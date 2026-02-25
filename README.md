@@ -175,6 +175,79 @@ const custom = `
 
 </details>
 
+## Accessibility
+
+All interactive elements include proper ARIA attributes and keyboard support:
+
+- **EventBlock** — `role="button"`, `aria-label` (title + time + duration + status), `tabindex="0"`, Enter/Space activates
+- **EmptySlot** — `role="button"`, `aria-label` (time range + duration), keyboard-accessible for event creation
+- **NowIndicator** — `role="status"`, `aria-live="polite"` announces the current time
+- **Calendar** — `role="region"`, `aria-label="Calendar"`
+- **Toolbar** — `aria-label="Calendar navigation"`
+- Focus-visible outlines on all interactive primitives
+
+## Locale & i18n
+
+The calendar uses `Intl.DateTimeFormat` for all date/time formatting. Pass a BCP 47 locale tag to the `Calendar` shell:
+
+```svelte
+<Calendar {views} {adapter} locale="pl-PL" dir="rtl" />
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `locale` | `string` | `'en-US'` | BCP 47 tag — controls weekday names, month names, date formats |
+| `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | Text direction (for Arabic, Hebrew, etc.) |
+
+The `locale` prop automatically switches between 12-hour and 24-hour time display based on the locale's hour cycle.
+
+### Programmatic locale control
+
+```ts
+import { setDefaultLocale, getDefaultLocale, is24HourLocale } from '@nomideusz/svelte-calendar';
+
+setDefaultLocale('de-DE');       // All formatting functions now use German
+is24HourLocale('en-US');         // false (12h)
+is24HourLocale('de-DE');         // true  (24h)
+```
+
+All formatting functions (`weekdayShort`, `monthLong`, `fmtDay`, `fmtWeekRange`, etc.) accept an optional `locale` parameter to override per-call.
+
+## Timezones
+
+Timezone utilities are included via `date-fns-tz`:
+
+```ts
+import {
+  toZonedTime,
+  fromZonedTime,
+  nowInZone,
+  formatInTimeZone,
+} from '@nomideusz/svelte-calendar';
+
+// Display a UTC date in a specific timezone
+const nyTime = toZonedTime(utcDate, 'America/New_York');
+
+// Convert back to UTC for storage
+const utc = fromZonedTime(displayDate, 'America/New_York');
+
+// Current time in Tokyo
+const tokyoNow = nowInZone('Asia/Tokyo');
+
+// Locale-aware formatting in a timezone
+formatInTimeZone(date, 'Europe/Warsaw', { hour: 'numeric', minute: '2-digit' }, 'pl-PL');
+// → "14:30"
+```
+
+The engine's `createViewState` also accepts a `timezone` option:
+
+```ts
+const viewState = createViewState({
+  defaultView: 'week-grid',
+  timezone: 'America/New_York',  // stored on viewState.timezone
+});
+```
+
 ## Architecture
 
 ```
