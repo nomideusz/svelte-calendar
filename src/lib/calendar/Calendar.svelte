@@ -63,6 +63,10 @@
 		dir?: 'ltr' | 'rtl' | 'auto';
 		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
 		locale?: string;
+		/** Read-only mode: disables drag, resize, empty-slot creation */
+		readOnly?: boolean;
+		/** Visible hour range: [startHour, endHour). Crops the grid to these hours. */
+		visibleHours?: [number, number];
 
 		// ── Callbacks ──
 		oneventclick?: (event: TimelineEvent) => void;
@@ -81,10 +85,16 @@
 		links = [],
 		dir,
 		locale,
+		readOnly = false,
+		visibleHours,
 		oneventclick,
 		oneventcreate,
 		oneventmove,
 	}: Props = $props();
+
+	// In readOnly mode, suppress mutation callbacks
+	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
+	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
 
 	import { setDefaultLocale } from '../core/locale.js';
 
@@ -105,6 +115,7 @@
 	// ── Drag commit handler ──
 	// Views call this on pointer-up to process drag results.
 	function commitDrag(): void {
+		if (readOnly) { drag.cancel(); return; }
 		const mode = drag.mode;
 		const payload = drag.commit();
 		if (!payload) return;
@@ -112,9 +123,9 @@
 		if ((mode === 'move' || mode === 'resize-start' || mode === 'resize-end') && payload.eventId) {
 			store.move(payload.eventId, payload.start, payload.end);
 			const ev = store.byId(payload.eventId);
-			if (ev) oneventmove?.(ev, payload.start, payload.end);
+			if (ev) effectiveMove?.(ev, payload.start, payload.end);
 		} else if (mode === 'create') {
-			oneventcreate?.({ start: payload.start, end: payload.end });
+			effectiveCreate?.({ start: payload.start, end: payload.end });
 		}
 	}
 
@@ -130,9 +141,11 @@
 	// always see the latest callback references.
 	setContext('calendar:callbacks', {
 		get oneventclick() { return oneventclick; },
-		get oneventcreate() { return oneventcreate; },
-		get oneventmove() { return oneventmove; },
+		get oneventcreate() { return effectiveCreate; },
+		get oneventmove() { return effectiveMove; },
 	});
+	setContext('calendar:readOnly', { get current() { return readOnly; } });
+	setContext('calendar:visibleHours', { get current() { return visibleHours; } });
 
 	// ── Load events when range changes ──
 	$effect(() => {
@@ -170,7 +183,9 @@
 				mondayStart={viewState.mondayStart}
 				focusDate={viewState.focusDate}
 				oneventclick={oneventclick}
-				oneventcreate={oneventcreate}
+				oneventcreate={effectiveCreate}
+				readOnly={readOnly}
+				visibleHours={visibleHours}
 				selectedEventId={selection.selectedId}
 				{...activeView.props ?? {}}
 			/>

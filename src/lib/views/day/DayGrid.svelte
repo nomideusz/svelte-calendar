@@ -43,6 +43,11 @@
 		selectedEventId?: string | null;
 		/** Start weeks on Monday */
 		mondayStart?: boolean;
+		/** Read-only mode */
+		readOnly?: boolean;
+		/** Visible hour range [startHour, endHour) — adjusts night collapse */
+		visibleHours?: [number, number];
+		[key: string]: unknown;
 	}
 
 	let {

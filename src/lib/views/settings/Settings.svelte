@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import type { PresetName } from '../../theme/presets.js';
-	import { presets, stageBg } from '../../theme/presets.js';
+	import { presets } from '../../theme/presets.js';
 
 	/* ─── Field definition types ─────────────────────── */
 	type RangeField = {

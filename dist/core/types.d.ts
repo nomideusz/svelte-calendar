@@ -19,6 +19,10 @@ export interface TimelineEvent {
     recurrence?: string;
     /** Whether this event can be moved / resized by the user */
     editable?: boolean;
+    /** Subtitle displayed below the title (e.g. instructor name, level) */
+    subtitle?: string;
+    /** Tags displayed as small pills (e.g. ["Beginner", "Yoga"]) */
+    tags?: string[];
     /** Arbitrary payload from the source app (bookings, attendees, etc.) */
     data?: Record<string, unknown>;
 }

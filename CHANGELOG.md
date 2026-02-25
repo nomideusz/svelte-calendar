@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 — 2026-02-26
+
+### Added
+- **Recurring adapter** — `createRecurringAdapter(schedule)` auto-projects weekly `RecurringEvent` definitions onto concrete dates. Eliminates manual date fabrication for schedule-based apps.
+- **`RecurringEvent` type** — `dayOfWeek` (1=Mon…7=Sun) + `startTime`/`endTime` strings, with `subtitle`, `tags`, `category`, `color`, and `data` fields.
+- **`readOnly` prop** on `Calendar` — disables drag, resize, empty-slot creation, and mutation callbacks. `oneventclick` still fires.
+- **`visibleHours` prop** on `Calendar` — `[startHour, endHour)` tuple to crop grids to relevant hours (e.g. `[6, 21]` for a yoga studio).
+- **`subtitle` and `tags` on `TimelineEvent`** — `EventBlock` renders subtitle as secondary text and tags as accent-colored pills (card and row variants).
+- **`colorMap` / `autoColor` on adapters** — `createMemoryAdapter` and `createRecurringAdapter` accept `{ colorMap, autoColor }` options. `colorMap` maps category/title → color; `autoColor` cycles a 15-color palette.
+- **`WeekSchedule` convenience component** — single-import, zero-config weekly schedule display. Accepts `events` or `schedule` prop, pre-wires adapter + views + toolbar.
+- **`MemoryAdapterOptions` type** exported from adapters.
+- Comprehensive tests for recurring adapter (8 test cases).
+
+### Changed
+- `Calendar` shell now passes `readOnly` and `visibleHours` through to child view components.
+- `WeekGrid` respects `readOnly` — disables cell-click creation and event drag.
+- `WeekHeatmap` respects `visibleHours` — renders only specified hour range.
+- Demo page (`+page.svelte`) rewritten as interactive feature showcase with theme/readOnly/visibleHours/colorMap toggles and 4 demo modes.
+
 ## 0.2.0 — 2026-02-25
 
 ### Added

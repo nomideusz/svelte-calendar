@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import type { PresetName } from '../../theme/presets.js';
-	import { presets, stageBg } from '../../theme/presets.js';
+	import { presets } from '../../theme/presets.js';
 
 	/* ─── Field definition types ─────────────────────── */
 	type RangeField = {
@@ -30,16 +30,20 @@
 
 	let { fields, values = $bindable(), theme = $bindable() }: Props = $props();
 
-	const themeKeys: PresetName[] = ['midnight', 'parchment', 'indigo'];
+	const themeKeys: PresetName[] = ['midnight', 'parchment', 'indigo', 'neutral', 'bare'];
 	const themeLabels: Record<PresetName, string> = {
 		midnight: 'Midnight',
 		parchment: 'Parchment',
 		indigo: 'Indigo',
+		neutral: 'Neutral',
+		bare: 'Bare',
 	};
 	const themeAccents: Record<PresetName, string> = {
 		midnight: '#ef4444',
 		parchment: '#b85c2f',
 		indigo: '#6366f1',
+		neutral: '#94a0b4',
+		bare: '#94a0b4',
 	};
 
 	let open = $state(true);

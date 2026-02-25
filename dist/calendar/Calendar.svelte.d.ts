@@ -37,6 +37,10 @@ interface Props {
     dir?: 'ltr' | 'rtl' | 'auto';
     /** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
     locale?: string;
+    /** Read-only mode: disables drag, resize, empty-slot creation */
+    readOnly?: boolean;
+    /** Visible hour range: [startHour, endHour). Crops the grid to these hours. */
+    visibleHours?: [number, number];
     oneventclick?: (event: TimelineEvent) => void;
     oneventcreate?: (range: {
         start: Date;

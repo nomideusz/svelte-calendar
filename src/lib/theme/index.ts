@@ -6,6 +6,5 @@ export {
 	neutral,
 	bare,
 	presets,
-	stageBg,
 } from './presets.js';
 export type { PresetName } from './presets.js';

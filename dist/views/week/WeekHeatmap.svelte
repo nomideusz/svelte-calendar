@@ -27,7 +27,13 @@
 		focusDate,
 		oneventclick,
 		selectedEventId = null,
-	}: WeekTimelineProps = $props();
+		visibleHours,
+		...rest
+	}: WeekTimelineProps & { visibleHours?: [number, number]; [key: string]: unknown } = $props();
+
+	const startHour = $derived(visibleHours?.[0] ?? 0);
+	const endHour = $derived(visibleHours?.[1] ?? 24);
+	const visibleHourCount = $derived(endHour - startHour);
 
 	const clock = createClock();
 
@@ -66,7 +72,7 @@
 			const isToday = ms === clock.today;
 
 			const cells: HeatCell[] = [];
-			for (let h = 0; h < 24; h++) {
+			for (let h = startHour; h < endHour; h++) {
 				const cellStart = ms + h * 3600000;
 				const cellEnd = cellStart + 3600000;
 				const overlaps = events.filter((ev) => ev.start.getTime() < cellEnd && ev.end.getTime() > cellStart);
@@ -179,9 +185,10 @@
 	<!-- Hour labels row -->
 	<div class="hm-hours-row">
 		<div class="hm-row-label"></div>
-		{#each Array(24) as _, h}
-			{#if h % 3 === 0}
-				<span class="hm-hour-mark" style:left="calc({h} * (100% / 24))">{fmtH(h)}</span>
+		{#each Array(visibleHourCount) as _, idx}
+			{@const h = startHour + idx}
+			{#if (h - startHour) % 3 === 0}
+				<span class="hm-hour-mark" style:left="calc({idx} * (100% / {visibleHourCount}))">{fmtH(h)}</span>
 			{/if}
 		{/each}
 	</div>

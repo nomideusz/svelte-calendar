@@ -89,11 +89,21 @@
 		<div class="eb-stripe"></div>
 		<div class="eb-body">
 			<span class="eb-title">{event.title}</span>
+			{#if event.subtitle}
+				<span class="eb-subtitle">{event.subtitle}</span>
+			{/if}
 			{#if showTime}
 				<span class="eb-time">{fmtTime(event.start)} – {fmtTime(event.end)}</span>
 			{/if}
 			{#if showDuration}
 				<span class="eb-dur">{fmtDuration(event.start, event.end)}</span>
+			{/if}
+			{#if event.tags && event.tags.length > 0}
+				<div class="eb-tags">
+					{#each event.tags as tag}
+						<span class="eb-tag">{tag}</span>
+					{/each}
+				</div>
 			{/if}
 			{#if active}<span class="eb-live-badge">now</span>{/if}
 		</div>
@@ -102,8 +112,18 @@
 		<span class="eb-stripe"></span>
 		<span class="eb-time">{fmtTime(event.start)} – {fmtTime(event.end)}</span>
 		<span class="eb-title">{event.title}</span>
+		{#if event.subtitle}
+			<span class="eb-subtitle">{event.subtitle}</span>
+		{/if}
 		{#if showDuration}
 			<span class="eb-dur">{fmtDuration(event.start, event.end)}</span>
+		{/if}
+		{#if event.tags && event.tags.length > 0}
+			<span class="eb-tags">
+				{#each event.tags as tag}
+					<span class="eb-tag">{tag}</span>
+				{/each}
+			</span>
 		{/if}
 		{#if active}<span class="eb-live-badge">now</span>{/if}
 	{/if}
@@ -262,6 +282,28 @@
 	}
 
 	/* ── Shared ── */
+	.eb-subtitle {
+		font: 400 10px / 1.2 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.65));
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.eb-tags {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: 3px;
+	}
+	.eb-tag {
+		display: inline-block;
+		font: 500 8px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		padding: 2px 5px;
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--_color) 18%, transparent);
+		color: var(--_color);
+	}
 	.eb-live-badge {
 		display: inline-flex;
 		align-items: center;

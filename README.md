@@ -13,6 +13,7 @@ Switching between Day and Week preserves the active concept.
 | **Timeline** | DayTimeline | — | Horizontal day timeline. Day-only. |
 | **Agenda** | Agenda `mode="day"` | Agenda `mode="week"` | List / feed — Done, Now, Next (day) or grouped-by-day scroll (week). |
 | **Heatmap** | — | WeekHeatmap | Density view — 24 cells per day showing busy/free intensity. Week-only. |
+| **Schedule** | — | WeekSchedule | Zero-config weekly schedule display. Single import convenience wrapper. |
 
 ## Installation
 
@@ -39,8 +40,16 @@ pnpm add @nomideusz/svelte-calendar
   import type { CalendarView, TimelineEvent } from '@nomideusz/svelte-calendar';
 
   const events: TimelineEvent[] = [
-    { id: '1', title: 'Yoga Flow', start: new Date('2025-03-01T09:00'), end: new Date('2025-03-01T10:00'), color: '#818cf8' },
-    { id: '2', title: 'Meditation', start: new Date('2025-03-01T12:00'), end: new Date('2025-03-01T12:45'), color: '#34d399' },
+    {
+      id: '1', title: 'Yoga Flow',
+      start: new Date('2025-03-01T09:00'), end: new Date('2025-03-01T10:00'),
+      color: '#818cf8', subtitle: 'With Anna', tags: ['Beginner'],
+    },
+    {
+      id: '2', title: 'Meditation',
+      start: new Date('2025-03-01T12:00'), end: new Date('2025-03-01T12:45'),
+      color: '#34d399',
+    },
   ];
 
   // Adapters provide the data layer (in-memory, REST, etc.)
@@ -66,6 +75,137 @@ pnpm add @nomideusz/svelte-calendar
   oneventcreate={(range) => console.log('create', range.start, range.end)}
 />
 ```
+
+## Recurring Weekly Schedules
+
+Define a weekly schedule once — the adapter auto-projects it onto whatever week the calendar is viewing. No manual date math needed.
+
+```svelte
+<script lang="ts">
+  import { Calendar, WeekGrid, createRecurringAdapter, neutral } from '@nomideusz/svelte-calendar';
+  import type { CalendarView, RecurringEvent } from '@nomideusz/svelte-calendar';
+
+  const schedule: RecurringEvent[] = [
+    { id: '1', title: 'Morning Yoga',  dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#818cf8' },
+    { id: '2', title: 'Pilates',       dayOfWeek: 3, startTime: '18:00', endTime: '19:00', color: '#f472b6' },
+    { id: '3', title: 'Sound Bath',    dayOfWeek: 5, startTime: '19:00', endTime: '20:00', color: '#2dd4bf', subtitle: 'Crystal bowls', tags: ['Relaxing'] },
+  ];
+
+  const adapter = createRecurringAdapter(schedule);
+  const views: CalendarView[] = [
+    { id: 'week-grid', label: 'Grid', granularity: 'week', component: WeekGrid },
+  ];
+</script>
+
+<Calendar {views} {adapter} defaultView="week-grid" theme={neutral} readOnly />
+```
+
+### RecurringEvent
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique identifier |
+| `title` | `string` | Event title |
+| `dayOfWeek` | `1–7` | ISO weekday (1 = Monday … 7 = Sunday) |
+| `startTime` | `string` | Start time in `"HH:MM"` format |
+| `endTime` | `string` | End time in `"HH:MM"` format |
+| `color` | `string?` | Accent color |
+| `subtitle` | `string?` | Subtitle (rendered below title) |
+| `tags` | `string[]?` | Tag pills |
+| `category` | `string?` | Category for grouping / colorMap |
+| `data` | `Record?` | Arbitrary payload |
+
+## WeekSchedule — Zero-Config Convenience
+
+One import, one component. Pre-wires adapter, views, and toolbar internally:
+
+```svelte
+<script>
+  import { WeekSchedule } from '@nomideusz/svelte-calendar';
+  import { neutral } from '@nomideusz/svelte-calendar';
+
+  const schedule = [
+    { id: '1', title: 'Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#818cf8' },
+    { id: '2', title: 'Pilates', dayOfWeek: 3, startTime: '18:00', endTime: '19:00', color: '#f472b6' },
+  ];
+</script>
+
+<WeekSchedule {schedule} theme={neutral} locale="pl-PL" height={560} readOnly />
+```
+
+Works with concrete events too:
+
+```svelte
+<WeekSchedule events={myEvents} theme={neutral} height={560} />
+```
+
+## Read-Only Mode
+
+Pass `readOnly` to disable drag, resize, and click-to-create interactions:
+
+```svelte
+<Calendar {views} {adapter} readOnly />
+```
+
+In read-only mode:
+- Drag handles and resize affordances are disabled
+- Empty-slot creation clicks are suppressed
+- `oneventcreate` and `oneventmove` callbacks are not fired
+- `oneventclick` still works for navigation/display purposes
+
+## Visible Hours
+
+Crop the grid to relevant hours — no more scrolling past empty early morning / late night rows:
+
+```svelte
+<!-- Only show 6 AM to 9 PM -->
+<Calendar {views} {adapter} visibleHours={[6, 21]} />
+
+<!-- Works on WeekSchedule too -->
+<WeekSchedule {schedule} visibleHours={[7, 20]} />
+```
+
+The `visibleHours` prop is a `[startHour, endHour)` tuple. It applies to the WeekHeatmap grid cells and is passed through to all views.
+
+## Subtitle & Tags on Events
+
+`TimelineEvent` now supports `subtitle` and `tags` fields — rendered automatically by `EventBlock`:
+
+```ts
+const events: TimelineEvent[] = [
+  {
+    id: '1',
+    title: 'Power Vinyasa',
+    start: new Date('2025-03-01T10:00'),
+    end: new Date('2025-03-01T11:15'),
+    color: '#f472b6',
+    subtitle: 'With Marco',           // shown below the title
+    tags: ['Advanced', 'Hot'],         // rendered as small color pills
+  },
+];
+```
+
+- **subtitle** — displayed as secondary text below the title in card and row variants
+- **tags** — rendered as small accent-colored pills
+
+## Color Map & Auto-Coloring
+
+Instead of setting `color` on every event, let the adapter assign colors by category or title:
+
+```ts
+// Explicit mapping
+const adapter = createMemoryAdapter(events, {
+  colorMap: {
+    yoga: '#818cf8',
+    wellness: '#34d399',
+  },
+});
+
+// Or auto-assign from a built-in 15-color palette
+const adapter = createMemoryAdapter(events, { autoColor: true });
+```
+
+Both `createMemoryAdapter` and `createRecurringAdapter` accept `colorMap` and `autoColor` options. Events with an explicit `color` field always take priority.
 
 ## Settings Panel
 
@@ -254,10 +394,10 @@ const viewState = createViewState({
 src/lib/
 ├── core/          # Clock, time utils, locale, types
 ├── engine/        # Reactive state: event-store, view-state, selection, drag
-├── adapters/      # Data layer: memory adapter, REST adapter
+├── adapters/      # Data layer: memory, recurring, REST adapters
 ├── primitives/    # Low-level UI atoms: NowIndicator, EventBlock, TimeGutter...
 ├── calendar/      # Calendar shell, Toolbar
-├── views/         # View components (day/, week/, agenda/, settings/)
+├── views/         # View components (day/, week/, agenda/, schedule/, settings/)
 └── theme/         # Preset themes and token definitions
 ```
 
@@ -281,8 +421,9 @@ import {
 
 | Adapter | Use |
 |---------|-----|
-| `createMemoryAdapter(events)` | In-memory — great for demos and prototyping |
-| `createRestAdapter(options)` | Fetch from a REST API with configurable endpoints |
+| `createMemoryAdapter(events, options?)` | In-memory — great for demos and prototyping. Supports `colorMap` and `autoColor`. |
+| `createRecurringAdapter(schedule, options?)` | Weekly recurring schedules — auto-projects onto viewed weeks. Read-only. |
+| `createRestAdapter(options)` | Fetch from a REST API with configurable endpoints. |
 
 ## Standalone Views
 
@@ -302,6 +443,65 @@ Each view works independently without the Calendar shell:
 <WeekHeatmap style={parchment} events={events} height={320} />
 ```
 
+## Embeddable Widget
+
+Drop a single `<script>` tag into **any** HTML page — no Svelte, no build tools, no npm needed.
+
+### From CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@nomideusz/svelte-calendar/widget/widget.js"></script>
+
+<day-calendar
+  api="https://myschool.com/api/events"
+  theme="neutral"
+  height="600"
+></day-calendar>
+```
+
+That's it. Two lines.
+
+### With inline events (no API)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@nomideusz/svelte-calendar/widget/widget.js"></script>
+
+<day-calendar
+  theme="midnight"
+  height="500"
+  events='[
+    { "id": "1", "title": "Yoga Flow", "start": "2025-03-01T09:00", "end": "2025-03-01T10:00", "color": "#818cf8" },
+    { "id": "2", "title": "Meditation", "start": "2025-03-01T12:00", "end": "2025-03-01T12:45", "color": "#34d399" }
+  ]'
+></day-calendar>
+```
+
+### Widget attributes
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `api` | — | REST API base URL — fetches from `{api}/events?start=...&end=...` |
+| `events` | — | JSON string of events (alternative to `api`) |
+| `theme` | `neutral` | Preset: `midnight`, `parchment`, `indigo`, `neutral`, `bare` |
+| `view` | `week-grid` | Default view: `day-grid`, `week-grid`, `day-timeline`, `day-agenda`, `week-agenda`, `week-heatmap` |
+| `height` | `600` | Height in pixels |
+| `locale` | — | BCP 47 locale (`en-US`, `pl-PL`, `ar-SA`, etc.) |
+| `dir` | — | Text direction: `ltr`, `rtl`, `auto` |
+| `mondaystart` | `true` | Start week on Monday (`true`/`false`) |
+| `headers` | — | JSON string of HTTP headers for the REST adapter |
+
+### REST API contract
+
+When using the `api` attribute, the widget expects your endpoint to accept:
+
+```
+GET {api}/events?start={ISO}&end={ISO}
+```
+
+And return either:
+- `[{ id, title, start, end, color? }, ...]`
+- `{ events: [{ id, title, start, end, color? }, ...] }`
+
 ## Development
 
 ```bash
@@ -309,6 +509,7 @@ pnpm install
 pnpm dev             # SvelteKit dev server (demo app)
 pnpm check           # Type check
 pnpm run package     # Build the library into dist/
+pnpm run build:widget # Build standalone widget.js
 ```
 
 ## License

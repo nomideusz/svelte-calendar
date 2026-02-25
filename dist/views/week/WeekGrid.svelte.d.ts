@@ -15,6 +15,9 @@ interface Props {
         end: Date;
     }) => void;
     selectedEventId?: string | null;
+    readOnly?: boolean;
+    visibleHours?: [number, number];
+    [key: string]: unknown;
 }
 declare const WeekGrid: import("svelte").Component<Props, {}, "">;
 type WeekGrid = ReturnType<typeof WeekGrid>;

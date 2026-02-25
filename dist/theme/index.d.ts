@@ -1,2 +1,2 @@
-export { midnight, parchment, indigo, neutral, bare, presets, stageBg, } from './presets.js';
+export { midnight, parchment, indigo, neutral, bare, presets, } from './presets.js';
 export type { PresetName } from './presets.js';

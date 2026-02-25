@@ -11,4 +11,10 @@
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter } from './types.js';
-export declare function createMemoryAdapter(initial?: TimelineEvent[]): CalendarAdapter;
+export interface MemoryAdapterOptions {
+    /** Map of category/title to color */
+    colorMap?: Record<string, string>;
+    /** Auto-assign colors to events by category or title */
+    autoColor?: boolean;
+}
+export declare function createMemoryAdapter(initial?: TimelineEvent[], options?: MemoryAdapterOptions): CalendarAdapter;

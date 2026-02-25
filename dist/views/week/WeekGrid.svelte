@@ -30,6 +30,9 @@
 		oneventclick?: (event: TimelineEvent) => void;
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		selectedEventId?: string | null;
+		readOnly?: boolean;
+		visibleHours?: [number, number];
+		[key: string]: unknown;
 	}
 
 	let {
@@ -41,6 +44,8 @@
 		oneventclick,
 		oneventcreate,
 		selectedEventId = null,
+		readOnly = false,
+		...rest
 	}: Props = $props();
 
 	// ── Drag support (available when inside Calendar) ──
@@ -162,7 +167,7 @@
 	function handleDayCellClick(ms: number, e: Event) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.wg-ev')) return;
-		if (!oneventcreate) return;
+		if (readOnly || !oneventcreate) return;
 		const start = new Date(ms + 9 * 3_600_000);
 		const end = new Date(ms + 10 * 3_600_000);
 		oneventcreate({ start, end });
@@ -182,7 +187,7 @@
 	}
 
 	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
-		if (e.button !== 0 || !drag) return;
+		if (e.button !== 0 || !drag || readOnly) return;
 		e.stopPropagation();
 		evDragStartX = e.clientX;
 		evDragStarted = false;

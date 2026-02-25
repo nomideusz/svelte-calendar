@@ -754,7 +754,7 @@
 		transition: width 1s linear;
 	}
 
-	.ag-empty {
+	:global(.ag-empty) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -880,7 +880,7 @@
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.25));
 		margin-bottom: 2px;
 	}
-	.ag-q-free-next {
+	:global(.ag-q-free-next) {
 		font-size: 10px;
 		font-weight: 500;
 		line-height: 1.2;
@@ -890,7 +890,7 @@
 		text-overflow: ellipsis;
 		margin-bottom: 2px;
 	}
-	.ag-q-free-until {
+	:global(.ag-q-free-until) {
 		font-size: 9px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-accent, #ff6b4a);

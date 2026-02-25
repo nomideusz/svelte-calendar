@@ -6,6 +6,7 @@
  */
 /** Midnight Industrial — dark charcoal + red accent, tech monitoring */
 export const midnight = `
+	--dt-stage-bg: #080a0f;
 	--dt-bg: #0b0e14;
 	--dt-surface: #10141c;
 	--dt-border: rgba(148, 163, 184, 0.07);
@@ -29,6 +30,7 @@ export const midnight = `
 `;
 /** Desert Parchment — warm analog planner, burnt sienna on aged paper */
 export const parchment = `
+	--dt-stage-bg: #e4dace;
 	--dt-bg: #f0e9dd;
 	--dt-surface: #e8dfd0;
 	--dt-border: rgba(139, 110, 70, 0.12);
@@ -54,6 +56,7 @@ export const parchment = `
 `;
 /** Soft Indigo — calm productivity, muted lavender with indigo markers */
 export const indigo = `
+	--dt-stage-bg: #efedf8;
 	--dt-bg: #f7f6fc;
 	--dt-surface: #eeedf8;
 	--dt-border: rgba(99, 102, 241, 0.08);
@@ -81,6 +84,7 @@ export const indigo = `
  * Drop-in preset that blends into any website without fighting its design.
  */
 export const neutral = `
+	--dt-stage-bg: #ffffff;
 	--dt-bg: #ffffff;
 	--dt-surface: #f9fafb;
 	--dt-border: rgba(0, 0, 0, 0.08);
@@ -110,6 +114,7 @@ export const neutral = `
  * the parent site's design. Override individual --dt-* tokens as needed.
  */
 export const bare = `
+	--dt-stage-bg: transparent;
 	--dt-bg: transparent;
 	--dt-surface: transparent;
 	--dt-border: currentColor;
@@ -135,14 +140,3 @@ export const bare = `
 `;
 /** All available presets keyed by name */
 export const presets = { midnight, parchment, indigo, neutral, bare };
-/**
- * Stage background color matching each theme.
- * Useful for the container behind the timeline component.
- */
-export const stageBg = {
-    midnight: '#080a0f',
-    parchment: '#e4dace',
-    indigo: '#efedf8',
-    neutral: '#ffffff',
-    bare: 'transparent',
-};

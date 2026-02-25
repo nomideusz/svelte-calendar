@@ -6,6 +6,7 @@ export {
 	WeekHeatmap,
 	Agenda,
 	Settings,
+	WeekSchedule,
 } from './views/index.js';
 export type { SettingsField } from './views/index.js';
 
@@ -44,8 +45,15 @@ export type {
 } from './engine/index.js';
 
 // ─── Adapters ───────────────────────────────────────────
-export { createMemoryAdapter, createRestAdapter } from './adapters/index.js';
-export type { CalendarAdapter, DateRange, RestAdapterOptions } from './adapters/index.js';
+export { createMemoryAdapter, createRestAdapter, createRecurringAdapter } from './adapters/index.js';
+export type {
+	CalendarAdapter,
+	DateRange,
+	RestAdapterOptions,
+	RecurringEvent,
+	RecurringAdapterOptions,
+	MemoryAdapterOptions,
+} from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────
 export {
@@ -89,5 +97,5 @@ export type {
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
-export { midnight, parchment, indigo, neutral, bare, presets, stageBg } from './theme/index.js';
+export { midnight, parchment, indigo, neutral, bare, presets } from './theme/index.js';
 export type { PresetName } from './theme/index.js';
