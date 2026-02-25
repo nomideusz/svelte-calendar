@@ -62,7 +62,7 @@
 
 	const accentColor = $derived(event.color || 'var(--dt-accent, #ef4444)');
 
-	const ariaLabel = $derived(() => {
+	const ariaLabel = $derived.by(() => {
 		const t = event.title;
 		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
 		const dur = fmtDuration(event.start, event.end);
@@ -85,8 +85,8 @@
 	class:eb-editable={editable}
 	style="--eb-color: {accentColor}"
 	role={onclick ? 'button' : 'article'}
-	tabindex={onclick ? 0 : -1}
-	aria-label={ariaLabel()}
+	tabindex={onclick ? 0 : undefined}
+	aria-label={ariaLabel}
 	aria-current={active ? 'true' : undefined}
 	onclick={() => onclick?.(event)}
 	onkeydown={handleKeydown}

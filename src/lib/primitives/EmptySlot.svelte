@@ -32,7 +32,7 @@
 		return m === 0 ? `${h12}${suffix}` : `${h12}:${String(m).padStart(2, '0')}${suffix}`;
 	}
 
-	const dur = $derived(() => {
+	const dur = $derived.by(() => {
 		const mins = Math.round((end.getTime() - start.getTime()) / 60_000);
 		if (mins < 60) return `${mins}m free`;
 		const h = Math.floor(mins / 60);
@@ -54,7 +54,7 @@
 	class:es-h={orientation === 'horizontal'}
 	role="button"
 	tabindex="0"
-	aria-label="Create event, {fmtTime(start)} to {fmtTime(end)}, {dur()}"
+	aria-label="Create event, {fmtTime(start)} to {fmtTime(end)}, {dur}"
 	onclick={() => onclick?.({ start, end })}
 	onkeydown={handleKeydown}
 >

@@ -62,7 +62,7 @@
 
 	const accentColor = $derived(event.color || 'var(--dt-accent, #ef4444)');
 
-	const ariaLabel = $derived(() => {
+	const ariaLabel = $derived.by(() => {
 		const t = event.title;
 		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
 		const dur = fmtDuration(event.start, event.end);
@@ -78,19 +78,7 @@
 	}
 </script>
 
-<div
-	class="eb eb-{variant}"
-	class:eb-active={active}
-	class:eb-past={past}
-	class:eb-editable={editable}
-	style="--eb-color: {accentColor}"
-	role={onclick ? 'button' : 'article'}
-	tabindex={onclick ? 0 : -1}
-	aria-label={ariaLabel()}
-	aria-current={active ? 'true' : undefined}
-	onclick={() => onclick?.(event)}
-	onkeydown={handleKeydown}
->
+{#snippet content()}
 	{#if children}
 		{@render children(event)}
 	{:else if variant === 'chip'}
@@ -119,7 +107,38 @@
 		{/if}
 		{#if active}<span class="eb-live-badge">now</span>{/if}
 	{/if}
+{/snippet}
+
+{#if onclick}
+<div
+	class="eb eb-{variant}"
+	class:eb-active={active}
+	class:eb-past={past}
+	class:eb-editable={editable}
+	style="--eb-color: {accentColor}"
+	role="button"
+	tabindex="0"
+	aria-label={ariaLabel}
+	aria-current={active ? 'true' : undefined}
+	onclick={() => onclick?.(event)}
+	onkeydown={handleKeydown}
+>
+	{@render content()}
 </div>
+{:else}
+<div
+	class="eb eb-{variant}"
+	class:eb-active={active}
+	class:eb-past={past}
+	class:eb-editable={editable}
+	style="--eb-color: {accentColor}"
+	role="article"
+	aria-label={ariaLabel}
+	aria-current={active ? 'true' : undefined}
+>
+	{@render content()}
+</div>
+{/if}
 
 <style>
 	.eb {
