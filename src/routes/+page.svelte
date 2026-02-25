@@ -74,7 +74,7 @@
 </script>
 
 <svelte:head>
-	<title>@svelte-calendar/core</title>
+	<title>@nomideusz/svelte-calendar</title>
 </svelte:head>
 
 <main>
