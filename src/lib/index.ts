@@ -89,5 +89,5 @@ export type {
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
-export { midnight, parchment, indigo, presets, stageBg } from './theme/index.js';
+export { midnight, parchment, indigo, neutral, bare, presets, stageBg } from './theme/index.js';
 export type { PresetName } from './theme/index.js';

@@ -76,8 +76,65 @@ export const indigo = `
 	--dt-hm-high: rgba(99, 102, 241, 0.48);
 	--dt-hm-max: rgba(99, 102, 241, 0.7);
 `;
+/**
+ * Neutral — inherits fonts from host page, uses standard grays + safe blue accent.
+ * Drop-in preset that blends into any website without fighting its design.
+ */
+export const neutral = `
+	--dt-bg: #ffffff;
+	--dt-surface: #f9fafb;
+	--dt-border: rgba(0, 0, 0, 0.08);
+	--dt-border-day: rgba(0, 0, 0, 0.14);
+	--dt-text: rgba(0, 0, 0, 0.87);
+	--dt-text-2: rgba(0, 0, 0, 0.54);
+	--dt-text-3: rgba(0, 0, 0, 0.38);
+	--dt-accent: #2563eb;
+	--dt-accent-dim: rgba(37, 99, 235, 0.12);
+	--dt-glow: rgba(37, 99, 235, 0.25);
+	--dt-today-bg: rgba(37, 99, 235, 0.04);
+	--dt-btn-text: #fff;
+	--dt-scrollbar: rgba(0, 0, 0, 0.1);
+	--dt-success: rgba(22, 163, 74, 0.7);
+	--dt-serif: inherit;
+	--dt-sans: inherit;
+	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
+	--dt-hm-empty: rgba(0, 0, 0, 0.03);
+	--dt-hm-low: rgba(37, 99, 235, 0.12);
+	--dt-hm-mid: rgba(37, 99, 235, 0.28);
+	--dt-hm-high: rgba(37, 99, 235, 0.48);
+	--dt-hm-max: rgba(37, 99, 235, 0.7);
+`;
+/**
+ * Bare — transparent skeleton that inherits everything from the host page.
+ * All colors use currentColor/transparent/inherit so the calendar fully absorbs
+ * the parent site's design. Override individual --dt-* tokens as needed.
+ */
+export const bare = `
+	--dt-bg: transparent;
+	--dt-surface: transparent;
+	--dt-border: currentColor;
+	--dt-border-day: currentColor;
+	--dt-text: inherit;
+	--dt-text-2: inherit;
+	--dt-text-3: inherit;
+	--dt-accent: currentColor;
+	--dt-accent-dim: transparent;
+	--dt-glow: transparent;
+	--dt-today-bg: transparent;
+	--dt-btn-text: inherit;
+	--dt-scrollbar: currentColor;
+	--dt-success: currentColor;
+	--dt-serif: inherit;
+	--dt-sans: inherit;
+	--dt-mono: inherit;
+	--dt-hm-empty: transparent;
+	--dt-hm-low: currentColor;
+	--dt-hm-mid: currentColor;
+	--dt-hm-high: currentColor;
+	--dt-hm-max: currentColor;
+`;
 /** All available presets keyed by name */
-export const presets = { midnight, parchment, indigo };
+export const presets = { midnight, parchment, indigo, neutral, bare };
 /**
  * Stage background color matching each theme.
  * Useful for the container behind the timeline component.
@@ -86,4 +143,6 @@ export const stageBg = {
     midnight: '#080a0f',
     parchment: '#e4dace',
     indigo: '#efedf8',
+    neutral: '#ffffff',
+    bare: 'transparent',
 };

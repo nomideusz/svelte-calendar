@@ -90,24 +90,44 @@ The `Settings` component provides a theme picker and dynamic fields for controll
 
 ## Themes
 
-Three built-in presets  each view reads from the same `--dt-*` CSS custom property contract:
+Five built-in presets — each view reads from the same `--dt-*` CSS custom property contract:
 
 | Preset | Tone |
 |--------|------|
-| `midnight` | Dark (deep navy/slate) |
-| `parchment` | Warm light (cream, amber accents) |
+| `midnight` | Dark (deep navy/slate, red accent) |
+| `parchment` | Warm light (cream, burnt sienna accents) |
 | `indigo` | Cool light (white surface, indigo accents) |
+| `neutral` | **Site-friendly** — white/gray, blue accent, `inherit` fonts so it matches your site |
+| `bare` | **Unstyled skeleton** — all `transparent`/`inherit`/`currentColor`, absorbs host styles entirely |
 
 ```svelte
 <script>
-  import { midnight, parchment, indigo, presets } from '@nomideusz/svelte-calendar';
+  import { midnight, parchment, indigo, neutral, bare, presets } from '@nomideusz/svelte-calendar';
 </script>
 
-<!-- Apply directly -->
-<WeekGrid style={midnight} events={events} />
+<!-- Blends into your site with no extra work -->
+<Calendar {views} {adapter} theme={neutral} />
 
 <!-- Or use the presets map -->
 <WeekGrid style={presets['parchment']} events={events} />
+```
+
+### Matching Your Site
+
+The `neutral` preset inherits font families from your page (`--dt-sans: inherit; --dt-serif: inherit`) and uses a standard blue accent. For most sites this is all you need.
+
+If you need full control, start from `bare` — it sets everything to `transparent`/`inherit`/`currentColor` — then override only the tokens you care about:
+
+```ts
+import { bare } from '@nomideusz/svelte-calendar';
+
+const myTheme = `
+  ${bare}
+  --dt-accent: #e11d48;
+  --dt-bg: var(--my-app-surface);
+  --dt-text: var(--my-app-text);
+  --dt-border: var(--my-app-border);
+`;
 ```
 
 ### Custom Themes
@@ -124,6 +144,36 @@ const custom = `
   /* ...see presets.ts for the full token list */
 `;
 ```
+
+<details>
+<summary><strong>Full token reference</strong></summary>
+
+| Token | Purpose |
+|-------|----------|
+| `--dt-bg` | Main background |
+| `--dt-surface` | Elevated surface (cards, popovers) |
+| `--dt-border` | Default border |
+| `--dt-border-day` | Day-column dividers |
+| `--dt-text` | Primary text |
+| `--dt-text-2` | Secondary text |
+| `--dt-text-3` | Tertiary / muted text |
+| `--dt-accent` | Accent color (buttons, now-indicator, highlights) |
+| `--dt-accent-dim` | Accent at ~12% opacity |
+| `--dt-glow` | Accent glow / focus ring |
+| `--dt-today-bg` | Today column highlight |
+| `--dt-btn-text` | Button label color |
+| `--dt-scrollbar` | Scrollbar thumb |
+| `--dt-success` | Success / completed indicator |
+| `--dt-serif` | Serif font stack |
+| `--dt-sans` | Sans-serif font stack |
+| `--dt-mono` | Monospace font stack |
+| `--dt-hm-empty` | Heatmap: empty cell |
+| `--dt-hm-low` | Heatmap: low density |
+| `--dt-hm-mid` | Heatmap: medium density |
+| `--dt-hm-high` | Heatmap: high density |
+| `--dt-hm-max` | Heatmap: maximum density |
+
+</details>
 
 ## Architecture
 

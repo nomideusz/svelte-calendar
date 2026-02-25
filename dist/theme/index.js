@@ -1,2 +1,2 @@
 // ─── Theme barrel export ────────────────────────────────
-export { midnight, parchment, indigo, presets, stageBg, } from './presets.js';
+export { midnight, parchment, indigo, neutral, bare, presets, stageBg, } from './presets.js';

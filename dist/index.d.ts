@@ -9,5 +9,5 @@ export { createMemoryAdapter, createRestAdapter } from './adapters/index.js';
 export type { CalendarAdapter, DateRange, RestAdapterOptions } from './adapters/index.js';
 export { createClock, DAY_MS, HOUR_MS, HOURS, sod, startOfWeek, addDaysMs, diffDays, pad, fractionalHour, fmtHM, fmtS, dayNum, dayOfWeek, fmtH, weekdayShort, weekdayLong, monthShort, monthLong, dateShort, dateWithWeekday, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, is24HourLocale, timeToX, toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, } from './core/index.js';
 export type { Clock, TimelineEvent, WeekTimelineProps, DayTimelineProps, } from './core/index.js';
-export { midnight, parchment, indigo, presets, stageBg } from './theme/index.js';
+export { midnight, parchment, indigo, neutral, bare, presets, stageBg } from './theme/index.js';
 export type { PresetName } from './theme/index.js';
