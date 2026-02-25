@@ -53,7 +53,7 @@
 </script>
 
 {#if mode === 'badge'}
-	<span class="ni-badge" style={colorVar}>
+	<span class="ni-badge" style={colorVar} role="status" aria-live="polite" aria-label="Current time: {time}">
 		{#if children}
 			{@render children()}
 		{:else}
@@ -61,7 +61,7 @@
 		{/if}
 	</span>
 {:else if mode === 'dot'}
-	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}">
+	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="Current time: {time}">
 		<div class="ni-dot-circle"></div>
 		{#if showLabel && time}
 			<div class="ni-label">
@@ -71,7 +71,7 @@
 		{/if}
 	</div>
 {:else}
-	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}">
+	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="Current time: {time}">
 		<div class="ni-line-bar"></div>
 		{#if showLabel && time}
 			<div class="ni-label">

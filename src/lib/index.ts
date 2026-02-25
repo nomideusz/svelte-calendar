@@ -34,6 +34,7 @@ export type {
 	ViewState,
 	ViewStateOptions,
 	CalendarViewId,
+	BuiltInViewId,
 	ViewGranularity,
 	ViewDateRange,
 	Selection,
@@ -73,7 +74,12 @@ export {
 	fmtWeekRange,
 	setDefaultLocale,
 	getDefaultLocale,
+	is24HourLocale,
 	timeToX,
+	toZonedTime,
+	fromZonedTime,
+	nowInZone,
+	formatInTimeZone,
 } from './core/index.js';
 export type {
 	Clock,

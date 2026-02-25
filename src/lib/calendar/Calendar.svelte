@@ -59,6 +59,10 @@
 		showToolbar?: boolean;
 		/** Links to display in toolbar */
 		links?: { href: string; label: string }[];
+		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
+		dir?: 'ltr' | 'rtl' | 'auto';
+		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
+		locale?: string;
 
 		// ── Callbacks ──
 		oneventclick?: (event: TimelineEvent) => void;
@@ -75,10 +79,19 @@
 		height = 600,
 		showToolbar = true,
 		links = [],
+		dir,
+		locale,
 		oneventclick,
 		oneventcreate,
 		oneventmove,
 	}: Props = $props();
+
+	import { setDefaultLocale } from '../core/locale.js';
+
+	// ── Set locale when provided ──
+	$effect(() => {
+		if (locale) setDefaultLocale(locale);
+	});
 
 	// ── Create reactive state ──
 	const store: EventStore = $derived(createEventStore(adapter));
@@ -135,7 +148,14 @@
 	);
 </script>
 
-<div class="cal" style="{theme}; --cal-h: {height}px">
+<div
+	class="cal"
+	style="{theme}; --cal-h: {height}px"
+	role="region"
+	aria-label="Calendar"
+	dir={dir}
+	lang={locale}
+>
 	{#if showToolbar}
 		<Toolbar {viewState} views={toolbarViews} {links} />
 	{/if}

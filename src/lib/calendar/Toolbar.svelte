@@ -47,7 +47,7 @@
 	);
 </script>
 
-<nav class="tb">
+<nav class="tb" aria-label="Calendar navigation">
 	<!-- Nav: ← Today → -->
 	<div class="tb-nav">
 		<button class="tb-btn" onclick={() => viewState.prev()} aria-label="Previous">

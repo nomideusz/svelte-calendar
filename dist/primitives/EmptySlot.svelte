@@ -39,17 +39,26 @@
 		const m = mins % 60;
 		return m > 0 ? `${h}h ${m}m free` : `${h}h free`;
 	});
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onclick?.({ start, end });
+		}
+	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="es"
 	class:es-v={orientation === 'vertical'}
 	class:es-h={orientation === 'horizontal'}
+	role="button"
+	tabindex="0"
+	aria-label="Create event, {fmtTime(start)} to {fmtTime(end)}, {dur()}"
 	onclick={() => onclick?.({ start, end })}
+	onkeydown={handleKeydown}
 >
-	<div class="es-hint">
+	<div class="es-hint" aria-hidden="true">
 		<span class="es-plus">+</span>
 		<span class="es-range">{fmtTime(start)} – {fmtTime(end)}</span>
 	</div>
@@ -67,6 +76,11 @@
 	.es:hover {
 		border-color: var(--dt-accent-dim, rgba(239, 68, 68, 0.18));
 		background: var(--dt-accent-dim, rgba(239, 68, 68, 0.05));
+	}
+	.es:focus-visible {
+		outline: 2px solid var(--dt-accent, #ef4444);
+		outline-offset: 2px;
+		border-color: var(--dt-accent-dim, rgba(239, 68, 68, 0.18));
 	}
 
 	.es-hint {

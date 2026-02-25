@@ -25,6 +25,7 @@ export {
 export {
 	setDefaultLocale,
 	getDefaultLocale,
+	is24HourLocale,
 	fmtH,
 	weekdayShort,
 	weekdayLong,
@@ -35,6 +36,14 @@ export {
 	fmtDay,
 	fmtWeekRange,
 } from './locale.js';
+
+// Timezone utilities
+export {
+	toZonedTime,
+	fromZonedTime,
+	nowInZone,
+	formatInTimeZone,
+} from './timezone.js';
 
 // Types
 export type {

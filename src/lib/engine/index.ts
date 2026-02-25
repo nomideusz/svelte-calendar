@@ -7,6 +7,7 @@ export type {
 	ViewState,
 	ViewStateOptions,
 	CalendarViewId,
+	BuiltInViewId,
 	ViewGranularity,
 	DateRange as ViewDateRange,
 } from './view-state.svelte.js';

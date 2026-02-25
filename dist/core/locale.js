@@ -17,8 +17,25 @@ export function setDefaultLocale(tag) {
 export function getDefaultLocale() {
     return defaultLocale;
 }
-/** Format hour index (0-23) as compact 12h label: 12a, 1a … 12p, 1p … */
-export function fmtH(h) {
+/**
+ * Detect whether the current locale uses 12-hour or 24-hour time.
+ * Caches per locale tag for performance.
+ */
+const hourCycleCache = new Map();
+export function is24HourLocale(locale) {
+    const loc = locale ?? defaultLocale;
+    if (hourCycleCache.has(loc))
+        return hourCycleCache.get(loc);
+    const sample = new Intl.DateTimeFormat(loc, { hour: 'numeric' }).resolvedOptions();
+    const is24 = sample.hourCycle === 'h23' || sample.hourCycle === 'h24';
+    hourCycleCache.set(loc, is24);
+    return is24;
+}
+/** Format hour index (0-23) as compact label: 12h ("12a", "1p") or 24h ("0", "13") */
+export function fmtH(h, locale) {
+    if (is24HourLocale(locale)) {
+        return String(h);
+    }
     if (h === 0)
         return '12a';
     if (h === 12)

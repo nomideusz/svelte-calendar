@@ -11,8 +11,9 @@
 export declare function setDefaultLocale(tag: string): void;
 /** Get the current default locale */
 export declare function getDefaultLocale(): string;
-/** Format hour index (0-23) as compact 12h label: 12a, 1a … 12p, 1p … */
-export declare function fmtH(h: number): string;
+export declare function is24HourLocale(locale?: string): boolean;
+/** Format hour index (0-23) as compact label: 12h ("12a", "1p") or 24h ("0", "13") */
+export declare function fmtH(h: number, locale?: string): string;
 /** Short weekday name for a timestamp: "Mon", "Tue", etc. */
 export declare function weekdayShort(ms: number, locale?: string): string;
 /** Long weekday name for a timestamp: "Monday", "Tuesday", etc. */

@@ -33,6 +33,10 @@ interface Props {
         href: string;
         label: string;
     }[];
+    /** Text direction: 'ltr' (default), 'rtl', or 'auto' */
+    dir?: 'ltr' | 'rtl' | 'auto';
+    /** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
+    locale?: string;
     oneventclick?: (event: TimelineEvent) => void;
     oneventcreate?: (range: {
         start: Date;

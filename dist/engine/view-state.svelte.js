@@ -35,6 +35,7 @@ export function createViewState(options = {}) {
     let view = $state(options.defaultView ?? 'week-grid');
     let focusDate = $state(new Date());
     let mondayStart = $state(options.mondayStart ?? true);
+    const timezone = options.timezone;
     const granularity = $derived(granularityFor(view));
     const range = $derived(computeRange(focusDate, granularity, mondayStart));
     return {
@@ -52,6 +53,9 @@ export function createViewState(options = {}) {
         },
         get mondayStart() {
             return mondayStart;
+        },
+        get timezone() {
+            return timezone;
         },
         setView(id) {
             view = id;

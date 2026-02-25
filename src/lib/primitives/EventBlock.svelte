@@ -61,17 +61,35 @@
 	}
 
 	const accentColor = $derived(event.color || 'var(--dt-accent, #ef4444)');
+
+	const ariaLabel = $derived(() => {
+		const t = event.title;
+		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
+		const dur = fmtDuration(event.start, event.end);
+		const status = active ? ', happening now' : past ? ', past' : '';
+		return `${t}, ${time}, ${dur}${status}`;
+	});
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onclick?.(event);
+		}
+	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="eb eb-{variant}"
 	class:eb-active={active}
 	class:eb-past={past}
 	class:eb-editable={editable}
 	style="--eb-color: {accentColor}"
+	role={onclick ? 'button' : 'article'}
+	tabindex={onclick ? 0 : -1}
+	aria-label={ariaLabel()}
+	aria-current={active ? 'true' : undefined}
 	onclick={() => onclick?.(event)}
+	onkeydown={handleKeydown}
 >
 	{#if children}
 		{@render children(event)}
@@ -114,6 +132,11 @@
 	}
 	.eb-editable:hover {
 		transform: translateY(-1px);
+	}
+	.eb:focus-visible {
+		outline: 2px solid var(--dt-accent, #ef4444);
+		outline-offset: 2px;
+		border-radius: 4px;
 	}
 	.eb-past {
 		opacity: 0.5;
