@@ -13,6 +13,8 @@ interface Props {
         href: string;
         label: string;
     }[];
+    /** Locale used for labels */
+    locale?: string;
 }
 declare const Toolbar: import("svelte").Component<Props, {}, "">;
 type Toolbar = ReturnType<typeof Toolbar>;

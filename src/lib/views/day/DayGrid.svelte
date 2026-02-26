@@ -35,6 +35,8 @@
 		style?: string;
 		/** The date to centre this view on */
 		focusDate?: Date;
+		/** Locale for labels */
+		locale?: string;
 		/** Called when the user clicks an event */
 		oneventclick?: (event: TimelineEvent) => void;
 		/** Called when the user clicks an empty time slot */
@@ -58,6 +60,7 @@
 		height = 520,
 		events = [],
 		style = '',
+		locale,
 		focusDate,
 		oneventclick,
 		oneventcreate,
@@ -130,7 +133,7 @@
 
 			layouts.push({
 				ms,
-				name: fmtDay(ms, clock.today, { short: true }),
+				name: fmtDay(ms, clock.today, { short: true }, locale),
 				today: isToday,
 				past: isPast,
 				dayX: x,
@@ -579,7 +582,7 @@
 						{@const hour = NIGHT_END + h}
 						{@const x = h * hourWidth}
 						<div class="fs-tick" style:left="{x}px">
-							<span class="fs-tick-lb">{fmtH(hour)}</span>
+							<span class="fs-tick-lb">{fmtH(hour, locale)}</span>
 						</div>
 						<div class="fs-tick fs-tick--half" style:left="{x + hourWidth * 0.5}px"></div>
 					{/each}
@@ -605,7 +608,7 @@
 								{@const hour = (NIGHT_START + h) % 24}
 								{@const x = h * hourWidth}
 								<div class="fs-tick fs-tick--night" style:left="{x}px">
-									<span class="fs-tick-lb">{fmtH(hour)}</span>
+									<span class="fs-tick-lb">{fmtH(hour, locale)}</span>
 								</div>
 							{/each}
 							<button class="fs-night-toggle" onclick={(e) => { e.stopPropagation(); toggleNight(i); }}>

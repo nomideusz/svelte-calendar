@@ -40,6 +40,8 @@
 		theme?: string;
 		/** BCP 47 locale */
 		locale?: string;
+		/** Text direction */
+		dir?: 'ltr' | 'rtl' | 'auto';
 		/** Total height */
 		height?: number;
 		/** Start week on Monday */
@@ -67,6 +69,7 @@
 		schedule,
 		theme = '',
 		locale,
+		dir,
 		height = 560,
 		mondayStart = true,
 		readOnly = true,
@@ -123,6 +126,7 @@
 	defaultView="week-grid"
 	{theme}
 	{locale}
+	{dir}
 	{height}
 	{mondayStart}
 	{readOnly}

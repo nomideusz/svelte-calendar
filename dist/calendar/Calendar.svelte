@@ -72,6 +72,7 @@
 		oneventclick?: (event: TimelineEvent) => void;
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
+		onviewchange?: (viewId: CalendarViewId) => void;
 	}
 
 	let {
@@ -90,6 +91,7 @@
 		oneventclick,
 		oneventcreate,
 		oneventmove,
+		onviewchange,
 	}: Props = $props();
 
 	// In readOnly mode, suppress mutation callbacks
@@ -153,6 +155,23 @@
 		store.load({ start, end });
 	});
 
+	// Keep active view in sync when external defaultView changes after mount.
+	$effect(() => {
+		viewState.setView(defaultView);
+	});
+
+	// Keep view state's week-start rule in sync with incoming prop changes.
+	$effect(() => {
+		if (viewState.mondayStart !== mondayStart) {
+			viewState.setMondayStart(mondayStart);
+		}
+	});
+
+	// Notify host when active view changes (e.g. via toolbar concept/granularity toggles).
+	$effect(() => {
+		onviewchange?.(viewState.view);
+	});
+
 	// ── Resolve active view ──
 	const activeView = $derived(views.find((v) => v.id === viewState.view) ?? views[0]);
 
@@ -170,7 +189,7 @@
 	lang={locale}
 >
 	{#if showToolbar}
-		<Toolbar {viewState} views={toolbarViews} {links} />
+		<Toolbar {viewState} views={toolbarViews} {links} {locale} />
 	{/if}
 
 	<div class="cal-body">
@@ -181,6 +200,7 @@
 				style={theme}
 				height={height - (showToolbar ? 48 : 0)}
 				mondayStart={viewState.mondayStart}
+				{locale}
 				focusDate={viewState.focusDate}
 				oneventclick={oneventclick}
 				oneventcreate={effectiveCreate}

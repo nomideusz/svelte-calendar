@@ -19,20 +19,23 @@
 		views?: ViewOption[];
 		/** Links to show in the toolbar */
 		links?: { href: string; label: string }[];
+		/** Locale used for labels */
+		locale?: string;
 	}
 
 	let {
 		viewState,
 		views = [],
 		links = [],
+		locale,
 	}: Props = $props();
 
 	const dateLabel = $derived(() => {
 		if (viewState.granularity === 'day') {
-			return `${weekdayLong(viewState.focusDate.getTime())}, ${fmtDay(viewState.focusDate.getTime(), Date.now())}`;
+			return `${weekdayLong(viewState.focusDate.getTime(), locale)}, ${fmtDay(viewState.focusDate.getTime(), Date.now(), undefined, locale)}`;
 		}
 		const ws = viewState.range.start.getTime();
-		return fmtWeekRange(ws);
+		return fmtWeekRange(ws, locale);
 	});
 
 	// Which granularities are available?

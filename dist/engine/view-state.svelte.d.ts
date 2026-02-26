@@ -28,6 +28,7 @@ export interface ViewState {
     /** IANA timezone, or undefined for local */
     readonly timezone: string | undefined;
     setView(id: CalendarViewId): void;
+    setMondayStart(value: boolean): void;
     setFocusDate(date: Date): void;
     next(): void;
     prev(): void;

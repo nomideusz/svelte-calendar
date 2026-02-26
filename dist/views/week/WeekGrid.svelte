@@ -20,6 +20,7 @@
 	interface Props {
 		weekOffset?: number;
 		mondayStart?: boolean;
+		locale?: string;
 		hourHeight?: number;
 		dayWidth?: number;
 		nowPosition?: number;
@@ -37,6 +38,7 @@
 
 	let {
 		mondayStart = true,
+		locale,
 		height = 520,
 		events = [],
 		style = '',
@@ -116,7 +118,7 @@
 			// Month label: show when first day of week is day 1-7
 			const startDate = new Date(weekStart);
 			const showMonth = startDate.getDate() <= 7;
-			const monthLabel = showMonth ? monthLong(weekStart).toUpperCase() : null;
+			const monthLabel = showMonth ? monthLong(weekStart, locale).toUpperCase() : null;
 
 			result.push({ weekStart, isCurrent, monthLabel, days });
 		}
@@ -126,11 +128,10 @@
 
 	// ─── Format helpers ─────────────────────────────────
 	function fmtAmPm(d: Date): string {
-		let h = d.getHours();
-		const m = d.getMinutes();
-		const ampm = h >= 12 ? 'PM' : 'AM';
-		h = h % 12 || 12;
-		return m > 0 ? `${h}:${m.toString().padStart(2, '0')}${ampm}` : `${h}${ampm}`;
+		return d
+			.toLocaleTimeString(locale ?? 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+			.toUpperCase()
+			.replace(' ', '');
 	}
 
 	function fmtNowTime(tick: number): string {
@@ -274,13 +275,13 @@
 								class:wg-cell--weekend={day.isWeekend}
 								role="gridcell"
 								tabindex="0"
-								aria-label="{new Date(day.ms).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ' (today)' : ''}, {day.events.length} events"
+								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ' (today)' : ''}, {day.events.length} events"
 								onclick={(e) => handleDayCellClick(day.ms, e)}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDayCellClick(day.ms, e); } }}
 							>
 								<!-- Day label inside the cell -->
 								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
-									<span class="wg-day-wd">{weekdayShort(day.ms)}</span>
+									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
 									<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
 										{day.dayNum}
 									</span>

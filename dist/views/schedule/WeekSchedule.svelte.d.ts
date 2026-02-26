@@ -9,6 +9,8 @@ interface Props {
     theme?: string;
     /** BCP 47 locale */
     locale?: string;
+    /** Text direction */
+    dir?: 'ltr' | 'rtl' | 'auto';
     /** Total height */
     height?: number;
     /** Start week on Monday */

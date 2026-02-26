@@ -13,8 +13,6 @@
       locale="en-US"
     ></day-calendar>
 -->
-<svelte:options customElement="day-calendar" />
-
 <script lang="ts">
 	import Calendar from '../calendar/Calendar.svelte';
 	import type { CalendarView } from '../calendar/Calendar.svelte';

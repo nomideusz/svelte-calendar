@@ -54,6 +54,7 @@ export interface ViewState {
 	readonly timezone: string | undefined;
 
 	setView(id: CalendarViewId): void;
+	setMondayStart(value: boolean): void;
 	setFocusDate(date: Date): void;
 	next(): void;
 	prev(): void;
@@ -115,6 +116,10 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 
 		setView(id: CalendarViewId) {
 			view = id;
+		},
+
+		setMondayStart(value: boolean) {
+			mondayStart = value;
 		},
 
 		setFocusDate(date: Date) {

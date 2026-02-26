@@ -1,6 +1,10 @@
 ﻿# @nomideusz/svelte-calendar
 
+[![GitHub stars](https://img.shields.io/github/stars/nomideusz/svelte-calendar?style=social)](https://github.com/nomideusz/svelte-calendar)
+
 A themeable, pluggable **Svelte 5** calendar component library with **Day** and **Week** views — ready for yoga studios, tour bookings, concerts, language schools, and more.
+
+> **Active development** — this library is under active development. APIs may evolve between minor versions. Feedback, issues, and PRs are welcome on [GitHub](https://github.com/nomideusz/svelte-calendar).
 
 ## Views — Concept-Paired
 
@@ -236,7 +240,7 @@ Both `createMemoryAdapter` and `createRecurringAdapter` accept `colorMap` and `a
 
 ## Settings Panel
 
-The `Settings` component provides a theme picker and dynamic fields for controlling view parameters:
+The `Settings` component provides a theme picker and dynamic fields for controlling view parameters. It renders as a compact horizontal panel with auto-fill columns so the calendar stays visible while adjusting options.
 
 ```svelte
 <script lang="ts">
@@ -244,16 +248,30 @@ The `Settings` component provides a theme picker and dynamic fields for controll
   import type { SettingsField, PresetName } from '@nomideusz/svelte-calendar';
 
   let theme: PresetName = $state('midnight');
-  let values = $state({ hourHeight: 60, elastic: true });
+  let values = $state({ hourHeight: 60, elastic: true, startHour: 6, endHour: 21, visibleHours: false });
 
   const fields: SettingsField[] = [
-    { key: 'hourHeight', label: 'Hour Height', type: 'range', min: 40, max: 120, step: 5 },
-    { key: 'elastic', label: 'Elastic Compression', type: 'toggle' },
+    { key: 'hourHeight', label: 'Hour Height', group: 'Layout', type: 'range', min: 40, max: 120, step: 5 },
+    { key: 'elastic', label: 'Elastic Compression', group: 'Behavior', type: 'toggle' },
+    { key: 'visibleHours', label: 'Visible Hours', group: 'Time Range', type: 'toggle' },
+    { key: 'startHour', label: 'Start Hour', group: 'Time Range', type: 'range', min: 0, max: 23, step: 1, enabledWhen: 'visibleHours' },
+    { key: 'endHour', label: 'End Hour', group: 'Time Range', type: 'range', min: 1, max: 24, step: 1, enabledWhen: 'visibleHours' },
   ];
 </script>
 
 <Settings {fields} bind:values bind:theme />
 ```
+
+### Field types
+
+| Type | Properties | Description |
+|------|-----------|-------------|
+| `range` | `min`, `max`, `step`, `enabledWhen?` | Slider with label and value display. `enabledWhen` references a toggle key — disables the slider when the toggle is off. |
+| `toggle` | — | Switch toggle (on/off) |
+| `select` | `options: {value, label}[]` | Dropdown select |
+| `segment` | `options: {value, label}[]` | Pill-button radio group |
+
+All fields support `group` for column grouping and `label` for display text.
 
 ## Themes
 
@@ -450,7 +468,7 @@ import {
 |---------|-----|
 | `createMemoryAdapter(events, options?)` | In-memory — great for demos and prototyping. Supports `colorMap` and `autoColor` (including theme-aware). |
 | `createRecurringAdapter(schedule, options?)` | Weekly recurring schedules — auto-projects onto viewed weeks. Read-only. Supports `colorMap` and `autoColor`. |
-| `createRestAdapter(options)` | Fetch from a REST API with configurable endpoints. |
+| `createRestAdapter(options)` | Fetch from a REST API using `/events` endpoints with configurable headers and response mappers (`mapEvents`, `mapEvent`). |
 
 ## Standalone Views
 
@@ -517,6 +535,8 @@ That's it. Two lines.
 | `mondaystart` | `true` | Start week on Monday (`true`/`false`) |
 | `headers` | — | JSON string of HTTP headers for the REST adapter |
 
+> `events` and `headers` must be valid JSON strings. Invalid JSON is ignored (`events`) or throws during adapter setup (`headers`).
+
 ### REST API contract
 
 When using the `api` attribute, the widget expects your endpoint to accept:
@@ -537,6 +557,10 @@ pnpm dev             # SvelteKit dev server (demo app)
 pnpm check           # Type check
 pnpm run package     # Build the library into dist/
 pnpm run build:widget # Build standalone widget.js
+
+# npm publish only runs `package` automatically (via prepublishOnly)
+# Run this too if you changed widget code:
+pnpm run build:widget
 ```
 
 ## License

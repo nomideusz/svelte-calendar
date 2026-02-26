@@ -14,10 +14,11 @@
 		nowPosition = 0.25,
 		events = [],
 		style = '',
+		locale,
 		focusDate,
 		oneventclick,
 		selectedEventId = null,
-	}: DayTimelineProps = $props();
+	}: DayTimelineProps & { locale?: string; [key: string]: unknown } = $props();
 
 	// ── Drag support (available when inside Calendar) ──
 	const drag = getContext<DragState>('calendar:drag') as DragState | undefined;
@@ -48,7 +49,7 @@
 			out.push({
 				ms,
 				x: i * dayW,
-				name: fmtDay(ms, clock.today),
+				name: fmtDay(ms, clock.today, undefined, locale),
 				today: ms === clock.today
 			});
 		}
@@ -242,7 +243,7 @@
 				{#each HOURS as h}
 					{@const x = d.x + h * hourWidth}
 					<div class="dt-tick" style:left="{x}px">
-						<span class="dt-tick-lb">{fmtH(h)}</span>
+						<span class="dt-tick-lb">{fmtH(h, locale)}</span>
 					</div>
 					<div class="dt-tick dt-tick--h" style:left="{x + hourWidth * 0.5}px"></div>
 				{/each}

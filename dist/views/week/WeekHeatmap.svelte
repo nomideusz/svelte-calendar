@@ -21,6 +21,7 @@
 	let {
 		weekOffset = 0,
 		mondayStart = true,
+		locale,
 		height = 400,
 		events = [],
 		style = '',
@@ -29,7 +30,7 @@
 		selectedEventId = null,
 		visibleHours,
 		...rest
-	}: WeekTimelineProps & { visibleHours?: [number, number]; [key: string]: unknown } = $props();
+	}: WeekTimelineProps & { locale?: string; visibleHours?: [number, number]; [key: string]: unknown } = $props();
 
 	const startHour = $derived(visibleHours?.[0] ?? 0);
 	const endHour = $derived(visibleHours?.[1] ?? 24);
@@ -43,7 +44,7 @@
 			: startOfWeek(clock.today, mondayStart) + weekOffset * 7 * DAY_MS,
 	);
 	const currentWeekVisible = $derived(clock.today >= weekStartMs && clock.today < weekStartMs + 7 * DAY_MS);
-	const weekLabel = $derived(fmtWeekRange(weekStartMs));
+	const weekLabel = $derived(fmtWeekRange(weekStartMs, locale));
 
 	let selectedCell = $state<{ day: number; hour: number } | null>(null);
 
@@ -96,7 +97,7 @@
 
 			out.push({
 				ms,
-				label: weekdayShort(ms),
+				label: weekdayShort(ms, locale),
 				num: dayNum(ms),
 				today: isToday,
 				past: ms < clock.today,
@@ -118,11 +119,11 @@
 		if (!selectedCell) return '';
 		const day = heatDays[selectedCell.day];
 		if (!day) return '';
-		return `${day.label} ${day.num}, ${fmtH(selectedCell.hour)}`;
+		return `${day.label} ${day.num}, ${fmtH(selectedCell.hour, locale)}`;
 	});
 
 	function fmtTime(d: Date): string {
-		return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+		return d.toLocaleTimeString(locale ?? 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
 	}
 
 	function duration(ev: TimelineEvent): string {
@@ -188,7 +189,7 @@
 		{#each Array(visibleHourCount) as _, idx}
 			{@const h = startHour + idx}
 			{#if (h - startHour) % 3 === 0}
-				<span class="hm-hour-mark" style:left="calc({idx} * (100% / {visibleHourCount}))">{fmtH(h)}</span>
+				<span class="hm-hour-mark" style:left="calc({idx} * (100% / {visibleHourCount}))">{fmtH(h, locale)}</span>
 			{/if}
 		{/each}
 	</div>
@@ -209,7 +210,7 @@
 							class:hm-cell--selected={selectedCell?.day === di && selectedCell?.hour === hi}
 							style:background={heatColor(cell.intensity)}
 							onclick={() => selectCell(di, hi)}
-							title="{fmtH(cell.hour)}: {cell.events.length > 0 ? cell.events.map(e => e.title).join(', ') : 'free'}"
+							title="{fmtH(cell.hour, locale)}: {cell.events.length > 0 ? cell.events.map(e => e.title).join(', ') : 'free'}"
 						>
 							{#if cell.isNow}
 								<span class="hm-cell-now"></span>

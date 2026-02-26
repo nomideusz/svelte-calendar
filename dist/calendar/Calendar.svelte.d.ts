@@ -47,6 +47,7 @@ interface Props {
         end: Date;
     }) => void;
     oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
+    onviewchange?: (viewId: CalendarViewId) => void;
 }
 declare const Calendar: Component<Props, {}, "">;
 type Calendar = ReturnType<typeof Calendar>;

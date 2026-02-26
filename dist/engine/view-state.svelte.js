@@ -60,6 +60,9 @@ export function createViewState(options = {}) {
         setView(id) {
             view = id;
         },
+        setMondayStart(value) {
+            mondayStart = value;
+        },
         setFocusDate(date) {
             focusDate = date;
         },

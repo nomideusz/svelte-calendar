@@ -2,6 +2,7 @@ import type { TimelineEvent } from '../../core/types.js';
 interface Props {
     weekOffset?: number;
     mondayStart?: boolean;
+    locale?: string;
     hourHeight?: number;
     dayWidth?: number;
     nowPosition?: number;

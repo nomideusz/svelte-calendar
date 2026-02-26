@@ -25,6 +25,7 @@
 		/** 'day' = single-day timeline rail, 'week' = rolling 7-day view */
 		mode?: 'day' | 'week';
 		mondayStart?: boolean;
+		locale?: string;
 		height?: number;
 		events?: TimelineEvent[];
 		style?: string;
@@ -38,6 +39,7 @@
 	let {
 		mode = 'day',
 		mondayStart = true,
+		locale,
 		height = 520,
 		events = [],
 		style = '',
@@ -51,7 +53,7 @@
 	// ── Format helpers ──────────────────────────────────
 	function fmtTime(d: Date): string {
 		return d
-			.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+			.toLocaleTimeString(locale ?? 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
 			.toLowerCase();
 	}
 
@@ -220,7 +222,7 @@
 			? startOfWeek(sod(focusDate.getTime()), mondayStart)
 			: startOfWeek(clock.today, mondayStart),
 	);
-	const weekLabel = $derived(fmtWeekRange(weekStartMs));
+	const weekLabel = $derived(fmtWeekRange(weekStartMs, locale));
 
 	const weekDays = $derived.by((): DayGroup[] => {
 		if (mode !== 'week') return [];
@@ -255,8 +257,8 @@
 
 			out.push({
 				ms,
-				dayName: tier === 'today' || tier === 'tomorrow' ? weekdayLong(ms) : weekdayShort(ms),
-				dateLabel: `${monthShort(ms)} ${dayNum(ms)}`,
+				dayName: tier === 'today' || tier === 'tomorrow' ? weekdayLong(ms, locale) : weekdayShort(ms, locale),
+				dateLabel: `${monthShort(ms, locale)} ${dayNum(ms)}`,
 				tier,
 				events: dayEvts,
 				pastEvents,
@@ -325,7 +327,7 @@
 	<header class="ag-header">
 		{#if mode === 'day'}
 			<div class="ag-header-left">
-				<span class="ag-title">{fmtDay(dayMs, clock.today, { short: false })}</span>
+				<span class="ag-title">{fmtDay(dayMs, clock.today, { short: false }, locale)}</span>
 				{#if isToday}
 					<span class="ag-clock">{clock.hm}</span>
 				{:else if isPastDay}

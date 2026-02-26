@@ -3,6 +3,7 @@ interface Props {
     /** 'day' = single-day timeline rail, 'week' = rolling 7-day view */
     mode?: 'day' | 'week';
     mondayStart?: boolean;
+    locale?: string;
     height?: number;
     events?: TimelineEvent[];
     style?: string;

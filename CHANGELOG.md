@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.4.0 — 2026-02-26
+
+> **Active development** — this library is under active development. APIs may evolve between minor versions. Pin your version if you need stability.
+
+### Added
+- **Horizontal settings panel** — settings now render as a compact multi-column grid (`auto-fit` columns) instead of a narrow vertical list. The calendar stays visible while adjusting options.
+- **`enabledWhen` on range fields** — range sliders can reference a toggle key; when the toggle is off the sliders are disabled and dimmed (e.g. Visible Hours → Start/End Hour).
+- **GitHub stars link** on the demo page header.
+- **Active development notice** in README and CHANGELOG.
+- **GitHub stars badge** in README.
+
+### Changed
+- Settings field groups flow in responsive CSS grid columns (`repeat(auto-fit, minmax(170px, 1fr))`) — adapts from 1 to 5 columns depending on viewport.
+- Theme picker and ungrouped fields (demo mode, color strategy) render in a horizontal top bar instead of stacked sections.
+- Theme pills now use the same `.stg-pill` styling as all other segment controls (unified design).
+- Range controls stack vertically (label + value above, full-width slider below) so slider width is consistent regardless of label length.
+- Toggle and select rows use `justify-content: space-between` so controls align in columns.
+- Segment rows (e.g. Direction) stack vertically — label on top, pills below.
+- Section titles use consistent styling across theme bar and grouped sections.
+- Settings root no longer has a `max-width` cap — fills the container naturally.
+- Direction field changed from segment pills to select dropdown to match Locale control.
+- All `font` shorthand declarations using `inherit` replaced with separate `font-weight`/`font-size`/`line-height` properties (invalid CSS fix).
+- Font sizes increased across the settings panel for better readability in the wide layout.
+- Removed colored theme dots — theme pills now match standard pill design.
+
+### Fixed
+- Labels were far from controls due to `justify-content: space-between` on all rows — now layout varies by field type.
+- Slider widths varied based on label text width — fixed by stacking label above slider.
+- Start/End Hour sliders stayed interactive when Visible Hours toggle was off.
+- Empty space on the right side of settings grid (`auto-fill` → `auto-fit`).
+- Invalid CSS: `font: 600 9px / 1 inherit` shorthand replaced with individual properties.
+
 ## 0.3.1 — 2026-02-26
 
 ### Added

@@ -16,6 +16,8 @@ interface Props {
     style?: string;
     /** The date to centre this view on */
     focusDate?: Date;
+    /** Locale for labels */
+    locale?: string;
     /** Called when the user clicks an event */
     oneventclick?: (event: TimelineEvent) => void;
     /** Called when the user clicks an empty time slot */
