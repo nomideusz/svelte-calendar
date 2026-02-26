@@ -27,8 +27,13 @@ export interface RecurringAdapterOptions {
     mondayStart?: boolean;
     /** Map of category/title to color */
     colorMap?: Record<string, string>;
-    /** Auto-assign colors to events by category or title */
-    autoColor?: boolean;
+    /**
+     * Auto-assign colors to events by category or title.
+     *   true    → use the default vivid palette
+     *   string  → hex accent color (e.g. '#6366f1') to generate a
+     *             theme-harmonious palette via golden-angle hue rotation
+     */
+    autoColor?: boolean | string;
 }
 /**
  * Create a CalendarAdapter that projects recurring weekly events

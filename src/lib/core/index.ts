@@ -52,3 +52,6 @@ export type {
 	DayTimelineProps,
 } from './types.js';
 export { timeToX } from './types.js';
+
+// Palette
+export { generatePalette, VIVID_PALETTE } from './palette.js';

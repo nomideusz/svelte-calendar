@@ -20,6 +20,7 @@
 
 	// ── Toggle states for features ──────────────────────
 	let readOnly = $state(false);
+	let mondayStart = $state(true);
 	let visibleHoursEnabled = $state(false);
 	let startHour = $state(6);
 	let endHour = $state(21);
@@ -96,6 +97,15 @@
 
 	const recurringAdapter = createRecurringAdapter(weeklySchedule);
 
+	// ── Theme accent extraction (for smart autoColor) ──────
+	const themeAccents: Record<string, string> = {
+		midnight: '#ef4444',
+		parchment: '#b85c2f',
+		indigo: '#6366f1',
+		neutral: '#2563eb',
+	};
+	const currentAccent = $derived(themeAccents[activeTheme] ?? '#ef4444');
+
 	// ── colorMap demo adapter (no explicit colors — uses autoColor) ──
 	const noColorSeed: TimelineEvent[] = seed.map(({ color, ...ev }) => ev);
 	const colorMapAdapter = createMemoryAdapter(noColorSeed, {
@@ -105,25 +115,41 @@
 		},
 	});
 
-	const autoColorAdapter = createMemoryAdapter(noColorSeed, { autoColor: true });
+	// Vivid palette (theme-unaware, original behavior)
+	const vividAutoAdapter = createMemoryAdapter(noColorSeed, { autoColor: true });
 
-	let colorMode = $state<'map' | 'auto'>('map');
-	const activeColorAdapter = $derived(colorMode === 'map' ? colorMapAdapter : autoColorAdapter);
+	// Theme-aware adapter — recreated when the accent changes
+	const themeAutoAdapter = $derived(
+		createMemoryAdapter(noColorSeed, { autoColor: currentAccent }),
+	);
+
+	let colorMode = $state<'map' | 'auto' | 'themed'>('themed');
+	const activeColorAdapter = $derived(
+		colorMode === 'map'
+			? colorMapAdapter
+			: colorMode === 'themed'
+				? themeAutoAdapter
+				: vividAutoAdapter,
+	);
 
 	// ── Register views ──────────────────────────────────
 	const views: CalendarView[] = [
-		{ id: 'day-grid',     label: 'Grid',    granularity: 'day',  component: DayGrid },
-		{ id: 'week-grid',    label: 'Grid',    granularity: 'week', component: WeekGrid },
-		{ id: 'day-agenda',   label: 'Agenda',  granularity: 'day',  component: Agenda, props: { mode: 'day' } },
-		{ id: 'week-agenda',  label: 'Agenda',  granularity: 'week', component: Agenda, props: { mode: 'week' } },
-		{ id: 'week-heatmap', label: 'Heatmap', granularity: 'week', component: WeekHeatmap },
+		{ id: 'day-grid',     label: 'Grid',     granularity: 'day',  component: DayGrid },
+		{ id: 'day-timeline', label: 'Timeline', granularity: 'day',  component: DayTimeline },
+		{ id: 'week-grid',    label: 'Grid',     granularity: 'week', component: WeekGrid },
+		{ id: 'day-agenda',   label: 'Agenda',   granularity: 'day',  component: Agenda, props: { mode: 'day' } },
+		{ id: 'week-agenda',  label: 'Agenda',   granularity: 'week', component: Agenda, props: { mode: 'week' } },
+		{ id: 'week-heatmap', label: 'Heatmap',  granularity: 'week', component: WeekHeatmap },
 	];
 
 	// ── Event handlers ──────────────────────────────────
 	let lastAction = $state('');
 
 	function handleClick(ev: TimelineEvent) {
-		lastAction = `Clicked: ${ev.title}${ev.subtitle ? ` (${ev.subtitle})` : ''}`;
+		const parts = [`Clicked: ${ev.title}`];
+		if (ev.subtitle) parts.push(`(${ev.subtitle})`);
+		if (ev.tags?.length) parts.push(`[${ev.tags.join(', ')}]`);
+		lastAction = parts.join(' ');
 	}
 
 	function handleCreate(range: { start: Date; end: Date }) {
@@ -175,6 +201,13 @@
 
 			<div class="control-group">
 				<label class="label">
+					<input type="checkbox" bind:checked={mondayStart} />
+					mondayStart
+				</label>
+			</div>
+
+			<div class="control-group">
+				<label class="label">
 					<input type="checkbox" bind:checked={visibleHoursEnabled} />
 					visibleHours
 				</label>
@@ -197,8 +230,9 @@
 				<div class="control-group">
 					<span class="label">Color mode</span>
 					<div class="btn-group">
+						<button class="btn" class:active={colorMode === 'themed'} onclick={() => colorMode = 'themed'}>themed</button>
+						<button class="btn" class:active={colorMode === 'auto'} onclick={() => colorMode = 'auto'}>vivid</button>
 						<button class="btn" class:active={colorMode === 'map'} onclick={() => colorMode = 'map'}>colorMap</button>
-						<button class="btn" class:active={colorMode === 'auto'} onclick={() => colorMode = 'auto'}>autoColor</button>
 					</div>
 				</div>
 			{/if}
@@ -223,6 +257,7 @@
 				theme={themeValue}
 				height={680}
 				{readOnly}
+				{mondayStart}
 				{visibleHours}
 				oneventclick={handleClick}
 				oneventcreate={handleCreate}
@@ -241,6 +276,7 @@
 				theme={themeValue}
 				height={680}
 				{readOnly}
+				{mondayStart}
 				{visibleHours}
 				oneventclick={handleClick}
 			/>
@@ -256,17 +292,20 @@
 				theme={themeValue}
 				height={600}
 				readOnly={readOnly}
+				{mondayStart}
 				{visibleHours}
 				oneventclick={handleClick}
 			/>
 
 		{:else if activeDemo === 'colormap'}
-			<h2 class="demo-title">Color Map / Auto-Color <span class="demo-tag">no manual colors on events</span></h2>
+			<h2 class="demo-title">Color Map / Auto-Color <span class="demo-tag">theme-aware • no manual colors</span></h2>
 			<p class="demo-desc">
-				{#if colorMode === 'map'}
-					Using <code>colorMap</code>: yoga → <span style="color: #818cf8">#818cf8</span>, wellness → <span style="color: #34d399">#34d399</span>
+				{#if colorMode === 'themed'}
+					Using <code>autoColor: '{currentAccent}'</code> — palette generated via golden-angle hue rotation from the theme's accent. Switch themes to see colors adapt!
+				{:else if colorMode === 'auto'}
+					Using <code>autoColor: true</code> — original vivid palette (15 fixed colors, theme-independent).
 				{:else}
-					Using <code>autoColor</code>: each unique category gets a color from the built-in palette.
+					Using <code>colorMap</code>: yoga → <span style="color: #818cf8">#818cf8</span>, wellness → <span style="color: #34d399">#34d399</span>
 				{/if}
 			</p>
 			<Calendar
@@ -276,6 +315,7 @@
 				theme={themeValue}
 				height={680}
 				{readOnly}
+				{mondayStart}
 				{visibleHours}
 				oneventclick={handleClick}
 				oneventcreate={handleCreate}

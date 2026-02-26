@@ -287,6 +287,9 @@
 		<div class="ag-card-stripe"></div>
 		<div class="ag-card-body">
 			<span class="ag-card-title">{ev.title}</span>
+			{#if ev.subtitle}
+				<span class="ag-card-sub">{ev.subtitle}</span>
+			{/if}
 			<span class="ag-card-meta">
 				{#if isNow}
 					until {fmtTime(ev.end)}
@@ -295,6 +298,13 @@
 				{/if}
 				<span class="ag-card-dur">{duration(ev)}</span>
 			</span>
+			{#if ev.tags?.length}
+				<div class="ag-card-tags">
+					{#each ev.tags as tag}
+						<span class="ag-card-tag">{tag}</span>
+					{/each}
+				</div>
+			{/if}
 			{#if isNow}
 				<div class="ag-card-progress">
 					<div class="ag-card-progress-fill" style:width="{progress(ev) * 100}%"></div>
@@ -411,10 +421,20 @@
 											<span class="ag-q-card-title">{ev.title}</span>
 											<span class="ag-q-card-eta">{timeUntilEv(ev)}</span>
 										</div>
+										{#if ev.subtitle}
+											<span class="ag-q-card-sub">{ev.subtitle}</span>
+										{/if}
 										<div class="ag-q-card-meta">
 											{fmtTime(ev.start)} – {fmtTime(ev.end)}
 											<span class="ag-q-card-dur">{duration(ev)}</span>
 										</div>
+										{#if ev.tags?.length}
+											<div class="ag-q-card-tags">
+												{#each ev.tags as tag}
+													<span class="ag-q-card-tag">{tag}</span>
+												{/each}
+											</div>
+										{/if}
 									</div>
 								</div>
 							{/each}
@@ -494,10 +514,20 @@
 										<span class="ag-plan-order">{i + 1}</span>
 										<span class="ag-plan-title">{ev.title}</span>
 									</div>
+									{#if ev.subtitle}
+										<span class="ag-plan-sub">{ev.subtitle}</span>
+									{/if}
 									<div class="ag-plan-meta">
 										{fmtTime(ev.start)} – {fmtTime(ev.end)}
 										<span class="ag-plan-dur">{duration(ev)}</span>
 									</div>
+									{#if ev.tags?.length}
+										<div class="ag-plan-tags">
+											{#each ev.tags as tag}
+												<span class="ag-plan-tag">{tag}</span>
+											{/each}
+										</div>
+									{/if}
 								</div>
 							</div>
 						{/each}
@@ -584,6 +614,14 @@
 									<span class="ag-compact-dot"></span>
 									<span class="ag-compact-time">{fmtTime(ev.start)}</span>
 									<span class="ag-compact-title">{ev.title}</span>
+									{#if ev.subtitle}
+										<span class="ag-compact-sub">{ev.subtitle}</span>
+									{/if}
+									{#if ev.tags?.length}
+										{#each ev.tags as tag}
+											<span class="ag-compact-tag">{tag}</span>
+										{/each}
+									{/if}
 									<span class="ag-compact-dur">{duration(ev)}</span>
 								</div>
 							{/each}
@@ -739,6 +777,24 @@
 	.ag-card-dur {
 		margin-left: 6px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+	}
+	.ag-card-sub {
+		font-size: 11px;
+		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-card-tags {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+	}
+	.ag-card-tag {
+		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 2px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
 	}
 	.ag-card-progress {
 		height: 3px;
@@ -998,6 +1054,25 @@
 		margin-left: 6px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
 	}
+	.ag-q-card-sub {
+		font-size: 11px;
+		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-q-card-tags {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+		margin-top: 2px;
+	}
+	.ag-q-card-tag {
+		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 2px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
+	}
 
 	/* ── PAST: minimal right gutter ── */
 	.ag-q-done {
@@ -1214,6 +1289,27 @@
 		margin-left: 6px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
 	}
+	.ag-plan-sub {
+		font-size: 11px;
+		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+		padding-left: 22px;
+	}
+	.ag-plan-tags {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+		padding-left: 22px;
+		margin-top: 2px;
+	}
+	.ag-plan-tag {
+		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 2px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
+	}
 
 	/* Header badges for past/future days */
 	.ag-badge {
@@ -1394,6 +1490,20 @@
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		flex-shrink: 0;
+	}
+	.ag-compact-sub {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		flex-shrink: 0;
+	}
+	.ag-compact-tag {
+		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);
+		padding: 1px 4px;
+		border-radius: 3px;
+		white-space: nowrap;
 		flex-shrink: 0;
 	}
 	.ag-compact-more {

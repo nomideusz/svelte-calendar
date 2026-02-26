@@ -269,6 +269,14 @@
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
 				>
 					<span class="dt-ev-title">{p.ev.title}</span>
+					{#if p.ev.subtitle}
+						<span class="dt-ev-sub">{p.ev.subtitle}</span>
+					{/if}
+					{#if p.ev.tags?.length}
+						{#each p.ev.tags as tag}
+							<span class="dt-ev-tag">{tag}</span>
+						{/each}
+					{/if}
 				</div>
 			{/each}
 		</div>
@@ -476,6 +484,7 @@
 		padding: 0 8px;
 		display: flex;
 		align-items: center;
+		gap: 4px;
 		cursor: pointer;
 		background: color-mix(in srgb, var(--ev-color) 22%, transparent);
 		border-left: 3px solid var(--ev-color);
@@ -501,5 +510,23 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	.dt-ev-sub {
+		font: 400 9px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.6));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.dt-ev-tag {
+		font: 500 7px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 20%, transparent);
+		padding: 1px 3px;
+		border-radius: 2px;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 </style>

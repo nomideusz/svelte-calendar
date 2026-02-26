@@ -88,6 +88,8 @@ export {
 	fromZonedTime,
 	nowInZone,
 	formatInTimeZone,
+	generatePalette,
+	VIVID_PALETTE,
 } from './core/index.js';
 export type {
 	Clock,

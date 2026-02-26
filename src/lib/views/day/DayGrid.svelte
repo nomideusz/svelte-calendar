@@ -656,6 +656,16 @@
 							</span>
 						{/if}
 						<span class="fs-ev-title">{p.ev.title}</span>
+						{#if p.ev.subtitle && p.heightPx > 48}
+							<span class="fs-ev-sub">{p.ev.subtitle}</span>
+						{/if}
+						{#if p.ev.tags?.length && p.heightPx > 72}
+							<span class="fs-ev-tags">
+								{#each p.ev.tags as tag}
+									<span class="fs-ev-tag">{tag}</span>
+								{/each}
+							</span>
+						{/if}
 					</div>
 				</div>
 			{/each}
@@ -1052,6 +1062,29 @@
 		font: 400 10px / 1 var(--dt-mono);
 		color: var(--dt-text-2);
 		opacity: 0.7;
+		white-space: nowrap;
+	}
+
+	.fs-ev-sub {
+		font: 400 11px / 1 var(--dt-sans);
+		color: var(--dt-text-2);
+		opacity: 0.6;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.fs-ev-tags {
+		display: flex;
+		gap: 4px;
+	}
+
+	.fs-ev-tag {
+		font: 500 8px / 1 var(--dt-sans);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 18%, transparent);
+		padding: 1px 4px;
+		border-radius: 3px;
 		white-space: nowrap;
 	}
 

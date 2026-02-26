@@ -8,3 +8,5 @@ export { setDefaultLocale, getDefaultLocale, is24HourLocale, fmtH, weekdayShort,
 // Timezone utilities
 export { toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, } from './timezone.js';
 export { timeToX } from './types.js';
+// Palette
+export { generatePalette, VIVID_PALETTE } from './palette.js';

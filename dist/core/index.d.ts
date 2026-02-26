@@ -5,3 +5,4 @@ export { setDefaultLocale, getDefaultLocale, is24HourLocale, fmtH, weekdayShort,
 export { toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, } from './timezone.js';
 export type { TimelineEvent, WeekTimelineProps, DayTimelineProps, } from './types.js';
 export { timeToX } from './types.js';
+export { generatePalette, VIVID_PALETTE } from './palette.js';

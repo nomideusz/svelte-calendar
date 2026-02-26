@@ -1,16 +1,19 @@
+import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
 let counter = 0;
 function uid() {
     return `mem-${Date.now()}-${++counter}`;
 }
 /** Default palette for auto-coloring */
-const AUTO_COLORS = [
-    '#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6',
-    '#3b82f6', '#6366f1', '#a855f7', '#ec4899', '#f43f5e',
-    '#06b6d4', '#84cc16', '#d946ef', '#0ea5e9', '#10b981',
-];
+const AUTO_COLORS = VIVID_PALETTE;
 export function createMemoryAdapter(initial = [], options = {}) {
     const { colorMap, autoColor } = options;
     const events = [...initial];
+    // Resolve palette: vivid default or theme-aware
+    const palette = autoColor
+        ? typeof autoColor === 'string'
+            ? generatePalette(autoColor)
+            : AUTO_COLORS
+        : AUTO_COLORS;
     // Build auto-color assignments
     const colorAssignments = new Map();
     let colorIndex = 0;
@@ -24,7 +27,7 @@ export function createMemoryAdapter(initial = [], options = {}) {
             return colorMap[key];
         if (autoColor) {
             if (!colorAssignments.has(key)) {
-                colorAssignments.set(key, AUTO_COLORS[colorIndex % AUTO_COLORS.length]);
+                colorAssignments.set(key, palette[colorIndex % palette.length]);
                 colorIndex++;
             }
             return colorAssignments.get(key);

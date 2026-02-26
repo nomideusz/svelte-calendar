@@ -17,6 +17,7 @@ import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
 import { startOfWeek } from '../core/time.js';
 import { DAY_MS } from '../core/time.js';
+import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
 
 /**
  * A weekly recurring event definition.
@@ -113,16 +114,17 @@ export interface RecurringAdapterOptions {
 	mondayStart?: boolean;
 	/** Map of category/title to color */
 	colorMap?: Record<string, string>;
-	/** Auto-assign colors to events by category or title */
-	autoColor?: boolean;
+	/**
+	 * Auto-assign colors to events by category or title.
+	 *   true    → use the default vivid palette
+	 *   string  → hex accent color (e.g. '#6366f1') to generate a
+	 *             theme-harmonious palette via golden-angle hue rotation
+	 */
+	autoColor?: boolean | string;
 }
 
 /** Default palette for auto-coloring */
-const AUTO_COLORS = [
-	'#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6',
-	'#3b82f6', '#6366f1', '#a855f7', '#ec4899', '#f43f5e',
-	'#06b6d4', '#84cc16', '#d946ef', '#0ea5e9', '#10b981',
-];
+const AUTO_COLORS = VIVID_PALETTE;
 
 /**
  * Create a CalendarAdapter that projects recurring weekly events
@@ -136,6 +138,13 @@ export function createRecurringAdapter(
 ): CalendarAdapter {
 	const { mondayStart = true, colorMap, autoColor } = options;
 
+	// Resolve palette: vivid default or theme-aware
+	const palette = autoColor
+		? typeof autoColor === 'string'
+			? generatePalette(autoColor)
+			: AUTO_COLORS
+		: AUTO_COLORS;
+
 	// Build auto-color assignments
 	const colorAssignments = new Map<string, string>();
 	if (autoColor || colorMap) {
@@ -145,7 +154,7 @@ export function createRecurringAdapter(
 			if (colorMap?.[key]) {
 				colorAssignments.set(key, colorMap[key]);
 			} else if (autoColor && !colorAssignments.has(key)) {
-				colorAssignments.set(key, AUTO_COLORS[colorIndex % AUTO_COLORS.length]);
+				colorAssignments.set(key, palette[colorIndex % palette.length]);
 				colorIndex++;
 			}
 		}

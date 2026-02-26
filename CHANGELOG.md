@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.1 — 2026-02-26
+
+### Added
+- **Theme-aware `autoColor`** — pass a hex accent string (e.g. `autoColor: '#6366f1'`) to `createMemoryAdapter` or `createRecurringAdapter` and the palette is generated via golden-angle hue rotation from that accent, with lightness adapted for dark/light themes. `autoColor: true` retains the original 15-color vivid palette.
+- **`generatePalette(accent?, count?)` utility** — exported from core. Generates perceptually distinct, theme-harmonious hex colors from any accent. Falls back to the vivid palette when no accent is provided.
+- **`VIVID_PALETTE` constant** — the original 15-color palette, now exported for direct use.
+- **Subtitle & tags in all views** — `subtitle` and `tags` now render in WeekGrid, DayGrid, DayTimeline, and Agenda (all variants: eventCard, queue cards, plan cards, compact rows), not just EventBlock.
+- **DayTimeline view** added to the demo's registered views.
+- **`mondayStart` toggle** in the demo control panel, wired to all Calendar and WeekSchedule instances.
+- Palette generator test suite (7 tests).
+
+### Changed
+- WeekGrid event blocks wrap to show subtitle (dimmed) and tag pills inline.
+- DayGrid shows subtitle when block height > 48px, tags when > 72px.
+- DayTimeline shows subtitle and tags inline with gap.
+- Agenda eventCard, queue cards, plan cards, and compact rows all render subtitle and tags with matching CSS.
+- Demo ColorMap tab now has three modes: **themed** (adapts to current theme accent), **vivid** (original fixed palette), and **colorMap** (manual mapping).
+- Demo action bar shows tags in click feedback: `Clicked: Title (subtitle) [tag1, tag2]`.
+
 ## 0.3.0 — 2026-02-26
 
 ### Added

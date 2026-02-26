@@ -169,7 +169,7 @@ The `visibleHours` prop is a `[startHour, endHour)` tuple. It applies to the Wee
 
 ## Subtitle & Tags on Events
 
-`TimelineEvent` now supports `subtitle` and `tags` fields — rendered automatically by `EventBlock`:
+`TimelineEvent` supports `subtitle` and `tags` fields — rendered automatically in **all views**:
 
 ```ts
 const events: TimelineEvent[] = [
@@ -185,8 +185,9 @@ const events: TimelineEvent[] = [
 ];
 ```
 
-- **subtitle** — displayed as secondary text below the title in card and row variants
-- **tags** — rendered as small accent-colored pills
+- **subtitle** — secondary text below the title (all views: WeekGrid, DayGrid, DayTimeline, Agenda, EventBlock)
+- **tags** — accent-colored pills after the title (all views)
+- In space-constrained views (DayGrid, DayTimeline), subtitle/tags appear only when the event block is tall/wide enough
 
 ## Color Map & Auto-Coloring
 
@@ -201,8 +202,34 @@ const adapter = createMemoryAdapter(events, {
   },
 });
 
-// Or auto-assign from a built-in 15-color palette
+// Auto-assign from a built-in 15-color vivid palette
 const adapter = createMemoryAdapter(events, { autoColor: true });
+```
+
+### Theme-Aware Auto-Coloring
+
+Pass the theme's accent hex to `autoColor` and the palette is generated to harmonize with your theme — colors rotate via golden-angle hue spacing from the accent, with lightness adjusted for dark/light backgrounds:
+
+```ts
+// Harmonious palette seeded from indigo accent
+const adapter = createMemoryAdapter(events, { autoColor: '#6366f1' });
+
+// Works with the recurring adapter too
+const adapter = createRecurringAdapter(schedule, { autoColor: '#ef4444' });
+```
+
+| `autoColor` value | Behaviour |
+|---|---|
+| `true` | Original 15-color vivid palette (fixed, theme-independent) |
+| `'#ef4444'` | Golden-angle hue rotation from that accent; lightness adapted to dark/light |
+
+You can also use the palette generator directly:
+
+```ts
+import { generatePalette } from '@nomideusz/svelte-calendar';
+
+generatePalette('#6366f1', 8);  // 8 theme-harmonious hex colors
+generatePalette();               // default vivid 15-color palette
 ```
 
 Both `createMemoryAdapter` and `createRecurringAdapter` accept `colorMap` and `autoColor` options. Events with an explicit `color` field always take priority.
@@ -421,8 +448,8 @@ import {
 
 | Adapter | Use |
 |---------|-----|
-| `createMemoryAdapter(events, options?)` | In-memory — great for demos and prototyping. Supports `colorMap` and `autoColor`. |
-| `createRecurringAdapter(schedule, options?)` | Weekly recurring schedules — auto-projects onto viewed weeks. Read-only. |
+| `createMemoryAdapter(events, options?)` | In-memory — great for demos and prototyping. Supports `colorMap` and `autoColor` (including theme-aware). |
+| `createRecurringAdapter(schedule, options?)` | Weekly recurring schedules — auto-projects onto viewed weeks. Read-only. Supports `colorMap` and `autoColor`. |
 | `createRestAdapter(options)` | Fetch from a REST API with configurable endpoints. |
 
 ## Standalone Views

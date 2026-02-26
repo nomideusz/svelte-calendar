@@ -303,8 +303,16 @@
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 										>
 											<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
-											<span class="wg-ev-title">{ev.title}</span>
-										</div>
+											<span class="wg-ev-title">{ev.title}</span>										{#if ev.subtitle}
+											<span class="wg-ev-sub">{ev.subtitle}</span>
+										{/if}
+										{#if ev.tags?.length}
+											<span class="wg-ev-tags">
+												{#each ev.tags as tag}
+													<span class="wg-ev-tag">{tag}</span>
+												{/each}
+											</span>
+										{/if}										</div>
 									{/each}
 									{#if day.events.length > MAX_EVENTS_SHOWN}
 										<div class="wg-ev-more">+{day.events.length - MAX_EVENTS_SHOWN} more</div>
@@ -480,7 +488,8 @@
 	.wg-ev {
 		display: flex;
 		align-items: center;
-		gap: 5px;
+		flex-wrap: wrap;
+		gap: 3px 5px;
 		padding: 3px 6px;
 		border-radius: 4px;
 		background: color-mix(in srgb, var(--ev-color) 12%, transparent);
@@ -514,6 +523,29 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	.wg-ev-sub {
+		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.4));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.wg-ev-tags {
+		display: flex;
+		gap: 3px;
+		flex-shrink: 0;
+	}
+
+	.wg-ev-tag {
+		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 1px 4px;
+		border-radius: 3px;
+		white-space: nowrap;
 	}
 
 	.wg-ev-more {

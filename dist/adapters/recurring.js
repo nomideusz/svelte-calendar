@@ -1,5 +1,6 @@
 import { startOfWeek } from '../core/time.js';
 import { DAY_MS } from '../core/time.js';
+import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
 /** Parse "HH:MM" into [hours, minutes] */
 function parseTime(time) {
     const [h, m] = time.split(':').map(Number);
@@ -54,11 +55,7 @@ function getOverlappingWeeks(range, mondayStart) {
     return weeks;
 }
 /** Default palette for auto-coloring */
-const AUTO_COLORS = [
-    '#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6',
-    '#3b82f6', '#6366f1', '#a855f7', '#ec4899', '#f43f5e',
-    '#06b6d4', '#84cc16', '#d946ef', '#0ea5e9', '#10b981',
-];
+const AUTO_COLORS = VIVID_PALETTE;
 /**
  * Create a CalendarAdapter that projects recurring weekly events
  * onto concrete dates for whatever range the calendar requests.
@@ -67,6 +64,12 @@ const AUTO_COLORS = [
  */
 export function createRecurringAdapter(schedule, options = {}) {
     const { mondayStart = true, colorMap, autoColor } = options;
+    // Resolve palette: vivid default or theme-aware
+    const palette = autoColor
+        ? typeof autoColor === 'string'
+            ? generatePalette(autoColor)
+            : AUTO_COLORS
+        : AUTO_COLORS;
     // Build auto-color assignments
     const colorAssignments = new Map();
     if (autoColor || colorMap) {
@@ -77,7 +80,7 @@ export function createRecurringAdapter(schedule, options = {}) {
                 colorAssignments.set(key, colorMap[key]);
             }
             else if (autoColor && !colorAssignments.has(key)) {
-                colorAssignments.set(key, AUTO_COLORS[colorIndex % AUTO_COLORS.length]);
+                colorAssignments.set(key, palette[colorIndex % palette.length]);
                 colorIndex++;
             }
         }
