@@ -8,6 +8,8 @@
  * `date-fns/locale/*` and pass to `format()`.
  */
 
+import { DAY_MS } from './time.js';
+
 /** Module-level default locale — consumers can override via setDefaultLocale() */
 let defaultLocale = 'en-US';
 
@@ -81,8 +83,6 @@ export function dateWithWeekday(ms: number, locale?: string): string {
 		day: 'numeric',
 	});
 }
-
-import { DAY_MS } from './time.js';
 
 /**
  * Format a timestamp as a smart day label:

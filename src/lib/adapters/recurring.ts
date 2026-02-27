@@ -15,8 +15,7 @@
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
-import { startOfWeek } from '../core/time.js';
-import { DAY_MS } from '../core/time.js';
+import { startOfWeek, DAY_MS } from '../core/time.js';
 import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
 
 /**
@@ -82,11 +81,11 @@ function projectToWeek(
 		end,
 		color: rec.color,
 		category: rec.category,
+		subtitle: rec.subtitle,
+		tags: rec.tags,
 		data: {
 			...rec.data,
 			recurringId: rec.id,
-			...(rec.subtitle ? { subtitle: rec.subtitle } : {}),
-			...(rec.tags ? { tags: rec.tags } : {}),
 		},
 	};
 }

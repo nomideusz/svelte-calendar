@@ -17,7 +17,7 @@
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
-import { sod } from '../core/time.js';
+import { sod, DAY_MS } from '../core/time.js';
 
 export interface EventStore {
 	/** All currently loaded events (reactive) */
@@ -113,7 +113,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 
 		forDay(date: Date): TimelineEvent[] {
 			const dayStart = new Date(sod(date.getTime()));
-			const dayEnd = new Date(dayStart.getTime() + 86_400_000);
+			const dayEnd = new Date(dayStart.getTime() + DAY_MS);
 			return events.filter((ev) => overlaps(ev, dayStart, dayEnd));
 		},
 

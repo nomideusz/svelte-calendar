@@ -96,8 +96,8 @@ describe('createRecurringAdapter', () => {
 		const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
 
 		const vinyasa = events.find((e) => e.title === 'Vinyasa Flow')!;
-		expect(vinyasa.data?.subtitle).toBe('With Anna');
-		expect(vinyasa.data?.tags).toEqual(['Intermediate']);
+		expect(vinyasa.subtitle).toBe('With Anna');
+		expect(vinyasa.tags).toEqual(['Intermediate']);
 		expect(vinyasa.data?.recurringId).toBe('vinyasa-fri');
 	});
 
