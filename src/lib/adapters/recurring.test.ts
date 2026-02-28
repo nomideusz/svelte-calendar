@@ -153,4 +153,46 @@ describe('createRecurringAdapter', () => {
 		expect(events).toHaveLength(1);
 		expect(events[0].title).toBe('Pilates');
 	});
+
+	describe('parseTime validation', () => {
+		it('throws for a missing colon separator', async () => {
+			const bad: RecurringEvent[] = [
+				{ id: '1', title: 'Bad', dayOfWeek: 1, startTime: '0900', endTime: '10:00' },
+			];
+			const adapter = createRecurringAdapter(bad);
+			await expect(
+				adapter.fetchEvents({ start: mondayMs(), end: mondayMs(1) }),
+			).rejects.toThrow('Invalid time format');
+		});
+
+		it('throws for out-of-range hours', async () => {
+			const bad: RecurringEvent[] = [
+				{ id: '1', title: 'Bad', dayOfWeek: 1, startTime: '25:00', endTime: '26:00' },
+			];
+			const adapter = createRecurringAdapter(bad);
+			await expect(
+				adapter.fetchEvents({ start: mondayMs(), end: mondayMs(1) }),
+			).rejects.toThrow('Invalid hours');
+		});
+
+		it('throws for out-of-range minutes', async () => {
+			const bad: RecurringEvent[] = [
+				{ id: '1', title: 'Bad', dayOfWeek: 1, startTime: '09:60', endTime: '10:00' },
+			];
+			const adapter = createRecurringAdapter(bad);
+			await expect(
+				adapter.fetchEvents({ start: mondayMs(), end: mondayMs(1) }),
+			).rejects.toThrow('Invalid minutes');
+		});
+
+		it('throws for non-numeric values', async () => {
+			const bad: RecurringEvent[] = [
+				{ id: '1', title: 'Bad', dayOfWeek: 1, startTime: 'ab:cd', endTime: '10:00' },
+			];
+			const adapter = createRecurringAdapter(bad);
+			await expect(
+				adapter.fetchEvents({ start: mondayMs(), end: mondayMs(1) }),
+			).rejects.toThrow('Invalid hours');
+		});
+	});
 });

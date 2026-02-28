@@ -44,8 +44,19 @@ export interface RecurringEvent {
 
 /** Parse "HH:MM" into [hours, minutes] */
 function parseTime(time: string): [number, number] {
-	const [h, m] = time.split(':').map(Number);
-	return [h, m ?? 0];
+	const parts = time.split(':');
+	if (parts.length < 2) {
+		throw new Error(`Invalid time format "${time}": expected "HH:MM"`);
+	}
+	const h = Number(parts[0]);
+	const m = Number(parts[1]);
+	if (!Number.isInteger(h) || h < 0 || h > 23) {
+		throw new Error(`Invalid hours in time "${time}": expected 0–23`);
+	}
+	if (!Number.isInteger(m) || m < 0 || m > 59) {
+		throw new Error(`Invalid minutes in time "${time}": expected 0–59`);
+	}
+	return [h, m];
 }
 
 /**

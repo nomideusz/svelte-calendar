@@ -43,7 +43,11 @@ export function createRestAdapter(options: RestAdapterOptions): CalendarAdapter 
 			throw new Error(`Calendar API error: ${res.status} ${res.statusText}`);
 		}
 		if (res.status === 204) return undefined;
-		return res.json();
+		try {
+			return await res.json();
+		} catch {
+			throw new Error(`Calendar API error: invalid JSON response from ${path}`);
+		}
 	}
 
 	return {
