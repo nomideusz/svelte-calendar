@@ -13,7 +13,7 @@
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import type { DragState } from '../../engine/drag.svelte.js';
-	import { DAY_MS, sod } from '../../core/time.js';
+	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
 	import { startOfWeek as sowFn, fractionalHour } from '../../core/time.js';
 	import { weekdayShort, monthLong } from '../../core/locale.js';
 
@@ -169,8 +169,8 @@
 		const target = e.target as HTMLElement;
 		if (target.closest('.wg-ev')) return;
 		if (readOnly || !oneventcreate) return;
-		const start = new Date(ms + 9 * 3_600_000);
-		const end = new Date(ms + 10 * 3_600_000);
+		const start = new Date(ms + 9 * HOUR_MS);
+		const end = new Date(ms + 10 * HOUR_MS);
 		oneventcreate({ start, end });
 	}
 
