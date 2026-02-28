@@ -21,6 +21,7 @@
 -->
 <script lang="ts">
 	import { setContext, untrack, type Component } from 'svelte';
+	import { setDefaultLocale } from '../core/locale.js';
 	import type { CalendarAdapter } from '../adapters/types.js';
 	import type { CalendarViewId } from '../engine/view-state.svelte.js';
 	import { createEventStore, type EventStore } from '../engine/event-store.svelte.js';
@@ -97,8 +98,6 @@
 	// In readOnly mode, suppress mutation callbacks
 	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
 	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
-
-	import { setDefaultLocale } from '../core/locale.js';
 
 	// ── Set locale when provided ──
 	$effect(() => {
