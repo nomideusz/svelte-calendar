@@ -1,5 +1,6 @@
 // ─── Views ──────────────────────────────────────────────
-export { DayGrid, DayTimeline, WeekGrid, WeekHeatmap, Agenda, Settings, WeekSchedule, } from './views/index.js';
+export { Planner, Agenda, } from './views/index.js';
+export { WeekSchedule } from './convenience/index.js';
 // ─── Primitives ─────────────────────────────────────────
 export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, } from './primitives/index.js';
 // ─── Calendar shell ─────────────────────────────────────

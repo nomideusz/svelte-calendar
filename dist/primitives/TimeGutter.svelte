@@ -2,7 +2,7 @@
   TimeGutter — shared hour labels / tick marks.
 
   Two orientations:
-    "horizontal" — ticks along a horizontal track (for DayTimeline style)
+    "horizontal" — ticks along a horizontal track (for day timeline-style layouts)
     "vertical"   — label column along a vertical grid (for WeekTimeline style)
 -->
 <script lang="ts">

@@ -10,7 +10,7 @@
       views={[
         { id: 'week-terrain', label: 'Terrain', component: WeekTimelineV4 },
         { id: 'week-agenda',  label: 'Agenda',  component: WeekTimelineV5 },
-        { id: 'day',          label: 'Day',     component: DayTimeline },
+        { id: 'day-grid',     label: 'Planner', component: Planner, props: { mode: 'day' } },
       ]}
       defaultView="week-terrain"
       theme={presets.midnight}
@@ -57,6 +57,8 @@
 		height?: number;
 		/** Show toolbar */
 		showToolbar?: boolean;
+		/** Show concept switch pills in toolbar (Planner/Agenda) */
+		showConceptSwitch?: boolean;
 		/** Links to display in toolbar */
 		links?: { href: string; label: string }[];
 		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
@@ -83,6 +85,7 @@
 		mondayStart = true,
 		height = 600,
 		showToolbar = true,
+		showConceptSwitch = true,
 		links = [],
 		dir,
 		locale,
@@ -98,18 +101,12 @@
 	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
 	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
 
-	import { setDefaultLocale } from '../core/locale.js';
-
-	// ── Set locale when provided ──
-	$effect(() => {
-		if (locale) setDefaultLocale(locale);
-	});
-
 	// ── Create reactive state ──
 	const store: EventStore = $derived(createEventStore(adapter));
 	const viewState: ViewState = createViewState(untrack(() => ({
 		defaultView,
 		mondayStart,
+		granularityForView: (viewId) => views.find((v) => v.id === viewId)?.granularity,
 	})));
 	const selection: Selection = createSelection();
 	const drag: DragState = createDragState();
@@ -189,7 +186,7 @@
 	lang={locale}
 >
 	{#if showToolbar}
-		<Toolbar {viewState} views={toolbarViews} {links} {locale} />
+		<Toolbar {viewState} views={toolbarViews} {showConceptSwitch} {links} {locale} />
 	{/if}
 
 	<div class="cal-body">

@@ -2,7 +2,7 @@
  * Built-in view IDs. Custom view IDs are also supported — CalendarViewId
  * is typed as `string` so consumers can register any ID.
  */
-export type BuiltInViewId = 'day-grid' | 'day-agenda' | 'week-grid' | 'week-agenda' | 'week-heatmap';
+export type BuiltInViewId = 'day-grid' | 'day-agenda' | 'week-grid' | 'week-agenda';
 /**
  * Any view identifier. Use built-in strings like 'day-grid' or your own
  * custom IDs like 'day-kanban', 'week-resource', etc.
@@ -14,6 +14,11 @@ export interface ViewStateOptions {
     mondayStart?: boolean;
     /** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
     timezone?: string;
+    /**
+     * Optional resolver for view granularity.
+     * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
+     */
+    granularityForView?: (viewId: CalendarViewId) => ViewGranularity | undefined;
 }
 export interface DateRange {
     start: Date;

@@ -7,6 +7,7 @@
  * For date-fns locale integration later, this module can import from
  * `date-fns/locale/*` and pass to `format()`.
  */
+import { DAY_MS } from './time.js';
 /** Module-level default locale — consumers can override via setDefaultLocale() */
 let defaultLocale = 'en-US';
 /** Change the default locale for all formatting functions */
@@ -73,7 +74,6 @@ export function dateWithWeekday(ms, locale) {
         day: 'numeric',
     });
 }
-import { DAY_MS } from './time.js';
 /**
  * Format a timestamp as a smart day label:
  *   "Today · Feb 21", "Yesterday · Feb 20", "Mon, Feb 17", etc.

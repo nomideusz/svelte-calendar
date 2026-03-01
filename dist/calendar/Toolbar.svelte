@@ -1,11 +1,11 @@
 <!--
   Toolbar — navigation + granularity toggle + concept switcher.
 
-  Layout: [← Today →]  date-label   [links]   [Day | Week]   [concept pills]
+  Layout: [← →]  date-label  [Day | Week]  [concept pills]  [links]
 -->
 <script lang="ts">
 	import type { CalendarViewId, ViewState } from '../engine/view-state.svelte.js';
-	import { fmtDay, fmtWeekRange, weekdayLong } from '../core/locale.js';
+	import { fmtWeekRange } from '../core/locale.js';
 
 	interface ViewOption {
 		id: CalendarViewId;
@@ -17,6 +17,8 @@
 		viewState: ViewState;
 		/** All registered views */
 		views?: ViewOption[];
+		/** Show concept switch pills (Planner/Agenda) */
+		showConceptSwitch?: boolean;
 		/** Links to show in the toolbar */
 		links?: { href: string; label: string }[];
 		/** Locale used for labels */
@@ -26,40 +28,50 @@
 	let {
 		viewState,
 		views = [],
+		showConceptSwitch = true,
 		links = [],
 		locale,
 	}: Props = $props();
 
-	const dateLabel = $derived(() => {
+	const dateLabel = $derived.by(() => {
 		if (viewState.granularity === 'day') {
-			return `${weekdayLong(viewState.focusDate.getTime(), locale)}, ${fmtDay(viewState.focusDate.getTime(), Date.now(), undefined, locale)}`;
+			return viewState.focusDate.toLocaleDateString(locale, {
+				weekday: 'long',
+				month: 'short',
+				day: 'numeric',
+			});
 		}
 		const ws = viewState.range.start.getTime();
 		return fmtWeekRange(ws, locale);
 	});
 
 	// Which granularities are available?
-	const granularities = $derived(() => {
+	const granularities = $derived.by(() => {
 		const g = new Set(views.map((v) => v.granularity));
-		return [...g] as ('day' | 'week')[];
+		return (['day', 'week'] as const).filter((key) => g.has(key));
 	});
 
 	// Concepts available for current granularity
-	const concepts = $derived(
+	const concepts = $derived.by(() =>
 		views.filter((v) => v.granularity === viewState.granularity),
+	);
+	const previousLabel = $derived(
+		viewState.granularity === 'day' ? 'Previous day' : 'Previous week',
+	);
+	const nextLabel = $derived(
+		viewState.granularity === 'day' ? 'Next day' : 'Next week',
 	);
 </script>
 
 <nav class="tb" aria-label="Calendar navigation">
-	<!-- Nav: ← Today → -->
+	<!-- Nav: ← → -->
 	<div class="tb-nav">
-		<button class="tb-btn" onclick={() => viewState.prev()} aria-label="Previous">
+		<button class="tb-btn" onclick={() => viewState.prev()} aria-label={previousLabel}>
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
 				<path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 		</button>
-		<button class="tb-btn tb-today" onclick={() => viewState.goToday()}>Today</button>
-		<button class="tb-btn" onclick={() => viewState.next()} aria-label="Next">
+		<button class="tb-btn" onclick={() => viewState.next()} aria-label={nextLabel}>
 			<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
 				<path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
@@ -67,24 +79,16 @@
 	</div>
 
 	<!-- Date label -->
-	<span class="tb-label">{dateLabel()}</span>
-
-	<!-- Links -->
-	{#if links.length > 0}
-		<div class="tb-links">
-			{#each links as link}
-				<a class="tb-link" href={link.href}>{link.label}</a>
-			{/each}
-		</div>
-	{/if}
+	<span class="tb-label">{dateLabel}</span>
 
 	<!-- Granularity toggle: Day / Week -->
-	{#if granularities().length > 1}
-		<div class="tb-group">
-			{#each granularities() as g}
+	{#if granularities.length > 1}
+		<div class="tb-group" role="group" aria-label="Granularity">
+			{#each granularities as g}
 				<button
 					class="tb-seg"
 					class:tb-seg-active={viewState.granularity === g}
+					aria-pressed={viewState.granularity === g}
 					onclick={() => {
 						// Preserve concept: find the view in target granularity with same label
 						const currentLabel = views.find((v) => v.id === viewState.view)?.label;
@@ -101,16 +105,26 @@
 	{/if}
 
 	<!-- Concept pills -->
-	{#if concepts.length > 1}
-		<div class="tb-concepts">
+	{#if showConceptSwitch && concepts.length > 1}
+		<div class="tb-concepts" role="group" aria-label="View concept">
 			{#each concepts as c}
 				<button
 					class="tb-pill"
 					class:tb-pill-active={viewState.view === c.id}
+					aria-pressed={viewState.view === c.id}
 					onclick={() => viewState.setView(c.id)}
 				>
 					{c.label}
 				</button>
+			{/each}
+		</div>
+	{/if}
+
+	<!-- Links -->
+	{#if links.length > 0}
+		<div class="tb-links">
+			{#each links as link}
+				<a class="tb-link" href={link.href}>{link.label}</a>
 			{/each}
 		</div>
 	{/if}
@@ -142,7 +156,8 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		padding: 4px 6px;
+		padding: 8px 10px;
+		min-height: 40px;
 		border-radius: 6px;
 		font: 500 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
 		transition: background 100ms, color 100ms;
@@ -150,11 +165,6 @@
 	.tb-btn:hover {
 		background: var(--dt-accent-dim, rgba(239, 68, 68, 0.18));
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-	}
-
-	.tb-today {
-		padding: 4px 10px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 	}
 
 	.tb-label {
@@ -171,13 +181,16 @@
 		gap: 6px;
 	}
 	.tb-link {
-		font: 400 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 400 12px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-		padding: 4px 8px;
+		padding: 8px 10px;
+		min-height: 40px;
 		border-radius: 5px;
 		text-decoration: none;
 		transition: color 100ms, border-color 100ms;
+		display: inline-flex;
+		align-items: center;
 	}
 	.tb-link:hover {
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
@@ -198,8 +211,9 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 600 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		padding: 5px 12px;
+		font: 600 12px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 8px 12px;
+		min-height: 36px;
 		border-radius: 4px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
@@ -227,8 +241,9 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 400 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		padding: 4px 9px;
+		font: 400 12px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 8px 10px;
+		min-height: 36px;
 		border-radius: 4px;
 		letter-spacing: 0.02em;
 		transition: background 100ms, color 100ms;
@@ -240,5 +255,13 @@
 	.tb-pill-active {
 		background: var(--dt-surface, #10141c);
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+	}
+
+	.tb-btn:focus-visible,
+	.tb-seg:focus-visible,
+	.tb-pill:focus-visible,
+	.tb-link:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
 	}
 </style>

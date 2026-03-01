@@ -1,14 +1,11 @@
 // ─── Views ──────────────────────────────────────────────
 export {
-	DayGrid,
-	DayTimeline,
-	WeekGrid,
-	WeekHeatmap,
+	Planner,
 	Agenda,
-	Settings,
-	WeekSchedule,
+	AgendaDay,
+	AgendaWeek,
 } from './views/index.js';
-export type { SettingsField } from './views/index.js';
+export { WeekSchedule } from './convenience/index.js';
 
 // ─── Primitives ─────────────────────────────────────────
 export {
@@ -37,7 +34,6 @@ export type {
 	CalendarViewId,
 	BuiltInViewId,
 	ViewGranularity,
-	ViewDateRange,
 	Selection,
 	DragState,
 	DragMode,
@@ -58,20 +54,10 @@ export type {
 // ─── Core: clock, time, locale, types ───────────────────
 export {
 	createClock,
-	DAY_MS,
-	HOUR_MS,
-	HOURS,
-	sod,
 	startOfWeek,
-	addDaysMs,
-	diffDays,
-	pad,
-	fractionalHour,
-	fmtHM,
-	fmtS,
-	dayNum,
-	dayOfWeek,
 	fmtH,
+	fmtTime,
+	fmtDuration,
 	weekdayShort,
 	weekdayLong,
 	monthShort,
@@ -83,7 +69,6 @@ export {
 	setDefaultLocale,
 	getDefaultLocale,
 	is24HourLocale,
-	timeToX,
 	toZonedTime,
 	fromZonedTime,
 	nowInZone,
@@ -94,10 +79,8 @@ export {
 export type {
 	Clock,
 	TimelineEvent,
-	WeekTimelineProps,
-	DayTimelineProps,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
-export { midnight, parchment, indigo, neutral, bare, presets } from './theme/index.js';
+export { midnight, neutral, bare, presets } from './theme/index.js';
 export type { PresetName } from './theme/index.js';

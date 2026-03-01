@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.5.0 — 2026-03-01
+
+> **Active development** — this library is under active development. APIs may evolve between minor versions. Pin your version if you need stability.
+
+### Added
+- **Planner view** — new `Planner` component with `mode: 'day'` (horizontal filmstrip timeline) and `mode: 'week'` (multi-week vertical scroll). Replaces the previous DayGrid/WeekGrid approach with a cleaner, more focused design.
+- **AgendaDay view** — dedicated single-day agenda with three-section layout: Done (past events + now indicator), Queue (upcoming today), and Plan (future days). Past events render above the NOW strip in a merged column.
+- **AgendaWeek view** — rolling 7-day agenda with day grouping and relative date labels (Today, Tomorrow, Yesterday, etc.).
+- **Floating pill navigation** — all views now use a consistent frosted-glass pill-nav pattern for Today/←/→ controls. Today pill smoothly hides when today is already in view and slides in when navigated away.
+- **Scroll-tracking date label** — PlannerDay shows a floating date pill (full weekday + date) that updates as the user scrolls through the timeline. AgendaDay shows a matching date pill for the focused date.
+- **`WeekSchedule` convenience component** — moved to `$lib/convenience/` as a standalone zero-config weekly schedule wrapper.
+- **`fmtTime()` / `fmtDuration()` utilities** — new locale-aware time and duration formatting functions exported from core.
+- **Shared site header** — layout now includes a persistent header with logo, Demo/Docs navigation (with active state), and GitHub link across all pages.
+- **Documentation page** (`/docs`) — new server-rendered docs page with markdown content, syntax-highlighted code blocks, and full typography styles.
+- **Demo settings panel** — extracted to `Settings.svelte` route component with horizontal multi-column grid layout, theme picker, and view/locale/RTL/mondayStart controls.
+
+### Changed
+- **View architecture overhaul** — removed `DayGrid`, `DayTimeline`, `WeekGrid`, `WeekHeatmap`, and `Settings` view components. The library now ships `Planner` and `Agenda` as the two primary view families.
+- **Simplified exports** — library barrel export trimmed from 30+ symbols to a focused public API. Removed internal time helpers (`DAY_MS`, `HOUR_MS`, `pad`, `fractionalHour`, etc.) and view-specific types (`WeekTimelineProps`, `DayTimelineProps`, `ViewDateRange`).
+- **Theme presets reduced** — removed `parchment` and `indigo` presets; library ships `midnight`, `neutral`, and `bare`.
+- `Toolbar` redesigned — cleaner view-selector pills with simplified styling.
+- `Calendar` shell passes view-label context to conditionally show/hide navigation elements per view type.
+- `ViewState` engine updated with refined focus-date management and granularity handling.
+- Demo page (`+page.svelte`) streamlined — inline header removed (moved to layout), reduced padding, cleaner seed data.
+- Docs page sidebar removed — navigation now handled by shared site header.
+
+### Removed
+- `DayGrid` component and day grid view.
+- `DayTimeline` component and day timeline view.
+- `WeekGrid` component and week grid view.
+- `WeekHeatmap` component and week heatmap view.
+- `Settings` view component (replaced by route-level demo component).
+- `WeekSchedule` from views barrel (moved to convenience).
+- `parchment` and `indigo` theme presets.
+- Docs sidebar TOC navigation (replaced by shared header nav).
+- Multiple internal time utilities and types from public API.
+
 ## 0.4.0 — 2026-02-26
 
 > **Active development** — this library is under active development. APIs may evolve between minor versions. Pin your version if you need stability.

@@ -6,6 +6,8 @@
   between events.
 -->
 <script lang="ts">
+	import { fmtTime, fmtDuration } from '../core/locale.js';
+
 	interface Props {
 		/** Start time of the empty slot */
 		start: Date;
@@ -24,21 +26,7 @@
 		orientation = 'vertical',
 	}: Props = $props();
 
-	function fmtTime(d: Date): string {
-		const h = d.getHours();
-		const m = d.getMinutes();
-		const suffix = h >= 12 ? 'p' : 'a';
-		const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-		return m === 0 ? `${h12}${suffix}` : `${h12}:${String(m).padStart(2, '0')}${suffix}`;
-	}
-
-	const dur = $derived.by(() => {
-		const mins = Math.round((end.getTime() - start.getTime()) / 60_000);
-		if (mins < 60) return `${mins}m free`;
-		const h = Math.floor(mins / 60);
-		const m = mins % 60;
-		return m > 0 ? `${h}h ${m}m free` : `${h}h free`;
-	});
+	const dur = $derived(`${fmtDuration(start, end)} free`);
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {

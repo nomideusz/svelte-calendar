@@ -12,7 +12,7 @@
  *   vs.goToday()   — jump to today
  */
 import { startOfWeek as calcStartOfWeek, addDaysMs, DAY_MS } from '../core/time.js';
-function granularityFor(view) {
+function inferGranularity(view) {
     if (view.startsWith('day'))
         return 'day';
     return 'week';
@@ -36,7 +36,8 @@ export function createViewState(options = {}) {
     let focusDate = $state(new Date());
     let mondayStart = $state(options.mondayStart ?? true);
     const timezone = options.timezone;
-    const granularity = $derived(granularityFor(view));
+    const granularityResolver = options.granularityForView;
+    const granularity = $derived(granularityResolver?.(view) ?? inferGranularity(view));
     const range = $derived(computeRange(focusDate, granularity, mondayStart));
     return {
         get view() {

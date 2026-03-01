@@ -12,6 +12,8 @@
  *   vs.goToday()   — jump to today
  */
 import { startOfWeek as calcStartOfWeek, addDaysMs, DAY_MS } from '../core/time.js';
+import type { DateRange } from '../adapters/types.js';
+export type { DateRange };
 
 /**
  * Built-in view IDs. Custom view IDs are also supported — CalendarViewId
@@ -21,8 +23,7 @@ export type BuiltInViewId =
 	| 'day-grid'
 	| 'day-agenda'
 	| 'week-grid'
-	| 'week-agenda'
-	| 'week-heatmap';
+	| 'week-agenda';
 
 /**
  * Any view identifier. Use built-in strings like 'day-grid' or your own
@@ -37,12 +38,15 @@ export interface ViewStateOptions {
 	mondayStart?: boolean;
 	/** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
 	timezone?: string;
+	/** Initial date to focus on (defaults to today). */
+	initialDate?: Date;
+	/**
+	 * Optional resolver for view granularity.
+	 * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
+	 */
+	granularityForView?: (viewId: CalendarViewId) => ViewGranularity | undefined;
 }
 
-export interface DateRange {
-	start: Date;
-	end: Date;
-}
 
 export interface ViewState {
 	readonly view: CalendarViewId;
@@ -61,7 +65,7 @@ export interface ViewState {
 	goToday(): void;
 }
 
-function granularityFor(view: CalendarViewId): ViewGranularity {
+function inferGranularity(view: CalendarViewId): ViewGranularity {
 	if (view.startsWith('day')) return 'day';
 	return 'week';
 }
@@ -87,11 +91,12 @@ function computeRange(
 
 export function createViewState(options: ViewStateOptions = {}): ViewState {
 	let view = $state<CalendarViewId>(options.defaultView ?? 'week-grid');
-	let focusDate = $state<Date>(new Date());
+	let focusDate = $state<Date>(options.initialDate ?? new Date());
 	let mondayStart = $state(options.mondayStart ?? true);
 	const timezone = options.timezone;
+	const granularityResolver = options.granularityForView;
 
-	const granularity = $derived(granularityFor(view));
+	const granularity = $derived(granularityResolver?.(view) ?? inferGranularity(view));
 	const range = $derived(computeRange(focusDate, granularity, mondayStart));
 
 	return {

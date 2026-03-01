@@ -16,7 +16,12 @@ export function createRestAdapter(options) {
         }
         if (res.status === 204)
             return undefined;
-        return res.json();
+        try {
+            return await res.json();
+        }
+        catch {
+            throw new Error(`Calendar API error: invalid JSON response from ${path}`);
+        }
     }
     return {
         async fetchEvents(range) {

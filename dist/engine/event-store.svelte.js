@@ -1,4 +1,4 @@
-import { sod } from '../core/time.js';
+import { sod, DAY_MS } from '../core/time.js';
 /**
  * Create a reactive event store backed by a CalendarAdapter.
  */
@@ -61,7 +61,7 @@ export function createEventStore(adapter) {
         },
         forDay(date) {
             const dayStart = new Date(sod(date.getTime()));
-            const dayEnd = new Date(dayStart.getTime() + 86_400_000);
+            const dayEnd = new Date(dayStart.getTime() + DAY_MS);
             return events.filter((ev) => overlaps(ev, dayStart, dayEnd));
         },
         byId(id) {

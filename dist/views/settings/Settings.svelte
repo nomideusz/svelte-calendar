@@ -43,7 +43,7 @@
 
 	let { fields, values = $bindable(), theme = $bindable() }: Props = $props();
 
-	const themeKeys: PresetName[] = ['midnight', 'parchment', 'indigo', 'neutral', 'bare'];
+	const themeKeys: PresetName[] = ['midnight', 'parchment', 'indigo'];
 	const themeLabels: Record<PresetName, string> = {
 		midnight: 'Midnight',
 		parchment: 'Parchment',

@@ -10,7 +10,7 @@
       views={[
         { id: 'week-terrain', label: 'Terrain', component: WeekTimelineV4 },
         { id: 'week-agenda',  label: 'Agenda',  component: WeekTimelineV5 },
-        { id: 'day',          label: 'Day',     component: DayTimeline },
+        { id: 'day-grid',     label: 'Planner', component: Planner, props: { mode: 'day' } },
       ]}
       defaultView="week-terrain"
       theme={presets.midnight}
@@ -20,8 +20,7 @@
     />
 -->
 <script lang="ts">
-	import { setContext, untrack, type Component } from 'svelte';
-	import { setDefaultLocale } from '../core/locale.js';
+	import { setContext, untrack, type Component, type Snippet } from 'svelte';
 	import type { CalendarAdapter } from '../adapters/types.js';
 	import type { CalendarViewId } from '../engine/view-state.svelte.js';
 	import { createEventStore, type EventStore } from '../engine/event-store.svelte.js';
@@ -29,7 +28,6 @@
 	import { createSelection, type Selection } from '../engine/selection.svelte.js';
 	import { createDragState, type DragState } from '../engine/drag.svelte.js';
 	import type { TimelineEvent } from '../core/types.js';
-	import Toolbar from './Toolbar.svelte';
 
 	/** One view registration */
 	export interface CalendarView {
@@ -58,8 +56,6 @@
 		height?: number;
 		/** Show toolbar */
 		showToolbar?: boolean;
-		/** Links to display in toolbar */
-		links?: { href: string; label: string }[];
 		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
 		dir?: 'ltr' | 'rtl' | 'auto';
 		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
@@ -68,6 +64,16 @@
 		readOnly?: boolean;
 		/** Visible hour range: [startHour, endHour). Crops the grid to these hours. */
 		visibleHours?: [number, number];
+		/** Initial date to focus on (defaults to today) */
+		initialDate?: Date;
+		/** Drag snap interval in minutes (default: 15) */
+		snapInterval?: number;
+
+		// ── Snippets ──
+		/** Custom event rendering snippet */
+		event?: Snippet<[TimelineEvent]>;
+		/** Content to show when no events are loaded */
+		empty?: Snippet;
 
 		// ── Callbacks ──
 		oneventclick?: (event: TimelineEvent) => void;
@@ -84,11 +90,14 @@
 		mondayStart = true,
 		height = 600,
 		showToolbar = true,
-		links = [],
 		dir,
 		locale,
 		readOnly = false,
 		visibleHours,
+		initialDate,
+		snapInterval = 15,
+		event: eventSnippet,
+		empty: emptySnippet,
 		oneventclick,
 		oneventcreate,
 		oneventmove,
@@ -99,16 +108,13 @@
 	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
 	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
 
-	// ── Set locale when provided ──
-	$effect(() => {
-		if (locale) setDefaultLocale(locale);
-	});
-
 	// ── Create reactive state ──
 	const store: EventStore = $derived(createEventStore(adapter));
 	const viewState: ViewState = createViewState(untrack(() => ({
 		defaultView,
 		mondayStart,
+		initialDate,
+		granularityForView: (viewId) => views.find((v) => v.id === viewId)?.granularity,
 	})));
 	const selection: Selection = createSelection();
 	const drag: DragState = createDragState();
@@ -147,6 +153,9 @@
 	});
 	setContext('calendar:readOnly', { get current() { return readOnly; } });
 	setContext('calendar:visibleHours', { get current() { return visibleHours; } });
+	setContext('calendar:snapInterval', { get current() { return snapInterval; } });
+	setContext('calendar:eventSnippet', { get current() { return eventSnippet; } });
+	setContext('calendar:emptySnippet', { get current() { return emptySnippet; } });
 
 	// ── Load events when range changes ──
 	$effect(() => {
@@ -174,9 +183,29 @@
 	// ── Resolve active view ──
 	const activeView = $derived(views.find((v) => v.id === viewState.view) ?? views[0]);
 
+	// ── Date label (always visible, centered over views) ──
+	const dateLabel = $derived.by(() => {
+		if (viewState.granularity === 'day') {
+			return viewState.focusDate.toLocaleDateString(locale, {
+				weekday: 'long',
+				month: 'short',
+				day: 'numeric',
+			});
+		}
+		return viewState.focusDate.toLocaleDateString(locale, {
+			month: 'long',
+			year: 'numeric',
+		});
+	});
+
 	const toolbarViews = $derived(
 		views.map((v) => ({ id: v.id, label: v.label, granularity: v.granularity })),
 	);
+	// Which granularities are available?
+	const granularities = $derived.by(() => {
+		const g = new Set(views.map((v) => v.granularity));
+		return (['day', 'week'] as const).filter((key) => g.has(key));
+	});
 </script>
 
 <div
@@ -187,8 +216,26 @@
 	dir={dir}
 	lang={locale}
 >
-	{#if showToolbar}
-		<Toolbar {viewState} views={toolbarViews} {links} {locale} />
+	<!-- Floating granularity pills (hidden for Agenda views) -->
+	{#if granularities.length > 1 && activeView?.label !== 'Agenda'}
+		<div class="cal-pills" role="group" aria-label="View mode">
+			{#each granularities as g}
+				<button
+					class="cal-pill"
+					class:cal-pill--active={viewState.granularity === g}
+					aria-pressed={viewState.granularity === g}
+					onclick={() => {
+						const currentLabel = views.find((v) => v.id === viewState.view)?.label;
+						const match = views.find((v) => v.granularity === g && v.label === currentLabel);
+						const fallback = views.find((v) => v.granularity === g);
+						const target = match ?? fallback;
+						if (target) viewState.setView(target.id);
+					}}
+				>
+					{g === 'day' ? 'Day' : 'Week'}
+				</button>
+			{/each}
+		</div>
 	{/if}
 
 	<div class="cal-body">
@@ -197,7 +244,7 @@
 			<Comp
 				events={store.events}
 				style={theme}
-				height={height - (showToolbar ? 48 : 0)}
+				height={null}
 				mondayStart={viewState.mondayStart}
 				{locale}
 				focusDate={viewState.focusDate}
@@ -224,15 +271,60 @@
 		height: var(--cal-h, 600px);
 		background: var(--dt-bg, #0b0e14);
 		border-radius: 12px;
-		overflow: hidden;
+		overflow: clip;
 		display: flex;
 		flex-direction: column;
 		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 	}
 
+	/* ── Floating pills ── */
+	.cal-pills {
+		position: absolute;
+		top: 22px;
+		bottom: auto;
+		left: 10px;
+		z-index: 20;
+		display: flex;
+		gap: 2px;
+		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		border-radius: 8px;
+		padding: 2px;
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+	}
+
+	.cal-pill {
+		border: none;
+		background: transparent;
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
+		cursor: pointer;
+		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 6px 12px;
+		border-radius: 6px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		transition: background 100ms, color 100ms;
+	}
+
+	.cal-pill:hover {
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+	}
+
+	.cal-pill--active {
+		background: var(--dt-accent, #ef4444);
+		color: var(--dt-btn-text, #fff);
+	}
+
+	.cal-pill:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
+	}
+
 	.cal-body {
 		flex: 1;
 		min-height: 0;
+		position: relative;
 		overflow: hidden;
 	}
 

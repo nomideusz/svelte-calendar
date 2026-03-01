@@ -61,9 +61,9 @@ export interface WeekTimelineProps {
     selectedEventId?: string | null;
 }
 /**
- * Shared props contract for the DayTimeline component.
+ * Shared props contract for Planner day mode.
  */
-export interface DayTimelineProps {
+export interface PlannerDayProps {
     /** Number of past days visible */
     pastDays?: number;
     /** Number of future days visible */

@@ -9,7 +9,6 @@ export type {
 	CalendarViewId,
 	BuiltInViewId,
 	ViewGranularity,
-	DateRange as ViewDateRange,
 } from './view-state.svelte.js';
 
 export { createSelection } from './selection.svelte.js';

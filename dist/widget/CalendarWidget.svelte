@@ -16,11 +16,8 @@
 <script lang="ts">
 	import Calendar from '../calendar/Calendar.svelte';
 	import type { CalendarView } from '../calendar/Calendar.svelte';
-	import { DayGrid } from '../views/day/index.js';
-	import { WeekGrid } from '../views/week/index.js';
+	import { Planner } from '../views/planner/index.js';
 	import { Agenda } from '../views/agenda/index.js';
-	import { WeekHeatmap } from '../views/week/index.js';
-	import { DayTimeline } from '../views/day/index.js';
 	import { createRestAdapter } from '../adapters/rest.js';
 	import { createMemoryAdapter } from '../adapters/memory.js';
 	import { presets } from '../theme/presets.js';
@@ -71,17 +68,47 @@
 	);
 
 	// ── Parse static events from JSON attribute ──
+	function parseHeaders(json?: string): Record<string, string> | undefined {
+		if (!json) return undefined;
+		try {
+			const parsed = JSON.parse(json) as Record<string, unknown>;
+			const out: Record<string, string> = {};
+			for (const [k, v] of Object.entries(parsed)) {
+				out[k] = String(v);
+			}
+			return out;
+		} catch {
+			console.warn('[day-calendar] Failed to parse headers JSON:', json);
+			return undefined;
+		}
+	}
+
+	function toEvent(raw: Record<string, unknown>, fallbackId: string): TimelineEvent | null {
+		const start = new Date(String(raw.start ?? ''));
+		const end = new Date(String(raw.end ?? ''));
+		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
+			return null;
+		}
+		return {
+			id: String(raw.id ?? fallbackId),
+			title: String(raw.title ?? 'Untitled'),
+			start,
+			end,
+			color: raw.color ? String(raw.color) : undefined,
+		};
+	}
+
 	function parseEvents(json?: string): TimelineEvent[] {
 		if (!json) return [];
 		try {
 			const raw = JSON.parse(json) as Array<Record<string, unknown>>;
-			return raw.map((e) => ({
-				id: String(e.id ?? crypto.randomUUID()),
-				title: String(e.title ?? 'Untitled'),
-				start: new Date(e.start as string),
-				end: new Date(e.end as string),
-				color: e.color ? String(e.color) : undefined,
-			}));
+			const parsed = raw
+				.map((e, idx) => toEvent(e, `inline-${idx}`))
+				.filter((ev): ev is TimelineEvent => ev !== null);
+			if (parsed.length !== raw.length) {
+				console.warn(`[day-calendar] Ignored ${raw.length - parsed.length} invalid event(s) from events JSON.`);
+			}
+			return parsed;
 		} catch {
 			console.warn('[day-calendar] Failed to parse events JSON:', json);
 			return [];
@@ -91,22 +118,15 @@
 	// ── Create adapter ──
 	const adapter = $derived.by(() => {
 		if (api) {
-			const parsedHeaders = headers ? JSON.parse(headers) as Record<string, string> : undefined;
+			const parsedHeaders = parseHeaders(headers);
 			return createRestAdapter({
 				baseUrl: api,
 				headers: parsedHeaders,
 				mapEvents: (data: unknown) => {
 					const arr = Array.isArray(data) ? data : (data as Record<string, unknown>).events as unknown[] ?? [];
-					return arr.map((e: unknown) => {
-						const ev = e as Record<string, unknown>;
-						return {
-							id: String(ev.id ?? ''),
-							title: String(ev.title ?? 'Untitled'),
-							start: new Date(ev.start as string),
-							end: new Date(ev.end as string),
-							color: ev.color ? String(ev.color) : undefined,
-						};
-					});
+					return arr
+						.map((e: unknown, idx) => toEvent(e as Record<string, unknown>, `api-${idx}`))
+						.filter((ev): ev is TimelineEvent => ev !== null);
 				},
 			});
 		}
@@ -115,12 +135,10 @@
 
 	// ── Default views ──
 	const defaultViews: CalendarView[] = [
-		{ id: 'day-grid',     label: 'Grid',     granularity: 'day',  component: DayGrid },
-		{ id: 'week-grid',    label: 'Grid',     granularity: 'week', component: WeekGrid },
-		{ id: 'day-timeline', label: 'Timeline', granularity: 'day',  component: DayTimeline },
+		{ id: 'day-grid',     label: 'Planner',  granularity: 'day',  component: Planner, props: { mode: 'day' } },
+		{ id: 'week-grid',    label: 'Planner',  granularity: 'week', component: Planner, props: { mode: 'week' } },
 		{ id: 'day-agenda',   label: 'Agenda',   granularity: 'day',  component: Agenda, props: { mode: 'day' } },
 		{ id: 'week-agenda',  label: 'Agenda',   granularity: 'week', component: Agenda, props: { mode: 'week' } },
-		{ id: 'week-heatmap', label: 'Heatmap',  granularity: 'week', component: WeekHeatmap },
 	];
 </script>
 

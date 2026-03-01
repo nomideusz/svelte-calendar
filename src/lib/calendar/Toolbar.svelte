@@ -1,11 +1,10 @@
 <!--
-  Toolbar — navigation + granularity toggle + concept switcher.
+  Toolbar — navigation arrows + granularity toggle.
 
-  Layout: [← Today →]  date-label   [links]   [Day | Week]   [concept pills]
+  Layout: [← →]  [spacer]  [Day | Week]
 -->
 <script lang="ts">
 	import type { CalendarViewId, ViewState } from '../engine/view-state.svelte.js';
-	import { fmtDay, fmtWeekRange, weekdayLong } from '../core/locale.js';
 
 	interface ViewOption {
 		id: CalendarViewId;
@@ -17,8 +16,6 @@
 		viewState: ViewState;
 		/** All registered views */
 		views?: ViewOption[];
-		/** Links to show in the toolbar */
-		links?: { href: string; label: string }[];
 		/** Locale used for labels */
 		locale?: string;
 	}
@@ -26,65 +23,34 @@
 	let {
 		viewState,
 		views = [],
-		links = [],
 		locale,
 	}: Props = $props();
 
-	const dateLabel = $derived(() => {
-		if (viewState.granularity === 'day') {
-			return `${weekdayLong(viewState.focusDate.getTime(), locale)}, ${fmtDay(viewState.focusDate.getTime(), Date.now(), undefined, locale)}`;
-		}
-		const ws = viewState.range.start.getTime();
-		return fmtWeekRange(ws, locale);
-	});
-
 	// Which granularities are available?
-	const granularities = $derived(() => {
+	const granularities = $derived.by(() => {
 		const g = new Set(views.map((v) => v.granularity));
-		return [...g] as ('day' | 'week')[];
+		return (['day', 'week'] as const).filter((key) => g.has(key));
 	});
 
-	// Concepts available for current granularity
-	const concepts = $derived(
-		views.filter((v) => v.granularity === viewState.granularity),
+	const previousLabel = $derived(
+		viewState.granularity === 'day' ? 'Previous day' : 'Previous week',
+	);
+	const nextLabel = $derived(
+		viewState.granularity === 'day' ? 'Next day' : 'Next week',
 	);
 </script>
 
 <nav class="tb" aria-label="Calendar navigation">
-	<!-- Nav: ← Today → -->
-	<div class="tb-nav">
-		<button class="tb-btn" onclick={() => viewState.prev()} aria-label="Previous">
-			<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-				<path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</button>
-		<button class="tb-btn tb-today" onclick={() => viewState.goToday()}>Today</button>
-		<button class="tb-btn" onclick={() => viewState.next()} aria-label="Next">
-			<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-				<path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</button>
-	</div>
-
-	<!-- Date label -->
-	<span class="tb-label">{dateLabel()}</span>
-
-	<!-- Links -->
-	{#if links.length > 0}
-		<div class="tb-links">
-			{#each links as link}
-				<a class="tb-link" href={link.href}>{link.label}</a>
-			{/each}
-		</div>
-	{/if}
+	<div class="tb-spacer"></div>
 
 	<!-- Granularity toggle: Day / Week -->
-	{#if granularities().length > 1}
-		<div class="tb-group">
-			{#each granularities() as g}
+	{#if granularities.length > 1}
+		<div class="tb-group" role="group" aria-label="Granularity">
+			{#each granularities as g}
 				<button
 					class="tb-seg"
 					class:tb-seg-active={viewState.granularity === g}
+					aria-pressed={viewState.granularity === g}
 					onclick={() => {
 						// Preserve concept: find the view in target granularity with same label
 						const currentLabel = views.find((v) => v.id === viewState.view)?.label;
@@ -95,21 +61,6 @@
 					}}
 				>
 					{g === 'day' ? 'Day' : 'Week'}
-				</button>
-			{/each}
-		</div>
-	{/if}
-
-	<!-- Concept pills -->
-	{#if concepts.length > 1}
-		<div class="tb-concepts">
-			{#each concepts as c}
-				<button
-					class="tb-pill"
-					class:tb-pill-active={viewState.view === c.id}
-					onclick={() => viewState.setView(c.id)}
-				>
-					{c.label}
 				</button>
 			{/each}
 		</div>
@@ -142,7 +93,8 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		padding: 4px 6px;
+		padding: 8px 10px;
+		min-height: 40px;
 		border-radius: 6px;
 		font: 500 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
 		transition: background 100ms, color 100ms;
@@ -152,36 +104,8 @@
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
 	}
 
-	.tb-today {
-		padding: 4px 10px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-	}
-
-	.tb-label {
-		font: 500 13px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		letter-spacing: 0.01em;
+	.tb-spacer {
 		flex: 1;
-		min-width: 0;
-	}
-
-	/* ── Links ── */
-	.tb-links {
-		display: flex;
-		gap: 6px;
-	}
-	.tb-link {
-		font: 400 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-		padding: 4px 8px;
-		border-radius: 5px;
-		text-decoration: none;
-		transition: color 100ms, border-color 100ms;
-	}
-	.tb-link:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		border-color: var(--dt-text-2, rgba(148, 163, 184, 0.25));
 	}
 
 	/* ── Granularity toggle ── */
@@ -198,8 +122,9 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 600 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		padding: 5px 12px;
+		font: 600 12px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 8px 12px;
+		min-height: 36px;
 		border-radius: 4px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
@@ -213,32 +138,9 @@
 		color: var(--dt-btn-text, #fff);
 	}
 
-	/* ── Concept pills ── */
-	.tb-concepts {
-		display: flex;
-		gap: 3px;
-		background: var(--dt-bg, #0b0e14);
-		border-radius: 6px;
-		padding: 2px;
-	}
-
-	.tb-pill {
-		border: none;
-		background: transparent;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
-		cursor: pointer;
-		font: 400 10px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		padding: 4px 9px;
-		border-radius: 4px;
-		letter-spacing: 0.02em;
-		transition: background 100ms, color 100ms;
-		white-space: nowrap;
-	}
-	.tb-pill:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-	}
-	.tb-pill-active {
-		background: var(--dt-surface, #10141c);
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+	.tb-btn:focus-visible,
+	.tb-seg:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
 	}
 </style>

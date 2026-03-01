@@ -28,6 +28,8 @@ interface Props {
     height?: number;
     /** Show toolbar */
     showToolbar?: boolean;
+    /** Show concept switch pills in toolbar (Planner/Agenda) */
+    showConceptSwitch?: boolean;
     /** Links to display in toolbar */
     links?: {
         href: string;
