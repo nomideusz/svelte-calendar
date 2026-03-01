@@ -1,4 +1,4 @@
-import { type Component } from 'svelte';
+import { type Component, type Snippet } from 'svelte';
 import type { CalendarAdapter } from '../adapters/types.js';
 import type { CalendarViewId } from '../engine/view-state.svelte.js';
 import type { TimelineEvent } from '../core/types.js';
@@ -28,13 +28,6 @@ interface Props {
     height?: number;
     /** Show toolbar */
     showToolbar?: boolean;
-    /** Show concept switch pills in toolbar (Planner/Agenda) */
-    showConceptSwitch?: boolean;
-    /** Links to display in toolbar */
-    links?: {
-        href: string;
-        label: string;
-    }[];
     /** Text direction: 'ltr' (default), 'rtl', or 'auto' */
     dir?: 'ltr' | 'rtl' | 'auto';
     /** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
@@ -43,6 +36,14 @@ interface Props {
     readOnly?: boolean;
     /** Visible hour range: [startHour, endHour). Crops the grid to these hours. */
     visibleHours?: [number, number];
+    /** Initial date to focus on (defaults to today) */
+    initialDate?: Date;
+    /** Drag snap interval in minutes (default: 15) */
+    snapInterval?: number;
+    /** Custom event rendering snippet */
+    event?: Snippet<[TimelineEvent]>;
+    /** Content to show when no events are loaded */
+    empty?: Snippet;
     oneventclick?: (event: TimelineEvent) => void;
     oneventcreate?: (range: {
         start: Date;

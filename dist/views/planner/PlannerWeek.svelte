@@ -9,22 +9,19 @@
   • Generous whitespace, thin dividers, minimal chrome.
 -->
 <script lang="ts">
-	import { getContext, onMount, tick } from 'svelte';
+	import { getContext, onMount, tick, untrack } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import type { DragState } from '../../engine/drag.svelte.js';
+	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
 	import { startOfWeek as sowFn, fractionalHour } from '../../core/time.js';
-	import { weekdayShort, monthLong } from '../../core/locale.js';
+	import { weekdayShort, monthLong, fmtTime as _fmtTime } from '../../core/locale.js';
 
 	interface Props {
-		weekOffset?: number;
 		mondayStart?: boolean;
 		locale?: string;
-		hourHeight?: number;
-		dayWidth?: number;
-		nowPosition?: number;
-		height?: number;
+		height?: number | null;
 		events?: TimelineEvent[];
 		style?: string;
 		focusDate?: Date;
@@ -32,7 +29,6 @@
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		selectedEventId?: string | null;
 		readOnly?: boolean;
-		visibleHours?: [number, number];
 		[key: string]: unknown;
 	}
 
@@ -47,19 +43,26 @@
 		oneventcreate,
 		selectedEventId = null,
 		readOnly = false,
-		...rest
 	}: Props = $props();
 
 	// ── Drag support (available when inside Calendar) ──
 	const drag = getContext<DragState>('calendar:drag') as DragState | undefined;
 	const commitDragCtx = getContext<() => void>('calendar:commitDrag') as (() => void) | undefined;
+	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
 
 	const clock = createClock();
 
-	// ─── Config ─────────────────────────────────────────
-	const PAST_WEEKS = 4;
-	const FUTURE_WEEKS = 12;
-	const MAX_EVENTS_SHOWN = 3;
+	// ─── Infinite-scroll config ────────────────────────
+	const BUFFER_WEEKS = 6;      // weeks rendered on each side of anchor
+	const EDGE_WEEKS = 2;        // rebase when this close to an edge
+	const SHIFT_WEEKS = 3;       // weeks to shift per rebase
+	const MAX_EVENTS_SHOWN = 5;
+
+	// Internal anchor drives layout; syncs bidirectionally with focusDate.
+	const _initMs = untrack(() => sod(focusDate?.getTime() ?? Date.now()));
+	let internalFocusMs = $state(_initMs);
+	let lastExternalMs = _initMs;
+	let rebasing = false;
 
 	let el: HTMLDivElement;
 	let scrolled = $state(false);
@@ -74,8 +77,7 @@
 
 	// ─── Derived ────────────────────────────────────────
 	const todayMs = $derived(clock.today);
-	const focusMs = $derived(focusDate ? sod(focusDate.getTime()) : todayMs);
-	const anchorWeekStart = $derived(sowFn(focusMs, mondayStart));
+	const anchorWeekStart = $derived(sowFn(internalFocusMs, mondayStart));
 
 	// ─── Week data ──────────────────────────────────────
 	interface WeekRow {
@@ -91,6 +93,8 @@
 		isToday: boolean;
 		isPast: boolean;
 		isWeekend: boolean;
+		isFirstOfMonth: boolean;
+		monthLabel: string | null;
 		events: TimelineEvent[];
 	}
 
@@ -98,7 +102,7 @@
 		const result: WeekRow[] = [];
 		const currentWeekStart = sowFn(todayMs, mondayStart);
 
-		for (let w = -PAST_WEEKS; w <= FUTURE_WEEKS; w++) {
+		for (let w = -BUFFER_WEEKS; w <= BUFFER_WEEKS; w++) {
 			const weekStart = anchorWeekStart + w * 7 * DAY_MS;
 			const isCurrent = weekStart === currentWeekStart;
 			const days: DayCell[] = [];
@@ -114,13 +118,17 @@
 				const isWeekend = dow === 0 || dow === 6;
 				const isToday = ms === todayMs;
 				const isPast = ms < todayMs;
+				const isFirstOfMonth = dayNum === 1;
+				const monthLabel = (d === 0 || isFirstOfMonth)
+					? monthLong(ms, locale).toUpperCase()
+					: null;
 
 				const dayEnd = ms + DAY_MS;
 				const dayEvents = events
 					.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
 					.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-				days.push({ ms, dayNum, isToday, isPast, isWeekend, events: dayEvents });
+				days.push({ ms, dayNum, isToday, isPast, isWeekend, isFirstOfMonth, monthLabel, events: dayEvents });
 			}
 
 			// Month label: show when first day of week is day 1-7
@@ -136,19 +144,11 @@
 
 	// ─── Format helpers ─────────────────────────────────
 	function fmtAmPm(d: Date): string {
-		return d
-			.toLocaleTimeString(locale ?? 'en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-			.toUpperCase()
-			.replace(' ', '');
+		return _fmtTime(d, locale);
 	}
 
 	function fmtNowTime(tick: number): string {
-		const d = new Date(tick);
-		let h = d.getHours();
-		const m = d.getMinutes();
-		const ampm = h >= 12 ? 'pm' : 'am';
-		h = h % 12 || 12;
-		return `${h}:${m.toString().padStart(2, '0')}${ampm}`;
+		return _fmtTime(new Date(tick), locale);
 	}
 
 	// ─── Now indicator fraction ─────────────────────────
@@ -160,13 +160,119 @@
 		scrollCurrentWeekIntoContainer();
 	});
 
+	// ─── Infinite-scroll helpers ────────────────────────
+
+	/** Detect external focusDate changes (from toolbar arrows). */
+	$effect(() => {
+		const ext = focusDate ? sod(focusDate.getTime()) : clock.today;
+		if (ext !== lastExternalMs && !rebasing) {
+			lastExternalMs = ext;
+			internalFocusMs = ext;
+			tick().then(() => scrollCurrentWeekIntoContainer('smooth'));
+		}
+	});
+
+	/** Check if viewport is near top/bottom edge; if so, rebase the window. */
+	function checkVerticalEdges() {
+		if (!el || !viewState || rebasing) return;
+		const rows = el.querySelectorAll<HTMLElement>('[data-week]');
+		if (!rows.length) return;
+
+		const avgH = el.scrollHeight / rows.length;
+		const threshold = avgH * EDGE_WEEKS;
+		const maxScroll = el.scrollHeight - el.clientHeight;
+
+		if (el.scrollTop < threshold) {
+			rebaseWeeks(-1);
+		} else if (maxScroll > 0 && maxScroll - el.scrollTop < threshold) {
+			rebaseWeeks(1);
+		}
+	}
+
+	/** Shift the rendered week window by SHIFT_WEEKS in the given direction. */
+	function rebaseWeeks(direction: number) {
+		if (rebasing) return;
+		rebasing = true;
+
+		// Save an anchor: first visible week row and its visual offset.
+		const rows = el.querySelectorAll<HTMLElement>('[data-week]');
+		let anchorWeekMs = 0;
+		let anchorTop = 0;
+		for (const row of rows) {
+			const top = row.offsetTop - el.scrollTop;
+			if (top + row.offsetHeight > 0) {
+				anchorWeekMs = Number(row.dataset.week);
+				anchorTop = top;
+				break;
+			}
+		}
+
+		const shift = SHIFT_WEEKS * direction;
+		internalFocusMs += shift * 7 * DAY_MS;
+		lastExternalMs = internalFocusMs;
+		viewState?.setFocusDate(new Date(internalFocusMs));
+
+		tick().then(() => {
+			// Restore the anchor week to its previous visual position.
+			const anchor = el.querySelector<HTMLElement>(`[data-week="${anchorWeekMs}"]`);
+			if (anchor) {
+				el.scrollTop = anchor.offsetTop - anchorTop;
+			}
+			rebasing = false;
+		});
+	}
+
+	/** Push the currently visible centre week to viewState. */
+	function syncFocusFromScroll() {
+		if (!el || !viewState || rebasing) return;
+		const centerY = el.scrollTop + el.clientHeight / 2;
+		const rows = el.querySelectorAll<HTMLElement>('[data-week]');
+		for (const row of rows) {
+			if (row.offsetTop + row.offsetHeight >= centerY) {
+				const ms = Number(row.dataset.week);
+				if (ms && ms !== lastExternalMs) {
+					lastExternalMs = ms;
+					viewState.setFocusDate(new Date(ms));
+				}
+				break;
+			}
+		}
+	}
+
+	function isCurrentWeekVisible(): boolean {
+		if (!el) return false;
+		const current = el.querySelector<HTMLElement>('.wg-week--current');
+		if (!current) return false;
+		const top = current.offsetTop - el.scrollTop;
+		const bottom = top + current.offsetHeight;
+		return bottom > 0 && top < el.clientHeight;
+	}
+
+	let suppressScroll = false;
+
 	function handleUserScroll() {
-		scrolled = true;
+		if (suppressScroll) return;
+		scrolled = !isCurrentWeekVisible();
+		if (!rebasing) {
+			checkVerticalEdges();
+			syncFocusFromScroll();
+		}
 	}
 
 	function jumpToday() {
-		scrollCurrentWeekIntoContainer('smooth');
+		internalFocusMs = clock.today;
+		lastExternalMs = clock.today;
+		viewState?.goToday();
+		suppressScroll = true;
 		scrolled = false;
+		tick().then(() => {
+			scrollCurrentWeekIntoContainer('smooth');
+			// Keep suppressed until smooth scroll finishes, then recheck
+			setTimeout(() => {
+				suppressScroll = false;
+				scrolled = !isCurrentWeekVisible();
+			}, 600);
+		});
 	}
 
 	function handleDayCellClick(ms: number, e: Event) {
@@ -181,6 +287,7 @@
 	// ─── Event drag-to-move ───────────────────────────────────────
 	const DRAG_THRESHOLD = 8;
 	let evDragStartX = 0;
+	let evDragStartY = 0;
 	let evDragStarted = false;
 	let evDragging = $state(false);
 	let evDragId = $state<string | null>(null);
@@ -191,10 +298,16 @@
 		return cell ? cell.getBoundingClientRect().width : 100;
 	}
 
+	function getRowHeight(): number {
+		const row = el?.querySelector('.wg-week');
+		return row ? row.getBoundingClientRect().height + 24 : 200; // 24 ≈ vertical margin between weeks
+	}
+
 	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
 		if (e.button !== 0 || !drag || readOnly) return;
 		e.stopPropagation();
 		evDragStartX = e.clientX;
+		evDragStartY = e.clientY;
 		evDragStarted = false;
 		evDragId = ev.id;
 		evDragEvent = ev;
@@ -208,7 +321,8 @@
 		const ev = evDragEvent;
 		if (!drag || !ev || evDragId !== ev.id) return;
 		const dx = e.clientX - evDragStartX;
-		if (!evDragStarted && Math.abs(dx) < DRAG_THRESHOLD) return;
+		const dy = e.clientY - evDragStartY;
+		if (!evDragStarted && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
 
 		if (!evDragStarted) {
 			evDragStarted = true;
@@ -217,8 +331,10 @@
 		}
 
 		const cellW = getCellWidth();
+		const rowH = getRowHeight();
 		const dayOffset = Math.round(dx / cellW);
-		const deltaMs = dayOffset * DAY_MS;
+		const weekOffset = Math.round(dy / rowH);
+		const deltaMs = (dayOffset + weekOffset * 7) * DAY_MS;
 		drag.updatePointer(
 			new Date(ev.start.getTime() + deltaMs),
 			new Date(ev.end.getTime() + deltaMs),
@@ -251,7 +367,7 @@
 	}
 </script>
 
-<div class="wg" style={style || undefined} style:height="{height}px">
+<div class="wg" style={style || undefined} style:height={height ? `${height}px` : '100%'}>
 	<div
 		class="wg-body"
 		bind:this={el}
@@ -260,14 +376,7 @@
 		aria-label="Multi-week calendar grid"
 	>
 		{#each weeks as week (week.weekStart)}
-			<div class="wg-week" class:wg-week--current={week.isCurrent}>
-				<!-- Month gutter (left) -->
-				<div class="wg-gutter">
-					{#if week.monthLabel}
-						<span class="wg-gutter-month">{week.monthLabel}</span>
-					{/if}
-				</div>
-
+			<div class="wg-week" class:wg-week--current={week.isCurrent} data-week={week.weekStart}>
 				<div class="wg-week-body">
 					<!-- Day columns (header inside each cell) -->
 					<div class="wg-days">
@@ -283,13 +392,17 @@
 								onclick={(e) => handleDayCellClick(day.ms, e)}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDayCellClick(day.ms, e); } }}
 							>
-								<!-- Day label inside the cell -->
+								<!-- Day label in top-right corner -->
 								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
-									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
 									<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
 										{day.dayNum}
 									</span>
+									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
 								</div>
+
+								{#if day.monthLabel}
+									<span class="wg-cell-month">{day.monthLabel}</span>
+								{/if}
 
 								<!-- Events -->
 								<div class="wg-cell-events">
@@ -308,29 +421,13 @@
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 										>
 											<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
-											<span class="wg-ev-title">{ev.title}</span>										{#if ev.subtitle}
-											<span class="wg-ev-sub">{ev.subtitle}</span>
-										{/if}
-										{#if ev.tags?.length}
-											<span class="wg-ev-tags">
-												{#each ev.tags as tag}
-													<span class="wg-ev-tag">{tag}</span>
-												{/each}
-											</span>
-										{/if}										</div>
+										<span class="wg-ev-title">{ev.title}</span>
+										</div>
 									{/each}
 									{#if day.events.length > MAX_EVENTS_SHOWN}
 										<div class="wg-ev-more">+{day.events.length - MAX_EVENTS_SHOWN} more</div>
 									{/if}
 								</div>
-
-								<!-- Now indicator with time -->
-								{#if day.isToday}
-									<div class="wg-now" style:top="calc({nowFrac * 100}% + 28px)">
-										<span class="wg-now-time">{fmtNowTime(clock.tick)}</span>
-										<div class="wg-now-line"></div>
-									</div>
-								{/if}
 							</div>
 						{/each}
 					</div>
@@ -340,13 +437,15 @@
 	</div>
 
 	{#if scrolled}
-		<button class="wg-btn" onclick={jumpToday}>
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-				<circle cx="12" cy="12" r="10" />
-				<circle cx="12" cy="12" r="3" fill="currentColor"/>
-			</svg>
-			Today
-		</button>
+		<nav class="wg-nav" aria-label="Week navigation">
+			<button
+				class="wg-nav-pill"
+				onclick={jumpToday}
+				aria-label="Go to today"
+			>
+				Today
+			</button>
+		</nav>
 	{/if}
 </div>
 
@@ -354,9 +453,6 @@
 	/* ─── Container ──────────────────────────────────── */
 	.wg {
 		position: relative;
-		background: var(--dt-bg, #fff);
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
-		border-radius: 10px;
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
@@ -383,29 +479,16 @@
 	/* ─── Week row ───────────────────────────────────── */
 	.wg-week {
 		display: flex;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-radius: 10px;
+		margin: 12px 8px;
+		border: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		overflow: hidden;
 	}
 
 	.wg-week--current {
 		background: var(--dt-today-bg, rgba(239, 68, 68, 0.02));
-	}
-
-	/* ─── Left gutter (month label) ──────────────────── */
-	.wg-gutter {
-		flex-shrink: 0;
-		width: 48px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
-	}
-
-	.wg-gutter-month {
-		font: 800 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.45));
-		writing-mode: vertical-rl;
-		transform: rotate(180deg);
+		border: 2.5px solid var(--dt-accent, #ef4444);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--dt-accent, #ef4444) 15%, transparent);
 	}
 
 	/* ─── Week body ──────────────────────────────────── */
@@ -425,8 +508,8 @@
 	.wg-cell {
 		flex: 1;
 		position: relative;
-		min-height: 130px;
-		padding: 0 4px 8px;
+		min-height: 170px;
+		padding: 4px 4px 8px;
 		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.06));
 		cursor: pointer;
 		transition: background 0.15s;
@@ -438,27 +521,34 @@
 	.wg-cell--today { background: var(--dt-today-bg, rgba(239, 68, 68, 0.03)); }
 	.wg-cell--today:hover { background: rgba(239, 68, 68, 0.05); }
 
-	.wg-cell--past { opacity: 0.55; }
-	.wg-cell--past:hover { opacity: 0.75; }
+	/* Dim all cells by default; current week overrides to full brightness */
+	.wg-cell { opacity: 0.55; }
+	.wg-cell:hover { opacity: 0.75; }
+	.wg-week--current .wg-cell { opacity: 1; }
+	.wg-week--current .wg-cell--past { opacity: 0.8; }
+	.wg-week--current .wg-cell--past:hover { opacity: 0.9; }
 
 	.wg-cell--weekend { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }
 
-	/* ─── Cell header (day label inside cell) ────────── */
+	/* ─── Cell header (day label top-right) ──────────── */
 	.wg-cell-hd {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: 5px;
-		padding: 6px 0 6px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.04));
-		margin-bottom: 4px;
+		justify-content: flex-end;
+		gap: 4px;
+		padding: 4px 5px 2px 0;
+		margin-bottom: 2px;
 	}
 
 	.wg-day-wd {
-		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.3));
+	}
+
+	.wg-week--current .wg-day-wd {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.5));
 	}
 
 	.wg-cell-hd--today .wg-day-wd {
@@ -471,20 +561,37 @@
 		color: var(--dt-text, rgba(0, 0, 0, 0.85));
 	}
 
+	.wg-week--current .wg-day-num {
+		color: var(--dt-text, rgba(0, 0, 0, 0.95));
+	}
+
 	.wg-day-num--today {
-		background: var(--dt-accent, #ef4444);
-		color: #fff;
-		width: 26px;
-		height: 26px;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 50%;
-		font-size: 13px;
+		color: var(--dt-accent, #ef4444);
+		font-weight: 900;
+	}
+
+	/* ─── Month label (top-left, behind events) ─────── */
+	.wg-cell-month {
+		position: absolute;
+		left: 4px;
+		top: 4px;
+		writing-mode: vertical-rl;
+		transform: rotate(180deg);
+		font: 800 22px / 1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: color-mix(in srgb, var(--dt-text, rgba(255,255,255,0.85)) 4%, transparent);
+		pointer-events: none;
+		white-space: nowrap;
+	}
+
+	.wg-week--current .wg-cell-month {
+		color: color-mix(in srgb, var(--dt-text, rgba(255,255,255,0.85)) 8%, transparent);
 	}
 
 	/* ─── Events ─────────────────────────────────────── */
 	.wg-cell-events {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 3px;
@@ -497,14 +604,14 @@
 		gap: 3px 5px;
 		padding: 3px 6px;
 		border-radius: 4px;
-		background: color-mix(in srgb, var(--ev-color) 12%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, #10141c));
 		cursor: pointer;
 		overflow: hidden;
 		transition: background 0.12s;
 	}
 
 	.wg-ev:hover {
-		background: color-mix(in srgb, var(--ev-color) 22%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, #10141c));
 	}
 
 	.wg-ev--selected {
@@ -512,7 +619,7 @@
 	}
 
 	.wg-ev--current {
-		background: color-mix(in srgb, var(--ev-color) 18%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
 	}
 
 	.wg-ev-time {
@@ -530,29 +637,6 @@
 		text-overflow: ellipsis;
 	}
 
-	.wg-ev-sub {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.4));
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.wg-ev-tags {
-		display: flex;
-		gap: 3px;
-		flex-shrink: 0;
-	}
-
-	.wg-ev-tag {
-		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--ev-color, var(--dt-accent));
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
-		padding: 1px 4px;
-		border-radius: 3px;
-		white-space: nowrap;
-	}
-
 	.wg-ev-more {
 		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.35));
@@ -564,58 +648,48 @@
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.55));
 	}
 
-	/* ─── Now indicator with time label ──────────────── */
-	.wg-now {
+	/* ─── Navigation pill ────────────────────────────── */
+	.wg-nav {
 		position: absolute;
-		left: 0;
-		right: 0;
-		z-index: 4;
-		pointer-events: none;
-		display: flex;
-		align-items: center;
-		gap: 0;
-	}
-
-	.wg-now-time {
-		flex-shrink: 0;
-		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-accent, #ef4444);
-		padding: 1px 4px;
-		background: color-mix(in srgb, var(--dt-accent, #ef4444) 12%, var(--dt-bg, #fff));
-		border-radius: 3px;
-		margin-left: -2px;
-	}
-
-	.wg-now-line {
-		flex: 1;
-		height: 1px;
-		background: var(--dt-accent, #ef4444);
-		opacity: 0.35;
-	}
-
-	/* ─── Jump button ────────────────────────────────── */
-	.wg-btn {
-		position: absolute;
-		bottom: 14px;
+		top: 22px;
 		right: 14px;
 		z-index: 20;
+		display: flex;
+		gap: 2px;
+		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		border-radius: 8px;
+		padding: 2px;
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		animation: wg-nav-in 200ms ease both;
+	}
+	@keyframes wg-nav-in {
+		from { opacity: 0; transform: translateY(-6px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+	.wg-nav-pill {
+		border: none;
+		background: transparent;
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
+		cursor: pointer;
+		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 6px 12px;
+		border-radius: 6px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		transition: background 100ms, color 100ms;
 		display: inline-flex;
 		align-items: center;
-		gap: 5px;
-		padding: 5px 13px 5px 9px;
-		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: #fff;
-		background: var(--dt-accent, #ef4444);
-		border: none;
-		border-radius: 100px;
-		cursor: pointer;
-		box-shadow: 0 2px 16px color-mix(in srgb, var(--dt-accent, #ef4444) 35%, transparent);
-		transition: transform 120ms ease, box-shadow 120ms ease;
+		justify-content: center;
 	}
-
-	.wg-btn svg { width: 13px; height: 13px; }
-	.wg-btn:hover { transform: scale(1.06); }
-	.wg-btn:active { transform: scale(0.96); }
+	.wg-nav-pill:hover {
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+	}
+	.wg-nav-pill:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
+	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
 	.wg-cell:focus-visible {

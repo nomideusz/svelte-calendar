@@ -1,19 +1,848 @@
-<script lang="ts">
-	import PlannerDayVertical from './_internal/PlannerDayVertical.svelte';
-	import PlannerDayHorizontal from './_internal/PlannerDayHorizontal.svelte';
+<!--
+  Planner day mode — horizontal filmstrip timeline.
 
-	type PlannerDayLayout = 'vertical' | 'horizontal';
+  Time flows left → right. Past on the left, future on the right.
+  The now-line tracks the current time. Drag to scroll through days.
+  Events are positioned as horizontal cards with overlap support.
+-->
+<script lang="ts">
+	import { getContext, onMount, tick, untrack } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { createClock } from '../../core/clock.svelte.js';
+	import type { TimelineEvent } from '../../core/types.js';
+	import type { DragState } from '../../engine/drag.svelte.js';
+	import type { ViewState } from '../../engine/view-state.svelte.js';
+	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
+	import { fmtH, fmtTime } from '../../core/locale.js';
 
 	interface Props {
-		layout?: PlannerDayLayout;
+		/** Total height (null = fill parent) */
+		height?: number | null;
+		/** Events to render */
+		events?: TimelineEvent[];
+		/** Inline style for CSS variable overrides (theme) */
+		style?: string;
+		/** The date to centre this view on */
+		focusDate?: Date;
+		/** Locale for labels */
+		locale?: string;
+		/** Called when the user clicks an event */
+		oneventclick?: (event: TimelineEvent) => void;
+		/** Called when the user clicks an empty time slot */
+		oneventcreate?: (range: { start: Date; end: Date }) => void;
+		/** Currently selected event ID (for highlight) */
+		selectedEventId?: string | null;
+		/** Read-only mode */
+		readOnly?: boolean;
+		/** Visible hour range [startHour, endHour) */
+		visibleHours?: [number, number];
 		[key: string]: unknown;
 	}
 
-	let { layout = 'vertical', ...rest }: Props = $props();
+	let {
+		height = 520,
+		events = [],
+		style = '',
+		locale,
+		focusDate,
+		oneventclick,
+		oneventcreate,
+		selectedEventId = null,
+		readOnly = false,
+		visibleHours,
+	}: Props = $props();
+
+	// ── Context (available when inside Calendar) ──
+	const drag = getContext<DragState>('calendar:drag') as DragState | undefined;
+	const commitDragCtx = getContext<() => void>('calendar:commitDrag') as (() => void) | undefined;
+	const snapIntervalCtx = getContext<{ current: number }>('calendar:snapInterval');
+	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+
+	const clock = createClock();
+
+	// ─── State ──────────────────────────────────────────
+	let following = $state(true);
+	let scrollDragging = $state(false);
+	let wasDragging = false;
+	let el: HTMLDivElement;
+	let containerW = $state(0);
+	let containerH = $state(520);
+	let dragStartX = 0;
+	let dragScrollStart = 0;
+	let rafId = 0;
+
+	// ─── Infinite-scroll config ────────────────────────
+	const BUFFER_DAYS = 7;      // days rendered on each side of centre
+	const EDGE_DAYS = 2;        // rebase when this close to an edge
+	const SHIFT_DAYS = 5;       // days to shift per rebase
+
+	// Internal centre drives layout; syncs bidirectionally with focusDate.
+	const _initMs = untrack(() => sod(focusDate?.getTime() ?? Date.now()));
+	let internalCenterMs = $state(_initMs);
+	let lastExternalMs = _initMs;
+	let rebasing = false;
+	let visibleDayMs = $state(_initMs);
+
+	// ─── Derived Config ─────────────────────────────────
+	const startHour = $derived(visibleHours?.[0] ?? 0);
+	const endHour = $derived(visibleHours?.[1] ?? 24);
+	const hourCount = $derived(Math.max(1, endHour - startHour));
+	const SNAP_MS = $derived((snapIntervalCtx?.current ?? 15) * 60_000);
+	const DAY_GAP = 2;
+
+	const dateLabel = $derived(
+		new Date(visibleDayMs).toLocaleDateString(locale ?? 'en-US', {
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+		})
+	);
+
+	const count = 1 + 2 * BUFFER_DAYS;
+	const origin = $derived(internalCenterMs - BUFFER_DAYS * DAY_MS);
+
+	// Auto-calculate hourWidth — minimum 60px so hours stay readable.
+	// When 24h × 60px exceeds the container, the timeline scrolls horizontally.
+	const MIN_HOUR_W = 60;
+	const hourWidth = $derived(containerW > 0 ? Math.max(MIN_HOUR_W, containerW / hourCount) : 110);
+	const dayWidth = $derived(hourCount * hourWidth);
+	const totalWidth = $derived(count * (dayWidth + DAY_GAP));
+
+	// ─── Day Layouts ────────────────────────────────────
+	interface DayLayout {
+		ms: number;
+		today: boolean;
+		past: boolean;
+		x: number;
+	}
+
+	const days = $derived.by(() => {
+		const result: DayLayout[] = [];
+		for (let i = 0; i < count; i++) {
+			const ms = origin + i * DAY_MS;
+			result.push({
+				ms,
+				today: ms === clock.today,
+				past: ms < clock.today,
+				x: i * (dayWidth + DAY_GAP),
+			});
+		}
+		return result;
+	});
+
+	// ─── Coordinate Conversion ──────────────────────────
+	function timeToPx(ms: number): number {
+		const elapsed = ms - origin;
+		const dayIndex = Math.floor(elapsed / DAY_MS);
+		const hourInDay = (elapsed - dayIndex * DAY_MS) / HOUR_MS;
+		const hourOffset = hourInDay - startHour;
+		return dayIndex * (dayWidth + DAY_GAP) + hourOffset * hourWidth;
+	}
+
+	function pxToTime(px: number): number {
+		const dayStride = dayWidth + DAY_GAP;
+		const dayIndex = Math.max(0, Math.min(count - 1, Math.floor(px / dayStride)));
+		const localPx = px - dayIndex * dayStride;
+		const hour = startHour + localPx / hourWidth;
+		return origin + dayIndex * DAY_MS + hour * HOUR_MS;
+	}
+
+	const nowPx = $derived(timeToPx(clock.tick));
+
+	// ─── Event Layout ───────────────────────────────────
+	const CONTENT_TOP = 56;
+	const EVENT_GAP = 5;
+	const MIN_EVENT_H = 32;
+
+	interface PositionedEvent {
+		ev: TimelineEvent;
+		x: number;
+		width: number;
+		row: number;
+		groupMaxRow: number;
+		topPx: number;
+		heightPx: number;
+		isCurrent: boolean;
+		isDragged: boolean;
+	}
+
+	const positionedEvents = $derived.by(() => {
+		const now = clock.tick;
+		const dragP = drag?.active && drag.mode === 'move' ? drag.payload : null;
+
+		const staticEvents: typeof events = [];
+		let draggedEv: TimelineEvent | null = null;
+		for (const ev of events) {
+			if (dragP?.eventId === ev.id) draggedEv = ev;
+			else staticEvents.push(ev);
+		}
+
+		const sorted = [...staticEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
+
+		const infos = sorted.map((ev) => {
+			const s = ev.start.getTime();
+			const e = ev.end.getTime();
+			const x = timeToPx(s);
+			const xEnd = timeToPx(e);
+			return {
+				ev, x, width: Math.max(xEnd - x, 28), row: 0, groupMaxRow: 1,
+				isCurrent: s <= now && e > now, isDragged: false, startMs: s, endMs: e,
+			};
+		});
+
+		// Union-find overlap groups
+		const par = infos.map((_, i) => i);
+		function find(i: number): number {
+			while (par[i] !== i) { par[i] = par[par[i]]; i = par[i]; }
+			return i;
+		}
+		for (let i = 0; i < infos.length; i++) {
+			for (let j = i + 1; j < infos.length; j++) {
+				if (infos[j].startMs < infos[i].endMs) par[find(i)] = find(j);
+				else break;
+			}
+		}
+
+		const groups = new Map<number, number[]>();
+		for (let i = 0; i < infos.length; i++) {
+			const root = find(i);
+			if (!groups.has(root)) groups.set(root, []);
+			groups.get(root)!.push(i);
+		}
+
+		for (const [, indices] of groups) {
+			const rows: number[] = [];
+			for (const idx of indices) {
+				const inf = infos[idx];
+				let row = 0;
+				for (let r = 0; r < rows.length; r++) {
+					if (rows[r] <= inf.startMs) { row = r; rows[r] = inf.endMs; break; }
+					row = r + 1;
+				}
+				if (row >= rows.length) rows.push(inf.endMs);
+				infos[idx].row = row;
+			}
+			for (const idx of indices) infos[idx].groupMaxRow = rows.length;
+		}
+
+		const availH = containerH - CONTENT_TOP - 8;
+		const result: PositionedEvent[] = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
+			const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
+			const topPx = CONTENT_TOP + info.row * (availH / info.groupMaxRow);
+			return { ...info, topPx, heightPx: laneH };
+		});
+
+		if (draggedEv && dragP) {
+			const x = timeToPx(dragP.start.getTime());
+			const xEnd = timeToPx(dragP.end.getTime());
+			result.push({
+				ev: draggedEv, x, width: Math.max(xEnd - x, 28),
+				row: 0, groupMaxRow: 1,
+				topPx: CONTENT_TOP,
+				heightPx: Math.max(MIN_EVENT_H, availH - EVENT_GAP),
+				isCurrent: draggedEv.start.getTime() <= now && draggedEv.end.getTime() > now,
+				isDragged: true,
+			});
+		}
+
+		return result;
+	});
+
+	// ─── Infinite-scroll helpers ────────────────────────
+
+	/** Detect external focusDate changes (from toolbar arrows). */
+	$effect(() => {
+		const ext = focusDate ? sod(focusDate.getTime()) : clock.today;
+		if (ext !== lastExternalMs && !rebasing) {
+			lastExternalMs = ext;
+			internalCenterMs = ext;
+			visibleDayMs = ext;
+			following = false;
+			// After DOM update, recenter scroll on focus day.
+			tick().then(() => {
+				if (el) {
+					const focusX = BUFFER_DAYS * (dayWidth + DAY_GAP);
+					el.scrollLeft = focusX + dayWidth / 2 - el.clientWidth / 2;
+				}
+			});
+		}
+	});
+
+	/** Check if viewport is near an edge; if so, rebase the window. */
+	function checkEdges() {
+		if (!el || !viewState || rebasing) return;
+		const stride = dayWidth + DAY_GAP;
+		const threshold = stride * EDGE_DAYS;
+		const maxScroll = el.scrollWidth - el.clientWidth;
+
+		if (el.scrollLeft < threshold) {
+			rebase(-1);
+		} else if (maxScroll > 0 && maxScroll - el.scrollLeft < threshold) {
+			rebase(1);
+		}
+	}
+
+	/** Shift the rendered window by SHIFT_DAYS in the given direction. */
+	function rebase(direction: number) {
+		if (rebasing) return;
+		rebasing = true;
+
+		const shift = SHIFT_DAYS * direction;
+		const stride = dayWidth + DAY_GAP;
+		const adj = -shift * stride;
+
+		// Pre-compensate scroll so the viewport stays visually stable.
+		if (el) el.scrollLeft += adj;
+		dragScrollStart += adj;
+
+		internalCenterMs += shift * DAY_MS;
+		lastExternalMs = internalCenterMs;
+		viewState?.setFocusDate(new Date(internalCenterMs));
+
+		tick().then(() => { rebasing = false; });
+	}
+
+	/** Push the currently visible centre day to viewState (updates Calendar date label). */
+	function syncFocusFromScroll() {
+		if (!el || !viewState || following || rebasing) return;
+		const centerX = el.scrollLeft + el.clientWidth / 2;
+		const centerDayMs = sod(pxToTime(centerX));
+		visibleDayMs = centerDayMs;
+		if (centerDayMs !== lastExternalMs) {
+			lastExternalMs = centerDayMs;
+			viewState.setFocusDate(new Date(centerDayMs));
+		}
+	}
+
+	// ─── Lifecycle ──────────────────────────────────────
+	onMount(() => {
+		const ro = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				containerW = entry.contentRect.width;
+				containerH = entry.contentRect.height;
+			}
+		});
+		ro.observe(el);
+
+		function frame() {
+			if (following && el && !scrollDragging) {
+				// Ensure today is in the strip.
+				if (internalCenterMs !== clock.today) {
+					internalCenterMs = clock.today;
+					lastExternalMs = clock.today;
+					viewState?.goToday();
+				}
+				visibleDayMs = clock.today;
+				const todayD = days.find((d) => d.today);
+				if (todayD) {
+					el.scrollLeft = todayD.x + dayWidth / 2 - el.clientWidth / 2;
+				}
+			} else if (el && !rebasing) {
+				checkEdges();
+				syncFocusFromScroll();
+			}
+			rafId = requestAnimationFrame(frame);
+		}
+		rafId = requestAnimationFrame(frame);
+		return () => { cancelAnimationFrame(rafId); ro.disconnect(); };
+	});
+
+	// ─── Drag-to-scroll ─────────────────────────────────
+	const SCROLL_THRESHOLD = 3;
+
+	function onPointerDown(e: PointerEvent) {
+		if (e.button !== 0) return;
+		if (!readOnly) return; // drag-to-scroll only in read-only mode
+		if ((e.target as HTMLElement).closest('.fs-event')) return;
+		dragStartX = e.clientX;
+		dragScrollStart = el.scrollLeft;
+		window.addEventListener('pointermove', onScrollMove);
+		window.addEventListener('pointerup', onScrollUp, { once: true });
+		window.addEventListener('pointercancel', onScrollUp, { once: true });
+	}
+
+	function onScrollMove(e: PointerEvent) {
+		const dx = e.clientX - dragStartX;
+		if (!scrollDragging && Math.abs(dx) >= SCROLL_THRESHOLD) {
+			scrollDragging = true;
+			wasDragging = true;
+			following = false;
+		}
+		if (scrollDragging) el.scrollLeft = dragScrollStart - dx;
+	}
+
+	function onScrollUp() {
+		window.removeEventListener('pointermove', onScrollMove);
+		window.removeEventListener('pointerup', onScrollUp);
+		window.removeEventListener('pointercancel', onScrollUp);
+		scrollDragging = false;
+	}
+
+	// ─── Click-to-create ────────────────────────────────
+	function handleTrackClick(e: MouseEvent) {
+		if (wasDragging) { wasDragging = false; return; }
+		if (!oneventcreate || readOnly) return;
+		if ((e.target as HTMLElement).closest('.fs-event')) return;
+
+		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+		const clickX = e.clientX - rect.left + el.scrollLeft;
+
+		for (const d of days) {
+			if (clickX >= d.x && clickX < d.x + dayWidth) {
+				const frac = (clickX - d.x) / dayWidth;
+				const hour = Math.floor(startHour + frac * hourCount);
+				const start = new Date(d.ms + hour * HOUR_MS);
+				const end = new Date(d.ms + (hour + 1) * HOUR_MS);
+				oneventcreate({ start, end });
+				return;
+			}
+		}
+	}
+
+	// ─── Event drag-to-move ─────────────────────────────
+	const DRAG_THRESHOLD = 5;
+	let evDragStartX = 0;
+	let evDragOriginPx = 0;
+	let evDragStarted = false;
+	let evDragging = $state(false);
+	let evDragId = $state<string | null>(null);
+	let evDragEvent: TimelineEvent | null = null;
+
+	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
+		if (e.button !== 0 || !drag || readOnly) return;
+		e.stopPropagation();
+		evDragStartX = e.clientX;
+		evDragOriginPx = timeToPx(ev.start.getTime());
+		evDragStarted = false;
+		evDragId = ev.id;
+		evDragEvent = ev;
+		window.addEventListener('pointermove', onEvMove);
+		window.addEventListener('pointerup', onEvUp, { once: true });
+		window.addEventListener('pointercancel', onEvCancel, { once: true });
+	}
+
+	function onEvMove(e: PointerEvent) {
+		const ev = evDragEvent;
+		if (!drag || !ev || evDragId !== ev.id) return;
+		const dx = e.clientX - evDragStartX;
+		if (!evDragStarted && Math.abs(dx) < DRAG_THRESHOLD) return;
+
+		if (!evDragStarted) {
+			evDragStarted = true;
+			evDragging = true;
+			drag.beginMove(ev.id, ev.start, ev.end);
+		}
+
+		const duration = ev.end.getTime() - ev.start.getTime();
+		const raw = pxToTime(evDragOriginPx + dx);
+		const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
+		drag.updatePointer(new Date(snapped), new Date(snapped + duration));
+	}
+
+	function cleanupEvDrag() {
+		window.removeEventListener('pointermove', onEvMove);
+		window.removeEventListener('pointerup', onEvUp);
+		window.removeEventListener('pointercancel', onEvCancel);
+		evDragStarted = false;
+		evDragging = false;
+		evDragId = null;
+		evDragEvent = null;
+	}
+
+	function onEvUp() {
+		if (!drag) { cleanupEvDrag(); return; }
+		if (!evDragStarted && evDragEvent) oneventclick?.(evDragEvent);
+		else if (evDragStarted) commitDragCtx?.();
+		cleanupEvDrag();
+	}
+
+	function onEvCancel() {
+		if (drag && evDragStarted) drag.cancel();
+		cleanupEvDrag();
+	}
 </script>
 
-{#if layout === 'horizontal'}
-	<PlannerDayHorizontal {...rest} />
-{:else}
-	<PlannerDayVertical {...rest} />
-{/if}
+<div class="fs" style={style || undefined} style:height={height ? `${height}px` : '100%'} role="region" aria-label="Day planner">
+	<div
+		class="fs-scroll"
+		class:fs-grabbing={scrollDragging}
+		class:fs-readonly={readOnly}
+		bind:this={el}
+		onwheel={(e) => { e.preventDefault(); el.scrollLeft += e.deltaY || e.deltaX; following = false; }}
+		onpointerdown={onPointerDown}
+		role="application"
+		aria-label="Scrollable day planner"
+	>
+		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="none">
+			{#each days as d (d.ms)}
+				<div
+					class="fs-day"
+					class:fs-today={d.today}
+					class:fs-past={d.past}
+					style:left="{d.x}px"
+					style:width="{dayWidth}px"
+				>
+					{#each { length: hourCount } as _, h}
+						{@const hour = startHour + h}
+						{@const x = h * hourWidth}
+						<div class="fs-tick" style:left="{x}px">
+							<span class="fs-tick-lb">{fmtH(hour, locale)}</span>
+						</div>
+						<div class="fs-tick fs-tick--half" style:left="{x + hourWidth * 0.5}px"></div>
+					{/each}
+				</div>
+			{/each}
+
+			<!-- Now line -->
+			<div class="fs-now" style:left="{nowPx}px">
+				<span class="fs-now-tag">{clock.hm}<span class="fs-now-sec">{clock.s}</span></span>
+				<div class="fs-now-line"></div>
+			</div>
+
+			<!-- Events -->
+			{#each positionedEvents as p (p.ev.id)}
+				<div
+					class="fs-event"
+					class:fs-event--selected={selectedEventId === p.ev.id}
+					class:fs-event--current={p.isCurrent}
+					class:fs-event--dragging={p.isDragged}
+					style:left="{p.x}px"
+					style:width="{p.width}px"
+					style:top="{p.topPx}px"
+					style:height="{p.heightPx}px"
+					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
+					role="button"
+					tabindex="0"
+					aria-label="{p.ev.title}{p.isCurrent ? ' (in progress)' : ''}"
+					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
+					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
+				>
+					<div class="fs-ev-inner">
+						{#if p.isCurrent}
+							<span class="fs-ev-live" aria-hidden="true"></span>
+						{/if}
+						{#if p.heightPx > 64}
+							<span class="fs-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
+						{/if}
+						<span class="fs-ev-title">{p.ev.title}</span>
+						{#if p.ev.subtitle && p.heightPx > 48}
+							<span class="fs-ev-sub">{p.ev.subtitle}</span>
+						{/if}
+						{#if p.ev.tags?.length && p.heightPx > 72}
+							<span class="fs-ev-tags">
+								{#each p.ev.tags as tag}
+									<span class="fs-ev-tag">{tag}</span>
+								{/each}
+							</span>
+						{/if}
+					</div>
+				</div>
+			{/each}
+		</div>
+	</div>
+
+	<div class="fs-date-label">{dateLabel}</div>
+
+	<nav class="fs-nav" aria-label="Day navigation">
+		<button
+			class="fs-nav-pill fs-nav-today"
+			class:fs-nav-today--hidden={following}
+			onclick={() => { internalCenterMs = clock.today; lastExternalMs = clock.today; viewState?.goToday(); following = true; }}
+			aria-label="Go to today"
+			tabindex={following ? -1 : 0}
+		>
+			Today
+		</button>
+		<button
+			class="fs-nav-pill"
+			onclick={() => { const prev = internalCenterMs - DAY_MS; internalCenterMs = prev; lastExternalMs = prev; viewState?.prev(); following = false; }}
+			aria-label="Previous day"
+		>
+			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
+		</button>
+		<button
+			class="fs-nav-pill"
+			onclick={() => { const next = internalCenterMs + DAY_MS; internalCenterMs = next; lastExternalMs = next; viewState?.next(); following = false; }}
+			aria-label="Next day"
+		>
+			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+		</button>
+	</nav>
+</div>
+
+<style>
+	/* ─── Container ──────────────────────────────────── */
+	.fs {
+		position: relative;
+		overflow: hidden;
+		user-select: none;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* ─── Horizontal scroll ──────────────────────────── */
+	.fs-scroll {
+		width: 100%;
+		height: 100%;
+		overflow-x: auto;
+		overflow-y: hidden;
+		touch-action: pan-x;
+		cursor: default;
+		scrollbar-width: thin;
+		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.08)) transparent;
+	}
+	.fs-scroll::-webkit-scrollbar { height: 5px; }
+	.fs-scroll::-webkit-scrollbar-thumb {
+		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.08));
+		border-radius: 4px;
+	}
+	.fs-scroll::-webkit-scrollbar-track { background: transparent; }
+	.fs-readonly { cursor: grab; }
+	.fs-grabbing { cursor: grabbing; }
+
+	.fs-track {
+		position: relative;
+		height: 100%;
+	}
+
+	/* ─── Day block ──────────────────────────────────── */
+	.fs-day {
+		position: absolute;
+		top: 0;
+		height: 100%;
+		border-left: 1px solid var(--dt-border-day, rgba(148, 163, 184, 0.14));
+		box-sizing: border-box;
+	}
+	.fs-day:first-of-type { border-left: none; }
+	.fs-today { background: var(--dt-today-bg, rgba(239, 68, 68, 0.025)); }
+	.fs-past { opacity: 0.7; }
+
+	/* ─── Hour ticks ─────────────────────────────────── */
+	.fs-tick {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 0;
+	}
+	.fs-tick::before {
+		content: '';
+		position: absolute;
+		top: 18px;
+		bottom: 0;
+		width: 1px;
+		background: var(--dt-border, rgba(148, 163, 184, 0.07));
+	}
+	.fs-tick-lb {
+		position: absolute;
+		top: 2px;
+		left: 5px;
+		font: 500 10px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text-3, rgba(100, 116, 139, 0.7));
+		white-space: nowrap;
+		pointer-events: none;
+	}
+	.fs-tick--half { bottom: auto; height: calc(18px + 8px); }
+	.fs-tick--half::before {
+		top: 18px;
+		height: 6px;
+		bottom: auto;
+		opacity: 0.4;
+	}
+
+	/* ─── Now-line ────────────────────────────────────── */
+	.fs-now {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		z-index: 10;
+		pointer-events: none;
+		transform: translateX(-1px);
+	}
+	.fs-now-line {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 2px;
+		background: var(--dt-accent, #ef4444);
+		box-shadow: 0 0 8px var(--dt-glow, rgba(239, 68, 68, 0.35));
+	}
+	.fs-now-tag {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		font: 700 11px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-accent, #ef4444);
+		background: color-mix(in srgb, var(--dt-bg, #0b0e14) 92%, var(--dt-accent, #ef4444));
+		border: 1px solid var(--dt-accent-dim, rgba(239, 68, 68, 0.18));
+		padding: 3px 6px;
+		border-radius: 4px;
+		white-space: nowrap;
+		z-index: 1;
+	}
+	.fs-now-sec {
+		font-weight: 400;
+		opacity: 0.5;
+		font-size: 10px;
+	}
+
+	/* ─── Floating date label ────────────────────────── */
+	.fs-date-label {
+		position: absolute;
+		top: 22px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 20;
+		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		padding: 8px 16px;
+		border-radius: 8px;
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		pointer-events: none;
+		white-space: nowrap;
+	}
+
+	/* ─── Navigation pills ────────────────────────────── */
+	.fs-nav {
+		position: absolute;
+		top: 22px;
+		right: 14px;
+		z-index: 20;
+		display: flex;
+		gap: 2px;
+		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		border-radius: 8px;
+		padding: 2px;
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+	}
+	.fs-nav-pill {
+		border: none;
+		background: transparent;
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
+		cursor: pointer;
+		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		padding: 6px 12px;
+		border-radius: 6px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		transition: background 100ms, color 100ms;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.fs-nav-pill:hover {
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+	}
+	.fs-nav-today {
+		max-width: 60px;
+		overflow: hidden;
+		white-space: nowrap;
+		transition: max-width 250ms ease, padding 250ms ease, opacity 200ms ease;
+	}
+	.fs-nav-today--hidden {
+		max-width: 0;
+		padding-left: 0;
+		padding-right: 0;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.fs-nav-pill:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
+	}
+
+	/* ─── Events ─────────────────────────────────────── */
+	.fs-event {
+		position: absolute;
+		z-index: 6;
+		border-radius: 6px;
+		cursor: pointer;
+		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, #10141c));
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: box-shadow 120ms, background 120ms;
+	}
+	.fs-event:hover {
+		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, #10141c));
+		box-shadow: 0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);
+	}
+	.fs-event--selected {
+		box-shadow: 0 0 0 2px var(--ev-color), 0 2px 14px color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
+	.fs-event--current {
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ev-color) 20%, transparent);
+	}
+	.fs-event--dragging {
+		opacity: 0.85;
+		z-index: 50;
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+		cursor: grabbing;
+		transition: none;
+	}
+
+	/* Event inner (vertical text, bottom-to-top reading) */
+	.fs-ev-inner {
+		writing-mode: vertical-rl;
+		transform: rotate(180deg);
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		max-height: 100%;
+		overflow: hidden;
+		padding: 8px 4px;
+	}
+	.fs-ev-live {
+		flex-shrink: 0;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--ev-color);
+	}
+	.fs-ev-title {
+		font: 600 13px/1.15 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.92));
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.fs-ev-time {
+		font: 400 10px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.72));
+		opacity: 0.7;
+		white-space: nowrap;
+	}
+	.fs-ev-sub {
+		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.72));
+		opacity: 0.6;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fs-ev-tags { display: flex; gap: 4px; }
+	.fs-ev-tag {
+		font: 500 8px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 18%, transparent);
+		padding: 1px 4px;
+		border-radius: 3px;
+		white-space: nowrap;
+	}
+
+	/* ─── Focus-visible ──────────────────────────────── */
+	.fs-event:focus-visible {
+		outline: 2px solid var(--dt-accent, #ef4444);
+		outline-offset: 2px;
+	}
+</style>
+
+

@@ -111,3 +111,34 @@ export function fmtWeekRange(weekStartMs, locale) {
     }
     return `${sm} ${s.getDate()} – ${e.getDate()}, ${ey}`;
 }
+// ─── Shared time / duration formatting ──────────────────
+/**
+ * Format a Date as a compact time string.
+ *
+ * 12-hour locales → "9a", "12:30p"
+ * 24-hour locales → "9:00", "14:30"
+ */
+export function fmtTime(d, locale) {
+    if (is24HourLocale(locale)) {
+        const h = d.getHours();
+        const m = d.getMinutes();
+        return m === 0 ? String(h) : `${h}:${String(m).padStart(2, '0')}`;
+    }
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const suffix = h >= 12 ? 'p' : 'a';
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return m === 0 ? `${h12}${suffix}` : `${h12}:${String(m).padStart(2, '0')}${suffix}`;
+}
+/**
+ * Format the duration between two Dates as a compact string.
+ * e.g. "45m", "1h", "1h 30m"
+ */
+export function fmtDuration(start, end) {
+    const mins = Math.round((end.getTime() - start.getTime()) / 60_000);
+    if (mins < 60)
+        return `${mins}m`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}

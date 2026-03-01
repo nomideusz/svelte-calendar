@@ -29,7 +29,7 @@
 		api?: string;
 		/** JSON string of events for static/inline data (alternative to api) */
 		events?: string;
-		/** Theme preset name: midnight, parchment, indigo, neutral, bare */
+		/** Theme preset name: midnight, neutral */
 		theme?: string;
 		/** Default view ID */
 		view?: string;

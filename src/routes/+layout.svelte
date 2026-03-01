@@ -102,4 +102,28 @@
 		border-color: rgba(148, 163, 184, 0.2);
 	}
 	.site-gh svg { opacity: 0.65; }
+
+	/* ─── Neutral (light) theme overrides ────────────── */
+	:global([data-theme="neutral"]) .site-logo {
+		color: rgba(0, 0, 0, 0.85);
+	}
+	:global([data-theme="neutral"]) .site-link {
+		color: rgba(0, 0, 0, 0.4);
+	}
+	:global([data-theme="neutral"]) .site-link:hover {
+		color: rgba(0, 0, 0, 0.75);
+		background: rgba(0, 0, 0, 0.04);
+	}
+	:global([data-theme="neutral"]) .site-link--active {
+		color: rgba(0, 0, 0, 0.8);
+	}
+	:global([data-theme="neutral"]) .site-gh {
+		color: rgba(0, 0, 0, 0.45);
+		border-color: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.03);
+	}
+	:global([data-theme="neutral"]) .site-gh:hover {
+		color: rgba(0, 0, 0, 0.75);
+		border-color: rgba(0, 0, 0, 0.18);
+	}
 </style>

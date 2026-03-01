@@ -90,3 +90,73 @@ export function dayNum(ms: number): number {
 export function dayOfWeek(ms: number): number {
 	return getDay(new Date(ms));
 }
+
+// ─── Multi-day event helpers ────────────────────────────
+
+import type { TimelineEvent } from './types.js';
+
+/** Does an event span more than one calendar day? */
+export function isMultiDay(ev: TimelineEvent): boolean {
+	return sod(ev.start.getTime()) !== sod(ev.end.getTime() - 1);
+}
+
+/** Is an event effectively all-day? (allDay flag, or spans ≥24h with midnight boundaries) */
+export function isAllDay(ev: TimelineEvent): boolean {
+	if (ev.allDay) return true;
+	const duration = ev.end.getTime() - ev.start.getTime();
+	if (duration < DAY_MS) return false;
+	const s = ev.start;
+	return s.getHours() === 0 && s.getMinutes() === 0 && s.getSeconds() === 0;
+}
+
+/**
+ * Describes how an event appears on a specific day.
+ */
+export interface DaySegment {
+	ev: TimelineEvent;
+	/** Effective start for this day (clamped to day start) */
+	start: Date;
+	/** Effective end for this day (clamped to day end) */
+	end: Date;
+	/** Is this the first day of the event? */
+	isStart: boolean;
+	/** Is this the last day of the event? */
+	isEnd: boolean;
+	/** 1-based day index within the span */
+	dayIndex: number;
+	/** Total number of days the event spans */
+	totalDays: number;
+	/** Is this an all-day event? */
+	allDay: boolean;
+}
+
+/**
+ * Compute how an event appears on a specific day.
+ * Returns null if the event doesn't overlap the day.
+ */
+export function segmentForDay(ev: TimelineEvent, dayMs: number): DaySegment | null {
+	const dayStart = sod(dayMs);
+	const dayEnd = dayStart + DAY_MS;
+	const evStart = ev.start.getTime();
+	const evEnd = ev.end.getTime();
+
+	// No overlap
+	if (evStart >= dayEnd || evEnd <= dayStart) return null;
+
+	const firstDayMs = sod(evStart);
+	// For end time: if event ends exactly at midnight, last day is the day before
+	const lastDayMs = sod(evEnd - 1);
+	const totalDays = Math.round((lastDayMs - firstDayMs) / DAY_MS) + 1;
+	const dayIndex = Math.round((dayStart - firstDayMs) / DAY_MS) + 1;
+
+	return {
+		ev,
+		start: new Date(Math.max(evStart, dayStart)),
+		end: new Date(Math.min(evEnd, dayEnd)),
+		isStart: dayStart === firstDayMs,
+		isEnd: dayStart === lastDayMs,
+		dayIndex,
+		totalDays,
+		allDay: isAllDay(ev),
+	};
+}

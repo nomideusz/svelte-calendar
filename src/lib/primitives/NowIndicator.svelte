@@ -13,6 +13,9 @@
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { getLabels } from '../core/locale.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		/** Visual mode */
@@ -53,15 +56,15 @@
 </script>
 
 {#if mode === 'badge'}
-	<span class="ni-badge" style={colorVar} role="status" aria-live="polite" aria-label="Current time: {time}">
+	<span class="ni-badge" style={colorVar} role="status" aria-live="polite" aria-label="{L.currentTime}: {time}">
 		{#if children}
 			{@render children()}
 		{:else}
-			now
+			{L.now}
 		{/if}
 	</span>
 {:else if mode === 'dot'}
-	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="Current time: {time}">
+	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="{L.currentTime}: {time}">
 		<div class="ni-dot-circle"></div>
 		{#if showLabel && time}
 			<div class="ni-label">
@@ -71,7 +74,7 @@
 		{/if}
 	</div>
 {:else}
-	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="Current time: {time}">
+	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="{L.currentTime}: {time}">
 		<div class="ni-line-bar"></div>
 		{#if showLabel && time}
 			<div class="ni-label">

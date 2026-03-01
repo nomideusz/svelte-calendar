@@ -10,6 +10,145 @@
 
 import { DAY_MS } from './time.js';
 
+// ─── Labels / i18n ──────────────────────────────────────
+
+/**
+ * All user-visible text in the calendar UI.
+ * Override via `setLabels()` for full localisation.
+ */
+export interface CalendarLabels {
+	// ── Day-relative ──
+	today: string;
+	yesterday: string;
+	tomorrow: string;
+
+	// ── View / section labels ──
+	day: string;
+	week: string;
+	planner: string;
+	agenda: string;
+	now: string;
+	free: string;
+	allDay: string;
+	done: string;
+	upNext: string;
+	until: string;
+
+	// ── Empty states ──
+	noEvents: string;
+	nothingScheduled: string;
+	nothingScheduledYet: string;
+	nothingWasScheduled: string;
+	allDoneForToday: string;
+
+	// ── Navigation ──
+	goToToday: string;
+	previousDay: string;
+	nextDay: string;
+	previousWeek: string;
+	nextWeek: string;
+
+	// ── Aria / accessibility labels ──
+	calendar: string;
+	viewMode: string;
+	dayNavigation: string;
+	weekNavigation: string;
+	dayPlanner: string;
+	scrollableDayPlanner: string;
+	todaysLineup: string;
+	weekAhead: string;
+	multiWeekGrid: string;
+	currentTime: string;
+	createEvent: string;
+	happeningNow: string;
+	past: string;
+	completed: string;
+	inProgress: string;
+
+	// ── Dynamic (parameterised) ──
+	/** e.g. "+3 more" */
+	nMore: (n: number) => string;
+	/** e.g. "5 events" */
+	nEvents: (n: number) => string;
+	/** e.g. "3 completed" */
+	nCompleted: (n: number) => string;
+	/** e.g. "day 2 of 4" */
+	dayNOfTotal: (current: number, total: number) => string;
+	/** e.g. "75% complete" */
+	percentComplete: (pct: number) => string;
+}
+
+/** English defaults — used unless overridden via `setLabels()`. */
+export const defaultLabels: CalendarLabels = {
+	today: 'Today',
+	yesterday: 'Yesterday',
+	tomorrow: 'Tomorrow',
+
+	day: 'Day',
+	week: 'Week',
+	planner: 'Planner',
+	agenda: 'Agenda',
+	now: 'now',
+	free: 'free',
+	allDay: 'All day',
+	done: 'Done',
+	upNext: 'Up next',
+	until: 'until',
+
+	noEvents: 'No events',
+	nothingScheduled: 'Nothing scheduled',
+	nothingScheduledYet: 'Nothing scheduled yet',
+	nothingWasScheduled: 'Nothing was scheduled',
+	allDoneForToday: 'All done for today',
+
+	goToToday: 'Go to today',
+	previousDay: 'Previous day',
+	nextDay: 'Next day',
+	previousWeek: 'Previous week',
+	nextWeek: 'Next week',
+
+	calendar: 'Calendar',
+	viewMode: 'View mode',
+	dayNavigation: 'Day navigation',
+	weekNavigation: 'Week navigation',
+	dayPlanner: 'Day planner',
+	scrollableDayPlanner: 'Scrollable day planner',
+	todaysLineup: "Today's lineup",
+	weekAhead: 'Week ahead',
+	multiWeekGrid: 'Multi-week calendar grid',
+	currentTime: 'Current time',
+	createEvent: 'Create event',
+	happeningNow: 'happening now',
+	past: 'past',
+	completed: 'completed',
+	inProgress: 'in progress',
+
+	nMore: (n) => `+${n} more`,
+	nEvents: (n) => `${n} event${n === 1 ? '' : 's'}`,
+	nCompleted: (n) => `${n} completed`,
+	dayNOfTotal: (current, total) => `day ${current} of ${total}`,
+	percentComplete: (pct) => `${pct}% complete`,
+};
+
+let _labels: CalendarLabels = { ...defaultLabels };
+
+/** Replace one or more UI labels. Merges with current labels. */
+export function setLabels(overrides: Partial<CalendarLabels>): void {
+	_labels = { ..._labels, ...overrides };
+}
+
+/** Reset all labels to English defaults. */
+export function resetLabels(): void {
+	_labels = { ...defaultLabels };
+}
+
+/** Get the currently active labels. */
+export function getLabels(): Readonly<CalendarLabels> {
+	return _labels;
+}
+
+// ─── Default locale ─────────────────────────────────────
+
 /** Module-level default locale — consumers can override via setDefaultLocale() */
 let defaultLocale = 'en-US';
 
@@ -96,10 +235,11 @@ export function fmtDay(
 ): string {
 	const loc = locale ?? defaultLocale;
 	const short = new Date(ms).toLocaleDateString(loc, { month: 'short', day: 'numeric' });
+	const L = _labels;
 
-	if (ms === todayMs) return opts?.short ? 'Today' : `Today · ${short}`;
-	if (ms === todayMs - DAY_MS) return opts?.short ? 'Yesterday' : `Yesterday · ${short}`;
-	if (ms === todayMs + DAY_MS) return opts?.short ? 'Tomorrow' : `Tomorrow · ${short}`;
+	if (ms === todayMs) return opts?.short ? L.today : `${L.today} · ${short}`;
+	if (ms === todayMs - DAY_MS) return opts?.short ? L.yesterday : `${L.yesterday} · ${short}`;
+	if (ms === todayMs + DAY_MS) return opts?.short ? L.tomorrow : `${L.tomorrow} · ${short}`;
 
 	if (opts?.short) {
 		return new Date(ms).toLocaleDateString(loc, { weekday: 'short', day: 'numeric' });

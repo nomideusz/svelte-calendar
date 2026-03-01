@@ -8,13 +8,6 @@ interface Props {
     viewState: ViewState;
     /** All registered views */
     views?: ViewOption[];
-    /** Show concept switch pills (Planner/Agenda) */
-    showConceptSwitch?: boolean;
-    /** Links to show in the toolbar */
-    links?: {
-        href: string;
-        label: string;
-    }[];
     /** Locale used for labels */
     locale?: string;
 }

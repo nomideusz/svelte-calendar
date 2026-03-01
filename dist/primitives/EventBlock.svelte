@@ -10,6 +10,7 @@
 -->
 <script lang="ts">
 	import type { TimelineEvent } from '../core/types.js';
+	import { fmtTime, fmtDuration } from '../core/locale.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -43,22 +44,6 @@
 		onclick,
 		children,
 	}: Props = $props();
-
-	function fmtTime(d: Date): string {
-		const h = d.getHours();
-		const m = d.getMinutes();
-		const suffix = h >= 12 ? 'p' : 'a';
-		const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-		return m === 0 ? `${h12}${suffix}` : `${h12}:${String(m).padStart(2, '0')}${suffix}`;
-	}
-
-	function fmtDuration(start: Date, end: Date): string {
-		const mins = Math.round((end.getTime() - start.getTime()) / 60_000);
-		if (mins < 60) return `${mins}m`;
-		const h = Math.floor(mins / 60);
-		const m = mins % 60;
-		return m > 0 ? `${h}h ${m}m` : `${h}h`;
-	}
 
 	const accentColor = $derived(event.color || 'var(--dt-accent, #ef4444)');
 

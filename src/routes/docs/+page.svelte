@@ -1,5 +1,10 @@
 <script lang="ts">
 	let { data } = $props();
+
+	$effect(() => {
+		document.body.style.background = '#08080c';
+		document.documentElement.dataset.theme = 'midnight';
+	});
 </script>
 
 <svelte:head>
@@ -15,9 +20,9 @@
 	.doc-content {
 		flex: 1;
 		min-width: 0;
-		max-width: 780px;
+		max-width: 1100px;
 		margin: 0 auto;
-		padding: 48px 48px 96px;
+		padding: 48px 24px 96px;
 		color: rgba(226, 232, 240, 0.82);
 		line-height: 1.7;
 	}

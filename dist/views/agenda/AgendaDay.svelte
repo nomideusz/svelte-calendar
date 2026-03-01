@@ -15,11 +15,9 @@
 	import { getContext } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, isAllDay, isMultiDay } from '../../core/time.js';
-	import { fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
+	import { sod, DAY_MS } from '../../core/time.js';
+	import { fmtTime as _fmtTime, fmtDuration } from '../../core/locale.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
-
-	const L = $derived(getLabels());
 
 	interface Props {
 		locale?: string;
@@ -56,7 +54,7 @@
 
 	function timeUntilMs(ms: number): string {
 		const diff = ms - clock.tick;
-		if (diff <= 0) return L.now;
+		if (diff <= 0) return 'now';
 		const tMins = Math.floor(diff / 60000);
 		if (tMins < 60) return `in ${tMins}m`;
 		const hrs = Math.floor(tMins / 60);
@@ -125,24 +123,18 @@
 	);
 
 	/** All events for this day, sorted chronologically */
-	const dayEvents = $derived.by((): TimelineEvent[] => {
+	const allDayEvents = $derived.by((): TimelineEvent[] => {
 		return events
 			.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs)
 			.sort((a, b) => a.start.getTime() - b.start.getTime());
 	});
-
-	/** All-day / multi-day events shown in a separate strip */
-	const allDayBanner = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
-
-	/** Timed events (non-all-day) for normal slot rendering */
-	const timedDayEvents = $derived(dayEvents.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
 
 	const dayCat = $derived.by(() => {
 		const now = clock.tick;
 		const past: TimelineEvent[] = [];
 		const current: TimelineEvent[] = [];
 		const upcoming: TimelineEvent[] = [];
-		for (const ev of timedDayEvents) {
+		for (const ev of allDayEvents) {
 			const s = ev.start.getTime();
 			const e = ev.end.getTime();
 			if (e <= now) past.push(ev);
@@ -170,31 +162,7 @@
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
 >
-	<div class="ag-body" role="list" aria-label={L.todaysLineup}>
-		{#if allDayBanner.length > 0}
-			<!-- ─── All-day / multi-day events ─── -->
-			<div class="ag-allday">
-				<div class="ag-allday-label">{L.allDay}</div>
-				<div class="ag-allday-items">
-					{#each allDayBanner as ev (ev.id)}
-						<div
-							class="ag-allday-chip"
-							class:ag-allday-chip--selected={selectedEventId === ev.id}
-							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							role="button"
-							tabindex="0"
-							aria-label="{ev.title}, {L.allDay}"
-							onclick={() => handleClick(ev)}
-							onkeydown={(e) => handleKeydown(e, ev)}
-						>
-							<span class="ag-allday-dot"></span>
-							<span class="ag-allday-title">{ev.title}</span>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
-
+	<div class="ag-body" role="list" aria-label="Today's lineup">
 		{#if isToday}
 			<!-- ─── Today: "The Queue" — upcoming is the hero ─── -->
 			<div class="ag-q">
@@ -202,14 +170,14 @@
 				<div class="ag-q-status">
 					{#if dayCat.past.length > 0}
 						<div class="ag-q-done-section">
-							<div class="ag-q-label">{L.done}</div>
+							<div class="ag-q-label">Done</div>
 							{#each dayCat.past as ev (ev.id)}
 								<div
 									class="ag-q-done-item"
 									class:ag-q-done-item--selected={selectedEventId === ev.id}
 									role="button"
 									tabindex="0"
-									aria-label="{ev.title}, {L.completed}, {fmtTime(ev.start)}"
+									aria-label="{ev.title}, completed, {fmtTime(ev.start)}"
 									onclick={() => handleClick(ev)}
 									onkeydown={(e) => handleKeydown(e, ev)}
 								>
@@ -220,7 +188,7 @@
 						</div>
 					{/if}
 
-					<div class="ag-q-label">{L.now} <span class="ag-q-clock">{clock.hm}</span></div>
+					<div class="ag-q-label">Now <span class="ag-q-clock">{clock.hm}</span></div>
 					{#if dayCat.current.length > 0}
 						{#each dayCat.current as ev (ev.id)}
 							<div
@@ -229,13 +197,13 @@
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
-								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(progress(ev) * 100))}"
+								aria-label="{ev.title}, happening now, {Math.round(progress(ev) * 100)}% complete"
 								onclick={() => handleClick(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
-								<div class="ag-q-now-time">{L.until} {fmtTime(ev.end)}</div>
+								<div class="ag-q-now-time">until {fmtTime(ev.end)}</div>
 								<div class="ag-q-now-track">
 									<div class="ag-q-now-fill" style:width="{progress(ev) * 100}%"></div>
 								</div>
@@ -243,17 +211,17 @@
 						{/each}
 					{:else}
 						<div class="ag-q-free">
-							<div class="ag-q-free-label">{L.free}</div>
+							<div class="ag-q-free-label">Free</div>
 						</div>
 					{/if}
 				</div>
 
 				<!-- NEXT: the hero center column -->
 				<div class="ag-q-queue">
-					<div class="ag-q-label">{L.upNext}</div>
+					<div class="ag-q-label">Up next</div>
 					{#if upcomingNext.length === 0}
 						<div class="ag-q-empty">
-							{dayCat.past.length > 0 ? L.allDoneForToday : L.nothingScheduled}
+							{dayCat.past.length > 0 ? 'All done for today' : 'Nothing scheduled'}
 						</div>
 					{:else}
 						{#each upcomingNext as ev, i (ev.id)}
@@ -298,10 +266,10 @@
 		{:else if isPastDay}
 			<!-- ─── Past day: "The Log" — everything happened ─── -->
 			<div class="ag-log">
-				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingWasScheduled}</div>
+				{#if allDayEvents.length === 0}
+					<div class="ag-q-empty">Nothing was scheduled</div>
 				{:else}
-					{#each timedDayEvents as ev (ev.id)}
+					{#each allDayEvents as ev (ev.id)}
 						<div
 							class="ag-log-row"
 							class:ag-log-row--selected={selectedEventId === ev.id}
@@ -325,10 +293,10 @@
 		{:else}
 			<!-- ─── Future day: "The Plan" — everything is ahead ─── -->
 			<div class="ag-plan">
-				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+				{#if allDayEvents.length === 0}
+					<div class="ag-q-empty">Nothing scheduled yet</div>
 				{:else}
-					{#each timedDayEvents as ev, i (ev.id)}
+					{#each allDayEvents as ev, i (ev.id)}
 						<div
 							class="ag-card ag-card--plan"
 							class:ag-card--first={i === 0}
@@ -371,27 +339,27 @@
 	<div class="ag-date-label">{dateLabel}</div>
 
 	<!-- ── Floating nav pills ── -->
-	<nav class="ag-nav" aria-label={L.dayNavigation}>
+	<nav class="ag-nav" aria-label="Day navigation">
 		<button
 			class="ag-nav-pill ag-nav-today"
 			class:ag-nav-today--hidden={isToday}
 			onclick={() => viewState?.goToday()}
-			aria-label={L.goToToday}
+			aria-label="Go to today"
 			tabindex={isToday ? -1 : 0}
 		>
-			{L.today}
+			Today
 		</button>
 		<button
 			class="ag-nav-pill"
 			onclick={() => viewState?.prev()}
-			aria-label={L.previousDay}
+			aria-label="Previous day"
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 		</button>
 		<button
 			class="ag-nav-pill"
 			onclick={() => viewState?.next()}
-			aria-label={L.nextDay}
+			aria-label="Next day"
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
@@ -499,63 +467,6 @@
 	.ag-body::-webkit-scrollbar-thumb {
 		background: var(--dt-border);
 		border-radius: 2px;
-	}
-
-	/* ═══ All-day strip ═══ */
-	.ag-allday {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 16px;
-		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-	}
-	.ag-allday-label {
-		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-	.ag-allday-items {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-	.ag-allday-chip {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		padding: 3px 10px;
-		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #10141c));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);
-		cursor: pointer;
-		transition: background 0.15s, border-color 0.15s;
-	}
-	.ag-allday-chip:hover {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
-		border-color: color-mix(in srgb, var(--ev-color) 35%, transparent);
-	}
-	.ag-allday-chip:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
-		outline-offset: 2px;
-	}
-	.ag-allday-chip--selected {
-		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #10141c));
-	}
-	.ag-allday-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--ev-color);
-		flex-shrink: 0;
-	}
-	.ag-allday-title {
-		font: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		white-space: nowrap;
 	}
 
 	/* ═══ Shared: event card ═══ */

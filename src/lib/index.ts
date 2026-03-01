@@ -5,7 +5,6 @@ export {
 	AgendaDay,
 	AgendaWeek,
 } from './views/index.js';
-export { WeekSchedule } from './convenience/index.js';
 
 // ─── Primitives ─────────────────────────────────────────
 export {
@@ -17,7 +16,7 @@ export {
 } from './primitives/index.js';
 
 // ─── Calendar shell ─────────────────────────────────────
-export { Calendar, Toolbar } from './calendar/index.js';
+export { Calendar } from './calendar/index.js';
 export type { CalendarView } from './calendar/index.js';
 
 // ─── Engine (reactive state) ────────────────────────────
@@ -69,18 +68,27 @@ export {
 	setDefaultLocale,
 	getDefaultLocale,
 	is24HourLocale,
+	defaultLabels,
+	setLabels,
+	resetLabels,
+	getLabels,
 	toZonedTime,
 	fromZonedTime,
 	nowInZone,
 	formatInTimeZone,
 	generatePalette,
 	VIVID_PALETTE,
+	isMultiDay,
+	isAllDay,
+	segmentForDay,
 } from './core/index.js';
 export type {
 	Clock,
 	TimelineEvent,
+	DaySegment,
+	CalendarLabels,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
-export { midnight, neutral, bare, presets } from './theme/index.js';
+export { midnight, neutral, presets } from './theme/index.js';
 export type { PresetName } from './theme/index.js';

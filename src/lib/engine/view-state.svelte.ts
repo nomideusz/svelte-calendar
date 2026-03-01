@@ -20,13 +20,13 @@ export type { DateRange };
  * is typed as `string` so consumers can register any ID.
  */
 export type BuiltInViewId =
-	| 'day-grid'
+	| 'day-planner'
 	| 'day-agenda'
-	| 'week-grid'
+	| 'week-planner'
 	| 'week-agenda';
 
 /**
- * Any view identifier. Use built-in strings like 'day-grid' or your own
+ * Any view identifier. Use built-in strings like 'day-planner' or your own
  * custom IDs like 'day-kanban', 'week-resource', etc.
  */
 export type CalendarViewId = string;
@@ -90,7 +90,7 @@ function computeRange(
 }
 
 export function createViewState(options: ViewStateOptions = {}): ViewState {
-	let view = $state<CalendarViewId>(options.defaultView ?? 'week-grid');
+	let view = $state<CalendarViewId>(options.defaultView ?? 'week-planner');
 	let focusDate = $state<Date>(options.initialDate ?? new Date());
 	let mondayStart = $state(options.mondayStart ?? true);
 	const timezone = options.timezone;

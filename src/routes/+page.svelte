@@ -18,13 +18,13 @@
 	let settingsValues = $state<Record<string, string | number | boolean>>({
 		readOnly: false,
 		mondayStart: true,
-		activeView: 'week-grid',
+		activeView: 'week-planner',
 		locale: 'en-US',
 	});
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
-	const defaultView = $derived((settingsValues.activeView as CalendarView['id']) ?? 'week-grid');
+	const defaultView = $derived((settingsValues.activeView as CalendarView['id']) ?? 'week-planner');
 	const locale = $derived((settingsValues.locale as string) ?? 'en-US');
 	const dir = $derived<'ltr' | 'rtl'>(settingsValues.rtl ? 'rtl' : 'ltr');
 	const themeValue = $derived(presets[activeTheme]);
@@ -36,8 +36,8 @@
 			group: '',
 			type: 'select',
 			options: [
-				{ value: 'week-grid', label: 'Week Planner' },
-				{ value: 'day-grid', label: 'Day Planner' },
+				{ value: 'week-planner', label: 'Week Planner' },
+				{ value: 'day-planner', label: 'Day Planner' },
 				{ value: 'week-agenda', label: 'Week Agenda' },
 				{ value: 'day-agenda', label: 'Day Agenda' },
 			],
@@ -90,6 +90,10 @@
 		{ id: '17', title: 'Meditation', start: at(5, 11, 0), end: at(5, 11, 45), category: 'wellness' },
 		{ id: '18', title: 'Slow Flow', start: at(6, 10, 0), end: at(6, 11, 0), category: 'yoga' },
 		{ id: '19', title: 'Gentle Morning', start: at(-1, 7, 0), end: at(-1, 8, 0), category: 'yoga' },
+		// Multi-day / all-day events
+		{ id: '20', title: 'Yoga Retreat', start: at(0, 0), end: at(3, 0), allDay: true, category: 'wellness', subtitle: 'Mountain Lodge' },
+		{ id: '21', title: 'Teacher Training', start: at(4, 0), end: at(6, 0), allDay: true, category: 'yoga' },
+		{ id: '22', title: 'Studio Closed', start: at(-2, 0), end: at(-1, 0), allDay: true, category: 'wellness' },
 	];
 
 	// ── Adapter with auto-coloring ─────────────────────────
@@ -101,22 +105,22 @@
 	const stageBgs: Record<PresetName, string> = {
 		midnight: '#080a0f',
 		neutral: '#ffffff',
-		bare: 'transparent',
 	};
 	$effect(() => {
 		document.body.style.background = stageBgs[activeTheme] ?? '#080a0f';
+		document.documentElement.dataset.theme = activeTheme;
 	});
 
 	// ── Views ──────────────────────────────────────────────
 	const views: CalendarView[] = [
 		{
-			id: 'day-grid',
+			id: 'day-planner',
 			label: 'Planner',
 			granularity: 'day',
 			component: Planner,
 			props: { mode: 'day' },
 		},
-		{ id: 'week-grid', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
+		{ id: 'week-planner', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
 		{ id: 'day-agenda', label: 'Agenda', granularity: 'day', component: Agenda, props: { mode: 'day' } },
 		{ id: 'week-agenda', label: 'Agenda', granularity: 'week', component: Agenda, props: { mode: 'week' } },
 	];
@@ -146,12 +150,14 @@
 <main style={themeValue}>
 	<Settings fields={settingsFields} bind:values={settingsValues} bind:theme={activeTheme} />
 
-	{#if lastAction}
-		<div class="action">
-			<span class="dot"></span>
-			{lastAction}
-		</div>
-	{/if}
+	<div style="height: 28px;">
+		{#if lastAction}
+			<div class="action">
+				<span class="dot"></span>
+				{lastAction}
+			</div>
+		{/if}
+	</div>
 
 	<Calendar
 		{adapter}
@@ -174,9 +180,8 @@
 	main {
 		max-width: 1100px;
 		margin: 0 auto;
-		padding: 12px 24px 64px;
+		padding: 48px 24px 64px;
 		background: var(--dt-stage-bg, #080a0f);
-		min-height: 100vh;
 		transition: background 300ms ease, color 300ms ease;
 	}
 

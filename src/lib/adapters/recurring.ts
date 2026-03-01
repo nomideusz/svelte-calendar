@@ -1,16 +1,40 @@
 /**
- * Recurring event adapter — projects weekly recurring schedules
- * onto concrete dates for whatever week range the calendar is viewing.
+ * Recurring event adapter — projects recurring schedules onto concrete dates
+ * for whatever range the calendar is viewing.
  *
- * Eliminates the need for consumers to manually fabricate Date objects
- * from simple "07:00-08:30 on Monday" schedule definitions.
+ * Supports daily, weekly, and monthly recurrence with optional interval,
+ * start/end bounds, and occurrence count limits.
  *
  * Usage:
  *   import { createRecurringAdapter } from '@nomideusz/svelte-calendar';
  *
  *   const adapter = createRecurringAdapter([
- *     { id: '1', title: 'Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#34d399' },
- *     { id: '2', title: 'Pilates', dayOfWeek: 3, startTime: '18:00', endTime: '19:00' },
+ *     // Weekly yoga every Monday (default frequency)
+ *     { id: '1', title: 'Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30' },
+ *
+ *     // Biweekly team sync
+ *     { id: '2', title: 'Sync', frequency: 'weekly', interval: 2,
+ *       dayOfWeek: 2, startTime: '14:00', endTime: '15:00',
+ *       startDate: '2025-03-01' },
+ *
+ *     // Daily standup, March only
+ *     { id: '3', title: 'Standup', frequency: 'daily',
+ *       startTime: '09:00', endTime: '09:15',
+ *       startDate: '2025-03-01', until: '2025-03-31' },
+ *
+ *     // Workshop — 8 Saturday sessions
+ *     { id: '4', title: 'Workshop', dayOfWeek: 6,
+ *       startTime: '10:00', endTime: '12:00',
+ *       startDate: '2025-03-01', count: 8 },
+ *
+ *     // Mon/Wed/Fri class during semester
+ *     { id: '5', title: 'Math', dayOfWeek: [1, 3, 5],
+ *       startTime: '09:00', endTime: '10:00',
+ *       startDate: '2025-09-01', until: '2025-12-15' },
+ *
+ *     // Monthly review on the 15th
+ *     { id: '6', title: 'Review', frequency: 'monthly', dayOfMonth: 15,
+ *       startTime: '10:00', endTime: '11:00' },
  *   ]);
  */
 import type { TimelineEvent } from '../core/types.js';
@@ -18,18 +42,67 @@ import type { CalendarAdapter, DateRange } from './types.js';
 import { startOfWeek, DAY_MS } from '../core/time.js';
 import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
 
+// ── Types ───────────────────────────────────────────────
+
 /**
- * A weekly recurring event definition.
+ * A recurring event definition.
+ *
+ * Backward-compatible: the only required fields are `id`, `title`,
+ * `startTime`, `endTime`, and `dayOfWeek` (for weekly, the default).
  */
 export interface RecurringEvent {
 	id: string;
 	title: string;
-	/** ISO weekday: 1 = Monday … 7 = Sunday */
-	dayOfWeek: number;
 	/** Start time in "HH:MM" 24-hour format */
 	startTime: string;
 	/** End time in "HH:MM" 24-hour format */
 	endTime: string;
+
+	// ── Recurrence rule ──
+
+	/** Recurrence frequency (default: `'weekly'`) */
+	frequency?: 'daily' | 'weekly' | 'monthly';
+	/**
+	 * Repeat every N periods — e.g. `2` with `weekly` = biweekly.
+	 * Requires `startDate` when > 1 so the adapter knows the anchor.
+	 * @default 1
+	 */
+	interval?: number;
+	/**
+	 * ISO weekday(s): 1 = Monday … 7 = Sunday.
+	 * Required for `weekly` frequency. Pass an array for multiple days
+	 * (e.g. `[1, 3, 5]` for Mon/Wed/Fri).
+	 */
+	dayOfWeek?: number | number[];
+	/**
+	 * Day of month (1–31). Required for `monthly` frequency.
+	 * Clamped to the last day of shorter months (e.g. 31 → 28 in Feb).
+	 * @default 1
+	 */
+	dayOfMonth?: number;
+
+	// ── Bounds ──
+
+	/**
+	 * First possible occurrence in `"YYYY-MM-DD"` format.
+	 * Events before this date are excluded. Required when using
+	 * `interval > 1` or `count`.
+	 */
+	startDate?: string;
+	/**
+	 * Last possible occurrence in `"YYYY-MM-DD"` format.
+	 * No events are generated after this date.
+	 */
+	until?: string;
+	/**
+	 * Maximum number of occurrences, counted from `startDate`.
+	 * Alternative to `until` — if both are set the stricter bound wins.
+	 * Requires `startDate`.
+	 */
+	count?: number;
+
+	// ── Event fields ──
+
 	/** Accent color */
 	color?: string;
 	/** Optional subtitle displayed below the title */
@@ -41,6 +114,21 @@ export interface RecurringEvent {
 	/** Arbitrary payload */
 	data?: Record<string, unknown>;
 }
+
+export interface RecurringAdapterOptions {
+	/** Start weeks on Monday (default: true) */
+	mondayStart?: boolean;
+	/** Map of category/title to color */
+	colorMap?: Record<string, string>;
+	/**
+	 * Auto-assign colors to events by category or title.
+	 *   true    → use the default vivid palette
+	 *   string  → hex accent color to generate a harmonious palette
+	 */
+	autoColor?: boolean | string;
+}
+
+// ── Helpers ─────────────────────────────────────────────
 
 /** Parse "HH:MM" into [hours, minutes] */
 function parseTime(time: string): [number, number] {
@@ -59,34 +147,48 @@ function parseTime(time: string): [number, number] {
 	return [h, m];
 }
 
-/**
- * Convert ISO weekday (1=Mon…7=Sun) to JS Date weekday offset from Monday.
- * Monday = 0, Tuesday = 1, … Sunday = 6
- */
-function isoWeekdayToOffset(dayOfWeek: number): number {
-	return dayOfWeek - 1; // 1→0, 2→1, …, 7→6
+/** Parse "YYYY-MM-DD" to a midnight Date */
+function parseDate(str: string): Date {
+	const parts = str.split('-');
+	if (parts.length !== 3) throw new Error(`Invalid date "${str}": expected "YYYY-MM-DD"`);
+	const y = Number(parts[0]);
+	const m = Number(parts[1]) - 1;
+	const d = Number(parts[2]);
+	const date = new Date(y, m, d);
+	if (Number.isNaN(date.getTime())) throw new Error(`Invalid date "${str}"`);
+	return date;
 }
 
-/**
- * Project a recurring event onto a specific week, returning a concrete TimelineEvent.
- */
-function projectToWeek(
-	rec: RecurringEvent,
-	weekStartMs: number,
-	weekIndex: number,
-): TimelineEvent {
-	const dayOffset = isoWeekdayToOffset(rec.dayOfWeek);
-	const dayMs = weekStartMs + dayOffset * DAY_MS;
-	const dayDate = new Date(dayMs);
+/** ISO weekday offset from Monday: 1→0, 2→1, … 7→6 */
+function isoWeekdayToOffset(dayOfWeek: number): number {
+	return dayOfWeek - 1;
+}
 
+/** Normalize `dayOfWeek` to a sorted array */
+function normalizeDays(value: number | number[] | undefined): number[] {
+	if (value == null) return [];
+	const arr = Array.isArray(value) ? [...value] : [value];
+	return arr.sort((a, b) => a - b);
+}
+
+/** Clamp day to last day of month (e.g. 31 → 28 in Feb) */
+function clampDayOfMonth(year: number, month: number, day: number): Date {
+	const lastDay = new Date(year, month + 1, 0).getDate();
+	return new Date(year, month, Math.min(day, lastDay));
+}
+
+/** Create a concrete TimelineEvent from a recurring def + occurrence date */
+function createConcreteEvent(
+	rec: RecurringEvent,
+	date: Date,
+	instanceKey: string,
+): TimelineEvent {
 	const [sh, sm] = parseTime(rec.startTime);
 	const [eh, em] = parseTime(rec.endTime);
-
-	const start = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), sh, sm);
-	const end = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), eh, em);
-
+	const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), sh, sm);
+	const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), eh, em);
 	return {
-		id: `${rec.id}--w${weekIndex}--d${rec.dayOfWeek}`,
+		id: `${rec.id}--${instanceKey}`,
 		title: rec.title,
 		start,
 		end,
@@ -94,53 +196,208 @@ function projectToWeek(
 		category: rec.category,
 		subtitle: rec.subtitle,
 		tags: rec.tags,
-		data: {
-			...rec.data,
-			recurringId: rec.id,
-		},
+		data: { ...rec.data, recurringId: rec.id },
 	};
 }
 
-/**
- * Find all weeks that overlap a given date range.
- * Returns an array of { weekStartMs, weekIndex } objects.
- */
-function getOverlappingWeeks(range: DateRange, mondayStart: boolean): { weekStartMs: number; weekIndex: number }[] {
-	const weeks: { weekStartMs: number; weekIndex: number }[] = [];
-	let cursor = startOfWeek(range.start.getTime(), mondayStart);
-	let index = 0;
+// ── Count → until resolution ────────────────────────────
 
-	while (cursor < range.end.getTime()) {
-		weeks.push({ weekStartMs: cursor, weekIndex: index });
-		cursor += 7 * DAY_MS;
-		index++;
+/**
+ * When `count` is set, compute the date of the last occurrence so the
+ * projection loop only needs to check date bounds.
+ */
+function computeUntilFromCount(
+	rec: RecurringEvent,
+	startDateObj: Date,
+	mondayStart: boolean,
+): Date | undefined {
+	const count = rec.count;
+	if (count == null || count <= 0) return undefined;
+
+	const freq = rec.frequency ?? 'weekly';
+	const interval = rec.interval ?? 1;
+
+	switch (freq) {
+		case 'daily': {
+			const d = new Date(startDateObj);
+			d.setDate(d.getDate() + (count - 1) * interval);
+			return d;
+		}
+		case 'weekly': {
+			const days = normalizeDays(rec.dayOfWeek);
+			if (days.length === 0) return undefined;
+			const startMs = startDateObj.getTime();
+			let weekMs = startOfWeek(startMs, mondayStart);
+			let remaining = count;
+			const maxCycles = Math.ceil(count / days.length) + 2;
+
+			for (let c = 0; c < maxCycles; c++) {
+				for (const day of days) {
+					const dayMs = weekMs + isoWeekdayToOffset(day) * DAY_MS;
+					if (dayMs >= startMs) {
+						remaining--;
+						if (remaining === 0) return new Date(dayMs);
+					}
+				}
+				weekMs += interval * 7 * DAY_MS;
+			}
+			return undefined;
+		}
+		case 'monthly': {
+			const totalMonths =
+				startDateObj.getFullYear() * 12 +
+				startDateObj.getMonth() +
+				(count - 1) * interval;
+			const y = Math.floor(totalMonths / 12);
+			const m = totalMonths % 12;
+			return clampDayOfMonth(y, m, rec.dayOfMonth ?? 1);
+		}
+	}
+}
+
+// ── Projection functions ────────────────────────────────
+
+function projectDaily(
+	rec: RecurringEvent,
+	range: DateRange,
+	startDate: Date | undefined,
+	effectiveUntil: Date | undefined,
+	out: TimelineEvent[],
+): void {
+	const interval = rec.interval ?? 1;
+
+	// Anchor at startDate or range.start (midnight)
+	const anchor = new Date(startDate ?? range.start);
+	anchor.setHours(0, 0, 0, 0);
+
+	const rangeStart = new Date(range.start);
+	rangeStart.setHours(0, 0, 0, 0);
+
+	// Skip ahead to first occurrence at or after range.start
+	const cursor = new Date(anchor);
+	if (cursor < rangeStart) {
+		const daysBetween = Math.round((rangeStart.getTime() - cursor.getTime()) / DAY_MS);
+		const skip = Math.floor(daysBetween / interval);
+		cursor.setDate(cursor.getDate() + skip * interval);
+		if (cursor < rangeStart) cursor.setDate(cursor.getDate() + interval);
 	}
 
-	return weeks;
+	let idx = 0;
+	while (cursor < range.end) {
+		if (effectiveUntil && cursor > effectiveUntil) break;
+
+		const ev = createConcreteEvent(rec, cursor, `d${idx}`);
+		if (ev.start < range.end && ev.end > range.start) {
+			out.push(ev);
+		}
+		cursor.setDate(cursor.getDate() + interval);
+		idx++;
+	}
 }
 
-export interface RecurringAdapterOptions {
-	/** Start weeks on Monday (default: true) */
-	mondayStart?: boolean;
-	/** Map of category/title to color */
-	colorMap?: Record<string, string>;
-	/**
-	 * Auto-assign colors to events by category or title.
-	 *   true    → use the default vivid palette
-	 *   string  → hex accent color (e.g. '#6366f1') to generate a
-	 *             theme-harmonious palette via golden-angle hue rotation
-	 */
-	autoColor?: boolean | string;
+function projectWeekly(
+	rec: RecurringEvent,
+	range: DateRange,
+	startDate: Date | undefined,
+	effectiveUntil: Date | undefined,
+	mondayStart: boolean,
+	out: TimelineEvent[],
+): void {
+	const interval = rec.interval ?? 1;
+	const days = normalizeDays(rec.dayOfWeek);
+	if (days.length === 0) return;
+
+	const startDateMs = startDate?.getTime();
+	const rangeStartMs = range.start.getTime();
+	const rangeEndMs = range.end.getTime();
+
+	// Anchor week: week containing startDate, or range.start if none
+	const anchorMs = startDateMs ?? rangeStartMs;
+	const anchorWeekMs = startOfWeek(anchorMs, mondayStart);
+
+	// Jump to first interval-aligned week that could overlap the range
+	let weekMs: number;
+	if (anchorWeekMs >= rangeStartMs) {
+		weekMs = anchorWeekMs;
+	} else {
+		const weeksBetween = Math.floor((rangeStartMs - anchorWeekMs) / (7 * DAY_MS));
+		const skip = Math.floor(weeksBetween / interval);
+		weekMs = anchorWeekMs + skip * interval * 7 * DAY_MS;
+		if (weekMs + 7 * DAY_MS <= rangeStartMs) {
+			weekMs += interval * 7 * DAY_MS;
+		}
+	}
+
+	let weekIndex = Math.round((weekMs - anchorWeekMs) / (7 * DAY_MS));
+
+	while (weekMs < rangeEndMs) {
+		for (const day of days) {
+			const dayMs = weekMs + isoWeekdayToOffset(day) * DAY_MS;
+			if (startDateMs != null && dayMs < startDateMs) continue;
+			if (dayMs >= rangeEndMs) break;
+			if (effectiveUntil && dayMs > effectiveUntil.getTime()) return;
+
+			const dayDate = new Date(dayMs);
+			const ev = createConcreteEvent(rec, dayDate, `w${weekIndex}--d${day}`);
+			if (ev.start < range.end && ev.end > range.start) {
+				out.push(ev);
+			}
+		}
+		weekMs += interval * 7 * DAY_MS;
+		weekIndex += interval;
+	}
 }
+
+function projectMonthly(
+	rec: RecurringEvent,
+	range: DateRange,
+	startDate: Date | undefined,
+	effectiveUntil: Date | undefined,
+	out: TimelineEvent[],
+): void {
+	const interval = rec.interval ?? 1;
+	const dayOfMonth = rec.dayOfMonth ?? 1;
+
+	const anchor = startDate ?? range.start;
+	let totalMonths = anchor.getFullYear() * 12 + anchor.getMonth();
+
+	// Skip ahead to first interval-aligned month at or near range.start
+	if (startDate && startDate < range.start) {
+		const rangeMonths = range.start.getFullYear() * 12 + range.start.getMonth();
+		const gap = rangeMonths - totalMonths;
+		const skip = Math.floor(gap / interval);
+		totalMonths += skip * interval;
+	}
+
+	for (let i = 0; i < 120; i++) {
+		const y = Math.floor(totalMonths / 12);
+		const m = totalMonths % 12;
+		const date = clampDayOfMonth(y, m, dayOfMonth);
+
+		if (date >= range.end) break;
+		if (effectiveUntil && date > effectiveUntil) break;
+
+		if (date >= range.start && (!startDate || date >= startDate)) {
+			const ev = createConcreteEvent(rec, date, `m${y}-${String(m + 1).padStart(2, '0')}`);
+			if (ev.start < range.end && ev.end > range.start) {
+				out.push(ev);
+			}
+		}
+
+		totalMonths += interval;
+	}
+}
+
+// ── Adapter factory ─────────────────────────────────────
 
 /** Default palette for auto-coloring */
 const AUTO_COLORS = VIVID_PALETTE;
 
 /**
- * Create a CalendarAdapter that projects recurring weekly events
- * onto concrete dates for whatever range the calendar requests.
+ * Create a CalendarAdapter that projects recurring events onto concrete
+ * dates for whatever range the calendar requests.
  *
- * Read-only by default — create/update/delete throw unless custom handlers are provided.
+ * Read-only by default — create/update/delete throw.
  */
 export function createRecurringAdapter(
 	schedule: RecurringEvent[],
@@ -148,7 +405,7 @@ export function createRecurringAdapter(
 ): CalendarAdapter {
 	const { mondayStart = true, colorMap, autoColor } = options;
 
-	// Resolve palette: vivid default or theme-aware
+	// Resolve palette
 	const palette = autoColor
 		? typeof autoColor === 'string'
 			? generatePalette(autoColor)
@@ -178,17 +435,37 @@ export function createRecurringAdapter(
 
 	return {
 		async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
-			const weeks = getOverlappingWeeks(range, mondayStart);
 			const events: TimelineEvent[] = [];
 
-			for (const { weekStartMs, weekIndex } of weeks) {
-				for (const rec of schedule) {
-					const coloredRec = { ...rec, color: resolveColor(rec) };
-					const ev = projectToWeek(coloredRec, weekStartMs, weekIndex);
-					// Only include if the event overlaps the requested range
-					if (ev.start < range.end && ev.end > range.start) {
-						events.push(ev);
-					}
+			for (const rec of schedule) {
+				const colored = { ...rec, color: resolveColor(rec) };
+				const freq = rec.frequency ?? 'weekly';
+
+				// Parse bounds
+				const sd = rec.startDate ? parseDate(rec.startDate) : undefined;
+				const untilDate = rec.until ? parseDate(rec.until) : undefined;
+				const countUntil = sd
+					? computeUntilFromCount(rec, sd, mondayStart)
+					: undefined;
+
+				// Effective until = tighter of the two bounds
+				let effectiveUntil: Date | undefined = untilDate;
+				if (countUntil) {
+					effectiveUntil = effectiveUntil
+						? countUntil < effectiveUntil ? countUntil : effectiveUntil
+						: countUntil;
+				}
+
+				switch (freq) {
+					case 'daily':
+						projectDaily(colored, range, sd, effectiveUntil, events);
+						break;
+					case 'weekly':
+						projectWeekly(colored, range, sd, effectiveUntil, mondayStart, events);
+						break;
+					case 'monthly':
+						projectMonthly(colored, range, sd, effectiveUntil, events);
+						break;
 				}
 			}
 

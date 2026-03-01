@@ -28,8 +28,8 @@ pnpm add @nomideusz/svelte-calendar
   const adapter = createMemoryAdapter(events);
 
   const views: CalendarView[] = [
-    { id: 'day-grid',   label: 'Planner', granularity: 'day',  component: Planner, props: { mode: 'day' } },
-    { id: 'week-grid',  label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
+    { id: 'day-planner',   label: 'Planner', granularity: 'day',  component: Planner, props: { mode: 'day' } },
+    { id: 'week-planner',  label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
     { id: 'day-agenda', label: 'Agenda',  granularity: 'day',  component: Agenda,  props: { mode: 'day' } },
     { id: 'week-agenda',label: 'Agenda',  granularity: 'week', component: Agenda,  props: { mode: 'week' } },
   ];
@@ -38,7 +38,7 @@ pnpm add @nomideusz/svelte-calendar
 <Calendar
   {views}
   {adapter}
-  defaultView="week-grid"
+  defaultView="week-planner"
   theme={neutral}
   height={600}
   oneventclick={(ev) => console.log('clicked', ev.id)}
@@ -52,7 +52,7 @@ pnpm add @nomideusz/svelte-calendar
 |------|------|---------|-------------|
 | `adapter` | `CalendarAdapter` | *required* | Data layer (memory, recurring, REST) |
 | `views` | `CalendarView[]` | `[]` | Registered view components |
-| `defaultView` | `string` | `'week-grid'` | Initial view ID |
+| `defaultView` | `string` | `'week-planner'` | Initial view ID |
 | `theme` | `string` | `''` | CSS theme string (`--dt-*` custom properties) |
 | `height` | `number` | `600` | Total height in pixels |
 | `locale` | `string` | `'en-US'` | BCP 47 locale tag |
@@ -80,15 +80,40 @@ pnpm add @nomideusz/svelte-calendar
 | `category` | `string?` | For grouping / colorMap |
 | `subtitle` | `string?` | Secondary text |
 | `tags` | `string[]?` | Small accent-colored pills |
+| `allDay` | `boolean?` | Render as an all-day event |
 | `data` | `Record?` | Arbitrary payload |
+
+## Multi-day & All-day Events
+
+Events that span multiple days or are flagged `allDay: true` are rendered in a
+dedicated strip above timed events in every view:
+
+```ts
+const events: TimelineEvent[] = [
+  // Explicit all-day flag
+  { id: '1', title: 'Conference', start: new Date('2025-03-15'), end: new Date('2025-03-18'), allDay: true },
+  // Auto-detected: starts at midnight and spans ≥ 24 h
+  { id: '2', title: 'Sprint', start: new Date('2025-03-15T00:00'), end: new Date('2025-03-17T00:00') },
+  // Overnight timed event — also renders in the all-day strip
+  { id: '3', title: 'Hackathon', start: new Date('2025-03-15T18:00'), end: new Date('2025-03-16T06:00') },
+];
+```
+
+Utility helpers are exported for custom views:
+
+```ts
+import { isAllDay, isMultiDay, segmentForDay } from '@nomideusz/svelte-calendar';
+
+segmentForDay(event, dayTimestamp);
+// → { ev, start, end, isStart, isEnd, dayIndex, totalDays, allDay } | null
+```
 
 ## Views
 
 | Concept | Day | Week | Description |
 |---------|-----|------|-------------|
 | **Planner** | `mode="day"` | `mode="week"` | Time blocks on a scrollable grid |
-| **Agenda** | `mode="day"` | `mode="week"` | List view - Done, Now, Next (day) or grouped-by-day (week) |
-| **Schedule** | - | `WeekSchedule` | Zero-config weekly schedule display |
+| **Agenda** | `mode="day"` | `mode="week"` | List view — Done, Now, Next (day) or grouped-by-day (week) |
 
 ## Recurring Schedules
 
@@ -98,34 +123,50 @@ pnpm add @nomideusz/svelte-calendar
   import type { CalendarView, RecurringEvent } from '@nomideusz/svelte-calendar';
 
   const schedule: RecurringEvent[] = [
+    // Every Monday
     { id: '1', title: 'Morning Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#818cf8' },
-    { id: '2', title: 'Pilates',      dayOfWeek: 3, startTime: '18:00', endTime: '19:00', color: '#f472b6' },
+    // Mon/Wed/Fri during semester
+    { id: '2', title: 'Math', dayOfWeek: [1, 3, 5], startTime: '09:00', endTime: '10:00',
+      startDate: '2025-09-01', until: '2025-12-15' },
+    // Biweekly team sync
+    { id: '3', title: 'Sync', frequency: 'weekly', interval: 2, dayOfWeek: 2,
+      startTime: '14:00', endTime: '15:00', startDate: '2025-03-01' },
+    // Daily standup, March only
+    { id: '4', title: 'Standup', frequency: 'daily', startTime: '09:00', endTime: '09:15',
+      startDate: '2025-03-01', until: '2025-03-31' },
+    // Workshop — 8 Saturday sessions
+    { id: '5', title: 'Workshop', dayOfWeek: 6, startTime: '10:00', endTime: '12:00',
+      startDate: '2025-03-01', count: 8 },
+    // Monthly review on the 15th
+    { id: '6', title: 'Review', frequency: 'monthly', dayOfMonth: 15,
+      startTime: '10:00', endTime: '11:00' },
   ];
 
   const adapter = createRecurringAdapter(schedule);
   const views: CalendarView[] = [
-    { id: 'week-grid', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
+    { id: 'week-planner', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
   ];
 </script>
 
-<Calendar {views} {adapter} defaultView="week-grid" theme={neutral} readOnly />
+<Calendar {views} {adapter} defaultView="week-planner" theme={neutral} readOnly />
 ```
 
-## WeekSchedule - Zero Config
+### RecurringEvent
 
-```svelte
-<script>
-  import { WeekSchedule, neutral } from '@nomideusz/svelte-calendar';
-
-  const schedule = [
-    { id: '1', title: 'Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#818cf8' },
-  ];
-</script>
-
-<WeekSchedule {schedule} theme={neutral} height={560} readOnly />
-```
-
-Also works with concrete events: `<WeekSchedule events={myEvents} theme={neutral} />`.
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `id` | `string` | *required* | Unique identifier |
+| `title` | `string` | *required* | Event title |
+| `startTime` | `string` | *required* | Start time `"HH:MM"` |
+| `endTime` | `string` | *required* | End time `"HH:MM"` |
+| `frequency` | `'daily' \| 'weekly' \| 'monthly'` | `'weekly'` | Recurrence frequency |
+| `interval` | `number` | `1` | Repeat every N periods (e.g. `2` = biweekly) |
+| `dayOfWeek` | `number \| number[]` | — | ISO weekday 1=Mon…7=Sun. Required for weekly. |
+| `dayOfMonth` | `number` | `1` | Day of month (1–31). For monthly. |
+| `startDate` | `string` | — | First occurrence `"YYYY-MM-DD"` |
+| `until` | `string` | — | Last occurrence `"YYYY-MM-DD"` |
+| `count` | `number` | — | Max occurrences from `startDate` |
+| `color` | `string?` | — | Accent color |
 
 ## Color Map & Auto-Coloring
 
@@ -142,27 +183,93 @@ const adapter = createMemoryAdapter(events, { autoColor: true });
 
 Events with explicit `color` always take priority.
 
+## Localization (i18n)
+
+All UI strings are configurable via the labels system:
+
+```ts
+import { setLabels, resetLabels, getLabels } from '@nomideusz/svelte-calendar';
+import type { CalendarLabels } from '@nomideusz/svelte-calendar';
+
+// Override any subset — unset keys stay English
+setLabels({
+  today: 'Heute',
+  yesterday: 'Gestern',
+  tomorrow: 'Morgen',
+  day: 'Tag',
+  week: 'Woche',
+  now: 'jetzt',
+  free: 'frei',
+  allDay: 'Ganztägig',
+  done: 'Erledigt',
+  upNext: 'Als Nächstes',
+  noEvents: 'Keine Termine',
+  goToToday: 'Heute anzeigen',
+  nMore: (n) => `+${n} weitere`,
+  nEvents: (n) => `${n} Termin${n === 1 ? '' : 'e'}`,
+});
+
+// Reset to English
+resetLabels();
+
+// Read current labels
+const labels = getLabels();
+```
+
+<details>
+<summary><strong>Full label keys</strong></summary>
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `today` | `'Today'` | Relative day label / nav button |
+| `yesterday` | `'Yesterday'` | Relative day label |
+| `tomorrow` | `'Tomorrow'` | Relative day label |
+| `day` | `'Day'` | Granularity pill |
+| `week` | `'Week'` | Granularity pill |
+| `planner` | `'Planner'` | View label |
+| `agenda` | `'Agenda'` | View label |
+| `now` | `'now'` | Live indicator badge |
+| `free` | `'free'` | Empty slot hint |
+| `allDay` | `'All day'` | All-day event label |
+| `done` | `'Done'` | Past section header |
+| `upNext` | `'Up next'` | Upcoming section header |
+| `until` | `'until'` | Time-until prefix |
+| `noEvents` | `'No events'` | Empty day |
+| `nothingScheduled` | `'Nothing scheduled'` | Empty state |
+| `allDoneForToday` | `'All done for today'` | Completed state |
+| `goToToday` | `'Go to today'` | Nav button aria |
+| `previousDay` / `nextDay` | `'Previous day'` / `'Next day'` | Nav aria |
+| `previousWeek` / `nextWeek` | `'Previous week'` / `'Next week'` | Nav aria |
+| `calendar` | `'Calendar'` | Root region aria |
+| `nMore(n)` | `` `+${n} more` `` | Overflow count |
+| `nEvents(n)` | `` `${n} event(s)` `` | Event count aria |
+| `nCompleted(n)` | `` `${n} completed` `` | Completed count |
+| `dayNOfTotal(i, t)` | `` `day ${i} of ${t}` `` | Multi-day segment |
+| `percentComplete(p)` | `` `${p}% complete` `` | Progress aria |
+
+</details>
+
 ## Themes
 
 | Preset | Description |
 |--------|-------------|
-| `neutral` | White/gray, blue accent, inherits fonts - **recommended** |
 | `midnight` | Dark navy/slate, red accent |
-| `bare` | Transparent/inherit - absorbs host styles |
+| `neutral` | White/gray, blue accent, inherits fonts — **recommended** |
 
 ```svelte
 <Calendar {views} {adapter} theme={neutral} />
 ```
 
-Override from `bare`:
+Customize any token:
 
 ```ts
 const myTheme = `
-  ${bare}
+  ${neutral}
   --dt-accent: #e11d48;
   --dt-bg: var(--my-app-surface);
   --dt-text: var(--my-app-text);
 `;
+```
 ```
 
 <details>

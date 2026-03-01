@@ -1,2 +1,2 @@
 // ─── Theme barrel export ────────────────────────────────
-export { midnight, parchment, indigo, neutral, bare, presets, } from './presets.js';
+export { midnight, neutral, presets, } from './presets.js';

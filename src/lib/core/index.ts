@@ -19,7 +19,11 @@ export {
 	fmtS,
 	dayNum,
 	dayOfWeek,
+	isMultiDay,
+	isAllDay,
+	segmentForDay,
 } from './time.js';
+export type { DaySegment } from './time.js';
 
 // Locale-aware formatting
 export {
@@ -37,7 +41,12 @@ export {
 	dateWithWeekday,
 	fmtDay,
 	fmtWeekRange,
+	defaultLabels,
+	setLabels,
+	resetLabels,
+	getLabels,
 } from './locale.js';
+export type { CalendarLabels } from './locale.js';
 
 // Timezone utilities
 export {

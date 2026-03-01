@@ -37,3 +37,15 @@ export declare function fmtDay(ms: number, todayMs: number, opts?: {
  * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
  */
 export declare function fmtWeekRange(weekStartMs: number, locale?: string): string;
+/**
+ * Format a Date as a compact time string.
+ *
+ * 12-hour locales → "9a", "12:30p"
+ * 24-hour locales → "9:00", "14:30"
+ */
+export declare function fmtTime(d: Date, locale?: string): string;
+/**
+ * Format the duration between two Dates as a compact string.
+ * e.g. "45m", "1h", "1h 30m"
+ */
+export declare function fmtDuration(start: Date, end: Date): string;

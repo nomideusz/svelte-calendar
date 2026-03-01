@@ -5,9 +5,8 @@
  * Pass to the `theme` prop of any timeline component.
  *
  * Presets:
- *   neutral  — Site-friendly default, inherits host fonts
- *   midnight — Dark mode
- *   bare     — Unstyled skeleton, absorbs host styles
+ *   midnight — Dark mode with red accent
+ *   neutral  — Light mode, inherits host fonts
  */
 
 /**
@@ -56,32 +55,6 @@ export const midnight = `
 	--dt-serif: Georgia, 'Times New Roman', serif;
 `;
 
-/**
- * Bare — transparent skeleton that inherits everything from the host page.
- * All colors use currentColor/transparent/inherit so the calendar fully absorbs
- * the parent site's design. Override individual --dt-* tokens as needed.
- */
-export const bare = `
-	--dt-stage-bg: transparent;
-	--dt-bg: transparent;
-	--dt-surface: transparent;
-	--dt-border: currentColor;
-	--dt-border-day: currentColor;
-	--dt-text: inherit;
-	--dt-text-2: inherit;
-	--dt-text-3: inherit;
-	--dt-accent: currentColor;
-	--dt-accent-dim: transparent;
-	--dt-glow: transparent;
-	--dt-today-bg: transparent;
-	--dt-btn-text: inherit;
-	--dt-scrollbar: currentColor;
-	--dt-success: currentColor;
-	--dt-serif: inherit;
-	--dt-sans: inherit;
-	--dt-mono: inherit;
-`;
-
 /** All available presets keyed by name */
-export const presets = { midnight, neutral, bare } as const;
+export const presets = { midnight, neutral } as const;
 export type PresetName = keyof typeof presets;

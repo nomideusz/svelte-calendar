@@ -1,3 +1,5 @@
+import type { DateRange } from '../adapters/types.js';
+export type { DateRange };
 /**
  * Built-in view IDs. Custom view IDs are also supported — CalendarViewId
  * is typed as `string` so consumers can register any ID.
@@ -14,15 +16,13 @@ export interface ViewStateOptions {
     mondayStart?: boolean;
     /** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
     timezone?: string;
+    /** Initial date to focus on (defaults to today). */
+    initialDate?: Date;
     /**
      * Optional resolver for view granularity.
      * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
      */
     granularityForView?: (viewId: CalendarViewId) => ViewGranularity | undefined;
-}
-export interface DateRange {
-    start: Date;
-    end: Date;
 }
 export interface ViewState {
     readonly view: CalendarViewId;

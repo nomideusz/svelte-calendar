@@ -6,7 +6,9 @@
   between events.
 -->
 <script lang="ts">
-	import { fmtTime, fmtDuration } from '../core/locale.js';
+	import { fmtTime, fmtDuration, getLabels } from '../core/locale.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		/** Start time of the empty slot */
@@ -26,7 +28,7 @@
 		orientation = 'vertical',
 	}: Props = $props();
 
-	const dur = $derived(`${fmtDuration(start, end)} free`);
+	const dur = $derived(`${fmtDuration(start, end)} ${L.free}`);
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' || e.key === ' ') {
@@ -42,7 +44,7 @@
 	class:es-h={orientation === 'horizontal'}
 	role="button"
 	tabindex="0"
-	aria-label="Create event, {fmtTime(start)} to {fmtTime(end)}, {dur}"
+	aria-label="{L.createEvent}, {fmtTime(start)} to {fmtTime(end)}, {dur}"
 	onclick={() => onclick?.({ start, end })}
 	onkeydown={handleKeydown}
 >

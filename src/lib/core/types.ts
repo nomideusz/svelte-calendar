@@ -12,6 +12,8 @@ export interface TimelineEvent {
 	start: Date;
 	end: Date;
 	color?: string;
+	/** True for all-day events (no specific start/end time) */
+	allDay?: boolean;
 	/** Category for grouping (e.g. "wellness", "work", "life") */
 	category?: string;
 	/** Subtitle displayed below the title (e.g. instructor name, level) */

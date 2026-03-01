@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.1 — 2026-03-01
+
+### Added
+- **`CalendarLabels` i18n system** — all user-visible UI strings ("Today", "Day", "Week", "Now", "Free", "All day", "Up next", etc.) are now configurable via `setLabels()`. Override any subset of labels for full localisation — unset keys fall back to English defaults.
+- **`CalendarLabels` interface** — typed interface covering 30+ static labels and 5 parameterised functions (`nMore`, `nEvents`, `nCompleted`, `dayNOfTotal`, `percentComplete`).
+- **`setLabels(overrides)`** — merge partial label overrides at runtime.
+- **`resetLabels()`** — restore all labels to English defaults.
+- **`getLabels()`** — read current active labels.
+- **`defaultLabels` export** — the full English label set, useful as a reference when building translations.
+- 10 new tests covering label get/set/reset, dynamic functions, overrides, and integration with `fmtDay()`.
+
+### Changed
+- `fmtDay()` now uses `CalendarLabels` for "Today", "Yesterday", "Tomorrow" instead of hardcoded strings.
+- All primitives (`NowIndicator`, `EventBlock`, `EmptySlot`) read labels via `getLabels()` for visible text and `aria-label` attributes.
+- `Calendar.svelte` — Day/Week granularity pills and `aria-label` attributes use labels.
+- `AgendaDay` / `AgendaWeek` — section headers (Done, Now, Free, Up next, No events), navigation buttons (Today, Previous/Next day/week), empty states, and all `aria-label` strings use labels.
+- `PlannerDay` / `PlannerWeek` — navigation, all-day banners, overflow counts, in-progress markers, and `aria-label` strings use labels.
+- `CalendarWidget` — default view registrations use `L.planner` / `L.agenda` labels.
+
 ## 0.5.0 — 2026-03-01
 
 > **Active development** — this library is under active development. APIs may evolve between minor versions. Pin your version if you need stability.

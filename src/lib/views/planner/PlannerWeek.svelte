@@ -15,8 +15,11 @@
 	import type { DragState } from '../../engine/drag.svelte.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
-	import { startOfWeek as sowFn, fractionalHour } from '../../core/time.js';
-	import { weekdayShort, monthLong, fmtTime as _fmtTime } from '../../core/locale.js';
+	import { startOfWeek as sowFn, fractionalHour, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import type { DaySegment } from '../../core/time.js';
+	import { weekdayShort, monthLong, fmtTime as _fmtTime, getLabels } from '../../core/locale.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		mondayStart?: boolean;
@@ -96,6 +99,8 @@
 		isFirstOfMonth: boolean;
 		monthLabel: string | null;
 		events: TimelineEvent[];
+		/** All-day or multi-day event segments for this day */
+		allDaySegments: DaySegment[];
 	}
 
 	const weeks = $derived.by(() => {
@@ -124,11 +129,23 @@
 					: null;
 
 				const dayEnd = ms + DAY_MS;
-				const dayEvents = events
+				const dayEventsAll = events
 					.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
 					.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-				days.push({ ms, dayNum, isToday, isPast, isWeekend, isFirstOfMonth, monthLabel, events: dayEvents });
+				// Separate all-day / multi-day from timed events
+				const timedEvents: TimelineEvent[] = [];
+				const allDaySegments: DaySegment[] = [];
+				for (const ev of dayEventsAll) {
+					if (isAllDay(ev) || isMultiDay(ev)) {
+						const seg = segmentForDay(ev, ms);
+						if (seg) allDaySegments.push(seg);
+					} else {
+						timedEvents.push(ev);
+					}
+				}
+
+				days.push({ ms, dayNum, isToday, isPast, isWeekend, isFirstOfMonth, monthLabel, events: timedEvents, allDaySegments });
 			}
 
 			// Month label: show when first day of week is day 1-7
@@ -162,7 +179,7 @@
 
 	// ─── Infinite-scroll helpers ────────────────────────
 
-	/** Detect external focusDate changes (from toolbar arrows). */
+	/** Detect external focusDate changes (from nav arrows). */
 	$effect(() => {
 		const ext = focusDate ? sod(focusDate.getTime()) : clock.today;
 		if (ext !== lastExternalMs && !rebasing) {
@@ -373,7 +390,7 @@
 		bind:this={el}
 		onscroll={handleUserScroll}
 		role="grid"
-		aria-label="Multi-week calendar grid"
+		aria-label={L.multiWeekGrid}
 	>
 		{#each weeks as week (week.weekStart)}
 			<div class="wg-week" class:wg-week--current={week.isCurrent} data-week={week.weekStart}>
@@ -388,7 +405,7 @@
 								class:wg-cell--weekend={day.isWeekend}
 								role="gridcell"
 								tabindex="0"
-								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ' (today)' : ''}, {day.events.length} events"
+								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ` (${L.today.toLowerCase()})` : ''}, {L.nEvents(day.events.length)}"
 								onclick={(e) => handleDayCellClick(day.ms, e)}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDayCellClick(day.ms, e); } }}
 							>
@@ -404,7 +421,38 @@
 									<span class="wg-cell-month">{day.monthLabel}</span>
 								{/if}
 
-								<!-- Events -->
+								<!-- All-day / multi-day events -->
+								{#if day.allDaySegments.length > 0}
+									<div class="wg-allday">
+										{#each day.allDaySegments as seg (seg.ev.id)}
+											<div
+												class="wg-ad"
+												class:wg-ad--start={seg.isStart}
+												class:wg-ad--end={seg.isEnd}
+												class:wg-ad--mid={!seg.isStart && !seg.isEnd}
+												class:wg-ad--selected={selectedEventId === seg.ev.id}
+												style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
+												role="button"
+												tabindex="0"
+												aria-label="{seg.ev.title}{seg.totalDays > 1 ? `, ${L.dayNOfTotal(seg.dayIndex, seg.totalDays)}` : `, ${L.allDay}`}"
+												onpointerdown={(e) => onEventPointerDown(e, seg.ev)}
+												onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(seg.ev); } }}
+											>
+												{#if seg.isStart}
+													<span class="wg-ad-title">{seg.ev.title}</span>
+												{:else}
+													<span class="wg-ad-cont" aria-hidden="true">◂</span>
+													<span class="wg-ad-title">{seg.ev.title}</span>
+												{/if}
+												{#if !seg.isEnd && seg.totalDays > 1}
+													<span class="wg-ad-arrow" aria-hidden="true">▸</span>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								{/if}
+
+								<!-- Timed events -->
 								<div class="wg-cell-events">
 									{#each day.events.slice(0, MAX_EVENTS_SHOWN) as ev (ev.id)}
 										<div
@@ -415,7 +463,7 @@
 											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
 											role="button"
 											tabindex="0"
-											aria-label="{ev.title}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ' (in progress)' : ''}"
+											aria-label="{ev.title}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
 											onpointerdown={(e) => onEventPointerDown(e, ev)}
 
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
@@ -425,7 +473,7 @@
 										</div>
 									{/each}
 									{#if day.events.length > MAX_EVENTS_SHOWN}
-										<div class="wg-ev-more">+{day.events.length - MAX_EVENTS_SHOWN} more</div>
+										<div class="wg-ev-more">{L.nMore(day.events.length - MAX_EVENTS_SHOWN)}</div>
 									{/if}
 								</div>
 							</div>
@@ -437,13 +485,13 @@
 	</div>
 
 	{#if scrolled}
-		<nav class="wg-nav" aria-label="Week navigation">
+		<nav class="wg-nav" aria-label={L.weekNavigation}>
 			<button
 				class="wg-nav-pill"
 				onclick={jumpToday}
-				aria-label="Go to today"
+				aria-label={L.goToToday}
 			>
-				Today
+				{L.today}
 			</button>
 		</nav>
 	{/if}
@@ -587,6 +635,73 @@
 
 	.wg-week--current .wg-cell-month {
 		color: color-mix(in srgb, var(--dt-text, rgba(255,255,255,0.85)) 8%, transparent);
+	}
+
+	/* ─── All-day / multi-day events ─────────────────── */
+	.wg-allday {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		margin-bottom: 4px;
+	}
+
+	.wg-ad {
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		padding: 2px 5px;
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
+		cursor: pointer;
+		overflow: hidden;
+		transition: background 0.12s;
+		min-height: 18px;
+	}
+
+	.wg-ad:hover {
+		background: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, #10141c));
+	}
+
+	.wg-ad--start {
+		border-left: 2.5px solid var(--ev-color);
+	}
+
+	.wg-ad--mid {
+		border-radius: 0;
+		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	}
+
+	.wg-ad--end:not(.wg-ad--start) {
+		border-radius: 0 3px 3px 0;
+		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	}
+
+	.wg-ad--selected {
+		box-shadow: 0 0 0 1.5px var(--ev-color);
+	}
+
+	.wg-ad-title {
+		font: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.85));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex: 1;
+	}
+
+	.wg-ad-cont {
+		font-size: 8px;
+		color: var(--ev-color);
+		flex-shrink: 0;
+		line-height: 1;
+	}
+
+	.wg-ad-arrow {
+		font-size: 8px;
+		color: var(--ev-color);
+		flex-shrink: 0;
+		margin-left: auto;
+		line-height: 1;
 	}
 
 	/* ─── Events ─────────────────────────────────────── */

@@ -43,11 +43,10 @@
 
 	let { fields, values = $bindable(), theme = $bindable() }: Props = $props();
 
-	const themeKeys: PresetName[] = ['midnight', 'neutral', 'bare'];
+	const themeKeys: PresetName[] = ['midnight', 'neutral'];
 	const themeLabels: Record<PresetName, string> = {
 		midnight: 'Midnight',
 		neutral: 'Neutral',
-		bare: 'Bare',
 	};
 	const darkThemes = new Set<PresetName>(['midnight']);
 	const panelId = 'stg-panel';

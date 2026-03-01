@@ -1,7 +1,7 @@
 {
 	"name": "@nomideusz/svelte-calendar",
-	"version": "0.5.0",
-	"description": "A themeable, pluggable Svelte 5 calendar with Day and Week views — Grid, Agenda, Planner.",
+	"version": "0.5.1",
+	"description": "A themeable Svelte 5 calendar with Day and Week views — Planner and Agenda.",
 	"type": "module",
 	"license": "MIT",
 	"svelte": "./dist/index.js",
@@ -41,7 +41,9 @@
 		"@sveltejs/kit": "^2.50.2",
 		"@sveltejs/package": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@types/node": "^22.0.0",
 		"@vercel/analytics": "^1.6.1",
+		"marked": "^17.0.3",
 		"svelte": "^5.51.0",
 		"svelte-check": "^4.3.6",
 		"typescript": "^5.9.3",
@@ -50,8 +52,7 @@
 	},
 	"dependencies": {
 		"date-fns": "^4.1.0",
-		"date-fns-tz": "^3.2.0",
-		"marked": "^17.0.3"
+		"date-fns-tz": "^3.2.0"
 	},
 	"keywords": [
 		"svelte",
