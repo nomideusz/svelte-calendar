@@ -1,37 +1,50 @@
+/**
+ * Reactive event store — the CRUD brain of the calendar.
+ *
+ * Wraps a CalendarAdapter and exposes Svelte 5 rune-mode reactive state.
+ * All mutations go through the adapter first, then update local state.
+ *
+ * Usage:
+ *   const store = createEventStore(adapter);
+ *   // store.events       — all loaded events (reactive)
+ *   // store.forRange()   — query by date range
+ *   // store.forDay()     — query single day
+ *   // store.add()        — create event
+ *   // store.update()     — patch event
+ *   // store.remove()     — delete event
+ *   // store.move()       — drag-move shorthand
+ *   // store.load()       — fetch from adapter for a range
+ */
+import { SvelteMap } from 'svelte/reactivity';
 import { sod, DAY_MS } from '../core/time.js';
 /**
  * Create a reactive event store backed by a CalendarAdapter.
  */
 export function createEventStore(adapter) {
-    let events = $state([]);
+    let eventMap = new SvelteMap();
     let loading = $state(false);
     let error = $state(null);
+    // Derived array view of the map — consumers read this.
+    const eventArray = $derived([...eventMap.values()]);
     // ── Internal helpers ──
     function overlaps(ev, start, end) {
         return ev.start < end && ev.end > start;
     }
     function replaceEvent(id, updated) {
-        const idx = events.findIndex((e) => e.id === id);
-        if (idx >= 0) {
-            events[idx] = updated;
+        if (eventMap.has(id)) {
+            eventMap.set(id, updated);
         }
     }
     function removeEvent(id) {
-        events = events.filter((e) => e.id !== id);
+        eventMap.delete(id);
     }
     function upsertEvent(ev) {
-        const idx = events.findIndex((e) => e.id === ev.id);
-        if (idx >= 0) {
-            events[idx] = ev;
-        }
-        else {
-            events.push(ev);
-        }
+        eventMap.set(ev.id, ev);
     }
     // ── Public API ──
     return {
         get events() {
-            return events;
+            return eventArray;
         },
         get loading() {
             return loading;
@@ -57,22 +70,22 @@ export function createEventStore(adapter) {
             }
         },
         forRange(start, end) {
-            return events.filter((ev) => overlaps(ev, start, end));
+            return eventArray.filter((ev) => overlaps(ev, start, end));
         },
         forDay(date) {
             const dayStart = new Date(sod(date.getTime()));
             const dayEnd = new Date(dayStart.getTime() + DAY_MS);
-            return events.filter((ev) => overlaps(ev, dayStart, dayEnd));
+            return eventArray.filter((ev) => overlaps(ev, dayStart, dayEnd));
         },
         byId(id) {
-            return events.find((e) => e.id === id);
+            return eventMap.get(id);
         },
         async add(eventData) {
             loading = true;
             error = null;
             try {
                 const created = await adapter.createEvent(eventData);
-                events.push(created);
+                upsertEvent(created);
                 return created;
             }
             catch (e) {

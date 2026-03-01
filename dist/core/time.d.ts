@@ -35,3 +35,33 @@ export declare function fmtS(ms: number): string;
 export declare function dayNum(ms: number): number;
 /** Day-of-week index (0 = Sun … 6 = Sat) */
 export declare function dayOfWeek(ms: number): number;
+import type { TimelineEvent } from './types.js';
+/** Does an event span more than one calendar day? */
+export declare function isMultiDay(ev: TimelineEvent): boolean;
+/** Is an event effectively all-day? (allDay flag, or spans ≥24h with midnight boundaries) */
+export declare function isAllDay(ev: TimelineEvent): boolean;
+/**
+ * Describes how an event appears on a specific day.
+ */
+export interface DaySegment {
+    ev: TimelineEvent;
+    /** Effective start for this day (clamped to day start) */
+    start: Date;
+    /** Effective end for this day (clamped to day end) */
+    end: Date;
+    /** Is this the first day of the event? */
+    isStart: boolean;
+    /** Is this the last day of the event? */
+    isEnd: boolean;
+    /** 1-based day index within the span */
+    dayIndex: number;
+    /** Total number of days the event spans */
+    totalDays: number;
+    /** Is this an all-day event? */
+    allDay: boolean;
+}
+/**
+ * Compute how an event appears on a specific day.
+ * Returns null if the event doesn't overlap the day.
+ */
+export declare function segmentForDay(ev: TimelineEvent, dayMs: number): DaySegment | null;

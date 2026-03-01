@@ -7,6 +7,68 @@
  * For date-fns locale integration later, this module can import from
  * `date-fns/locale/*` and pass to `format()`.
  */
+/**
+ * All user-visible text in the calendar UI.
+ * Override via `setLabels()` for full localisation.
+ */
+export interface CalendarLabels {
+    today: string;
+    yesterday: string;
+    tomorrow: string;
+    day: string;
+    week: string;
+    planner: string;
+    agenda: string;
+    now: string;
+    free: string;
+    allDay: string;
+    done: string;
+    upNext: string;
+    until: string;
+    noEvents: string;
+    nothingScheduled: string;
+    nothingScheduledYet: string;
+    nothingWasScheduled: string;
+    allDoneForToday: string;
+    goToToday: string;
+    previousDay: string;
+    nextDay: string;
+    previousWeek: string;
+    nextWeek: string;
+    calendar: string;
+    viewMode: string;
+    dayNavigation: string;
+    weekNavigation: string;
+    dayPlanner: string;
+    scrollableDayPlanner: string;
+    todaysLineup: string;
+    weekAhead: string;
+    multiWeekGrid: string;
+    currentTime: string;
+    createEvent: string;
+    happeningNow: string;
+    past: string;
+    completed: string;
+    inProgress: string;
+    /** e.g. "+3 more" */
+    nMore: (n: number) => string;
+    /** e.g. "5 events" */
+    nEvents: (n: number) => string;
+    /** e.g. "3 completed" */
+    nCompleted: (n: number) => string;
+    /** e.g. "day 2 of 4" */
+    dayNOfTotal: (current: number, total: number) => string;
+    /** e.g. "75% complete" */
+    percentComplete: (pct: number) => string;
+}
+/** English defaults — used unless overridden via `setLabels()`. */
+export declare const defaultLabels: CalendarLabels;
+/** Replace one or more UI labels. Merges with current labels. */
+export declare function setLabels(overrides: Partial<CalendarLabels>): void;
+/** Reset all labels to English defaults. */
+export declare function resetLabels(): void;
+/** Get the currently active labels. */
+export declare function getLabels(): Readonly<CalendarLabels>;
 /** Change the default locale for all formatting functions */
 export declare function setDefaultLocale(tag: string): void;
 /** Get the current default locale */

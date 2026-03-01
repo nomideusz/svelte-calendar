@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { fmtH, weekdayShort, monthShort, monthLong, dateShort, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, } from './locale.js';
+import { fmtH, weekdayShort, monthShort, monthLong, dateShort, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, setLabels, resetLabels, getLabels, defaultLabels, } from './locale.js';
 import { sod, DAY_MS } from './time.js';
 beforeEach(() => {
     setDefaultLocale('en-US');
+    resetLabels();
 });
 // ─── fmtH ───────────────────────────────────────────────
 describe('fmtH', () => {
@@ -104,5 +105,67 @@ describe('locale management', () => {
     it('setDefaultLocale changes the locale', () => {
         setDefaultLocale('pl-PL');
         expect(getDefaultLocale()).toBe('pl-PL');
+    });
+});
+// ─── labels (i18n) ──────────────────────────────────────
+describe('labels', () => {
+    it('getLabels returns English defaults', () => {
+        const L = getLabels();
+        expect(L.today).toBe('Today');
+        expect(L.yesterday).toBe('Yesterday');
+        expect(L.tomorrow).toBe('Tomorrow');
+        expect(L.day).toBe('Day');
+        expect(L.week).toBe('Week');
+        expect(L.now).toBe('now');
+        expect(L.free).toBe('free');
+        expect(L.allDay).toBe('All day');
+    });
+    it('setLabels merges partial overrides', () => {
+        setLabels({ today: 'Heute', yesterday: 'Gestern', tomorrow: 'Morgen' });
+        const L = getLabels();
+        expect(L.today).toBe('Heute');
+        expect(L.yesterday).toBe('Gestern');
+        expect(L.tomorrow).toBe('Morgen');
+        // untouched keys stay at defaults
+        expect(L.day).toBe('Day');
+        expect(L.week).toBe('Week');
+    });
+    it('resetLabels restores English defaults', () => {
+        setLabels({ today: 'Dzisiaj' });
+        resetLabels();
+        expect(getLabels().today).toBe('Today');
+    });
+    it('fmtDay uses overridden labels', () => {
+        const todayMs = sod(new Date(2025, 2, 15).getTime());
+        setLabels({ today: 'Dziś', yesterday: 'Wczoraj', tomorrow: 'Jutro' });
+        expect(fmtDay(todayMs, todayMs, { short: true })).toBe('Dziś');
+        expect(fmtDay(todayMs, todayMs)).toContain('Dziś');
+        expect(fmtDay(todayMs - DAY_MS, todayMs)).toContain('Wczoraj');
+        expect(fmtDay(todayMs + DAY_MS, todayMs)).toContain('Jutro');
+    });
+    it('dynamic label functions work', () => {
+        const L = getLabels();
+        expect(L.nMore(3)).toBe('+3 more');
+        expect(L.nEvents(1)).toBe('1 event');
+        expect(L.nEvents(5)).toBe('5 events');
+        expect(L.nCompleted(2)).toBe('2 completed');
+        expect(L.dayNOfTotal(2, 4)).toBe('day 2 of 4');
+        expect(L.percentComplete(75)).toBe('75% complete');
+    });
+    it('dynamic label functions can be overridden', () => {
+        setLabels({
+            nMore: (n) => `+${n} więcej`,
+            nEvents: (n) => `${n} wydarzeń`,
+        });
+        const L = getLabels();
+        expect(L.nMore(3)).toBe('+3 więcej');
+        expect(L.nEvents(5)).toBe('5 wydarzeń');
+        // un-overridden still default
+        expect(L.nCompleted(2)).toBe('2 completed');
+    });
+    it('defaultLabels export is the original English set', () => {
+        expect(defaultLabels.today).toBe('Today');
+        expect(defaultLabels.now).toBe('now');
+        expect(defaultLabels.nMore(5)).toBe('+5 more');
     });
 });

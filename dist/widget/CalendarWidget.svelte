@@ -8,7 +8,7 @@
     <day-calendar
       api="https://myschool.com/api/events"
       theme="neutral"
-      view="week-grid"
+      view="week-planner"
       height="600"
       locale="en-US"
     ></day-calendar>
@@ -23,6 +23,9 @@
 	import { presets } from '../theme/presets.js';
 	import type { PresetName } from '../theme/presets.js';
 	import type { TimelineEvent } from '../core/types.js';
+	import { getLabels } from '../core/locale.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		/** REST API base URL — if provided, fetches events from this endpoint */
@@ -49,7 +52,7 @@
 		api,
 		events,
 		theme = 'neutral',
-		view = 'week-grid',
+		view = 'week-planner',
 		height = '600',
 		locale,
 		dir,
@@ -134,12 +137,12 @@
 	});
 
 	// ── Default views ──
-	const defaultViews: CalendarView[] = [
-		{ id: 'day-grid',     label: 'Planner',  granularity: 'day',  component: Planner, props: { mode: 'day' } },
-		{ id: 'week-grid',    label: 'Planner',  granularity: 'week', component: Planner, props: { mode: 'week' } },
-		{ id: 'day-agenda',   label: 'Agenda',   granularity: 'day',  component: Agenda, props: { mode: 'day' } },
-		{ id: 'week-agenda',  label: 'Agenda',   granularity: 'week', component: Agenda, props: { mode: 'week' } },
-	];
+	const defaultViews: CalendarView[] = $derived([
+		{ id: 'day-planner',     label: L.planner,  granularity: 'day',  component: Planner, props: { mode: 'day' } },
+		{ id: 'week-planner',    label: L.planner,  granularity: 'week', component: Planner, props: { mode: 'week' } },
+		{ id: 'day-agenda',   label: L.agenda,   granularity: 'day',  component: Agenda, props: { mode: 'day' } },
+		{ id: 'week-agenda',  label: L.agenda,   granularity: 'week', component: Agenda, props: { mode: 'week' } },
+	]);
 </script>
 
 <Calendar

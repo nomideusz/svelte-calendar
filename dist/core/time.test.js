@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DAY_MS, HOUR_MS, HOURS, sod, startOfWeek, addDaysMs, diffDays, pad, fractionalHour, fmtHM, fmtS, dayNum, dayOfWeek, } from './time.js';
+import { DAY_MS, HOUR_MS, HOURS, sod, startOfWeek, addDaysMs, diffDays, pad, fractionalHour, fmtHM, fmtS, dayNum, dayOfWeek, isMultiDay, isAllDay, segmentForDay, } from './time.js';
 // ─── Constants ──────────────────────────────────────────
 describe('constants', () => {
     it('DAY_MS is 86 400 000', () => {
@@ -148,5 +148,101 @@ describe('dayOfWeek', () => {
     it('returns 6 for Saturday', () => {
         // Jan 4 2025 is a Saturday
         expect(dayOfWeek(new Date(2025, 0, 4).getTime())).toBe(6);
+    });
+});
+// ─── Helper to build a minimal event ────────────────────
+function ev(start, end, opts = {}) {
+    return { id: 'test', title: 'Test', start, end, ...opts };
+}
+// ─── isMultiDay ─────────────────────────────────────────
+describe('isMultiDay', () => {
+    it('returns false for a same-day event', () => {
+        expect(isMultiDay(ev(new Date(2025, 2, 15, 9), new Date(2025, 2, 15, 17)))).toBe(false);
+    });
+    it('returns true when event spans midnight', () => {
+        expect(isMultiDay(ev(new Date(2025, 2, 15, 22), new Date(2025, 2, 16, 2)))).toBe(true);
+    });
+    it('returns true for a 3-day event', () => {
+        expect(isMultiDay(ev(new Date(2025, 2, 15, 0), new Date(2025, 2, 18, 0)))).toBe(true);
+    });
+    it('returns false when end is exactly midnight (same calendar day)', () => {
+        // 2025-03-15 23:00 → 2025-03-16 00:00 — end -1ms is still on the 15th
+        expect(isMultiDay(ev(new Date(2025, 2, 15, 23), new Date(2025, 2, 16, 0)))).toBe(false);
+    });
+});
+// ─── isAllDay ───────────────────────────────────────────
+describe('isAllDay', () => {
+    it('returns true when allDay flag is set', () => {
+        expect(isAllDay(ev(new Date(2025, 2, 15, 9), new Date(2025, 2, 15, 10), { allDay: true }))).toBe(true);
+    });
+    it('returns false for a short event without flag', () => {
+        expect(isAllDay(ev(new Date(2025, 2, 15, 9), new Date(2025, 2, 15, 10)))).toBe(false);
+    });
+    it('returns true for 24h+ event starting at midnight', () => {
+        expect(isAllDay(ev(new Date(2025, 2, 15, 0, 0, 0), new Date(2025, 2, 16, 0, 0, 0)))).toBe(true);
+    });
+    it('returns false for 24h+ event NOT starting at midnight', () => {
+        expect(isAllDay(ev(new Date(2025, 2, 15, 6, 0), new Date(2025, 2, 16, 6, 0)))).toBe(false);
+    });
+    it('returns true for multi-day midnight-aligned event', () => {
+        expect(isAllDay(ev(new Date(2025, 2, 15, 0), new Date(2025, 2, 18, 0)))).toBe(true);
+    });
+});
+// ─── segmentForDay ──────────────────────────────────────
+describe('segmentForDay', () => {
+    const multi = ev(new Date(2025, 2, 15, 0), new Date(2025, 2, 18, 0)); // 3 full days: 15,16,17
+    it('returns null for a day that does not overlap', () => {
+        const result = segmentForDay(multi, new Date(2025, 2, 14).getTime());
+        expect(result).toBeNull();
+    });
+    it('returns null for the day after the event', () => {
+        const result = segmentForDay(multi, new Date(2025, 2, 18).getTime());
+        expect(result).toBeNull();
+    });
+    it('returns isStart=true on the first day', () => {
+        const seg = segmentForDay(multi, new Date(2025, 2, 15).getTime());
+        expect(seg).not.toBeNull();
+        expect(seg.isStart).toBe(true);
+        expect(seg.isEnd).toBe(false);
+        expect(seg.dayIndex).toBe(1);
+        expect(seg.totalDays).toBe(3);
+    });
+    it('returns isEnd=true on the last day', () => {
+        const seg = segmentForDay(multi, new Date(2025, 2, 17).getTime());
+        expect(seg).not.toBeNull();
+        expect(seg.isStart).toBe(false);
+        expect(seg.isEnd).toBe(true);
+        expect(seg.dayIndex).toBe(3);
+    });
+    it('returns middle segment for intermediate days', () => {
+        const seg = segmentForDay(multi, new Date(2025, 2, 16).getTime());
+        expect(seg).not.toBeNull();
+        expect(seg.isStart).toBe(false);
+        expect(seg.isEnd).toBe(false);
+        expect(seg.dayIndex).toBe(2);
+    });
+    it('clamps start/end to the day boundaries', () => {
+        const overnight = ev(new Date(2025, 2, 15, 22), new Date(2025, 2, 16, 6));
+        const seg = segmentForDay(overnight, new Date(2025, 2, 16).getTime());
+        expect(seg).not.toBeNull();
+        expect(seg.start.getHours()).toBe(0);
+        expect(seg.end.getHours()).toBe(6);
+    });
+    it('single-day event has dayIndex=1, totalDays=1, isStart=isEnd=true', () => {
+        const single = ev(new Date(2025, 2, 15, 9), new Date(2025, 2, 15, 17));
+        const seg = segmentForDay(single, new Date(2025, 2, 15).getTime());
+        expect(seg).not.toBeNull();
+        expect(seg.dayIndex).toBe(1);
+        expect(seg.totalDays).toBe(1);
+        expect(seg.isStart).toBe(true);
+        expect(seg.isEnd).toBe(true);
+    });
+    it('marks allDay based on isAllDay()', () => {
+        const allDayEv = ev(new Date(2025, 2, 15, 0), new Date(2025, 2, 16, 0));
+        const seg = segmentForDay(allDayEv, new Date(2025, 2, 15).getTime());
+        expect(seg.allDay).toBe(true);
+        const timedEv = ev(new Date(2025, 2, 15, 9), new Date(2025, 2, 15, 17));
+        const seg2 = segmentForDay(timedEv, new Date(2025, 2, 15).getTime());
+        expect(seg2.allDay).toBe(false);
     });
 });

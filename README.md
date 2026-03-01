@@ -14,60 +14,61 @@ pnpm add @nomideusz/svelte-calendar
 
 ```svelte
 <script lang="ts">
-  import {
-    Calendar, Planner, Agenda,
-    createMemoryAdapter, neutral,
-  } from '@nomideusz/svelte-calendar';
-  import type { CalendarView, TimelineEvent } from '@nomideusz/svelte-calendar';
+  import { Calendar, createMemoryAdapter } from '@nomideusz/svelte-calendar';
+  import type { TimelineEvent } from '@nomideusz/svelte-calendar';
 
   const events: TimelineEvent[] = [
-    { id: '1', title: 'Yoga Flow', start: new Date('2025-03-01T09:00'), end: new Date('2025-03-01T10:00'), color: '#818cf8' },
-    { id: '2', title: 'Meditation', start: new Date('2025-03-01T12:00'), end: new Date('2025-03-01T12:45'), color: '#34d399' },
+    { id: '1', title: 'Yoga Flow', start: new Date('2025-03-01T09:00'), end: new Date('2025-03-01T10:00') },
+    { id: '2', title: 'Meditation', start: new Date('2025-03-01T12:00'), end: new Date('2025-03-01T12:45') },
   ];
 
   const adapter = createMemoryAdapter(events);
-
-  const views: CalendarView[] = [
-    { id: 'day-planner',   label: 'Planner', granularity: 'day',  component: Planner, props: { mode: 'day' } },
-    { id: 'week-planner',  label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
-    { id: 'day-agenda', label: 'Agenda',  granularity: 'day',  component: Agenda,  props: { mode: 'day' } },
-    { id: 'week-agenda',label: 'Agenda',  granularity: 'week', component: Agenda,  props: { mode: 'week' } },
-  ];
 </script>
 
-<Calendar
-  {views}
-  {adapter}
-  defaultView="week-planner"
-  theme={neutral}
-  height={600}
-  oneventclick={(ev) => console.log('clicked', ev.id)}
-  oneventcreate={(range) => console.log('create', range)}
-/>
+<Calendar {adapter} height={600} />
 ```
+
+That's it — built-in views (Day/Week Planner + Agenda), auto-coloring, and the `neutral` theme are all defaults.
 
 ## Calendar Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `adapter` | `CalendarAdapter` | *required* | Data layer (memory, recurring, REST) |
-| `views` | `CalendarView[]` | `[]` | Registered view components |
-| `defaultView` | `string` | `'week-planner'` | Initial view ID |
-| `theme` | `string` | `''` | CSS theme string (`--dt-*` custom properties) |
+| `views` | `CalendarView[]` | all 4 built-in | Registered view components |
+| `view` | `string` | first view | Active view ID |
+| `theme` | `string` | `neutral` | CSS theme string (`--dt-*` custom properties) |
 | `height` | `number` | `600` | Total height in pixels |
 | `locale` | `string` | `'en-US'` | BCP 47 locale tag |
-| `dir` | `'ltr' \| 'rtl' \| 'auto'` | - | Text direction |
+| `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | Text direction |
 | `mondayStart` | `boolean` | `true` | Start week on Monday |
 | `readOnly` | `boolean` | `false` | Disable drag, resize, and click-to-create |
-| `visibleHours` | `[number, number]` | - | Crop grid to `[startHour, endHour)` |
+| `visibleHours` | `[number, number]` | — | Crop grid to `[startHour, endHour)` |
 | `initialDate` | `Date` | today | Date to focus on at mount |
 | `snapInterval` | `number` | `15` | Drag snap in minutes |
-| `oneventclick` | `(event) => void` | - | Event clicked |
-| `oneventcreate` | `(range) => void` | - | New time range selected |
-| `oneventmove` | `(event, start, end) => void` | - | Event dragged to new time |
-| `onviewchange` | `(viewId) => void` | - | Active view changed |
-| `event` | `Snippet<[TimelineEvent]>` | - | Custom event rendering |
-| `empty` | `Snippet` | - | Empty state content |
+| `oneventclick` | `(event) => void` | — | Event clicked |
+| `oneventcreate` | `(range) => void` | — | New time range selected |
+| `oneventmove` | `(event, start, end) => void` | — | Event dragged to new time |
+| `onviewchange` | `(viewId) => void` | — | Active view changed |
+| `event` | `Snippet<[TimelineEvent]>` | — | Custom event rendering |
+| `empty` | `Snippet` | — | Empty state content |
+
+## Built-in Views
+
+Calendar ships with 4 views out of the box. Use the Day/Week pills to switch between modes:
+
+| View | Day | Week | Description |
+|------|-----|------|-------------|
+| **Planner** | ✓ | ✓ | Time blocks on a scrollable grid |
+| **Agenda** | ✓ | ✓ | List view — Done, Now, Next (day) or grouped-by-day (week) |
+
+Switch views programmatically:
+
+```svelte
+<Calendar {adapter} view="day-agenda" />
+```
+
+Built-in view IDs: `day-planner`, `week-planner`, `day-agenda`, `week-agenda`.
 
 ## TimelineEvent
 
@@ -76,12 +77,28 @@ pnpm add @nomideusz/svelte-calendar
 | `id` | `string` | Unique identifier |
 | `title` | `string` | Event title |
 | `start` / `end` | `Date` | Time range |
-| `color` | `string?` | Accent color |
-| `category` | `string?` | For grouping / colorMap |
+| `color` | `string?` | Accent color (auto-assigned if omitted) |
+| `category` | `string?` | For grouping — events with the same category share a color |
 | `subtitle` | `string?` | Secondary text |
 | `tags` | `string[]?` | Small accent-colored pills |
 | `allDay` | `boolean?` | Render as an all-day event |
 | `data` | `Record?` | Arbitrary payload |
+
+## Auto-Coloring
+
+Events without an explicit `color` are automatically assigned one from a vivid palette, grouped by `category` (or `title` if no category). No configuration needed — just omit `color`:
+
+```ts
+const events = [
+  { id: '1', title: 'Yoga', category: 'wellness', start: ..., end: ... },
+  { id: '2', title: 'Pilates', category: 'wellness', start: ..., end: ... },  // same color as Yoga
+  { id: '3', title: 'Team Sync', start: ..., end: ... },                      // different color
+];
+
+const adapter = createMemoryAdapter(events);
+```
+
+Events with explicit `color` always take priority.
 
 ## Multi-day & All-day Events
 
@@ -108,23 +125,16 @@ segmentForDay(event, dayTimestamp);
 // → { ev, start, end, isStart, isEnd, dayIndex, totalDays, allDay } | null
 ```
 
-## Views
-
-| Concept | Day | Week | Description |
-|---------|-----|------|-------------|
-| **Planner** | `mode="day"` | `mode="week"` | Time blocks on a scrollable grid |
-| **Agenda** | `mode="day"` | `mode="week"` | List view — Done, Now, Next (day) or grouped-by-day (week) |
-
 ## Recurring Schedules
 
 ```svelte
 <script lang="ts">
-  import { Calendar, Planner, createRecurringAdapter, neutral } from '@nomideusz/svelte-calendar';
-  import type { CalendarView, RecurringEvent } from '@nomideusz/svelte-calendar';
+  import { Calendar, createRecurringAdapter } from '@nomideusz/svelte-calendar';
+  import type { RecurringEvent } from '@nomideusz/svelte-calendar';
 
   const schedule: RecurringEvent[] = [
     // Every Monday
-    { id: '1', title: 'Morning Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30', color: '#818cf8' },
+    { id: '1', title: 'Morning Yoga', dayOfWeek: 1, startTime: '07:00', endTime: '08:30' },
     // Mon/Wed/Fri during semester
     { id: '2', title: 'Math', dayOfWeek: [1, 3, 5], startTime: '09:00', endTime: '10:00',
       startDate: '2025-09-01', until: '2025-12-15' },
@@ -143,12 +153,9 @@ segmentForDay(event, dayTimestamp);
   ];
 
   const adapter = createRecurringAdapter(schedule);
-  const views: CalendarView[] = [
-    { id: 'week-planner', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
-  ];
 </script>
 
-<Calendar {views} {adapter} defaultView="week-planner" theme={neutral} readOnly />
+<Calendar {adapter} readOnly />
 ```
 
 ### RecurringEvent
@@ -166,22 +173,7 @@ segmentForDay(event, dayTimestamp);
 | `startDate` | `string` | — | First occurrence `"YYYY-MM-DD"` |
 | `until` | `string` | — | Last occurrence `"YYYY-MM-DD"` |
 | `count` | `number` | — | Max occurrences from `startDate` |
-| `color` | `string?` | — | Accent color |
-
-## Color Map & Auto-Coloring
-
-```ts
-// Explicit mapping
-const adapter = createMemoryAdapter(events, { colorMap: { yoga: '#818cf8', wellness: '#34d399' } });
-
-// Auto-assign from accent color
-const adapter = createMemoryAdapter(events, { autoColor: '#6366f1' });
-
-// Fixed vivid palette
-const adapter = createMemoryAdapter(events, { autoColor: true });
-```
-
-Events with explicit `color` always take priority.
+| `color` | `string?` | — | Accent color (auto-assigned if omitted) |
 
 ## Localization (i18n)
 
@@ -224,8 +216,8 @@ const labels = getLabels();
 | `today` | `'Today'` | Relative day label / nav button |
 | `yesterday` | `'Yesterday'` | Relative day label |
 | `tomorrow` | `'Tomorrow'` | Relative day label |
-| `day` | `'Day'` | Granularity pill |
-| `week` | `'Week'` | Granularity pill |
+| `day` | `'Day'` | Mode pill |
+| `week` | `'Week'` | Mode pill |
 | `planner` | `'Planner'` | View label |
 | `agenda` | `'Agenda'` | View label |
 | `now` | `'now'` | Live indicator badge |
@@ -253,23 +245,25 @@ const labels = getLabels();
 
 | Preset | Description |
 |--------|-------------|
+| `neutral` | White/gray, blue accent, inherits fonts — **default** |
 | `midnight` | Dark navy/slate, red accent |
-| `neutral` | White/gray, blue accent, inherits fonts — **recommended** |
 
 ```svelte
-<Calendar {views} {adapter} theme={neutral} />
+<Calendar {adapter} />              <!-- neutral (default) -->
+<Calendar {adapter} theme={midnight} />  <!-- dark mode -->
 ```
 
 Customize any token:
 
 ```ts
+import { neutral } from '@nomideusz/svelte-calendar';
+
 const myTheme = `
   ${neutral}
   --dt-accent: #e11d48;
   --dt-bg: var(--my-app-surface);
   --dt-text: var(--my-app-text);
 `;
-```
 ```
 
 <details>
@@ -297,7 +291,7 @@ const myTheme = `
 
 ## Embeddable Widget
 
-Drop into any HTML page - no build tools needed:
+Drop into any HTML page — no build tools needed:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@nomideusz/svelte-calendar/widget/widget.js"></script>
@@ -307,13 +301,6 @@ Drop into any HTML page - no build tools needed:
   theme="neutral"
   height="600"
 ></day-calendar>
-```
-
-## Standalone Views
-
-```svelte
-<Planner style={midnight} mode="day" events={events} height={600} />
-<Agenda mode="day" events={events} height={520} />
 ```
 
 ## Development

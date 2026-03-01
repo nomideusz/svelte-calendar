@@ -1,8 +1,6 @@
 <script lang="ts">
 	import {
 		Calendar,
-		Planner,
-		Agenda,
 		createMemoryAdapter,
 		presets,
 	} from '$lib/index.js';
@@ -24,7 +22,7 @@
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
-	const defaultView = $derived((settingsValues.activeView as CalendarView['id']) ?? 'week-planner');
+	const activeView = $derived((settingsValues.activeView as CalendarView['id']) ?? 'week-planner');
 	const locale = $derived((settingsValues.locale as string) ?? 'en-US');
 	const dir = $derived<'ltr' | 'rtl'>(settingsValues.rtl ? 'rtl' : 'ltr');
 	const themeValue = $derived(presets[activeTheme]);
@@ -96,10 +94,8 @@
 		{ id: '22', title: 'Studio Closed', start: at(-2, 0), end: at(-1, 0), allDay: true, category: 'wellness' },
 	];
 
-	// ── Adapter with auto-coloring ─────────────────────────
-	const accentMap: Partial<Record<PresetName, string>> = { midnight: '#ef4444' };
-	const accent = $derived(accentMap[activeTheme] ?? '#2563eb');
-	const adapter = $derived(createMemoryAdapter(seed, { autoColor: accent }));
+	// ── Adapter ────────────────────────────────────────────
+	const adapter = $derived(createMemoryAdapter(seed));
 
 	// ── Sync body background ───────────────────────────────
 	const stageBgs: Record<PresetName, string> = {
@@ -110,20 +106,6 @@
 		document.body.style.background = stageBgs[activeTheme] ?? '#080a0f';
 		document.documentElement.dataset.theme = activeTheme;
 	});
-
-	// ── Views ──────────────────────────────────────────────
-	const views: CalendarView[] = [
-		{
-			id: 'day-planner',
-			label: 'Planner',
-			granularity: 'day',
-			component: Planner,
-			props: { mode: 'day' },
-		},
-		{ id: 'week-planner', label: 'Planner', granularity: 'week', component: Planner, props: { mode: 'week' } },
-		{ id: 'day-agenda', label: 'Agenda', granularity: 'day', component: Agenda, props: { mode: 'day' } },
-		{ id: 'week-agenda', label: 'Agenda', granularity: 'week', component: Agenda, props: { mode: 'week' } },
-	];
 
 	// ── Callbacks ──────────────────────────────────────────
 	let lastAction = $state('');
@@ -137,7 +119,7 @@
 		lastAction = `Moved: ${event.title} → ${start.toLocaleTimeString()} – ${end.toLocaleTimeString()}`;
 	}
 	function handleViewChange(viewId: CalendarView['id']) {
-		if (defaultView !== viewId) {
+		if (activeView !== viewId) {
 			settingsValues = { ...settingsValues, activeView: viewId };
 		}
 	}
@@ -161,8 +143,7 @@
 
 	<Calendar
 		{adapter}
-		{views}
-		{defaultView}
+		view={activeView}
 		theme={themeValue}
 		height={700}
 		{readOnly}

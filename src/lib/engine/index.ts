@@ -8,7 +8,7 @@ export type {
 	ViewStateOptions,
 	CalendarViewId,
 	BuiltInViewId,
-	ViewGranularity,
+	ViewMode,
 } from './view-state.svelte.js';
 
 export { createSelection } from './selection.svelte.js';

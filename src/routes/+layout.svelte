@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
 
-	const path = $derived($page.url.pathname);
+	const path = $derived(page.url.pathname);
 </script>
 
 <svelte:head>

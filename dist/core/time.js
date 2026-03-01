@@ -66,3 +66,45 @@ export function dayNum(ms) {
 export function dayOfWeek(ms) {
     return getDay(new Date(ms));
 }
+/** Does an event span more than one calendar day? */
+export function isMultiDay(ev) {
+    return sod(ev.start.getTime()) !== sod(ev.end.getTime() - 1);
+}
+/** Is an event effectively all-day? (allDay flag, or spans ≥24h with midnight boundaries) */
+export function isAllDay(ev) {
+    if (ev.allDay)
+        return true;
+    const duration = ev.end.getTime() - ev.start.getTime();
+    if (duration < DAY_MS)
+        return false;
+    const s = ev.start;
+    return s.getHours() === 0 && s.getMinutes() === 0 && s.getSeconds() === 0;
+}
+/**
+ * Compute how an event appears on a specific day.
+ * Returns null if the event doesn't overlap the day.
+ */
+export function segmentForDay(ev, dayMs) {
+    const dayStart = sod(dayMs);
+    const dayEnd = dayStart + DAY_MS;
+    const evStart = ev.start.getTime();
+    const evEnd = ev.end.getTime();
+    // No overlap
+    if (evStart >= dayEnd || evEnd <= dayStart)
+        return null;
+    const firstDayMs = sod(evStart);
+    // For end time: if event ends exactly at midnight, last day is the day before
+    const lastDayMs = sod(evEnd - 1);
+    const totalDays = Math.round((lastDayMs - firstDayMs) / DAY_MS) + 1;
+    const dayIndex = Math.round((dayStart - firstDayMs) / DAY_MS) + 1;
+    return {
+        ev,
+        start: new Date(Math.max(evStart, dayStart)),
+        end: new Date(Math.min(evEnd, dayEnd)),
+        isStart: dayStart === firstDayMs,
+        isEnd: dayStart === lastDayMs,
+        dayIndex,
+        totalDays,
+        allDay: isAllDay(ev),
+    };
+}

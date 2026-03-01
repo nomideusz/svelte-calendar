@@ -13,7 +13,12 @@
 	import type { DragState } from '../../engine/drag.svelte.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
+	import { isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import type { DaySegment } from '../../core/time.js';
 	import { fmtH, fmtTime } from '../../core/locale.js';
+	import { getLabels } from '../../core/locale.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		/** Total height (null = fill parent) */
@@ -57,6 +62,7 @@
 	const commitDragCtx = getContext<() => void>('calendar:commitDrag') as (() => void) | undefined;
 	const snapIntervalCtx = getContext<{ current: number }>('calendar:snapInterval');
 	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 
 	const clock = createClock();
 
@@ -100,6 +106,15 @@
 
 	const count = 1 + 2 * BUFFER_DAYS;
 	const origin = $derived(internalCenterMs - BUFFER_DAYS * DAY_MS);
+
+	// ─── Declare load range for entire visible buffer ────────
+	$effect(() => {
+		if (!loadRangeCtx) return;
+		const rangeStart = new Date(internalCenterMs - BUFFER_DAYS * DAY_MS);
+		const rangeEnd = new Date(internalCenterMs + (BUFFER_DAYS + 1) * DAY_MS);
+		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
+		return () => loadRangeCtx.set(null);
+	});
 
 	// Auto-calculate hourWidth — minimum 60px so hours stay readable.
 	// When 24h × 60px exceeds the container, the timeline scrolls horizontally.
@@ -149,8 +164,22 @@
 
 	const nowPx = $derived(timeToPx(clock.tick));
 
+	// ─── Separate all-day from timed events ────────────
+	const timedEvents = $derived(events.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
+	const allDayEvents = $derived.by(() => {
+		const segs: DaySegment[] = [];
+		for (const ev of events) {
+			if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+			const seg = segmentForDay(ev, visibleDayMs);
+			if (seg) segs.push(seg);
+		}
+		return segs;
+	});
+
 	// ─── Event Layout ───────────────────────────────────
 	const CONTENT_TOP = 56;
+	const ALLDAY_H = 24;
+	const contentTop = $derived(CONTENT_TOP + (allDayEvents.length > 0 ? ALLDAY_H + 4 : 0));
 	const EVENT_GAP = 5;
 	const MIN_EVENT_H = 32;
 
@@ -170,9 +199,9 @@
 		const now = clock.tick;
 		const dragP = drag?.active && drag.mode === 'move' ? drag.payload : null;
 
-		const staticEvents: typeof events = [];
+		const staticEvents: typeof timedEvents = [];
 		let draggedEv: TimelineEvent | null = null;
-		for (const ev of events) {
+		for (const ev of timedEvents) {
 			if (dragP?.eventId === ev.id) draggedEv = ev;
 			else staticEvents.push(ev);
 		}
@@ -225,10 +254,10 @@
 			for (const idx of indices) infos[idx].groupMaxRow = rows.length;
 		}
 
-		const availH = containerH - CONTENT_TOP - 8;
+		const availH = containerH - contentTop - 8;
 		const result: PositionedEvent[] = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
 			const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
-			const topPx = CONTENT_TOP + info.row * (availH / info.groupMaxRow);
+			const topPx = contentTop + info.row * (availH / info.groupMaxRow);
 			return { ...info, topPx, heightPx: laneH };
 		});
 
@@ -238,7 +267,7 @@
 			result.push({
 				ev: draggedEv, x, width: Math.max(xEnd - x, 28),
 				row: 0, groupMaxRow: 1,
-				topPx: CONTENT_TOP,
+				topPx: contentTop,
 				heightPx: Math.max(MIN_EVENT_H, availH - EVENT_GAP),
 				isCurrent: draggedEv.start.getTime() <= now && draggedEv.end.getTime() > now,
 				isDragged: true,
@@ -250,7 +279,7 @@
 
 	// ─── Infinite-scroll helpers ────────────────────────
 
-	/** Detect external focusDate changes (from toolbar arrows). */
+	/** Detect external focusDate changes (from nav arrows). */
 	$effect(() => {
 		const ext = focusDate ? sod(focusDate.getTime()) : clock.today;
 		if (ext !== lastExternalMs && !rebasing) {
@@ -462,7 +491,7 @@
 	}
 </script>
 
-<div class="fs" style={style || undefined} style:height={height ? `${height}px` : '100%'} role="region" aria-label="Day planner">
+<div class="fs" style={style || undefined} style:height={height ? `${height}px` : '100%'} role="region" aria-label={L.dayPlanner}>
 	<div
 		class="fs-scroll"
 		class:fs-grabbing={scrollDragging}
@@ -471,7 +500,7 @@
 		onwheel={(e) => { e.preventDefault(); el.scrollLeft += e.deltaY || e.deltaX; following = false; }}
 		onpointerdown={onPointerDown}
 		role="application"
-		aria-label="Scrollable day planner"
+		aria-label={L.scrollableDayPlanner}
 	>
 		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="none">
 			{#each days as d (d.ms)}
@@ -513,7 +542,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					role="button"
 					tabindex="0"
-					aria-label="{p.ev.title}{p.isCurrent ? ' (in progress)' : ''}"
+					aria-label="{p.ev.title}{p.isCurrent ? ` (${L.inProgress})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
 				>
@@ -541,29 +570,56 @@
 		</div>
 	</div>
 
+	<!-- All-day events banner (outside scroll so it stays in viewport) -->
+	{#if allDayEvents.length > 0}
+		<div class="fs-allday" style:top="{CONTENT_TOP}px">
+			{#each allDayEvents as seg (seg.ev.id)}
+				<div
+					class="fs-ad"
+					class:fs-ad--start={seg.isStart}
+					class:fs-ad--selected={selectedEventId === seg.ev.id}
+					style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
+					role="button"
+					tabindex="0"
+					aria-label="{seg.ev.title}{seg.totalDays > 1 ? `, ${L.dayNOfTotal(seg.dayIndex, seg.totalDays)}` : `, ${L.allDay}`}"
+					onclick={() => oneventclick?.(seg.ev)}
+					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(seg.ev); } }}
+				>
+					<span class="fs-ad-dot" aria-hidden="true"></span>
+					<span class="fs-ad-title">{seg.ev.title}</span>
+					{#if seg.totalDays > 1}
+						<span class="fs-ad-span">{L.day} {seg.dayIndex}/{seg.totalDays}</span>
+					{:else}
+						<span class="fs-ad-span">{L.allDay}</span>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	{/if}
+
 	<div class="fs-date-label">{dateLabel}</div>
 
-	<nav class="fs-nav" aria-label="Day navigation">
+	<nav class="fs-nav" aria-label={L.dayNavigation}>
 		<button
 			class="fs-nav-pill fs-nav-today"
 			class:fs-nav-today--hidden={following}
 			onclick={() => { internalCenterMs = clock.today; lastExternalMs = clock.today; viewState?.goToday(); following = true; }}
-			aria-label="Go to today"
+			aria-label={L.goToToday}
 			tabindex={following ? -1 : 0}
 		>
-			Today
+			{L.today}
 		</button>
 		<button
 			class="fs-nav-pill"
 			onclick={() => { const prev = internalCenterMs - DAY_MS; internalCenterMs = prev; lastExternalMs = prev; viewState?.prev(); following = false; }}
-			aria-label="Previous day"
+			aria-label={L.previousDay}
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 		</button>
 		<button
 			class="fs-nav-pill"
 			onclick={() => { const next = internalCenterMs + DAY_MS; internalCenterMs = next; lastExternalMs = next; viewState?.next(); following = false; }}
-			aria-label="Next day"
+			aria-label={L.nextDay}
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
@@ -755,6 +811,69 @@
 	.fs-nav-pill:focus-visible {
 		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
 		outline-offset: 2px;
+	}
+
+	/* ─── All-day strip ─────────────────────────────── */
+	.fs-allday {
+		position: absolute;
+		left: 0;
+		right: 0;
+		display: flex;
+		gap: 6px;
+		padding: 0 8px;
+		z-index: 7;
+		overflow-x: auto;
+		scrollbar-width: none;
+		pointer-events: auto;
+	}
+	.fs-allday::-webkit-scrollbar { display: none; }
+
+	.fs-ad {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 2px 8px;
+		border-radius: 4px;
+		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #10141c));
+		border-left: 3px solid var(--ev-color);
+		white-space: nowrap;
+		flex-shrink: 0;
+		cursor: pointer;
+		transition: background 0.15s;
+	}
+	.fs-ad:hover {
+		background: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, #10141c));
+	}
+	.fs-ad:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline-offset: 2px;
+	}
+	.fs-ad--selected {
+		background: color-mix(in srgb, var(--ev-color) 30%, var(--dt-surface, #10141c));
+		border-left-width: 4px;
+	}
+
+	.fs-ad-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--ev-color);
+		flex-shrink: 0;
+	}
+
+	.fs-ad-title {
+		font-size: 0.7rem;
+		font-weight: 500;
+		color: var(--dt-text, #e2e8f0);
+		max-width: 120px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.fs-ad-span {
+		font-size: 0.6rem;
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
+		flex-shrink: 0;
 	}
 
 	/* ─── Events ─────────────────────────────────────── */

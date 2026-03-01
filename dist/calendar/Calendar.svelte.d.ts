@@ -26,8 +26,6 @@ interface Props {
     mondayStart?: boolean;
     /** Total height */
     height?: number;
-    /** Show toolbar */
-    showToolbar?: boolean;
     /** Text direction: 'ltr' (default), 'rtl', or 'auto' */
     dir?: 'ltr' | 'rtl' | 'auto';
     /** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */

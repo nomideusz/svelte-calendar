@@ -40,7 +40,7 @@
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
 import { startOfWeek, DAY_MS } from '../core/time.js';
-import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
+import { VIVID_PALETTE } from '../core/palette.js';
 
 // ── Types ───────────────────────────────────────────────
 
@@ -118,14 +118,6 @@ export interface RecurringEvent {
 export interface RecurringAdapterOptions {
 	/** Start weeks on Monday (default: true) */
 	mondayStart?: boolean;
-	/** Map of category/title to color */
-	colorMap?: Record<string, string>;
-	/**
-	 * Auto-assign colors to events by category or title.
-	 *   true    → use the default vivid palette
-	 *   string  → hex accent color to generate a harmonious palette
-	 */
-	autoColor?: boolean | string;
 }
 
 // ── Helpers ─────────────────────────────────────────────
@@ -177,18 +169,25 @@ function clampDayOfMonth(year: number, month: number, day: number): Date {
 	return new Date(year, month, Math.min(day, lastDay));
 }
 
+/** Format a Date as a compact "YYYYMMDD" key for stable instance IDs. */
+function dateKey(d: Date): string {
+	const y = d.getFullYear();
+	const m = String(d.getMonth() + 1).padStart(2, '0');
+	const day = String(d.getDate()).padStart(2, '0');
+	return `${y}${m}${day}`;
+}
+
 /** Create a concrete TimelineEvent from a recurring def + occurrence date */
 function createConcreteEvent(
 	rec: RecurringEvent,
 	date: Date,
-	instanceKey: string,
 ): TimelineEvent {
 	const [sh, sm] = parseTime(rec.startTime);
 	const [eh, em] = parseTime(rec.endTime);
 	const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), sh, sm);
 	const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), eh, em);
 	return {
-		id: `${rec.id}--${instanceKey}`,
+		id: `${rec.id}--${dateKey(date)}`,
 		title: rec.title,
 		start,
 		end,
@@ -282,16 +281,14 @@ function projectDaily(
 		if (cursor < rangeStart) cursor.setDate(cursor.getDate() + interval);
 	}
 
-	let idx = 0;
 	while (cursor < range.end) {
 		if (effectiveUntil && cursor > effectiveUntil) break;
 
-		const ev = createConcreteEvent(rec, cursor, `d${idx}`);
+		const ev = createConcreteEvent(rec, cursor);
 		if (ev.start < range.end && ev.end > range.start) {
 			out.push(ev);
 		}
 		cursor.setDate(cursor.getDate() + interval);
-		idx++;
 	}
 }
 
@@ -328,8 +325,6 @@ function projectWeekly(
 		}
 	}
 
-	let weekIndex = Math.round((weekMs - anchorWeekMs) / (7 * DAY_MS));
-
 	while (weekMs < rangeEndMs) {
 		for (const day of days) {
 			const dayMs = weekMs + isoWeekdayToOffset(day) * DAY_MS;
@@ -338,13 +333,12 @@ function projectWeekly(
 			if (effectiveUntil && dayMs > effectiveUntil.getTime()) return;
 
 			const dayDate = new Date(dayMs);
-			const ev = createConcreteEvent(rec, dayDate, `w${weekIndex}--d${day}`);
+			const ev = createConcreteEvent(rec, dayDate);
 			if (ev.start < range.end && ev.end > range.start) {
 				out.push(ev);
 			}
 		}
 		weekMs += interval * 7 * DAY_MS;
-		weekIndex += interval;
 	}
 }
 
@@ -378,7 +372,7 @@ function projectMonthly(
 		if (effectiveUntil && date > effectiveUntil) break;
 
 		if (date >= range.start && (!startDate || date >= startDate)) {
-			const ev = createConcreteEvent(rec, date, `m${y}-${String(m + 1).padStart(2, '0')}`);
+			const ev = createConcreteEvent(rec, date);
 			if (ev.start < range.end && ev.end > range.start) {
 				out.push(ev);
 			}
@@ -391,11 +385,14 @@ function projectMonthly(
 // ── Adapter factory ─────────────────────────────────────
 
 /** Default palette for auto-coloring */
-const AUTO_COLORS = VIVID_PALETTE;
+const PALETTE = VIVID_PALETTE;
 
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
+ *
+ * Events without a `color` are auto-assigned one from a vivid palette,
+ * grouped by `category` or `title` so related events share a color.
  *
  * Read-only by default — create/update/delete throw.
  */
@@ -403,27 +400,17 @@ export function createRecurringAdapter(
 	schedule: RecurringEvent[],
 	options: RecurringAdapterOptions = {},
 ): CalendarAdapter {
-	const { mondayStart = true, colorMap, autoColor } = options;
+	const { mondayStart = true } = options;
 
-	// Resolve palette
-	const palette = autoColor
-		? typeof autoColor === 'string'
-			? generatePalette(autoColor)
-			: AUTO_COLORS
-		: AUTO_COLORS;
-
-	// Build auto-color assignments
+	// Auto-color: assign from vivid palette by category/title
 	const colorAssignments = new Map<string, string>();
-	if (autoColor || colorMap) {
-		let colorIndex = 0;
-		for (const rec of schedule) {
-			const key = rec.category ?? rec.title;
-			if (colorMap?.[key]) {
-				colorAssignments.set(key, colorMap[key]);
-			} else if (autoColor && !colorAssignments.has(key)) {
-				colorAssignments.set(key, palette[colorIndex % palette.length]);
-				colorIndex++;
-			}
+	let colorIndex = 0;
+	for (const rec of schedule) {
+		if (rec.color) continue;
+		const key = rec.category ?? rec.title;
+		if (!colorAssignments.has(key)) {
+			colorAssignments.set(key, PALETTE[colorIndex % PALETTE.length]);
+			colorIndex++;
 		}
 	}
 

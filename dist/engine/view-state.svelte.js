@@ -32,7 +32,7 @@ function computeRange(focus, granularity, mondayStart) {
     };
 }
 export function createViewState(options = {}) {
-    let view = $state(options.defaultView ?? 'week-grid');
+    let view = $state(options.defaultView ?? 'week-planner');
     let focusDate = $state(options.initialDate ?? new Date());
     let mondayStart = $state(options.mondayStart ?? true);
     const timezone = options.timezone;

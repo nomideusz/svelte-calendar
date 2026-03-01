@@ -8,6 +8,66 @@
  * `date-fns/locale/*` and pass to `format()`.
  */
 import { DAY_MS } from './time.js';
+/** English defaults — used unless overridden via `setLabels()`. */
+export const defaultLabels = {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    tomorrow: 'Tomorrow',
+    day: 'Day',
+    week: 'Week',
+    planner: 'Planner',
+    agenda: 'Agenda',
+    now: 'now',
+    free: 'free',
+    allDay: 'All day',
+    done: 'Done',
+    upNext: 'Up next',
+    until: 'until',
+    noEvents: 'No events',
+    nothingScheduled: 'Nothing scheduled',
+    nothingScheduledYet: 'Nothing scheduled yet',
+    nothingWasScheduled: 'Nothing was scheduled',
+    allDoneForToday: 'All done for today',
+    goToToday: 'Go to today',
+    previousDay: 'Previous day',
+    nextDay: 'Next day',
+    previousWeek: 'Previous week',
+    nextWeek: 'Next week',
+    calendar: 'Calendar',
+    viewMode: 'View mode',
+    dayNavigation: 'Day navigation',
+    weekNavigation: 'Week navigation',
+    dayPlanner: 'Day planner',
+    scrollableDayPlanner: 'Scrollable day planner',
+    todaysLineup: "Today's lineup",
+    weekAhead: 'Week ahead',
+    multiWeekGrid: 'Multi-week calendar grid',
+    currentTime: 'Current time',
+    createEvent: 'Create event',
+    happeningNow: 'happening now',
+    past: 'past',
+    completed: 'completed',
+    inProgress: 'in progress',
+    nMore: (n) => `+${n} more`,
+    nEvents: (n) => `${n} event${n === 1 ? '' : 's'}`,
+    nCompleted: (n) => `${n} completed`,
+    dayNOfTotal: (current, total) => `day ${current} of ${total}`,
+    percentComplete: (pct) => `${pct}% complete`,
+};
+let _labels = { ...defaultLabels };
+/** Replace one or more UI labels. Merges with current labels. */
+export function setLabels(overrides) {
+    _labels = { ..._labels, ...overrides };
+}
+/** Reset all labels to English defaults. */
+export function resetLabels() {
+    _labels = { ...defaultLabels };
+}
+/** Get the currently active labels. */
+export function getLabels() {
+    return _labels;
+}
+// ─── Default locale ─────────────────────────────────────
 /** Module-level default locale — consumers can override via setDefaultLocale() */
 let defaultLocale = 'en-US';
 /** Change the default locale for all formatting functions */
@@ -81,12 +141,13 @@ export function dateWithWeekday(ms, locale) {
 export function fmtDay(ms, todayMs, opts, locale) {
     const loc = locale ?? defaultLocale;
     const short = new Date(ms).toLocaleDateString(loc, { month: 'short', day: 'numeric' });
+    const L = _labels;
     if (ms === todayMs)
-        return opts?.short ? 'Today' : `Today · ${short}`;
+        return opts?.short ? L.today : `${L.today} · ${short}`;
     if (ms === todayMs - DAY_MS)
-        return opts?.short ? 'Yesterday' : `Yesterday · ${short}`;
+        return opts?.short ? L.yesterday : `${L.yesterday} · ${short}`;
     if (ms === todayMs + DAY_MS)
-        return opts?.short ? 'Tomorrow' : `Tomorrow · ${short}`;
+        return opts?.short ? L.tomorrow : `${L.tomorrow} · ${short}`;
     if (opts?.short) {
         return new Date(ms).toLocaleDateString(loc, { weekday: 'short', day: 'numeric' });
     }

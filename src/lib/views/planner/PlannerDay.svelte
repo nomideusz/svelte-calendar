@@ -62,6 +62,7 @@
 	const commitDragCtx = getContext<() => void>('calendar:commitDrag') as (() => void) | undefined;
 	const snapIntervalCtx = getContext<{ current: number }>('calendar:snapInterval');
 	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 
 	const clock = createClock();
 
@@ -105,6 +106,15 @@
 
 	const count = 1 + 2 * BUFFER_DAYS;
 	const origin = $derived(internalCenterMs - BUFFER_DAYS * DAY_MS);
+
+	// ─── Declare load range for entire visible buffer ────────
+	$effect(() => {
+		if (!loadRangeCtx) return;
+		const rangeStart = new Date(internalCenterMs - BUFFER_DAYS * DAY_MS);
+		const rangeEnd = new Date(internalCenterMs + (BUFFER_DAYS + 1) * DAY_MS);
+		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
+		return () => loadRangeCtx.set(null);
+	});
 
 	// Auto-calculate hourWidth — minimum 60px so hours stay readable.
 	// When 24h × 60px exceeds the container, the timeline scrolls horizontally.

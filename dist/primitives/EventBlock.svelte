@@ -10,8 +10,10 @@
 -->
 <script lang="ts">
 	import type { TimelineEvent } from '../core/types.js';
-	import { fmtTime, fmtDuration } from '../core/locale.js';
+	import { fmtTime, fmtDuration, getLabels } from '../core/locale.js';
 	import type { Snippet } from 'svelte';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		event: TimelineEvent;
@@ -51,7 +53,7 @@
 		const t = event.title;
 		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
 		const dur = fmtDuration(event.start, event.end);
-		const status = active ? ', happening now' : past ? ', past' : '';
+		const status = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : '';
 		return `${t}, ${time}, ${dur}${status}`;
 	});
 
@@ -90,7 +92,7 @@
 					{/each}
 				</div>
 			{/if}
-			{#if active}<span class="eb-live-badge">now</span>{/if}
+			{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
 		</div>
 	{:else}
 		<!-- row -->
@@ -110,7 +112,7 @@
 				{/each}
 			</span>
 		{/if}
-		{#if active}<span class="eb-live-badge">now</span>{/if}
+		{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
 	{/if}
 {/snippet}
 

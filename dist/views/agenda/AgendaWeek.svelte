@@ -12,9 +12,11 @@
 	import { getContext } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, startOfWeek, dayNum } from '../../core/time.js';
-	import { weekdayLong, weekdayShort, monthShort, fmtTime as _fmtTime, fmtDuration } from '../../core/locale.js';
+	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
+	import { weekdayLong, weekdayShort, monthShort, fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
+
+	const L = $derived(getLabels());
 
 	interface Props {
 		mondayStart?: boolean;
@@ -53,7 +55,7 @@
 
 	function timeUntilMs(ms: number): string {
 		const diff = ms - clock.tick;
-		if (diff <= 0) return 'now';
+		if (diff <= 0) return L.now;
 		const tMins = Math.floor(diff / 60000);
 		if (tMins < 60) return `in ${tMins}m`;
 		const hrs = Math.floor(tMins / 60);
@@ -116,6 +118,8 @@
 		dateLabel: string;
 		tier: DayTier;
 		events: TimelineEvent[];
+		allDayEvents: TimelineEvent[];
+		timedEvents: TimelineEvent[];
 		pastEvents: TimelineEvent[];
 		currentEvents: TimelineEvent[];
 		upcomingEvents: TimelineEvent[];
@@ -143,7 +147,9 @@
 			const dayEvts = events
 				.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms)
 				.sort((a, b) => a.start.getTime() - b.start.getTime());
-			const totalMinutes = dayEvts.reduce((sum, ev) => {
+			const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
+			const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
+			const totalMinutes = timedEvts.reduce((sum, ev) => {
 				const s = Math.max(ev.start.getTime(), ms);
 				const e = Math.min(ev.end.getTime(), dEnd);
 				return sum + (e - s) / 60000;
@@ -151,7 +157,7 @@
 			const pastEvents: TimelineEvent[] = [];
 			const currentEvents: TimelineEvent[] = [];
 			const upcomingEvents: TimelineEvent[] = [];
-			for (const ev of dayEvts) {
+			for (const ev of timedEvts) {
 				if (ev.end.getTime() <= now) pastEvents.push(ev);
 				else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
 				else upcomingEvents.push(ev);
@@ -168,6 +174,8 @@
 				dateLabel: `${monthShort(ms, locale)} ${dayNum(ms)}`,
 				tier,
 				events: dayEvts,
+				allDayEvents: allDayEvts,
+				timedEvents: timedEvts,
 				pastEvents,
 				currentEvents,
 				upcomingEvents,
@@ -198,7 +206,7 @@
 			{/if}
 			<span class="ag-card-meta">
 				{#if isNow}
-					until {fmtTime(ev.end)}
+					{L.until} {fmtTime(ev.end)}
 				{:else}
 					{fmtTime(ev.start)} – {fmtTime(ev.end)}
 				{/if}
@@ -224,7 +232,7 @@
 	class="ag ag--week"
 	style={style || undefined}
 >
-	<div class="ag-body" role="list" aria-label="Week ahead">
+	<div class="ag-body" role="list" aria-label={L.weekAhead}>
 		{#each weekDays as day (day.ms)}
 			{@const expanded = day.tier === 'today' || day.tier === 'tomorrow'}
 			{#if day.tier === 'past'}
@@ -251,17 +259,37 @@
 				<div class="ag-wday-head">
 					<div class="ag-wday-head-left">
 						{#if day.tier === 'today'}
-							<span class="ag-wday-badge">Today</span>
-						{:else if day.tier === 'tomorrow'}
-							<span class="ag-wday-badge ag-wday-badge--muted">Tomorrow</span>
+						<span class="ag-wday-badge">{L.today}</span>
+					{:else if day.tier === 'tomorrow'}
+						<span class="ag-wday-badge ag-wday-badge--muted">{L.tomorrow}</span>
 						{/if}
 						<span class="ag-wday-name">{day.dayName}</span>
 						<span class="ag-wday-date">{day.dateLabel}</span>
 					</div>
 				</div>
 
+				{#if day.allDayEvents.length > 0}
+					<div class="ag-allday">
+						{#each day.allDayEvents as ev (ev.id)}
+							<div
+								class="ag-allday-chip"
+								class:ag-allday-chip--selected={selectedEventId === ev.id}
+								style:--ev-color={ev.color || 'var(--dt-accent)'}
+								role="button"
+								tabindex="0"
+								aria-label="{ev.title}, {L.allDay}"
+								onclick={() => handleClick(ev)}
+								onkeydown={(e) => handleKeydown(e, ev)}
+							>
+								<span class="ag-allday-dot"></span>
+								<span class="ag-allday-title">{ev.title}</span>
+							</div>
+						{/each}
+					</div>
+				{/if}
+
 				{#if day.events.length === 0}
-					<div class="ag-wday-empty">No events</div>
+					<div class="ag-wday-empty">{L.noEvents}</div>
 				{:else if expanded}
 					<!-- Expanded: today/tomorrow get full slot treatment -->
 					<div class="ag-wday-expanded">
@@ -269,7 +297,7 @@
 							{#each day.currentEvents as ev (ev.id)}
 								<div class="ag-wslot">
 									<div class="ag-wslot-header">
-										<span class="ag-wslot-now">now</span>
+									<span class="ag-wslot-now">{L.now}</span>
 									</div>
 									{@render eventCard(ev, true)}
 								</div>
@@ -291,7 +319,7 @@
 							</div>
 						{/each}
 						{#if day.pastEvents.length > 0}
-							<div class="ag-wday-past-line">✓ {day.pastEvents.length} completed</div>
+							<div class="ag-wday-past-line">✓ {L.nCompleted(day.pastEvents.length)}</div>
 						{/if}
 					</div>
 				{:else}
@@ -323,7 +351,7 @@
 							</div>
 						{/each}
 						{#if day.events.length > 3}
-							<div class="ag-compact-more">+{day.events.length - 3} more</div>
+							<div class="ag-compact-more">{L.nMore(day.events.length - 3)}</div>
 						{/if}
 					</div>
 				{/if}
@@ -333,27 +361,27 @@
 	</div>
 
 	<!-- ── Floating nav pills ── -->
-	<nav class="ag-nav" aria-label="Week navigation">
+	<nav class="ag-nav" aria-label={L.weekNavigation}>
 		<button
 			class="ag-nav-pill ag-nav-today"
 			class:ag-nav-today--hidden={isThisWeek}
 			onclick={() => viewState?.goToday()}
-			aria-label="Go to today"
+			aria-label={L.goToToday}
 			tabindex={isThisWeek ? -1 : 0}
 		>
-			Today
+			{L.today}
 		</button>
 		<button
 			class="ag-nav-pill"
 			onclick={() => viewState?.prev()}
-			aria-label="Previous week"
+			aria-label={L.previousWeek}
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 		</button>
 		<button
 			class="ag-nav-pill"
 			onclick={() => viewState?.next()}
-			aria-label="Next week"
+			aria-label={L.nextWeek}
 		>
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
@@ -437,6 +465,49 @@
 	.ag-body::-webkit-scrollbar-thumb {
 		background: var(--dt-border);
 		border-radius: 2px;
+	}
+
+	/* ═══ All-day chips ═══ */
+	.ag-allday {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		padding: 4px 14px 6px;
+	}
+	.ag-allday-chip {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 2px 8px;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #10141c));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);
+		cursor: pointer;
+		transition: background 0.15s, border-color 0.15s;
+	}
+	.ag-allday-chip:hover {
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
+		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
+	}
+	.ag-allday-chip:focus-visible {
+		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline-offset: 2px;
+	}
+	.ag-allday-chip--selected {
+		border-color: var(--ev-color);
+		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #10141c));
+	}
+	.ag-allday-dot {
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--ev-color);
+		flex-shrink: 0;
+	}
+	.ag-allday-title {
+		font: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		white-space: nowrap;
 	}
 
 	/* ═══ Shared: event card ═══ */

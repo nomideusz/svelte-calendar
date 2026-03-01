@@ -1,11 +1,3 @@
-// ─── Views ──────────────────────────────────────────────
-export {
-	Planner,
-	Agenda,
-	AgendaDay,
-	AgendaWeek,
-} from './views/index.js';
-
 // ─── Primitives ─────────────────────────────────────────
 export {
 	NowIndicator,
@@ -32,7 +24,7 @@ export type {
 	ViewStateOptions,
 	CalendarViewId,
 	BuiltInViewId,
-	ViewGranularity,
+	ViewMode,
 	Selection,
 	DragState,
 	DragMode,
@@ -47,7 +39,6 @@ export type {
 	RestAdapterOptions,
 	RecurringEvent,
 	RecurringAdapterOptions,
-	MemoryAdapterOptions,
 } from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────

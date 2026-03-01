@@ -1,18 +1,18 @@
 <!--
   Calendar — the unified orchestrator.
 
-  Brings together: adapter → event store → view state + selection → toolbar + active view.
+  Brings together: adapter → event store → view state + selection → active view.
   Provides context so any descendant view can read the store/state via getContext().
 
   Usage:
     <Calendar
       adapter={myAdapter}
       views={[
-        { id: 'week-terrain', label: 'Terrain', component: WeekTimelineV4 },
-        { id: 'week-agenda',  label: 'Agenda',  component: WeekTimelineV5 },
-        { id: 'day-grid',     label: 'Planner', component: Planner, props: { mode: 'day' } },
+        { id: 'week-planner', label: 'Planner', component: Planner, props: { mode: 'week' } },
+        { id: 'week-agenda',   label: 'Agenda',  component: Agenda },
+        { id: 'day-planner',   label: 'Planner', component: Planner, props: { mode: 'day' } },
       ]}
-      defaultView="week-terrain"
+      defaultView="week-planner"
       theme={presets.midnight}
       height={600}
       oneventclick={handleClick}
@@ -28,6 +28,7 @@
 	import { createSelection, type Selection } from '../engine/selection.svelte.js';
 	import { createDragState, type DragState } from '../engine/drag.svelte.js';
 	import type { TimelineEvent } from '../core/types.js';
+	import { getLabels } from '../core/locale.js';
 
 	/** One view registration */
 	export interface CalendarView {
@@ -54,8 +55,6 @@
 		mondayStart?: boolean;
 		/** Total height */
 		height?: number;
-		/** Show toolbar */
-		showToolbar?: boolean;
 		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
 		dir?: 'ltr' | 'rtl' | 'auto';
 		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
@@ -85,11 +84,10 @@
 	let {
 		adapter,
 		views = [],
-		defaultView = 'week-grid',
+		defaultView = 'week-planner',
 		theme = '',
 		mondayStart = true,
 		height = 600,
-		showToolbar = true,
 		dir,
 		locale,
 		readOnly = false,
@@ -157,10 +155,20 @@
 	setContext('calendar:eventSnippet', { get current() { return eventSnippet; } });
 	setContext('calendar:emptySnippet', { get current() { return emptySnippet; } });
 
-	// ── Load events when range changes ──
+	// ── Load range signal ──
+	// Views can write a wider range here to override the default viewState.range.
+	// This lets infinite-scroll views (PlannerWeek, PlannerDay) declare their
+	// buffer needs without directly calling store.load().
+	let viewLoadRange = $state<{ start: Date; end: Date } | null>(null);
+	setContext('calendar:loadRange', {
+		get current() { return viewLoadRange; },
+		set(range: { start: Date; end: Date } | null) { viewLoadRange = range; },
+	});
+
+	// ── Load events when effective range changes ──
 	$effect(() => {
-		const { start, end } = viewState.range;
-		store.load({ start, end });
+		const range = viewLoadRange ?? viewState.range;
+		store.load({ start: range.start, end: range.end });
 	});
 
 	// Keep active view in sync when external defaultView changes after mount.
@@ -175,7 +183,7 @@
 		}
 	});
 
-	// Notify host when active view changes (e.g. via toolbar concept/granularity toggles).
+	// Notify host when active view changes (e.g. via granularity toggles).
 	$effect(() => {
 		onviewchange?.(viewState.view);
 	});
@@ -198,27 +206,26 @@
 		});
 	});
 
-	const toolbarViews = $derived(
-		views.map((v) => ({ id: v.id, label: v.label, granularity: v.granularity })),
-	);
 	// Which granularities are available?
 	const granularities = $derived.by(() => {
 		const g = new Set(views.map((v) => v.granularity));
 		return (['day', 'week'] as const).filter((key) => g.has(key));
 	});
+
+	const L = $derived(getLabels());
 </script>
 
 <div
 	class="cal"
 	style="{theme}; --cal-h: {height}px"
 	role="region"
-	aria-label="Calendar"
+	aria-label={L.calendar}
 	dir={dir}
 	lang={locale}
 >
 	<!-- Floating granularity pills (hidden for Agenda views) -->
 	{#if granularities.length > 1 && activeView?.label !== 'Agenda'}
-		<div class="cal-pills" role="group" aria-label="View mode">
+		<div class="cal-pills" role="group" aria-label={L.viewMode}>
 			{#each granularities as g}
 				<button
 					class="cal-pill"
@@ -232,7 +239,7 @@
 						if (target) viewState.setView(target.id);
 					}}
 				>
-					{g === 'day' ? 'Day' : 'Week'}
+					{g === 'day' ? L.day : L.week}
 				</button>
 			{/each}
 		</div>

@@ -4,9 +4,9 @@ export type { DateRange };
  * Built-in view IDs. Custom view IDs are also supported — CalendarViewId
  * is typed as `string` so consumers can register any ID.
  */
-export type BuiltInViewId = 'day-grid' | 'day-agenda' | 'week-grid' | 'week-agenda';
+export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'week-planner' | 'week-agenda';
 /**
- * Any view identifier. Use built-in strings like 'day-grid' or your own
+ * Any view identifier. Use built-in strings like 'day-planner' or your own
  * custom IDs like 'day-kanban', 'week-resource', etc.
  */
 export type CalendarViewId = string;

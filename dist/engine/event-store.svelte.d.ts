@@ -1,20 +1,3 @@
-/**
- * Reactive event store — the CRUD brain of the calendar.
- *
- * Wraps a CalendarAdapter and exposes Svelte 5 rune-mode reactive state.
- * All mutations go through the adapter first, then update local state.
- *
- * Usage:
- *   const store = createEventStore(adapter);
- *   // store.events       — all loaded events (reactive)
- *   // store.forRange()   — query by date range
- *   // store.forDay()     — query single day
- *   // store.add()        — create event
- *   // store.update()     — patch event
- *   // store.remove()     — delete event
- *   // store.move()       — drag-move shorthand
- *   // store.load()       — fetch from adapter for a range
- */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
 export interface EventStore {

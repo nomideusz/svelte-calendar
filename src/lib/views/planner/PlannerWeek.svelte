@@ -52,6 +52,7 @@
 	const drag = getContext<DragState>('calendar:drag') as DragState | undefined;
 	const commitDragCtx = getContext<() => void>('calendar:commitDrag') as (() => void) | undefined;
 	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 
 	const clock = createClock();
 
@@ -81,6 +82,17 @@
 	// ─── Derived ────────────────────────────────────────
 	const todayMs = $derived(clock.today);
 	const anchorWeekStart = $derived(sowFn(internalFocusMs, mondayStart));
+
+	// ─── Declare load range for entire visible buffer ────────
+	// Instead of calling store.load() directly, we tell Calendar
+	// what range we need. Calendar's single $effect handles loading.
+	$effect(() => {
+		if (!loadRangeCtx) return;
+		const rangeStart = new Date(anchorWeekStart - BUFFER_WEEKS * 7 * DAY_MS);
+		const rangeEnd = new Date(anchorWeekStart + (BUFFER_WEEKS + 1) * 7 * DAY_MS);
+		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
+		return () => loadRangeCtx.set(null);
+	});
 
 	// ─── Week data ──────────────────────────────────────
 	interface WeekRow {

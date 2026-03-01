@@ -4,16 +4,14 @@
   Brings together: adapter → event store → view state + selection → active view.
   Provides context so any descendant view can read the store/state via getContext().
 
-  Usage:
+  Usage (minimal):
+    <Calendar adapter={myAdapter} theme={neutral} />
+
+  Usage (full control):
     <Calendar
       adapter={myAdapter}
-      views={[
-        { id: 'week-planner', label: 'Planner', component: Planner, props: { mode: 'week' } },
-        { id: 'week-agenda',   label: 'Agenda',  component: Agenda },
-        { id: 'day-planner',   label: 'Planner', component: Planner, props: { mode: 'day' } },
-      ]}
-      defaultView="week-planner"
-      theme={presets.midnight}
+      view="week-planner"
+      theme={midnight}
       height={600}
       oneventclick={handleClick}
       oneventcreate={handleCreate}
@@ -29,13 +27,16 @@
 	import { createDragState, type DragState } from '../engine/drag.svelte.js';
 	import type { TimelineEvent } from '../core/types.js';
 	import { getLabels } from '../core/locale.js';
+	import { neutral } from '../theme/presets.js';
+	import Planner from '../views/planner/Planner.svelte';
+	import Agenda from '../views/agenda/Agenda.svelte';
 
 	/** One view registration */
 	export interface CalendarView {
 		id: CalendarViewId;
 		label: string;
 		/** day or week */
-		granularity: 'day' | 'week';
+		mode: 'day' | 'week';
 		/** The Svelte component to render */
 		component: Component<Record<string, unknown>>;
 		/** Extra props to pass through (e.g. hourHeight, specialized settings) */
@@ -47,8 +48,8 @@
 		adapter: CalendarAdapter;
 		/** Registered views */
 		views?: CalendarView[];
-		/** Initial view */
-		defaultView?: CalendarViewId;
+		/** Active view ID (defaults to first registered view) */
+		view?: CalendarViewId;
 		/** CSS theme string (--dt-* inline style) */
 		theme?: string;
 		/** Start week on Monday */
@@ -81,11 +82,19 @@
 		onviewchange?: (viewId: CalendarViewId) => void;
 	}
 
+	// ── Built-in views (used when no custom views are provided) ──
+	const DEFAULT_VIEWS: CalendarView[] = [
+		{ id: 'day-planner',  label: 'Planner', mode: 'day',  component: Planner },
+		{ id: 'week-planner', label: 'Planner', mode: 'week', component: Planner },
+		{ id: 'day-agenda',   label: 'Agenda',  mode: 'day',  component: Agenda },
+		{ id: 'week-agenda',  label: 'Agenda',  mode: 'week', component: Agenda },
+	];
+
 	let {
 		adapter,
-		views = [],
-		defaultView = 'week-planner',
-		theme = '',
+		views = DEFAULT_VIEWS,
+		view: activeViewId,
+		theme = neutral,
 		mondayStart = true,
 		height = 600,
 		dir,
@@ -109,10 +118,10 @@
 	// ── Create reactive state ──
 	const store: EventStore = $derived(createEventStore(adapter));
 	const viewState: ViewState = createViewState(untrack(() => ({
-		defaultView,
+		view: activeViewId ?? views[0]?.id,
 		mondayStart,
 		initialDate,
-		granularityForView: (viewId) => views.find((v) => v.id === viewId)?.granularity,
+		modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode,
 	})));
 	const selection: Selection = createSelection();
 	const drag: DragState = createDragState();
@@ -155,15 +164,25 @@
 	setContext('calendar:eventSnippet', { get current() { return eventSnippet; } });
 	setContext('calendar:emptySnippet', { get current() { return emptySnippet; } });
 
-	// ── Load events when range changes ──
-	$effect(() => {
-		const { start, end } = viewState.range;
-		store.load({ start, end });
+	// ── Load range signal ──
+	// Views can write a wider range here to override the default viewState.range.
+	// This lets infinite-scroll views (PlannerWeek, PlannerDay) declare their
+	// buffer needs without directly calling store.load().
+	let viewLoadRange = $state<{ start: Date; end: Date } | null>(null);
+	setContext('calendar:loadRange', {
+		get current() { return viewLoadRange; },
+		set(range: { start: Date; end: Date } | null) { viewLoadRange = range; },
 	});
 
-	// Keep active view in sync when external defaultView changes after mount.
+	// ── Load events when effective range changes ──
 	$effect(() => {
-		viewState.setView(defaultView);
+		const range = viewLoadRange ?? viewState.range;
+		store.load({ start: range.start, end: range.end });
+	});
+
+	// Keep active view in sync when external view prop changes after mount.
+	$effect(() => {
+		if (activeViewId) viewState.setView(activeViewId);
 	});
 
 	// Keep view state's week-start rule in sync with incoming prop changes.
@@ -173,7 +192,7 @@
 		}
 	});
 
-	// Notify host when active view changes (e.g. via granularity toggles).
+	// Notify host when active view changes (e.g. via mode toggles).
 	$effect(() => {
 		onviewchange?.(viewState.view);
 	});
@@ -183,7 +202,7 @@
 
 	// ── Date label (always visible, centered over views) ──
 	const dateLabel = $derived.by(() => {
-		if (viewState.granularity === 'day') {
+		if (viewState.mode === 'day') {
 			return viewState.focusDate.toLocaleDateString(locale, {
 				weekday: 'long',
 				month: 'short',
@@ -196,9 +215,9 @@
 		});
 	});
 
-	// Which granularities are available?
-	const granularities = $derived.by(() => {
-		const g = new Set(views.map((v) => v.granularity));
+	// Which modes are available?
+	const modes = $derived.by(() => {
+		const g = new Set(views.map((v) => v.mode));
 		return (['day', 'week'] as const).filter((key) => g.has(key));
 	});
 
@@ -213,18 +232,18 @@
 	dir={dir}
 	lang={locale}
 >
-	<!-- Floating granularity pills (hidden for Agenda views) -->
-	{#if granularities.length > 1 && activeView?.label !== 'Agenda'}
+	<!-- Floating mode pills (hidden for Agenda views) -->
+	{#if modes.length > 1 && activeView?.label !== 'Agenda'}
 		<div class="cal-pills" role="group" aria-label={L.viewMode}>
-			{#each granularities as g}
+			{#each modes as g}
 				<button
 					class="cal-pill"
-					class:cal-pill--active={viewState.granularity === g}
-					aria-pressed={viewState.granularity === g}
+					class:cal-pill--active={viewState.mode === g}
+					aria-pressed={viewState.mode === g}
 					onclick={() => {
 						const currentLabel = views.find((v) => v.id === viewState.view)?.label;
-						const match = views.find((v) => v.granularity === g && v.label === currentLabel);
-						const fallback = views.find((v) => v.granularity === g);
+						const match = views.find((v) => v.mode === g && v.label === currentLabel);
+						const fallback = views.find((v) => v.mode === g);
 						const target = match ?? fallback;
 						if (target) viewState.setView(target.id);
 					}}
@@ -242,6 +261,7 @@
 				events={store.events}
 				style={theme}
 				height={null}
+				mode={activeView.mode}
 				mondayStart={viewState.mondayStart}
 				{locale}
 				focusDate={viewState.focusDate}

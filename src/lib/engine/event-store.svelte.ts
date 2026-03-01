@@ -15,6 +15,7 @@
  *   // store.move()       — drag-move shorthand
  *   // store.load()       — fetch from adapter for a range
  */
+import { SvelteMap } from 'svelte/reactivity';
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
 import { sod, DAY_MS } from '../core/time.js';
@@ -50,9 +51,12 @@ export interface EventStore {
  * Create a reactive event store backed by a CalendarAdapter.
  */
 export function createEventStore(adapter: CalendarAdapter): EventStore {
-	let events = $state<TimelineEvent[]>([]);
+	let eventMap = new SvelteMap<string, TimelineEvent>();
 	let loading = $state(false);
 	let error = $state<string | null>(null);
+
+	// Derived array view of the map — consumers read this.
+	const eventArray = $derived([...eventMap.values()]);
 
 	// ── Internal helpers ──
 	function overlaps(ev: TimelineEvent, start: Date, end: Date): boolean {
@@ -60,29 +64,23 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 	}
 
 	function replaceEvent(id: string, updated: TimelineEvent): void {
-		const idx = events.findIndex((e) => e.id === id);
-		if (idx >= 0) {
-			events[idx] = updated;
+		if (eventMap.has(id)) {
+			eventMap.set(id, updated);
 		}
 	}
 
 	function removeEvent(id: string): void {
-		events = events.filter((e) => e.id !== id);
+		eventMap.delete(id);
 	}
 
 	function upsertEvent(ev: TimelineEvent): void {
-		const idx = events.findIndex((e) => e.id === ev.id);
-		if (idx >= 0) {
-			events[idx] = ev;
-		} else {
-			events.push(ev);
-		}
+		eventMap.set(ev.id, ev);
 	}
 
 	// ── Public API ──
 	return {
 		get events() {
-			return events;
+			return eventArray;
 		},
 		get loading() {
 			return loading;
@@ -108,17 +106,17 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		},
 
 		forRange(start: Date, end: Date): TimelineEvent[] {
-			return events.filter((ev) => overlaps(ev, start, end));
+			return eventArray.filter((ev) => overlaps(ev, start, end));
 		},
 
 		forDay(date: Date): TimelineEvent[] {
 			const dayStart = new Date(sod(date.getTime()));
 			const dayEnd = new Date(dayStart.getTime() + DAY_MS);
-			return events.filter((ev) => overlaps(ev, dayStart, dayEnd));
+			return eventArray.filter((ev) => overlaps(ev, dayStart, dayEnd));
 		},
 
 		byId(id: string): TimelineEvent | undefined {
-			return events.find((e) => e.id === id);
+			return eventMap.get(id);
 		},
 
 		async add(eventData: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent> {
@@ -126,7 +124,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 			error = null;
 			try {
 				const created = await adapter.createEvent(eventData);
-				events.push(created);
+				upsertEvent(created);
 				return created;
 			} catch (e) {
 				error = e instanceof Error ? e.message : String(e);

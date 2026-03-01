@@ -3,7 +3,7 @@
  * and navigation (prev/next/today).
  *
  * Usage:
- *   const vs = createViewState({ defaultView: 'week-terrain' });
+ *   const vs = createViewState({ view: 'week-terrain' });
  *   vs.view        — current view id
  *   vs.focusDate   — the center date
  *   vs.range       — { start, end } for the current view window
@@ -31,20 +31,20 @@ export type BuiltInViewId =
  */
 export type CalendarViewId = string;
 
-export type ViewGranularity = 'day' | 'week';
+export type ViewMode = 'day' | 'week';
 
 export interface ViewStateOptions {
-	defaultView?: CalendarViewId;
+	view?: CalendarViewId;
 	mondayStart?: boolean;
 	/** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
 	timezone?: string;
 	/** Initial date to focus on (defaults to today). */
 	initialDate?: Date;
 	/**
-	 * Optional resolver for view granularity.
+	 * Optional resolver for view mode.
 	 * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
 	 */
-	granularityForView?: (viewId: CalendarViewId) => ViewGranularity | undefined;
+	modeForView?: (viewId: CalendarViewId) => ViewMode | undefined;
 }
 
 
@@ -52,7 +52,7 @@ export interface ViewState {
 	readonly view: CalendarViewId;
 	readonly focusDate: Date;
 	readonly range: DateRange;
-	readonly granularity: ViewGranularity;
+	readonly mode: ViewMode;
 	readonly mondayStart: boolean;
 	/** IANA timezone, or undefined for local */
 	readonly timezone: string | undefined;
@@ -65,17 +65,17 @@ export interface ViewState {
 	goToday(): void;
 }
 
-function inferGranularity(view: CalendarViewId): ViewGranularity {
+function inferMode(view: CalendarViewId): ViewMode {
 	if (view.startsWith('day')) return 'day';
 	return 'week';
 }
 
 function computeRange(
 	focus: Date,
-	granularity: ViewGranularity,
+	mode: ViewMode,
 	mondayStart: boolean,
 ): DateRange {
-	if (granularity === 'day') {
+	if (mode === 'day') {
 		const start = new Date(focus);
 		start.setHours(0, 0, 0, 0);
 		const end = new Date(start.getTime() + DAY_MS);
@@ -90,14 +90,14 @@ function computeRange(
 }
 
 export function createViewState(options: ViewStateOptions = {}): ViewState {
-	let view = $state<CalendarViewId>(options.defaultView ?? 'week-planner');
+	let view = $state<CalendarViewId>(options.view ?? 'week-planner');
 	let focusDate = $state<Date>(options.initialDate ?? new Date());
 	let mondayStart = $state(options.mondayStart ?? true);
 	const timezone = options.timezone;
-	const granularityResolver = options.granularityForView;
+	const modeResolver = options.modeForView;
 
-	const granularity = $derived(granularityResolver?.(view) ?? inferGranularity(view));
-	const range = $derived(computeRange(focusDate, granularity, mondayStart));
+	const mode = $derived(modeResolver?.(view) ?? inferMode(view));
+	const range = $derived(computeRange(focusDate, mode, mondayStart));
 
 	return {
 		get view() {
@@ -109,8 +109,8 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 		get range() {
 			return range;
 		},
-		get granularity() {
-			return granularity;
+		get mode() {
+			return mode;
 		},
 		get mondayStart() {
 			return mondayStart;
@@ -132,12 +132,12 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 		},
 
 		next() {
-			const days = granularity === 'day' ? 1 : 7;
+			const days = mode === 'day' ? 1 : 7;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
 
 		prev() {
-			const days = granularity === 'day' ? -1 : -7;
+			const days = mode === 'day' ? -1 : -7;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
 
