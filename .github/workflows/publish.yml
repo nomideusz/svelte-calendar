@@ -12,6 +12,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm
     steps:
       - uses: actions/checkout@v4
 
@@ -32,9 +33,7 @@ jobs:
       - run: pnpm run package
 
       - name: Dry run publish
-        run: npm publish --provenance --dry-run
+        run: npm publish --provenance --access public --dry-run
 
       - name: Publish to npm
-        run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
