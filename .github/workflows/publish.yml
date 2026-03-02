@@ -31,5 +31,10 @@ jobs:
       - run: pnpm test
       - run: pnpm run package
 
+      # setup-node injects GitHub token as NODE_AUTH_TOKEN which
+      # overrides OIDC. Strip it so npm uses trusted publisher auth.
+      - name: Strip auth token for OIDC
+        run: sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
+
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --provenance --access public
