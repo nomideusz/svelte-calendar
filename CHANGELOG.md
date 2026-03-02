@@ -1,12 +1,12 @@
 # Changelog
 
-## 0.6.2 — 2026-03-02
+## 0.6.3 — 2026-03-02
 
 ### Fixed
 - **Mobile agenda day cutoff** — events at the bottom of the agenda day view were clipped on mobile; added `min-height: 0` to the scroll body and reduced excess top padding.
 
 ### Changed
-- **CI: OIDC trusted publishing** — publish workflow now uses Node 24 with automatic OIDC provenance (no manual token exchange). Auto-tag workflow creates version tags on push to main.
+- **CI: unified release workflow** — single workflow handles tag creation, GitHub Release, and npm publish via OIDC trusted publishing (Node 24).
 
 ## 0.6.1 — 2026-03-02
 
