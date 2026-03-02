@@ -111,6 +111,7 @@
 		left: string;
 		width: string;
 		isCurrent: boolean;
+		isNext: boolean;
 		col: number;
 		totalCols: number;
 	}
@@ -118,6 +119,15 @@
 	const positionedEvents = $derived.by(() => {
 		const now = clock.tick;
 		const sorted = [...timedEvents];
+
+		// Find the next upcoming event today
+		let nextEventId: string | null = null;
+		if (isToday) {
+			for (const ev of [...sorted].sort((a, b) => a.start.getTime() - b.start.getTime())) {
+				const s = ev.start.getTime();
+				if (s > now) { nextEventId = ev.id; break; }
+			}
+		}
 
 		// Overlap grouping
 		const infos = sorted.map(ev => {
@@ -130,6 +140,7 @@
 				top: topH * HOUR_HEIGHT,
 				height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
 				isCurrent: ev.start.getTime() <= now && ev.end.getTime() > now,
+				isNext: ev.id === nextEventId,
 				startMs: sMs,
 				endMs: eMs,
 				col: 0,
@@ -178,6 +189,7 @@
 			left: `calc(${GUTTER_W}px + ${(info.col / info.totalCols) * 100}% * (1 - ${GUTTER_W} / var(--mb-grid-w, 300)))`,
 			width: `calc((100% - ${GUTTER_W}px) / ${info.totalCols} - 2px)`,
 			isCurrent: info.isCurrent,
+			isNext: info.isNext,
 			col: info.col,
 			totalCols: info.totalCols,
 		})) as PosEvent[];
@@ -347,6 +359,7 @@
 					class="mb-event"
 					class:mb-event--selected={selectedEventId === p.ev.id}
 					class:mb-event--current={p.isCurrent}
+					class:mb-event--next={p.isNext}
 					style:top="{p.top}px"
 					style:height="{p.height}px"
 					style:left={p.left}
@@ -354,7 +367,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					onclick={(e) => { e.stopPropagation(); oneventclick?.(p.ev); }}
 					onpointerenter={() => oneventhover?.(p.ev)}
-					aria-label="{p.ev.title}{p.isCurrent ? `, ${L.inProgress}` : ''}"
+					aria-label="{p.ev.title}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
 				>
 					<div class="mb-ev-stripe"></div>
 					<div class="mb-ev-body">
@@ -375,6 +388,8 @@
 					</div>
 					{#if p.isCurrent}
 						<span class="mb-ev-live"></span>
+					{:else if p.isNext}
+						<span class="mb-ev-next-badge">{L.upNext}</span>
 					{/if}
 				</button>
 			{/each}
@@ -592,6 +607,10 @@
 	.mb-event--current {
 		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));
 	}
+	.mb-event--next {
+		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
 
 	.mb-ev-stripe {
 		width: 4px;
@@ -655,6 +674,19 @@
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		animation: mb-pulse 2s ease-in-out infinite;
+	}
+	.mb-ev-next-badge {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		font: 600 8px/1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 2px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
 	}
 
 	@keyframes mb-pulse {

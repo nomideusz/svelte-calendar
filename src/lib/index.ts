@@ -32,13 +32,16 @@ export type {
 } from './engine/index.js';
 
 // ─── Adapters ───────────────────────────────────────────
-export { createMemoryAdapter, createRestAdapter, createRecurringAdapter } from './adapters/index.js';
+export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter } from './adapters/index.js';
 export type {
 	CalendarAdapter,
 	DateRange,
 	RestAdapterOptions,
 	RecurringEvent,
 	RecurringAdapterOptions,
+	FieldMapping,
+	MappedAdapterOptions,
+	MutationHandler,
 } from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────
@@ -80,6 +83,7 @@ export type {
 	BlockedSlot,
 	DaySegment,
 	CalendarLabels,
+	EventStatus,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────

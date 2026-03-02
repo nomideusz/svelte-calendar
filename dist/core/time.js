@@ -95,8 +95,8 @@ export function segmentForDay(ev, dayMs) {
     const firstDayMs = sod(evStart);
     // For end time: if event ends exactly at midnight, last day is the day before
     const lastDayMs = sod(evEnd - 1);
-    const totalDays = Math.round((lastDayMs - firstDayMs) / DAY_MS) + 1;
-    const dayIndex = Math.round((dayStart - firstDayMs) / DAY_MS) + 1;
+    const totalDays = Math.floor((lastDayMs - firstDayMs) / DAY_MS) + 1;
+    const dayIndex = Math.floor((dayStart - firstDayMs) / DAY_MS) + 1;
     return {
         ev,
         start: new Date(Math.max(evStart, dayStart)),

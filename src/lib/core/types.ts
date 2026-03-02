@@ -6,6 +6,15 @@
  * Represents an event on the timeline / scheduler.
  * Core interface for all views, adapters, and the event store.
  */
+/**
+ * Event status — universal across scheduling domains.
+ *
+ *   'confirmed'  — default, normal event
+ *   'cancelled'  — visually struck through, still shown on grid
+ *   'tentative'  — e.g. awaiting confirmation
+ */
+export type EventStatus = 'confirmed' | 'cancelled' | 'tentative';
+
 export interface TimelineEvent {
 	id: string;
 	title: string;
@@ -20,6 +29,35 @@ export interface TimelineEvent {
 	subtitle?: string;
 	/** Tags displayed as small pills (e.g. ["Beginner", "Yoga"]) */
 	tags?: string[];
+
+	// ── Universal scheduling fields ──
+
+	/**
+	 * Location or room where the event takes place.
+	 * Universal across domains: yoga studio, meeting room, classroom, venue.
+	 */
+	location?: string;
+
+	/**
+	 * Event status. Defaults to `'confirmed'` when omitted.
+	 * Cancelled events are visually distinct but still shown on the grid.
+	 */
+	status?: EventStatus;
+
+	/**
+	 * ID from the external / upstream system (e.g. booking platform,
+	 * CRM, LMS). Preserved during mapping so the consumer can
+	 * cross-reference back to the source.
+	 */
+	externalId?: string;
+
+	/**
+	 * Resource this event belongs to — for multi-resource views.
+	 * Could be a room ID, instructor ID, court number, etc.
+	 * The calendar can group columns/lanes by this value.
+	 */
+	resourceId?: string;
+
 	/** Arbitrary payload from the source app (bookings, attendees, etc.) */
 	data?: Record<string, unknown>;
 }

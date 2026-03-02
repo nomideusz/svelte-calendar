@@ -60,6 +60,7 @@ export {
 export type {
 	TimelineEvent,
 	BlockedSlot,
+	EventStatus,
 } from './types.js';
 
 // Palette

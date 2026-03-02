@@ -68,6 +68,8 @@ function createConcreteEvent(rec, date) {
         category: rec.category,
         subtitle: rec.subtitle,
         tags: rec.tags,
+        location: rec.location,
+        resourceId: rec.resourceId,
         data: { ...rec.data, recurringId: rec.id },
     };
 }

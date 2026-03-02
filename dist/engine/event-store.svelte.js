@@ -30,11 +30,6 @@ export function createEventStore(adapter) {
     function overlaps(ev, start, end) {
         return ev.start < end && ev.end > start;
     }
-    function replaceEvent(id, updated) {
-        if (eventMap.has(id)) {
-            eventMap.set(id, updated);
-        }
-    }
     function removeEvent(id) {
         eventMap.delete(id);
     }
@@ -101,7 +96,7 @@ export function createEventStore(adapter) {
             error = null;
             try {
                 const updated = await adapter.updateEvent(id, patch);
-                replaceEvent(id, updated);
+                upsertEvent(updated);
             }
             catch (e) {
                 error = e instanceof Error ? e.message : String(e);

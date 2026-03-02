@@ -57,6 +57,10 @@ export interface RecurringEvent {
     tags?: string[];
     /** Category for grouping */
     category?: string;
+    /** Location or room name */
+    location?: string;
+    /** Resource ID for multi-resource views */
+    resourceId?: string;
     /** Arbitrary payload */
     data?: Record<string, unknown>;
 }

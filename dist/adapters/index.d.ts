@@ -5,3 +5,5 @@ export { createRestAdapter } from './rest.js';
 export type { RestAdapterOptions } from './rest.js';
 export { createRecurringAdapter } from './recurring.js';
 export type { RecurringEvent, RecurringAdapterOptions } from './recurring.js';
+export { createMappedAdapter } from './mapped.js';
+export type { FieldMapping, MappedAdapterOptions, MutationHandler } from './mapped.js';

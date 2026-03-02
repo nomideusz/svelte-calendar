@@ -111,6 +111,10 @@ export interface RecurringEvent {
 	tags?: string[];
 	/** Category for grouping */
 	category?: string;
+	/** Location or room name */
+	location?: string;
+	/** Resource ID for multi-resource views */
+	resourceId?: string;
 	/** Arbitrary payload */
 	data?: Record<string, unknown>;
 }
@@ -202,6 +206,8 @@ function createConcreteEvent(
 		category: rec.category,
 		subtitle: rec.subtitle,
 		tags: rec.tags,
+		location: rec.location,
+		resourceId: rec.resourceId,
 		data: { ...rec.data, recurringId: rec.id },
 	};
 }

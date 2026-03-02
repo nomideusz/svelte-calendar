@@ -48,13 +48,17 @@
 	}: Props = $props();
 
 	const accentColor = $derived(event.color || 'var(--dt-accent, #ef4444)');
+	const isCancelled = $derived(event.status === 'cancelled');
+	const isTentative = $derived(event.status === 'tentative');
 
 	const ariaLabel = $derived.by(() => {
 		const t = event.title;
 		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
 		const dur = fmtDuration(event.start, event.end);
-		const status = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : '';
-		return `${t}, ${time}, ${dur}${status}`;
+		const loc = event.location ? `, ${event.location}` : '';
+		const statusStr = isCancelled ? ', cancelled' : isTentative ? ', tentative' : '';
+		const activeStr = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : '';
+		return `${t}${loc}, ${time}, ${dur}${statusStr}${activeStr}`;
 	});
 
 	function handleKeydown(e: KeyboardEvent) {
@@ -79,6 +83,9 @@
 			{#if event.subtitle}
 				<span class="eb-subtitle">{event.subtitle}</span>
 			{/if}
+			{#if event.location}
+				<span class="eb-location">📍 {event.location}</span>
+			{/if}
 			{#if showTime}
 				<span class="eb-time">{fmtTime(event.start)} – {fmtTime(event.end)}</span>
 			{/if}
@@ -92,6 +99,8 @@
 					{/each}
 				</div>
 			{/if}
+			{#if isCancelled}<span class="eb-status-badge eb-cancelled-badge">Cancelled</span>{/if}
+			{#if isTentative}<span class="eb-status-badge eb-tentative-badge">Tentative</span>{/if}
 			{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
 		</div>
 	{:else}
@@ -101,6 +110,9 @@
 		<span class="eb-title">{event.title}</span>
 		{#if event.subtitle}
 			<span class="eb-subtitle">{event.subtitle}</span>
+		{/if}
+		{#if event.location}
+			<span class="eb-location">📍 {event.location}</span>
 		{/if}
 		{#if showDuration}
 			<span class="eb-dur">{fmtDuration(event.start, event.end)}</span>
@@ -112,6 +124,7 @@
 				{/each}
 			</span>
 		{/if}
+		{#if isCancelled}<span class="eb-status-badge eb-cancelled-badge">Cancelled</span>{/if}
 		{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
 	{/if}
 {/snippet}
@@ -121,6 +134,8 @@
 	class="eb eb-{variant}"
 	class:eb-active={active}
 	class:eb-past={past}
+	class:eb-cancelled={isCancelled}
+	class:eb-tentative={isTentative}
 	class:eb-editable={editable}
 	style="--eb-color: {accentColor}"
 	role="button"
@@ -137,6 +152,8 @@
 	class="eb eb-{variant}"
 	class:eb-active={active}
 	class:eb-past={past}
+	class:eb-cancelled={isCancelled}
+	class:eb-tentative={isTentative}
 	class:eb-editable={editable}
 	style="--eb-color: {accentColor}"
 	role="article"
@@ -166,6 +183,24 @@
 	}
 	.eb-past {
 		opacity: 0.5;
+	}
+	.eb-cancelled {
+		opacity: 0.45;
+	}
+	.eb-cancelled .eb-title {
+		text-decoration: line-through;
+	}
+	.eb-tentative {
+		opacity: 0.7;
+	}
+	.eb-tentative .eb-stripe {
+		background: repeating-linear-gradient(
+			45deg,
+			var(--_color),
+			var(--_color) 2px,
+			transparent 2px,
+			transparent 4px
+		);
 	}
 
 	/* ── Chip ── */
@@ -290,6 +325,31 @@
 		border-radius: 3px;
 		background: color-mix(in srgb, var(--_color) 18%, transparent);
 		color: var(--_color);
+	}
+	.eb-location {
+		font: 400 9px / 1.2 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(100, 116, 139, 0.55));
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.eb-status-badge {
+		display: inline-flex;
+		align-items: center;
+		font: 700 8px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		padding: 2px 6px;
+		border-radius: 3px;
+		width: fit-content;
+	}
+	.eb-cancelled-badge {
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.65));
+		background: color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.3)) 15%, transparent);
+	}
+	.eb-tentative-badge {
+		color: var(--_color);
+		background: color-mix(in srgb, var(--_color) 12%, transparent);
 	}
 	.eb-live-badge {
 		display: inline-flex;
