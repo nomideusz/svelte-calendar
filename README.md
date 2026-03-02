@@ -2,6 +2,17 @@
 
 A themeable **Svelte 5** calendar with **Day/Week Planner & Agenda** views, touch-first mobile views, and a smart auto-theme that adapts to any page.
 
+<table>
+  <tr>
+    <td><img src="static/screenshots/week-planner-light.png" alt="Week Planner – light theme" /></td>
+    <td><img src="static/screenshots/week-planner-dark.png" alt="Week Planner – dark theme" /></td>
+  </tr>
+  <tr>
+    <td><img src="static/screenshots/day-planner.png" alt="Day Planner" /></td>
+    <td><img src="static/screenshots/week-agenda.png" alt="Week Agenda" /></td>
+  </tr>
+</table>
+
 ## Installation
 
 ```bash
@@ -47,6 +58,8 @@ Hide the pills when your app controls the view externally:
 ```
 
 ## Mobile
+
+<img src="static/screenshots/mobile.png" alt="Mobile view" width="390" />
 
 On narrow screens (`< 768px`), the calendar automatically remaps Planner views to touch-first Mobile views with swipe navigation, a centralized header with Day/Week pills, and a compact layout:
 
