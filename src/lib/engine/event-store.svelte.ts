@@ -63,12 +63,6 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		return ev.start < end && ev.end > start;
 	}
 
-	function replaceEvent(id: string, updated: TimelineEvent): void {
-		if (eventMap.has(id)) {
-			eventMap.set(id, updated);
-		}
-	}
-
 	function removeEvent(id: string): void {
 		eventMap.delete(id);
 	}
@@ -139,7 +133,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 			error = null;
 			try {
 				const updated = await adapter.updateEvent(id, patch);
-				replaceEvent(id, updated);
+				upsertEvent(updated);
 			} catch (e) {
 				error = e instanceof Error ? e.message : String(e);
 				throw e;
