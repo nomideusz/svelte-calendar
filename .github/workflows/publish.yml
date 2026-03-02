@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
 
       - run: pnpm install --frozen-lockfile
 
@@ -33,5 +34,11 @@ jobs:
 
       - name: Publish to npm
         run: |
-          npm config set registry https://registry.npmjs.org/
+          # Fetch OIDC token from GitHub with npm audience
+          OIDC_TOKEN=$(curl -sS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=https://registry.npmjs.org" \
+            | jq -r '.value')
+          # Use OIDC token as npm auth (replaces the GitHub token that setup-node injected)
+          npm config set "//registry.npmjs.org/:_authToken" "${OIDC_TOKEN}"
           npm publish --provenance --access public
