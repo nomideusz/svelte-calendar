@@ -76,10 +76,12 @@
 	const minDurationCtx = getContext<{ current: number | undefined }>('calendar:minDuration') as { current: number | undefined } | undefined;
 	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
 	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
 
 	const blockedSlots = $derived(blockedSlotsCtx?.current);
 	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
 	const minDuration = $derived(minDurationCtx?.current);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
 	const oneventhover = $derived(callbacksCtx?.oneventhover);
 	const disabledDates = $derived(disabledDatesCtx?.current);
 	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
@@ -214,6 +216,7 @@
 		topPx: number;
 		heightPx: number;
 		isCurrent: boolean;
+		isNext: boolean;
 		isDragged: boolean;
 	}
 
@@ -230,6 +233,20 @@
 
 		const sorted = [...staticEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
 
+		// Find the earliest future event on today to mark as "next"
+		const todayStart = sod(now);
+		const todayEnd = todayStart + DAY_MS;
+		let nextEventId: string | null = null;
+		for (const ev of sorted) {
+			const s = ev.start.getTime();
+			const e = ev.end.getTime();
+			// Must be today, start in the future, and not currently running
+			if (s >= todayStart && s < todayEnd && s > now && !(s <= now && e > now)) {
+				nextEventId = ev.id;
+				break;
+			}
+		}
+
 		const infos = sorted.map((ev) => {
 			const s = ev.start.getTime();
 			const e = ev.end.getTime();
@@ -237,7 +254,7 @@
 			const xEnd = timeToPx(e);
 			return {
 				ev, x, width: Math.max(xEnd - x, 28), row: 0, groupMaxRow: 1,
-				isCurrent: s <= now && e > now, isDragged: false, startMs: s, endMs: e,
+				isCurrent: s <= now && e > now, isNext: ev.id === nextEventId, isDragged: false, startMs: s, endMs: e,
 			};
 		});
 
@@ -280,7 +297,7 @@
 		const result: PositionedEvent[] = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
 			const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
 			const topPx = contentTop + info.row * (availH / info.groupMaxRow);
-			return { ...info, topPx, heightPx: laneH };
+			return { ...info, topPx, heightPx: laneH, isNext: info.isNext };
 		});
 
 		if (draggedEv && dragP) {
@@ -292,6 +309,7 @@
 				topPx: contentTop,
 				heightPx: Math.max(MIN_EVENT_H, availH - EVENT_GAP),
 				isCurrent: draggedEv.start.getTime() <= now && draggedEv.end.getTime() > now,
+				isNext: false,
 				isDragged: true,
 			});
 		}
@@ -528,7 +546,7 @@
 	}
 </script>
 
-<div class="fs" style={style || undefined} style:height={height ? `${height}px` : '100%'} role="region" aria-label={L.dayPlanner}>
+<div class="fs" class:fs--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')} role="region" aria-label={L.dayPlanner}>
 	<div
 		class="fs-scroll"
 		class:fs-grabbing={scrollDragging}
@@ -603,6 +621,7 @@
 					class="fs-event"
 					class:fs-event--selected={selectedEventId === p.ev.id}
 					class:fs-event--current={p.isCurrent}
+					class:fs-event--next={p.isNext}
 					class:fs-event--dragging={p.isDragged}
 					style:left="{p.x}px"
 					style:width="{p.width}px"
@@ -611,7 +630,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					role="button"
 					tabindex="0"
-					aria-label="{p.ev.title}{p.isCurrent ? ` (${L.inProgress})` : ''}"
+					aria-label="{p.ev.title}{p.isCurrent ? ` (${L.inProgress})` : ''}{p.isNext ? ` (${L.upNext})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 					onpointerenter={() => oneventhover?.(p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
@@ -619,6 +638,8 @@
 					<div class="fs-ev-inner">
 						{#if p.isCurrent}
 							<span class="fs-ev-live" aria-hidden="true"></span>
+						{:else if p.isNext}
+							<span class="fs-ev-next-badge" aria-hidden="true">{L.upNext}</span>
 						{/if}
 						{#if p.heightPx > 64}
 							<span class="fs-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
@@ -706,6 +727,7 @@
 		user-select: none;
 		font-variant-numeric: tabular-nums;
 	}
+	.fs--auto { overflow: visible; }
 
 	/* ─── Horizontal scroll ──────────────────────────── */
 	.fs-scroll {
@@ -718,6 +740,7 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.08)) transparent;
 	}
+	.fs--auto .fs-scroll { height: auto; overflow: visible; }
 	.fs-scroll::-webkit-scrollbar { height: 5px; }
 	.fs-scroll::-webkit-scrollbar-thumb {
 		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.08));
@@ -1024,6 +1047,10 @@
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ev-color) 20%, transparent);
 	}
+	.fs-event--next {
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #10141c));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
 	.fs-event--dragging {
 		opacity: 0.85;
 		z-index: 50;
@@ -1049,6 +1076,17 @@
 		height: 7px;
 		border-radius: 50%;
 		background: var(--ev-color);
+	}
+	.fs-ev-next-badge {
+		flex-shrink: 0;
+		font: 600 8px/1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		padding: 2px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
 	}
 	.fs-ev-title {
 		font: 600 13px/1.15 var(--dt-sans, system-ui, sans-serif);

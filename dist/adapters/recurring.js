@@ -1,5 +1,5 @@
 import { startOfWeek, DAY_MS } from '../core/time.js';
-import { generatePalette, VIVID_PALETTE } from '../core/palette.js';
+import { VIVID_PALETTE } from '../core/palette.js';
 // ── Helpers ─────────────────────────────────────────────
 /** Parse "HH:MM" into [hours, minutes] */
 function parseTime(time) {
@@ -219,34 +219,29 @@ function projectMonthly(rec, range, startDate, effectiveUntil, out) {
 }
 // ── Adapter factory ─────────────────────────────────────
 /** Default palette for auto-coloring */
-const AUTO_COLORS = VIVID_PALETTE;
+const PALETTE = VIVID_PALETTE;
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
  *
+ * Events without a `color` are auto-assigned one from a vivid palette,
+ * grouped by `category` or `title` so related events share a color.
+ *
  * Read-only by default — create/update/delete throw.
  */
 export function createRecurringAdapter(schedule, options = {}) {
-    const { mondayStart = true, colorMap, autoColor } = options;
-    // Resolve palette
-    const palette = autoColor
-        ? typeof autoColor === 'string'
-            ? generatePalette(autoColor)
-            : AUTO_COLORS
-        : AUTO_COLORS;
-    // Build auto-color assignments
+    const { mondayStart = true, palette } = options;
+    const colors = palette?.length ? palette : PALETTE;
+    // Auto-color: assign from palette by category/title
     const colorAssignments = new Map();
-    if (autoColor || colorMap) {
-        let colorIndex = 0;
-        for (const rec of schedule) {
-            const key = rec.category ?? rec.title;
-            if (colorMap?.[key]) {
-                colorAssignments.set(key, colorMap[key]);
-            }
-            else if (autoColor && !colorAssignments.has(key)) {
-                colorAssignments.set(key, palette[colorIndex % palette.length]);
-                colorIndex++;
-            }
+    let colorIndex = 0;
+    for (const rec of schedule) {
+        if (rec.color)
+            continue;
+        const key = rec.category ?? rec.title;
+        if (!colorAssignments.has(key)) {
+            colorAssignments.set(key, colors[colorIndex % colors.length]);
+            colorIndex++;
         }
     }
     function resolveColor(rec) {

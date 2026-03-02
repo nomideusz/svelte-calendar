@@ -8,4 +8,4 @@ export { setDefaultLocale, getDefaultLocale, is24HourLocale, fmtH, fmtTime, fmtD
 // Timezone utilities
 export { toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, } from './timezone.js';
 // Palette
-export { generatePalette, VIVID_PALETTE } from './palette.js';
+export { generatePalette, extractAccent, VIVID_PALETTE } from './palette.js';

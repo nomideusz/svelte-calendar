@@ -1,2 +1,4 @@
 // ─── Theme barrel export ────────────────────────────────
-export { midnight, neutral, presets, } from './presets.js';
+export { auto, neutral, midnight, presets, } from './presets.js';
+// ─── Smart auto-theme ───────────────────────────────────
+export { probeHostTheme, observeHostTheme } from './auto.js';

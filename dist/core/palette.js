@@ -70,6 +70,14 @@ function hslToHex(h, s, l) {
     const toHex = (v) => Math.round(v * 255).toString(16).padStart(2, '0');
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+/**
+ * Extract the --dt-accent hex value from a theme CSS string.
+ * Returns undefined if not found.
+ */
+export function extractAccent(themeString) {
+    const m = themeString.match(/--dt-accent\s*:\s*(#[0-9a-fA-F]{3,8})/);
+    return m?.[1];
+}
 // ── Palette generation ──────────────────────────────────
 /**
  * Generate `count` visually distinct and theme-harmonious colors

@@ -1,2 +1,3 @@
-export { Planner } from './planner/index.js';
-export { Agenda, AgendaDay, AgendaWeek } from './agenda/index.js';
+export { default as Planner } from './planner/Planner.svelte';
+export { default as Agenda } from './agenda/Agenda.svelte';
+export { default as Mobile } from './mobile/Mobile.svelte';

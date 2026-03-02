@@ -2,24 +2,22 @@
  * In-memory adapter — the default for demos and testing.
  *
  * Events are stored in a plain array. No persistence across page loads.
- * Perfect for prototyping and unit tests.
+ * Events without a `color` are auto-assigned one from a palette,
+ * grouped by `category` or `title` so related events share a color.
  *
  * Usage:
  *   import { createMemoryAdapter } from './';
  *   const adapter = createMemoryAdapter(initialEvents);
- *   const store = createEventStore(adapter);
+ *   const adapter = createMemoryAdapter(initialEvents, { palette: myColors });
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter } from './types.js';
 export interface MemoryAdapterOptions {
-    /** Map of category/title to color */
-    colorMap?: Record<string, string>;
     /**
-     * Auto-assign colors to events by category or title.
-     *   true    → use the default vivid palette
-     *   string  → hex accent color (e.g. '#6366f1') to generate a
-     *             theme-harmonious palette via golden-angle hue rotation
+     * Custom color palette for auto-coloring events.
+     * Defaults to VIVID_PALETTE. Pass `generatePalette(accent)` to
+     * make event colors adapt to your theme.
      */
-    autoColor?: boolean | string;
+    palette?: string[];
 }
 export declare function createMemoryAdapter(initial?: TimelineEvent[], options?: MemoryAdapterOptions): CalendarAdapter;

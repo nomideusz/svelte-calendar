@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1 — 2026-03-02
+
+### Added
+- **PlannerDay & MobileDay "Up next" badge** — the next upcoming event today now shows a dashed-border highlight and an "Up next" label, complementing the existing "NOW" live indicator for current events.
+
 ## 0.6.0 — 2026-03-02
 
 ### Added

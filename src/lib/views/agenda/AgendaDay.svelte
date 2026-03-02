@@ -48,10 +48,12 @@
 	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
 	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
 	const mobileCtx = getContext<{ current: boolean }>('calendar:mobile') as { current: boolean } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
 	const showNav = $derived(showNavCtx?.current ?? true);
 	const equalDays = $derived(equalDaysCtx?.current ?? false);
 	const showDates = $derived(showDatesCtx?.current ?? true);
 	const isMobile = $derived(mobileCtx?.current ?? false);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
 
 	// ── Swipe navigation (mobile) ──────────────────────
 	let swipeStartX = 0;
@@ -210,6 +212,7 @@
 	class="ag ag--day"
 	class:ag--disabled={disabledSet.has(dayMs)}
 	class:ag--mobile={isMobile}
+	class:ag--auto={autoHeight}
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
 	onpointerdown={onPointerDown}
@@ -529,6 +532,8 @@
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 
+	.ag--auto { height: auto; overflow: visible; }
+
 	.ag--disabled {
 		opacity: 0.4;
 		pointer-events: none;
@@ -544,6 +549,7 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
+	.ag--auto .ag-body { overflow-y: visible; }
 	.ag-body::-webkit-scrollbar {
 		width: 4px;
 	}

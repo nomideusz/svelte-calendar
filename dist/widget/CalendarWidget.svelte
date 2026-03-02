@@ -15,17 +15,11 @@
 -->
 <script lang="ts">
 	import Calendar from '../calendar/Calendar.svelte';
-	import type { CalendarView } from '../calendar/Calendar.svelte';
-	import { Planner } from '../views/planner/index.js';
-	import { Agenda } from '../views/agenda/index.js';
 	import { createRestAdapter } from '../adapters/rest.js';
 	import { createMemoryAdapter } from '../adapters/memory.js';
 	import { presets } from '../theme/presets.js';
 	import type { PresetName } from '../theme/presets.js';
 	import type { TimelineEvent } from '../core/types.js';
-	import { getLabels } from '../core/locale.js';
-
-	const L = $derived(getLabels());
 
 	interface Props {
 		/** REST API base URL — if provided, fetches events from this endpoint */
@@ -64,7 +58,7 @@
 	const heightPx = $derived(parseInt(height, 10) || 600);
 	const isMondayStart = $derived(mondaystart !== 'false');
 	const themeStyle = $derived(
-		(presets as Record<string, string>)[theme] ?? presets.neutral
+		(presets as Record<string, string>)[theme] || presets.neutral
 	);
 	const dirValue = $derived(
 		(dir === 'rtl' || dir === 'ltr' || dir === 'auto') ? dir as 'ltr' | 'rtl' | 'auto' : undefined
@@ -135,20 +129,11 @@
 		}
 		return createMemoryAdapter(parseEvents(events));
 	});
-
-	// ── Default views ──
-	const defaultViews: CalendarView[] = $derived([
-		{ id: 'day-planner',     label: L.planner,  granularity: 'day',  component: Planner, props: { mode: 'day' } },
-		{ id: 'week-planner',    label: L.planner,  granularity: 'week', component: Planner, props: { mode: 'week' } },
-		{ id: 'day-agenda',   label: L.agenda,   granularity: 'day',  component: Agenda, props: { mode: 'day' } },
-		{ id: 'week-agenda',  label: L.agenda,   granularity: 'week', component: Agenda, props: { mode: 'week' } },
-	]);
 </script>
 
 <Calendar
 	{adapter}
-	views={defaultViews}
-	defaultView={view}
+	{view}
 	theme={themeStyle}
 	height={heightPx}
 	mondayStart={isMondayStart}

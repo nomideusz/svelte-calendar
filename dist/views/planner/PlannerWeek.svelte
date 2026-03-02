@@ -9,9 +9,9 @@
   • Generous whitespace, thin dividers, minimal chrome.
 -->
 <script lang="ts">
-	import { getContext, onMount, tick, untrack } from 'svelte';
+	import { getContext, onMount, tick, untrack, type Snippet } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent } from '../../core/types.js';
+	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
 	import type { DragState } from '../../engine/drag.svelte.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
@@ -55,6 +55,30 @@
 	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 
 	const clock = createClock();
+	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
+	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
+	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
+	const hideDaysCtx = getContext<{ current: number[] | undefined }>('calendar:hideDays') as { current: number[] | undefined } | undefined;
+	const showNav = $derived(showNavCtx?.current ?? true);
+	const equalDays = $derived(equalDaysCtx?.current ?? false);
+	const showDates = $derived(showDatesCtx?.current ?? true);
+	const hideDays = $derived(hideDaysCtx?.current);
+
+	// ── New feature contexts ──
+	const blockedSlotsCtx = getContext<{ current: BlockedSlot[] | undefined }>('calendar:blockedSlots') as { current: BlockedSlot[] | undefined } | undefined;
+	const dayHeaderSnippetCtx = getContext<{ current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined }>('calendar:dayHeaderSnippet') as { current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined } | undefined;
+	const minDurationCtx = getContext<{ current: number | undefined }>('calendar:minDuration') as { current: number | undefined } | undefined;
+	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
+	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
+
+	const blockedSlots = $derived(blockedSlotsCtx?.current);
+	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
+	const minDuration = $derived(minDurationCtx?.current);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
+	const oneventhover = $derived(callbacksCtx?.oneventhover);
+	const disabledDates = $derived(disabledDatesCtx?.current);
+	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
 
 	// ─── Infinite-scroll config ────────────────────────
 	const BUFFER_WEEKS = 6;      // weeks rendered on each side of anchor
@@ -81,15 +105,20 @@
 
 	// ─── Derived ────────────────────────────────────────
 	const todayMs = $derived(clock.today);
-	const anchorWeekStart = $derived(sowFn(internalFocusMs, mondayStart));
+	const customDays = $derived(viewState?.dayCount ?? 7);
+	const anchorPeriodStart = $derived(
+		customDays === 7
+			? sowFn(internalFocusMs, mondayStart)
+			: sod(internalFocusMs)
+	);
 
 	// ─── Declare load range for entire visible buffer ────────
 	// Instead of calling store.load() directly, we tell Calendar
 	// what range we need. Calendar's single $effect handles loading.
 	$effect(() => {
 		if (!loadRangeCtx) return;
-		const rangeStart = new Date(anchorWeekStart - BUFFER_WEEKS * 7 * DAY_MS);
-		const rangeEnd = new Date(anchorWeekStart + (BUFFER_WEEKS + 1) * 7 * DAY_MS);
+		const rangeStart = new Date(anchorPeriodStart - BUFFER_WEEKS * customDays * DAY_MS);
+		const rangeEnd = new Date(anchorPeriodStart + (BUFFER_WEEKS + 1) * customDays * DAY_MS);
 		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
 		return () => loadRangeCtx.set(null);
 	});
@@ -117,24 +146,20 @@
 
 	const weeks = $derived.by(() => {
 		const result: WeekRow[] = [];
-		const currentWeekStart = sowFn(todayMs, mondayStart);
 
 		for (let w = -BUFFER_WEEKS; w <= BUFFER_WEEKS; w++) {
-			const weekStart = anchorWeekStart + w * 7 * DAY_MS;
-			const isCurrent = weekStart === currentWeekStart;
+			const periodStart = anchorPeriodStart + w * customDays * DAY_MS;
+			const isCurrent = todayMs >= periodStart && todayMs < periodStart + customDays * DAY_MS;
 			const days: DayCell[] = [];
 
-			const firstMonth = new Date(weekStart).getMonth();
-			const lastMonth = new Date(weekStart + 6 * DAY_MS).getMonth();
-
-			for (let d = 0; d < 7; d++) {
-				const ms = weekStart + d * DAY_MS;
+			for (let d = 0; d < customDays; d++) {
+				const ms = periodStart + d * DAY_MS;
 				const date = new Date(ms);
 				const dayNum = date.getDate();
 				const dow = date.getDay();
 				const isWeekend = dow === 0 || dow === 6;
 				const isToday = ms === todayMs;
-				const isPast = ms < todayMs;
+				const isPast = equalDays ? false : ms < todayMs;
 				const isFirstOfMonth = dayNum === 1;
 				const monthLabel = (d === 0 || isFirstOfMonth)
 					? monthLong(ms, locale).toUpperCase()
@@ -160,12 +185,24 @@
 				days.push({ ms, dayNum, isToday, isPast, isWeekend, isFirstOfMonth, monthLabel, events: timedEvents, allDaySegments });
 			}
 
-			// Month label: show when first day of week is day 1-7
-			const startDate = new Date(weekStart);
-			const showMonth = startDate.getDate() <= 7;
-			const monthLabel = showMonth ? monthLong(weekStart, locale).toUpperCase() : null;
+			// Month label: show when first day of period is day 1-7 (for 7-day), or first day of period (for custom)
+			const startDate = new Date(periodStart);
+			const showMonth = customDays === 7 ? startDate.getDate() <= 7 : startDate.getDate() <= customDays;
+			const monthLabel = showMonth ? monthLong(periodStart, locale).toUpperCase() : null;
 
-			result.push({ weekStart, isCurrent, monthLabel, days });
+			result.push({ weekStart: periodStart, isCurrent, monthLabel, days });
+		}
+
+		// Filter hidden days if hideDays is set
+		if (hideDays?.length) {
+			for (const row of result) {
+				row.days = row.days.filter((d) => {
+					const isoDay = new Date(d.ms).getDay();
+					// Convert JS day (0=Sun) to ISO (7=Sun)
+					const iso = isoDay === 0 ? 7 : isoDay;
+					return !hideDays.includes(iso);
+				});
+			}
 		}
 
 		return result;
@@ -237,7 +274,7 @@
 		}
 
 		const shift = SHIFT_WEEKS * direction;
-		internalFocusMs += shift * 7 * DAY_MS;
+		internalFocusMs += shift * customDays * DAY_MS;
 		lastExternalMs = internalFocusMs;
 		viewState?.setFocusDate(new Date(internalFocusMs));
 
@@ -308,8 +345,12 @@
 		const target = e.target as HTMLElement;
 		if (target.closest('.wg-ev')) return;
 		if (readOnly || !oneventcreate) return;
+		// Check disabled dates
+		if (disabledSet.has(ms)) return;
+		// Check blocked slots (all-day block check: if entire day is blocked, prevent)
+		const durMin = minDuration ? Math.max(60, minDuration) : 60;
 		const start = new Date(ms + 9 * HOUR_MS);
-		const end = new Date(ms + 10 * HOUR_MS);
+		const end = new Date(start.getTime() + durMin * 60_000);
 		oneventcreate({ start, end });
 	}
 
@@ -396,7 +437,7 @@
 	}
 </script>
 
-<div class="wg" style={style || undefined} style:height={height ? `${height}px` : '100%'}>
+<div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}>
 	<div
 		class="wg-body"
 		bind:this={el}
@@ -414,8 +455,7 @@
 								class="wg-cell"
 								class:wg-cell--today={day.isToday}
 								class:wg-cell--past={day.isPast}
-								class:wg-cell--weekend={day.isWeekend}
-								role="gridcell"
+								class:wg-cell--weekend={day.isWeekend}							class:wg-cell--disabled={disabledSet.has(day.ms)}								role="gridcell"
 								tabindex="0"
 								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ` (${L.today.toLowerCase()})` : ''}, {L.nEvents(day.events.length)}"
 								onclick={(e) => handleDayCellClick(day.ms, e)}
@@ -423,14 +463,38 @@
 							>
 								<!-- Day label in top-right corner -->
 								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
-									<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
-										{day.dayNum}
-									</span>
+									{#if showDates}
+										<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
+											{day.dayNum}
+										</span>
+									{/if}
 									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
 								</div>
 
-								{#if day.monthLabel}
+								{#if day.monthLabel && showDates}
 									<span class="wg-cell-month">{day.monthLabel}</span>
+								{/if}
+
+								<!-- Custom day header snippet -->
+								{#if dayHeaderSnippet}
+									<div class="wg-cell-custom-header">
+										{@render dayHeaderSnippet({ date: new Date(day.ms), isToday: day.isToday, dayName: weekdayShort(day.ms, locale) })}
+									</div>
+								{/if}
+
+								<!-- Blocked slots indicator -->
+								{#if blockedSlots?.length}
+									{@const jsDay = new Date(day.ms).getDay()}
+									{@const isoDay = jsDay === 0 ? 7 : jsDay}
+									{#each blockedSlots as slot}
+										{#if !slot.day || slot.day === isoDay}
+											<div class="wg-blocked" aria-label={slot.label || 'Unavailable'}>
+												{#if slot.label}
+													<span class="wg-blocked-label">{slot.label}</span>
+												{/if}
+											</div>
+										{/if}
+									{/each}
 								{/if}
 
 								<!-- All-day / multi-day events -->
@@ -476,8 +540,7 @@
 											role="button"
 											tabindex="0"
 											aria-label="{ev.title}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
-											onpointerdown={(e) => onEventPointerDown(e, ev)}
-
+											onpointerdown={(e) => onEventPointerDown(e, ev)}										onpointerenter={() => oneventhover?.(ev)}
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 										>
 											<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
@@ -496,7 +559,7 @@
 		{/each}
 	</div>
 
-	{#if scrolled}
+	{#if showNav && scrolled}
 		<nav class="wg-nav" aria-label={L.weekNavigation}>
 			<button
 				class="wg-nav-pill"
@@ -519,6 +582,7 @@
 		user-select: none;
 		font-variant-numeric: tabular-nums;
 	}
+	.wg--auto { overflow: visible; }
 
 	/* ─── Scrollable body ────────────────────────────── */
 	.wg-body {
@@ -528,6 +592,7 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.08)) transparent;
 	}
+	.wg--auto .wg-body { overflow-y: visible; }
 
 	.wg-body::-webkit-scrollbar { width: 4px; }
 	.wg-body::-webkit-scrollbar-thumb {
@@ -588,7 +653,53 @@
 	.wg-week--current .wg-cell--past { opacity: 0.8; }
 	.wg-week--current .wg-cell--past:hover { opacity: 0.9; }
 
+	/* equalDays: when no cells are marked past, all are full brightness */
+
 	.wg-cell--weekend { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }
+
+	/* ─── Disabled cell ──────────────────────────────── */
+	.wg-cell--disabled {
+		opacity: 0.35;
+		pointer-events: none;
+		background: repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 6px,
+			var(--dt-border, rgba(0, 0, 0, 0.06)) 6px,
+			var(--dt-border, rgba(0, 0, 0, 0.06)) 7px
+		) !important;
+	}
+
+	/* ─── Blocked slot indicator ─────────────────────── */
+	.wg-blocked {
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		padding: 2px 4px;
+		border-radius: 3px;
+		background: repeating-linear-gradient(
+			-45deg,
+			color-mix(in srgb, var(--dt-text, rgba(0,0,0,0.85)) 4%, transparent),
+			color-mix(in srgb, var(--dt-text, rgba(0,0,0,0.85)) 4%, transparent) 3px,
+			transparent 3px,
+			transparent 6px
+		);
+		margin-bottom: 2px;
+		min-height: 14px;
+	}
+
+	.wg-blocked-label {
+		font: 500 8px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.3));
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+	}
+
+	/* ─── Custom day header ──────────────────────────── */
+	.wg-cell-custom-header {
+		padding: 0 4px 2px;
+	}
 
 	/* ─── Cell header (day label top-right) ──────────── */
 	.wg-cell-hd {

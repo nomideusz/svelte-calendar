@@ -44,6 +44,44 @@
 
 	const clock = createClock();
 	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
+	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
+	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
+	const mobileCtx = getContext<{ current: boolean }>('calendar:mobile') as { current: boolean } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
+	const showNav = $derived(showNavCtx?.current ?? true);
+	const equalDays = $derived(equalDaysCtx?.current ?? false);
+	const showDates = $derived(showDatesCtx?.current ?? true);
+	const isMobile = $derived(mobileCtx?.current ?? false);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
+
+	// ── Swipe navigation (mobile) ──────────────────────
+	let swipeStartX = 0;
+	let swipeStartY = 0;
+	const SWIPE_THRESHOLD = 50;
+
+	function onPointerDown(e: PointerEvent) {
+		if (!isMobile) return;
+		swipeStartX = e.clientX;
+		swipeStartY = e.clientY;
+	}
+
+	function onPointerUp(e: PointerEvent) {
+		if (!isMobile) return;
+		const dx = e.clientX - swipeStartX;
+		const dy = e.clientY - swipeStartY;
+		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+			if (dx > 0) viewState?.prev();
+			else viewState?.next();
+		}
+	}
+
+	// ── New feature contexts ──
+	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
+	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+	const oneventhover = $derived(callbacksCtx?.oneventhover);
+	const disabledDates = $derived(disabledDatesCtx?.current);
+	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
 
 	// ── Format helpers ──────────────────────────────────
 	function fmtTime(d: Date): string {
@@ -114,14 +152,18 @@
 	const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
 	const dayEnd = $derived(dayMs + DAY_MS);
 	const isToday = $derived(dayMs === clock.today);
-	const isPastDay = $derived(dayMs < clock.today);
+	const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
 
 	const dateLabel = $derived(
-		new Date(dayMs).toLocaleDateString(locale ?? 'en-US', {
-			weekday: 'long',
-			month: 'long',
-			day: 'numeric',
-		})
+		showDates
+			? new Date(dayMs).toLocaleDateString(locale ?? 'en-US', {
+				weekday: 'long',
+				month: 'long',
+				day: 'numeric',
+			})
+			: new Date(dayMs).toLocaleDateString(locale ?? 'en-US', {
+				weekday: 'long',
+			})
 	);
 
 	/** All events for this day, sorted chronologically */
@@ -165,10 +207,16 @@
 	});
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="ag ag--day"
+	class:ag--disabled={disabledSet.has(dayMs)}
+	class:ag--mobile={isMobile}
+	class:ag--auto={autoHeight}
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
+	onpointerdown={onPointerDown}
+	onpointerup={onPointerUp}
 >
 	<div class="ag-body" role="list" aria-label={L.todaysLineup}>
 		{#if allDayBanner.length > 0}
@@ -185,6 +233,7 @@
 							tabindex="0"
 							aria-label="{ev.title}, {L.allDay}"
 							onclick={() => handleClick(ev)}
+							onpointerenter={() => oneventhover?.(ev)}
 							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<span class="ag-allday-dot"></span>
@@ -230,8 +279,7 @@
 								role="button"
 								tabindex="0"
 								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(progress(ev) * 100))}"
-								onclick={() => handleClick(ev)}
-								onkeydown={(e) => handleKeydown(e, ev)}
+								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
@@ -266,9 +314,9 @@
 								tabindex="0"
 								aria-label="{ev.title}, {fmtTime(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}
+								onpointerenter={() => oneventhover?.(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
-								<div class="ag-card-stripe"></div>
 								<div class="ag-card-body">
 									<div class="ag-card-top">
 										<span class="ag-card-title">{ev.title}</span>
@@ -309,8 +357,7 @@
 							role="button"
 							tabindex="0"
 							aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}"
-							onclick={() => handleClick(ev)}
-							onkeydown={(e) => handleKeydown(e, ev)}
+							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<span class="ag-log-check">✓</span>
 							<span class="ag-log-time">{fmtTime(ev.start)}</span>
@@ -337,10 +384,8 @@
 							role="button"
 							tabindex="0"
 							aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
-							onclick={() => handleClick(ev)}
-							onkeydown={(e) => handleKeydown(e, ev)}
+							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
-							<div class="ag-card-stripe"></div>
 							<div class="ag-card-body">
 								<div class="ag-card-top">
 									<span class="ag-card-order">{i + 1}</span>
@@ -368,9 +413,12 @@
 		{/if}
 	</div>
 
-	<div class="ag-date-label">{dateLabel}</div>
+	{#if !isMobile}
+		<div class="ag-date-label">{dateLabel}</div>
+	{/if}
 
-	<!-- ── Floating nav pills ── -->
+	<!-- ── Floating nav pills (desktop only — mobile uses Calendar header) ── -->
+	{#if showNav && !isMobile}
 	<nav class="ag-nav" aria-label={L.dayNavigation}>
 		<button
 			class="ag-nav-pill ag-nav-today"
@@ -396,6 +444,7 @@
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
 	</nav>
+	{/if}
 </div>
 
 <style>
@@ -483,6 +532,13 @@
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 
+	.ag--auto { height: auto; overflow: visible; }
+
+	.ag--disabled {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+
 	/* ═══ Body ═══ */
 	.ag-body {
 		flex: 1;
@@ -493,6 +549,7 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
+	.ag--auto .ag-body { overflow-y: visible; }
 	.ag-body::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -563,13 +620,14 @@
 		display: flex;
 		align-items: stretch;
 		border-radius: 10px;
-		background: var(--dt-surface, #191919);
-		border: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, #191919));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(255, 255, 255, 0.06)));
 		overflow: hidden;
 		cursor: pointer;
-		transition: border-color 150ms;
+		transition: background 150ms, border-color 150ms;
 	}
 	.ag-card:hover {
+		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, #191919));
 		border-color: color-mix(in srgb, var(--ev-color) 40%, transparent);
 	}
 	.ag-card:focus-visible {
@@ -578,12 +636,7 @@
 	}
 	.ag-card--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #191919));
-	}
-	.ag-card-stripe {
-		width: 3px;
-		background: var(--ev-color, var(--dt-accent));
-		flex-shrink: 0;
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #191919));
 	}
 	.ag-card-body {
 		padding: 10px 12px;
@@ -642,9 +695,7 @@
 		margin-bottom: 6px;
 		transition: border-color 150ms, transform 100ms;
 	}
-	.ag-card--q .ag-card-stripe {
-		width: 3.5px;
-	}
+
 	.ag-card--q .ag-card-body {
 		gap: 3px;
 	}
@@ -660,8 +711,8 @@
 		white-space: nowrap;
 	}
 	.ag-card--hero {
-		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #191919));
-		border-color: color-mix(in srgb, var(--ev-color) 25%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #191919));
+		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
 	.ag-card--hero .ag-card-title {
 		font-size: 16px;
@@ -678,9 +729,7 @@
 	}
 
 	/* ── Plan card variant ── */
-	.ag-card--plan .ag-card-stripe {
-		width: 3.5px;
-	}
+
 	.ag-card--plan .ag-card-body {
 		padding: 12px 14px;
 		gap: 3px;
@@ -699,8 +748,8 @@
 		font-size: 14px;
 	}
 	.ag-card--first {
-		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #191919));
-		border-color: color-mix(in srgb, var(--ev-color) 15%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
+		border-color: color-mix(in srgb, var(--ev-color) 25%, transparent);
 	}
 	.ag-card--first .ag-card-title {
 		font-size: 16px;
@@ -722,6 +771,41 @@
 		flex: 1;
 		padding: 8px 0 10px;
 		min-height: 0;
+	}
+	/* Mobile: stack queue columns vertically */
+	.ag--mobile .ag-q {
+		grid-template-columns: 1fr;
+	}
+	.ag--mobile .ag-q-status {
+		border-right: none;
+		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		padding-bottom: 10px;
+		margin-bottom: 8px;
+	}
+	/* Mobile: larger touch targets */
+	.ag--mobile .ag-card-body {
+		padding: 14px 16px;
+	}
+	.ag--mobile .ag-card-title {
+		font-size: 15px;
+	}
+	.ag--mobile .ag-card--hero .ag-card-title {
+		font-size: 18px;
+	}
+	.ag--mobile .ag-card--hero .ag-card-body {
+		padding: 16px 18px;
+	}
+	.ag--mobile .ag-log-row {
+		padding: 12px 0;
+	}
+	.ag--mobile .ag-card--plan .ag-card-body {
+		padding: 14px 16px;
+	}
+	.ag--mobile .ag-card--plan .ag-card-title {
+		font-size: 15px;
+	}
+	.ag--mobile .ag-nav-pill {
+		padding: 10px 16px;
 	}
 	.ag-q-label {
 		font-size: 8px;
@@ -770,13 +854,14 @@
 	.ag-q-now {
 		padding: 8px 10px;
 		border-radius: 8px;
-		background: var(--dt-surface, #191919);
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, #191919));
 		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		cursor: pointer;
-		transition: border-color 150ms;
+		transition: background 150ms, border-color 150ms;
 		margin-right: 10px;
 	}
 	.ag-q-now:hover {
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, #191919));
 		border-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);
 	}
 	.ag-q-now:focus-visible {

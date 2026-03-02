@@ -63,18 +63,20 @@ export interface RecurringEvent {
 export interface RecurringAdapterOptions {
     /** Start weeks on Monday (default: true) */
     mondayStart?: boolean;
-    /** Map of category/title to color */
-    colorMap?: Record<string, string>;
     /**
-     * Auto-assign colors to events by category or title.
-     *   true    → use the default vivid palette
-     *   string  → hex accent color to generate a harmonious palette
+     * Custom color palette for auto-coloring events.
+     * Pass `generatePalette('#yourAccent')` to get theme-harmonious colors,
+     * or provide your own array of hex strings.
+     * Defaults to the built-in vivid palette.
      */
-    autoColor?: boolean | string;
+    palette?: string[];
 }
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
+ *
+ * Events without a `color` are auto-assigned one from a vivid palette,
+ * grouped by `category` or `title` so related events share a color.
  *
  * Read-only by default — create/update/delete throw.
  */

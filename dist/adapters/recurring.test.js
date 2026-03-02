@@ -99,27 +99,15 @@ describe('createRecurringAdapter — weekly (default)', () => {
         expect(events[0].title).toBe('Pilates');
     });
 });
-// ── Color options ───────────────────────────────────────
-describe('createRecurringAdapter — colors', () => {
-    it('applies colorMap', async () => {
-        const adapter = createRecurringAdapter(schedule, {
-            colorMap: { yoga: '#ff6600', Pilates: '#0066ff' },
-        });
-        const monday = mondayMs();
-        const nextMonday = mondayMs(1);
-        const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
-        const vinyasa = events.find((e) => e.title === 'Vinyasa Flow');
-        expect(vinyasa.color).toBe('#ff6600'); // matched by category 'yoga'
-        const pilates = events.find((e) => e.title === 'Pilates');
-        expect(pilates.color).toBe('#0066ff'); // matched by title 'Pilates'
-    });
-    it('applies autoColor', async () => {
+// ── Auto-coloring ───────────────────────────────────────
+describe('createRecurringAdapter — auto-coloring', () => {
+    it('auto-assigns colors to events without explicit color', async () => {
         const noColorSchedule = [
             { id: '1', title: 'A', dayOfWeek: 1, startTime: '09:00', endTime: '10:00' },
             { id: '2', title: 'B', dayOfWeek: 2, startTime: '09:00', endTime: '10:00' },
             { id: '3', title: 'A', dayOfWeek: 3, startTime: '09:00', endTime: '10:00' },
         ];
-        const adapter = createRecurringAdapter(noColorSchedule, { autoColor: true });
+        const adapter = createRecurringAdapter(noColorSchedule);
         const monday = mondayMs();
         const nextMonday = mondayMs(1);
         const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
@@ -129,6 +117,15 @@ describe('createRecurringAdapter — colors', () => {
         // 'B' should get a different color
         const bEvent = events.find((e) => e.title === 'B');
         expect(bEvent.color).not.toBe(aEvents[0].color);
+    });
+    it('preserves explicit colors', async () => {
+        const adapter = createRecurringAdapter(schedule);
+        const monday = mondayMs();
+        const nextMonday = mondayMs(1);
+        const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
+        const vinyasa = events.find((e) => e.title === 'Vinyasa Flow');
+        // Should keep its explicit color from the schedule
+        expect(vinyasa.color).toBeTruthy();
     });
 });
 // ── Read-only ───────────────────────────────────────────

@@ -10,6 +10,11 @@
  */
 export declare const VIVID_PALETTE: string[];
 /**
+ * Extract the --dt-accent hex value from a theme CSS string.
+ * Returns undefined if not found.
+ */
+export declare function extractAccent(themeString: string): string | undefined;
+/**
  * Generate `count` visually distinct and theme-harmonious colors
  * by rotating hue evenly from the base accent, keeping saturation
  * and lightness within a pleasant range.

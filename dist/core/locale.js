@@ -183,13 +183,13 @@ export function fmtTime(d, locale) {
     if (is24HourLocale(locale)) {
         const h = d.getHours();
         const m = d.getMinutes();
-        return m === 0 ? String(h) : `${h}:${String(m).padStart(2, '0')}`;
+        return `${h}:${String(m).padStart(2, '0')}`;
     }
     const h = d.getHours();
     const m = d.getMinutes();
     const suffix = h >= 12 ? 'p' : 'a';
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-    return m === 0 ? `${h12}${suffix}` : `${h12}:${String(m).padStart(2, '0')}${suffix}`;
+    return `${h12}:${String(m).padStart(2, '0')}${suffix}`;
 }
 /**
  * Format the duration between two Dates as a compact string.

@@ -5,13 +5,26 @@
  * Pass to the `theme` prop of any timeline component.
  *
  * Presets:
- *   midnight — Dark mode with red accent
- *   neutral  — Light mode, inherits host fonts
+ *   auto     — Transparent: inherit --dt-* from the host page (recommended default)
+ *   neutral  — Explicit light theme: white bg, blue accent, works standalone
+ *   midnight — Explicit dark theme: charcoal bg, red accent
  */
 /**
- * Neutral — inherits fonts from host page, uses standard grays + safe blue accent.
- * Drop-in preset that blends into any website without fighting its design.
- * This is the recommended default.
+ * Auto — triggers the smart auto-theme engine.
+ *
+ * When passed to Calendar's `theme` prop, the component will probe the host
+ * page at mount time (background, fonts, accent color, light/dark mode)
+ * and generate matching --dt-* CSS tokens automatically.
+ *
+ * Reactively watches for host theme changes (e.g. dark-mode toggle).
+ *
+ * If you want passive inheritance only (no probing), pass `autoTheme={false}`
+ * alongside `theme={auto}`.
+ */
+export const auto = ``;
+/**
+ * Neutral — explicit light theme. White bg, blue accent, inherits host fonts.
+ * Use when embedding standalone without ancestor --dt-* vars.
  */
 export const neutral = `
 	--dt-stage-bg: #ffffff;
@@ -53,4 +66,4 @@ export const midnight = `
 	--dt-serif: Georgia, 'Times New Roman', serif;
 `;
 /** All available presets keyed by name */
-export const presets = { midnight, neutral };
+export const presets = { auto, neutral, midnight };

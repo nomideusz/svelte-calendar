@@ -118,6 +118,13 @@ export interface RecurringEvent {
 export interface RecurringAdapterOptions {
 	/** Start weeks on Monday (default: true) */
 	mondayStart?: boolean;
+	/**
+	 * Custom color palette for auto-coloring events.
+	 * Pass `generatePalette('#yourAccent')` to get theme-harmonious colors,
+	 * or provide your own array of hex strings.
+	 * Defaults to the built-in vivid palette.
+	 */
+	palette?: string[];
 }
 
 // ── Helpers ─────────────────────────────────────────────
@@ -400,16 +407,17 @@ export function createRecurringAdapter(
 	schedule: RecurringEvent[],
 	options: RecurringAdapterOptions = {},
 ): CalendarAdapter {
-	const { mondayStart = true } = options;
+	const { mondayStart = true, palette } = options;
+	const colors = palette?.length ? palette : PALETTE;
 
-	// Auto-color: assign from vivid palette by category/title
+	// Auto-color: assign from palette by category/title
 	const colorAssignments = new Map<string, string>();
 	let colorIndex = 0;
 	for (const rec of schedule) {
 		if (rec.color) continue;
 		const key = rec.category ?? rec.title;
 		if (!colorAssignments.has(key)) {
-			colorAssignments.set(key, PALETTE[colorIndex % PALETTE.length]);
+			colorAssignments.set(key, colors[colorIndex % colors.length]);
 			colorIndex++;
 		}
 	}

@@ -70,10 +70,12 @@
 	const minDurationCtx = getContext<{ current: number | undefined }>('calendar:minDuration') as { current: number | undefined } | undefined;
 	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
 	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
 
 	const blockedSlots = $derived(blockedSlotsCtx?.current);
 	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
 	const minDuration = $derived(minDurationCtx?.current);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
 	const oneventhover = $derived(callbacksCtx?.oneventhover);
 	const disabledDates = $derived(disabledDatesCtx?.current);
 	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
@@ -435,7 +437,7 @@
 	}
 </script>
 
-<div class="wg" style={style || undefined} style:height={height ? `${height}px` : '100%'}>
+<div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}>
 	<div
 		class="wg-body"
 		bind:this={el}
@@ -580,6 +582,7 @@
 		user-select: none;
 		font-variant-numeric: tabular-nums;
 	}
+	.wg--auto { overflow: visible; }
 
 	/* ─── Scrollable body ────────────────────────────── */
 	.wg-body {
@@ -589,6 +592,7 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.08)) transparent;
 	}
+	.wg--auto .wg-body { overflow-y: visible; }
 
 	.wg-body::-webkit-scrollbar { width: 4px; }
 	.wg-body::-webkit-scrollbar-thumb {

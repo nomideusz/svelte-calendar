@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * AgendaWeek — rolling 7-day agenda view.
+	 * AgendaWeek — rolling N-day agenda view.
 	 *
 	 * "The Week Ahead":
 	 *   Today + tomorrow expanded with time slots/countdowns.
@@ -9,11 +9,11 @@
 	 *
 	 * Answers: "What's coming up and when do I need to be ready?"
 	 */
-	import { getContext } from 'svelte';
+	import { getContext, type Snippet } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
-	import { weekdayLong, weekdayShort, monthShort, fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
+	import { weekdayLong, monthLong, fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
 
 	const L = $derived(getLabels());
@@ -43,6 +43,49 @@
 
 	const clock = createClock();
 	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
+	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
+	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
+	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
+	const hideDaysCtx = getContext<{ current: number[] | undefined }>('calendar:hideDays') as { current: number[] | undefined } | undefined;
+	const mobileCtx = getContext<{ current: boolean }>('calendar:mobile') as { current: boolean } | undefined;
+	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
+	const showNav = $derived(showNavCtx?.current ?? true);
+	const equalDays = $derived(equalDaysCtx?.current ?? false);
+	const showDates = $derived(showDatesCtx?.current ?? true);
+	const hideDays = $derived(hideDaysCtx?.current);
+	const isMobile = $derived(mobileCtx?.current ?? false);
+	const autoHeight = $derived(autoHeightCtx?.current ?? false);
+
+	// ── Swipe navigation (mobile) ──────────────────────
+	let swipeStartX = 0;
+	let swipeStartY = 0;
+	const SWIPE_THRESHOLD = 50;
+
+	function onPointerDown(e: PointerEvent) {
+		if (!isMobile) return;
+		swipeStartX = e.clientX;
+		swipeStartY = e.clientY;
+	}
+
+	function onPointerUp(e: PointerEvent) {
+		if (!isMobile) return;
+		const dx = e.clientX - swipeStartX;
+		const dy = e.clientY - swipeStartY;
+		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+			if (dx > 0) viewState?.prev();
+			else viewState?.next();
+		}
+	}
+
+	// ── New feature contexts ──
+	const dayHeaderSnippetCtx = getContext<{ current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined }>('calendar:dayHeaderSnippet') as { current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined } | undefined;
+	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
+	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+
+	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
+	const oneventhover = $derived(callbacksCtx?.oneventhover);
+	const disabledDates = $derived(disabledDatesCtx?.current);
+	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
 
 	// ── Format helpers ──────────────────────────────────
 	function fmtTime(d: Date): string {
@@ -128,12 +171,20 @@
 
 	const weekStartMs = $derived(
 		focusDate
-			? startOfWeek(sod(focusDate.getTime()), mondayStart)
-			: startOfWeek(clock.today, mondayStart),
+			? (viewState?.dayCount === 7
+				? startOfWeek(sod(focusDate.getTime()), mondayStart)
+				: sod(focusDate.getTime()))
+			: (viewState?.dayCount === 7
+				? startOfWeek(clock.today, mondayStart)
+				: clock.today),
 	);
 
+	const customDays = $derived(viewState?.dayCount ?? 7);
+
 	const isThisWeek = $derived(
-		weekStartMs === startOfWeek(clock.today, mondayStart),
+		customDays === 7
+			? weekStartMs === startOfWeek(clock.today, mondayStart)
+			: clock.today >= weekStartMs && clock.today < weekStartMs + customDays * DAY_MS,
 	);
 
 	const weekDays = $derived.by((): DayGroup[] => {
@@ -141,7 +192,7 @@
 		const todayMs = clock.today;
 		const tomorrowMs = todayMs + DAY_MS;
 		const out: DayGroup[] = [];
-		for (let i = 0; i < 7; i++) {
+		for (let i = 0; i < customDays; i++) {
 			const ms = weekStartMs + i * DAY_MS;
 			const dEnd = ms + DAY_MS;
 			const dayEvts = events
@@ -163,15 +214,22 @@
 				else upcomingEvents.push(ev);
 			}
 			let tier: DayTier;
-			if (ms === todayMs) tier = 'today';
-			else if (ms === tomorrowMs) tier = 'tomorrow';
-			else if (ms < todayMs) tier = 'past';
-			else tier = 'upcoming';
+			if (equalDays) {
+				tier = 'upcoming';
+			} else if (ms === todayMs) {
+				tier = 'today';
+			} else if (ms === tomorrowMs) {
+				tier = 'tomorrow';
+			} else if (ms < todayMs) {
+				tier = 'past';
+			} else {
+				tier = 'upcoming';
+			}
 
 			out.push({
 				ms,
-				dayName: tier === 'today' || tier === 'tomorrow' ? weekdayLong(ms, locale) : weekdayShort(ms, locale),
-				dateLabel: `${monthShort(ms, locale)} ${dayNum(ms)}`,
+				dayName: weekdayLong(ms, locale),
+				dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
 				tier,
 				events: dayEvts,
 				allDayEvents: allDayEvts,
@@ -182,12 +240,22 @@
 				totalHours: Math.round((totalMinutes / 60) * 10) / 10,
 			});
 		}
+
+		// Filter hidden days if hideDays is set
+		if (hideDays?.length) {
+			return out.filter((d) => {
+				const jsDay = new Date(d.ms).getDay();
+				const iso = jsDay === 0 ? 7 : jsDay;
+				return !hideDays.includes(iso);
+			});
+		}
+
 		return out;
 	});
 </script>
 
 <!-- ═══ Shared event card snippet ═══ -->
-{#snippet eventCard(ev: TimelineEvent, isNow: boolean)}
+{#snippet eventCard(ev: TimelineEvent, isNow: boolean, eta?: string)}
 	<div
 		class="ag-card"
 		class:ag-card--selected={selectedEventId === ev.id}
@@ -196,9 +264,9 @@
 		tabindex="0"
 		aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
 		onclick={() => handleClick(ev)}
+		onpointerenter={() => oneventhover?.(ev)}
 		onkeydown={(e) => handleKeydown(e, ev)}
 	>
-		<div class="ag-card-stripe"></div>
 		<div class="ag-card-body">
 			<span class="ag-card-title">{ev.title}</span>
 			{#if ev.subtitle}
@@ -211,6 +279,9 @@
 					{fmtTime(ev.start)} – {fmtTime(ev.end)}
 				{/if}
 				<span class="ag-card-dur">{duration(ev)}</span>
+				{#if eta}
+					<span class="ag-card-eta">{eta}</span>
+				{/if}
 			</span>
 			{#if ev.tags?.length}
 				<div class="ag-card-tags">
@@ -228,24 +299,31 @@
 	</div>
 {/snippet}
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="ag ag--week"
+	class:ag--mobile={isMobile}
+	class:ag--auto={autoHeight}
 	style={style || undefined}
+	onpointerdown={onPointerDown}
+	onpointerup={onPointerUp}
 >
 	<div class="ag-body" role="list" aria-label={L.weekAhead}>
 		{#each weekDays as day (day.ms)}
 			{@const expanded = day.tier === 'today' || day.tier === 'tomorrow'}
 			{#if day.tier === 'past'}
 				<!-- Past day: single collapsed line -->
-				<div class="ag-wday ag-wday--past" role="listitem">
+				<div class="ag-wday ag-wday--past" class:ag-wday--disabled={disabledSet.has(day.ms)} role="listitem">
 					<div class="ag-wday-head">
 						<div class="ag-wday-head-left">
 							<span class="ag-wday-name">{day.dayName}</span>
-							<span class="ag-wday-date">{day.dateLabel}</span>
-							{#if day.events.length > 0}
-								<span class="ag-wday-done">✓ {day.events.length}</span>
-							{/if}
+						{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
 						</div>
+						{#if dayHeaderSnippet}
+							<div class="ag-wday-custom-header">
+								{@render dayHeaderSnippet({ date: new Date(day.ms), isToday: false, dayName: day.dayName })}
+							</div>
+						{/if}
 					</div>
 				</div>
 			{:else}
@@ -253,6 +331,8 @@
 				class="ag-wday"
 				class:ag-wday--today={day.tier === 'today'}
 				class:ag-wday--tomorrow={day.tier === 'tomorrow'}
+				class:ag-wday--equal={equalDays}
+				class:ag-wday--disabled={disabledSet.has(day.ms)}
 				role="listitem"
 			>
 				<!-- Day header -->
@@ -264,8 +344,13 @@
 						<span class="ag-wday-badge ag-wday-badge--muted">{L.tomorrow}</span>
 						{/if}
 						<span class="ag-wday-name">{day.dayName}</span>
-						<span class="ag-wday-date">{day.dateLabel}</span>
+						{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
 					</div>
+					{#if dayHeaderSnippet}
+						<div class="ag-wday-custom-header">
+							{@render dayHeaderSnippet({ date: new Date(day.ms), isToday: day.tier === 'today', dayName: day.dayName })}
+						</div>
+					{/if}
 				</div>
 
 				{#if day.allDayEvents.length > 0}
@@ -279,6 +364,7 @@
 								tabindex="0"
 								aria-label="{ev.title}, {L.allDay}"
 								onclick={() => handleClick(ev)}
+								onpointerenter={() => oneventhover?.(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<span class="ag-allday-dot"></span>
@@ -290,6 +376,20 @@
 
 				{#if day.events.length === 0}
 					<div class="ag-wday-empty">{L.noEvents}</div>
+				{:else if equalDays}
+					<!-- Equal days: card layout for all days, no time-relative badges -->
+					<div class="ag-wday-expanded">
+						{#each groupIntoSlots(day.timedEvents) as slot (slot.startMs)}
+							<div class="ag-wslot">
+
+								<div class="ag-wslot-cards" class:ag-wslot-cards--multi={slot.events.length > 1}>
+									{#each slot.events as ev (ev.id)}
+										{@render eventCard(ev, false)}
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
 				{:else if expanded}
 					<!-- Expanded: today/tomorrow get full slot treatment -->
 					<div class="ag-wday-expanded">
@@ -305,15 +405,10 @@
 						{/if}
 						{#each groupIntoSlots(day.upcomingEvents) as slot (slot.startMs)}
 							<div class="ag-wslot">
-								<div class="ag-wslot-header">
-									<span class="ag-wslot-time">{fmtTime(new Date(slot.startMs))}</span>
-									{#if day.tier === 'today'}
-										<span class="ag-wslot-eta">{timeUntilMs(slot.startMs)}</span>
-									{/if}
-								</div>
+
 								<div class="ag-wslot-cards" class:ag-wslot-cards--multi={slot.events.length > 1}>
 									{#each slot.events as ev (ev.id)}
-										{@render eventCard(ev, false)}
+										{@render eventCard(ev, false, day.tier === 'today' ? timeUntilMs(ev.start.getTime()) : undefined)}
 									{/each}
 								</div>
 							</div>
@@ -325,7 +420,7 @@
 				{:else}
 					<!-- Compact: future days get minimal rows -->
 					<div class="ag-wday-compact">
-						{#each day.events.slice(0, 3) as ev (ev.id)}
+						{#each day.timedEvents.slice(0, 4) as ev (ev.id)}
 							<div
 								class="ag-compact"
 								class:ag-compact--selected={selectedEventId === ev.id}
@@ -333,8 +428,7 @@
 								role="button"
 								tabindex="0"
 								aria-label="{ev.title}, {fmtTime(ev.start)}, {duration(ev)}"
-								onclick={() => handleClick(ev)}
-								onkeydown={(e) => handleKeydown(e, ev)}
+								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmtTime(ev.start)}</span>
@@ -350,8 +444,8 @@
 								<span class="ag-compact-dur">{duration(ev)}</span>
 							</div>
 						{/each}
-						{#if day.events.length > 3}
-							<div class="ag-compact-more">{L.nMore(day.events.length - 3)}</div>
+						{#if day.timedEvents.length > 4}
+							<div class="ag-compact-more">{L.nMore(day.timedEvents.length - 4)}</div>
 						{/if}
 					</div>
 				{/if}
@@ -360,7 +454,8 @@
 		{/each}
 	</div>
 
-	<!-- ── Floating nav pills ── -->
+	<!-- ── Floating nav pills (desktop only — mobile uses Calendar header) ── -->
+	{#if showNav && !isMobile}
 	<nav class="ag-nav" aria-label={L.weekNavigation}>
 		<button
 			class="ag-nav-pill ag-nav-today"
@@ -386,6 +481,7 @@
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
 	</nav>
+	{/if}
 </div>
 
 <style>
@@ -451,6 +547,10 @@
 		color: var(--dt-text, rgba(255, 255, 255, 0.92));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
+	.ag--auto {
+		height: auto;
+		overflow: visible;
+	}
 
 	/* ═══ Body ═══ */
 	.ag-body {
@@ -458,6 +558,9 @@
 		overflow-y: auto;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
+	}
+	.ag--auto .ag-body {
+		overflow-y: visible;
 	}
 	.ag-body::-webkit-scrollbar {
 		width: 4px;
@@ -514,15 +617,16 @@
 	.ag-card {
 		display: flex;
 		align-items: stretch;
-		border-radius: 10px;
-		background: var(--dt-surface, #191919);
-		border: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		border-radius: 6px;
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #191919));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(255, 255, 255, 0.06)));
 		overflow: hidden;
 		cursor: pointer;
-		transition: border-color 150ms;
+		transition: background 150ms, border-color 150ms;
 	}
 	.ag-card:hover {
-		border-color: color-mix(in srgb, var(--ev-color) 40%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
+		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
 	.ag-card:focus-visible {
 		outline: 2px solid var(--dt-accent, #ff6b4a);
@@ -530,18 +634,13 @@
 	}
 	.ag-card--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #191919));
-	}
-	.ag-card-stripe {
-		width: 3px;
-		background: var(--ev-color, var(--dt-accent));
-		flex-shrink: 0;
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
 	}
 	.ag-card-body {
-		padding: 10px 12px;
+		padding: 7px 10px;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 2px;
 		min-width: 0;
 		flex: 1;
 	}
@@ -555,6 +654,8 @@
 		flex: 1;
 	}
 	.ag-card-meta {
+		display: flex;
+		align-items: center;
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
 		font-family: var(--dt-mono, monospace);
@@ -563,6 +664,14 @@
 	.ag-card-dur {
 		margin-left: 6px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+	}
+	.ag-card-eta {
+		margin-left: auto;
+		font-size: 10px;
+		font-weight: 600;
+		color: color-mix(in srgb, var(--ev-color) 80%, var(--dt-text));
+		opacity: 0.85;
+		letter-spacing: 0.02em;
 	}
 	.ag-card-sub {
 		font-size: 11px;
@@ -601,19 +710,39 @@
 		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
 	}
 	.ag-wday--today {
-		background: color-mix(in srgb, var(--dt-accent, #ff6b4a) 4%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #ff6b4a) 2%, transparent);
+	}
+	.ag-wday--tomorrow .ag-card {
+		opacity: 0.82;
 	}
 	.ag-wday--past {
-		opacity: 0.35;
+		opacity: 0.4;
 	}
 	.ag-wday--past .ag-wday-head {
-		padding: 6px 20px;
+		padding: 8px 20px;
 	}
-	.ag-wday-done {
-		font-size: 10px;
-		font-family: var(--dt-mono, monospace);
-		color: var(--dt-success, rgba(120, 200, 140, 0.6));
+	.ag-wday--disabled {
+		opacity: 0.35;
+		pointer-events: none;
+		position: relative;
 	}
+	.ag-wday--disabled::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: repeating-linear-gradient(
+			135deg,
+			transparent,
+			transparent 4px,
+			rgba(128, 128, 128, 0.08) 4px,
+			rgba(128, 128, 128, 0.08) 8px
+		);
+		pointer-events: none;
+	}
+	.ag-wday-custom-header {
+		padding: 2px 0 4px;
+	}
+
 	.ag-wday-head {
 		display: flex;
 		justify-content: space-between;
@@ -652,40 +781,32 @@
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
 	}
+
 	.ag-wday-empty {
-		padding: 4px 20px 10px;
-		font-size: 12px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		padding: 2px 20px 10px;
+		font-size: 11px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
+		font-style: italic;
 	}
 
 	/* Expanded day */
 	.ag-wday-expanded {
-		padding: 0 20px 12px;
+		padding: 0 20px 10px;
 	}
 	.ag-wslot {
-		margin-bottom: 6px;
+		margin-bottom: 4px;
 	}
 	.ag-wslot-header {
 		display: flex;
 		align-items: baseline;
 		gap: 8px;
-		padding: 4px 0;
-	}
-	.ag-wslot-time {
-		font-size: 12px;
-		font-weight: 600;
-		font-family: var(--dt-mono, monospace);
+		padding: 2px 0;
 	}
 	.ag-wslot-now {
 		font-size: 9px;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-accent, #ff6b4a);
-	}
-	.ag-wslot-eta {
-		font-size: 11px;
-		font-weight: 500;
 		color: var(--dt-accent, #ff6b4a);
 	}
 	.ag-wslot-cards {
@@ -715,6 +836,12 @@
 		gap: 8px;
 		padding: 4px 0;
 		cursor: pointer;
+	}
+	.ag-compact--selected {
+		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
+		border-radius: 4px;
+		padding-left: 6px;
+		padding-right: 6px;
 	}
 	.ag-compact:hover .ag-compact-title {
 		color: var(--dt-text);
@@ -771,5 +898,37 @@
 		font-size: 11px;
 		color: var(--dt-text-3);
 		padding: 2px 0 0 13px;
+	}
+
+	/* ═══ Mobile adaptations ═══ */
+	.ag--mobile .ag-wday-head {
+		padding: 12px 16px;
+	}
+	.ag--mobile .ag-wday-expanded {
+		padding: 0 16px 12px;
+	}
+	.ag--mobile .ag-wday-compact {
+		padding: 0 16px 12px;
+	}
+	.ag--mobile .ag-card-body {
+		padding: 12px 14px;
+	}
+	.ag--mobile .ag-card-title {
+		font-size: 14px;
+	}
+	.ag--mobile .ag-compact {
+		padding: 8px 0;
+	}
+	.ag--mobile .ag-compact-title {
+		font-size: 14px;
+	}
+	.ag--mobile .ag-compact-time {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-nav-pill {
+		padding: 10px 16px;
+	}
+	.ag--mobile .ag-wslot-cards--multi {
+		grid-template-columns: 1fr;
 	}
 </style>

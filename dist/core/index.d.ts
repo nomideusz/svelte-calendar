@@ -5,5 +5,5 @@ export type { DaySegment } from './time.js';
 export { setDefaultLocale, getDefaultLocale, is24HourLocale, fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong, monthShort, monthLong, dateShort, dateWithWeekday, fmtDay, fmtWeekRange, defaultLabels, setLabels, resetLabels, getLabels, } from './locale.js';
 export type { CalendarLabels } from './locale.js';
 export { toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, } from './timezone.js';
-export type { TimelineEvent, } from './types.js';
-export { generatePalette, VIVID_PALETTE } from './palette.js';
+export type { TimelineEvent, BlockedSlot, } from './types.js';
+export { generatePalette, extractAccent, VIVID_PALETTE } from './palette.js';

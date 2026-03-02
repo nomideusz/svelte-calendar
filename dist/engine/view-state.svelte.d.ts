@@ -10,31 +10,36 @@ export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'week-planner' | 'wee
  * custom IDs like 'day-kanban', 'week-resource', etc.
  */
 export type CalendarViewId = string;
-export type ViewGranularity = 'day' | 'week';
+export type ViewMode = 'day' | 'week';
 export interface ViewStateOptions {
-    defaultView?: CalendarViewId;
+    view?: CalendarViewId;
     mondayStart?: boolean;
     /** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
     timezone?: string;
     /** Initial date to focus on (defaults to today). */
     initialDate?: Date;
+    /** Number of days shown in week mode (default: 7). E.g. 3 for a 3-day view, 5 for workweek. */
+    dayCount?: number;
     /**
-     * Optional resolver for view granularity.
+     * Optional resolver for view mode.
      * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
      */
-    granularityForView?: (viewId: CalendarViewId) => ViewGranularity | undefined;
+    modeForView?: (viewId: CalendarViewId) => ViewMode | undefined;
 }
 export interface ViewState {
     readonly view: CalendarViewId;
     readonly focusDate: Date;
     readonly range: DateRange;
-    readonly granularity: ViewGranularity;
+    readonly mode: ViewMode;
     readonly mondayStart: boolean;
     /** IANA timezone, or undefined for local */
     readonly timezone: string | undefined;
+    /** Number of days shown in week mode */
+    readonly dayCount: number;
     setView(id: CalendarViewId): void;
     setMondayStart(value: boolean): void;
     setFocusDate(date: Date): void;
+    setDayCount(n: number): void;
     next(): void;
     prev(): void;
     goToday(): void;

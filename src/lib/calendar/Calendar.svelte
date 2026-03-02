@@ -70,8 +70,8 @@
 		autoTheme?: AutoThemeOptions | false;
 		/** Start week on Monday */
 		mondayStart?: boolean;
-		/** Total height */
-		height?: number;
+		/** Total height. Use `'auto'` to let content determine height (ideal for Agenda views). */
+		height?: number | 'auto';
 		/** Border radius in px (default: 12). Set to 0 for no rounding. */
 		borderRadius?: number;
 		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
@@ -152,7 +152,7 @@
 		theme = auto,
 		autoTheme,
 		mondayStart = true,
-		height = 600,
+		height: heightProp = 600,
 		borderRadius = 12,
 		dir,
 		locale,
@@ -327,6 +327,7 @@
 	setContext('calendar:maxDuration', { get current() { return maxDuration; } });
 	setContext('calendar:disabledDates', { get current() { return disabledDates; } });
 	setContext('calendar:mobile', { get current() { return useMobile; } });
+	setContext('calendar:autoHeight', { get current() { return heightProp === 'auto'; } });
 
 	// ── Load range signal ──
 	// Views can write a wider range here to override the default viewState.range.
@@ -452,7 +453,8 @@
 <div
 	class="cal"
 	bind:this={calEl}
-	style="{effectiveTheme}; --cal-h: {height}px; --cal-r: {borderRadius}px"
+	style="{effectiveTheme}; {heightProp === 'auto' ? '' : `--cal-h: ${heightProp}px;`} --cal-r: {borderRadius}px"
+	class:cal--auto={heightProp === 'auto'}
 	role="region"
 	aria-label={L.calendar}
 	dir={dir}
@@ -560,6 +562,10 @@
 		flex-direction: column;
 		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 	}
+	.cal--auto {
+		height: auto;
+		overflow: visible;
+	}
 
 	/* ── Floating pills ── */
 	.cal-pills {
@@ -610,6 +616,9 @@
 		min-height: 0;
 		position: relative;
 		overflow: hidden;
+	}
+	.cal--auto .cal-body {
+		overflow: visible;
 	}
 
 	.cal-empty {
