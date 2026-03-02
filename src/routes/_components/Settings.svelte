@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import type { PresetName } from '$lib/theme/presets.js';
-	import { presets } from '$lib/theme/presets.js';
+	import { onMount } from 'svelte';
 
 	/* ─── Field definition types ─────────────────────── */
 	type BaseField = {
@@ -38,23 +37,18 @@
 	interface Props {
 		fields: SettingsField[];
 		values: Record<string, string | number | boolean>;
-		theme: PresetName;
 	}
 
-	let { fields, values = $bindable(), theme = $bindable() }: Props = $props();
+	let { fields, values = $bindable() }: Props = $props();
 
-	const themeKeys: PresetName[] = ['midnight', 'neutral'];
-	const themeLabels: Record<PresetName, string> = {
-		midnight: 'Midnight',
-		neutral: 'Neutral',
-	};
-	const darkThemes = new Set<PresetName>(['midnight']);
 	const panelId = 'stg-panel';
 
 	let open = $state(true);
 
-	const themeStyle = $derived(presets[theme]);
-	const colorScheme = $derived(darkThemes.has(theme) ? 'dark' : 'light');
+	/* Collapse on mobile after mount (SSR-safe) */
+	onMount(() => {
+		if (window.innerWidth <= 600) open = false;
+	});
 
 	function setVal(key: string, v: string | number | boolean) {
 		values = { ...values, [key]: v };
@@ -100,9 +94,13 @@
 
 		return { topFields: top, groupedFields: orderedGroups };
 	});
+
+	/* For mobile: split top-level fields into selects/segments vs toggles */
+	const topSelects = $derived(topFields.filter((f) => f.type === 'select' || f.type === 'segment'));
+	const topToggles = $derived(topFields.filter((f) => f.type === 'toggle'));
 </script>
 
-<div class="stg" style="{themeStyle}; color-scheme: {colorScheme}">
+<div class="stg">
 	<button
 		class="stg-hd"
 		aria-expanded={open}
@@ -125,24 +123,9 @@
 
 	{#if open}
 		<div class="stg-body" id={panelId} transition:slide={{ duration: 180 }}>
-			<!-- ─── Top bar: theme + ungrouped fields ─── -->
+			<!-- ─── Top bar: ungrouped fields ─── -->
 			<div class="stg-bar">
-				<div class="stg-bar-item">
-					<label class="stg-col-title" id="stg-theme-label" for="stg-theme">Theme</label>
-					<select
-						id="stg-theme"
-						class="stg-sel"
-						aria-labelledby="stg-theme-label"
-						value={theme}
-						onchange={(e) => (theme = (e.target as HTMLSelectElement).value as PresetName)}
-					>
-						{#each themeKeys as k (k)}
-							<option value={k}>{themeLabels[k]}</option>
-						{/each}
-					</select>
-				</div>
-
-				{#each topFields as f (f.key)}
+				{#each topSelects as f (f.key)}
 					{@const fid = controlId(f.key)}
 					{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
 					{#if f.type === 'segment'}
@@ -166,24 +149,6 @@
 								{/each}
 							</div>
 						</div>
-					{:else if f.type === 'toggle'}
-						<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-							<label class="stg-row stg-row--toggle" for={fid}>
-								<span class="stg-lbl">{f.label}</span>
-								<input
-									id={fid}
-									class="stg-sr"
-									type="checkbox"
-									role="switch"
-									checked={values[f.key] === true}
-									{disabled}
-									onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
-								/>
-								<span class="stg-sw" aria-hidden="true">
-									<span class="stg-sw-knob"></span>
-								</span>
-							</label>
-						</div>
 					{:else if f.type === 'select'}
 						<div class="stg-bar-item" class:stg-row--disabled={disabled}>
 							{#if f.label}
@@ -204,6 +169,31 @@
 					{/if}
 				{/each}
 			</div>
+
+			<!-- ─── Toggle grid: compact 2-col on mobile ─── -->
+			{#if topToggles.length > 0}
+				<div class="stg-toggles">
+					{#each topToggles as f (f.key)}
+						{@const fid = controlId(f.key)}
+						{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
+						<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid}>
+							<span class="stg-lbl">{f.label}</span>
+							<input
+								id={fid}
+								class="stg-sr"
+								type="checkbox"
+								role="switch"
+								checked={values[f.key] === true}
+								{disabled}
+								onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
+							/>
+							<span class="stg-sw" aria-hidden="true">
+								<span class="stg-sw-knob"></span>
+							</span>
+						</label>
+					{/each}
+				</div>
+			{/if}
 
 			<!-- ─── Grouped fields in columns ─── -->
 			{#if groupedFields.length > 0}
@@ -372,6 +362,13 @@
 		gap: 2px 20px;
 		border-top: 1px solid color-mix(in srgb, var(--dt-border, rgba(148, 160, 180, 0.10)) 50%, transparent);
 		padding-top: 6px;
+	}
+
+	/* ─── Toggle grid (compact layout for top-level toggles) ─── */
+	.stg-toggles {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 20px;
 	}
 
 	.stg-col {
@@ -606,14 +603,100 @@
 		outline-offset: 2px;
 	}
 
-	/* ─── Responsive: stack columns on small screens ── */
+	/* ─── Responsive: compact mobile layout ──────────── */
 	@media (max-width: 600px) {
-		.stg-grid {
-			grid-template-columns: 1fr;
+		.stg {
+			border-radius: 0;
+			border-left: none;
+			border-right: none;
+			margin-bottom: 12px;
 		}
-		.stg-bar {
-			flex-direction: column;
+		.stg-hd {
+			padding: 10px 14px;
+			font-size: 11px;
+		}
+		.stg-body {
+			padding: 0 14px 10px;
 			gap: 6px;
+		}
+		/* Selects in a row */
+		.stg-bar {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 6px;
+		}
+		.stg-bar-item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			flex: 1;
+			min-width: 0;
+		}
+		.stg-col-title {
+			font-size: 9px;
+			margin: 0;
+			flex-shrink: 0;
+		}
+		.stg-sel {
+			font-size: 12px;
+			padding: 6px 22px 6px 7px;
+			border-radius: 6px;
+			flex: 1;
+			min-width: 0;
+		}
+		/* Compact 2-column toggle grid */
+		.stg-toggles {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0 8px;
+			border-top: 1px solid color-mix(in srgb, var(--dt-border, rgba(148, 160, 180, 0.10)) 50%, transparent);
+			padding-top: 4px;
+			margin-top: 2px;
+		}
+		.stg-lbl {
+			font-size: 12px;
+		}
+		.stg-row--toggle {
+			min-height: 28px;
+			padding: 2px 0;
+		}
+		.stg-sw {
+			width: 30px;
+			height: 16px;
+			border-radius: 8px;
+		}
+		.stg-sw-knob {
+			width: 10px;
+			height: 10px;
+			top: 2px;
+			left: 2px;
+		}
+		.stg-sr:checked + .stg-sw .stg-sw-knob {
+			transform: translateX(14px);
+		}
+		.stg-pill {
+			padding: 5px 10px;
+			font-size: 12px;
+		}
+		.stg-grid {
+			grid-template-columns: 1fr 1fr;
+			gap: 2px 12px;
+		}
+		.stg-col {
+			padding: 2px 0;
+		}
+		.stg-rng {
+			height: 4px;
+		}
+		.stg-rng::-webkit-slider-thumb {
+			width: 16px;
+			height: 16px;
+		}
+		.stg-rng::-moz-range-thumb {
+			width: 16px;
+			height: 16px;
 		}
 	}
 </style>

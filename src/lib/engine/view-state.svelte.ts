@@ -40,6 +40,8 @@ export interface ViewStateOptions {
 	timezone?: string;
 	/** Initial date to focus on (defaults to today). */
 	initialDate?: Date;
+	/** Number of days shown in week mode (default: 7). E.g. 3 for a 3-day view, 5 for workweek. */
+	dayCount?: number;
 	/**
 	 * Optional resolver for view mode.
 	 * Useful for custom IDs that don't follow "day-*" / "week-*" naming.
@@ -56,10 +58,13 @@ export interface ViewState {
 	readonly mondayStart: boolean;
 	/** IANA timezone, or undefined for local */
 	readonly timezone: string | undefined;
+	/** Number of days shown in week mode */
+	readonly dayCount: number;
 
 	setView(id: CalendarViewId): void;
 	setMondayStart(value: boolean): void;
 	setFocusDate(date: Date): void;
+	setDayCount(n: number): void;
 	next(): void;
 	prev(): void;
 	goToday(): void;
@@ -74,6 +79,7 @@ function computeRange(
 	focus: Date,
 	mode: ViewMode,
 	mondayStart: boolean,
+	dayCount: number = 7,
 ): DateRange {
 	if (mode === 'day') {
 		const start = new Date(focus);
@@ -81,11 +87,20 @@ function computeRange(
 		const end = new Date(start.getTime() + DAY_MS);
 		return { start, end };
 	}
-	// week
-	const ws = calcStartOfWeek(focus.getTime(), mondayStart);
+	// week / custom period
+	if (dayCount === 7) {
+		const ws = calcStartOfWeek(focus.getTime(), mondayStart);
+		return {
+			start: new Date(ws),
+			end: new Date(addDaysMs(ws, 7)),
+		};
+	}
+	// Custom day count: start from sod of focus
+	const start = new Date(focus);
+	start.setHours(0, 0, 0, 0);
 	return {
-		start: new Date(ws),
-		end: new Date(addDaysMs(ws, 7)),
+		start,
+		end: new Date(start.getTime() + dayCount * DAY_MS),
 	};
 }
 
@@ -93,11 +108,12 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 	let view = $state<CalendarViewId>(options.view ?? 'week-planner');
 	let focusDate = $state<Date>(options.initialDate ?? new Date());
 	let mondayStart = $state(options.mondayStart ?? true);
+	let dayCount = $state(options.dayCount ?? 7);
 	const timezone = options.timezone;
 	const modeResolver = options.modeForView;
 
 	const mode = $derived(modeResolver?.(view) ?? inferMode(view));
-	const range = $derived(computeRange(focusDate, mode, mondayStart));
+	const range = $derived(computeRange(focusDate, mode, mondayStart, dayCount));
 
 	return {
 		get view() {
@@ -118,6 +134,9 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 		get timezone() {
 			return timezone;
 		},
+		get dayCount() {
+			return dayCount;
+		},
 
 		setView(id: CalendarViewId) {
 			view = id;
@@ -131,13 +150,17 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 			focusDate = date;
 		},
 
+		setDayCount(n: number) {
+			dayCount = n;
+		},
+
 		next() {
-			const days = mode === 'day' ? 1 : 7;
+			const days = mode === 'day' ? 1 : dayCount;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
 
 		prev() {
-			const days = mode === 'day' ? -1 : -7;
+			const days = mode === 'day' ? -1 : -dayCount;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
 

@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.0 — 2026-03-02
+
+### Added
+- **Smart auto-theme engine** — the default `auto` theme now probes the host page at mount time (background color, accent/brand color, fonts, light/dark mode) and generates matching `--dt-*` CSS tokens automatically. Reactively watches for host theme changes (e.g. dark-mode toggle). Fine-tune with `autoTheme={{ mode, accent, font }}` or disable probing with `autoTheme={false}`.
+- **Mobile views** — new `MobileDay` (vertical time grid with swipe navigation, all-day chips, tap-to-create) and `MobileWeek` (vertical day-list with relative date labels). Automatically activated on narrow screens (`<768px`) via `mobile="auto"` (default). Force with `mobile={true/false}`.
+- **Centralized mobile header** — `Calendar.svelte` renders a unified mobile header with prev/next navigation, Day/Week mode pills, date label, and a "Today" pill (shown below the header to avoid layout shift).
+- **`mobile` prop** on Calendar: `'auto'` (detect via matchMedia), `true` (always mobile), or `false` (always desktop).
+- **`autoTheme` prop** on Calendar: `{ mode?, accent?, font? }` to override auto-detection, or `false` to disable.
+- **`probeHostTheme()` / `observeHostTheme()` exports** — auto-theme utilities available for external use.
+- **`generatePalette()` export** — generate theme-harmonious event color palettes from any accent color.
+
+### Changed
+- **Planner views** remapped to Mobile views on small screens — Planner Day/Week automatically switch to MobileDay/MobileWeek when `mobile` is active. Agenda views keep their list-based layout but hide desktop floating navigation.
+- **AgendaWeek** — day headers now use full weekday and month names (e.g. "Monday, March 2" instead of "Mon, Mar 2"). Event counts removed from headers.
+- **AgendaDay / AgendaWeek** — desktop floating nav pills (Today/←/→) and date labels hidden on mobile; the centralized Calendar header handles navigation.
+- **Calendar "Today" button** — moved from the header row to a separate bar below, eliminating layout shift when it appears/disappears.
+- **MobileDay gutter** — reduced from 52px to 40px for a tighter layout on small screens.
+- **Demo page** — richer seed data, responsive layout improvements, theme picker updates.
+- **Theme presets** — `auto` preset triggers the smart auto-theme engine instead of being a passive empty string.
+
+### Fixed
+- **MobileDay first hour cutoff** — added `padding-top` to the scroll container so the first hour label (offset by `top: -6px`) is no longer clipped.
+- **Auto-theme race conditions** — background probe uses a hidden element to avoid flashing; surface hierarchy detection is robust across ancestor layers.
+- **Text color contrast** — auto-theme validates detected text color against background luminance before applying.
+
 ## 0.5.1 — 2026-03-01
 
 ### Added

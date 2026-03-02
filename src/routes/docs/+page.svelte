@@ -1,10 +1,5 @@
 <script lang="ts">
 	let { data } = $props();
-
-	$effect(() => {
-		document.body.style.background = '#08080c';
-		document.documentElement.dataset.theme = 'midnight';
-	});
 </script>
 
 <svelte:head>
@@ -202,7 +197,108 @@
 	/* ─── Responsive ─────────────────────────────────── */
 	@media (max-width: 768px) {
 		.doc-content {
-			padding: 32px 20px 64px;
+			padding: 24px 16px 64px;
 		}
+		.doc-content :global(h1) {
+			font-size: 22px;
+		}
+		.doc-content :global(h2) {
+			font-size: 17px;
+			margin-top: 32px;
+		}
+		.doc-content :global(pre) {
+			padding: 12px 14px;
+			font-size: 12px;
+			border-radius: 6px;
+		}
+		/* Prevent tables from breaking layout */
+		.doc-content :global(table) {
+			display: block;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+		.doc-content :global(th),
+		.doc-content :global(td) {
+			padding: 6px 8px;
+			white-space: nowrap;
+		}
+		.doc-content :global(details > table) {
+			margin: 8px 12px;
+			width: calc(100% - 24px);
+		}
+	}
+
+	/* ─── Light scheme overrides ────────────────────── */
+	:global([data-scheme="light"]) .doc-content {
+		color: rgba(0, 0, 0, 0.72);
+	}
+	:global([data-scheme="light"]) .doc-content :global(h1) {
+		color: rgba(0, 0, 0, 0.9);
+	}
+	:global([data-scheme="light"]) .doc-content :global(h2) {
+		color: rgba(0, 0, 0, 0.85);
+		border-bottom-color: rgba(0, 0, 0, 0.08);
+	}
+	:global([data-scheme="light"]) .doc-content :global(h3) {
+		color: rgba(0, 0, 0, 0.8);
+	}
+	:global([data-scheme="light"]) .doc-content :global(> p:first-of-type) {
+		color: rgba(0, 0, 0, 0.5);
+	}
+	:global([data-scheme="light"]) .doc-content :global(blockquote) {
+		border-left-color: rgba(37, 99, 235, 0.4);
+		background: rgba(37, 99, 235, 0.04);
+		color: rgba(0, 0, 0, 0.6);
+	}
+	:global([data-scheme="light"]) .doc-content :global(pre) {
+		background: #f8f9fa;
+		border-color: rgba(0, 0, 0, 0.08);
+		color: rgba(0, 0, 0, 0.72);
+		scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+	}
+	:global([data-scheme="light"]) .doc-content :global(code) {
+		background: rgba(0, 0, 0, 0.05);
+		color: rgba(0, 0, 0, 0.78);
+	}
+	:global([data-scheme="light"]) .doc-content :global(pre code) {
+		background: none;
+	}
+	:global([data-scheme="light"]) .doc-content :global(th) {
+		color: rgba(0, 0, 0, 0.45);
+		border-bottom-color: rgba(0, 0, 0, 0.1);
+	}
+	:global([data-scheme="light"]) .doc-content :global(td) {
+		border-bottom-color: rgba(0, 0, 0, 0.05);
+		color: rgba(0, 0, 0, 0.65);
+	}
+	:global([data-scheme="light"]) .doc-content :global(td code) {
+		color: #2563eb;
+		background: rgba(37, 99, 235, 0.07);
+	}
+	:global([data-scheme="light"]) .doc-content :global(tr:hover td) {
+		background: rgba(0, 0, 0, 0.02);
+	}
+	:global([data-scheme="light"]) .doc-content :global(a) {
+		color: #2563eb;
+		border-bottom-color: rgba(37, 99, 235, 0.2);
+	}
+	:global([data-scheme="light"]) .doc-content :global(a:hover) {
+		border-color: #2563eb;
+	}
+	:global([data-scheme="light"]) .doc-content :global(details) {
+		border-color: rgba(0, 0, 0, 0.08);
+	}
+	:global([data-scheme="light"]) .doc-content :global(summary) {
+		color: rgba(0, 0, 0, 0.75);
+		background: rgba(0, 0, 0, 0.02);
+	}
+	:global([data-scheme="light"]) .doc-content :global(details[open] summary) {
+		border-bottom-color: rgba(0, 0, 0, 0.08);
+	}
+	:global([data-scheme="light"]) .doc-content :global(hr) {
+		border-top-color: rgba(0, 0, 0, 0.08);
+	}
+	:global([data-scheme="light"]) .doc-content :global(strong) {
+		color: rgba(0, 0, 0, 0.87);
 	}
 </style>

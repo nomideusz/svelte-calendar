@@ -58,7 +58,7 @@
 	const heightPx = $derived(parseInt(height, 10) || 600);
 	const isMondayStart = $derived(mondaystart !== 'false');
 	const themeStyle = $derived(
-		(presets as Record<string, string>)[theme] ?? presets.neutral
+		(presets as Record<string, string>)[theme] || presets.neutral
 	);
 	const dirValue = $derived(
 		(dir === 'rtl' || dir === 'ltr' || dir === 'auto') ? dir as 'ltr' | 'rtl' | 'auto' : undefined

@@ -64,6 +64,15 @@ function hslToHex(h: number, s: number, l: number): string {
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+/**
+ * Extract the --dt-accent hex value from a theme CSS string.
+ * Returns undefined if not found.
+ */
+export function extractAccent(themeString: string): string | undefined {
+	const m = themeString.match(/--dt-accent\s*:\s*(#[0-9a-fA-F]{3,8})/);
+	return m?.[1];
+}
+
 // ── Palette generation ──────────────────────────────────
 
 /**

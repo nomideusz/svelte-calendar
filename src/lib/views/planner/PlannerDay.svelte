@@ -6,16 +6,16 @@
   Events are positioned as horizontal cards with overlap support.
 -->
 <script lang="ts">
-	import { getContext, onMount, tick, untrack } from 'svelte';
+	import { getContext, onMount, tick, untrack, type Snippet } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent } from '../../core/types.js';
+	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
 	import type { DragState } from '../../engine/drag.svelte.js';
 	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
 	import { isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { fmtH, fmtTime } from '../../core/locale.js';
+	import { fmtH, fmtTime, weekdayShort } from '../../core/locale.js';
 	import { getLabels } from '../../core/locale.js';
 
 	const L = $derived(getLabels());
@@ -65,6 +65,24 @@
 	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 
 	const clock = createClock();
+	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
+	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
+	const showNav = $derived(showNavCtx?.current ?? true);
+	const showDates = $derived(showDatesCtx?.current ?? true);
+
+	// ── New feature contexts ──
+	const blockedSlotsCtx = getContext<{ current: BlockedSlot[] | undefined }>('calendar:blockedSlots') as { current: BlockedSlot[] | undefined } | undefined;
+	const dayHeaderSnippetCtx = getContext<{ current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined }>('calendar:dayHeaderSnippet') as { current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined } | undefined;
+	const minDurationCtx = getContext<{ current: number | undefined }>('calendar:minDuration') as { current: number | undefined } | undefined;
+	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
+	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
+
+	const blockedSlots = $derived(blockedSlotsCtx?.current);
+	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
+	const minDuration = $derived(minDurationCtx?.current);
+	const oneventhover = $derived(callbacksCtx?.oneventhover);
+	const disabledDates = $derived(disabledDatesCtx?.current);
+	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
 
 	// ─── State ──────────────────────────────────────────
 	let following = $state(true);
@@ -97,11 +115,15 @@
 	const DAY_GAP = 2;
 
 	const dateLabel = $derived(
-		new Date(visibleDayMs).toLocaleDateString(locale ?? 'en-US', {
-			weekday: 'long',
-			month: 'long',
-			day: 'numeric',
-		})
+		showDates
+			? new Date(visibleDayMs).toLocaleDateString(locale ?? 'en-US', {
+				weekday: 'long',
+				month: 'long',
+				day: 'numeric',
+			})
+			: new Date(visibleDayMs).toLocaleDateString(locale ?? 'en-US', {
+				weekday: 'long',
+			})
 	);
 
 	const count = 1 + 2 * BUFFER_DAYS;
@@ -408,6 +430,15 @@
 	}
 
 	// ─── Click-to-create ────────────────────────────────
+	function isBlockedAt(dayMs: number, hour: number): boolean {
+		if (!blockedSlots?.length) return false;
+		const jsDay = new Date(dayMs).getDay();
+		const isoDay = jsDay === 0 ? 7 : jsDay;
+		return blockedSlots.some(slot => {
+			if (slot.day && slot.day !== isoDay) return false;
+			return hour >= slot.start && hour < slot.end;
+		});
+	}
 	function handleTrackClick(e: MouseEvent) {
 		if (wasDragging) { wasDragging = false; return; }
 		if (!oneventcreate || readOnly) return;
@@ -418,10 +449,16 @@
 
 		for (const d of days) {
 			if (clickX >= d.x && clickX < d.x + dayWidth) {
+				// Check disabled dates
+				if (disabledSet.has(d.ms)) return;
 				const frac = (clickX - d.x) / dayWidth;
-				const hour = Math.floor(startHour + frac * hourCount);
+				const clickHour = startHour + frac * hourCount;
+				// Check blocked slots
+				if (isBlockedAt(d.ms, clickHour)) return;
+				const hour = Math.floor(clickHour);
+				const durMin = minDuration ? Math.max(60, minDuration) : 60;
 				const start = new Date(d.ms + hour * HOUR_MS);
-				const end = new Date(d.ms + (hour + 1) * HOUR_MS);
+				const end = new Date(start.getTime() + durMin * 60_000);
 				oneventcreate({ start, end });
 				return;
 			}
@@ -508,6 +545,7 @@
 					class="fs-day"
 					class:fs-today={d.today}
 					class:fs-past={d.past}
+					class:fs-disabled={disabledSet.has(d.ms)}
 					style:left="{d.x}px"
 					style:width="{dayWidth}px"
 				>
@@ -519,6 +557,37 @@
 						</div>
 						<div class="fs-tick fs-tick--half" style:left="{x + hourWidth * 0.5}px"></div>
 					{/each}
+
+					<!-- Blocked slot overlays -->
+					{#if blockedSlots?.length}
+						{@const jsDay = new Date(d.ms).getDay()}
+						{@const isoDay = jsDay === 0 ? 7 : jsDay}
+						{#each blockedSlots as slot}
+							{#if !slot.day || slot.day === isoDay}
+								{@const s = Math.max(slot.start, startHour)}
+								{@const e = Math.min(slot.end, endHour)}
+								{#if e > s}
+									<div
+										class="fs-blocked"
+										style:left="{(s - startHour) * hourWidth}px"
+										style:width="{(e - s) * hourWidth}px"
+										aria-label={slot.label || 'Unavailable'}
+									>
+										{#if slot.label}
+											<span class="fs-blocked-label">{slot.label}</span>
+										{/if}
+									</div>
+								{/if}
+							{/if}
+						{/each}
+					{/if}
+
+					<!-- Custom day header snippet -->
+					{#if dayHeaderSnippet}
+						<div class="fs-day-header-custom">
+							{@render dayHeaderSnippet({ date: new Date(d.ms), isToday: d.today, dayName: weekdayShort(d.ms, locale) })}
+						</div>
+					{/if}
 				</div>
 			{/each}
 
@@ -544,6 +613,7 @@
 					tabindex="0"
 					aria-label="{p.ev.title}{p.isCurrent ? ` (${L.inProgress})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
+					onpointerenter={() => oneventhover?.(p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
 				>
 					<div class="fs-ev-inner">
@@ -599,6 +669,7 @@
 
 	<div class="fs-date-label">{dateLabel}</div>
 
+	{#if showNav}
 	<nav class="fs-nav" aria-label={L.dayNavigation}>
 		<button
 			class="fs-nav-pill fs-nav-today"
@@ -624,6 +695,7 @@
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 		</button>
 	</nav>
+	{/if}
 </div>
 
 <style>
@@ -671,6 +743,58 @@
 	.fs-day:first-of-type { border-left: none; }
 	.fs-today { background: var(--dt-today-bg, rgba(239, 68, 68, 0.025)); }
 	.fs-past { opacity: 0.7; }
+
+	/* ─── Disabled day ───────────────────────────────── */
+	.fs-disabled {
+		opacity: 0.35;
+		background: repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 6px,
+			var(--dt-border, rgba(148, 163, 184, 0.07)) 6px,
+			var(--dt-border, rgba(148, 163, 184, 0.07)) 7px
+		) !important;
+	}
+
+	/* ─── Blocked slot overlay ───────────────────────── */
+	.fs-blocked {
+		position: absolute;
+		top: 18px;
+		bottom: 0;
+		z-index: 3;
+		background: repeating-linear-gradient(
+			-45deg,
+			color-mix(in srgb, var(--dt-text, rgba(148, 163, 184, 0.85)) 4%, transparent),
+			color-mix(in srgb, var(--dt-text, rgba(148, 163, 184, 0.85)) 4%, transparent) 4px,
+			transparent 4px,
+			transparent 8px
+		);
+		border-radius: 4px;
+		pointer-events: none;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		padding-bottom: 6px;
+	}
+
+	.fs-blocked-label {
+		font: 500 9px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(100, 116, 139, 0.55));
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+	}
+
+	/* ─── Custom day header ──────────────────────────── */
+	.fs-day-header-custom {
+		position: absolute;
+		top: 16px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 4;
+		pointer-events: auto;
+		white-space: nowrap;
+	}
 
 	/* ─── Hour ticks ─────────────────────────────────── */
 	.fs-tick {

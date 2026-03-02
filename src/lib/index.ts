@@ -68,6 +68,7 @@ export {
 	nowInZone,
 	formatInTimeZone,
 	generatePalette,
+	extractAccent,
 	VIVID_PALETTE,
 	isMultiDay,
 	isAllDay,
@@ -76,10 +77,12 @@ export {
 export type {
 	Clock,
 	TimelineEvent,
+	BlockedSlot,
 	DaySegment,
 	CalendarLabels,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
-export { midnight, neutral, presets } from './theme/index.js';
-export type { PresetName } from './theme/index.js';
+export { auto, neutral, midnight, presets } from './theme/index.js';
+export { probeHostTheme, observeHostTheme } from './theme/index.js';
+export type { PresetName, AutoThemeOptions } from './theme/index.js';

@@ -23,3 +23,18 @@ export interface TimelineEvent {
 	/** Arbitrary payload from the source app (bookings, attendees, etc.) */
 	data?: Record<string, unknown>;
 }
+
+/**
+ * Represents a blocked/unavailable time slot on the calendar.
+ * Used to mark times when events cannot be created (e.g. lunch break, maintenance).
+ */
+export interface BlockedSlot {
+	/** ISO weekday (1=Mon … 7=Sun). If omitted, applies to all days. */
+	day?: number;
+	/** Start hour (0–24, decimals allowed: 12.5 = 12:30) */
+	start: number;
+	/** End hour (0–24, decimals allowed: 13.5 = 1:30 PM) */
+	end: number;
+	/** Optional label shown on the blocked region */
+	label?: string;
+}

@@ -59,7 +59,8 @@ export {
 // Types
 export type {
 	TimelineEvent,
+	BlockedSlot,
 } from './types.js';
 
 // Palette
-export { generatePalette, VIVID_PALETTE } from './palette.js';
+export { generatePalette, extractAccent, VIVID_PALETTE } from './palette.js';
