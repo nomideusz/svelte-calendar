@@ -24,12 +24,18 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm check
       - run: pnpm test
       - run: pnpm run package
+
+      # Remove the _authToken line that setup-node wrote so
+      # npm falls through to OIDC trusted-publisher auth.
+      - name: Configure npm for OIDC
+        run: npm config delete //registry.npmjs.org/:_authToken
 
       - name: Dry run publish
         run: npm publish --provenance --access public --dry-run
