@@ -542,6 +542,7 @@
 	/* ═══ Body ═══ */
 	.ag-body {
 		flex: 1;
+		min-height: 0;
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
@@ -549,7 +550,8 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
-	.ag--auto .ag-body { overflow-y: visible; }
+	.ag--auto .ag-body { overflow-y: visible; min-height: auto; }
+	.ag--mobile .ag-body { padding-top: 8px; }
 	.ag-body::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -775,12 +777,22 @@
 	/* Mobile: stack queue columns vertically */
 	.ag--mobile .ag-q {
 		grid-template-columns: 1fr;
+		min-height: auto;
 	}
 	.ag--mobile .ag-q-status {
 		border-right: none;
 		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
 		padding-bottom: 10px;
 		margin-bottom: 8px;
+		overflow-y: visible;
+	}
+	.ag--mobile .ag-q-queue {
+		overflow-y: visible;
+		padding-bottom: 16px;
+	}
+	.ag--mobile .ag-card-meta {
+		line-height: 1.3;
+		padding-bottom: 1px;
 	}
 	/* Mobile: larger touch targets */
 	.ag--mobile .ag-card-body {
