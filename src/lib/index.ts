@@ -32,7 +32,7 @@ export type {
 } from './engine/index.js';
 
 // ─── Adapters ───────────────────────────────────────────
-export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter } from './adapters/index.js';
+export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter } from './adapters/index.js';
 export type {
 	CalendarAdapter,
 	DateRange,
@@ -42,6 +42,7 @@ export type {
 	FieldMapping,
 	MappedAdapterOptions,
 	MutationHandler,
+	CompositeAdapterOptions,
 } from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────

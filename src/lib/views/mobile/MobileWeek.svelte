@@ -236,6 +236,8 @@
 								class:mw-ev--selected={selectedEventId === ev.id}
 								class:mw-ev--allday={isAllDay(ev) || isMultiDay(ev)}
 								class:mw-ev--current={!isAllDay(ev) && !isMultiDay(ev) && ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
+								class:mw-ev--cancelled={ev.status === 'cancelled'}
+								class:mw-ev--tentative={ev.status === 'tentative'}
 								style:--ev-color={ev.color ?? 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
@@ -401,6 +403,16 @@
 	}
 	.mw-ev--allday {
 		background: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));
+	}
+	.mw-ev--cancelled {
+		opacity: 0.5;
+	}
+	.mw-ev--cancelled .mw-ev-title {
+		text-decoration: line-through;
+	}
+	.mw-ev--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
 
 	.mw-ev-stripe {

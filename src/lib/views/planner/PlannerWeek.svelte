@@ -536,15 +536,20 @@
 											class:wg-ev--selected={selectedEventId === ev.id}
 											class:wg-ev--current={ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
 											class:wg-ev--dragging={evDragging && evDragId === ev.id}
+											class:wg-ev--cancelled={ev.status === 'cancelled'}
+											class:wg-ev--tentative={ev.status === 'tentative'}
 											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
 											role="button"
 											tabindex="0"
-											aria-label="{ev.title}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
+											aria-label="{ev.title}{ev.status === 'cancelled' ? ` (cancelled)` : ''}{ev.status === 'tentative' ? ` (tentative)` : ''}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
 											onpointerdown={(e) => onEventPointerDown(e, ev)}										onpointerenter={() => oneventhover?.(ev)}
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 										>
 											<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
 										<span class="wg-ev-title">{ev.title}</span>
+										{#if ev.location}
+											<span class="wg-ev-loc">{ev.location}</span>
+										{/if}
 										</div>
 									{/each}
 									{#if day.events.length > MAX_EVENTS_SHOWN}
@@ -860,6 +865,17 @@
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
 	}
 
+	.wg-ev--cancelled {
+		opacity: 0.5;
+	}
+	.wg-ev--cancelled .wg-ev-title {
+		text-decoration: line-through;
+	}
+	.wg-ev--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	}
+
 	.wg-ev-time {
 		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.4));
@@ -873,6 +889,15 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	.wg-ev-loc {
+		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.35));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex-shrink: 1;
 	}
 
 	.wg-ev-more {

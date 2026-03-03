@@ -110,7 +110,16 @@ export interface MappedAdapterOptions<T = Record<string, unknown>> {
 	includeData?: string[] | '*';
 
 	/**
-	 * Custom color palette for auto-coloring events without a color.
+	 * When true (default), ignore source colors and auto-assign from
+	 * the palette grouped by category / title.  This keeps the calendar
+	 * visually consistent regardless of the upstream source.
+	 * Set to `false` to preserve the original colors from the data.
+	 * @default true
+	 */
+	autoColor?: boolean;
+
+	/**
+	 * Color palette used for auto-coloring.
 	 * Defaults to VIVID_PALETTE.
 	 */
 	palette?: string[];
@@ -276,6 +285,7 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 		fields,
 		mapEvent: customMapper,
 		includeData = '*',
+		autoColor = true,
 		palette = VIVID_PALETTE,
 		readOnly = true,
 	} = options;
@@ -286,7 +296,8 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 	let colorIndex = 0;
 
 	function resolveColor(ev: TimelineEvent): string | undefined {
-		if (ev.color) return ev.color;
+		// When autoColor is on, always assign from palette (ignore source color)
+		if (!autoColor && ev.color) return ev.color;
 		const key = ev.category ?? ev.title;
 		if (!colorAssignments.has(key)) {
 			colorAssignments.set(key, palette[colorIndex % palette.length]);

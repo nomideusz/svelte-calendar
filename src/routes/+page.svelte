@@ -3,6 +3,8 @@
 	import {
 		Calendar,
 		createMemoryAdapter,
+		createRecurringAdapter,
+		createCompositeAdapter,
 		generatePalette,
 		auto,
 		neutral,
@@ -13,6 +15,7 @@
 	import type { SettingsField } from "./_components/Settings.svelte";
 	import type { CalendarView, TimelineEvent } from "$lib/index.js";
 	import { themeStore, demoThemes } from "./theme.svelte.js";
+	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 
 	let isMobile = $state(false);
 	onMount(() => {
@@ -121,183 +124,20 @@
 		{ key: "rtl", label: "RTL", group: "", type: "toggle" },
 	];
 
-	// ── Seed data ──────────────────────────────────────────
-	function at(dayOffset: number, h: number, m = 0): Date {
-		const d = new Date(today.getTime() + dayOffset * 86_400_000);
-		d.setHours(h, m, 0, 0);
-		return d;
-	}
-
-	const seed: TimelineEvent[] = [
-		{
-			id: "1",
-			title: "Morning Flow",
-			start: at(0, 9, 15),
-			end: at(0, 10, 15),
-			category: "yoga",
-			subtitle: "With Anna",
-		},
-		{
-			id: "2",
-			title: "Breathwork",
-			start: at(0, 10, 30),
-			end: at(0, 11, 15),
-			category: "wellness",
-		},
-		{
-			id: "3",
-			title: "Power Vinyasa",
-			start: at(0, 14, 0),
-			end: at(0, 15, 15),
-			category: "yoga",
-			tags: ["Advanced"],
-		},
-		{
-			id: "4",
-			title: "Yin Yoga",
-			start: at(0, 16, 0),
-			end: at(0, 17, 0),
-			category: "yoga",
-		},
-		{
-			id: "5",
-			title: "Sound Bath",
-			start: at(0, 18, 30),
-			end: at(0, 19, 30),
-			category: "wellness",
-		},
-		{
-			id: "6",
-			title: "Sunrise Salutation",
-			start: at(1, 6, 30),
-			end: at(1, 7, 30),
-			category: "yoga",
-		},
-		{
-			id: "7",
-			title: "Core Strength",
-			start: at(1, 9, 0),
-			end: at(1, 10, 0),
-			category: "yoga",
-		},
-		{
-			id: "8",
-			title: "Guided Nidra",
-			start: at(1, 13, 0),
-			end: at(1, 13, 45),
-			category: "wellness",
-		},
-		{
-			id: "9",
-			title: "Ashtanga",
-			start: at(1, 17, 0),
-			end: at(1, 18, 30),
-			category: "yoga",
-			tags: ["Advanced"],
-		},
-		{
-			id: "10",
-			title: "Hatha Basics",
-			start: at(3, 7, 0),
-			end: at(3, 8, 0),
-			category: "yoga",
-		},
-		{
-			id: "11",
-			title: "Mobility Lab",
-			start: at(3, 10, 30),
-			end: at(3, 11, 30),
-			category: "wellness",
-		},
-		{
-			id: "12",
-			title: "Dynamic Flow",
-			start: at(3, 8, 0),
-			end: at(3, 9, 15),
-			category: "yoga",
-		},
-		{
-			id: "13",
-			title: "Pranayama",
-			start: at(3, 11, 0),
-			end: at(3, 12, 0),
-			category: "wellness",
-		},
-		{
-			id: "14",
-			title: "Rocket Yoga",
-			start: at(5, 7, 30),
-			end: at(5, 8, 45),
-			category: "yoga",
-			tags: ["Advanced"],
-		},
-		{
-			id: "15",
-			title: "Stretch & Release",
-			start: at(5, 14, 0),
-			end: at(5, 14, 45),
-			category: "wellness",
-		},
-		{
-			id: "16",
-			title: "Weekend Flow",
-			start: at(5, 9, 0),
-			end: at(5, 10, 15),
-			category: "yoga",
-		},
-		{
-			id: "17",
-			title: "Meditation",
-			start: at(5, 11, 0),
-			end: at(5, 11, 45),
-			category: "wellness",
-		},
-		{
-			id: "18",
-			title: "Slow Flow",
-			start: at(6, 10, 0),
-			end: at(6, 11, 0),
-			category: "yoga",
-		},
-		{
-			id: "19",
-			title: "Gentle Morning",
-			start: at(-1, 9, 30),
-			end: at(-1, 10, 30),
-			category: "yoga",
-		},
-		// Multi-day / all-day events
-		{
-			id: "20",
-			title: "Yoga Retreat",
-			start: at(0, 0),
-			end: at(2, 0),
-			allDay: true,
-			category: "wellness",
-			subtitle: "Mountain Lodge",
-		},
-		{
-			id: "21",
-			title: "Teacher Training",
-			start: at(5, 0),
-			end: at(6, 0),
-			allDay: true,
-			category: "yoga",
-		},
-		{
-			id: "22",
-			title: "Studio Closed",
-			start: at(-2, 0),
-			end: at(-1, 0),
-			allDay: true,
-			category: "wellness",
-		},
-	];
+	// ── Seed data (auto-generated relative to today) ──────
+	const seed: TimelineEvent[] = createDemoEvents(today);
+	const recurring = createDemoRecurring();
 
 	// ── Adapter (palette adapts to demo theme accent) ─────────
+	// Composite: one-off events (memory) + recurring schedule
 	const accent = $derived(demoThemes[themeStore.current].accent);
 	const palette = $derived(generatePalette(accent));
-	const adapter = $derived(createMemoryAdapter(seed, { palette }));
+	const adapter = $derived(
+		createCompositeAdapter([
+			createMemoryAdapter(seed, { palette }),
+			createRecurringAdapter(recurring, { palette }),
+		]),
+	);
 
 	// ── Calendar preset theme (from Settings panel) ───────
 	const selectedPreset = $derived(

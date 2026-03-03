@@ -623,6 +623,8 @@
 					class:fs-event--current={p.isCurrent}
 					class:fs-event--next={p.isNext}
 					class:fs-event--dragging={p.isDragged}
+					class:fs-event--cancelled={p.ev.status === 'cancelled'}
+					class:fs-event--tentative={p.ev.status === 'tentative'}
 					style:left="{p.x}px"
 					style:width="{p.width}px"
 					style:top="{p.topPx}px"
@@ -630,7 +632,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					role="button"
 					tabindex="0"
-					aria-label="{p.ev.title}{p.isCurrent ? ` (${L.inProgress})` : ''}{p.isNext ? ` (${L.upNext})` : ''}"
+					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.isCurrent ? ` (${L.inProgress})` : ''}{p.isNext ? ` (${L.upNext})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 					onpointerenter={() => oneventhover?.(p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
@@ -647,6 +649,9 @@
 						<span class="fs-ev-title">{p.ev.title}</span>
 						{#if p.ev.subtitle && p.heightPx > 48}
 							<span class="fs-ev-sub">{p.ev.subtitle}</span>
+						{/if}
+						{#if p.ev.location && p.heightPx > 56}
+							<span class="fs-ev-loc">{p.ev.location}</span>
 						{/if}
 						{#if p.ev.tags?.length && p.heightPx > 72}
 							<span class="fs-ev-tags">
@@ -1058,6 +1063,16 @@
 		cursor: grabbing;
 		transition: none;
 	}
+	.fs-event--cancelled {
+		opacity: 0.5;
+	}
+	.fs-event--cancelled .fs-ev-title {
+		text-decoration: line-through;
+	}
+	.fs-event--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	}
 
 	/* Event inner (vertical text, bottom-to-top reading) */
 	.fs-ev-inner {
@@ -1105,6 +1120,13 @@
 		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.72));
 		opacity: 0.6;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fs-ev-loc {
+		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.5));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

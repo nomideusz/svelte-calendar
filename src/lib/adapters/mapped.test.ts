@@ -129,8 +129,19 @@ describe('createMappedAdapter', () => {
 			expect(events[2].location).toBe('Joga Centrum Bronowice');
 		});
 
-		it('normalizes rgb() colors to hex', async () => {
+		it('auto-assigns palette colors by default (ignores source colors)', async () => {
 			const adapter = createMappedAdapter(yogaEvents, { fields });
+			const events = await adapter.fetchEvents(MARCH_3);
+
+			// Source had rgb(62,101,255) but autoColor is true by default
+			// → palette color assigned instead
+			expect(events[0].color).toBeTruthy();
+			expect(events[0].color).not.toBe('#3e65ff');
+			expect(events[1].color).not.toBe('#ef6950');
+		});
+
+		it('preserves source colors when autoColor is false', async () => {
+			const adapter = createMappedAdapter(yogaEvents, { fields, autoColor: false });
 			const events = await adapter.fetchEvents(MARCH_3);
 
 			expect(events[0].color).toBe('#3e65ff');
@@ -275,29 +286,41 @@ describe('createMappedAdapter', () => {
 	});
 
 	describe('color handling', () => {
-		it('converts rgb() to hex', async () => {
+		it('auto-assigns palette colors by default (ignores source rgb)', async () => {
 			const adapter = createMappedAdapter(
 				[{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: 'rgb(255, 0, 128)' }],
 				{ fields: {} },
 			);
 			const events = await adapter.fetchEvents(MARCH_3);
+			// autoColor: true → palette color, not source
+			expect(events[0].color).toBeTruthy();
+			expect(events[0].color).not.toBe('#ff0080');
+		});
+
+		it('preserves rgb() source colors with autoColor: false', async () => {
+			const adapter = createMappedAdapter(
+				[{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: 'rgb(255, 0, 128)' }],
+				{ fields: {}, autoColor: false },
+			);
+			const events = await adapter.fetchEvents(MARCH_3);
 			expect(events[0].color).toBe('#ff0080');
 		});
 
-		it('passes through hex colors unchanged', async () => {
+		it('preserves hex colors with autoColor: false', async () => {
 			const adapter = createMappedAdapter(
 				[{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: '#abcdef' }],
-				{ fields: {} },
+				{ fields: {}, autoColor: false },
 			);
 			const events = await adapter.fetchEvents(MARCH_3);
 			expect(events[0].color).toBe('#abcdef');
 		});
 
-		it('auto-assigns colors when none provided', async () => {
+		it('groups auto-colors by title — same title gets same color', async () => {
 			const adapter = createMappedAdapter(
 				[
 					{ title: 'A', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z' },
 					{ title: 'B', starts_at_iso: '2026-03-03T12:00:00Z', ends_at_iso: '2026-03-03T13:00:00Z' },
+					{ title: 'A', starts_at_iso: '2026-03-03T14:00:00Z', ends_at_iso: '2026-03-03T15:00:00Z' },
 				],
 				{ fields: {} },
 			);
@@ -305,6 +328,8 @@ describe('createMappedAdapter', () => {
 			expect(events[0].color).toBeTruthy();
 			expect(events[1].color).toBeTruthy();
 			expect(events[0].color).not.toBe(events[1].color);
+			// Same title gets same color
+			expect(events[2].color).toBe(events[0].color);
 		});
 	});
 

@@ -259,10 +259,12 @@
 	<div
 		class="ag-card"
 		class:ag-card--selected={selectedEventId === ev.id}
+		class:ag-card--cancelled={ev.status === 'cancelled'}
+		class:ag-card--tentative={ev.status === 'tentative'}
 		style:--ev-color={ev.color || 'var(--dt-accent)'}
 		role="button"
 		tabindex="0"
-		aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
+		aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
 		onclick={() => handleClick(ev)}
 		onpointerenter={() => oneventhover?.(ev)}
 		onkeydown={(e) => handleKeydown(e, ev)}
@@ -271,6 +273,9 @@
 			<span class="ag-card-title">{ev.title}</span>
 			{#if ev.subtitle}
 				<span class="ag-card-sub">{ev.subtitle}</span>
+			{/if}
+			{#if ev.location}
+				<span class="ag-card-loc">{ev.location}</span>
 			{/if}
 			<span class="ag-card-meta">
 				{#if isNow}
@@ -424,6 +429,8 @@
 							<div
 								class="ag-compact"
 								class:ag-compact--selected={selectedEventId === ev.id}
+								class:ag-compact--cancelled={ev.status === 'cancelled'}
+								class:ag-compact--tentative={ev.status === 'tentative'}
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
@@ -433,6 +440,9 @@
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmtTime(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
+								{#if ev.location}
+									<span class="ag-compact-loc">{ev.location}</span>
+								{/if}
 								{#if ev.subtitle}
 									<span class="ag-compact-sub">{ev.subtitle}</span>
 								{/if}
@@ -636,6 +646,16 @@
 		border-color: var(--ev-color);
 		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
 	}
+	.ag-card--cancelled {
+		opacity: 0.5;
+	}
+	.ag-card--cancelled .ag-card-title {
+		text-decoration: line-through;
+	}
+	.ag-card--tentative {
+		opacity: 0.65;
+		border-style: dashed;
+	}
 	.ag-card-body {
 		padding: 7px 10px;
 		display: flex;
@@ -676,6 +696,11 @@
 	.ag-card-sub {
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-card-loc {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		line-height: 1;
 	}
 	.ag-card-tags {
@@ -884,6 +909,21 @@
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		flex-shrink: 0;
+	}
+	.ag-compact-loc {
+		font-size: 9px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+	.ag-compact--cancelled {
+		opacity: 0.5;
+	}
+	.ag-compact--cancelled .ag-compact-title {
+		text-decoration: line-through;
+	}
+	.ag-compact--tentative {
+		opacity: 0.65;
 	}
 	.ag-compact-tag {
 		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);

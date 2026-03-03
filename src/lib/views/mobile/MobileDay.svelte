@@ -360,6 +360,8 @@
 					class:mb-event--selected={selectedEventId === p.ev.id}
 					class:mb-event--current={p.isCurrent}
 					class:mb-event--next={p.isNext}
+					class:mb-event--cancelled={p.ev.status === 'cancelled'}
+					class:mb-event--tentative={p.ev.status === 'tentative'}
 					style:top="{p.top}px"
 					style:height="{p.height}px"
 					style:left={p.left}
@@ -367,7 +369,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					onclick={(e) => { e.stopPropagation(); oneventclick?.(p.ev); }}
 					onpointerenter={() => oneventhover?.(p.ev)}
-					aria-label="{p.ev.title}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
+					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
 				>
 					<div class="mb-ev-stripe"></div>
 					<div class="mb-ev-body">
@@ -377,6 +379,9 @@
 						{/if}
 						{#if p.ev.subtitle && p.height > 48}
 							<span class="mb-ev-sub">{p.ev.subtitle}</span>
+						{/if}
+						{#if p.ev.location && p.height > 56}
+							<span class="mb-ev-loc">{p.ev.location}</span>
 						{/if}
 						{#if p.ev.tags?.length && p.height > 56}
 							<div class="mb-ev-tags">
@@ -611,6 +616,16 @@
 		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
+	.mb-event--cancelled {
+		opacity: 0.5;
+	}
+	.mb-event--cancelled .mb-ev-title {
+		text-decoration: line-through;
+	}
+	.mb-event--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
 
 	.mb-ev-stripe {
 		width: 4px;
@@ -645,6 +660,14 @@
 	.mb-ev-sub {
 		font: 400 11px/1.1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.mb-ev-loc {
+		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.3));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

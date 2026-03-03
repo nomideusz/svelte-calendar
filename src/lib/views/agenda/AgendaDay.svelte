@@ -380,10 +380,12 @@
 							class="ag-card ag-card--plan"
 							class:ag-card--first={i === 0}
 							class:ag-card--selected={selectedEventId === ev.id}
+							class:ag-card--cancelled={ev.status === 'cancelled'}
+							class:ag-card--tentative={ev.status === 'tentative'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
 							role="button"
 							tabindex="0"
-							aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
+							aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<div class="ag-card-body">
@@ -393,6 +395,9 @@
 								</div>
 								{#if ev.subtitle}
 									<span class="ag-card-sub">{ev.subtitle}</span>
+								{/if}
+								{#if ev.location}
+									<span class="ag-card-loc">{ev.location}</span>
 								{/if}
 								<div class="ag-card-meta">
 									{fmtTime(ev.start)} – {fmtTime(ev.end)}
@@ -640,6 +645,16 @@
 		border-color: var(--ev-color);
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #191919));
 	}
+	.ag-card--cancelled {
+		opacity: 0.5;
+	}
+	.ag-card--cancelled .ag-card-title {
+		text-decoration: line-through;
+	}
+	.ag-card--tentative {
+		opacity: 0.65;
+		border-style: dashed;
+	}
 	.ag-card-body {
 		padding: 10px 12px;
 		display: flex;
@@ -676,6 +691,11 @@
 	.ag-card-sub {
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-card-loc {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		line-height: 1;
 	}
 	.ag-card-tags {
