@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { base } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
 	import { themeStore, setTheme, demoThemes, demoThemeNames } from './theme.svelte.js';
 	import type { DemoThemeName } from './theme.svelte.js';
 
 	let { children } = $props();
 
-	const path = $derived(page.url.pathname);
+	const path = $derived(page.url.pathname.slice(base.length) || '/');
 
 	$effect(() => {
 		const t = themeStore.current;
@@ -29,11 +30,11 @@
 </svelte:head>
 
 <header class="site-hd">
-	<a class="site-logo" href="/">svelte-calendar</a>
+	<a class="site-logo" href="{base}/">svelte-calendar</a>
 
 	<nav class="site-nav">
-		<a class="site-link" class:site-link--active={path === '/'} href="/">Demo</a>
-		<a class="site-link" class:site-link--active={path === '/docs'} href="/docs">Docs</a>
+		<a class="site-link" class:site-link--active={path === '/'} href="{base}/">Demo</a>
+		<a class="site-link" class:site-link--active={path === '/docs'} href="{base}/docs">Docs</a>
 	</nav>
 
 	<div class="theme-pills">
