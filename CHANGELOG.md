@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.6.7 — 2026-06-05
+
+### Fixed
+- **Standalone install (pnpm 11+)** — sync now ships `pnpm-workspace.yaml` with `allowBuilds` for esbuild so `pnpm install` succeeds locally and in CI (republish; 0.6.6 did not reach npm).
+
+## 0.6.6 — 2026-06-05
+
+### Fixed
+- **Day planner event labels** — restore vertical text in the day filmstrip view (`writing-mode: vertical-rl`) so titles read along the lane height; text fitting uses swapped width/height limits for vertical layout.
+
+### Changed
+- Demo site defaults to **Day Planner** view so the day filmstrip layout is shown first.
+
+## 0.6.5 — 2026-04-25
+
+### Added
+- Demo controls for mobile mode, visible hours, custom week length, blocked slots, disabled dates, and compact agenda rendering.
+- README/docs notes for drag previews, disabled-date behavior, mobile overlap layout, and professional package defaults.
+
+### Changed
+- Week planner drag-and-drop now renders a live ghost preview at the target day instead of only fading the original event.
+- Planner day event cards use horizontal text by default for better scanability and localization.
+- Disabled dates visually indicate unavailable days without blocking clicks on existing events.
+- Floating controls reserve more layout space in planner/agenda views to avoid covering first-row content.
+- Component fallback styles now lean on neutral system fonts and a blue accent instead of stronger demo-specific defaults.
+- Demo favicon now uses a calendar-specific mark instead of the Svelte logo.
+
+### Fixed
+- Mobile day overlap positioning now uses valid CSS math so concurrent events render in stable columns.
+- Mobile week no longer nests focusable event controls inside a day button.
+
+## 0.6.4 — 2026-04-23
+
+### Docs
+- Documented new `TimelineEvent` fields: `location`, `status` (with 5 `EventStatus` values), `externalId`, `resourceId`.
+- Added sections for `createMappedAdapter` (declarative field mapping + custom `mapEvent` transform) and `createCompositeAdapter` (merging adapters with `primaryIndex` routing).
+- Added Headless API section covering `createCalendar()` and `createAgenda()` for BYO-UI scenarios.
+- Documented `header` and `navigation` snippet overrides plus `height="auto"` + `compact` for agenda embeds.
+- Expanded widget attribute reference (`events`, `view`, `locale`, `dir`, `mondaystart`, `headers`).
+- Updated props table: `compact`, `header`, `navigation`, `height: 'auto'`, 6 built-in views.
+
 ## 0.6.3 — 2026-03-02
 
 ### Fixed
