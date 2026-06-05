@@ -1,3 +1,5 @@
+[![Socket Badge](https://badge.socket.dev/npm/package/@nomideusz/svelte-calendar/0.6.7)](https://badge.socket.dev/npm/package/@nomideusz/svelte-calendar/0.6.7)
+
 # @nomideusz/svelte-calendar
 
 A themeable **Svelte 5** calendar with **Day/Week Planner & Agenda** views, touch-first mobile views, and a smart auto-theme that adapts to any page.
