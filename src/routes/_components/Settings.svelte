@@ -65,6 +65,18 @@
 		return `stg-${key.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 	}
 
+	function isPrimaryField(field: SettingsField): field is SelectField | SegmentField {
+		return field.type === 'select' || field.type === 'segment';
+	}
+
+	function isToggleField(field: SettingsField): field is ToggleField {
+		return field.type === 'toggle';
+	}
+
+	function isNotToggleField(field: SettingsField): field is Exclude<SettingsField, ToggleField> {
+		return field.type !== 'toggle';
+	}
+
 	/* Split fields into top-level (no group name) and grouped */
 	const { topFields, groupedFields } = $derived.by(() => {
 		const top: SettingsField[] = [];
@@ -96,9 +108,70 @@
 	});
 
 	/* For mobile: split top-level fields into selects/segments vs toggles */
-	const topSelects = $derived(topFields.filter((f) => f.type === 'select' || f.type === 'segment'));
-	const topToggles = $derived(topFields.filter((f) => f.type === 'toggle'));
+	const topSelects = $derived(topFields.filter(isPrimaryField));
+	const topToggles = $derived(topFields.filter(isToggleField));
 </script>
+
+{#snippet segmentControl(f: SegmentField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
+	{#if f.label}
+		<span class={labelClass} id={`${fid}-label`}>{f.label}</span>
+	{/if}
+	<div
+		class="stg-pills"
+		role="radiogroup"
+		aria-labelledby={f.label ? `${fid}-label` : undefined}
+		aria-label={f.label ? undefined : f.key}
+	>
+		{#each f.options as option (option.value)}
+			<button
+				type="button"
+				class="stg-pill"
+				class:stg-pill--on={String(values[f.key]) === option.value}
+				role="radio"
+				aria-checked={String(values[f.key]) === option.value}
+				{disabled}
+				onclick={() => setVal(f.key, option.value)}
+			>
+				{option.label}
+			</button>
+		{/each}
+	</div>
+{/snippet}
+
+{#snippet selectControl(f: SelectField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
+	{#if f.label}
+		<label class={labelClass} for={fid}>{f.label}</label>
+	{/if}
+	<select
+		id={fid}
+		class="stg-sel"
+		value={String(values[f.key] ?? '')}
+		{disabled}
+		onchange={(e) => setVal(f.key, (e.target as HTMLSelectElement).value)}
+	>
+		{#each f.options as option (option.value)}
+			<option value={option.value}>{option.label}</option>
+		{/each}
+	</select>
+{/snippet}
+
+{#snippet toggleControl(f: ToggleField, fid: string, disabled: boolean)}
+	<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid}>
+		<span class="stg-lbl">{f.label}</span>
+		<input
+			id={fid}
+			class="stg-sr"
+			type="checkbox"
+			role="switch"
+			checked={values[f.key] === true}
+			{disabled}
+			onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
+		/>
+		<span class="stg-sw" aria-hidden="true">
+			<span class="stg-sw-knob"></span>
+		</span>
+	</label>
+{/snippet}
 
 <div class="stg">
 	<button
@@ -118,295 +191,268 @@
 		>
 			<path d="M6 4l4 4-4 4" />
 		</svg>
-		<span>Settings</span>
+		<span class="stg-hd-copy">
+			<span>Settings</span>
+		</span>
 	</button>
 
 	{#if open}
 		<div class="stg-body" id={panelId} transition:slide={{ duration: 180 }}>
-			<!-- ─── Top bar: ungrouped fields ─── -->
-			<div class="stg-bar">
-				{#each topSelects as f (f.key)}
-					{@const fid = controlId(f.key)}
-					{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-					{#if f.type === 'segment'}
-						<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-							{#if f.label}
-								<span class="stg-col-title" id={`${fid}-label`}>{f.label}</span>
-							{/if}
-							<div class="stg-pills" role="radiogroup" aria-labelledby={f.label ? `${fid}-label` : undefined} aria-label={f.label ? undefined : f.key}>
-								{#each f.options as option (option.value)}
-									<button
-										type="button"
-										class="stg-pill"
-										class:stg-pill--on={String(values[f.key]) === option.value}
-										role="radio"
-										aria-checked={String(values[f.key]) === option.value}
-										{disabled}
-										onclick={() => setVal(f.key, option.value)}
-									>
-										{option.label}
-									</button>
-								{/each}
+			<!-- ─── Primary controls stay visible to keep the demo quick to scan. ─── -->
+			{#if topSelects.length > 0}
+				<div class="stg-bar">
+					{#each topSelects as f (f.key)}
+						{@const fid = controlId(f.key)}
+						{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
+						{#if f.type === 'segment'}
+							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
+								{@render segmentControl(f, fid, disabled, 'stg-col-title')}
 							</div>
-						</div>
-					{:else if f.type === 'select'}
-						<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-							{#if f.label}
-								<label class="stg-col-title" for={fid}>{f.label}</label>
-							{/if}
-							<select
-								id={fid}
-								class="stg-sel"
-								value={String(values[f.key] ?? '')}
-								{disabled}
-								onchange={(e) => setVal(f.key, (e.target as HTMLSelectElement).value)}
-							>
-								{#each f.options as option (option.value)}
-									<option value={option.value}>{option.label}</option>
-								{/each}
-							</select>
-						</div>
-					{/if}
-				{/each}
-			</div>
+						{:else if f.type === 'select'}
+							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
+								{@render selectControl(f, fid, disabled, 'stg-col-title')}
+							</div>
+						{/if}
+					{/each}
+				</div>
+			{/if}
 
-			<!-- ─── Toggle grid: compact 2-col on mobile ─── -->
 			{#if topToggles.length > 0}
 				<div class="stg-toggles">
 					{#each topToggles as f (f.key)}
 						{@const fid = controlId(f.key)}
 						{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-						<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid}>
-							<span class="stg-lbl">{f.label}</span>
-							<input
-								id={fid}
-								class="stg-sr"
-								type="checkbox"
-								role="switch"
-								checked={values[f.key] === true}
-								{disabled}
-								onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
-							/>
-							<span class="stg-sw" aria-hidden="true">
-								<span class="stg-sw-knob"></span>
-							</span>
-						</label>
+						{@render toggleControl(f, fid, disabled)}
 					{/each}
 				</div>
 			{/if}
 
-			<!-- ─── Grouped fields in columns ─── -->
 			{#if groupedFields.length > 0}
-				<div class="stg-grid">
-					{#each groupedFields as section (section.id)}
-						<section class="stg-col" aria-labelledby={`stg-s-${section.id}`}>
-							<h3 class="stg-col-title" id={`stg-s-${section.id}`}>{section.name}</h3>
+				<details class="stg-advanced">
+					<summary>Advanced controls</summary>
+					<div class="stg-grid">
+						{#each groupedFields as section (section.id)}
+							<section class="stg-col" aria-labelledby={`stg-s-${section.id}`}>
+								<h3 class="stg-col-title" id={`stg-s-${section.id}`}>{section.name}</h3>
 
-							{#each section.fields as f (f.key)}
-								{@const fid = controlId(f.key)}
-								{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-
-								{#if f.type === 'toggle'}
-									<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid}>
-										<span class="stg-lbl">{f.label}</span>
-										<input
-											id={fid}
-											class="stg-sr"
-											type="checkbox"
-											role="switch"
-											checked={values[f.key] === true}
-											{disabled}
-											onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
-										/>
-										<span class="stg-sw" aria-hidden="true">
-											<span class="stg-sw-knob"></span>
-										</span>
-									</label>
-
-								{:else if f.type === 'range'}
-									<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
-										<div class="stg-rng-hd">
-											<label class="stg-lbl" for={fid}>{f.label}</label>
-											<span class="stg-num">{fmt(values[f.key])}</span>
-										</div>
-										<input
-											id={fid}
-											class="stg-rng"
-											type="range"
-											min={f.min}
-											max={f.max}
-											step={f.step}
-											value={values[f.key]}
-											{disabled}
-											oninput={(e) => setVal(f.key, Number((e.target as HTMLInputElement).value))}
-										/>
-									</div>
-
-								{:else if f.type === 'select'}
-									<div class="stg-row">
-										<label class="stg-lbl" for={fid}>{f.label}</label>
-										<select
-											id={fid}
-											class="stg-sel"
-											value={String(values[f.key] ?? '')}
-											{disabled}
-											onchange={(e) => setVal(f.key, (e.target as HTMLSelectElement).value)}
-										>
-											{#each f.options as option (option.value)}
-												<option value={option.value}>{option.label}</option>
-											{/each}
-										</select>
-									</div>
-
-								{:else if f.type === 'segment'}
-									<div class="stg-row stg-row--seg" class:stg-row--disabled={disabled}>
-										{#if f.label}
-											<span class="stg-lbl" id={`${fid}-label`}>{f.label}</span>
-										{/if}
-										<div class="stg-pills" role="radiogroup" aria-labelledby={f.label ? `${fid}-label` : undefined} aria-label={f.label ? undefined : f.key}>
-											{#each f.options as option (option.value)}
-												<button
-													type="button"
-													class="stg-pill"
-													class:stg-pill--on={String(values[f.key]) === option.value}
-													role="radio"
-													aria-checked={String(values[f.key]) === option.value}
-													{disabled}
-													onclick={() => setVal(f.key, option.value)}
-												>
-													{option.label}
-												</button>
-											{/each}
-										</div>
+								{#if section.fields.some(isToggleField)}
+									<div class="stg-toggles stg-toggles--advanced">
+										{#each section.fields.filter(isToggleField) as f (f.key)}
+											{@const fid = controlId(f.key)}
+											{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
+											{@render toggleControl(f, fid, disabled)}
+										{/each}
 									</div>
 								{/if}
-							{/each}
-						</section>
-					{/each}
-				</div>
+
+								{#each section.fields.filter(isNotToggleField) as f (f.key)}
+									{@const fid = controlId(f.key)}
+									{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
+
+									{#if f.type === 'range'}
+										<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
+											<div class="stg-rng-hd">
+												<label class="stg-lbl" for={fid}>{f.label}</label>
+												<span class="stg-num">{fmt(values[f.key])}</span>
+											</div>
+											<input
+												id={fid}
+												class="stg-rng"
+												type="range"
+												min={f.min}
+												max={f.max}
+												step={f.step}
+												value={values[f.key]}
+												{disabled}
+												oninput={(e) => setVal(f.key, Number((e.target as HTMLInputElement).value))}
+											/>
+										</div>
+
+									{:else if f.type === 'select'}
+										<div class="stg-row" class:stg-row--disabled={disabled}>
+											{@render selectControl(f, fid, disabled)}
+										</div>
+
+									{:else if f.type === 'segment'}
+										<div class="stg-row stg-row--seg" class:stg-row--disabled={disabled}>
+											{@render segmentControl(f, fid, disabled)}
+										</div>
+									{/if}
+								{/each}
+							</section>
+						{/each}
+					</div>
+				</details>
 			{/if}
 		</div>
 	{/if}
 </div>
 
 <style>
-	/* ─── Root: themed via --dt-* tokens from inline style ─── */
 	.stg {
-		border: 1px solid var(--dt-border, rgba(148, 160, 180, 0.10));
+		--stg-border: var(--dt-border, rgba(148, 160, 180, 0.12));
+		--stg-soft: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 8%, transparent);
+		--stg-strong: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 14%, transparent);
+
+		border: 1px solid var(--stg-border);
 		border-radius: 10px;
-		background: var(--dt-surface, #10141c);
+		background: color-mix(in srgb, var(--dt-surface, #10141c) 88%, transparent);
 		overflow: hidden;
 		font-family: var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		margin-bottom: 20px;
+		margin-bottom: 14px;
 	}
 
-	/* ─── Collapsible header ─────────────────────────── */
 	.stg-hd {
 		display: flex;
 		align-items: center;
-		gap: 7px;
+		gap: 8px;
 		width: 100%;
-		padding: 10px 14px;
-		background: none;
+		padding: 8px 12px;
+		background: transparent;
 		border: none;
 		cursor: pointer;
-		font-weight: 600;
-		font-size: 12px;
-		line-height: 1;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.62));
-		transition: color 120ms;
+		color: var(--dt-text-2, rgba(148, 160, 180, 0.78));
+		text-align: left;
+		transition: background 140ms, color 140ms;
 	}
 	.stg-hd:hover {
-		color: var(--dt-text, rgba(228, 234, 245, 0.88));
+		background: var(--stg-soft);
+		color: var(--dt-text, rgba(228, 234, 245, 0.9));
 	}
-
 	.stg-chevron {
-		width: 11px;
-		height: 11px;
+		width: 12px;
+		height: 12px;
 		flex-shrink: 0;
-		transition: transform 150ms ease;
+		transition: transform 160ms ease;
 	}
 	.stg-chevron--open {
 		transform: rotate(90deg);
 	}
-
-	/* ─── Body ───────────────────────────────────────── */
-	.stg-body {
-		padding: 0 14px 12px;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	/* ─── Top bar: theme + mode pills ────────────────── */
-	.stg-bar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 6px 20px;
-		padding-bottom: 4px;
-	}
-
-	.stg-bar-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	/* ─── Column grid for grouped fields ─────────────── */
-	.stg-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-		gap: 2px 20px;
-		border-top: 1px solid color-mix(in srgb, var(--dt-border, rgba(148, 160, 180, 0.10)) 50%, transparent);
-		padding-top: 6px;
-	}
-
-	/* ─── Toggle grid (compact layout for top-level toggles) ─── */
-	.stg-toggles {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 20px;
-	}
-
-	.stg-col {
-		padding: 4px 0 2px;
-		min-width: 0;
-	}
-
-	.stg-col-title {
-		margin: 0 0 2px;
-		font-weight: 600;
+	.stg-hd-copy > span {
+		font-weight: 700;
 		font-size: 11px;
 		line-height: 1;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 160, 180, 0.40));
 	}
 
-	/* ─── Row (inline: label left, control right) ──── */
+	.stg-body {
+		padding: 0 12px 12px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px 18px;
+	}
+
+	.stg-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px 16px;
+	}
+	.stg-bar-item {
+		display: grid;
+		grid-template-columns: auto minmax(92px, auto);
+		align-items: center;
+		gap: 8px;
+	}
+
+	.stg-toggles {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px 16px;
+	}
+	.stg-toggles--advanced {
+		margin-bottom: 8px;
+	}
+
+	.stg-advanced {
+		width: 100%;
+		border-top: 1px solid color-mix(in srgb, var(--stg-border) 65%, transparent);
+		padding-top: 9px;
+	}
+	.stg-advanced summary {
+		width: fit-content;
+		cursor: pointer;
+		list-style: none;
+		font-weight: 700;
+		font-size: 10px;
+		line-height: 1;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--dt-text-3, rgba(148, 160, 180, 0.56));
+	}
+	.stg-advanced summary::-webkit-details-marker {
+		display: none;
+	}
+	.stg-advanced summary::after {
+		content: ' +';
+	}
+	.stg-advanced[open] summary::after {
+		content: ' -';
+	}
+	.stg-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px 24px;
+		margin-top: 12px;
+	}
+	.stg-col {
+		min-width: min(260px, 100%);
+		flex: 1;
+	}
+	.stg-col-title {
+		margin: 0 0 8px;
+		font-weight: 700;
+		font-size: 10px;
+		line-height: 1;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--dt-text-3, rgba(148, 160, 180, 0.5));
+	}
+
 	.stg-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 10px;
-		min-height: 26px;
-		padding: 2px 0;
+		min-height: 34px;
+		padding: 5px 0;
 	}
-
+	.stg-col > .stg-row + .stg-row {
+		border-top: 1px solid color-mix(in srgb, var(--stg-border) 45%, transparent);
+	}
+	.stg-row--toggle {
+		justify-content: flex-start;
+		min-height: 24px;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+		gap: 8px;
+		transition: color 140ms;
+	}
+	.stg-row--toggle:hover {
+		color: var(--dt-text, rgba(228, 234, 245, 0.9));
+	}
 	.stg-row--rng {
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: flex-start;
-		gap: 2px;
+		gap: 7px;
 		min-height: auto;
-		padding: 4px 0;
+		padding: 8px 0;
 	}
-
+	.stg-row--seg {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		gap: 7px;
+		padding: 8px 0;
+	}
 	.stg-row--disabled {
-		opacity: 0.35;
+		opacity: 0.42;
 		pointer-events: none;
 	}
 
@@ -417,24 +463,12 @@
 		gap: 8px;
 	}
 
-	.stg-row--seg {
-		flex-direction: column;
-		align-items: flex-start;
-		justify-content: flex-start;
-		gap: 3px;
-		padding: 3px 0;
-	}
-
-	.stg-row--toggle {
-		cursor: pointer;
-	}
-
-	/* ─── Label ──────────────────────────────────────── */
+	/* ─── Labels ──────────────────────────────────────── */
 	.stg-lbl {
-		font-weight: 400;
-		font-size: 13px;
+		font-weight: 700;
+		font-size: 11px;
 		line-height: 1.2;
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.62));
+		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -450,37 +484,36 @@
 		clip: rect(0, 0, 0, 0);
 		border: 0;
 	}
-
 	.stg-sw {
 		position: relative;
 		display: block;
-		width: 32px;
-		height: 18px;
-		border-radius: 9px;
-		border: 1px solid var(--dt-border, rgba(148, 160, 180, 0.10));
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 10%, transparent);
+		width: 30px;
+		height: 16px;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--stg-border) 82%, transparent);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 15%, transparent);
 		cursor: pointer;
 		flex-shrink: 0;
 		transition: background 150ms, border-color 150ms;
 	}
 	.stg-sr:checked + .stg-sw {
-		background: var(--dt-accent-dim, rgba(99, 102, 241, 0.12));
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 35%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #6366f1) 28%, transparent);
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 55%, transparent);
 	}
-
 	.stg-sw-knob {
 		position: absolute;
 		top: 2px;
 		left: 2px;
-		width: 12px;
-		height: 12px;
+		width: 10px;
+		height: 10px;
 		border-radius: 50%;
-		background: var(--dt-text-3, rgba(148, 160, 180, 0.40));
+		background: var(--dt-text-3, rgba(148, 160, 180, 0.55));
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 		transition: transform 150ms ease, background 150ms;
 	}
 	.stg-sr:checked + .stg-sw .stg-sw-knob {
 		transform: translateX(14px);
-		background: var(--dt-accent, #6366f1);
+		background: var(--dt-btn-text, #fff);
 	}
 
 	/* ─── Range slider ───────────────────────────────── */
@@ -488,109 +521,110 @@
 		width: 100%;
 		-webkit-appearance: none;
 		appearance: none;
-		height: 3px;
-		border-radius: 2px;
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 30%, transparent);
+		height: 4px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--dt-accent, #6366f1), color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 34%, transparent));
 		outline: none;
 		cursor: pointer;
 	}
 	.stg-rng::-webkit-slider-thumb {
 		-webkit-appearance: none;
-		width: 12px;
-		height: 12px;
+		width: 14px;
+		height: 14px;
 		border-radius: 50%;
-		background: var(--dt-text-2, rgba(148, 160, 180, 0.62));
-		border: none;
+		background: var(--dt-text, rgba(228, 234, 245, 0.9));
+		border: 2px solid color-mix(in srgb, var(--dt-bg, #0b0e14) 80%, transparent);
 		cursor: grab;
-		transition: background 100ms, transform 100ms;
+		transition: transform 100ms, border-color 100ms;
 	}
 	.stg-rng::-webkit-slider-thumb:hover {
-		background: var(--dt-text, rgba(228, 234, 245, 0.88));
-		transform: scale(1.15);
+		transform: scale(1.12);
+		border-color: var(--dt-accent, #6366f1);
 	}
 	.stg-rng::-webkit-slider-thumb:active {
 		cursor: grabbing;
 	}
 	.stg-rng::-moz-range-thumb {
-		width: 12px;
-		height: 12px;
+		width: 14px;
+		height: 14px;
 		border-radius: 50%;
-		background: var(--dt-text-2, rgba(148, 160, 180, 0.62));
-		border: none;
+		background: var(--dt-text, rgba(228, 234, 245, 0.9));
+		border: 2px solid color-mix(in srgb, var(--dt-bg, #0b0e14) 80%, transparent);
 		cursor: grab;
 	}
-
 	.stg-rng:disabled {
 		cursor: default;
 	}
-
 	.stg-num {
 		flex-shrink: 0;
-		min-width: 22px;
+		min-width: 28px;
 		text-align: right;
-		font: 500 11px / 1 var(--dt-mono, 'SF Mono', 'Cascadia Code', ui-monospace, monospace);
+		font: 700 11px / 1 var(--dt-mono, 'SF Mono', 'Cascadia Code', ui-monospace, monospace);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.62));
+		color: var(--dt-accent, #6366f1);
 	}
 
 	/* ─── Select dropdown ────────────────────────────── */
 	.stg-sel {
 		appearance: none;
-		font-weight: 400;
-		font-size: 13px;
+		width: auto;
+		min-width: 84px;
+		font-weight: 600;
+		font-size: 12px;
 		line-height: 1;
-		padding: 5px 24px 5px 8px;
-		border-radius: 6px;
-		border: 1px solid var(--dt-border, rgba(148, 160, 180, 0.10));
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 8%, var(--dt-surface, #10141c));
-		color: var(--dt-text, rgba(228, 234, 245, 0.88));
+		padding: 7px 26px 7px 9px;
+		border-radius: 7px;
+		border: 1px solid color-mix(in srgb, var(--stg-border) 76%, transparent);
+		background: var(--stg-soft);
+		color: var(--dt-text, rgba(228, 234, 245, 0.9));
 		outline: none;
 		cursor: pointer;
-		background-image: linear-gradient(45deg, transparent 50%, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 50%),
-			linear-gradient(135deg, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 50%, transparent 50%);
-		background-position: calc(100% - 12px) center, calc(100% - 8px) center;
-		background-size: 4px 4px, 4px 4px;
+		background-image: linear-gradient(45deg, transparent 50%, var(--dt-text-3, rgba(148, 160, 180, 0.5)) 50%),
+			linear-gradient(135deg, var(--dt-text-3, rgba(148, 160, 180, 0.5)) 50%, transparent 50%);
+		background-position: calc(100% - 14px) center, calc(100% - 9px) center;
+		background-size: 5px 5px, 5px 5px;
 		background-repeat: no-repeat;
-		transition: border-color 120ms;
+		transition: border-color 120ms, background-color 120ms;
 	}
 	.stg-sel:hover {
-		border-color: var(--dt-border-day, rgba(148, 160, 180, 0.14));
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 30%, var(--stg-border));
+		background-color: var(--stg-strong);
 	}
 	.stg-sel:focus {
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 45%, transparent);
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 55%, transparent);
 	}
 	.stg-sel option {
 		background: var(--dt-bg, #0b0e14);
-		color: var(--dt-text, rgba(228, 234, 245, 0.88));
+		color: var(--dt-text, rgba(228, 234, 245, 0.9));
 	}
 
 	/* ─── Segment pills ──────────────────────────────── */
 	.stg-pills {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 4px;
+		gap: 5px;
 	}
-
 	.stg-pill {
-		padding: 4px 9px;
-		border-radius: 100px;
-		border: 1px solid color-mix(in srgb, var(--dt-border, rgba(148, 160, 180, 0.10)) 60%, transparent);
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.40)) 8%, transparent);
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.62));
-		font-weight: 400;
+		padding: 6px 10px;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--stg-border) 68%, transparent);
+		background: var(--stg-surface-soft);
+		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
+		font-weight: 600;
 		font-size: 12px;
 		line-height: 1;
 		cursor: pointer;
-		transition: border-color 120ms, color 120ms, background 120ms;
+		transition: border-color 120ms, color 120ms, background 120ms, transform 120ms;
 	}
 	.stg-pill:hover {
-		color: var(--dt-text, rgba(228, 234, 245, 0.88));
-		border-color: var(--dt-border, rgba(148, 160, 180, 0.10));
+		color: var(--dt-text, rgba(228, 234, 245, 0.9));
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 24%, var(--stg-border));
 	}
 	.stg-pill--on {
-		color: var(--dt-accent, #6366f1);
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 35%, transparent);
-		background: var(--dt-accent-dim, rgba(99, 102, 241, 0.12));
+		color: var(--dt-btn-text, #fff);
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 70%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #6366f1) 78%, #000 0%);
+		box-shadow: 0 6px 18px color-mix(in srgb, var(--dt-accent, #6366f1) 18%, transparent);
 	}
 
 	/* ─── Focus rings ────────────────────────────────── */
@@ -603,100 +637,30 @@
 		outline-offset: 2px;
 	}
 
-	/* ─── Responsive: compact mobile layout ──────────── */
-	@media (max-width: 600px) {
+	/* ─── Responsive ─────────────────────────────────── */
+	@media (max-width: 760px) {
 		.stg {
 			border-radius: 0;
 			border-left: none;
 			border-right: none;
-			margin-bottom: 12px;
 		}
 		.stg-hd {
-			padding: 10px 14px;
-			font-size: 11px;
+			padding: 10px 16px;
 		}
 		.stg-body {
-			padding: 0 14px 10px;
-			gap: 6px;
-		}
-		/* Selects in a row */
-		.stg-bar {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 6px;
+			padding: 0 16px 12px;
+			gap: 10px 14px;
 		}
 		.stg-bar-item {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			flex: 1;
-			min-width: 0;
-		}
-		.stg-col-title {
-			font-size: 9px;
-			margin: 0;
-			flex-shrink: 0;
+			grid-template-columns: 86px minmax(0, 1fr);
+			width: 100%;
 		}
 		.stg-sel {
-			font-size: 12px;
-			padding: 6px 22px 6px 7px;
-			border-radius: 6px;
-			flex: 1;
-			min-width: 0;
+			width: 100%;
 		}
-		/* Compact 2-column toggle grid */
-		.stg-toggles {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 0 8px;
-			border-top: 1px solid color-mix(in srgb, var(--dt-border, rgba(148, 160, 180, 0.10)) 50%, transparent);
-			padding-top: 4px;
-			margin-top: 2px;
-		}
-		.stg-lbl {
-			font-size: 12px;
-		}
-		.stg-row--toggle {
-			min-height: 28px;
-			padding: 2px 0;
-		}
-		.stg-sw {
-			width: 30px;
-			height: 16px;
-			border-radius: 8px;
-		}
-		.stg-sw-knob {
-			width: 10px;
-			height: 10px;
-			top: 2px;
-			left: 2px;
-		}
-		.stg-sr:checked + .stg-sw .stg-sw-knob {
-			transform: translateX(14px);
-		}
-		.stg-pill {
-			padding: 5px 10px;
-			font-size: 12px;
-		}
-		.stg-grid {
-			grid-template-columns: 1fr 1fr;
-			gap: 2px 12px;
-		}
+		.stg-grid,
 		.stg-col {
-			padding: 2px 0;
-		}
-		.stg-rng {
-			height: 4px;
-		}
-		.stg-rng::-webkit-slider-thumb {
-			width: 16px;
-			height: 16px;
-		}
-		.stg-rng::-moz-range-thumb {
-			width: 16px;
-			height: 16px;
+			width: 100%;
 		}
 	}
 </style>

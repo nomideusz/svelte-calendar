@@ -11,8 +11,10 @@
  *   'confirmed'  — default, normal event
  *   'cancelled'  — visually struck through, still shown on grid
  *   'tentative'  — e.g. awaiting confirmation
+ *   'full'       — no remaining capacity
+ *   'limited'    — low remaining capacity
  */
-export type EventStatus = 'confirmed' | 'cancelled' | 'tentative';
+export type EventStatus = 'confirmed' | 'cancelled' | 'tentative' | 'full' | 'limited';
 export interface TimelineEvent {
     id: string;
     title: string;

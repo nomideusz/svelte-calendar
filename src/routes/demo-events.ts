@@ -367,8 +367,8 @@ export function createDemoRecurring(): RecurringEvent[] {
 			id: 'rec-stretch',
 			title: 'Stretch & Release',
 			dayOfWeek: 5, // Friday
-			startTime: '12:00',
-			endTime: '12:45',
+			startTime: '13:15',
+			endTime: '14:00',
 			category: 'wellness',
 			location: 'Studio B',
 		},

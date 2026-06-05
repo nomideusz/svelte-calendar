@@ -72,6 +72,8 @@ interface Props {
     maxDuration?: number;
     /** Specific dates to disable (greyed-out, no event creation). */
     disabledDates?: Date[];
+    /** Compact mode: use minimal text-row rendering in Agenda views (dot + time + title). */
+    compact?: boolean;
     /**
      * Mobile mode.
      * - `'auto'` (default): detect via viewport width (< 768 px)
@@ -89,6 +91,16 @@ interface Props {
         isToday: boolean;
         dayName: string;
     }]>;
+    /**
+     * Replace the entire header chrome (date label + mode pills + nav arrows).
+     * Receives context: { dateLabel, mode, modes, switchMode, prev, next, goToday, isViewOnToday, focusDate }.
+     */
+    header?: Snippet<[import('../headless/types.js').HeaderContext]>;
+    /**
+     * Replace just the navigation controls (arrows + today button).
+     * Receives context: { prev, next, goToday, isViewOnToday, focusDate, mode }.
+     */
+    navigation?: Snippet<[import('../headless/types.js').NavigationContext]>;
     oneventclick?: (event: TimelineEvent) => void;
     oneventcreate?: (range: {
         start: Date;

@@ -25,7 +25,7 @@ pnpm add @nomideusz/svelte-calendar
 <Calendar {adapter} />
 ```
 
-That's it — 6 views (Day/Week × Planner, Agenda, Mobile), auto-coloring, drag-and-drop, all out of the box. The default `auto` theme probes your page's background, accent color, and fonts, so the calendar adapts to any design.
+That's it — 6 views (Day/Week × Planner, Agenda, Mobile), auto-coloring, drag-and-drop with live previews, all out of the box. The default `auto` theme probes your page's background, accent color, and fonts, so the calendar adapts to any design.
 
 ## Views
 
@@ -39,6 +39,8 @@ Switch between **Planner** (time grid) and **Agenda** (list) in Day or Week mode
 ```
 
 Users can also switch via the built-in Day/Week pills.
+
+Planner views are designed for direct manipulation: drag an event to another day or time and the calendar renders a ghost preview at the target position before committing the move.
 
 Hide the pills when your app controls the view externally:
 
@@ -62,8 +64,8 @@ On narrow screens (`< 768px`), the calendar automatically remaps Planner views t
 ```
 
 Mobile views include:
-- **MobileDay** — vertical time grid with hour labels, swipe left/right to change days, all-day event chips at the top, tap-to-create
-- **MobileWeek** — vertical day list showing each day's events with relative labels (Today, Tomorrow, etc.)
+- **MobileDay** — vertical time grid with hour labels, swipe left/right to change days, all-day event chips at the top, tap-to-create, and stable columns for overlapping events
+- **MobileWeek** — vertical day list showing each day's events with relative labels (Today, Tomorrow, etc.) and accessible event buttons inside each row
 
 Agenda views keep their list-based layout on mobile but hide desktop floating navigation in favor of the centralized header.
 
@@ -150,6 +152,8 @@ Disable specific dates:
 />
 ```
 
+Disabled dates prevent creating or moving events into those days. Existing events remain visible and clickable, which is useful for holidays, fully booked days, or read-only imported schedules.
+
 Custom day headers and hover previews:
 
 ```svelte
@@ -158,6 +162,37 @@ Custom day headers and hover previews:
     <span style:font-weight={isToday ? 'bold' : 'normal'}>{dayName}</span>
   {/snippet}
 </Calendar>
+```
+
+Replace the built-in navigation or the entire header chrome with your own controls:
+
+```svelte
+<Calendar {adapter}>
+  {#snippet navigation({ prev, next, goToday, isViewOnToday, mode })}
+    <button onclick={prev}>‹</button>
+    {#if !isViewOnToday}<button onclick={goToday}>Today</button>{/if}
+    <button onclick={next}>›</button>
+  {/snippet}
+</Calendar>
+
+<Calendar {adapter}>
+  {#snippet header({ dateLabel, mode, switchMode, prev, next, goToday })}
+    <nav class="my-toolbar">
+      <h2>{dateLabel}</h2>
+      <button class:active={mode === 'day'} onclick={() => switchMode('day')}>Day</button>
+      <button class:active={mode === 'week'} onclick={() => switchMode('week')}>Week</button>
+      <button onclick={prev}>←</button>
+      <button onclick={goToday}>Today</button>
+      <button onclick={next}>→</button>
+    </nav>
+  {/snippet}
+</Calendar>
+```
+
+Let agenda content determine height instead of forcing a fixed box — useful when embedding inside a scrolling page:
+
+```svelte
+<Calendar {adapter} view="week-agenda" height="auto" compact />
 ```
 
 ## Themes
@@ -233,7 +268,7 @@ Or set them at the page level:
 }
 ```
 
-The auto-probe reads these first — if you set `--dt-bg` or `--accent` on `:root`, the calendar picks them up.
+The auto-probe reads these first — if you set `--dt-bg` or `--accent` on `:root`, the calendar picks them up. Component fallbacks intentionally use system fonts and neutral blue accents so the package stays clean in apps that do not provide custom tokens.
 
 ### Extending Presets
 
@@ -288,7 +323,13 @@ const custom = `${neutral}; --dt-accent: #e11d48;`;
 | `subtitle` | `string?` | Secondary text below the title |
 | `tags` | `string[]?` | Small accent-colored pills |
 | `allDay` | `boolean?` | Render as an all-day event |
+| `location` | `string?` | Room, venue, or address (universal across domains) |
+| `status` | `EventStatus?` | `'confirmed'` (default), `'cancelled'`, `'tentative'`, `'full'`, `'limited'` |
+| `externalId` | `string?` | ID from an upstream system (booking platform, CRM, LMS) |
+| `resourceId` | `string?` | Resource this event belongs to (room, instructor, court) for multi-resource views |
 | `data` | `Record?` | Arbitrary payload for your app |
+
+Cancelled events render with a strikethrough on the grid but remain visible so the slot isn't confused for free time.
 
 ### Auto-Coloring
 
@@ -400,6 +441,74 @@ const adapter = createRestAdapter({
 
 The adapter calls `GET /events?start=...&end=...`, `POST /events`, `PATCH /events/:id`, and `DELETE /events/:id`.
 
+## Mapped Adapter
+
+Wrap any static array of external records (yoga classes, gym schedules, appointments, timetables) without writing a custom adapter. Supply a declarative field mapping — or a `mapEvent` function for full control — and the adapter handles parsing, color assignment, tag extraction, and status coercion:
+
+```ts
+import { createMappedAdapter } from '@nomideusz/svelte-calendar';
+
+const adapter = createMappedAdapter(rawClasses, {
+  fields: {
+    title: 'class_name',
+    start: 'starts_at_iso',
+    end: 'ends_at_iso',
+    subtitle: 'teacher',
+    location: 'room',
+    color: 'color',
+    externalId: 'reference_id',
+    status: 'is_cancelled',           // boolean → 'cancelled' / 'confirmed'
+    tags: ['is_free', 'is_bookable_online'],
+  },
+});
+```
+
+`start`/`end` accept ISO strings, `Date` objects, or Unix timestamps. When source records split date and time (`date: "2026-03-03"`, `startTime: "07:00"`), use `date` + `startTime` / `endTime` instead.
+
+For full control, pass a `mapEvent` transform and skip `fields` entirely:
+
+```ts
+const adapter = createMappedAdapter(rawData, {
+  mapEvent: (raw) => ({
+    id: raw.uid,
+    title: raw.procedure_name,
+    start: new Date(raw.scheduled_at),
+    end: new Date(raw.scheduled_end),
+    location: raw.office,
+    resourceId: raw.doctor_id,
+  }),
+});
+```
+
+Mapped adapters are read-only by default. Set `readOnly: false` and supply `onMutate: { onCreate, onUpdate, onDelete }` handlers to enable writes.
+
+## Composite Adapter
+
+Merge multiple adapters into one — e.g. a recurring weekly schedule combined with one-off events:
+
+```ts
+import {
+  Calendar,
+  createMemoryAdapter,
+  createRecurringAdapter,
+  createCompositeAdapter,
+} from '@nomideusz/svelte-calendar';
+
+const memory    = createMemoryAdapter(oneOffEvents);
+const recurring = createRecurringAdapter(weeklySchedule);
+
+const adapter = createCompositeAdapter([memory, recurring]);
+// Reads from both; writes go to memory (the primary — first adapter by default)
+```
+
+Change which adapter handles mutations with `primaryIndex`:
+
+```ts
+const adapter = createCompositeAdapter([recurring, memory], { primaryIndex: 1 });
+```
+
+Updates and deletes fall through each adapter in order — handy when the recurring adapter generates occurrences that the primary memory adapter doesn't know about.
+
 ## Custom Adapter
 
 Implement the `CalendarAdapter` interface to connect any data source:
@@ -413,6 +522,61 @@ const adapter: CalendarAdapter = {
   updateEvent: async (id, patch) => { /* return updated TimelineEvent */ },
   deleteEvent: async (id) => { /* void */ },
 };
+```
+
+## Headless API
+
+For full control over rendering, skip the `<Calendar>` component and drive everything from reactive state. `createCalendar()` returns computed layouts, navigation actions, drag helpers, and raw engines — zero DOM, bring your own UI:
+
+```svelte
+<script lang="ts">
+  import { createCalendar, createMemoryAdapter } from '@nomideusz/svelte-calendar';
+
+  const adapter = createMemoryAdapter([/* ... */]);
+  const cal = createCalendar({ adapter, view: 'week-planner' });
+</script>
+
+<header>
+  <button onclick={cal.prev}>←</button>
+  <span>{cal.headerContext.dateLabel}</span>
+  <button onclick={cal.next}>→</button>
+  <button onclick={cal.goToday}>Today</button>
+</header>
+
+{#each cal.weeks as week}
+  <div class="week-row">
+    {#each week.days as day}
+      <div class:today={day.isToday} class:past={day.isPast}>
+        <h3>{day.dayNum}</h3>
+        {#each day.events as ev}
+          <div style:background={ev.color}>{ev.title}</div>
+        {/each}
+      </div>
+    {/each}
+  </div>
+{/each}
+```
+
+`cal.days` gives flat `HeadlessDay[]` with events attached; `cal.weeks` groups them into periods. `cal.todayQueue` returns `{ past, current, upcoming }` for today — updates every second via the built-in clock. `cal.hours` yields the visible hour numbers (cropped by `visibleHours`). Drag support is fully wired: `beginDragMove`, `beginDragCreate`, `updateDrag`, `commitDrag`, `cancelDrag`, plus `isDragging` / `dragPayload` / `dragMode` signals. Raw engines (`store`, `viewState`, `selection`, `dragState`, `clock`) are exposed for advanced cases.
+
+For a simpler day-only list view, use `createAgenda()`:
+
+```svelte
+<script lang="ts">
+  import { createAgenda, createMemoryAdapter } from '@nomideusz/svelte-calendar';
+
+  const adapter = createMemoryAdapter([/* ... */]);
+  const agenda = createAgenda({ adapter });
+</script>
+
+<h2>{agenda.dateLabel}</h2>
+{#each agenda.upcoming as ev}
+  <div>
+    <time>{agenda.fmtTime(ev.start)}</time>
+    <span>{ev.title}</span>
+    <small>{agenda.eta(ev)}</small>
+  </div>
+{/each}
 ```
 
 ## Localization (i18n)
@@ -489,7 +653,7 @@ const now = nowInZone('Asia/Tokyo');
 
 ## Embeddable Widget
 
-Drop into any HTML page — no build tools needed:
+Drop into any HTML page — no build tools needed. Registers a `<day-calendar>` custom element:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@nomideusz/svelte-calendar/widget/widget.js"></script>
@@ -497,9 +661,24 @@ Drop into any HTML page — no build tools needed:
 <day-calendar
   api="https://myschool.com/api/events"
   theme="neutral"
+  view="week-planner"
   height="600"
+  locale="en-US"
+  mondaystart="true"
 ></day-calendar>
 ```
+
+| Attribute | Description |
+|-----------|-------------|
+| `api` | REST endpoint — fetched as `GET {api}?start=...&end=...` |
+| `events` | Inline JSON array of events (alternative to `api`) |
+| `view` | Initial view ID (`week-planner`, `day-agenda`, …) |
+| `theme` | `auto`, `neutral`, or `midnight` |
+| `height` | Calendar height in px |
+| `locale` | BCP 47 locale tag |
+| `dir` | `ltr` or `rtl` |
+| `mondaystart` | `"true"` / `"false"` — week-start day |
+| `headers` | JSON string of extra headers to send with `api` requests |
 
 ## All Props
 
@@ -508,13 +687,13 @@ Drop into any HTML page — no build tools needed:
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `adapter` | `CalendarAdapter` | *required* | Data layer (memory, recurring, REST, or custom) |
-| `views` | `CalendarView[]` | all 4 built-in | Registered view components |
+| `adapter` | `CalendarAdapter` | *required* | Data layer (memory, recurring, mapped, composite, REST, or custom) |
+| `views` | `CalendarView[]` | 6 built-in | Registered view components (4 desktop + 2 mobile variants) |
 | `view` | `string` | first view | Active view ID |
 | `theme` | `string` | `auto` | CSS theme string (`--dt-*` custom properties). `auto` probes the host page and generates matching tokens. |
 | `autoTheme` | `AutoThemeOptions \| false` | `{}` | Fine-tune auto-detection: `{ mode, accent, font }`. Set `false` to disable probing. |
-| `mobile` | `'auto' \| boolean` | `'auto'` | Mobile mode. `'auto'` detects via `matchMedia(<768px)`. Remaps Planner→Mobile views. |
-| `height` | `number` | `600` | Total height in pixels |
+| `mobile` | `'auto' \| boolean` | `'auto'` | Mobile mode. `'auto'` detects via container width (<768px). Remaps Planner→Mobile views. |
+| `height` | `number \| 'auto'` | `600` | Height in pixels, or `'auto'` to let content grow naturally (ideal for Agenda views) |
 | `borderRadius` | `number` | `12` | Border radius in pixels. Set to `0` for no rounding. |
 | `locale` | `string` | `'en-US'` | BCP 47 locale tag |
 | `dir` | `'ltr' \| 'rtl' \| 'auto'` | — | Text direction |
@@ -531,10 +710,13 @@ Drop into any HTML page — no build tools needed:
 | `currentDate` | `Date` | — | Controlled focus date (drives which date the calendar shows) |
 | `days` | `number` | `7` | Number of days shown in week views (e.g. `3` for a rolling 3-day view) |
 | `blockedSlots` | `BlockedSlot[]` | — | Time ranges that cannot be booked (hatched overlay in planner views) |
-| `disabledDates` | `Date[]` | — | Dates that are fully disabled (dimmed, no interaction) |
+| `disabledDates` | `Date[]` | — | Dates that reject creation/moves while keeping existing events visible and clickable |
 | `minDuration` | `number` | — | Minimum event duration in minutes (enforced on create & resize) |
 | `maxDuration` | `number` | — | Maximum event duration in minutes (enforced on create & resize) |
+| `compact` | `boolean` | `false` | Minimal text-row rendering in Agenda views (dot + time + title) |
 | `dayHeader` | `Snippet<[{ date, isToday, dayName }]>` | — | Custom day header snippet for planner/agenda views |
+| `header` | `Snippet<[HeaderContext]>` | — | Replace entire header chrome (date label + mode pills + nav) |
+| `navigation` | `Snippet<[NavigationContext]>` | — | Replace just the prev/next/today controls |
 | `oneventclick` | `(event) => void` | — | Event clicked |
 | `oneventcreate` | `(range) => void` | — | New time range selected |
 | `oneventmove` | `(event, start, end) => void` | — | Event dragged to new time |

@@ -181,6 +181,8 @@ function coerceStatus(value: unknown, fieldName: string): EventStatus {
 		const lower = value.toLowerCase();
 		if (lower === 'cancelled' || lower === 'canceled') return 'cancelled';
 		if (lower === 'tentative') return 'tentative';
+		if (lower === 'full') return 'full';
+		if (lower === 'limited') return 'limited';
 		return 'confirmed';
 	}
 	if (typeof value === 'boolean') {

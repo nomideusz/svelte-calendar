@@ -32,9 +32,10 @@ export type {
 } from './engine/index.js';
 
 // ─── Adapters ───────────────────────────────────────────
-export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter } from './adapters/index.js';
+export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter } from './adapters/index.js';
 export type {
 	CalendarAdapter,
+	WritableCalendarAdapter,
 	DateRange,
 	RestAdapterOptions,
 	RecurringEvent,
@@ -43,6 +44,8 @@ export type {
 	MappedAdapterOptions,
 	MutationHandler,
 	CompositeAdapterOptions,
+	JmapClient,
+	JmapCalendarAdapterOptions,
 } from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────
@@ -77,6 +80,8 @@ export {
 	isMultiDay,
 	isAllDay,
 	segmentForDay,
+	createTextMeasure,
+	initTextMeasure,
 } from './core/index.js';
 export type {
 	Clock,
@@ -85,9 +90,26 @@ export type {
 	DaySegment,
 	CalendarLabels,
 	EventStatus,
+	TextMeasure,
+	TextMeasureOptions,
+	ContentFit,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
 export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
+
+// ─── Headless API ───────────────────────────────────────
+export { createCalendar, createAgenda } from './headless/index.js';
+export type {
+	HeadlessCalendarOptions,
+	HeadlessCalendar,
+	HeadlessDay,
+	HeadlessWeek,
+	TodayQueue,
+	HeaderContext,
+	NavigationContext,
+	AgendaOptions,
+	HeadlessAgenda,
+} from './headless/index.js';

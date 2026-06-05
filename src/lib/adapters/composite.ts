@@ -70,16 +70,35 @@ export function createCompositeAdapter(
 			return merged;
 		},
 
-		createEvent(event: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent> {
-			return primary.createEvent(event);
+		// Create always goes to primary
+		...(primary.createEvent ? { createEvent: (event: Omit<TimelineEvent, 'id'>) => primary.createEvent!(event) } : {}),
+
+		// Update/delete: try each adapter that supports the operation.
+		// This handles the case where a recurring adapter generates events
+		// that the primary (memory) adapter doesn't know about.
+		async updateEvent(id: string, patch: Partial<TimelineEvent>): Promise<TimelineEvent> {
+			for (const adapter of adapters) {
+				if (!adapter.updateEvent) continue;
+				try {
+					return await adapter.updateEvent(id, patch);
+				} catch {
+					// Event not in this adapter, try next
+				}
+			}
+			throw new Error(`Event not found in any adapter: ${id}`);
 		},
 
-		updateEvent(id: string, patch: Partial<TimelineEvent>): Promise<TimelineEvent> {
-			return primary.updateEvent(id, patch);
-		},
-
-		deleteEvent(id: string): Promise<void> {
-			return primary.deleteEvent(id);
+		async deleteEvent(id: string): Promise<void> {
+			for (const adapter of adapters) {
+				if (!adapter.deleteEvent) continue;
+				try {
+					await adapter.deleteEvent(id);
+					return;
+				} catch {
+					// Event not in this adapter, try next
+				}
+			}
+			throw new Error(`Event not found in any adapter: ${id}`);
 		},
 	};
 }

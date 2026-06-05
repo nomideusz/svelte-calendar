@@ -66,7 +66,7 @@ describe('createMemoryAdapter', () => {
 	describe('createEvent', () => {
 		it('creates an event with a generated ID', async () => {
 			const adapter = createMemoryAdapter();
-			const created = await adapter.createEvent({
+			const created = await adapter.createEvent!({
 				title: 'New Event',
 				start: new Date(2025, 2, 1, 9, 0),
 				end: new Date(2025, 2, 1, 10, 0),
@@ -83,12 +83,12 @@ describe('createMemoryAdapter', () => {
 
 		it('generates unique IDs', async () => {
 			const adapter = createMemoryAdapter();
-			const a = await adapter.createEvent({
+			const a = await adapter.createEvent!({
 				title: 'A',
 				start: new Date(2025, 2, 1, 9, 0),
 				end: new Date(2025, 2, 1, 10, 0),
 			});
-			const b = await adapter.createEvent({
+			const b = await adapter.createEvent!({
 				title: 'B',
 				start: new Date(2025, 2, 1, 11, 0),
 				end: new Date(2025, 2, 1, 12, 0),
@@ -102,7 +102,7 @@ describe('createMemoryAdapter', () => {
 	describe('updateEvent', () => {
 		it('patches an existing event', async () => {
 			const adapter = createMemoryAdapter([makeEvent('1', 9, 10)]);
-			const updated = await adapter.updateEvent('1', { title: 'Updated' });
+			const updated = await adapter.updateEvent!('1', { title: 'Updated' });
 
 			expect(updated.title).toBe('Updated');
 			expect(updated.id).toBe('1');
@@ -114,14 +114,14 @@ describe('createMemoryAdapter', () => {
 
 		it('throws for non-existent event', async () => {
 			const adapter = createMemoryAdapter();
-			await expect(adapter.updateEvent('nope', { title: 'X' })).rejects.toThrow(
+			await expect(adapter.updateEvent!('nope', { title: 'X' })).rejects.toThrow(
 				'Event not found',
 			);
 		});
 
 		it('preserves the original ID even if patch includes a different ID', async () => {
 			const adapter = createMemoryAdapter([makeEvent('1', 9, 10)]);
-			const updated = await adapter.updateEvent('1', {
+			const updated = await adapter.updateEvent!('1', {
 				title: 'Changed',
 				id: 'should-be-ignored' as string,
 			});
@@ -134,7 +134,7 @@ describe('createMemoryAdapter', () => {
 	describe('deleteEvent', () => {
 		it('removes an existing event', async () => {
 			const adapter = createMemoryAdapter([makeEvent('1', 9, 10)]);
-			await adapter.deleteEvent('1');
+			await adapter.deleteEvent!('1');
 
 			const fetched = await adapter.fetchEvents(MARCH_1);
 			expect(fetched).toHaveLength(0);
@@ -142,7 +142,7 @@ describe('createMemoryAdapter', () => {
 
 		it('throws for non-existent event', async () => {
 			const adapter = createMemoryAdapter();
-			await expect(adapter.deleteEvent('nope')).rejects.toThrow('Event not found');
+			await expect(adapter.deleteEvent!('nope')).rejects.toThrow('Event not found');
 		});
 	});
 
@@ -153,7 +153,7 @@ describe('createMemoryAdapter', () => {
 			const adapter = createMemoryAdapter();
 
 			// Create
-			const ev = await adapter.createEvent({
+			const ev = await adapter.createEvent!({
 				title: 'Yoga',
 				start: new Date(2025, 2, 3, 9, 0),
 				end: new Date(2025, 2, 3, 10, 0),
@@ -165,12 +165,12 @@ describe('createMemoryAdapter', () => {
 			expect(events).toHaveLength(1);
 
 			// Update
-			await adapter.updateEvent(ev.id, { title: 'Hot Yoga' });
+			await adapter.updateEvent!(ev.id, { title: 'Hot Yoga' });
 			events = await adapter.fetchEvents(MARCH_WEEK);
 			expect(events[0].title).toBe('Hot Yoga');
 
 			// Delete
-			await adapter.deleteEvent(ev.id);
+			await adapter.deleteEvent!(ev.id);
 			events = await adapter.fetchEvents(MARCH_WEEK);
 			expect(events).toHaveLength(0);
 		});

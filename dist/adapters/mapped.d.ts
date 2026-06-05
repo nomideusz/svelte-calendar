@@ -95,7 +95,15 @@ export interface MappedAdapterOptions<T = Record<string, unknown>> {
      */
     includeData?: string[] | '*';
     /**
-     * Custom color palette for auto-coloring events without a color.
+     * When true (default), ignore source colors and auto-assign from
+     * the palette grouped by category / title.  This keeps the calendar
+     * visually consistent regardless of the upstream source.
+     * Set to `false` to preserve the original colors from the data.
+     * @default true
+     */
+    autoColor?: boolean;
+    /**
+     * Color palette used for auto-coloring.
      * Defaults to VIVID_PALETTE.
      */
     palette?: string[];

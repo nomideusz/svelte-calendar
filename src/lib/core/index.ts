@@ -65,3 +65,7 @@ export type {
 
 // Palette
 export { generatePalette, extractAccent, VIVID_PALETTE } from './palette.js';
+
+// Text measurement (optional Pretext integration)
+export { createTextMeasure, initTextMeasure } from './measure.js';
+export type { TextMeasure, TextMeasureOptions, ContentFit } from './measure.js';

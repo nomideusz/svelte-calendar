@@ -114,6 +114,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		},
 
 		async add(eventData: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent> {
+			if (!adapter.createEvent) throw new Error('Adapter is read-only: createEvent not implemented');
 			loading = true;
 			error = null;
 			try {
@@ -129,6 +130,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		},
 
 		async update(id: string, patch: Partial<TimelineEvent>): Promise<void> {
+			if (!adapter.updateEvent) throw new Error('Adapter is read-only: updateEvent not implemented');
 			loading = true;
 			error = null;
 			try {
@@ -143,6 +145,7 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		},
 
 		async remove(id: string): Promise<void> {
+			if (!adapter.deleteEvent) throw new Error('Adapter is read-only: deleteEvent not implemented');
 			loading = true;
 			error = null;
 			try {
@@ -157,7 +160,19 @@ export function createEventStore(adapter: CalendarAdapter): EventStore {
 		},
 
 		async move(id: string, newStart: Date, newEnd: Date): Promise<void> {
-			return this.update(id, { start: newStart, end: newEnd });
+			// Optimistic update: apply locally first so the UI doesn't flash
+			// back to the old position between drag.commit() and adapter response.
+			const existing = eventMap.get(id);
+			if (existing) {
+				upsertEvent({ ...existing, start: newStart, end: newEnd });
+			}
+			try {
+				await this.update(id, { start: newStart, end: newEnd });
+			} catch (e) {
+				// Revert optimistic update on failure
+				if (existing) upsertEvent(existing);
+				throw e;
+			}
 		},
 	};
 }

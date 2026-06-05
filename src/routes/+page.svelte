@@ -9,6 +9,7 @@
 		auto,
 		neutral,
 		presets,
+		initTextMeasure,
 	} from "$lib/index.js";
 	import type { PresetName } from "$lib/index.js";
 	import Settings from "./_components/Settings.svelte";
@@ -17,9 +18,14 @@
 	import { themeStore, demoThemes } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 
+	type SettingValue = string | number | boolean;
+
 	let isMobile = $state(false);
+	let pretextActive = $state(false);
+	let pretextLoading = $state(false);
+
 	onMount(() => {
-		const mql = window.matchMedia("(max-width: 600px)");
+		const mql = window.matchMedia("(max-width: 768px)");
 		isMobile = mql.matches;
 		function onChange(e: MediaQueryListEvent) {
 			isMobile = e.matches;
@@ -28,19 +34,60 @@
 		return () => mql.removeEventListener("change", onChange);
 	});
 
+	async function togglePretext() {
+		if (pretextActive) {
+			// Can't unload a module — reload to disable
+			(globalThis as any).__pretextModule = null;
+			pretextActive = false;
+			return;
+		}
+		pretextLoading = true;
+		const ok = await initTextMeasure();
+		pretextActive = ok;
+		pretextLoading = false;
+	}
+
+	function createVisibleHours(
+		enabled: boolean,
+		startValue: SettingValue | undefined,
+		endValue: SettingValue | undefined,
+	): [number, number] | undefined {
+		if (!enabled) return undefined;
+
+		const startHour = Number(startValue ?? 6);
+		const endHour = Math.max(startHour + 1, Number(endValue ?? 21));
+
+		return [startHour, endHour];
+	}
+
+	function toMobileMode(value: SettingValue | undefined): "auto" | boolean {
+		if (value === "force") return true;
+		if (value === "desktop") return false;
+
+		return "auto";
+	}
+
 	const calendarHeight = $derived(isMobile ? 500 : 700);
 	const calendarRadius = $derived(isMobile ? 0 : 12);
 
-	let settingsValues = $state<Record<string, string | number | boolean>>({
+	let settingsValues = $state<Record<string, SettingValue>>({
 		readOnly: false,
 		mondayStart: true,
 		showModePills: true,
 		showNavigation: true,
 		equalDays: false,
-		activeView: "week-planner",
+		activeView: "day-planner",
 		locale: "en-US",
 		showDates: true,
 		calendarPreset: "auto",
+		mobileMode: "auto",
+		days: 7,
+		visibleHoursEnabled: false,
+		startHour: 6,
+		endHour: 21,
+		blockedSlotsEnabled: true,
+		disabledDatesEnabled: true,
+		compact: false,
 	});
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
@@ -53,6 +100,19 @@
 	);
 	const equalDays = $derived(Boolean(settingsValues.equalDays));
 	const showDates = $derived(Boolean(settingsValues.showDates ?? true));
+	const visibleHoursEnabled = $derived(Boolean(settingsValues.visibleHoursEnabled));
+	const visibleHours = $derived<[number, number] | undefined>(
+		createVisibleHours(
+			visibleHoursEnabled,
+			settingsValues.startHour,
+			settingsValues.endHour,
+		),
+	);
+	const mobileMode = $derived<"auto" | boolean>(toMobileMode(settingsValues.mobileMode));
+	const days = $derived(Math.max(1, Math.min(14, Number(settingsValues.days ?? 7))));
+	const compact = $derived(Boolean(settingsValues.compact));
+	const blockedSlotsEnabled = $derived(Boolean(settingsValues.blockedSlotsEnabled));
+	const disabledDatesEnabled = $derived(Boolean(settingsValues.disabledDatesEnabled));
 	const activeView = $derived(
 		(settingsValues.activeView as CalendarView["id"]) ?? "week-planner",
 	);
@@ -99,6 +159,17 @@
 				{ value: "ar-SA", label: "ar-SA" },
 			],
 		},
+		{
+			key: "mobileMode",
+			label: "Mobile",
+			group: "",
+			type: "select",
+			options: [
+				{ value: "auto", label: "Auto" },
+				{ value: "force", label: "Force mobile" },
+				{ value: "desktop", label: "Force desktop" },
+			],
+		},
 
 		{
 			key: "mondayStart",
@@ -122,6 +193,54 @@
 		{ key: "equalDays", label: "Equal Days", group: "", type: "toggle" },
 		{ key: "showDates", label: "Show Dates", group: "", type: "toggle" },
 		{ key: "rtl", label: "RTL", group: "", type: "toggle" },
+		{ key: "compact", label: "Compact Agenda", group: "", type: "toggle" },
+		{
+			key: "blockedSlotsEnabled",
+			label: "Blocked Slots",
+			group: "Availability",
+			type: "toggle",
+		},
+		{
+			key: "disabledDatesEnabled",
+			label: "Disabled Dates",
+			group: "Availability",
+			type: "toggle",
+		},
+		{
+			key: "visibleHoursEnabled",
+			label: "Visible Hours",
+			group: "Planner",
+			type: "toggle",
+		},
+		{
+			key: "startHour",
+			label: "Start Hour",
+			group: "Planner",
+			type: "range",
+			min: 0,
+			max: 22,
+			step: 1,
+			enabledWhen: "visibleHoursEnabled",
+		},
+		{
+			key: "endHour",
+			label: "End Hour",
+			group: "Planner",
+			type: "range",
+			min: 1,
+			max: 24,
+			step: 1,
+			enabledWhen: "visibleHoursEnabled",
+		},
+		{
+			key: "days",
+			label: "Week Days",
+			group: "Planner",
+			type: "range",
+			min: 1,
+			max: 14,
+			step: 1,
+		},
 	];
 
 	// ── Seed data (auto-generated relative to today) ──────
@@ -166,6 +285,24 @@
 			settingsValues = { ...settingsValues, activeView: viewId };
 		}
 	}
+
+	const blockedSlots = $derived(
+		blockedSlotsEnabled
+			? [
+					{ start: 12, end: 13, label: "Lunch" },
+					{ day: 6, start: 0, end: 9, label: "Sat morning" },
+					{ day: 7, start: 0, end: 9, label: "Sun morning" },
+				]
+			: undefined,
+	);
+	const disabledDates = $derived(
+		disabledDatesEnabled
+			? [
+					new Date(today.getTime() + 2 * 86_400_000),
+					new Date(today.getTime() + 4 * 86_400_000),
+				]
+			: undefined,
+	);
 </script>
 
 <svelte:head>
@@ -175,13 +312,33 @@
 <main>
 	<Settings fields={settingsFields} bind:values={settingsValues} />
 
-	<div style="height: 28px; padding: 0 10px;">
-		{#if lastAction}
-			<div class="action">
-				<span class="dot"></span>
-				{lastAction}
-			</div>
-		{/if}
+	<div class="toolbar">
+		<div class="action-area">
+			{#if lastAction}
+				<div class="action">
+					<span class="dot"></span>
+					{lastAction}
+				</div>
+			{/if}
+		</div>
+		<button
+			class="pretext-toggle"
+			class:pretext-on={pretextActive}
+			onclick={togglePretext}
+			disabled={pretextLoading}
+			aria-describedby="pretext-help"
+		>
+			{#if pretextLoading}
+				Loading text fitting…
+			{:else if pretextActive}
+				Text fitting: precise
+			{:else}
+				Text fitting: basic
+			{/if}
+		</button>
+		<p class="pretext-help" id="pretext-help">
+			Pretext is optional. Turn it on to load the text-measurement engine and fit event labels more accurately.
+		</p>
 	</div>
 
 	<Calendar
@@ -197,17 +354,14 @@
 		{showNavigation}
 		{equalDays}
 		{showDates}
+		{visibleHours}
+		mobile={mobileMode}
+		{days}
+		{compact}
 		{locale}
 		{dir}
-		blockedSlots={[
-			{ start: 12, end: 13, label: "Lunch" },
-			{ day: 6, start: 0, end: 9, label: "Sat morning" },
-			{ day: 7, start: 0, end: 9, label: "Sun morning" },
-		]}
-		disabledDates={[
-			new Date(today.getTime() + 2 * 86_400_000),
-			new Date(today.getTime() + 4 * 86_400_000),
-		]}
+		blockedSlots={blockedSlots}
+		disabledDates={disabledDates}
 		onviewchange={handleViewChange}
 		oneventclick={handleClick}
 		oneventcreate={handleCreate}
@@ -219,7 +373,7 @@
 	main {
 		max-width: 1100px;
 		margin: 0 auto;
-		padding: 48px 24px 64px;
+		padding: 32px 24px 64px;
 		background: var(--dt-stage-bg, #080a0f);
 		transition:
 			background 300ms ease,
@@ -232,6 +386,19 @@
 		}
 	}
 
+	.toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 10px;
+		gap: 12px;
+		margin: -4px 0 16px;
+	}
+	.action-area {
+		flex: 1;
+		min-width: 0;
+		padding-top: 5px;
+	}
 	.action {
 		font: 400 11px/1.2 var(--dt-sans, "Outfit", system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(226, 232, 240, 0.6));
@@ -246,5 +413,53 @@
 		border-radius: 50%;
 		background: var(--dt-success, #34d399);
 		flex-shrink: 0;
+	}
+	.pretext-toggle {
+		border: 1px solid rgba(148, 163, 184, 0.15);
+		background: rgba(148, 163, 184, 0.06);
+		color: rgba(148, 163, 184, 0.55);
+		font: 600 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		padding: 5px 10px;
+		border-radius: 6px;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: all 150ms;
+		flex-shrink: 0;
+	}
+	.pretext-help {
+		max-width: 360px;
+		margin: 0;
+		font: 400 11px/1.4 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.52));
+		text-align: right;
+	}
+	.pretext-toggle:hover {
+		color: rgba(226, 232, 240, 0.85);
+		border-color: rgba(148, 163, 184, 0.3);
+	}
+	.pretext-on {
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.3);
+		color: #34d399;
+	}
+	.pretext-on:hover {
+		background: rgba(52, 211, 153, 0.2);
+		color: #34d399;
+	}
+	@media (max-width: 760px) {
+		.toolbar {
+			flex-direction: column;
+			align-items: stretch;
+			padding: 0 16px;
+		}
+		.pretext-toggle {
+			width: fit-content;
+		}
+		.pretext-help {
+			text-align: left;
+			max-width: none;
+		}
 	}
 </style>

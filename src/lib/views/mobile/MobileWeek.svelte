@@ -6,10 +6,9 @@
   left/right to navigate weeks.
 -->
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { useCalendarContext } from '../shared/context.svelte.js';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, sod, isAllDay, isMultiDay } from '../../core/time.js';
 	import { startOfWeek as sowFn } from '../../core/time.js';
 	import { fmtTime as _fmtTime, weekdayShort, getLabels } from '../../core/locale.js';
@@ -44,22 +43,16 @@
 	}: Props = $props();
 
 	// ── Context ────────────────────────────────────────
-	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
-	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
-	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
-	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
-	const hideDaysCtx = getContext<{ current: number[] | undefined }>('calendar:hideDays') as { current: number[] | undefined } | undefined;
-	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
-	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
-	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
-
-	const equalDays = $derived(equalDaysCtx?.current ?? false);
-	const autoHeight = $derived(autoHeightCtx?.current ?? false);
-	const showDates = $derived(showDatesCtx?.current ?? true);
-	const hideDays = $derived(hideDaysCtx?.current);
-	const oneventhover = $derived(callbacksCtx?.oneventhover);
-	const disabledDates = $derived(disabledDatesCtx?.current);
-	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
+	const ctx = useCalendarContext();
+	const viewState = $derived(ctx.viewState);
+	const equalDays = $derived(ctx.equalDays);
+	const showDates = $derived(ctx.showDates);
+	const hideDays = $derived(ctx.hideDays);
+	const autoHeight = $derived(ctx.autoHeight);
+	const oneventhover = $derived(ctx.oneventhover);
+	const disabledSet = $derived(ctx.disabledSet);
+	const loadRangeCtx = $derived(ctx.loadRange);
+	const minDuration = $derived(ctx.minDuration);
 
 	const clock = createClock();
 
@@ -192,6 +185,12 @@
 			viewState.setView(dayView);
 		}
 	}
+
+	function handleDayKeydown(e: KeyboardEvent, dayMs: number) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		handleDayTap(dayMs);
+	}
 </script>
 
 <div
@@ -208,15 +207,21 @@
 	<!-- Vertical day list -->
 	<div class="mw-list" role="list">
 		{#each dayCells as cell (cell.ms)}
-			<button
+			<div
 				class="mw-row"
 				class:mw-row--today={cell.isToday}
 				class:mw-row--past={cell.isPast}
 				class:mw-row--weekend={cell.isWeekend}
 				class:mw-row--disabled={cell.isDisabled}
-				onclick={() => handleDayTap(cell.ms)}
-				aria-label="{cell.dayName} {cell.dayNum}"
+				role="listitem"
 			>
+				<button
+					class="mw-row-target"
+					disabled={cell.isDisabled}
+					onclick={() => handleDayTap(cell.ms)}
+					onkeydown={(e) => handleDayKeydown(e, cell.ms)}
+					aria-label="{cell.dayName} {cell.dayNum}"
+				></button>
 				<!-- Date column -->
 				<div class="mw-date">
 					<span class="mw-day-name" class:mw-day-name--today={cell.isToday}>{cell.dayName}</span>
@@ -231,16 +236,17 @@
 						<span class="mw-empty">{L.noEvents}</span>
 					{:else}
 						{#each cell.events.slice(0, MAX_EVENTS) as ev (ev.id)}
-							<div
+							<button
+								type="button"
 								class="mw-ev"
 								class:mw-ev--selected={selectedEventId === ev.id}
 								class:mw-ev--allday={isAllDay(ev) || isMultiDay(ev)}
 								class:mw-ev--current={!isAllDay(ev) && !isMultiDay(ev) && ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
 								class:mw-ev--cancelled={ev.status === 'cancelled'}
 								class:mw-ev--tentative={ev.status === 'tentative'}
+								class:mw-ev--full={ev.status === 'full'}
+								class:mw-ev--limited={ev.status === 'limited'}
 								style:--ev-color={ev.color ?? 'var(--dt-accent)'}
-								role="button"
-								tabindex="0"
 								onclick={(e) => { e.stopPropagation(); oneventclick?.(ev); }}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 								onpointerenter={() => oneventhover?.(ev)}
@@ -254,7 +260,7 @@
 										<span class="mw-ev-time">{fmtTime(ev.start)}</span>
 									{/if}
 								</div>
-							</div>
+							</button>
 						{/each}
 						{#if cell.totalCount > MAX_EVENTS}
 							<span class="mw-ev-more">{L.nMore(cell.totalCount - MAX_EVENTS)}</span>
@@ -264,7 +270,7 @@
 
 				<!-- Chevron -->
 				<svg class="mw-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
-			</button>
+			</div>
 		{/each}
 	</div>
 </div>
@@ -298,10 +304,9 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
+		position: relative;
 		padding: 10px 12px;
-		border: none;
 		background: transparent;
-		cursor: pointer;
 		transition: background 120ms;
 		text-align: left;
 		width: 100%;
@@ -312,7 +317,7 @@
 	.mw-row:last-child {
 		border-bottom: none;
 	}
-	.mw-row:active {
+	.mw-row:has(.mw-row-target:active) {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);
 	}
 	.mw-row--today {
@@ -322,8 +327,30 @@
 		opacity: 0.5;
 	}
 	.mw-row--disabled {
-		opacity: 0.3;
-		pointer-events: none;
+		background-image: repeating-linear-gradient(
+			135deg,
+			transparent,
+			transparent 6px,
+			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,
+			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px
+		);
+	}
+	.mw-row-target {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		padding: 0;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.mw-row-target:disabled {
+		cursor: default;
+	}
+	.mw-row-target:focus-visible {
+		outline: 2px solid var(--dt-accent, #2563eb);
+		outline-offset: -2px;
 	}
 
 	/* ─── Date column ────────────────────────────────── */
@@ -334,6 +361,9 @@
 		width: 40px;
 		flex-shrink: 0;
 		gap: 2px;
+		position: relative;
+		z-index: 1;
+		pointer-events: none;
 	}
 
 	.mw-day-name {
@@ -369,6 +399,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
+		position: relative;
+		z-index: 2;
 	}
 
 	.mw-empty {
@@ -411,6 +443,13 @@
 		text-decoration: line-through;
 	}
 	.mw-ev--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
+	.mw-ev--full {
+		opacity: 0.55;
+	}
+	.mw-ev--limited {
 		opacity: 0.65;
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
@@ -459,13 +498,12 @@
 	.mw-chevron {
 		flex-shrink: 0;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.2));
+		position: relative;
+		z-index: 1;
+		pointer-events: none;
 	}
 
 	/* ─── Focus ──────────────────────────────────────── */
-	.mw-row:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: -2px;
-	}
 	.mw-ev:focus-visible {
 		outline: 2px solid var(--ev-color, var(--dt-accent));
 		outline-offset: 1px;

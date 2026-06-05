@@ -95,9 +95,10 @@ describe('createMappedAdapter', () => {
             const events = await adapter.fetchEvents(MARCH_3);
             expect(events[0].start).toBeInstanceOf(Date);
             expect(events[0].end).toBeInstanceOf(Date);
-            expect(events[0].start.getHours()).toBe(7);
-            expect(events[0].end.getHours()).toBe(8);
-            expect(events[0].end.getMinutes()).toBe(15);
+            // Use UTC hours since CI may run in a different timezone
+            expect(events[0].start.getUTCHours()).toBe(6); // 07:00+01:00 = 06:00 UTC
+            expect(events[0].end.getUTCHours()).toBe(7); // 08:15+01:00 = 07:15 UTC
+            expect(events[0].end.getUTCMinutes()).toBe(15);
         });
         it('maps subtitle from teacher', async () => {
             const adapter = createMappedAdapter(yogaEvents, { fields });
@@ -111,8 +112,17 @@ describe('createMappedAdapter', () => {
             expect(events[0].location).toBe('Joga Centrum Kazimierz');
             expect(events[2].location).toBe('Joga Centrum Bronowice');
         });
-        it('normalizes rgb() colors to hex', async () => {
+        it('auto-assigns palette colors by default (ignores source colors)', async () => {
             const adapter = createMappedAdapter(yogaEvents, { fields });
+            const events = await adapter.fetchEvents(MARCH_3);
+            // Source had rgb(62,101,255) but autoColor is true by default
+            // → palette color assigned instead
+            expect(events[0].color).toBeTruthy();
+            expect(events[0].color).not.toBe('#3e65ff');
+            expect(events[1].color).not.toBe('#ef6950');
+        });
+        it('preserves source colors when autoColor is false', async () => {
+            const adapter = createMappedAdapter(yogaEvents, { fields, autoColor: false });
             const events = await adapter.fetchEvents(MARCH_3);
             expect(events[0].color).toBe('#3e65ff');
             expect(events[1].color).toBe('#ef6950');
@@ -233,25 +243,35 @@ describe('createMappedAdapter', () => {
         });
     });
     describe('color handling', () => {
-        it('converts rgb() to hex', async () => {
+        it('auto-assigns palette colors by default (ignores source rgb)', async () => {
             const adapter = createMappedAdapter([{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: 'rgb(255, 0, 128)' }], { fields: {} });
+            const events = await adapter.fetchEvents(MARCH_3);
+            // autoColor: true → palette color, not source
+            expect(events[0].color).toBeTruthy();
+            expect(events[0].color).not.toBe('#ff0080');
+        });
+        it('preserves rgb() source colors with autoColor: false', async () => {
+            const adapter = createMappedAdapter([{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: 'rgb(255, 0, 128)' }], { fields: {}, autoColor: false });
             const events = await adapter.fetchEvents(MARCH_3);
             expect(events[0].color).toBe('#ff0080');
         });
-        it('passes through hex colors unchanged', async () => {
-            const adapter = createMappedAdapter([{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: '#abcdef' }], { fields: {} });
+        it('preserves hex colors with autoColor: false', async () => {
+            const adapter = createMappedAdapter([{ title: 'Test', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z', color: '#abcdef' }], { fields: {}, autoColor: false });
             const events = await adapter.fetchEvents(MARCH_3);
             expect(events[0].color).toBe('#abcdef');
         });
-        it('auto-assigns colors when none provided', async () => {
+        it('groups auto-colors by title — same title gets same color', async () => {
             const adapter = createMappedAdapter([
                 { title: 'A', starts_at_iso: '2026-03-03T10:00:00Z', ends_at_iso: '2026-03-03T11:00:00Z' },
                 { title: 'B', starts_at_iso: '2026-03-03T12:00:00Z', ends_at_iso: '2026-03-03T13:00:00Z' },
+                { title: 'A', starts_at_iso: '2026-03-03T14:00:00Z', ends_at_iso: '2026-03-03T15:00:00Z' },
             ], { fields: {} });
             const events = await adapter.fetchEvents(MARCH_3);
             expect(events[0].color).toBeTruthy();
             expect(events[1].color).toBeTruthy();
             expect(events[0].color).not.toBe(events[1].color);
+            // Same title gets same color
+            expect(events[2].color).toBe(events[0].color);
         });
     });
     describe('read-only mode', () => {
@@ -316,6 +336,38 @@ describe('createMappedAdapter', () => {
             expect(events[0].resourceId).toBe('doc-42');
             expect(events[0].id).toBe('apt-001');
             expect(events[1].status).toBe('tentative');
+        });
+    });
+    describe('status coercion for full and limited', () => {
+        it('coerces string "full" to EventStatus full', async () => {
+            const adapter = createMappedAdapter([{
+                    title: 'Full Class',
+                    starts_at_iso: '2026-03-03T10:00:00Z',
+                    ends_at_iso: '2026-03-03T11:00:00Z',
+                    status: 'full',
+                }], { fields: { status: 'status' } });
+            const events = await adapter.fetchEvents(MARCH_3);
+            expect(events[0].status).toBe('full');
+        });
+        it('coerces string "limited" to EventStatus limited', async () => {
+            const adapter = createMappedAdapter([{
+                    title: 'Limited Class',
+                    starts_at_iso: '2026-03-03T10:00:00Z',
+                    ends_at_iso: '2026-03-03T11:00:00Z',
+                    status: 'limited',
+                }], { fields: { status: 'status' } });
+            const events = await adapter.fetchEvents(MARCH_3);
+            expect(events[0].status).toBe('limited');
+        });
+        it('coerces string "Full" (uppercase) to EventStatus full', async () => {
+            const adapter = createMappedAdapter([{
+                    title: 'Full Class',
+                    starts_at_iso: '2026-03-03T10:00:00Z',
+                    ends_at_iso: '2026-03-03T11:00:00Z',
+                    status: 'Full',
+                }], { fields: { status: 'status' } });
+            const events = await adapter.fetchEvents(MARCH_3);
+            expect(events[0].status).toBe('full');
         });
     });
     describe('school timetable (another domain)', () => {

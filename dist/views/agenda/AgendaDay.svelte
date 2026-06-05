@@ -12,14 +12,16 @@
 	 * Future day ("The Plan"):
 	 *   Clean numbered schedule list.
 	 */
-	import { getContext } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { sod, DAY_MS, isAllDay, isMultiDay } from '../../core/time.js';
-	import { fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
+	import { getLabels } from '../../core/locale.js';
+	import { useCalendarContext } from '../shared/context.svelte.js';
+	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
+	import type { TimeSlot } from '../shared/format.js';
 
 	const L = $derived(getLabels());
+	const ctx = useCalendarContext();
 
 	interface Props {
 		locale?: string;
@@ -43,17 +45,15 @@
 	}: Props = $props();
 
 	const clock = createClock();
-	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
-	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
-	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
-	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
-	const mobileCtx = getContext<{ current: boolean }>('calendar:mobile') as { current: boolean } | undefined;
-	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
-	const showNav = $derived(showNavCtx?.current ?? true);
-	const equalDays = $derived(equalDaysCtx?.current ?? false);
-	const showDates = $derived(showDatesCtx?.current ?? true);
-	const isMobile = $derived(mobileCtx?.current ?? false);
-	const autoHeight = $derived(autoHeightCtx?.current ?? false);
+	const viewState = $derived(ctx.viewState);
+	const showNav = $derived(ctx.showNav);
+	const equalDays = $derived(ctx.equalDays);
+	const showDates = $derived(ctx.showDates);
+	const isMobile = $derived(ctx.isMobile);
+	const autoHeight = $derived(ctx.autoHeight);
+	const compact = $derived(ctx.compact);
+	const oneventhover = $derived(ctx.oneventhover);
+	const disabledSet = $derived(ctx.disabledSet);
 
 	// ── Swipe navigation (mobile) ──────────────────────
 	let swipeStartX = 0;
@@ -76,65 +76,10 @@
 		}
 	}
 
-	// ── New feature contexts ──
-	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
-	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
-	const oneventhover = $derived(callbacksCtx?.oneventhover);
-	const disabledDates = $derived(disabledDatesCtx?.current);
-	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
-
-	// ── Format helpers ──────────────────────────────────
-	function fmtTime(d: Date): string {
-		return _fmtTime(d, locale);
-	}
-
-	function duration(ev: TimelineEvent): string {
-		return fmtDuration(ev.start, ev.end);
-	}
-
-	function timeUntilMs(ms: number): string {
-		const diff = ms - clock.tick;
-		if (diff <= 0) return L.now;
-		const tMins = Math.floor(diff / 60000);
-		if (tMins < 60) return `in ${tMins}m`;
-		const hrs = Math.floor(tMins / 60);
-		const rm = tMins % 60;
-		if (hrs < 24) return rm > 0 ? `in ${hrs}h ${rm}m` : `in ${hrs}h`;
-		const days = Math.floor(hrs / 24);
-		return `in ${days}d`;
-	}
-
-	function progress(ev: TimelineEvent): number {
-		const s = ev.start.getTime();
-		const e = ev.end.getTime();
-		return Math.min(1, Math.max(0, (clock.tick - s) / (e - s)));
-	}
-
-	// ── Overlap grouping ────────────────────────────────
-	interface TimeSlot {
-		startMs: number;
-		endMs: number;
-		events: TimelineEvent[];
-	}
-
-	function groupIntoSlots(evts: TimelineEvent[]): TimeSlot[] {
-		const sorted = [...evts].sort((a, b) => a.start.getTime() - b.start.getTime());
-		const slots: TimeSlot[] = [];
-		for (const ev of sorted) {
-			const last = slots[slots.length - 1];
-			if (last && ev.start.getTime() < last.endMs) {
-				last.events.push(ev);
-				last.endMs = Math.max(last.endMs, ev.end.getTime());
-			} else {
-				slots.push({
-					startMs: ev.start.getTime(),
-					endMs: ev.end.getTime(),
-					events: [ev],
-				});
-			}
-		}
-		return slots;
-	}
+	// ── Format helpers (delegated to shared/format.ts) ──
+	const fmt = (d: Date) => fmtTime(d, locale);
+	const eta = (ms: number) => timeUntilMs(ms, clock.tick);
+	const prog = (ev: TimelineEvent) => progress(ev, clock.tick);
 
 	// ── Event handlers ──────────────────────────────────
 	function handleClick(ev: TimelineEvent): void {
@@ -244,7 +189,44 @@
 			</div>
 		{/if}
 
-		{#if isToday}
+		{#if compact}
+			<!-- ─── Compact: minimal text rows ─── -->
+			<div class="ag-compact-list">
+				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
+					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+				{:else}
+					{#each timedDayEvents as ev (ev.id)}
+						<div
+							class="ag-compact-row"
+							class:ag-compact-row--selected={selectedEventId === ev.id}
+							class:ag-compact-row--cancelled={ev.status === 'cancelled'}
+							class:ag-compact-row--tentative={ev.status === 'tentative'}
+							style:--ev-color={ev.color || 'var(--dt-accent)'}
+							role="button"
+							tabindex="0"
+							aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+							onclick={() => handleClick(ev)}
+							onpointerenter={() => oneventhover?.(ev)}
+							onkeydown={(e) => handleKeydown(e, ev)}
+						>
+							<span class="ag-compact-row-dot"></span>
+							<span class="ag-compact-row-time">{fmt(ev.start)}</span>
+							<span class="ag-compact-row-title">{ev.title}</span>
+							{#if ev.subtitle}
+								<span class="ag-compact-row-sub">{ev.subtitle}</span>
+							{/if}
+							{#if ev.tags?.length}
+								{#each ev.tags as tag}
+									<span class="ag-compact-row-tag">{tag}</span>
+								{/each}
+							{/if}
+							<span class="ag-compact-row-dur">{duration(ev)}</span>
+						</div>
+					{/each}
+				{/if}
+			</div>
+
+		{:else if isToday}
 			<!-- ─── Today: "The Queue" — upcoming is the hero ─── -->
 			<div class="ag-q">
 				<!-- NOW column: past events stacked above NOW strip -->
@@ -258,7 +240,7 @@
 									class:ag-q-done-item--selected={selectedEventId === ev.id}
 									role="button"
 									tabindex="0"
-									aria-label="{ev.title}, {L.completed}, {fmtTime(ev.start)}"
+									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
 									onclick={() => handleClick(ev)}
 									onkeydown={(e) => handleKeydown(e, ev)}
 								>
@@ -278,14 +260,14 @@
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
-								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(progress(ev) * 100))}"
+								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(prog(ev) * 100))}"
 								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
-								<div class="ag-q-now-time">{L.until} {fmtTime(ev.end)}</div>
+								<div class="ag-q-now-time">{L.until} {fmt(ev.end)}</div>
 								<div class="ag-q-now-track">
-									<div class="ag-q-now-fill" style:width="{progress(ev) * 100}%"></div>
+									<div class="ag-q-now-fill" style:width="{prog(ev) * 100}%"></div>
 								</div>
 							</div>
 						{/each}
@@ -312,7 +294,7 @@
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
-								aria-label="{ev.title}, {fmtTime(ev.start)}, {duration(ev)}"
+								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}
 								onpointerenter={() => oneventhover?.(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
@@ -320,13 +302,13 @@
 								<div class="ag-card-body">
 									<div class="ag-card-top">
 										<span class="ag-card-title">{ev.title}</span>
-										<span class="ag-card-eta">{timeUntilMs(ev.start.getTime())}</span>
+										<span class="ag-card-eta">{eta(ev.start.getTime())}</span>
 									</div>
 									{#if ev.subtitle}
 										<span class="ag-card-sub">{ev.subtitle}</span>
 									{/if}
 									<div class="ag-card-meta">
-										{fmtTime(ev.start)} – {fmtTime(ev.end)}
+										{fmt(ev.start)} – {fmt(ev.end)}
 										<span class="ag-card-dur">{duration(ev)}</span>
 									</div>
 									{#if ev.tags?.length}
@@ -356,11 +338,11 @@
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
 							role="button"
 							tabindex="0"
-							aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}"
+							aria-label="{ev.title}, {fmt(ev.start)} to {fmt(ev.end)}"
 							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<span class="ag-log-check">✓</span>
-							<span class="ag-log-time">{fmtTime(ev.start)}</span>
+							<span class="ag-log-time">{fmt(ev.start)}</span>
 							<span class="ag-log-dot" style:background={ev.color || 'var(--dt-accent)'}></span>
 							<span class="ag-log-title">{ev.title}</span>
 							<span class="ag-log-dur">{duration(ev)}</span>
@@ -380,10 +362,14 @@
 							class="ag-card ag-card--plan"
 							class:ag-card--first={i === 0}
 							class:ag-card--selected={selectedEventId === ev.id}
+							class:ag-card--cancelled={ev.status === 'cancelled'}
+							class:ag-card--tentative={ev.status === 'tentative'}
+							class:ag-card--full={ev.status === 'full'}
+							class:ag-card--limited={ev.status === 'limited'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
 							role="button"
 							tabindex="0"
-							aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
+							aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<div class="ag-card-body">
@@ -394,8 +380,11 @@
 								{#if ev.subtitle}
 									<span class="ag-card-sub">{ev.subtitle}</span>
 								{/if}
+								{#if ev.location}
+									<span class="ag-card-loc">{ev.location}</span>
+								{/if}
 								<div class="ag-card-meta">
-									{fmtTime(ev.start)} – {fmtTime(ev.end)}
+									{fmt(ev.start)} – {fmt(ev.end)}
 									<span class="ag-card-dur">{duration(ev)}</span>
 								</div>
 								{#if ev.tags?.length}
@@ -455,11 +444,11 @@
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 20;
-		font: 600 11px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
 		padding: 8px 16px;
@@ -477,7 +466,7 @@
 		z-index: 20;
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
 		border-radius: 8px;
@@ -489,7 +478,7 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
 		padding: 6px 12px;
 		border-radius: 6px;
 		letter-spacing: 0.04em;
@@ -516,7 +505,7 @@
 		pointer-events: none;
 	}
 	.ag-nav-pill:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		outline-offset: 2px;
 	}
 
@@ -528,6 +517,9 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 		color: var(--dt-text, rgba(255, 255, 255, 0.92));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
@@ -535,17 +527,24 @@
 	.ag--auto { height: auto; overflow: visible; }
 
 	.ag--disabled {
-		opacity: 0.4;
-		pointer-events: none;
+		background-image: repeating-linear-gradient(
+			135deg,
+			transparent,
+			transparent 6px,
+			color-mix(in srgb, var(--dt-text, rgba(255, 255, 255, 0.92)) 4%, transparent) 6px,
+			color-mix(in srgb, var(--dt-text, rgba(255, 255, 255, 0.92)) 4%, transparent) 12px
+		);
 	}
 
 	/* ═══ Body ═══ */
 	.ag-body {
 		flex: 1;
 		min-height: 0;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
+		overflow-x: hidden;
 		padding-top: 44px;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
@@ -587,22 +586,22 @@
 		gap: 5px;
 		padding: 3px 10px;
 		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);
 		cursor: pointer;
 		transition: background 0.15s, border-color 0.15s;
 	}
 	.ag-allday-chip:hover {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
 	.ag-allday-chip:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-allday-chip--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));
 	}
 	.ag-allday-dot {
 		width: 6px;
@@ -622,23 +621,40 @@
 		display: flex;
 		align-items: stretch;
 		border-radius: 10px;
-		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(255, 255, 255, 0.06)));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
 	}
 	.ag-card:hover {
-		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 40%, transparent);
 	}
 	.ag-card:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-card--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+	}
+	.ag-card--cancelled {
+		opacity: 0.5;
+	}
+	.ag-card--cancelled .ag-card-title {
+		text-decoration: line-through;
+	}
+	.ag-card--tentative {
+		opacity: 0.65;
+		border-style: dashed;
+	}
+	.ag-card--full {
+		opacity: 0.55;
+	}
+	.ag-card--limited {
+		opacity: 0.65;
+		border-style: dashed;
 	}
 	.ag-card-body {
 		padding: 10px 12px;
@@ -653,15 +669,15 @@
 		justify-content: space-between;
 		align-items: flex-start;
 		gap: 8px;
+		min-width: 0;
 	}
 	.ag-card-title {
 		font-size: 13px;
 		font-weight: 600;
-		line-height: 1.2;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		line-height: 1.3;
+		word-break: break-word;
 		flex: 1;
+		min-width: 0;
 	}
 	.ag-card-meta {
 		font-size: 11px;
@@ -676,6 +692,11 @@
 	.ag-card-sub {
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-card-loc {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		line-height: 1;
 	}
 	.ag-card-tags {
@@ -708,12 +729,12 @@
 		font-size: 9px;
 		font-weight: 600;
 		letter-spacing: 0.04em;
-		color: var(--dt-accent, #ff6b4a);
+		color: var(--dt-accent, #2563eb);
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
 	.ag-card--hero {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
 	.ag-card--hero .ag-card-title {
@@ -722,7 +743,7 @@
 	}
 	.ag-card--hero .ag-card-eta {
 		font-size: 11px;
-		background: color-mix(in srgb, var(--dt-accent, #ff6b4a) 18%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);
 		padding: 2px 7px;
 		border-radius: 4px;
 	}
@@ -750,7 +771,7 @@
 		font-size: 14px;
 	}
 	.ag-card--first {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 25%, transparent);
 	}
 	.ag-card--first .ag-card-title {
@@ -860,24 +881,24 @@
 		font-size: 10px;
 		font-weight: 600;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-accent, #ff6b4a);
+		color: var(--dt-accent, #2563eb);
 		margin-left: 4px;
 	}
 	.ag-q-now {
 		padding: 8px 10px;
 		border-radius: 8px;
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
 		margin-right: 10px;
 	}
 	.ag-q-now:hover {
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);
 	}
 	.ag-q-now:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-q-now--selected {
@@ -887,7 +908,7 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: var(--ev-color, var(--dt-accent, #ff6b4a));
+		background: var(--ev-color, var(--dt-accent, #2563eb));
 		margin-bottom: 6px;
 		animation: ag-pulse 2.5s ease-in-out infinite;
 	}
@@ -919,7 +940,7 @@
 	}
 	.ag-q-now-fill {
 		height: 100%;
-		background: var(--ev-color, var(--dt-accent, #ff6b4a));
+		background: var(--ev-color, var(--dt-accent, #2563eb));
 		border-radius: 1px;
 		transition: width 1s linear;
 	}
@@ -959,7 +980,7 @@
 		opacity: 0.6;
 	}
 	.ag-q-done-item:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 		opacity: 0.6;
 	}
@@ -1009,7 +1030,7 @@
 		opacity: 1;
 	}
 	.ag-log-row:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-log-row--selected {
@@ -1056,6 +1077,84 @@
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
 		flex-shrink: 0;
 	}
+
+	/* ═══ Compact Day ═══ */
+	.ag-compact-list {
+		flex: 1;
+		padding: 8px 20px 12px;
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+	.ag-compact-list::-webkit-scrollbar { display: none; }
+	.ag-compact-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 4px 0;
+		cursor: pointer;
+	}
+	.ag-compact-row--selected {
+		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
+		border-radius: 4px;
+		padding-left: 6px;
+		padding-right: 6px;
+	}
+	.ag-compact-row:hover .ag-compact-row-title { color: var(--dt-text); }
+	.ag-compact-row:focus-visible {
+		outline: 2px solid var(--dt-accent, #2563eb);
+		outline-offset: 2px;
+	}
+	.ag-compact-row-dot {
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--ev-color, var(--dt-accent));
+		flex-shrink: 0;
+	}
+	.ag-compact-row-time {
+		font-size: 11px;
+		font-family: var(--dt-mono, monospace);
+		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		min-width: 64px;
+		flex-shrink: 0;
+	}
+	.ag-compact-row-title {
+		font-size: 12px;
+		font-weight: 500;
+		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		flex: 1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		transition: color 150ms;
+	}
+	.ag-compact-row-dur {
+		font-size: 10px;
+		font-family: var(--dt-mono, monospace);
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		flex-shrink: 0;
+	}
+	.ag-compact-row-sub {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		flex-shrink: 0;
+	}
+	.ag-compact-row-tag {
+		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--ev-color, var(--dt-accent));
+		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);
+		padding: 1px 4px;
+		border-radius: 3px;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+	.ag-compact-row--cancelled { opacity: 0.5; }
+	.ag-compact-row--cancelled .ag-compact-row-title { text-decoration: line-through; }
+	.ag-compact-row--tentative { opacity: 0.65; }
+	/* Mobile: larger touch targets for compact rows */
+	.ag--mobile .ag-compact-row { padding: 8px 0; }
+	.ag--mobile .ag-compact-row-title { font-size: 14px; }
+	.ag--mobile .ag-compact-row-time { font-size: 12px; }
 
 	/* ═══ Future Day: "The Plan" ═══ */
 	.ag-plan {

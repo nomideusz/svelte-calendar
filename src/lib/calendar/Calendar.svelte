@@ -108,6 +108,8 @@
 		maxDuration?: number;
 		/** Specific dates to disable (greyed-out, no event creation). */
 		disabledDates?: Date[];
+		/** Compact mode: use minimal text-row rendering in Agenda views (dot + time + title). */
+		compact?: boolean;
 		/**
 		 * Mobile mode.
 		 * - `'auto'` (default): detect via viewport width (< 768 px)
@@ -123,6 +125,16 @@
 		empty?: Snippet;
 		/** Custom day header snippet. Receives { date, isToday, dayName }. */
 		dayHeader?: Snippet<[{ date: Date; isToday: boolean; dayName: string }]>;
+		/**
+		 * Replace the entire header chrome (date label + mode pills + nav arrows).
+		 * Receives context: { dateLabel, mode, modes, switchMode, prev, next, goToday, isViewOnToday, focusDate }.
+		 */
+		header?: Snippet<[import('../headless/types.js').HeaderContext]>;
+		/**
+		 * Replace just the navigation controls (arrows + today button).
+		 * Receives context: { prev, next, goToday, isViewOnToday, focusDate, mode }.
+		 */
+		navigation?: Snippet<[import('../headless/types.js').NavigationContext]>;
 
 		// ── Callbacks ──
 		oneventclick?: (event: TimelineEvent) => void;
@@ -171,10 +183,13 @@
 		minDuration,
 		maxDuration,
 		disabledDates,
+		compact = false,
 		mobile: mobileProp = 'auto',
 		event: eventSnippet,
 		empty: emptySnippet,
 		dayHeader: dayHeaderSnippet,
+		header: headerSnippet,
+		navigation: navigationSnippet,
 		oneventclick,
 		oneventcreate,
 		oneventmove,
@@ -187,20 +202,12 @@
 	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
 	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
 
-	// ── Mobile detection ──
-	let isMobileViewport = $state(false);
-
-	onMount(() => {
-		if (typeof window === 'undefined') return;
-		const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-		isMobileViewport = mql.matches;
-		function onChange(e: MediaQueryListEvent) { isMobileViewport = e.matches; }
-		mql.addEventListener('change', onChange);
-		return () => mql.removeEventListener('change', onChange);
-	});
+	// ── Mobile detection (container-based, not viewport) ──
+	let containerWidth = $state(0);
+	const isMobileContainer = $derived(containerWidth > 0 && containerWidth < MOBILE_BREAKPOINT);
 
 	const useMobile = $derived(
-		mobileProp === 'auto' ? isMobileViewport : Boolean(mobileProp)
+		mobileProp === 'auto' ? isMobileContainer : Boolean(mobileProp)
 	);
 
 	// ── Smart auto-theme ──
@@ -208,15 +215,27 @@
 	// probe the host page on mount and reactively watch for host theme changes.
 	let calEl: HTMLElement | undefined = $state();
 	let probedTheme = $state('');
+	// Only delay rendering when auto-probe is actually needed
+	const needsProbe = $derived(theme === auto && autoTheme !== false);
 
 	onMount(() => {
 		if (!calEl) return;
-		// Only probe when using the auto preset (empty string)
-		const isAuto = theme === auto && autoTheme !== false;
-		if (!isAuto) return;
+
+		// Measure container width for mobile detection
+		containerWidth = calEl.clientWidth;
+		const ro = new ResizeObserver((entries) => {
+			containerWidth = Math.round(entries[0].contentRect.width);
+		});
+		ro.observe(calEl);
+
+		// Only probe theme when using the auto preset
+		if (!needsProbe) return () => ro.disconnect();
 
 		const opts: AutoThemeOptions = typeof autoTheme === 'object' ? autoTheme : {};
-		return observeHostTheme(calEl, (vars) => { probedTheme = vars; }, opts);
+		const stopTheme = observeHostTheme(calEl, (vars) => {
+			probedTheme = vars;
+		}, opts);
+		return () => { ro.disconnect(); stopTheme?.(); };
 	});
 
 	/** Effective theme: user-provided takes priority, otherwise probed auto. */
@@ -236,7 +255,7 @@
 
 	// ── Drag commit handler ──
 	// Views call this on pointer-up to process drag results.
-	function commitDrag(): void {
+	async function commitDrag(): Promise<void> {
 		if (readOnly) { drag.cancel(); return; }
 		const mode = drag.mode;
 		const payload = drag.commit();
@@ -288,55 +307,68 @@
 		}
 
 		if ((mode === 'move' || mode === 'resize-start' || mode === 'resize-end') && payload.eventId) {
-			store.move(payload.eventId, start, end);
-			const ev = store.byId(payload.eventId);
-			if (ev) effectiveMove?.(ev, start, end);
+			try {
+				await store.move(payload.eventId, start, end);
+				const ev = store.byId(payload.eventId);
+				if (ev) effectiveMove?.(ev, start, end);
+			} catch (e) {
+				// Silently handle read-only / missing event errors.
+				// The optimistic update in store.move() already reverted.
+				const msg = e instanceof Error ? e.message : '';
+				if (!msg.includes('read-only') && !msg.includes('not found')) {
+					console.warn('[calendar] drag commit failed:', e);
+				}
+			}
 		} else if (mode === 'create') {
 			effectiveCreate?.({ start, end });
 		}
 	}
-
-	// Context is set once at mount; engine objects hold $state internally
-	// so consumers reading from them stay reactive automatically.
-	// Wrap store in a getter since it's $derived and may change when adapter changes.
-	setContext('calendar:store', { get current() { return store; } });
-	setContext('calendar:viewState', viewState);
-	setContext('calendar:selection', selection);
-	setContext('calendar:drag', drag);
-	setContext('calendar:commitDrag', commitDrag);
-	// Callbacks: provide a getter-based object so context consumers
-	// always see the latest callback references.
-	setContext('calendar:callbacks', {
-		get oneventclick() { return oneventclick; },
-		get oneventcreate() { return effectiveCreate; },
-		get oneventmove() { return effectiveMove; },
-		get oneventhover() { return oneventhover; },
-	});
-	setContext('calendar:readOnly', { get current() { return readOnly; } });
-	setContext('calendar:visibleHours', { get current() { return visibleHours; } });
-	setContext('calendar:snapInterval', { get current() { return snapInterval; } });
-	setContext('calendar:eventSnippet', { get current() { return eventSnippet; } });
-	setContext('calendar:emptySnippet', { get current() { return emptySnippet; } });
-	setContext('calendar:showNavigation', { get current() { return showNavigation; } });
-	setContext('calendar:equalDays', { get current() { return equalDays; } });
-	setContext('calendar:showDates', { get current() { return showDates; } });
-	setContext('calendar:hideDays', { get current() { return hideDays; } });
-	setContext('calendar:blockedSlots', { get current() { return blockedSlots; } });
-	setContext('calendar:dayHeaderSnippet', { get current() { return dayHeaderSnippet; } });
-	setContext('calendar:minDuration', { get current() { return minDuration; } });
-	setContext('calendar:maxDuration', { get current() { return maxDuration; } });
-	setContext('calendar:disabledDates', { get current() { return disabledDates; } });
-	setContext('calendar:mobile', { get current() { return useMobile; } });
-	setContext('calendar:autoHeight', { get current() { return heightProp === 'auto'; } });
 
 	// ── Load range signal ──
 	// Views can write a wider range here to override the default viewState.range.
 	// This lets infinite-scroll views (PlannerWeek, PlannerDay) declare their
 	// buffer needs without directly calling store.load().
 	let viewLoadRange = $state<{ start: Date; end: Date } | null>(null);
-	setContext('calendar:loadRange', {
-		get current() { return viewLoadRange; },
-		set(range: { start: Date; end: Date } | null) { viewLoadRange = range; },
+
+	// ── Single context object ──
+	// All view state is exposed through one context key with reactive getters.
+	// Views read this via useCalendarContext() from views/shared/context.svelte.ts.
+	setContext('calendar', {
+		// Engine objects (hold $state internally)
+		get store() { return store; },
+		viewState,
+		selection,
+		drag,
+		commitDrag,
+
+		// Callbacks
+		get oneventclick() { return oneventclick; },
+		get oneventcreate() { return effectiveCreate; },
+		get oneventmove() { return effectiveMove; },
+		get oneventhover() { return oneventhover; },
+
+		// Config (reactive via getters)
+		get readOnly() { return readOnly; },
+		get visibleHours() { return visibleHours; },
+		get snapInterval() { return snapInterval; },
+		get eventSnippet() { return eventSnippet; },
+		get emptySnippet() { return emptySnippet; },
+		get showNavigation() { return showNavigation; },
+		get equalDays() { return equalDays; },
+		get showDates() { return showDates; },
+		get hideDays() { return hideDays; },
+		get blockedSlots() { return blockedSlots; },
+		get dayHeaderSnippet() { return dayHeaderSnippet; },
+		get minDuration() { return minDuration; },
+		get maxDuration() { return maxDuration; },
+		get disabledDates() { return disabledDates; },
+		get mobile() { return useMobile; },
+		get autoHeight() { return heightProp === 'auto'; },
+		get compact() { return compact; },
+
+		// Load range (read/write)
+		get loadRange() { return viewLoadRange; },
+		setLoadRange(range: { start: Date; end: Date } | null) { viewLoadRange = range; },
 	});
 
 	// ── Load events when effective range changes ──
@@ -344,6 +376,9 @@
 		const range = viewLoadRange ?? viewState.range;
 		store.load({ start: range.start, end: range.end });
 	});
+	// Eager initial load — $effect runs after paint, but for sync adapters
+	// (memory, recurring) this resolves in the same microtask.
+	untrack(() => store.load({ start: viewState.range.start, end: viewState.range.end }));
 
 	// Keep active view in sync when external view prop changes after mount.
 	$effect(() => {
@@ -377,6 +412,7 @@
 	$effect(() => {
 		onviewchange?.(viewState.view);
 	});
+
 
 	// ── Resolve active view ──
 	// When mobile is active, Planner views get remapped to Mobile variants.
@@ -448,6 +484,29 @@
 		const { start, end } = viewState.range;
 		return now >= start.getTime() && now < end.getTime();
 	});
+
+	/** Header context for custom header snippet */
+	const headerCtx = $derived({
+		dateLabel,
+		mode: viewState.mode,
+		modes,
+		switchMode,
+		prev: () => viewState.prev(),
+		next: () => viewState.next(),
+		goToday: () => viewState.goToday(),
+		isViewOnToday: viewIncludesToday,
+		focusDate: viewState.focusDate,
+	});
+
+	/** Navigation context for custom navigation snippet */
+	const navCtx = $derived({
+		prev: () => viewState.prev(),
+		next: () => viewState.next(),
+		goToday: () => viewState.goToday(),
+		isViewOnToday: viewIncludesToday,
+		focusDate: viewState.focusDate,
+		mode: viewState.mode,
+	});
 </script>
 
 <div
@@ -460,11 +519,17 @@
 	dir={dir}
 	lang={locale}
 >
+	<!-- ─── Custom header snippet (replaces all chrome) ─── -->
+	{#if headerSnippet}
+		{@render headerSnippet(headerCtx)}
+
 	<!-- ─── Mobile header (flow layout, no absolute) ─── -->
-	{#if useMobile}
+	{:else if useMobile}
 		<div class="cal-m-hd">
 			<div class="cal-m-left">
-				{#if showNavigation}
+				{#if navigationSnippet}
+					{@render navigationSnippet(navCtx)}
+				{:else if showNavigation}
 					<button class="cal-m-nav" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : L.previousWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 					</button>
@@ -489,7 +554,7 @@
 			<span class="cal-m-title">{dateLabel}</span>
 
 			<div class="cal-m-right">
-				{#if showNavigation}
+				{#if !navigationSnippet && showNavigation}
 					<button class="cal-m-nav" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : L.nextWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 					</button>
@@ -498,29 +563,31 @@
 		</div>
 
 		<!-- Today pill — floats below header, doesn't affect header flow -->
-		{#if showNavigation && !viewIncludesToday}
+		{#if !navigationSnippet && showNavigation && !viewIncludesToday}
 			<div class="cal-m-today-bar">
 				<button class="cal-m-today" onclick={() => viewState.goToday()}>
 					{L.today}
 				</button>
 			</div>
 		{/if}
-	{/if}
 
-	<!-- Floating mode pills — desktop only (hidden for Agenda views) -->
-	{#if !useMobile && showModePills && modes.length > 1 && activeView?.label !== 'Agenda'}
-		<div class="cal-pills" role="group" aria-label={L.viewMode}>
-			{#each modes as g}
-				<button
-					class="cal-pill"
-					class:cal-pill--active={viewState.mode === g}
-					aria-pressed={viewState.mode === g}
-					onclick={() => switchMode(g)}
-				>
-					{g === 'day' ? L.day : L.week}
-				</button>
-			{/each}
-		</div>
+	<!-- ─── Desktop chrome ─── -->
+	{:else}
+		<!-- Floating mode pills (hidden for Agenda views) -->
+		{#if showModePills && modes.length > 1 && activeView?.label !== 'Agenda'}
+			<div class="cal-pills" role="group" aria-label={L.viewMode}>
+				{#each modes as g}
+					<button
+						class="cal-pill"
+						class:cal-pill--active={viewState.mode === g}
+						aria-pressed={viewState.mode === g}
+						onclick={() => switchMode(g)}
+					>
+						{g === 'day' ? L.day : L.week}
+					</button>
+				{/each}
+			</div>
+		{/if}
 	{/if}
 
 	<div class="cal-body">
@@ -554,18 +621,22 @@
 <style>
 	.cal {
 		position: relative;
+		width: 100%;
+		min-width: 0;
 		height: var(--cal-h, 600px);
-		background: var(--dt-bg, #0b0e14);
+		background: var(--dt-bg, inherit);
 		border-radius: var(--cal-r, 12px);
 		overflow: clip;
 		display: flex;
 		flex-direction: column;
 		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		box-sizing: border-box;
 	}
 	.cal--auto {
 		height: auto;
 		overflow: visible;
 	}
+
 
 	/* ── Floating pills ── */
 	.cal-pills {
@@ -576,7 +647,7 @@
 		z-index: 20;
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
 		border-radius: 8px;
@@ -589,7 +660,7 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
 		padding: 6px 12px;
 		border-radius: 6px;
 		letter-spacing: 0.04em;
@@ -602,12 +673,12 @@
 	}
 
 	.cal-pill--active {
-		background: var(--dt-accent, #ef4444);
+		background: var(--dt-accent, #2563eb);
 		color: var(--dt-btn-text, #fff);
 	}
 
 	.cal-pill:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		outline-offset: 2px;
 	}
 
@@ -626,7 +697,7 @@
 		align-items: center;
 		justify-content: center;
 		height: 100%;
-		font: 400 13px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(100, 116, 139, 0.55));
 	}
 
@@ -639,7 +710,7 @@
 		background: linear-gradient(
 			90deg,
 			transparent 0%,
-			var(--dt-accent, #ef4444) 50%,
+			var(--dt-accent, #2563eb) 50%,
 			transparent 100%
 		);
 		animation: cal-slide 1.2s ease-in-out infinite;
@@ -696,14 +767,14 @@
 		background: var(--dt-accent-dim, rgba(239, 68, 68, 0.12));
 	}
 	.cal-m-nav:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		outline-offset: 2px;
 	}
 
 	.cal-m-pills {
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
 		border-radius: 8px;
 		padding: 2px;
 		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
@@ -726,7 +797,7 @@
 		color: var(--dt-text, rgba(226, 232, 240, 0.85));
 	}
 	.cal-m-pill--active {
-		background: var(--dt-accent, #ef4444);
+		background: var(--dt-accent, #2563eb);
 		color: var(--dt-btn-text, #fff);
 	}
 
@@ -750,8 +821,8 @@
 
 	.cal-m-today {
 		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-accent, #ef4444);
-		background: color-mix(in srgb, var(--dt-accent, #ef4444) 10%, transparent);
+		color: var(--dt-accent, #2563eb);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);
 		border: none;
 		padding: 5px 10px;
 		border-radius: 6px;
@@ -764,13 +835,13 @@
 		flex-shrink: 0;
 	}
 	.cal-m-today:hover {
-		background: color-mix(in srgb, var(--dt-accent, #ef4444) 18%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);
 	}
 	.cal-m-today:active {
-		background: color-mix(in srgb, var(--dt-accent, #ef4444) 25%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);
 	}
 	.cal-m-today:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		outline-offset: 2px;
 	}
 </style>

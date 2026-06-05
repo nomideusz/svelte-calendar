@@ -6,11 +6,10 @@
   Events positioned absolutely within hour lanes.
 -->
 <script lang="ts">
-	import { getContext, onMount, tick, untrack } from 'svelte';
+	import { onMount } from 'svelte';
+	import { useCalendarContext } from '../shared/context.svelte.js';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
-	import type { DragState } from '../../engine/drag.svelte.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
 	import { DAY_MS, HOUR_MS, sod, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
 	import { fmtH, fmtTime, getLabels } from '../../core/locale.js';
@@ -45,20 +44,14 @@
 	}: Props = $props();
 
 	// ── Context ────────────────────────────────────────
-	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
-	const loadRangeCtx = getContext<{ current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void }>('calendar:loadRange') as { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
-	const blockedSlotsCtx = getContext<{ current: BlockedSlot[] | undefined }>('calendar:blockedSlots') as { current: BlockedSlot[] | undefined } | undefined;
-	const minDurationCtx = getContext<{ current: number | undefined }>('calendar:minDuration') as { current: number | undefined } | undefined;
-	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
-	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
-	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
-
-	const blockedSlots = $derived(blockedSlotsCtx?.current);
-	const minDuration = $derived(minDurationCtx?.current);
-	const autoHeight = $derived(autoHeightCtx?.current ?? false);
-	const oneventhover = $derived(callbacksCtx?.oneventhover);
-	const disabledDates = $derived(disabledDatesCtx?.current);
-	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
+	const ctx = useCalendarContext();
+	const viewState = $derived(ctx.viewState);
+	const autoHeight = $derived(ctx.autoHeight);
+	const oneventhover = $derived(ctx.oneventhover);
+	const disabledSet = $derived(ctx.disabledSet);
+	const loadRangeCtx = $derived(ctx.loadRange);
+	const minDuration = $derived(ctx.minDuration);
+	const blockedSlots = $derived(ctx.blockedSlots);
 
 	const clock = createClock();
 
@@ -186,8 +179,8 @@
 			ev: info.ev,
 			top: info.top,
 			height: info.height,
-			left: `calc(${GUTTER_W}px + ${(info.col / info.totalCols) * 100}% * (1 - ${GUTTER_W} / var(--mb-grid-w, 300)))`,
-			width: `calc((100% - ${GUTTER_W}px) / ${info.totalCols} - 2px)`,
+			left: `calc(${GUTTER_W}px + ${(info.col / info.totalCols) * 100}% - ${(GUTTER_W * info.col) / info.totalCols}px)`,
+			width: `calc(${100 / info.totalCols}% - ${GUTTER_W / info.totalCols + 2}px)`,
 			isCurrent: info.isCurrent,
 			isNext: info.isNext,
 			col: info.col,
@@ -321,7 +314,6 @@
 		onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGridClick(e as unknown as MouseEvent); }}
 		role="grid"
 		tabindex="-1"
-		style:--mb-grid-w="300"
 	>
 		<div class="mb-grid-inner" style:height="{gridHeight}px">
 			<!-- Hour lanes -->
@@ -362,6 +354,8 @@
 					class:mb-event--next={p.isNext}
 					class:mb-event--cancelled={p.ev.status === 'cancelled'}
 					class:mb-event--tentative={p.ev.status === 'tentative'}
+					class:mb-event--full={p.ev.status === 'full'}
+					class:mb-event--limited={p.ev.status === 'limited'}
 					style:top="{p.top}px"
 					style:height="{p.height}px"
 					style:left={p.left}
@@ -369,7 +363,7 @@
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
 					onclick={(e) => { e.stopPropagation(); oneventclick?.(p.ev); }}
 					onpointerenter={() => oneventhover?.(p.ev)}
-					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
+					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
 				>
 					<div class="mb-ev-stripe"></div>
 					<div class="mb-ev-body">
@@ -623,6 +617,13 @@
 		text-decoration: line-through;
 	}
 	.mb-event--tentative {
+		opacity: 0.65;
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
+	.mb-event--full {
+		opacity: 0.55;
+	}
+	.mb-event--limited {
 		opacity: 0.65;
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}

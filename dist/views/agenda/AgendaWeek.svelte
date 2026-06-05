@@ -9,14 +9,15 @@
 	 *
 	 * Answers: "What's coming up and when do I need to be ready?"
 	 */
-	import { getContext, type Snippet } from 'svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
-	import { weekdayLong, monthLong, fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
+	import { weekdayLong, monthLong, getLabels } from '../../core/locale.js';
+	import { useCalendarContext } from '../shared/context.svelte.js';
+	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
 
 	const L = $derived(getLabels());
+	const ctx = useCalendarContext();
 
 	interface Props {
 		mondayStart?: boolean;
@@ -42,19 +43,17 @@
 	}: Props = $props();
 
 	const clock = createClock();
-	const viewState = getContext<ViewState>('calendar:viewState') as ViewState | undefined;
-	const showNavCtx = getContext<{ current: boolean }>('calendar:showNavigation') as { current: boolean } | undefined;
-	const equalDaysCtx = getContext<{ current: boolean }>('calendar:equalDays') as { current: boolean } | undefined;
-	const showDatesCtx = getContext<{ current: boolean }>('calendar:showDates') as { current: boolean } | undefined;
-	const hideDaysCtx = getContext<{ current: number[] | undefined }>('calendar:hideDays') as { current: number[] | undefined } | undefined;
-	const mobileCtx = getContext<{ current: boolean }>('calendar:mobile') as { current: boolean } | undefined;
-	const autoHeightCtx = getContext<{ current: boolean }>('calendar:autoHeight') as { current: boolean } | undefined;
-	const showNav = $derived(showNavCtx?.current ?? true);
-	const equalDays = $derived(equalDaysCtx?.current ?? false);
-	const showDates = $derived(showDatesCtx?.current ?? true);
-	const hideDays = $derived(hideDaysCtx?.current);
-	const isMobile = $derived(mobileCtx?.current ?? false);
-	const autoHeight = $derived(autoHeightCtx?.current ?? false);
+	const viewState = $derived(ctx.viewState);
+	const showNav = $derived(ctx.showNav);
+	const equalDays = $derived(ctx.equalDays);
+	const showDates = $derived(ctx.showDates);
+	const hideDays = $derived(ctx.hideDays);
+	const isMobile = $derived(ctx.isMobile);
+	const autoHeight = $derived(ctx.autoHeight);
+	const compact = $derived(ctx.compact);
+	const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
+	const oneventhover = $derived(ctx.oneventhover);
+	const disabledSet = $derived(ctx.disabledSet);
 
 	// ── Swipe navigation (mobile) ──────────────────────
 	let swipeStartX = 0;
@@ -77,68 +76,12 @@
 		}
 	}
 
-	// ── New feature contexts ──
-	const dayHeaderSnippetCtx = getContext<{ current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined }>('calendar:dayHeaderSnippet') as { current: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined } | undefined;
-	const callbacksCtx = getContext<{ oneventhover?: (event: TimelineEvent) => void }>('calendar:callbacks') as { oneventhover?: (event: TimelineEvent) => void } | undefined;
-	const disabledDatesCtx = getContext<{ current: Date[] | undefined }>('calendar:disabledDates') as { current: Date[] | undefined } | undefined;
-
-	const dayHeaderSnippet = $derived(dayHeaderSnippetCtx?.current);
-	const oneventhover = $derived(callbacksCtx?.oneventhover);
-	const disabledDates = $derived(disabledDatesCtx?.current);
-	const disabledSet = $derived(new Set(disabledDates?.map(d => sod(d.getTime())) ?? []));
-
-	// ── Format helpers ──────────────────────────────────
-	function fmtTime(d: Date): string {
-		return _fmtTime(d, locale);
-	}
-
-	function duration(ev: TimelineEvent): string {
-		return fmtDuration(ev.start, ev.end);
-	}
-
-	function timeUntilMs(ms: number): string {
-		const diff = ms - clock.tick;
-		if (diff <= 0) return L.now;
-		const tMins = Math.floor(diff / 60000);
-		if (tMins < 60) return `in ${tMins}m`;
-		const hrs = Math.floor(tMins / 60);
-		const rm = tMins % 60;
-		if (hrs < 24) return rm > 0 ? `in ${hrs}h ${rm}m` : `in ${hrs}h`;
-		const days = Math.floor(hrs / 24);
-		return `in ${days}d`;
-	}
-
-	function progress(ev: TimelineEvent): number {
-		const s = ev.start.getTime();
-		const e = ev.end.getTime();
-		return Math.min(1, Math.max(0, (clock.tick - s) / (e - s)));
-	}
-
-	// ── Overlap grouping ────────────────────────────────
-	interface TimeSlot {
-		startMs: number;
-		endMs: number;
-		events: TimelineEvent[];
-	}
-
-	function groupIntoSlots(evts: TimelineEvent[]): TimeSlot[] {
-		const sorted = [...evts].sort((a, b) => a.start.getTime() - b.start.getTime());
-		const slots: TimeSlot[] = [];
-		for (const ev of sorted) {
-			const last = slots[slots.length - 1];
-			if (last && ev.start.getTime() < last.endMs) {
-				last.events.push(ev);
-				last.endMs = Math.max(last.endMs, ev.end.getTime());
-			} else {
-				slots.push({
-					startMs: ev.start.getTime(),
-					endMs: ev.end.getTime(),
-					events: [ev],
-				});
-			}
-		}
-		return slots;
-	}
+	// ── Format helpers (delegated to shared/format.ts) ──
+	// fmtTime, duration, groupIntoSlots imported at top
+	// Thin wrappers that bind locale / clock.tick:
+	const fmt = (d: Date) => fmtTime(d, locale);
+	const eta = (ms: number) => timeUntilMs(ms, clock.tick);
+	const prog = (ev: TimelineEvent) => progress(ev, clock.tick);
 
 	// ── Event handlers ──────────────────────────────────
 	function handleClick(ev: TimelineEvent): void {
@@ -259,10 +202,14 @@
 	<div
 		class="ag-card"
 		class:ag-card--selected={selectedEventId === ev.id}
+		class:ag-card--cancelled={ev.status === 'cancelled'}
+		class:ag-card--tentative={ev.status === 'tentative'}
+		class:ag-card--full={ev.status === 'full'}
+		class:ag-card--limited={ev.status === 'limited'}
 		style:--ev-color={ev.color || 'var(--dt-accent)'}
 		role="button"
 		tabindex="0"
-		aria-label="{ev.title}, {fmtTime(ev.start)} to {fmtTime(ev.end)}, {duration(ev)}"
+		aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
 		onclick={() => handleClick(ev)}
 		onpointerenter={() => oneventhover?.(ev)}
 		onkeydown={(e) => handleKeydown(e, ev)}
@@ -272,11 +219,14 @@
 			{#if ev.subtitle}
 				<span class="ag-card-sub">{ev.subtitle}</span>
 			{/if}
+			{#if ev.location}
+				<span class="ag-card-loc">{ev.location}</span>
+			{/if}
 			<span class="ag-card-meta">
 				{#if isNow}
-					{L.until} {fmtTime(ev.end)}
+					{L.until} {fmt(ev.end)}
 				{:else}
-					{fmtTime(ev.start)} – {fmtTime(ev.end)}
+					{fmt(ev.start)} – {fmt(ev.end)}
 				{/if}
 				<span class="ag-card-dur">{duration(ev)}</span>
 				{#if eta}
@@ -292,7 +242,7 @@
 			{/if}
 			{#if isNow}
 				<div class="ag-card-progress">
-					<div class="ag-card-progress-fill" style:width="{progress(ev) * 100}%"></div>
+					<div class="ag-card-progress-fill" style:width="{prog(ev) * 100}%"></div>
 				</div>
 			{/if}
 		</div>
@@ -376,6 +326,40 @@
 
 				{#if day.events.length === 0}
 					<div class="ag-wday-empty">{L.noEvents}</div>
+				{:else if compact}
+					<!-- Compact: minimal dot + time + title rows for all days -->
+					<div class="ag-wday-compact">
+						{#each day.timedEvents as ev (ev.id)}
+							<div
+								class="ag-compact"
+								class:ag-compact--selected={selectedEventId === ev.id}
+								class:ag-compact--cancelled={ev.status === 'cancelled'}
+								class:ag-compact--tentative={ev.status === 'tentative'}
+								class:ag-compact--full={ev.status === 'full'}
+								class:ag-compact--limited={ev.status === 'limited'}
+								style:--ev-color={ev.color || 'var(--dt-accent)'}
+								role="button"
+								tabindex="0"
+								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+								onclick={() => handleClick(ev)}
+								onpointerenter={() => oneventhover?.(ev)}
+								onkeydown={(e) => handleKeydown(e, ev)}
+							>
+								<span class="ag-compact-dot"></span>
+								<span class="ag-compact-time">{fmt(ev.start)}</span>
+								<span class="ag-compact-title">{ev.title}</span>
+								{#if ev.subtitle}
+									<span class="ag-compact-sub">{ev.subtitle}</span>
+								{/if}
+								{#if ev.tags?.length}
+									{#each ev.tags as tag}
+										<span class="ag-compact-tag">{tag}</span>
+									{/each}
+								{/if}
+								<span class="ag-compact-dur">{duration(ev)}</span>
+							</div>
+						{/each}
+					</div>
 				{:else if equalDays}
 					<!-- Equal days: card layout for all days, no time-relative badges -->
 					<div class="ag-wday-expanded">
@@ -408,7 +392,7 @@
 
 								<div class="ag-wslot-cards" class:ag-wslot-cards--multi={slot.events.length > 1}>
 									{#each slot.events as ev (ev.id)}
-										{@render eventCard(ev, false, day.tier === 'today' ? timeUntilMs(ev.start.getTime()) : undefined)}
+										{@render eventCard(ev, false, day.tier === 'today' ? eta(ev.start.getTime()) : undefined)}
 									{/each}
 								</div>
 							</div>
@@ -424,15 +408,22 @@
 							<div
 								class="ag-compact"
 								class:ag-compact--selected={selectedEventId === ev.id}
+								class:ag-compact--cancelled={ev.status === 'cancelled'}
+								class:ag-compact--tentative={ev.status === 'tentative'}
+								class:ag-compact--full={ev.status === 'full'}
+								class:ag-compact--limited={ev.status === 'limited'}
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
 								role="button"
 								tabindex="0"
-								aria-label="{ev.title}, {fmtTime(ev.start)}, {duration(ev)}"
+								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<span class="ag-compact-dot"></span>
-								<span class="ag-compact-time">{fmtTime(ev.start)}</span>
+								<span class="ag-compact-time">{fmt(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
+								{#if ev.location}
+									<span class="ag-compact-loc">{ev.location}</span>
+								{/if}
 								{#if ev.subtitle}
 									<span class="ag-compact-sub">{ev.subtitle}</span>
 								{/if}
@@ -493,7 +484,7 @@
 		z-index: 20;
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 85%, transparent);
+		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
 		border-radius: 8px;
@@ -505,7 +496,7 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
 		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
 		padding: 6px 12px;
 		border-radius: 6px;
 		letter-spacing: 0.04em;
@@ -532,7 +523,7 @@
 		pointer-events: none;
 	}
 	.ag-nav-pill:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #ef4444) 55%, transparent);
+		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		outline-offset: 2px;
 	}
 
@@ -544,6 +535,9 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 		color: var(--dt-text, rgba(255, 255, 255, 0.92));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
@@ -555,7 +549,11 @@
 	/* ═══ Body ═══ */
 	.ag-body {
 		flex: 1;
+		min-width: 0;
 		overflow-y: auto;
+		overflow-x: hidden;
+		box-sizing: border-box;
+		padding-top: 44px;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
@@ -583,22 +581,22 @@
 		gap: 4px;
 		padding: 2px 8px;
 		border-radius: 5px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);
 		cursor: pointer;
 		transition: background 0.15s, border-color 0.15s;
 	}
 	.ag-allday-chip:hover {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
 	.ag-allday-chip:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-allday-chip--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #10141c));
+		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));
 	}
 	.ag-allday-dot {
 		width: 5px;
@@ -618,23 +616,40 @@
 		display: flex;
 		align-items: stretch;
 		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(255, 255, 255, 0.06)));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
 	}
 	.ag-card:hover {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
 	.ag-card:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-card--selected {
 		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #191919));
+		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
+	}
+	.ag-card--cancelled {
+		opacity: 0.5;
+	}
+	.ag-card--cancelled .ag-card-title {
+		text-decoration: line-through;
+	}
+	.ag-card--tentative {
+		opacity: 0.65;
+		border-style: dashed;
+	}
+	.ag-card--full {
+		opacity: 0.55;
+	}
+	.ag-card--limited {
+		opacity: 0.65;
+		border-style: dashed;
 	}
 	.ag-card-body {
 		padding: 7px 10px;
@@ -647,11 +662,10 @@
 	.ag-card-title {
 		font-size: 13px;
 		font-weight: 600;
-		line-height: 1.2;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		line-height: 1.3;
+		word-break: break-word;
 		flex: 1;
+		min-width: 0;
 	}
 	.ag-card-meta {
 		display: flex;
@@ -676,6 +690,11 @@
 	.ag-card-sub {
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		line-height: 1;
+	}
+	.ag-card-loc {
+		font-size: 10px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		line-height: 1;
 	}
 	.ag-card-tags {
@@ -710,7 +729,7 @@
 		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
 	}
 	.ag-wday--today {
-		background: color-mix(in srgb, var(--dt-accent, #ff6b4a) 2%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
 	}
 	.ag-wday--tomorrow .ag-card {
 		opacity: 0.82;
@@ -722,8 +741,6 @@
 		padding: 8px 20px;
 	}
 	.ag-wday--disabled {
-		opacity: 0.35;
-		pointer-events: none;
 		position: relative;
 	}
 	.ag-wday--disabled::after {
@@ -747,7 +764,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 10px 20px;
+		padding: 8px 20px;
 	}
 	.ag-wday-head-left {
 		display: flex;
@@ -759,8 +776,8 @@
 		font-weight: 600;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-accent, #ff6b4a);
-		background: color-mix(in srgb, var(--dt-accent, #ff6b4a) 12%, transparent);
+		color: var(--dt-accent, #2563eb);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
 		padding: 2px 7px;
 		border-radius: 3px;
 	}
@@ -783,7 +800,7 @@
 	}
 
 	.ag-wday-empty {
-		padding: 2px 20px 10px;
+		padding: 2px 20px 6px;
 		font-size: 11px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
 		font-style: italic;
@@ -807,7 +824,7 @@
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-accent, #ff6b4a);
+		color: var(--dt-accent, #2563eb);
 	}
 	.ag-wslot-cards {
 		display: flex;
@@ -828,14 +845,16 @@
 
 	/* Compact day events */
 	.ag-wday-compact {
-		padding: 0 20px 10px;
+		padding: 0 20px 6px;
 	}
 	.ag-compact {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		padding: 4px 0;
+		gap: 6px;
+		padding: 3px 0;
 		cursor: pointer;
+		min-width: 0;
+		overflow: hidden;
 	}
 	.ag-compact--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -847,7 +866,7 @@
 		color: var(--dt-text);
 	}
 	.ag-compact:focus-visible {
-		outline: 2px solid var(--dt-accent, #ff6b4a);
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: 2px;
 	}
 	.ag-compact-dot {
@@ -861,14 +880,16 @@
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
-		min-width: 64px;
+		min-width: 40px;
 		flex-shrink: 0;
+		white-space: nowrap;
 	}
 	.ag-compact-title {
 		font-size: 12px;
 		font-weight: 500;
 		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
 		flex: 1;
+		min-width: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -879,11 +900,40 @@
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
 		flex-shrink: 0;
+		white-space: nowrap;
 	}
 	.ag-compact-sub {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
 		flex-shrink: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 120px;
+	}
+	.ag-compact-loc {
+		font-size: 9px;
+		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		flex-shrink: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100px;
+	}
+	.ag-compact--cancelled {
+		opacity: 0.5;
+	}
+	.ag-compact--cancelled .ag-compact-title {
+		text-decoration: line-through;
+	}
+	.ag-compact--tentative {
+		opacity: 0.65;
+	}
+	.ag-compact--full {
+		opacity: 0.55;
+	}
+	.ag-compact--limited {
+		opacity: 0.65;
 	}
 	.ag-compact-tag {
 		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
@@ -893,6 +943,9 @@
 		border-radius: 3px;
 		white-space: nowrap;
 		flex-shrink: 0;
+		max-width: 80px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.ag-compact-more {
 		font-size: 11px;

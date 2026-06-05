@@ -108,9 +108,10 @@ describe('createMappedAdapter', () => {
 
 			expect(events[0].start).toBeInstanceOf(Date);
 			expect(events[0].end).toBeInstanceOf(Date);
-			expect(events[0].start.getHours()).toBe(7);
-			expect(events[0].end.getHours()).toBe(8);
-			expect(events[0].end.getMinutes()).toBe(15);
+			// Use UTC hours since CI may run in a different timezone
+			expect(events[0].start.getUTCHours()).toBe(6); // 07:00+01:00 = 06:00 UTC
+			expect(events[0].end.getUTCHours()).toBe(7); // 08:15+01:00 = 07:15 UTC
+			expect(events[0].end.getUTCMinutes()).toBe(15);
 		});
 
 		it('maps subtitle from teacher', async () => {
@@ -338,7 +339,7 @@ describe('createMappedAdapter', () => {
 			const adapter = createMappedAdapter([], {});
 
 			await expect(
-				adapter.createEvent({ title: 'New', start: new Date(), end: new Date() }),
+				adapter.createEvent!({ title: 'New', start: new Date(), end: new Date() }),
 			).rejects.toThrow('read-only');
 		});
 
@@ -348,14 +349,14 @@ describe('createMappedAdapter', () => {
 			});
 
 			await expect(
-				adapter.updateEvent('abc123', { title: 'Updated' }),
+				adapter.updateEvent!('abc123', { title: 'Updated' }),
 			).rejects.toThrow('read-only');
 		});
 
 		it('throws on deleteEvent by default', async () => {
 			const adapter = createMappedAdapter([], {});
 
-			await expect(adapter.deleteEvent('xyz')).rejects.toThrow('read-only');
+			await expect(adapter.deleteEvent!('xyz')).rejects.toThrow('read-only');
 		});
 	});
 
@@ -409,6 +410,50 @@ describe('createMappedAdapter', () => {
 			expect(events[0].id).toBe('apt-001');
 
 			expect(events[1].status).toBe('tentative');
+		});
+	});
+
+	describe('status coercion for full and limited', () => {
+		it('coerces string "full" to EventStatus full', async () => {
+			const adapter = createMappedAdapter(
+				[{
+					title: 'Full Class',
+					starts_at_iso: '2026-03-03T10:00:00Z',
+					ends_at_iso: '2026-03-03T11:00:00Z',
+					status: 'full',
+				}],
+				{ fields: { status: 'status' } },
+			);
+			const events = await adapter.fetchEvents(MARCH_3);
+			expect(events[0].status).toBe('full');
+		});
+
+		it('coerces string "limited" to EventStatus limited', async () => {
+			const adapter = createMappedAdapter(
+				[{
+					title: 'Limited Class',
+					starts_at_iso: '2026-03-03T10:00:00Z',
+					ends_at_iso: '2026-03-03T11:00:00Z',
+					status: 'limited',
+				}],
+				{ fields: { status: 'status' } },
+			);
+			const events = await adapter.fetchEvents(MARCH_3);
+			expect(events[0].status).toBe('limited');
+		});
+
+		it('coerces string "Full" (uppercase) to EventStatus full', async () => {
+			const adapter = createMappedAdapter(
+				[{
+					title: 'Full Class',
+					starts_at_iso: '2026-03-03T10:00:00Z',
+					ends_at_iso: '2026-03-03T11:00:00Z',
+					status: 'Full',
+				}],
+				{ fields: { status: 'status' } },
+			);
+			const events = await adapter.fetchEvents(MARCH_3);
+			expect(events[0].status).toBe('full');
 		});
 	});
 

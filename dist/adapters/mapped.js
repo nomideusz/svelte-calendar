@@ -37,6 +37,10 @@ function coerceStatus(value, fieldName) {
             return 'cancelled';
         if (lower === 'tentative')
             return 'tentative';
+        if (lower === 'full')
+            return 'full';
+        if (lower === 'limited')
+            return 'limited';
         return 'confirmed';
     }
     if (typeof value === 'boolean') {
@@ -130,13 +134,14 @@ function collectData(raw, mappedKeys, include) {
  * ```
  */
 export function createMappedAdapter(sourceData, options = {}) {
-    const { fields, mapEvent: customMapper, includeData = '*', palette = VIVID_PALETTE, readOnly = true, } = options;
+    const { fields, mapEvent: customMapper, includeData = '*', autoColor = true, palette = VIVID_PALETTE, readOnly = true, } = options;
     // Build the internal event list
     const events = [];
     const colorAssignments = new Map();
     let colorIndex = 0;
     function resolveColor(ev) {
-        if (ev.color)
+        // When autoColor is on, always assign from palette (ignore source color)
+        if (!autoColor && ev.color)
             return ev.color;
         const key = ev.category ?? ev.title;
         if (!colorAssignments.has(key)) {
