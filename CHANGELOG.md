@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.9 — 2026-06-29
+
+### Security
+- Bump vulnerable devDependencies to clear npm High CVE alerts: `vite` ^7.3.1 → ^7.3.5, `vitest` ^4.0.18 → ^4.1.0, `@sveltejs/kit` ^2.50.2 → ^2.60.1, `jsdom` ^28.1.0 → ^29.0.0 (resolves `undici` to 7.28.0), `@chenglou/pretext` ^0.0.4 → ^0.0.5.
+
+### Changed
+- Ship `widget/widget.js` unminified. The bundled IIFE (served via `cdn.jsdelivr.net/npm/@nomideusz/svelte-calendar/widget/widget.js`) was previously esbuild-minified, which triggered npm's Minified code / Obfuscated code / AI-detected anomaly alerts. The file is now readable JS (~380 KB, was 145 KB). CDN URL unchanged — no breaking change for embeds.
+
 ## 0.6.8 — 2026-06-17
 
 ### Changed
