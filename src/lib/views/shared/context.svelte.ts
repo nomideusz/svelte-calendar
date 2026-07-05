@@ -34,7 +34,6 @@ interface CalendarContextRaw {
 	readonly snapInterval: number;
 	readonly eventSnippet?: Snippet<[TimelineEvent]>;
 	readonly emptySnippet?: Snippet;
-	readonly showNavigation: boolean;
 	readonly equalDays: boolean;
 	readonly showDates: boolean;
 	readonly hideDays?: number[];
@@ -57,7 +56,6 @@ export interface CalendarContext {
 	readonly drag: DragState | undefined;
 	readonly commitDrag: (() => void) | undefined;
 	readonly snapInterval: number;
-	readonly showNav: boolean;
 	readonly equalDays: boolean;
 	readonly showDates: boolean;
 	readonly hideDays: number[] | undefined;
@@ -90,7 +88,6 @@ export function useCalendarContext(): CalendarContext {
 		get drag() { return raw?.drag; },
 		get commitDrag() { return raw?.commitDrag; },
 		get snapInterval() { return raw?.snapInterval ?? 15; },
-		get showNav() { return raw?.showNavigation ?? true; },
 		get equalDays() { return raw?.equalDays ?? false; },
 		get showDates() { return raw?.showDates ?? true; },
 		get hideDays() { return raw?.hideDays; },

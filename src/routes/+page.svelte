@@ -70,7 +70,7 @@
 	const calendarHeight = $derived(isMobile ? 500 : 700);
 	const calendarRadius = $derived(isMobile ? 0 : 12);
 
-	let settingsValues = $state<Record<string, SettingValue>>({
+	const DEFAULT_SETTINGS: Record<string, SettingValue> = {
 		readOnly: false,
 		mondayStart: true,
 		showModePills: true,
@@ -88,7 +88,56 @@
 		blockedSlotsEnabled: true,
 		disabledDatesEnabled: true,
 		compact: false,
-	});
+	};
+
+	let settingsValues = $state<Record<string, SettingValue>>({ ...DEFAULT_SETTINGS });
+
+	// ── Recipes: one-click prop bundles showing common setups ──
+	const recipes: { name: string; hint: string; values: Record<string, SettingValue> }[] = [
+		{
+			name: "Booking page",
+			hint: "Editable week grid with business hours, blocked lunch slots, and disabled dates",
+			values: {
+				activeView: "week-planner", readOnly: false,
+				visibleHoursEnabled: true, startHour: 8, endHour: 20,
+				blockedSlotsEnabled: true, disabledDatesEnabled: true,
+			},
+		},
+		{
+			name: "Class timetable",
+			hint: "Fixed weekly template: day names only, no past-day dimming, read-only",
+			values: {
+				activeView: "week-planner", readOnly: true,
+				showDates: false, equalDays: true,
+				visibleHoursEnabled: true, startHour: 7, endHour: 21,
+				blockedSlotsEnabled: false, disabledDatesEnabled: false,
+			},
+		},
+		{
+			name: "Embedded schedule",
+			hint: "Chromeless compact agenda for dropping into an existing page",
+			values: {
+				activeView: "week-agenda", readOnly: true, compact: true,
+				showModePills: false, showNavigation: false, equalDays: true,
+				blockedSlotsEnabled: false, disabledDatesEnabled: false,
+			},
+		},
+	];
+
+	// Active recipe derived by comparison, so manual tweaks un-highlight it.
+	const activeRecipe = $derived(
+		recipes.find((r) =>
+			Object.entries({ ...DEFAULT_SETTINGS, ...r.values }).every(
+				([k, v]) => settingsValues[k] === v,
+			),
+		)?.name ?? "",
+	);
+	function applyRecipe(recipe: (typeof recipes)[number]) {
+		settingsValues = { ...DEFAULT_SETTINGS, ...recipe.values };
+	}
+	function resetSettings() {
+		settingsValues = { ...DEFAULT_SETTINGS };
+	}
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
@@ -125,6 +174,7 @@
 	const settingsFields: SettingsField[] = [
 		{
 			key: "activeView",
+			hint: "Which built-in view renders: Planner is a time grid, Agenda is a list",
 			label: "View",
 			group: "",
 			type: "select",
@@ -137,6 +187,7 @@
 		},
 		{
 			key: "calendarPreset",
+			hint: "auto probes your page and matches it; neutral/midnight are fixed presets",
 			label: "Theme",
 			group: "",
 			type: "select",
@@ -148,6 +199,7 @@
 		},
 		{
 			key: "locale",
+			hint: "BCP 47 tag for date/time formatting (prop: locale)",
 			label: "Locale",
 			group: "",
 			type: "select",
@@ -161,6 +213,7 @@
 		},
 		{
 			key: "mobileMode",
+			hint: "Below 768px the calendar swaps to touch-first views (prop: mobile)",
 			label: "Mobile",
 			group: "",
 			type: "select",
@@ -173,47 +226,59 @@
 
 		{
 			key: "mondayStart",
+			hint: "Start weeks on Monday instead of Sunday",
 			label: "Monday Start",
 			group: "",
 			type: "toggle",
 		},
-		{ key: "readOnly", label: "Read Only", group: "", type: "toggle" },
+		{ key: "readOnly",
+			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle" },
 		{
 			key: "showModePills",
+			hint: "Day/Week switch in the header (prop: showModePills)",
 			label: "Mode Pills",
 			group: "",
 			type: "toggle",
 		},
 		{
 			key: "showNavigation",
+			hint: "Prev/next arrows and Today button in the header",
 			label: "Navigation",
 			group: "",
 			type: "toggle",
 		},
-		{ key: "equalDays", label: "Equal Days", group: "", type: "toggle" },
-		{ key: "showDates", label: "Show Dates", group: "", type: "toggle" },
-		{ key: "rtl", label: "RTL", group: "", type: "toggle" },
-		{ key: "compact", label: "Compact Agenda", group: "", type: "toggle" },
+		{ key: "equalDays",
+			hint: "No past-day dimming — for template schedules", label: "Equal Days", group: "", type: "toggle" },
+		{ key: "showDates",
+			hint: "Off: headers show day names only (Mon, Tue, …)", label: "Show Dates", group: "", type: "toggle" },
+		{ key: "rtl",
+			hint: "Right-to-left text direction (prop: dir='rtl')", label: "RTL", group: "", type: "toggle" },
+		{ key: "compact",
+			hint: "Minimal dot + time + title rows in Agenda views (prop: compact)", label: "Compact Agenda", group: "", type: "toggle" },
 		{
 			key: "blockedSlotsEnabled",
+			hint: "Hatched unbookable ranges, e.g. lunch breaks (prop: blockedSlots)",
 			label: "Blocked Slots",
 			group: "Availability",
 			type: "toggle",
 		},
 		{
 			key: "disabledDatesEnabled",
+			hint: "Dates that reject event creation and moves (prop: disabledDates)",
 			label: "Disabled Dates",
 			group: "Availability",
 			type: "toggle",
 		},
 		{
 			key: "visibleHoursEnabled",
+			hint: "Crop the grid to a start/end hour (prop: visibleHours)",
 			label: "Visible Hours",
 			group: "Planner",
 			type: "toggle",
 		},
 		{
 			key: "startHour",
+			hint: "First visible hour of the grid",
 			label: "Start Hour",
 			group: "Planner",
 			type: "range",
@@ -224,6 +289,7 @@
 		},
 		{
 			key: "endHour",
+			hint: "Hour the grid ends at (exclusive)",
 			label: "End Hour",
 			group: "Planner",
 			type: "range",
@@ -234,6 +300,7 @@
 		},
 		{
 			key: "days",
+			hint: "Days per week view — 5 = workweek, 3 = rolling window (prop: days)",
 			label: "Week Days",
 			group: "Planner",
 			type: "range",
@@ -303,6 +370,48 @@
 				]
 			: undefined,
 	);
+
+	// ── Live code snippet: the <Calendar> markup for the current settings ──
+	const codeSnippet = $derived.by(() => {
+		const extraImports = selectedPreset !== "auto" ? `, ${selectedPreset}` : "";
+		const script: string[] = [
+			`  import { Calendar, createMemoryAdapter${extraImports} } from '@nomideusz/svelte-calendar';`,
+			"",
+			"  const adapter = createMemoryAdapter(events);",
+		];
+		if (blockedSlotsEnabled) {
+			script.push(
+				"  const blockedSlots = [",
+				"    { start: 12, end: 13, label: 'Lunch' },        // every day 12–13",
+				"    { day: 6, start: 0, end: 9, label: 'Sat morning' },",
+				"    { day: 7, start: 0, end: 9, label: 'Sun morning' },",
+				"  ];",
+			);
+		}
+		if (disabledDatesEnabled) {
+			script.push("  const disabledDates = [/* Date objects to grey out */];");
+		}
+
+		const props: string[] = ["{adapter}", `view="${activeView}"`];
+		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
+		if (locale !== "en-US") props.push(`locale="${locale}"`);
+		if (dir === "rtl") props.push(`dir="rtl"`);
+		if (readOnly) props.push("readOnly");
+		if (!mondayStart) props.push("mondayStart={false}");
+		if (!showModePills) props.push("showModePills={false}");
+		if (!showNavigation) props.push("showNavigation={false}");
+		if (equalDays) props.push("equalDays");
+		if (!showDates) props.push("showDates={false}");
+		if (compact) props.push("compact");
+		if (days !== 7) props.push(`days={${days}}`);
+		if (visibleHours) props.push(`visibleHours={[${visibleHours[0]}, ${visibleHours[1]}]}`);
+		if (mobileMode !== "auto") props.push(`mobile={${mobileMode}}`);
+		if (blockedSlotsEnabled) props.push("{blockedSlots}");
+		if (disabledDatesEnabled) props.push("{disabledDates}");
+
+		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
+		return `<script>\n${script.join("\n")}\n</` + `script>\n\n<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n/>`;
+	});
 </script>
 
 <svelte:head>
@@ -310,6 +419,21 @@
 </svelte:head>
 
 <main>
+	<div class="recipes" role="group" aria-label="Example setups">
+		<span class="recipes-lbl">Examples</span>
+		{#each recipes as r (r.name)}
+			<button
+				class="recipe"
+				class:recipe--on={activeRecipe === r.name}
+				title={r.hint}
+				onclick={() => applyRecipe(r)}
+			>
+				{r.name}
+			</button>
+		{/each}
+		<button class="recipe recipe--reset" onclick={resetSettings}>Reset</button>
+	</div>
+
 	<Settings fields={settingsFields} bind:values={settingsValues} />
 
 	<div class="toolbar">
@@ -367,6 +491,11 @@
 		oneventcreate={handleCreate}
 		oneventmove={handleMove}
 	/>
+
+	<details class="code-panel" open>
+		<summary>Code for this setup</summary>
+		<pre><code>{codeSnippet}</code></pre>
+	</details>
 </main>
 
 <style>
@@ -384,6 +513,79 @@
 		main {
 			padding: 16px 0 32px;
 		}
+	}
+
+	.recipes {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		margin: 0 0 12px;
+		padding: 0 10px;
+	}
+	.recipes-lbl {
+		font: 700 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.52));
+	}
+	.recipe {
+		font: 600 12px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		padding: 6px 12px;
+		border-radius: 999px;
+		border: 1px solid rgba(148, 163, 184, 0.18);
+		background: rgba(148, 163, 184, 0.06);
+		color: var(--dt-text-2, rgba(226, 232, 240, 0.6));
+		cursor: pointer;
+		transition: all 150ms;
+	}
+	.recipe:hover {
+		color: var(--dt-text, rgba(226, 232, 240, 0.9));
+		border-color: rgba(148, 163, 184, 0.35);
+	}
+	.recipe--on {
+		background: color-mix(in srgb, var(--dt-accent, #6366f1) 22%, transparent);
+		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 60%, transparent);
+		color: var(--dt-text, rgba(226, 232, 240, 0.92));
+	}
+	.recipe--reset {
+		margin-left: auto;
+		border-style: dashed;
+	}
+
+	.code-panel {
+		margin-top: 16px;
+		border: 1px solid rgba(148, 163, 184, 0.14);
+		border-radius: 10px;
+		overflow: hidden;
+	}
+	.code-panel summary {
+		padding: 10px 14px;
+		cursor: pointer;
+		list-style: none;
+		font: 700 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.55));
+		background: rgba(148, 163, 184, 0.04);
+	}
+	.code-panel summary::-webkit-details-marker {
+		display: none;
+	}
+	.code-panel summary::after {
+		content: " +";
+	}
+	.code-panel[open] summary::after {
+		content: " –";
+	}
+	.code-panel pre {
+		margin: 0;
+		padding: 14px 16px;
+		overflow-x: auto;
+		font: 400 12.5px/1.55 var(--dt-mono, ui-monospace, "Cascadia Code", monospace);
+		color: var(--dt-text-2, rgba(226, 232, 240, 0.72));
+		background: rgba(0, 0, 0, 0.18);
+		scrollbar-width: thin;
 	}
 
 	.toolbar {

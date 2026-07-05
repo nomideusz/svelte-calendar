@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0 — 2026-07-05
+
+### Changed
+- **Header row replaces floating controls.** Desktop chrome is now a single flow-layout header — Today button + prev/next arrows, centered date label, Day/Week pills — instead of translucent pills absolutely positioned over the grid. Content is never covered, and the four per-view floating nav implementations (planner day/week, agenda day/week) are gone along with the top-padding hacks that reserved space for them.
+- **Today button** only appears when the view is off today, and has a "Go to today" tooltip. It's styled as a bordered button so it no longer reads as a third view-mode pill.
+- **Agenda views gain Day/Week pills on desktop.** Previously the mode switch was hidden for Agenda, leaving no in-UI way back to a Planner view.
+- **Week planner tracks scroll.** Scrolling the multi-week list now syncs the focused week to the header label and surfaces the Today button when today leaves view.
+- **Neutral fallback theme.** All `--dt-*` CSS fallbacks are normalized to the `neutral` light preset values. Previously the same token fell back to different colors per file (near-white text in some views, black in others) and midnight-red leaked into accent/glow/today defaults. No visual change when the auto-theme or a preset supplies tokens.
+- Desktop controls drop the uppercase/letter-spacing styling for a more neutral, embeddable look. The `header` and `navigation` snippets still replace the built-in chrome for full customization.
+
+### Added
+- Demo: "Examples" recipes (Booking page, Class timetable, Embedded schedule), a live "Code for this setup" panel showing the exact `<Calendar>` markup for the current settings, and tooltip hints on every control naming the prop it drives.
+
+### Docs
+- The docs page now renders a sticky table-of-contents sidebar (heading ids are generated at render time; marked v17 stopped emitting them, which had silently broken the TOC).
+- README covers the previously undocumented exports: custom view registration (`views` + `CalendarView`), rendering primitives, the JMAP adapter, engine factories, `probeHostTheme`/`observeHostTheme`, optional Pretext text fitting (`initTextMeasure`), locale/timezone/palette helpers, and a utilities reference table.
+
 ## 0.6.9 — 2026-06-29
 
 ### Security

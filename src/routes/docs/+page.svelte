@@ -6,20 +6,86 @@
 	<title>svelte-calendar – Docs</title>
 </svelte:head>
 
-<main class="doc-content">
-	{@html data.html}
-</main>
+<div class="doc-layout">
+	{#if data.toc.length > 0}
+		<aside class="doc-toc">
+			<nav aria-label="Table of contents">
+				<span class="doc-toc-title">On this page</span>
+				{#each data.toc as item (item.id)}
+					<a href={`#${item.id}`}>{item.label}</a>
+				{/each}
+			</nav>
+		</aside>
+	{/if}
+
+	<main class="doc-content">
+		{@html data.html}
+	</main>
+</div>
 
 <style>
+	.doc-layout {
+		display: flex;
+		align-items: flex-start;
+		gap: 40px;
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 0 24px;
+	}
+
+	/* ─── TOC sidebar ────────────────────────────────── */
+	.doc-toc {
+		position: sticky;
+		top: 24px;
+		flex-shrink: 0;
+		width: 190px;
+		max-height: calc(100vh - 48px);
+		overflow-y: auto;
+		padding: 48px 0 24px;
+		scrollbar-width: thin;
+	}
+	.doc-toc nav {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.doc-toc-title {
+		font: 700 10px/1 'Outfit', system-ui, sans-serif;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: rgba(148, 163, 184, 0.5);
+		margin-bottom: 10px;
+	}
+	.doc-toc a {
+		font: 500 12.5px/1.4 'Outfit', system-ui, sans-serif;
+		color: rgba(148, 163, 184, 0.75);
+		text-decoration: none;
+		padding: 4px 8px;
+		border-radius: 5px;
+		border-left: 2px solid transparent;
+		transition: color 120ms, background 120ms;
+	}
+	.doc-toc a:hover {
+		color: rgba(226, 232, 240, 0.95);
+		background: rgba(148, 163, 184, 0.07);
+	}
+
+	@media (max-width: 900px) {
+		.doc-toc {
+			display: none;
+		}
+	}
+
 	/* ─── Main content ───────────────────────────────── */
 	.doc-content {
 		flex: 1;
 		min-width: 0;
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 48px 24px 96px;
+		padding: 48px 0 96px;
 		color: rgba(226, 232, 240, 0.82);
 		line-height: 1.7;
+	}
+	.doc-content :global(h2) {
+		scroll-margin-top: 24px;
 	}
 
 	/* ── Typography ── */
@@ -196,8 +262,11 @@
 
 	/* ─── Responsive ─────────────────────────────────── */
 	@media (max-width: 768px) {
+		.doc-layout {
+			padding: 0 16px;
+		}
 		.doc-content {
-			padding: 24px 16px 64px;
+			padding: 24px 0 64px;
 		}
 		.doc-content :global(h1) {
 			font-size: 22px;
@@ -229,6 +298,16 @@
 	}
 
 	/* ─── Light scheme overrides ────────────────────── */
+	:global([data-scheme="light"]) .doc-toc-title {
+		color: rgba(0, 0, 0, 0.4);
+	}
+	:global([data-scheme="light"]) .doc-toc a {
+		color: rgba(0, 0, 0, 0.55);
+	}
+	:global([data-scheme="light"]) .doc-toc a:hover {
+		color: rgba(0, 0, 0, 0.85);
+		background: rgba(0, 0, 0, 0.04);
+	}
 	:global([data-scheme="light"]) .doc-content {
 		color: rgba(0, 0, 0, 0.72);
 	}

@@ -50,6 +50,26 @@ Hide the pills when your app controls the view externally:
 <Calendar {adapter} view="day-planner" showModePills={false} />
 ```
 
+### Custom Views
+
+The `views` prop replaces the built-in registry. Each entry maps a view ID to a Svelte component; your component receives `events`, `mode`, `focusDate`, `locale`, and the callbacks, and can read the calendar engines via context:
+
+```svelte
+<script lang="ts">
+  import { Calendar, type CalendarView } from '@nomideusz/svelte-calendar';
+  import KanbanDay from './KanbanDay.svelte';
+
+  const views: CalendarView[] = [
+    { id: 'day-kanban',  label: 'Kanban', mode: 'day',  component: KanbanDay },
+    { id: 'week-kanban', label: 'Kanban', mode: 'week', component: KanbanDay },
+  ];
+</script>
+
+<Calendar {adapter} {views} view="day-kanban" />
+```
+
+Building blocks for custom views are exported as primitives: `EventBlock` (a positioned event card), `TimeGutter` (hour labels), `DayHeader`, `NowIndicator`, and `EmptySlot` (click-to-create target).
+
 ## Mobile
 
 On narrow screens (`< 768px`), the calendar automatically remaps Planner views to touch-first Mobile views with swipe navigation, a centralized header with Day/Week pills, and a compact layout:
@@ -69,7 +89,7 @@ Mobile views include:
 - **MobileDay** — vertical time grid with hour labels, swipe left/right to change days, all-day event chips at the top, tap-to-create, and stable columns for overlapping events
 - **MobileWeek** — vertical day list showing each day's events with relative labels (Today, Tomorrow, etc.) and accessible event buttons inside each row
 
-Agenda views keep their list-based layout on mobile but hide desktop floating navigation in favor of the centralized header.
+Agenda views keep their list-based layout on mobile; navigation stays in the calendar header on all screen sizes.
 
 ## Callbacks
 
@@ -229,6 +249,8 @@ The default `auto` preset probes the host page's design and generates a calendar
 
 It also watches for changes (e.g. dark mode toggle) and updates automatically.
 
+The probing engine is exported for standalone use: `probeHostTheme(element, options?)` returns a `--dt-*` CSS string for the page around `element`; `observeHostTheme(element, callback, options?)` re-probes on theme changes and returns a stop function.
+
 Fine-tune auto-detection with the `autoTheme` prop:
 
 ```svelte
@@ -355,6 +377,8 @@ const palette = generatePalette('#e11d48');
 const adapter = createMemoryAdapter(events, { palette });
 ```
 
+Related exports: `VIVID_PALETTE` (the default palette) and `extractAccent(themeString)` (pull the accent color out of a `--dt-*` theme string).
+
 ### Multi-day & All-day
 
 Events spanning multiple days or flagged `allDay: true` render in a dedicated strip above timed events:
@@ -442,6 +466,31 @@ const adapter = createRestAdapter({
 ```
 
 The adapter calls `GET /events?start=...&end=...`, `POST /events`, `PATCH /events/:id`, and `DELETE /events/:id`.
+
+## JMAP Adapter
+
+Read events from a [JMAP Calendars](https://jmap.io/) server (Fastmail, Stalwart, Cyrus):
+
+```ts
+import { createJmapAdapter, type JmapClient } from '@nomideusz/svelte-calendar';
+
+const client: JmapClient = {
+  request: (calls) =>
+    fetch('https://api.example.com/jmap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ using: ['urn:ietf:params:jmap:calendars'], methodCalls: calls }),
+    }).then((r) => r.json()),
+};
+
+const adapter = createJmapAdapter(client, {
+  getAccountId: () => accountId,
+  calendarId: 'primary',          // optional: restrict to one calendar
+  timeZone: 'Europe/Warsaw',      // optional: default Etc/UTC
+});
+```
+
+Handles all-day events, ISO-duration ends, and per-calendar colors (pass `calendars` to map them).
 
 ## Mapped Adapter
 
@@ -561,6 +610,8 @@ For full control over rendering, skip the `<Calendar>` component and drive every
 
 `cal.days` gives flat `HeadlessDay[]` with events attached; `cal.weeks` groups them into periods. `cal.todayQueue` returns `{ past, current, upcoming }` for today — updates every second via the built-in clock. `cal.hours` yields the visible hour numbers (cropped by `visibleHours`). Drag support is fully wired: `beginDragMove`, `beginDragCreate`, `updateDrag`, `commitDrag`, `cancelDrag`, plus `isDragging` / `dragPayload` / `dragMode` signals. Raw engines (`store`, `viewState`, `selection`, `dragState`, `clock`) are exposed for advanced cases.
 
+The engine factories behind them are also exported individually — `createEventStore(adapter)`, `createViewState(options)`, `createSelection()`, `createDragState()`, `createClock()` — if you want to compose your own calendar loop instead of using `createCalendar()`.
+
 For a simpler day-only list view, use `createAgenda()`:
 
 ```svelte
@@ -589,6 +640,8 @@ The `locale` prop controls date/time formatting (BCP 47):
 <Calendar {adapter} locale="de-DE" />
 ```
 
+`setDefaultLocale('de-DE')` sets the locale globally instead of per component (`getDefaultLocale()` reads it back, `is24HourLocale(tag)` tells you how times will format).
+
 Override UI labels for full translation:
 
 ```ts
@@ -601,7 +654,7 @@ setLabels({
 });
 ```
 
-Call `resetLabels()` to restore English defaults.
+Call `resetLabels()` to restore English defaults (`defaultLabels` exports them; `getLabels()` reads the active set).
 
 <details>
 <summary>All label keys</summary>
@@ -651,7 +704,40 @@ const utc = fromZonedTime(localDate, 'America/New_York');
 
 // Current time in a timezone
 const now = nowInZone('Asia/Tokyo');
+
+// Format a date directly in a timezone
+formatInTimeZone(date, 'America/New_York', { hour: '2-digit', minute: '2-digit' });
 ```
+
+## Text Fitting (optional)
+
+Event cards fit their labels using character-width heuristics. For pixel-precise fitting (long titles, narrow columns, custom fonts), initialize the optional [Pretext](https://www.npmjs.com/package/pretext) measurement engine once at app startup — everything falls back gracefully if you don't:
+
+```svelte
+<script>
+  import { onMount } from 'svelte';
+  import { initTextMeasure } from '@nomideusz/svelte-calendar';
+
+  onMount(() => initTextMeasure());  // resolves true if Pretext loaded
+</script>
+```
+
+Custom views can measure text themselves via `createTextMeasure(options)` → `fitContent({ title, subtitle, maxWidth, maxHeight, … })`.
+
+## Utilities
+
+Small helpers used by the built-in views, exported for custom rendering:
+
+| Export | Purpose |
+|--------|---------|
+| `fmtTime(date, locale?)` / `fmtH(hour, locale?)` | Locale-aware time / hour labels |
+| `fmtDuration(ms)` | `"1h 30m"`-style durations |
+| `fmtDay` / `fmtWeekRange` / `dateShort` / `dateWithWeekday` | Date labels |
+| `weekdayShort` / `weekdayLong` / `monthShort` / `monthLong` | Name parts from a day timestamp |
+| `startOfWeek(ms, mondayStart)` | Start-of-week timestamp |
+| `isAllDay(ev)` / `isMultiDay(ev)` | Event classification |
+| `segmentForDay(ev, dayMs)` | The slice of a multi-day event that falls on one day |
+| `createClock()` | Reactive clock (`tick`, `today`) driving now-lines and relative labels |
 
 ## Embeddable Widget
 

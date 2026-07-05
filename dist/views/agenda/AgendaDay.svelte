@@ -46,9 +46,7 @@
 
 	const clock = createClock();
 	const viewState = $derived(ctx.viewState);
-	const showNav = $derived(ctx.showNav);
 	const equalDays = $derived(ctx.equalDays);
-	const showDates = $derived(ctx.showDates);
 	const isMobile = $derived(ctx.isMobile);
 	const autoHeight = $derived(ctx.autoHeight);
 	const compact = $derived(ctx.compact);
@@ -98,18 +96,6 @@
 	const dayEnd = $derived(dayMs + DAY_MS);
 	const isToday = $derived(dayMs === clock.today);
 	const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
-
-	const dateLabel = $derived(
-		showDates
-			? new Date(dayMs).toLocaleDateString(locale ?? 'en-US', {
-				weekday: 'long',
-				month: 'long',
-				day: 'numeric',
-			})
-			: new Date(dayMs).toLocaleDateString(locale ?? 'en-US', {
-				weekday: 'long',
-			})
-	);
 
 	/** All events for this day, sorted chronologically */
 	const dayEvents = $derived.by((): TimelineEvent[] => {
@@ -402,113 +388,9 @@
 		{/if}
 	</div>
 
-	{#if !isMobile}
-		<div class="ag-date-label">{dateLabel}</div>
-	{/if}
-
-	<!-- ── Floating nav pills (desktop only — mobile uses Calendar header) ── -->
-	{#if showNav && !isMobile}
-	<nav class="ag-nav" aria-label={L.dayNavigation}>
-		<button
-			class="ag-nav-pill ag-nav-today"
-			class:ag-nav-today--hidden={isToday}
-			onclick={() => viewState?.goToday()}
-			aria-label={L.goToToday}
-			tabindex={isToday ? -1 : 0}
-		>
-			{L.today}
-		</button>
-		<button
-			class="ag-nav-pill"
-			onclick={() => viewState?.prev()}
-			aria-label={L.previousDay}
-		>
-			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
-		</button>
-		<button
-			class="ag-nav-pill"
-			onclick={() => viewState?.next()}
-			aria-label={L.nextDay}
-		>
-			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
-		</button>
-	</nav>
-	{/if}
 </div>
 
 <style>
-	/* ═══ Floating date label ═══ */
-	.ag-date-label {
-		position: absolute;
-		top: 10px;
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 20;
-		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
-		padding: 8px 16px;
-		border-radius: 8px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-		pointer-events: none;
-		white-space: nowrap;
-	}
-
-	/* ═══ Floating nav pills ═══ */
-	.ag-nav {
-		position: absolute;
-		top: 10px;
-		right: 14px;
-		z-index: 20;
-		display: flex;
-		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
-		border-radius: 8px;
-		padding: 2px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-	}
-	.ag-nav-pill {
-		border: none;
-		background: transparent;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
-		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		padding: 6px 12px;
-		border-radius: 6px;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		transition: background 100ms, color 100ms;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-	.ag-nav-pill:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-	}
-	.ag-nav-today {
-		max-width: 60px;
-		overflow: hidden;
-		white-space: nowrap;
-		transition: max-width 250ms ease, padding 250ms ease, opacity 200ms ease;
-	}
-	.ag-nav-today--hidden {
-		max-width: 0;
-		padding-left: 0;
-		padding-right: 0;
-		opacity: 0;
-		pointer-events: none;
-	}
-	.ag-nav-pill:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
-		outline-offset: 2px;
-	}
-
 	/* ═══ Container ═══ */
 	.ag {
 		position: relative;
@@ -520,7 +402,7 @@
 		width: 100%;
 		min-width: 0;
 		box-sizing: border-box;
-		color: var(--dt-text, rgba(255, 255, 255, 0.92));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 
@@ -531,8 +413,8 @@
 			135deg,
 			transparent,
 			transparent 6px,
-			color-mix(in srgb, var(--dt-text, rgba(255, 255, 255, 0.92)) 4%, transparent) 6px,
-			color-mix(in srgb, var(--dt-text, rgba(255, 255, 255, 0.92)) 4%, transparent) 12px
+			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,
+			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px
 		);
 	}
 
@@ -545,12 +427,11 @@
 		flex-direction: column;
 		overflow-y: auto;
 		overflow-x: hidden;
-		padding-top: 44px;
+		padding-top: 8px;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
 	.ag--auto .ag-body { overflow-y: visible; min-height: auto; }
-	.ag--mobile .ag-body { padding-top: 8px; }
 	.ag-body::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -565,13 +446,13 @@
 		align-items: center;
 		gap: 8px;
 		padding: 6px 16px;
-		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-allday-label {
 		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -612,7 +493,7 @@
 	}
 	.ag-allday-title {
 		font: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 	}
 
@@ -622,7 +503,7 @@
 		align-items: stretch;
 		border-radius: 10px;
 		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(255, 255, 255, 0.06)));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
@@ -681,22 +562,22 @@
 	}
 	.ag-card-meta {
 		font-size: 11px;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		font-family: var(--dt-mono, monospace);
 		line-height: 1;
 	}
 	.ag-card-dur {
 		margin-left: 6px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 	.ag-card-sub {
 		font-size: 11px;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		line-height: 1;
 	}
 	.ag-card-loc {
 		font-size: 10px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		line-height: 1;
 	}
 	.ag-card-tags {
@@ -763,7 +644,7 @@
 	.ag-card-order {
 		font-size: 10px;
 		font-weight: 700;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		font-family: var(--dt-mono, monospace);
 		flex-shrink: 0;
 	}
@@ -802,7 +683,7 @@
 	}
 	.ag--mobile .ag-q-status {
 		border-right: none;
-		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		padding-bottom: 10px;
 		margin-bottom: 8px;
 		overflow-y: visible;
@@ -837,15 +718,12 @@
 	.ag--mobile .ag-card--plan .ag-card-title {
 		font-size: 15px;
 	}
-	.ag--mobile .ag-nav-pill {
-		padding: 10px 16px;
-	}
 	.ag-q-label {
 		font-size: 8px;
 		font-weight: 600;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.25));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		margin-bottom: 8px;
 		padding: 0 12px;
 		font-family: var(--dt-sans, system-ui, sans-serif);
@@ -857,13 +735,13 @@
 		flex: 1;
 		font-size: 13px;
 		font-weight: 300;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.25));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 
 	/* ── NOW column (includes Done above) ── */
 	.ag-q-status {
 		padding: 0 10px 0 14px;
-		border-right: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
@@ -875,7 +753,7 @@
 	.ag-q-done-section {
 		margin-bottom: 10px;
 		padding-bottom: 8px;
-		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-q-clock {
 		font-size: 10px;
@@ -920,7 +798,7 @@
 		font-size: 11px;
 		font-weight: 600;
 		line-height: 1.2;
-		color: var(--dt-text, rgba(255, 255, 255, 0.92));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -929,12 +807,12 @@
 	.ag-q-now-time {
 		font-size: 9px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		margin-bottom: 6px;
 	}
 	.ag-q-now-track {
 		height: 2px;
-		background: var(--dt-border, rgba(255, 255, 255, 0.06));
+		background: var(--dt-border, rgba(0, 0, 0, 0.08));
 		border-radius: 1px;
 		overflow: hidden;
 	}
@@ -951,7 +829,7 @@
 	.ag-q-free-label {
 		font-size: 12px;
 		font-weight: 300;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.25));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		margin-bottom: 2px;
 	}
 
@@ -989,18 +867,18 @@
 	}
 	.ag-q-done-check {
 		font-size: 9px;
-		color: var(--dt-success, rgba(120, 200, 140, 0.7));
+		color: var(--dt-success, rgba(22, 163, 74, 0.7));
 		flex-shrink: 0;
 	}
 	.ag-q-done-title {
 		font-size: 10px;
 		line-height: 1.2;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		text-decoration: line-through;
-		text-decoration-color: var(--dt-text-3, rgba(255, 255, 255, 0.15));
+		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 
 	/* ═══ Past Day: "The Log" ═══ */
@@ -1019,7 +897,7 @@
 		align-items: center;
 		gap: 10px;
 		padding: 8px 0;
-		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.04));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		cursor: pointer;
 		transition: opacity 150ms;
 	}
@@ -1042,13 +920,13 @@
 	}
 	.ag-log-check {
 		font-size: 10px;
-		color: var(--dt-success, rgba(120, 200, 140, 0.5));
+		color: var(--dt-success, rgba(22, 163, 74, 0.7));
 		flex-shrink: 0;
 	}
 	.ag-log-time {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		width: 64px;
 		flex-shrink: 0;
 	}
@@ -1063,18 +941,18 @@
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 1.2;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.55));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex: 1;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		text-decoration: line-through;
-		text-decoration-color: var(--dt-border, rgba(255, 255, 255, 0.08));
+		text-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-log-dur {
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 	}
 
@@ -1114,14 +992,14 @@
 	.ag-compact-row-time {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 64px;
 		flex-shrink: 0;
 	}
 	.ag-compact-row-title {
 		font-size: 12px;
 		font-weight: 500;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex: 1;
 		white-space: nowrap;
 		overflow: hidden;
@@ -1131,12 +1009,12 @@
 	.ag-compact-row-dur {
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 	}
 	.ag-compact-row-sub {
 		font-size: 10px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 	}
 	.ag-compact-row-tag {

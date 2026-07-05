@@ -44,7 +44,6 @@
 
 	const clock = createClock();
 	const viewState = $derived(ctx.viewState);
-	const showNav = $derived(ctx.showNav);
 	const equalDays = $derived(ctx.equalDays);
 	const showDates = $derived(ctx.showDates);
 	const hideDays = $derived(ctx.hideDays);
@@ -123,12 +122,6 @@
 	);
 
 	const customDays = $derived(viewState?.dayCount ?? 7);
-
-	const isThisWeek = $derived(
-		customDays === 7
-			? weekStartMs === startOfWeek(clock.today, mondayStart)
-			: clock.today >= weekStartMs && clock.today < weekStartMs + customDays * DAY_MS,
-	);
 
 	const weekDays = $derived.by((): DayGroup[] => {
 		const now = clock.tick;
@@ -445,88 +438,9 @@
 		{/each}
 	</div>
 
-	<!-- ── Floating nav pills (desktop only — mobile uses Calendar header) ── -->
-	{#if showNav && !isMobile}
-	<nav class="ag-nav" aria-label={L.weekNavigation}>
-		<button
-			class="ag-nav-pill ag-nav-today"
-			class:ag-nav-today--hidden={isThisWeek}
-			onclick={() => viewState?.goToday()}
-			aria-label={L.goToToday}
-			tabindex={isThisWeek ? -1 : 0}
-		>
-			{L.today}
-		</button>
-		<button
-			class="ag-nav-pill"
-			onclick={() => viewState?.prev()}
-			aria-label={L.previousWeek}
-		>
-			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
-		</button>
-		<button
-			class="ag-nav-pill"
-			onclick={() => viewState?.next()}
-			aria-label={L.nextWeek}
-		>
-			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
-		</button>
-	</nav>
-	{/if}
 </div>
 
 <style>
-	/* ═══ Floating nav pills ═══ */
-	.ag-nav {
-		position: absolute;
-		top: 10px;
-		right: 14px;
-		z-index: 20;
-		display: flex;
-		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
-		border-radius: 8px;
-		padding: 2px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-	}
-	.ag-nav-pill {
-		border: none;
-		background: transparent;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.55));
-		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		padding: 6px 12px;
-		border-radius: 6px;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		transition: background 100ms, color 100ms;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-	.ag-nav-pill:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-	}
-	.ag-nav-today {
-		max-width: 60px;
-		overflow: hidden;
-		white-space: nowrap;
-		transition: max-width 250ms ease, padding 250ms ease, opacity 200ms ease;
-	}
-	.ag-nav-today--hidden {
-		max-width: 0;
-		padding-left: 0;
-		padding-right: 0;
-		opacity: 0;
-		pointer-events: none;
-	}
-	.ag-nav-pill:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
-		outline-offset: 2px;
-	}
-
 	/* ═══ Container ═══ */
 	.ag {
 		position: relative;
@@ -538,7 +452,7 @@
 		width: 100%;
 		min-width: 0;
 		box-sizing: border-box;
-		color: var(--dt-text, rgba(255, 255, 255, 0.92));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 	.ag--auto {
@@ -553,7 +467,7 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 		box-sizing: border-box;
-		padding-top: 44px;
+		padding-top: 8px;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
 	}
@@ -607,7 +521,7 @@
 	}
 	.ag-allday-title {
 		font: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 	}
 
@@ -617,7 +531,7 @@
 		align-items: stretch;
 		border-radius: 6px;
 		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(255, 255, 255, 0.06)));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
@@ -671,13 +585,13 @@
 		display: flex;
 		align-items: center;
 		font-size: 11px;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		font-family: var(--dt-mono, monospace);
 		line-height: 1;
 	}
 	.ag-card-dur {
 		margin-left: 6px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 	.ag-card-eta {
 		margin-left: auto;
@@ -689,12 +603,12 @@
 	}
 	.ag-card-sub {
 		font-size: 11px;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.45));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		line-height: 1;
 	}
 	.ag-card-loc {
 		font-size: 10px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		line-height: 1;
 	}
 	.ag-card-tags {
@@ -712,7 +626,7 @@
 	}
 	.ag-card-progress {
 		height: 3px;
-		background: var(--dt-border, rgba(255, 255, 255, 0.06));
+		background: var(--dt-border, rgba(0, 0, 0, 0.08));
 		border-radius: 2px;
 		overflow: hidden;
 		margin-top: 2px;
@@ -726,7 +640,7 @@
 
 	/* ═══ Week day groups ═══ */
 	.ag-wday {
-		border-bottom: 1px solid var(--dt-border, rgba(255, 255, 255, 0.06));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-wday--today {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
@@ -782,10 +696,10 @@
 		border-radius: 3px;
 	}
 	.ag-wday-badge--muted {
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		background: color-mix(
 			in srgb,
-			var(--dt-text-2, rgba(255, 255, 255, 0.5)) 10%,
+			var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,
 			transparent
 		);
 	}
@@ -796,13 +710,13 @@
 	.ag-wday-date {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 
 	.ag-wday-empty {
 		padding: 2px 20px 6px;
 		font-size: 11px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.2));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		font-style: italic;
 	}
 
@@ -838,7 +752,7 @@
 	}
 	.ag-wday-past-line {
 		font-size: 10px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		padding: 6px 0 0;
 		opacity: 0.5;
 	}
@@ -879,7 +793,7 @@
 	.ag-compact-time {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 40px;
 		flex-shrink: 0;
 		white-space: nowrap;
@@ -887,7 +801,7 @@
 	.ag-compact-title {
 		font-size: 12px;
 		font-weight: 500;
-		color: var(--dt-text-2, rgba(255, 255, 255, 0.5));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex: 1;
 		min-width: 0;
 		white-space: nowrap;
@@ -898,13 +812,13 @@
 	.ag-compact-dur {
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
 	.ag-compact-sub {
 		font-size: 10px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.35));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;
 		overflow: hidden;
@@ -913,7 +827,7 @@
 	}
 	.ag-compact-loc {
 		font-size: 9px;
-		color: var(--dt-text-3, rgba(255, 255, 255, 0.3));
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;
 		overflow: hidden;
@@ -977,9 +891,6 @@
 	}
 	.ag--mobile .ag-compact-time {
 		font-size: 12px;
-	}
-	.ag--mobile .ag-nav-pill {
-		padding: 10px 16px;
 	}
 	.ag--mobile .ag-wslot-cards--multi {
 		grid-template-columns: 1fr;

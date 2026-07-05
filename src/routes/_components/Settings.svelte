@@ -8,6 +8,8 @@
 		label: string;
 		group?: string;
 		enabledWhen?: string;
+		/** One-line description shown as a tooltip */
+		hint?: string;
 	};
 
 	type RangeField = BaseField & {
@@ -114,7 +116,7 @@
 
 {#snippet segmentControl(f: SegmentField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
 	{#if f.label}
-		<span class={labelClass} id={`${fid}-label`}>{f.label}</span>
+		<span class={labelClass} id={`${fid}-label`} title={f.hint}>{f.label}</span>
 	{/if}
 	<div
 		class="stg-pills"
@@ -140,7 +142,7 @@
 
 {#snippet selectControl(f: SelectField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
 	{#if f.label}
-		<label class={labelClass} for={fid}>{f.label}</label>
+		<label class={labelClass} for={fid} title={f.hint}>{f.label}</label>
 	{/if}
 	<select
 		id={fid}
@@ -156,7 +158,7 @@
 {/snippet}
 
 {#snippet toggleControl(f: ToggleField, fid: string, disabled: boolean)}
-	<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid}>
+	<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid} title={f.hint}>
 		<span class="stg-lbl">{f.label}</span>
 		<input
 			id={fid}
@@ -252,7 +254,7 @@
 									{#if f.type === 'range'}
 										<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
 											<div class="stg-rng-hd">
-												<label class="stg-lbl" for={fid}>{f.label}</label>
+												<label class="stg-lbl" for={fid} title={f.hint}>{f.label}</label>
 												<span class="stg-num">{fmt(values[f.key])}</span>
 											</div>
 											<input
