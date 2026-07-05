@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1 — 2026-07-05
+
+### Added
+- **Drag animations.** Week planner: the drag ghost crossfades between day cells instead of teleporting, event lists animate with FLIP so neighbours make room smoothly, and on drop the ghost glides into the placed card (rejected drops fly back to the original slot). Multi-day previews animate per day segment. Day planner: the dragged card eases toward the snapped cursor position (80ms), and other cards animate their lane reflow on drop. All animations respect `prefers-reduced-motion`.
+
+### Fixed
+- Crash on drag drop (`Cannot read properties of null (reading 'id')`): transition params are evaluated lazily at unmount, after the drag payload is cleared — crossfade keys are now snapshotted at render time.
+
 ## 0.7.0 — 2026-07-05
 
 ### Changed

@@ -10,6 +10,9 @@
 -->
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { crossfade } from 'svelte/transition';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
@@ -51,6 +54,11 @@
 
 	const ctx = useCalendarContext();
 	const clock = createClock();
+
+	// Drag ghost flies between day cells instead of teleporting.
+	// No fallback: without a counterpart (drag start/end) it appears/disappears instantly.
+	const ANIM = $derived(prefersReducedMotion.current ? 0 : 180);
+	const [previewSend, previewReceive] = crossfade({ duration: () => (prefersReducedMotion.current ? 0 : 160) });
 	const drag = $derived(ctx.drag);
 	const commitDragCtx = $derived(ctx.commitDrag);
 	const viewState = $derived(ctx.viewState);
@@ -312,17 +320,27 @@
 		return day.events.filter((ev) => ev.id !== dragPreviewEvent.id);
 	}
 
+	// Crossfade keys for the previews, snapshotted at render time. Transition
+	// params are evaluated lazily at unmount — after the drag payload is
+	// already null — so they must never read the reactive preview directly.
+	// Plain Map (not $state): written during render, read only by transitions.
+	const previewKeySnapshot = new Map<number | 'timed', string>();
+
 	function dragPreviewTimedForDay(dayMs: number): TimelineEvent | null {
 		const ev = dragPreviewEvent;
 		if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
 		const dayEnd = dayMs + DAY_MS;
-		return ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs ? ev : null;
+		const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
+		if (hit) previewKeySnapshot.set('timed', ev.id);
+		return hit ? ev : null;
 	}
 
 	function dragPreviewSegmentForDay(dayMs: number): DaySegment | null {
 		const ev = dragPreviewEvent;
 		if (!ev || (!isAllDay(ev) && !isMultiDay(ev))) return null;
-		return segmentForDay(ev, dayMs);
+		const seg = segmentForDay(ev, dayMs);
+		if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
+		return seg;
 	}
 
 	function getCellWidth(): number {
@@ -490,6 +508,9 @@
 									<div class="wg-allday">
 										{#each visibleAllDaySegments as seg (seg.ev.id)}
 											<div
+												animate:flip={{ duration: ANIM }}
+												in:previewReceive={{ key: `${seg.ev.id}:${seg.dayIndex}` }}
+												out:previewSend={{ key: `${seg.ev.id}:${seg.dayIndex}` }}
 												class="wg-ad"
 												class:wg-ad--start={seg.isStart}
 												class:wg-ad--end={seg.isEnd}
@@ -506,6 +527,8 @@
 											</div>
 										{/each}
 										{#if previewSegment}
+											<!-- key by event id + dayIndex: multi-day previews render one segment
+											     per cell, and each pairs with its own real-card counterpart -->
 											<div
 												class="wg-ad wg-ad--drag-preview"
 												class:wg-ad--start={previewSegment.isStart}
@@ -513,6 +536,8 @@
 												class:wg-ad--mid={!previewSegment.isStart && !previewSegment.isEnd}
 												style:--ev-color={previewSegment.ev.color ?? 'var(--dt-accent)'}
 												aria-hidden="true"
+												in:previewReceive={{ key: previewKeySnapshot.get(day.ms) ?? '' }}
+												out:previewSend={{ key: previewKeySnapshot.get(day.ms) ?? '' }}
 											>
 												{@render allDaySegmentContent(previewSegment)}
 											</div>
@@ -523,7 +548,12 @@
 								<!-- Timed events -->
 								<div class="wg-cell-events">
 									{#each visibleTimedEvents.slice(0, MAX_EVENTS_SHOWN) as ev (ev.id)}
+										<!-- send/receive keyed by event id pair the card with the drag ghost:
+										     drag start morphs card → ghost, drop morphs ghost → placed card -->
 										<div
+											animate:flip={{ duration: ANIM }}
+											in:previewReceive={{ key: ev.id }}
+											out:previewSend={{ key: ev.id }}
 											class="wg-ev"
 											class:wg-ev--selected={selectedEventId === ev.id}
 											class:wg-ev--current={ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
@@ -549,6 +579,8 @@
 											class="wg-ev wg-ev--drag-preview"
 											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
 											aria-hidden="true"
+											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
+											out:previewSend={{ key: previewKeySnapshot.get('timed') ?? '' }}
 										>
 											{@render timedEventContent(previewTimedEvent)}
 										</div>
