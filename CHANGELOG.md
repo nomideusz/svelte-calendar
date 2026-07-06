@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.4 — 2026-07-06
+
+### Changed
+- Day planner event colors read vivid instead of muted: 3px solid color stripe at the start edge (matching the week view) and background tint raised 15% → 22% (hover 25% → 32%).
+
 ## 0.7.3 — 2026-07-06
 
 ### Changed
