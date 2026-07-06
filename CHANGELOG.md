@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.5 — 2026-07-06
+
+### Changed
+- Day planner "up next" event no longer uses a dashed border + dimmed background (it read as tentative/broken); emphasis is the UP NEXT badge plus a stronger solid border.
+- Day planner titles may wrap to a second column (vertical writing mode) before truncating, so overlapping events keep readable names.
+
+### Added
+- Day planner event cards expose the full event name as a native hover tooltip (`title` attribute).
+
 ## 0.7.4 — 2026-07-06
 
 ### Changed
