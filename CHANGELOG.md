@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.3 — 2026-07-06
+
+### Changed
+- Day planner event cards get a subtle 1px border in the event's color (40% mix), visually separating adjacent events.
+
 ## 0.7.2 — 2026-07-06
 
 ### Fixed
