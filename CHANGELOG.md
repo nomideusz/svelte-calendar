@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2 — 2026-07-06
+
+### Fixed
+- **Day planner width runaway.** The day planner derives its hour width from its container and lays a px-sized track inside it; a host flex/grid column with `min-width: auto` grew with the track, feeding the width back into the calculation until the page hit the browser's layout cap. The planner root now declares `contain: inline-size`, so its intrinsic width can never be driven by its own track — no host layout can trigger the loop.
+- **Auto-height day planner painted outside its box.** `height="auto"` mode set `overflow: visible` on the scroller, disabling horizontal containment and painting the full track (20k+ px) over the page. Horizontal scrolling is now preserved in auto mode.
+
 ## 0.7.1 — 2026-07-05
 
 ### Added
