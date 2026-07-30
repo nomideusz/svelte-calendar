@@ -101,6 +101,7 @@ export type {
 // ─── Themes ─────────────────────────────────────────────
 export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';
+export { wrapAdapterWithTimezone } from './core/timezone.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
 
 // ─── Headless API ───────────────────────────────────────

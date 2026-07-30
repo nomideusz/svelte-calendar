@@ -13,19 +13,23 @@
  */
 import { onMount } from 'svelte';
 import { sod, fmtHM, fmtS, fractionalHour } from './time.js';
+import { toZonedTime } from './timezone.js';
 /**
  * Create a shared reactive clock.
  *
  * Must be called during component initialisation (before first await).
  * Automatically cleans up on unmount via onMount return.
  */
-export function createClock() {
-    let tick = $state(Date.now());
-    let today = $state(sod(Date.now()));
+export function createClock(timezone) {
+    // With a timezone, ticks are "zoned wall-clock" epoch ms — the same plane
+    // the wrapped adapter shifts event Dates into. Views stay zone-agnostic.
+    const now = () => (timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now());
+    let tick = $state(now());
+    let today = $state(sod(tick));
     let intervalId = null;
     function start() {
         intervalId = setInterval(() => {
-            tick = Date.now();
+            tick = now();
             const sd = sod(tick);
             if (sd !== today)
                 today = sd;

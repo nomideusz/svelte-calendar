@@ -29,7 +29,7 @@ let {
   visibleHours
 } = $props();
 const ctx = useCalendarContext();
-const clock = createClock();
+const clock = createClock(ctx.timezone);
 const drag = $derived(ctx.drag);
 const commitDragCtx = $derived(ctx.commitDrag);
 const viewState = $derived(ctx.viewState);

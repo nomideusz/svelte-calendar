@@ -116,6 +116,13 @@ interface Props {
     ondayclick?: (date: Date) => void;
     /** Surfaced instead of silent console output when loading or mutations fail. */
     onerror?: (error: Error) => void;
+    /**
+     * Render the calendar in an IANA timezone (e.g. 'Europe/Warsaw').
+     * Events, "now" and day boundaries all shift; ranges passed to
+     * oneventcreate/oneventmove convert back to real instants.
+     * Default: the viewer's local time.
+     */
+    timezone?: string;
 }
 declare const Calendar: Component<Props, {}, "">;
 type Calendar = ReturnType<typeof Calendar>;

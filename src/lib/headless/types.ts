@@ -25,6 +25,8 @@ export interface HeadlessCalendarOptions {
 	mondayStart?: boolean;
 	/** Initial date to focus on (default: today) */
 	initialDate?: Date;
+	/** Render in an IANA timezone; events, "now" and day boundaries shift. */
+	timezone?: string;
 	/** BCP 47 locale tag (e.g. 'en-US', 'pl-PL') */
 	locale?: string;
 	/** Visible hour range [startHour, endHour). Default: [0, 24] */

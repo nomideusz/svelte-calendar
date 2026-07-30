@@ -30,6 +30,7 @@ import Planner from "../views/planner/Planner.svelte";
 import Agenda from "../views/agenda/Agenda.svelte";
 import Mobile from "../views/mobile/Mobile.svelte";
 import MonthGrid from "../views/month/MonthGrid.svelte";
+import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from "../core/timezone.js";
 const MOBILE_BREAKPOINT = 768;
 const DEFAULT_VIEWS = [
   { id: "day-planner", label: "Planner", mode: "day", component: Planner },
@@ -80,10 +81,16 @@ let {
   ondatechange,
   oneventhover,
   ondayclick,
-  onerror
+  onerror,
+  timezone
 } = $props();
-const effectiveCreate = $derived(readOnly ? void 0 : oneventcreate);
-const effectiveMove = $derived(readOnly ? void 0 : oneventmove);
+const unzone = (d) => timezone ? fromZonedTime(d, timezone) : d;
+const effectiveCreate = $derived(
+  readOnly || !oneventcreate ? void 0 : (range) => oneventcreate({ start: unzone(range.start), end: unzone(range.end) })
+);
+const effectiveMove = $derived(
+  readOnly || !oneventmove ? void 0 : (ev, start, end) => oneventmove(ev, unzone(start), unzone(end))
+);
 function handleEventClick(ev) {
   selection.select(ev.id);
   oneventclick?.(ev);
@@ -114,12 +121,17 @@ onMount(() => {
   };
 });
 const effectiveTheme = $derived(theme === auto && autoTheme !== false ? probedTheme : theme);
-const store = $derived(createEventStore(adapter));
+const effectiveAdapter = $derived(
+  timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter
+);
+const store = $derived(createEventStore(effectiveAdapter));
 const viewState = createViewState(untrack(() => ({
   view: activeViewId ?? views[0]?.id,
   mondayStart,
-  initialDate,
+  // Focus lives on the zoned plane too — day boundaries follow the zone.
+  initialDate: initialDate && timezone ? toZonedTime(initialDate, timezone) : initialDate,
   dayCount: days,
+  timezone,
   modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode
 })));
 const selection = createSelection();
@@ -222,6 +234,9 @@ setContext("calendar", {
   },
   get ondayclick() {
     return ondayclick;
+  },
+  get timezone() {
+    return timezone;
   },
   // Config (reactive via getters)
   get readOnly() {

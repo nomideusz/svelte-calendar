@@ -57,7 +57,7 @@
 	const commitDragCtx = $derived(ctx.commitDrag);
 	const SNAP_MS = $derived(ctx.snapInterval * 60_000);
 
-	const clock = createClock();
+	const clock = createClock(ctx.timezone);
 
 	// ── Config ─────────────────────────────────────────
 	const HOUR_HEIGHT = 64;

@@ -32,7 +32,7 @@ let {
   readOnly = false
 } = $props();
 const ctx = useCalendarContext();
-const clock = createClock();
+const clock = createClock(ctx.timezone);
 const ANIM = $derived(prefersReducedMotion.current ? 0 : 180);
 const [previewSend, previewReceive] = crossfade({ duration: () => prefersReducedMotion.current ? 0 : 160 });
 const drag = $derived(ctx.drag);

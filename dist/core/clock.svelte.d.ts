@@ -18,4 +18,4 @@ export interface Clock {
  * Must be called during component initialisation (before first await).
  * Automatically cleans up on unmount via onMount return.
  */
-export declare function createClock(): Clock;
+export declare function createClock(timezone?: string): Clock;

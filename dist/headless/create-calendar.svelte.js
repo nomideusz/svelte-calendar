@@ -42,15 +42,18 @@
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
 import { createViewState } from '../engine/view-state.svelte.js';
+import { toZonedTime, fromZonedTime, wrapAdapterWithTimezone } from '../core/timezone.js';
 import { createSelection } from '../engine/selection.svelte.js';
 import { createDragState } from '../engine/drag.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
 import { sod, DAY_MS, HOUR_MS, startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay, } from '../core/time.js';
 import { monthLong, weekdayLong, weekdayShort } from '../core/locale.js';
 export function createCalendar(options) {
-    const { adapter, mondayStart: initialMondayStart = true, initialDate, locale, visibleHours, snapInterval = 15, equalDays = false, hideDays, blockedSlots, disabledDates, days: initialDayCount = 7, readOnly = false, minDuration, maxDuration, oneventclick, oneventcreate, oneventmove, } = options;
+    const { adapter, mondayStart: initialMondayStart = true, initialDate: rawInitialDate, locale, visibleHours, snapInterval = 15, equalDays = false, hideDays, blockedSlots, disabledDates, days: initialDayCount = 7, readOnly = false, minDuration, maxDuration, oneventclick, oneventcreate, oneventmove, } = options;
     // ── Create engine ────────────────────────────────────
-    const store = createEventStore(adapter);
+    const timezone = options.timezone;
+    const initialDate = rawInitialDate && timezone ? toZonedTime(rawInitialDate, timezone) : rawInitialDate;
+    const store = createEventStore(timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter);
     const viewState = createViewState({
         view: options.view ?? 'week-planner',
         mondayStart: initialMondayStart,
@@ -60,7 +63,8 @@ export function createCalendar(options) {
     });
     const selection = createSelection();
     const drag = createDragState();
-    const clock = createClock();
+    const clock = createClock(timezone);
+    const unzoneDate = (d) => (timezone ? fromZonedTime(d, timezone) : d);
     // ── Computed ──────────────────────────────────────────
     const disabledSet = $derived(new Set(disabledDates?.map((d) => sod(d.getTime())) ?? []));
     const startHour = visibleHours?.[0] ?? 0;
@@ -281,7 +285,7 @@ export function createCalendar(options) {
                 await store.move(payload.eventId, start, end);
                 const ev = store.byId(payload.eventId);
                 if (ev)
-                    oneventmove?.(ev, start, end);
+                    oneventmove?.(ev, unzoneDate(start), unzoneDate(end));
             }
             catch (e) {
                 const msg = e instanceof Error ? e.message : '';
@@ -290,7 +294,7 @@ export function createCalendar(options) {
                 if (msg.includes('read-only')) {
                     const ev = store.byId(payload.eventId);
                     if (ev)
-                        oneventmove?.(ev, start, end);
+                        oneventmove?.(ev, unzoneDate(start), unzoneDate(end));
                 }
                 else if (!msg.includes('not found')) {
                     console.warn('[calendar] drag commit failed:', e);
@@ -299,7 +303,9 @@ export function createCalendar(options) {
             }
         }
         else if (mode === 'create') {
-            oneventcreate?.({ start, end });
+            oneventcreate?.(timezone
+                ? { start: fromZonedTime(start, timezone), end: fromZonedTime(end, timezone) }
+                : { start, end });
         }
         return result;
     }

@@ -51,3 +51,34 @@ export function formatInTimeZone(date, timezone, options = {}, locale) {
         timeZone: timezone,
     }).format(d);
 }
+export function wrapAdapterWithTimezone(adapter, timezone) {
+    const zoneEvent = (ev) => ({
+        ...ev,
+        start: toZonedTime(ev.start, timezone),
+        end: toZonedTime(ev.end, timezone),
+    });
+    const unzonePartial = (obj) => ({
+        ...obj,
+        ...(obj.start instanceof Date ? { start: fromZonedTime(obj.start, timezone) } : {}),
+        ...(obj.end instanceof Date ? { end: fromZonedTime(obj.end, timezone) } : {}),
+    });
+    const wrapped = {
+        async fetchEvents(range) {
+            const events = await adapter.fetchEvents({
+                start: fromZonedTime(range.start, timezone),
+                end: fromZonedTime(range.end, timezone),
+            });
+            return events.map(zoneEvent);
+        },
+    };
+    if (adapter.createEvent) {
+        wrapped.createEvent = async (event) => zoneEvent(await adapter.createEvent(unzonePartial(event)));
+    }
+    if (adapter.updateEvent) {
+        wrapped.updateEvent = async (id, patch) => zoneEvent(await adapter.updateEvent(id, unzonePartial(patch)));
+    }
+    if (adapter.deleteEvent) {
+        wrapped.deleteEvent = (id) => adapter.deleteEvent(id);
+    }
+    return wrapped;
+}

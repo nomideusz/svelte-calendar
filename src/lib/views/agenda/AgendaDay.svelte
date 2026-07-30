@@ -46,7 +46,7 @@
 		selectedEventId = null,
 	}: Props = $props();
 
-	const clock = createClock();
+	const clock = createClock(ctx.timezone);
 	const viewState = $derived(ctx.viewState);
 	const equalDays = $derived(ctx.equalDays);
 	const isMobile = $derived(ctx.isMobile);

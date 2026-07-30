@@ -20,3 +20,15 @@ export declare function nowInZone(timezone: string): Date;
  * Returns a locale-aware string.
  */
 export declare function formatInTimeZone(date: Date | number, timezone: string, options?: Intl.DateTimeFormatOptions, locale?: string): string;
+/**
+ * Wrap a CalendarAdapter so everything it emits is expressed as wall-clock
+ * Dates in `timezone`, and everything written through it is converted back to
+ * real instants. This is how the Calendar's `timezone` prop works: views keep
+ * doing plain local-time math on an already-shifted plane.
+ *
+ * Known limit shared by every wall-clock calendar UI: during a DST fall-back
+ * the repeated hour is ambiguous on the wall clock, so writes made inside it
+ * resolve to one of the two instants (date-fns-tz picks the offset).
+ */
+import type { CalendarAdapter } from '../adapters/types.js';
+export declare function wrapAdapterWithTimezone(adapter: CalendarAdapter, timezone: string): CalendarAdapter;

@@ -47,7 +47,7 @@
 	const eventSnippet = $derived(ctx.eventSnippet);
 	const loadRangeCtx = $derived(ctx.loadRange);
 
-	const clock = createClock();
+	const clock = createClock(ctx.timezone);
 	const todayMs = $derived(clock.today);
 
 	const MAX_CHIPS = $derived(isMobile ? 2 : 3);

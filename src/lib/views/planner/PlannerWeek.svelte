@@ -54,7 +54,7 @@
 	}: Props = $props();
 
 	const ctx = useCalendarContext();
-	const clock = createClock();
+	const clock = createClock(ctx.timezone);
 
 	// Drag ghost flies between day cells instead of teleporting.
 	// No fallback: without a counterpart (drag start/end) it appears/disappears instantly.

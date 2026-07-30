@@ -706,7 +706,20 @@ Call `resetLabels()` to restore English defaults (`defaultLabels` exports them; 
 
 ## Timezone Support
 
-Convert events between timezones using the built-in helpers:
+Render the whole calendar in any IANA timezone — events, the now-indicator
+and day boundaries all shift; ranges passed to `oneventcreate`/`oneventmove`
+convert back to real instants:
+
+```svelte
+<Calendar {adapter} timezone="Europe/Warsaw" />
+```
+
+Under the hood the adapter is wrapped with `wrapAdapterWithTimezone` (also
+exported) so views do plain local-time math on a zoned wall-clock plane.
+Known limit shared by every wall-clock calendar: the repeated hour of a DST
+fall-back is ambiguous, writes inside it resolve to one of the two instants.
+
+Convert events manually with the built-in helpers:
 
 ```ts
 import { toZonedTime, fromZonedTime, nowInZone } from '@nomideusz/svelte-calendar';

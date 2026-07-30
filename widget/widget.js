@@ -5358,11 +5358,11 @@
     if (date instanceof Date) return new date.constructor(value);
     return new Date(value);
   }
-  function toDate(argument, context) {
+  function toDate$1(argument, context) {
     return constructFrom(context || argument, argument);
   }
   function addDays(date, amount, options) {
-    const _date = toDate(date, options?.in);
+    const _date = toDate$1(date, options?.in);
     if (isNaN(amount)) return constructFrom(date, NaN);
     if (!amount) return _date;
     _date.setDate(_date.getDate() + amount);
@@ -5375,7 +5375,7 @@
   function startOfWeek$1(date, options) {
     const defaultOptions2 = getDefaultOptions();
     const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
-    const _date = toDate(date, options?.in);
+    const _date = toDate$1(date, options?.in);
     const day = _date.getDay();
     const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
     _date.setDate(_date.getDate() - diff);
@@ -5383,21 +5383,21 @@
     return _date;
   }
   function startOfDay(date, options) {
-    const _date = toDate(date, options?.in);
+    const _date = toDate$1(date, options?.in);
     _date.setHours(0, 0, 0, 0);
     return _date;
   }
   function getDate(date, options) {
-    return toDate(date, options?.in).getDate();
+    return toDate$1(date, options?.in).getDate();
   }
   function getHours(date, options) {
-    return toDate(date, options?.in).getHours();
+    return toDate$1(date, options?.in).getHours();
   }
   function getMinutes(date, options) {
-    return toDate(date, options?.in).getMinutes();
+    return toDate$1(date, options?.in).getMinutes();
   }
   function getSeconds(date) {
-    return toDate(date).getSeconds();
+    return toDate$1(date).getSeconds();
   }
   const DAY_MS = 864e5;
   const HOUR_MS = 36e5;
@@ -6307,6 +6307,9 @@
       get ondayclick() {
         return raw?.ondayclick;
       },
+      get timezone() {
+        return raw?.timezone;
+      },
       get disabledDates() {
         return raw?.disabledDates;
       },
@@ -6422,14 +6425,543 @@
     }
     return [transition2(to_send, to_receive, false), transition2(to_receive, to_send, true)];
   }
-  function createClock() {
-    let tick2 = /* @__PURE__ */ state(proxy(Date.now()));
-    let today = /* @__PURE__ */ state(proxy(sod(Date.now())));
+  function tzTokenizeDate(date, timeZone) {
+    const dtf = getDateTimeFormat(timeZone);
+    return "formatToParts" in dtf ? partsOffset(dtf, date) : hackyOffset(dtf, date);
+  }
+  const typeToPos = {
+    year: 0,
+    month: 1,
+    day: 2,
+    hour: 3,
+    minute: 4,
+    second: 5
+  };
+  function partsOffset(dtf, date) {
+    try {
+      const formatted = dtf.formatToParts(date);
+      const filled = [];
+      for (let i = 0; i < formatted.length; i++) {
+        const pos = typeToPos[formatted[i].type];
+        if (pos !== void 0) {
+          filled[pos] = parseInt(formatted[i].value, 10);
+        }
+      }
+      return filled;
+    } catch (error) {
+      if (error instanceof RangeError) {
+        return [NaN];
+      }
+      throw error;
+    }
+  }
+  function hackyOffset(dtf, date) {
+    const formatted = dtf.format(date);
+    const parsed = /(\d+)\/(\d+)\/(\d+),? (\d+):(\d+):(\d+)/.exec(formatted);
+    return [
+      parseInt(parsed[3], 10),
+      parseInt(parsed[1], 10),
+      parseInt(parsed[2], 10),
+      parseInt(parsed[4], 10),
+      parseInt(parsed[5], 10),
+      parseInt(parsed[6], 10)
+    ];
+  }
+  const dtfCache = {};
+  const testDateFormatted = new Intl.DateTimeFormat("en-US", {
+    hourCycle: "h23",
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  }).format(/* @__PURE__ */ new Date("2014-06-25T04:00:00.123Z"));
+  const hourCycleSupported = testDateFormatted === "06/25/2014, 00:00:00" || testDateFormatted === "‎06‎/‎25‎/‎2014‎ ‎00‎:‎00‎:‎00";
+  function getDateTimeFormat(timeZone) {
+    if (!dtfCache[timeZone]) {
+      dtfCache[timeZone] = hourCycleSupported ? new Intl.DateTimeFormat("en-US", {
+        hourCycle: "h23",
+        timeZone,
+        year: "numeric",
+        month: "numeric",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }) : new Intl.DateTimeFormat("en-US", {
+        hour12: false,
+        timeZone,
+        year: "numeric",
+        month: "numeric",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+    return dtfCache[timeZone];
+  }
+  function newDateUTC(fullYear, month, day, hour, minute, second, millisecond) {
+    const utcDate = /* @__PURE__ */ new Date(0);
+    utcDate.setUTCFullYear(fullYear, month, day);
+    utcDate.setUTCHours(hour, minute, second, millisecond);
+    return utcDate;
+  }
+  const MILLISECONDS_IN_HOUR$1 = 36e5;
+  const MILLISECONDS_IN_MINUTE$1 = 6e4;
+  const patterns$1 = {
+    timezoneZ: /^(Z)$/,
+    timezoneHH: /^([+-]\d{2})$/,
+    timezoneHHMM: /^([+-])(\d{2}):?(\d{2})$/
+  };
+  function tzParseTimezone(timezoneString, date, isUtcDate) {
+    if (!timezoneString) {
+      return 0;
+    }
+    let token = patterns$1.timezoneZ.exec(timezoneString);
+    if (token) {
+      return 0;
+    }
+    let hours;
+    let absoluteOffset;
+    token = patterns$1.timezoneHH.exec(timezoneString);
+    if (token) {
+      hours = parseInt(token[1], 10);
+      if (!validateTimezone(hours)) {
+        return NaN;
+      }
+      return -(hours * MILLISECONDS_IN_HOUR$1);
+    }
+    token = patterns$1.timezoneHHMM.exec(timezoneString);
+    if (token) {
+      hours = parseInt(token[2], 10);
+      const minutes = parseInt(token[3], 10);
+      if (!validateTimezone(hours, minutes)) {
+        return NaN;
+      }
+      absoluteOffset = Math.abs(hours) * MILLISECONDS_IN_HOUR$1 + minutes * MILLISECONDS_IN_MINUTE$1;
+      return token[1] === "+" ? -absoluteOffset : absoluteOffset;
+    }
+    if (isValidTimezoneIANAString(timezoneString)) {
+      date = new Date(date || Date.now());
+      const utcDate = isUtcDate ? date : toUtcDate(date);
+      const offset = calcOffset(utcDate, timezoneString);
+      const fixedOffset = isUtcDate ? offset : fixOffset(date, offset, timezoneString);
+      return -fixedOffset;
+    }
+    return NaN;
+  }
+  function toUtcDate(date) {
+    return newDateUTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+  }
+  function calcOffset(date, timezoneString) {
+    const tokens = tzTokenizeDate(date, timezoneString);
+    const asUTC = newDateUTC(tokens[0], tokens[1] - 1, tokens[2], tokens[3] % 24, tokens[4], tokens[5], 0).getTime();
+    let asTS = date.getTime();
+    const over = asTS % 1e3;
+    asTS -= over >= 0 ? over : 1e3 + over;
+    return asUTC - asTS;
+  }
+  function fixOffset(date, offset, timezoneString) {
+    const localTS = date.getTime();
+    let utcGuess = localTS - offset;
+    const o2 = calcOffset(new Date(utcGuess), timezoneString);
+    if (offset === o2) {
+      return offset;
+    }
+    utcGuess -= o2 - offset;
+    const o3 = calcOffset(new Date(utcGuess), timezoneString);
+    if (o2 === o3) {
+      return o2;
+    }
+    return Math.max(o2, o3);
+  }
+  function validateTimezone(hours, minutes) {
+    return -23 <= hours && hours <= 23 && (minutes == null || 0 <= minutes && minutes <= 59);
+  }
+  const validIANATimezoneCache = {};
+  function isValidTimezoneIANAString(timeZoneString) {
+    if (validIANATimezoneCache[timeZoneString])
+      return true;
+    try {
+      new Intl.DateTimeFormat(void 0, { timeZone: timeZoneString });
+      validIANATimezoneCache[timeZoneString] = true;
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  function getTimezoneOffsetInMilliseconds(date) {
+    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()));
+    utcDate.setUTCFullYear(date.getFullYear());
+    return +date - +utcDate;
+  }
+  const tzPattern = /(Z|[+-]\d{2}(?::?\d{2})?| UTC| [a-zA-Z]+\/[a-zA-Z_]+(?:\/[a-zA-Z_]+)?)$/;
+  const MILLISECONDS_IN_HOUR = 36e5;
+  const MILLISECONDS_IN_MINUTE = 6e4;
+  const DEFAULT_ADDITIONAL_DIGITS = 2;
+  const patterns = {
+    dateTimePattern: /^([0-9W+-]+)(T| )(.*)/,
+    datePattern: /^([0-9W+-]+)(.*)/,
+    // year tokens
+    YY: /^(\d{2})$/,
+    YYY: [
+      /^([+-]\d{2})$/,
+      // 0 additional digits
+      /^([+-]\d{3})$/,
+      // 1 additional digit
+      /^([+-]\d{4})$/
+      // 2 additional digits
+    ],
+    YYYY: /^(\d{4})/,
+    YYYYY: [
+      /^([+-]\d{4})/,
+      // 0 additional digits
+      /^([+-]\d{5})/,
+      // 1 additional digit
+      /^([+-]\d{6})/
+      // 2 additional digits
+    ],
+    // date tokens
+    MM: /^-(\d{2})$/,
+    DDD: /^-?(\d{3})$/,
+    MMDD: /^-?(\d{2})-?(\d{2})$/,
+    Www: /^-?W(\d{2})$/,
+    WwwD: /^-?W(\d{2})-?(\d{1})$/,
+    HH: /^(\d{2}([.,]\d*)?)$/,
+    HHMM: /^(\d{2}):?(\d{2}([.,]\d*)?)$/,
+    HHMMSS: /^(\d{2}):?(\d{2}):?(\d{2}([.,]\d*)?)$/,
+    // time zone tokens (to identify the presence of a tz)
+    timeZone: tzPattern
+  };
+  function toDate(argument, options = {}) {
+    if (arguments.length < 1) {
+      throw new TypeError("1 argument required, but only " + arguments.length + " present");
+    }
+    if (argument === null) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    const additionalDigits = options.additionalDigits == null ? DEFAULT_ADDITIONAL_DIGITS : Number(options.additionalDigits);
+    if (additionalDigits !== 2 && additionalDigits !== 1 && additionalDigits !== 0) {
+      throw new RangeError("additionalDigits must be 0, 1 or 2");
+    }
+    if (argument instanceof Date || typeof argument === "object" && Object.prototype.toString.call(argument) === "[object Date]") {
+      return new Date(argument.getTime());
+    } else if (typeof argument === "number" || Object.prototype.toString.call(argument) === "[object Number]") {
+      return new Date(argument);
+    } else if (!(Object.prototype.toString.call(argument) === "[object String]")) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    const dateStrings = splitDateString(argument);
+    const { year, restDateString } = parseYear(dateStrings.date, additionalDigits);
+    const date = parseDate(restDateString, year);
+    if (date === null || isNaN(date.getTime())) {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+    if (date) {
+      const timestamp = date.getTime();
+      let time = 0;
+      let offset;
+      if (dateStrings.time) {
+        time = parseTime(dateStrings.time);
+        if (time === null || isNaN(time)) {
+          return /* @__PURE__ */ new Date(NaN);
+        }
+      }
+      if (dateStrings.timeZone || options.timeZone) {
+        offset = tzParseTimezone(dateStrings.timeZone || options.timeZone, new Date(timestamp + time));
+        if (isNaN(offset)) {
+          return /* @__PURE__ */ new Date(NaN);
+        }
+      } else {
+        offset = getTimezoneOffsetInMilliseconds(new Date(timestamp + time));
+        offset = getTimezoneOffsetInMilliseconds(new Date(timestamp + time + offset));
+      }
+      return new Date(timestamp + time + offset);
+    } else {
+      return /* @__PURE__ */ new Date(NaN);
+    }
+  }
+  function splitDateString(dateString) {
+    const dateStrings = {};
+    let parts = patterns.dateTimePattern.exec(dateString);
+    let timeString;
+    if (!parts) {
+      parts = patterns.datePattern.exec(dateString);
+      if (parts) {
+        dateStrings.date = parts[1];
+        timeString = parts[2];
+      } else {
+        dateStrings.date = null;
+        timeString = dateString;
+      }
+    } else {
+      dateStrings.date = parts[1];
+      timeString = parts[3];
+    }
+    if (timeString) {
+      const token = patterns.timeZone.exec(timeString);
+      if (token) {
+        dateStrings.time = timeString.replace(token[1], "");
+        dateStrings.timeZone = token[1].trim();
+      } else {
+        dateStrings.time = timeString;
+      }
+    }
+    return dateStrings;
+  }
+  function parseYear(dateString, additionalDigits) {
+    if (dateString) {
+      const patternYYY = patterns.YYY[additionalDigits];
+      const patternYYYYY = patterns.YYYYY[additionalDigits];
+      let token = patterns.YYYY.exec(dateString) || patternYYYYY.exec(dateString);
+      if (token) {
+        const yearString = token[1];
+        return {
+          year: parseInt(yearString, 10),
+          restDateString: dateString.slice(yearString.length)
+        };
+      }
+      token = patterns.YY.exec(dateString) || patternYYY.exec(dateString);
+      if (token) {
+        const centuryString = token[1];
+        return {
+          year: parseInt(centuryString, 10) * 100,
+          restDateString: dateString.slice(centuryString.length)
+        };
+      }
+    }
+    return {
+      year: null
+    };
+  }
+  function parseDate(dateString, year) {
+    if (year === null) {
+      return null;
+    }
+    let date;
+    let month;
+    let week;
+    if (!dateString || !dateString.length) {
+      date = /* @__PURE__ */ new Date(0);
+      date.setUTCFullYear(year);
+      return date;
+    }
+    let token = patterns.MM.exec(dateString);
+    if (token) {
+      date = /* @__PURE__ */ new Date(0);
+      month = parseInt(token[1], 10) - 1;
+      if (!validateDate(year, month)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+      date.setUTCFullYear(year, month);
+      return date;
+    }
+    token = patterns.DDD.exec(dateString);
+    if (token) {
+      date = /* @__PURE__ */ new Date(0);
+      const dayOfYear = parseInt(token[1], 10);
+      if (!validateDayOfYearDate(year, dayOfYear)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+      date.setUTCFullYear(year, 0, dayOfYear);
+      return date;
+    }
+    token = patterns.MMDD.exec(dateString);
+    if (token) {
+      date = /* @__PURE__ */ new Date(0);
+      month = parseInt(token[1], 10) - 1;
+      const day = parseInt(token[2], 10);
+      if (!validateDate(year, month, day)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+      date.setUTCFullYear(year, month, day);
+      return date;
+    }
+    token = patterns.Www.exec(dateString);
+    if (token) {
+      week = parseInt(token[1], 10) - 1;
+      if (!validateWeekDate(week)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+      return dayOfISOWeekYear(year, week);
+    }
+    token = patterns.WwwD.exec(dateString);
+    if (token) {
+      week = parseInt(token[1], 10) - 1;
+      const dayOfWeek = parseInt(token[2], 10) - 1;
+      if (!validateWeekDate(week, dayOfWeek)) {
+        return /* @__PURE__ */ new Date(NaN);
+      }
+      return dayOfISOWeekYear(year, week, dayOfWeek);
+    }
+    return null;
+  }
+  function parseTime(timeString) {
+    let hours;
+    let minutes;
+    let token = patterns.HH.exec(timeString);
+    if (token) {
+      hours = parseFloat(token[1].replace(",", "."));
+      if (!validateTime(hours)) {
+        return NaN;
+      }
+      return hours % 24 * MILLISECONDS_IN_HOUR;
+    }
+    token = patterns.HHMM.exec(timeString);
+    if (token) {
+      hours = parseInt(token[1], 10);
+      minutes = parseFloat(token[2].replace(",", "."));
+      if (!validateTime(hours, minutes)) {
+        return NaN;
+      }
+      return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE;
+    }
+    token = patterns.HHMMSS.exec(timeString);
+    if (token) {
+      hours = parseInt(token[1], 10);
+      minutes = parseInt(token[2], 10);
+      const seconds = parseFloat(token[3].replace(",", "."));
+      if (!validateTime(hours, minutes, seconds)) {
+        return NaN;
+      }
+      return hours % 24 * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE + seconds * 1e3;
+    }
+    return null;
+  }
+  function dayOfISOWeekYear(isoWeekYear, week, day) {
+    week = week || 0;
+    day = day || 0;
+    const date = /* @__PURE__ */ new Date(0);
+    date.setUTCFullYear(isoWeekYear, 0, 4);
+    const fourthOfJanuaryDay = date.getUTCDay() || 7;
+    const diff = week * 7 + day + 1 - fourthOfJanuaryDay;
+    date.setUTCDate(date.getUTCDate() + diff);
+    return date;
+  }
+  const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const DAYS_IN_MONTH_LEAP_YEAR = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  function isLeapYearIndex(year) {
+    return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0;
+  }
+  function validateDate(year, month, date) {
+    if (month < 0 || month > 11) {
+      return false;
+    }
+    if (date != null) {
+      if (date < 1) {
+        return false;
+      }
+      const isLeapYear = isLeapYearIndex(year);
+      if (isLeapYear && date > DAYS_IN_MONTH_LEAP_YEAR[month]) {
+        return false;
+      }
+      if (!isLeapYear && date > DAYS_IN_MONTH[month]) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function validateDayOfYearDate(year, dayOfYear) {
+    if (dayOfYear < 1) {
+      return false;
+    }
+    const isLeapYear = isLeapYearIndex(year);
+    if (isLeapYear && dayOfYear > 366) {
+      return false;
+    }
+    if (!isLeapYear && dayOfYear > 365) {
+      return false;
+    }
+    return true;
+  }
+  function validateWeekDate(week, day) {
+    if (week < 0 || week > 52) {
+      return false;
+    }
+    if (day != null && (day < 0 || day > 6)) {
+      return false;
+    }
+    return true;
+  }
+  function validateTime(hours, minutes, seconds) {
+    if (hours < 0 || hours >= 25) {
+      return false;
+    }
+    if (minutes != null && (minutes < 0 || minutes >= 60)) {
+      return false;
+    }
+    if (seconds != null && (seconds < 0 || seconds >= 60)) {
+      return false;
+    }
+    return true;
+  }
+  function toZonedTime$1(date, timeZone, options) {
+    date = toDate(date, options);
+    const offsetMilliseconds = tzParseTimezone(timeZone, date, true);
+    const d = new Date(date.getTime() - offsetMilliseconds);
+    const resultDate = /* @__PURE__ */ new Date(0);
+    resultDate.setFullYear(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    resultDate.setHours(d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
+    return resultDate;
+  }
+  function fromZonedTime$1(date, timeZone, options) {
+    if (typeof date === "string" && !date.match(tzPattern)) {
+      return toDate(date, { ...options, timeZone });
+    }
+    date = toDate(date, options);
+    const utc = newDateUTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()).getTime();
+    const offsetMilliseconds = tzParseTimezone(timeZone, new Date(utc));
+    return new Date(utc + offsetMilliseconds);
+  }
+  function toZonedTime(date, timezone) {
+    return toZonedTime$1(date, timezone);
+  }
+  function fromZonedTime(date, timezone) {
+    return fromZonedTime$1(date, timezone);
+  }
+  function wrapAdapterWithTimezone(adapter, timezone) {
+    const zoneEvent = (ev) => ({
+      ...ev,
+      start: toZonedTime(ev.start, timezone),
+      end: toZonedTime(ev.end, timezone)
+    });
+    const unzonePartial = (obj) => ({
+      ...obj,
+      ...obj.start instanceof Date ? { start: fromZonedTime(obj.start, timezone) } : {},
+      ...obj.end instanceof Date ? { end: fromZonedTime(obj.end, timezone) } : {}
+    });
+    const wrapped = {
+      async fetchEvents(range) {
+        const events = await adapter.fetchEvents({
+          start: fromZonedTime(range.start, timezone),
+          end: fromZonedTime(range.end, timezone)
+        });
+        return events.map(zoneEvent);
+      }
+    };
+    if (adapter.createEvent) {
+      wrapped.createEvent = async (event2) => zoneEvent(await adapter.createEvent(unzonePartial(event2)));
+    }
+    if (adapter.updateEvent) {
+      wrapped.updateEvent = async (id, patch) => zoneEvent(await adapter.updateEvent(id, unzonePartial(patch)));
+    }
+    if (adapter.deleteEvent) {
+      wrapped.deleteEvent = (id) => adapter.deleteEvent(id);
+    }
+    return wrapped;
+  }
+  function createClock(timezone) {
+    const now2 = () => timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now();
+    let tick2 = /* @__PURE__ */ state(proxy(now2()));
+    let today = /* @__PURE__ */ state(proxy(sod(get(tick2))));
     let intervalId = null;
     function start() {
       intervalId = setInterval(
         () => {
-          set(tick2, Date.now(), true);
+          set(tick2, now2(), true);
           const sd = sod(get(tick2));
           if (sd !== get(today)) set(today, sd, true);
         },
@@ -6633,7 +7165,7 @@
     const L = /* @__PURE__ */ user_derived(getLabels);
     let height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
     const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
@@ -7741,7 +8273,7 @@
     const L = /* @__PURE__ */ user_derived(getLabels);
     let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const ANIM = /* @__PURE__ */ user_derived(() => prefersReducedMotion.current ? 0 : 180);
     const [previewSend, previewReceive] = crossfade({ duration: () => prefersReducedMotion.current ? 0 : 160 });
     const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
@@ -8424,7 +8956,7 @@
     const ctx = useCalendarContext();
     const emptySnippet = /* @__PURE__ */ user_derived(() => ctx.emptySnippet);
     let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const equalDays = /* @__PURE__ */ user_derived(() => ctx.equalDays);
     const isMobile = /* @__PURE__ */ user_derived(() => ctx.isMobile);
@@ -9418,7 +9950,7 @@
     let mondayStart = prop($$props, "mondayStart", 3, true);
     prop($$props, "height", 3, 520);
     let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const equalDays = /* @__PURE__ */ user_derived(() => ctx.equalDays);
     const showDates = /* @__PURE__ */ user_derived(() => ctx.showDates);
@@ -10060,7 +10592,7 @@
     const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
     const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
     const SNAP_MS = /* @__PURE__ */ user_derived(() => ctx.snapInterval * 6e4);
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const HOUR_HEIGHT = 64;
     const GUTTER_W = 40;
     const startHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[0] ?? 0);
@@ -10723,7 +11255,7 @@
     const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
     const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
     const loadRangeCtx = /* @__PURE__ */ user_derived(() => ctx.loadRange);
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const MAX_EVENTS = 3;
     const customDays = /* @__PURE__ */ user_derived(() => get(viewState)?.dayCount ?? 7);
     const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
@@ -11034,7 +11566,7 @@
     const ondayclick = /* @__PURE__ */ user_derived(() => ctx.ondayclick);
     const eventSnippet = /* @__PURE__ */ user_derived(() => ctx.eventSnippet);
     const loadRangeCtx = /* @__PURE__ */ user_derived(() => ctx.loadRange);
-    const clock = createClock();
+    const clock = createClock(ctx.timezone);
     const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
     const MAX_CHIPS = /* @__PURE__ */ user_derived(() => get(isMobile) ? 2 : 3);
     const range = /* @__PURE__ */ user_derived(() => get(viewState)?.range);
@@ -11294,8 +11826,9 @@
       }
     ];
     let views = prop($$props, "views", 3, DEFAULT_VIEWS), theme = prop($$props, "theme", 3, auto), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 12), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
-    const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() ? void 0 : $$props.oneventcreate);
-    const effectiveMove = /* @__PURE__ */ user_derived(() => readOnly() ? void 0 : $$props.oneventmove);
+    const unzone = (d) => $$props.timezone ? fromZonedTime(d, $$props.timezone) : d;
+    const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventcreate ? void 0 : (range) => $$props.oneventcreate({ start: unzone(range.start), end: unzone(range.end) }));
+    const effectiveMove = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventmove ? void 0 : (ev, start, end) => $$props.oneventmove(ev, unzone(start), unzone(end)));
     function handleEventClick(ev) {
       selection.select(ev.id);
       $$props.oneventclick?.(ev);
@@ -11328,12 +11861,15 @@
       };
     });
     const effectiveTheme = /* @__PURE__ */ user_derived(() => theme() === auto && $$props.autoTheme !== false ? get(probedTheme) : theme());
-    const store = /* @__PURE__ */ user_derived(() => createEventStore($$props.adapter));
+    const effectiveAdapter = /* @__PURE__ */ user_derived(() => $$props.timezone ? wrapAdapterWithTimezone($$props.adapter, $$props.timezone) : $$props.adapter);
+    const store = /* @__PURE__ */ user_derived(() => createEventStore(get(effectiveAdapter)));
     const viewState = createViewState(untrack(() => ({
       view: $$props.view ?? views()[0]?.id,
       mondayStart: mondayStart(),
-      initialDate: $$props.initialDate,
+      // Focus lives on the zoned plane too — day boundaries follow the zone.
+      initialDate: $$props.initialDate && $$props.timezone ? toZonedTime($$props.initialDate, $$props.timezone) : $$props.initialDate,
       dayCount: $$props.days,
+      timezone: $$props.timezone,
       modeForView: (viewId) => views().find((v) => v.id === viewId)?.mode
     })));
     const selection = createSelection();
@@ -11436,6 +11972,9 @@
       },
       get ondayclick() {
         return $$props.ondayclick;
+      },
+      get timezone() {
+        return $$props.timezone;
       },
       // Config (reactive via getters)
       get readOnly() {

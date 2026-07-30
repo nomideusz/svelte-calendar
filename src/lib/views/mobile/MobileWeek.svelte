@@ -55,7 +55,7 @@
 	const loadRangeCtx = $derived(ctx.loadRange);
 	const minDuration = $derived(ctx.minDuration);
 
-	const clock = createClock();
+	const clock = createClock(ctx.timezone);
 
 	// ── Config ─────────────────────────────────────────
 	const MAX_EVENTS = 3;

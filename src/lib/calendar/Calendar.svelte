@@ -35,6 +35,7 @@
 	import Agenda from '../views/agenda/Agenda.svelte';
 	import Mobile from '../views/mobile/Mobile.svelte';
 	import MonthGrid from '../views/month/MonthGrid.svelte';
+	import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from '../core/timezone.js';
 
 	/** Breakpoint (px) at which auto-mobile activates */
 	const MOBILE_BREAKPOINT = 768;
@@ -150,6 +151,13 @@
 		ondayclick?: (date: Date) => void;
 		/** Surfaced instead of silent console output when loading or mutations fail. */
 		onerror?: (error: Error) => void;
+		/**
+		 * Render the calendar in an IANA timezone (e.g. 'Europe/Warsaw').
+		 * Events, "now" and day boundaries all shift; ranges passed to
+		 * oneventcreate/oneventmove convert back to real instants.
+		 * Default: the viewer's local time.
+		 */
+		timezone?: string;
 	}
 
 	// ── Built-in views (used when no custom views are provided) ──
@@ -204,11 +212,23 @@
 		oneventhover,
 		ondayclick,
 		onerror,
+		timezone,
 	}: Props = $props();
 
-	// In readOnly mode, suppress mutation callbacks
-	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
-	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
+	// In readOnly mode, suppress mutation callbacks. With a timezone, the
+	// drag plane is zoned wall-clock — hosts always receive real instants.
+	const unzone = (d: Date) => (timezone ? fromZonedTime(d, timezone) : d);
+	const effectiveCreate = $derived(
+		readOnly || !oneventcreate
+			? undefined
+			: (range: { start: Date; end: Date }) =>
+					oneventcreate({ start: unzone(range.start), end: unzone(range.end) }),
+	);
+	const effectiveMove = $derived(
+		readOnly || !oneventmove
+			? undefined
+			: (ev: TimelineEvent, start: Date, end: Date) => oneventmove(ev, unzone(start), unzone(end)),
+	);
 
 	// Clicking an event selects it (highlight via selectedEventId) and then
 	// notifies the host — selection used to be created but never driven.
@@ -257,12 +277,17 @@
 	const effectiveTheme = $derived(theme === auto && autoTheme !== false ? probedTheme : theme);
 
 	// ── Create reactive state ──
-	const store: EventStore = $derived(createEventStore(adapter));
+	const effectiveAdapter = $derived(
+		timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter,
+	);
+	const store: EventStore = $derived(createEventStore(effectiveAdapter));
 	const viewState: ViewState = createViewState(untrack(() => ({
 		view: activeViewId ?? views[0]?.id,
 		mondayStart,
-		initialDate,
+		// Focus lives on the zoned plane too — day boundaries follow the zone.
+		initialDate: initialDate && timezone ? toZonedTime(initialDate, timezone) : initialDate,
 		dayCount: days,
+		timezone,
 		modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode,
 	})));
 	const selection: Selection = createSelection();
@@ -374,6 +399,7 @@
 		get oneventmove() { return effectiveMove; },
 		get oneventhover() { return oneventhover; },
 		get ondayclick() { return ondayclick; },
+		get timezone() { return timezone; },
 
 		// Config (reactive via getters)
 		get readOnly() { return readOnly; },

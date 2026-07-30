@@ -11,6 +11,7 @@ export { createClock, startOfWeek, fmtH, fmtTime, fmtDuration, weekdayShort, wee
 export type { Clock, TimelineEvent, BlockedSlot, DaySegment, CalendarLabels, EventStatus, TextMeasure, TextMeasureOptions, ContentFit, } from './core/index.js';
 export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';
+export { wrapAdapterWithTimezone } from './core/timezone.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
 export { createCalendar, createAgenda } from './headless/index.js';
 export type { HeadlessCalendarOptions, HeadlessCalendar, HeadlessDay, HeadlessWeek, TodayQueue, HeaderContext, NavigationContext, AgendaOptions, HeadlessAgenda, } from './headless/index.js';
