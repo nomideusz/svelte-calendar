@@ -55,11 +55,17 @@ export function createClock(): Clock {
 		}
 	}
 
-	// Auto-start and auto-cleanup
-	onMount(() => {
-		start();
-		return destroy;
-	});
+	// Auto-start and auto-cleanup.
+	// Outside component initialisation (headless usage, tests) onMount throws —
+	// fall back to a static clock; callers may still call destroy().
+	try {
+		onMount(() => {
+			start();
+			return destroy;
+		});
+	} catch {
+		// lifecycle_outside_component — no interval, clock stays at creation time
+	}
 
 	return {
 		get tick() { return tick; },

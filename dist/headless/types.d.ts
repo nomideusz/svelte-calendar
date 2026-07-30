@@ -7,7 +7,7 @@
 import type { CalendarAdapter } from '../adapters/types.js';
 import type { TimelineEvent, BlockedSlot } from '../core/types.js';
 import type { DaySegment } from '../core/time.js';
-import type { CalendarViewId } from '../engine/view-state.svelte.js';
+import type { CalendarViewId, ViewMode } from '../engine/view-state.svelte.js';
 import type { EventStore } from '../engine/event-store.svelte.js';
 import type { ViewState } from '../engine/view-state.svelte.js';
 import type { Selection } from '../engine/selection.svelte.js';
@@ -96,11 +96,11 @@ export interface HeaderContext {
     /** Formatted date label for current view */
     dateLabel: string;
     /** Current mode */
-    mode: 'day' | 'week';
+    mode: ViewMode;
     /** Available modes */
-    modes: ('day' | 'week')[];
+    modes: ViewMode[];
     /** Switch to a different mode */
-    switchMode: (mode: 'day' | 'week') => void;
+    switchMode: (mode: ViewMode) => void;
     /** Go to previous period */
     prev: () => void;
     /** Go to next period */
@@ -118,7 +118,7 @@ export interface NavigationContext {
     goToday: () => void;
     isViewOnToday: boolean;
     focusDate: Date;
-    mode: 'day' | 'week';
+    mode: ViewMode;
 }
 export interface HeadlessCalendar {
     /** All loaded events for the current range */
@@ -128,7 +128,7 @@ export interface HeadlessCalendar {
     /** The currently focused date */
     readonly focusDate: Date;
     /** Current mode: 'day' or 'week' */
-    readonly mode: 'day' | 'week';
+    readonly mode: ViewMode;
     /** Current view ID */
     readonly view: CalendarViewId;
     /** Visible date range */

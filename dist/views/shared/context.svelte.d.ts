@@ -23,6 +23,7 @@ export interface CalendarContext {
     readonly minDuration: number | undefined;
     readonly maxDuration: number | undefined;
     readonly oneventhover: ((event: TimelineEvent) => void) | undefined;
+    readonly ondayclick: ((date: Date) => void) | undefined;
     readonly disabledDates: Date[] | undefined;
     readonly disabledSet: Set<number>;
     readonly loadRange: {

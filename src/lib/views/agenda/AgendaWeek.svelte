@@ -14,6 +14,7 @@
 	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
 	import { weekdayLong, monthLong, getLabels } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
 
 	const L = $derived(getLabels());
@@ -208,6 +209,7 @@
 		onkeydown={(e) => handleKeydown(e, ev)}
 	>
 		<div class="ag-card-body">
+			<EventContent event={ev}>
 			<span class="ag-card-title">{ev.title}</span>
 			{#if ev.subtitle}
 				<span class="ag-card-sub">{ev.subtitle}</span>
@@ -233,6 +235,7 @@
 					{/each}
 				</div>
 			{/if}
+			</EventContent>
 			{#if isNow}
 				<div class="ag-card-progress">
 					<div class="ag-card-progress-fill" style:width="{prog(ev) * 100}%"></div>
@@ -260,7 +263,7 @@
 					<div class="ag-wday-head">
 						<div class="ag-wday-head-left">
 							<span class="ag-wday-name">{day.dayName}</span>
-						{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
+							{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
 						</div>
 						{#if dayHeaderSnippet}
 							<div class="ag-wday-custom-header">
@@ -338,6 +341,7 @@
 								onpointerenter={() => oneventhover?.(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
+								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
@@ -350,6 +354,7 @@
 									{/each}
 								{/if}
 								<span class="ag-compact-dur">{duration(ev)}</span>
+								</EventContent>
 							</div>
 						{/each}
 					</div>
@@ -411,6 +416,7 @@
 								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
+								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
@@ -426,6 +432,7 @@
 									{/each}
 								{/if}
 								<span class="ag-compact-dur">{duration(ev)}</span>
+								</EventContent>
 							</div>
 						{/each}
 						{#if day.timedEvents.length > 4}
@@ -642,6 +649,9 @@
 	.ag-wday {
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
+	.ag-wday:last-child {
+		border-bottom: none;
+	}
 	.ag-wday--today {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
 	}
@@ -682,7 +692,7 @@
 	}
 	.ag-wday-head-left {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 8px;
 	}
 	.ag-wday-badge {
@@ -706,11 +716,13 @@
 	.ag-wday-name {
 		font-size: 13px;
 		font-weight: 600;
+		line-height: 1.2;
 	}
 	.ag-wday-date {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		line-height: 1.2;
 	}
 
 	.ag-wday-empty {
@@ -759,16 +771,15 @@
 
 	/* Compact day events */
 	.ag-wday-compact {
-		padding: 0 20px 6px;
+		padding: 0 20px 8px;
 	}
 	.ag-compact {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 6px;
 		padding: 3px 0;
 		cursor: pointer;
 		min-width: 0;
-		overflow: hidden;
 	}
 	.ag-compact--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -789,6 +800,7 @@
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;
+		align-self: center;
 	}
 	.ag-compact-time {
 		font-size: 11px;
@@ -797,6 +809,7 @@
 		min-width: 40px;
 		flex-shrink: 0;
 		white-space: nowrap;
+		line-height: 1.4;
 	}
 	.ag-compact-title {
 		font-size: 12px;
@@ -808,6 +821,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
+		line-height: 1.4;
 	}
 	.ag-compact-dur {
 		font-size: 10px;
@@ -815,6 +829,7 @@
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;
+		line-height: 1.4;
 	}
 	.ag-compact-sub {
 		font-size: 10px;
@@ -824,6 +839,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: 120px;
+		line-height: 1.4;
 	}
 	.ag-compact-loc {
 		font-size: 9px;

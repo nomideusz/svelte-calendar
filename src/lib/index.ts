@@ -9,6 +9,9 @@ export {
 
 // ─── Calendar shell ─────────────────────────────────────
 export { Calendar } from './calendar/index.js';
+// Raw view components — compose your own shell around the engine if needed
+export { Planner, Agenda, Mobile } from './views/index.js';
+export { default as MonthGrid } from './views/month/MonthGrid.svelte';
 export type { CalendarView } from './calendar/index.js';
 
 // ─── Engine (reactive state) ────────────────────────────

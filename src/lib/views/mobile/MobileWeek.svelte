@@ -7,6 +7,7 @@
 -->
 <script lang="ts">
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { DAY_MS, sod, isAllDay, isMultiDay } from '../../core/time.js';
@@ -253,12 +254,14 @@
 							>
 								<span class="mw-ev-stripe"></span>
 								<div class="mw-ev-body">
+									<EventContent event={ev}>
 									<span class="mw-ev-title">{ev.title}</span>
 									{#if isAllDay(ev) || isMultiDay(ev)}
 										<span class="mw-ev-time">{L.allDay}</span>
 									{:else}
 										<span class="mw-ev-time">{fmtTime(ev.start)}</span>
 									{/if}
+									</EventContent>
 								</div>
 							</button>
 						{/each}

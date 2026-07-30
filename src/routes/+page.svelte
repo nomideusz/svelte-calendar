@@ -183,6 +183,7 @@
 				{ value: "day-planner", label: "Day Planner" },
 				{ value: "week-agenda", label: "Week Agenda" },
 				{ value: "day-agenda", label: "Day Agenda" },
+				{ value: "month-grid", label: "Month Grid" },
 			],
 		},
 		{

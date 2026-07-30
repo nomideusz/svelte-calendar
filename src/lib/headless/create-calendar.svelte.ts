@@ -42,6 +42,7 @@
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
 import { createViewState } from '../engine/view-state.svelte.js';
+import type { ViewMode } from '../engine/view-state.svelte.js';
 import { createSelection } from '../engine/selection.svelte.js';
 import { createDragState } from '../engine/drag.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
@@ -230,8 +231,8 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 		return {
 			dateLabel,
 			mode,
-			modes: ['day', 'week'] as ('day' | 'week')[],
-			switchMode: (m: 'day' | 'week') => {
+			modes: ['day', 'week', 'month'] as ViewMode[],
+			switchMode: (m: ViewMode) => {
 				const currentView = viewState.view;
 				const currentLabel = currentView.replace(/^(day|week)-/, '');
 				viewState.setView(`${m}-${currentLabel}`);
@@ -268,6 +269,13 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 
 		// Enforce min/max duration
 		if (mode === 'create' || mode === 'resize-start' || mode === 'resize-end') {
+			// Defensive floor: never accept a zero/negative duration, even when
+			// minDuration is unset (views clamp, but the engine must hold alone).
+			if (end.getTime() <= start.getTime()) {
+				const floorMs = Math.max(1, snapInterval) * 60_000;
+				if (mode === 'resize-start') start = new Date(end.getTime() - floorMs);
+				else end = new Date(start.getTime() + floorMs);
+			}
 			const durationMs = end.getTime() - start.getTime();
 			const durationMin = durationMs / 60_000;
 			if (minDuration && durationMin < minDuration) {
@@ -321,7 +329,12 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 				if (ev) oneventmove?.(ev, start, end);
 			} catch (e) {
 				const msg = e instanceof Error ? e.message : '';
-				if (!msg.includes('read-only') && !msg.includes('not found')) {
+				// Read-only adapter: the host still gets the callback — it owns
+				// persistence and refetches.
+				if (msg.includes('read-only')) {
+					const ev = store.byId(payload.eventId);
+					if (ev) oneventmove?.(ev, start, end);
+				} else if (!msg.includes('not found')) {
 					console.warn('[calendar] drag commit failed:', e);
 				}
 				return null;

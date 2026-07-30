@@ -34,6 +34,7 @@
 	import Planner from '../views/planner/Planner.svelte';
 	import Agenda from '../views/agenda/Agenda.svelte';
 	import Mobile from '../views/mobile/Mobile.svelte';
+	import MonthGrid from '../views/month/MonthGrid.svelte';
 
 	/** Breakpoint (px) at which auto-mobile activates */
 	const MOBILE_BREAKPOINT = 768;
@@ -42,8 +43,8 @@
 	export interface CalendarView {
 		id: CalendarViewId;
 		label: string;
-		/** day or week */
-		mode: 'day' | 'week';
+		/** day, week or month */
+		mode: 'day' | 'week' | 'month';
 		/** The Svelte component to render */
 		component: Component<Record<string, unknown>>;
 		/** Extra props to pass through (e.g. hourHeight, specialized settings) */
@@ -145,6 +146,10 @@
 		ondatechange?: (date: Date) => void;
 		/** Called when the pointer enters an event (hover). */
 		oneventhover?: (event: TimelineEvent) => void;
+		/** Called when a day cell is clicked (month grid; more views over time). */
+		ondayclick?: (date: Date) => void;
+		/** Surfaced instead of silent console output when loading or mutations fail. */
+		onerror?: (error: Error) => void;
 	}
 
 	// ── Built-in views (used when no custom views are provided) ──
@@ -155,6 +160,7 @@
 		{ id: 'week-agenda',  label: 'Agenda',  mode: 'week', component: Agenda },
 		{ id: 'day-mobile',   label: 'Mobile',  mode: 'day',  component: Mobile },
 		{ id: 'week-mobile',  label: 'Mobile',  mode: 'week', component: Mobile },
+		{ id: 'month-grid',   label: 'Month',   mode: 'month', component: MonthGrid },
 	];
 
 	let {
@@ -196,11 +202,20 @@
 		onviewchange,
 		ondatechange,
 		oneventhover,
+		ondayclick,
+		onerror,
 	}: Props = $props();
 
 	// In readOnly mode, suppress mutation callbacks
 	const effectiveCreate = $derived(readOnly ? undefined : oneventcreate);
 	const effectiveMove = $derived(readOnly ? undefined : oneventmove);
+
+	// Clicking an event selects it (highlight via selectedEventId) and then
+	// notifies the host — selection used to be created but never driven.
+	function handleEventClick(ev: TimelineEvent) {
+		selection.select(ev.id);
+		oneventclick?.(ev);
+	}
 
 	// ── Mobile detection (container-based, not viewport) ──
 	let containerWidth = $state(0);
@@ -265,6 +280,13 @@
 
 		// Enforce min/max duration for create and resize
 		if (mode === 'create' || mode === 'resize-start' || mode === 'resize-end') {
+			// Defensive floor: never accept a zero/negative duration, even when
+			// minDuration is unset (views clamp, but the engine must hold alone).
+			if (end.getTime() <= start.getTime()) {
+				const floorMs = Math.max(1, snapInterval) * 60_000;
+				if (mode === 'resize-start') start = new Date(end.getTime() - floorMs);
+				else end = new Date(start.getTime() + floorMs);
+			}
 			const durationMs = end.getTime() - start.getTime();
 			const durationMin = durationMs / 60_000;
 			if (minDuration && durationMin < minDuration) {
@@ -312,11 +334,16 @@
 				const ev = store.byId(payload.eventId);
 				if (ev) effectiveMove?.(ev, start, end);
 			} catch (e) {
-				// Silently handle read-only / missing event errors.
-				// The optimistic update in store.move() already reverted.
 				const msg = e instanceof Error ? e.message : '';
-				if (!msg.includes('read-only') && !msg.includes('not found')) {
-					console.warn('[calendar] drag commit failed:', e);
+				// Read-only adapter: the store can't persist, but the HOST still
+				// gets the callback — it owns persistence (e.g. scheduler RPC) and
+				// refetches. Missing event stays silent; real failures surface.
+				if (msg.includes('read-only')) {
+					const ev = store.byId(payload.eventId);
+					if (ev) effectiveMove?.(ev, start, end);
+				} else if (!msg.includes('not found')) {
+					if (onerror) onerror(e instanceof Error ? e : new Error(String(e)));
+					else console.warn('[calendar] drag commit failed:', e);
 				}
 			}
 		} else if (mode === 'create') {
@@ -342,10 +369,11 @@
 		commitDrag,
 
 		// Callbacks
-		get oneventclick() { return oneventclick; },
+		get oneventclick() { return handleEventClick; },
 		get oneventcreate() { return effectiveCreate; },
 		get oneventmove() { return effectiveMove; },
 		get oneventhover() { return oneventhover; },
+		get ondayclick() { return ondayclick; },
 
 		// Config (reactive via getters)
 		get readOnly() { return readOnly; },
@@ -412,6 +440,11 @@
 		onviewchange?.(viewState.view);
 	});
 
+	// Surface adapter failures — store.error was previously write-only.
+	$effect(() => {
+		if (store.error && onerror) onerror(new Error(store.error));
+	});
+
 
 	// ── Resolve active view ──
 	// When mobile is active, Planner views get remapped to Mobile variants.
@@ -440,11 +473,7 @@
 	// ── Date label (always visible, centered over views) ──
 	const dateLabel = $derived.by(() => {
 		if (!showDates) {
-			// Template week mode: just show weekday name (day) or nothing (week)
-			if (viewState.mode === 'day') {
-				return viewState.focusDate.toLocaleDateString(locale, { weekday: 'long' });
-			}
-			return ''; // week views have their own day headers
+			return ''; // the host owns date display; views have their own day headers
 		}
 		if (viewState.mode === 'day') {
 			return viewState.focusDate.toLocaleDateString(locale, {
@@ -462,13 +491,13 @@
 	// Which modes are available?
 	const modes = $derived.by(() => {
 		const g = new Set(desktopViews.map((v) => v.mode));
-		return (['day', 'week'] as const).filter((key) => g.has(key));
+		return (['day', 'week', 'month'] as const).filter((key) => g.has(key));
 	});
 
 	const L = $derived(getLabels());
 
 	/** Switch to a different mode (day/week), preserving the current view label. */
-	function switchMode(g: 'day' | 'week') {
+	function switchMode(g: 'day' | 'week' | 'month') {
 		const currentLabel = desktopViews.find((v) => v.id === viewState.view)?.label
 			?? activeView?.label;
 		const match = desktopViews.find((v) => v.mode === g && v.label === currentLabel);
@@ -523,13 +552,13 @@
 		{@render headerSnippet(headerCtx)}
 
 	<!-- ─── Mobile header (flow layout, no absolute) ─── -->
-	{:else if useMobile}
+	{:else if useMobile && (showNavigation || (showModePills && modes.length > 1) || dateLabel)}
 		<div class="cal-m-hd">
 			<div class="cal-m-left">
 				{#if navigationSnippet}
 					{@render navigationSnippet(navCtx)}
 				{:else if showNavigation}
-					<button class="cal-m-nav" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : L.previousWeek}>
+					<button class="cal-m-nav" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 					</button>
 				{/if}
@@ -543,7 +572,7 @@
 								aria-pressed={viewState.mode === g}
 								onclick={() => switchMode(g)}
 							>
-								{g === 'day' ? L.day : L.week}
+								{g === 'day' ? L.day : g === 'week' ? L.week : L.month}
 							</button>
 						{/each}
 					</div>
@@ -554,7 +583,7 @@
 
 			<div class="cal-m-right">
 				{#if !navigationSnippet && showNavigation}
-					<button class="cal-m-nav" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : L.nextWeek}>
+					<button class="cal-m-nav" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 					</button>
 				{/if}
@@ -582,10 +611,10 @@
 							{L.today}
 						</button>
 					{/if}
-					<button class="cal-hd-btn" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : L.previousWeek}>
+					<button class="cal-hd-btn" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 					</button>
-					<button class="cal-hd-btn" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : L.nextWeek}>
+					<button class="cal-hd-btn" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 					</button>
 				{/if}
@@ -601,7 +630,7 @@
 								aria-pressed={viewState.mode === g}
 								onclick={() => switchMode(g)}
 							>
-								{g === 'day' ? L.day : L.week}
+								{g === 'day' ? L.day : g === 'week' ? L.week : L.month}
 							</button>
 						{/each}
 					</div>
@@ -621,7 +650,7 @@
 				mondayStart={viewState.mondayStart}
 				{locale}
 				focusDate={viewState.focusDate}
-				oneventclick={oneventclick}
+				oneventclick={handleEventClick}
 				oneventcreate={effectiveCreate}
 				readOnly={readOnly}
 				visibleHours={visibleHours}

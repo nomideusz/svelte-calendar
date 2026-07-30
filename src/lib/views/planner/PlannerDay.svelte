@@ -8,6 +8,7 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { fly } from 'svelte/transition';
 	import { createClock } from '../../core/clock.svelte.js';
 	import { createTextMeasure, type ContentFit } from '../../core/measure.js';
@@ -208,7 +209,9 @@
 
 	const positionedEvents = $derived.by(() => {
 		const now = clock.tick;
-		const dragP = drag?.active && drag.mode === 'move' ? drag.payload : null;
+		const dragP = drag?.active && (drag.mode === 'move' || drag.mode === 'resize-start' || drag.mode === 'resize-end')
+			? drag.payload
+			: null;
 
 		const staticEvents: typeof timedEvents = [];
 		let draggedEv: TimelineEvent | null = null;
@@ -428,13 +431,18 @@
 
 	function onPointerDown(e: PointerEvent) {
 		if (e.button !== 0) return;
-		if (!readOnly) return; // drag-to-scroll only in read-only mode
 		if ((e.target as HTMLElement).closest('.fs-event')) return;
-		dragStartX = e.clientX;
-		dragScrollStart = el.scrollLeft;
-		window.addEventListener('pointermove', onScrollMove);
-		window.addEventListener('pointerup', onScrollUp, { once: true });
-		window.addEventListener('pointercancel', onScrollUp, { once: true });
+		if (readOnly) {
+			// drag-to-scroll in read-only mode
+			dragStartX = e.clientX;
+			dragScrollStart = el.scrollLeft;
+			window.addEventListener('pointermove', onScrollMove);
+			window.addEventListener('pointerup', onScrollUp, { once: true });
+			window.addEventListener('pointercancel', onScrollUp, { once: true });
+			return;
+		}
+		// editable mode: empty-canvas drag creates an event
+		onCreatePointerDown(e);
 	}
 
 	function onScrollMove(e: PointerEvent) {
@@ -488,6 +496,72 @@
 				return;
 			}
 		}
+	}
+
+	// ─── Drag-to-create ─────────────────────────────────
+	// Pointer-down on empty canvas + horizontal drag sweeps out a new range.
+	// Movement below CREATE_THRESHOLD stays a plain click (handleTrackClick).
+	const CREATE_THRESHOLD = 4;
+	let createStartX = 0;
+	let createAnchorMs = 0;
+	let createStarted = false;
+
+	/** Pointer X in track coordinates (accounts for scroll). */
+	function trackX(e: PointerEvent): number {
+		return e.clientX - el.getBoundingClientRect().left + el.scrollLeft;
+	}
+
+	function onCreatePointerDown(e: PointerEvent) {
+		if (!drag || !oneventcreate) return;
+		createStartX = e.clientX;
+		createAnchorMs = pxToTime(trackX(e));
+		createStarted = false;
+		window.addEventListener('pointermove', onCreateMove);
+		window.addEventListener('pointerup', onCreateUp, { once: true });
+		window.addEventListener('pointercancel', onCreateCancel, { once: true });
+	}
+
+	function onCreateMove(e: PointerEvent) {
+		if (!drag) return;
+		if (!createStarted) {
+			if (Math.abs(e.clientX - createStartX) < CREATE_THRESHOLD) return;
+			// Never start a create-drag anchored on a disabled day
+			if (disabledSet.has(sod(createAnchorMs))) return;
+			createStarted = true;
+			wasDragging = true; // suppress the trailing click-to-create
+			createAnchorMs = Math.floor(createAnchorMs / SNAP_MS) * SNAP_MS;
+			drag.beginCreate(new Date(createAnchorMs), new Date(createAnchorMs + SNAP_MS));
+		}
+		const snapped = Math.round(pxToTime(trackX(e)) / SNAP_MS) * SNAP_MS;
+		drag.updatePointer(
+			new Date(Math.min(createAnchorMs, snapped)),
+			new Date(Math.max(createAnchorMs + SNAP_MS, snapped)),
+		);
+	}
+
+	function cleanupCreateDrag() {
+		window.removeEventListener('pointermove', onCreateMove);
+		window.removeEventListener('pointerup', onCreateUp);
+		window.removeEventListener('pointercancel', onCreateCancel);
+		createStarted = false;
+	}
+
+	function onCreateUp() {
+		if (drag && createStarted) {
+			commitDragCtx?.();
+			// The click event (if any) fires synchronously after pointerup and
+			// consumes wasDragging; reset afterwards in case it never fires.
+			setTimeout(() => { wasDragging = false; }, 0);
+		}
+		cleanupCreateDrag();
+	}
+
+	function onCreateCancel() {
+		if (drag && createStarted) {
+			drag.cancel();
+			setTimeout(() => { wasDragging = false; }, 0);
+		}
+		cleanupCreateDrag();
 	}
 
 	// ─── Event drag-to-move ─────────────────────────────
@@ -550,6 +624,70 @@
 	function onEvCancel() {
 		if (drag && evDragStarted) drag.cancel();
 		cleanupEvDrag();
+	}
+
+	// ─── Event resize (edge handles) ────────────────────
+	// Narrow zones on the left/right edge of a block start a resize drag.
+	let rsStartX = 0;
+	let rsStarted = false;
+	let rsEdge: 'start' | 'end' = 'end';
+	let rsEvent: TimelineEvent | null = null;
+
+	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end') {
+		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
+		e.stopPropagation();
+		rsStartX = e.clientX;
+		rsStarted = false;
+		rsEdge = edge;
+		rsEvent = ev;
+		window.addEventListener('pointermove', onResizeMove);
+		window.addEventListener('pointerup', onResizeUp, { once: true });
+		window.addEventListener('pointercancel', onResizeCancel, { once: true });
+	}
+
+	function onResizeMove(e: PointerEvent) {
+		const ev = rsEvent;
+		if (!drag || !ev) return;
+		if (!rsStarted) {
+			if (Math.abs(e.clientX - rsStartX) < CREATE_THRESHOLD) return;
+			rsStarted = true;
+			drag.beginResize(ev.id, rsEdge, ev.start, ev.end);
+		}
+		const snapped = Math.round(pxToTime(trackX(e)) / SNAP_MS) * SNAP_MS;
+		if (rsEdge === 'end') {
+			// End edge follows the pointer but never crosses the start
+			const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
+			drag.updatePointer(ev.start, new Date(end));
+		} else {
+			const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
+			drag.updatePointer(new Date(start), ev.end);
+		}
+	}
+
+	function cleanupResize() {
+		window.removeEventListener('pointermove', onResizeMove);
+		window.removeEventListener('pointerup', onResizeUp);
+		window.removeEventListener('pointercancel', onResizeCancel);
+		rsStarted = false;
+		rsEvent = null;
+	}
+
+	function onResizeUp() {
+		if (drag && rsStarted) {
+			// If the pointer ends off the block, the synthesized click lands on
+			// the track — suppress the click-to-create it would trigger.
+			wasDragging = true;
+			commitDragCtx?.();
+			setTimeout(() => { wasDragging = false; }, 0);
+		} else if (rsEvent && !rsStarted) {
+			oneventclick?.(rsEvent); // edge click = plain click
+		}
+		cleanupResize();
+	}
+
+	function onResizeCancel() {
+		if (drag && rsStarted) drag.cancel();
+		cleanupResize();
 	}
 </script>
 
@@ -630,6 +768,7 @@
 					class:fs-event--current={p.isCurrent}
 					class:fs-event--next={p.isNext}
 					class:fs-event--dragging={p.isDragged}
+					class:fs-event--resizing={p.isDragged && drag?.mode !== 'move'}
 					class:fs-event--readonly={p.ev.data?.readOnly}
 					class:fs-event--cancelled={p.ev.status === 'cancelled'}
 					class:fs-event--tentative={p.ev.status === 'tentative'}
@@ -654,6 +793,7 @@
 						{:else if p.isNext}
 							<span class="fs-ev-next-badge" aria-hidden="true">{L.upNext}</span>
 						{/if}
+						<EventContent event={p.ev}>
 						{#if p.fit.time}
 							<span class="fs-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
 						{/if}
@@ -671,9 +811,41 @@
 								{/each}
 							</span>
 						{/if}
+						</EventContent>
 					</div>
+					{#if !readOnly && !p.ev.data?.readOnly && !p.isDragged}
+						<div
+							class="fs-ev-handle fs-ev-handle--start"
+							aria-hidden="true"
+							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
+						></div>
+						<div
+							class="fs-ev-handle fs-ev-handle--end"
+							aria-hidden="true"
+							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
+						></div>
+					{/if}
 				</div>
 			{/each}
+
+			<!-- Drag-to-create ghost -->
+			{#if !readOnly && drag?.active && drag.mode === 'create' && drag.payload}
+				{@const gx = timeToPx(drag.payload.start.getTime())}
+				{@const gw = Math.max(timeToPx(drag.payload.end.getTime()) - gx, 8)}
+				{@const gh = Math.max(MIN_EVENT_H, containerH - contentTop - 8 - EVENT_GAP)}
+				<div
+					class="fs-create-ghost"
+					style:left="{gx}px"
+					style:width="{gw}px"
+					style:top="{contentTop}px"
+					style:height="{gh}px"
+					aria-hidden="true"
+				>
+					<span class="fs-create-ghost-time">
+						{fmtTime(drag.payload.start, locale)} – {fmtTime(drag.payload.end, locale)}
+					</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -985,6 +1157,55 @@
 		cursor: grabbing;
 		/* fast ease toward the snapped cursor position */
 		transition: left 80ms ease-out, width 80ms ease-out;
+	}
+	.fs-event--resizing {
+		cursor: ew-resize;
+	}
+
+	/* ─── Resize handles ─────────────────────────────── */
+	.fs-ev-handle {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 6px;
+		z-index: 2;
+		cursor: ew-resize;
+		touch-action: none;
+	}
+	.fs-ev-handle--start { left: 0; }
+	.fs-ev-handle--end { right: 0; }
+	.fs-ev-handle::after {
+		content: '';
+		position: absolute;
+		top: 20%;
+		bottom: 20%;
+		left: 2px;
+		width: 2px;
+		border-radius: 2px;
+		background: var(--ev-color);
+		opacity: 0;
+		transition: opacity 120ms;
+	}
+	.fs-event:hover .fs-ev-handle::after { opacity: 0.55; }
+
+	/* ─── Drag-to-create ghost ───────────────────────── */
+	.fs-create-ghost {
+		position: absolute;
+		z-index: 40;
+		border-radius: 6px;
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 14%, transparent);
+		border: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 60%, transparent);
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.fs-create-ghost-time {
+		font: 600 10px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-accent, #2563eb);
+		padding: 6px 4px;
+		white-space: nowrap;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

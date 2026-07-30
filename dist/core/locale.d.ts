@@ -17,6 +17,7 @@ export interface CalendarLabels {
     tomorrow: string;
     day: string;
     week: string;
+    month: string;
     planner: string;
     agenda: string;
     now: string;
@@ -34,7 +35,9 @@ export interface CalendarLabels {
     previousDay: string;
     nextDay: string;
     previousWeek: string;
+    previousMonth: string;
     nextWeek: string;
+    nextMonth: string;
     calendar: string;
     viewMode: string;
     dayNavigation: string;
@@ -56,6 +59,7 @@ export interface CalendarLabels {
     nEvents: (n: number) => string;
     /** e.g. "3 completed" */
     nCompleted: (n: number) => string;
+    showLess: string;
     /** e.g. "day 2 of 4" */
     dayNOfTotal: (current: number, total: number) => string;
     /** e.g. "75% complete" */

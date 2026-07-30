@@ -30,6 +30,7 @@ export function useCalendarContext() {
         get minDuration() { return raw?.minDuration; },
         get maxDuration() { return raw?.maxDuration; },
         get oneventhover() { return raw?.oneventhover; },
+        get ondayclick() { return raw?.ondayclick; },
         get disabledDates() { return raw?.disabledDates; },
         get disabledSet() { return new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []); },
         get loadRange() {

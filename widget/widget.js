@@ -5567,6 +5567,7 @@
   }
   function inferMode(view) {
     if (view.startsWith("day")) return "day";
+    if (view.startsWith("month")) return "month";
     return "week";
   }
   function computeRange(focus, mode, mondayStart, dayCount = 7) {
@@ -5575,6 +5576,13 @@
       start2.setHours(0, 0, 0, 0);
       const end = new Date(start2.getTime() + DAY_MS);
       return { start: start2, end };
+    }
+    if (mode === "month") {
+      const first = new Date(focus.getFullYear(), focus.getMonth(), 1);
+      const last = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
+      const gridStart = startOfWeek(first.getTime(), mondayStart);
+      const gridEnd = addDaysMs(startOfWeek(last.getTime(), mondayStart), 7);
+      return { start: new Date(gridStart), end: new Date(gridEnd) };
     }
     if (dayCount === 7) {
       const ws = startOfWeek(focus.getTime(), mondayStart);
@@ -5628,10 +5636,18 @@
         set(dayCount, n, true);
       },
       next() {
+        if (get(mode) === "month") {
+          set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() + 1, 1), true);
+          return;
+        }
         const days = get(mode) === "day" ? 1 : get(dayCount);
         set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
       },
       prev() {
+        if (get(mode) === "month") {
+          set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() - 1, 1), true);
+          return;
+        }
         const days = get(mode) === "day" ? -1 : -get(dayCount);
         set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
       },
@@ -5744,6 +5760,7 @@
     tomorrow: "Tomorrow",
     day: "Day",
     week: "Week",
+    month: "Month",
     planner: "Planner",
     agenda: "Agenda",
     now: "now",
@@ -5761,7 +5778,9 @@
     previousDay: "Previous day",
     nextDay: "Next day",
     previousWeek: "Previous week",
+    previousMonth: "Previous month",
     nextWeek: "Next week",
+    nextMonth: "Next month",
     calendar: "Calendar",
     viewMode: "View mode",
     dayNavigation: "Day navigation",
@@ -5780,6 +5799,7 @@
     nMore: (n) => `+${n} more`,
     nEvents: (n) => `${n} event${n === 1 ? "" : "s"}`,
     nCompleted: (n) => `${n} completed`,
+    showLess: "Show less",
     dayNOfTotal: (current, total) => `day ${current} of ${total}`,
     percentComplete: (pct) => `${pct}% complete`
   };
@@ -6284,6 +6304,9 @@
       get oneventhover() {
         return raw?.oneventhover;
       },
+      get ondayclick() {
+        return raw?.ondayclick;
+      },
       get disabledDates() {
         return raw?.disabledDates;
       },
@@ -6306,6 +6329,33 @@
         return raw?.emptySnippet;
       }
     };
+  }
+  function EventContent($$anchor, $$props) {
+    push($$props, true);
+    const ctx = useCalendarContext();
+    const eventSnippet = /* @__PURE__ */ user_derived(() => ctx.eventSnippet);
+    var fragment = comment();
+    var node = first_child(fragment);
+    {
+      var consequent = ($$anchor2) => {
+        var fragment_1 = comment();
+        var node_1 = first_child(fragment_1);
+        snippet(node_1, () => get(eventSnippet), () => $$props.event);
+        append($$anchor2, fragment_1);
+      };
+      var alternate = ($$anchor2) => {
+        var fragment_2 = comment();
+        var node_2 = first_child(fragment_2);
+        snippet(node_2, () => $$props.children);
+        append($$anchor2, fragment_2);
+      };
+      if_block(node, ($$render) => {
+        if (get(eventSnippet)) $$render(consequent);
+        else $$render(alternate, -1);
+      });
+    }
+    append($$anchor, fragment);
+    pop();
   }
   function cubic_out(t) {
     const f = t - 1;
@@ -6392,10 +6442,13 @@
         intervalId = null;
       }
     }
-    onMount(() => {
-      start();
-      return destroy;
-    });
+    try {
+      onMount(() => {
+        start();
+        return destroy;
+      });
+    } catch {
+    }
     return {
       get tick() {
         return get(tick2);
@@ -6555,23 +6608,26 @@
       }
     };
   }
-  var root_1$6 = /* @__PURE__ */ from_html(`<div class="fs-tick svelte-mrwdy7"><span class="fs-tick-lb svelte-mrwdy7"> </span></div> <div class="fs-tick fs-tick--half svelte-mrwdy7"></div>`, 1);
-  var root_2$6 = /* @__PURE__ */ from_html(`<span class="fs-blocked-label svelte-mrwdy7"> </span>`);
-  var root_3$6 = /* @__PURE__ */ from_html(`<div class="fs-blocked svelte-mrwdy7"><!></div>`);
-  var root_4$6 = /* @__PURE__ */ from_html(`<div class="fs-day-header-custom svelte-mrwdy7"><!></div>`);
-  var root_5$6 = /* @__PURE__ */ from_html(`<div><!> <!> <!></div>`);
-  var root_6$6 = /* @__PURE__ */ from_html(`<span class="fs-ev-live svelte-mrwdy7" aria-hidden="true"></span>`);
+  var root_1$7 = /* @__PURE__ */ from_html(`<div class="fs-tick svelte-mrwdy7"><span class="fs-tick-lb svelte-mrwdy7"> </span></div> <div class="fs-tick fs-tick--half svelte-mrwdy7"></div>`, 1);
+  var root_2$7 = /* @__PURE__ */ from_html(`<span class="fs-blocked-label svelte-mrwdy7"> </span>`);
+  var root_3$7 = /* @__PURE__ */ from_html(`<div class="fs-blocked svelte-mrwdy7"><!></div>`);
+  var root_4$7 = /* @__PURE__ */ from_html(`<div class="fs-day-header-custom svelte-mrwdy7"><!></div>`);
+  var root_5$7 = /* @__PURE__ */ from_html(`<div><!> <!> <!></div>`);
+  var root_6$7 = /* @__PURE__ */ from_html(`<span class="fs-ev-live svelte-mrwdy7" aria-hidden="true"></span>`);
   var root_7$6 = /* @__PURE__ */ from_html(`<span class="fs-ev-next-badge svelte-mrwdy7" aria-hidden="true"> </span>`);
-  var root_8$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-time svelte-mrwdy7"> </span>`);
+  var root_8$6 = /* @__PURE__ */ from_html(`<span class="fs-ev-time svelte-mrwdy7"> </span>`);
   var root_9$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-sub svelte-mrwdy7"> </span>`);
   var root_10$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-loc svelte-mrwdy7"> </span>`);
   var root_11$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-tag svelte-mrwdy7"> </span>`);
   var root_12$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-tags svelte-mrwdy7"></span>`);
-  var root_13$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="fs-ev-inner svelte-mrwdy7"><!> <!> <span class="fs-ev-title svelte-mrwdy7"> </span> <!> <!> <!></div></div>`);
-  var root_14$4 = /* @__PURE__ */ from_html(`<span class="fs-ad-span svelte-mrwdy7"> </span>`);
-  var root_15$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="fs-ad-dot svelte-mrwdy7" aria-hidden="true"></span> <span class="fs-ad-title svelte-mrwdy7"> </span> <!></div>`);
-  var root_16$4 = /* @__PURE__ */ from_html(`<div class="fs-allday svelte-mrwdy7"></div>`);
-  var root_17$3 = /* @__PURE__ */ from_html(`<div role="region"><div role="application"><div class="fs-track svelte-mrwdy7" role="none"><!> <div class="fs-now svelte-mrwdy7"><span class="fs-now-tag svelte-mrwdy7"> <span class="fs-now-sec svelte-mrwdy7"> </span></span> <div class="fs-now-line svelte-mrwdy7"></div></div> <!></div></div> <!></div>`);
+  var root_13$4 = /* @__PURE__ */ from_html(`<!> <span class="fs-ev-title svelte-mrwdy7"> </span> <!> <!> <!>`, 1);
+  var root_14$4 = /* @__PURE__ */ from_html(`<div class="fs-ev-handle fs-ev-handle--start svelte-mrwdy7" aria-hidden="true"></div> <div class="fs-ev-handle fs-ev-handle--end svelte-mrwdy7" aria-hidden="true"></div>`, 1);
+  var root_15$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="fs-ev-inner svelte-mrwdy7"><!> <!></div> <!></div>`);
+  var root_16$4 = /* @__PURE__ */ from_html(`<div class="fs-create-ghost svelte-mrwdy7" aria-hidden="true"><span class="fs-create-ghost-time svelte-mrwdy7"> </span></div>`);
+  var root_17$4 = /* @__PURE__ */ from_html(`<span class="fs-ad-span svelte-mrwdy7"> </span>`);
+  var root_18$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="fs-ad-dot svelte-mrwdy7" aria-hidden="true"></span> <span class="fs-ad-title svelte-mrwdy7"> </span> <!></div>`);
+  var root_19$3 = /* @__PURE__ */ from_html(`<div class="fs-allday svelte-mrwdy7"></div>`);
+  var root_20$2 = /* @__PURE__ */ from_html(`<div role="region"><div role="application"><div class="fs-track svelte-mrwdy7" role="none"><!> <div class="fs-now svelte-mrwdy7"><span class="fs-now-tag svelte-mrwdy7"> <span class="fs-now-sec svelte-mrwdy7"> </span></span> <div class="fs-now-line svelte-mrwdy7"></div></div> <!> <!></div></div> <!></div>`);
   function PlannerDay($$anchor, $$props) {
     push($$props, true);
     const L = /* @__PURE__ */ user_derived(getLabels);
@@ -6676,7 +6732,7 @@
     });
     const positionedEvents = /* @__PURE__ */ user_derived(() => {
       const now2 = clock.tick;
-      const dragP = get(drag)?.active && get(drag).mode === "move" ? get(drag).payload : null;
+      const dragP = get(drag)?.active && (get(drag).mode === "move" || get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
       const staticEvents = [];
       let draggedEv = null;
       for (const ev of get(timedEvents)) {
@@ -6880,13 +6936,16 @@
     const SCROLL_THRESHOLD = 3;
     function onPointerDown(e) {
       if (e.button !== 0) return;
-      if (!readOnly()) return;
       if (e.target.closest(".fs-event")) return;
-      dragStartX = e.clientX;
-      dragScrollStart = el.scrollLeft;
-      window.addEventListener("pointermove", onScrollMove);
-      window.addEventListener("pointerup", onScrollUp, { once: true });
-      window.addEventListener("pointercancel", onScrollUp, { once: true });
+      if (readOnly()) {
+        dragStartX = e.clientX;
+        dragScrollStart = el.scrollLeft;
+        window.addEventListener("pointermove", onScrollMove);
+        window.addEventListener("pointerup", onScrollUp, { once: true });
+        window.addEventListener("pointercancel", onScrollUp, { once: true });
+        return;
+      }
+      onCreatePointerDown(e);
     }
     function onScrollMove(e) {
       const dx = e.clientX - dragStartX;
@@ -6935,6 +6994,65 @@
           return;
         }
       }
+    }
+    const CREATE_THRESHOLD = 4;
+    let createStartX = 0;
+    let createAnchorMs = 0;
+    let createStarted = false;
+    function trackX(e) {
+      return e.clientX - el.getBoundingClientRect().left + el.scrollLeft;
+    }
+    function onCreatePointerDown(e) {
+      if (!get(drag) || !$$props.oneventcreate) return;
+      createStartX = e.clientX;
+      createAnchorMs = pxToTime(trackX(e));
+      createStarted = false;
+      window.addEventListener("pointermove", onCreateMove);
+      window.addEventListener("pointerup", onCreateUp, { once: true });
+      window.addEventListener("pointercancel", onCreateCancel, { once: true });
+    }
+    function onCreateMove(e) {
+      if (!get(drag)) return;
+      if (!createStarted) {
+        if (Math.abs(e.clientX - createStartX) < CREATE_THRESHOLD) return;
+        if (get(disabledSet).has(sod(createAnchorMs))) return;
+        createStarted = true;
+        wasDragging = true;
+        createAnchorMs = Math.floor(createAnchorMs / get(SNAP_MS)) * get(SNAP_MS);
+        get(drag).beginCreate(new Date(createAnchorMs), new Date(createAnchorMs + get(SNAP_MS)));
+      }
+      const snapped = Math.round(pxToTime(trackX(e)) / get(SNAP_MS)) * get(SNAP_MS);
+      get(drag).updatePointer(new Date(Math.min(createAnchorMs, snapped)), new Date(Math.max(createAnchorMs + get(SNAP_MS), snapped)));
+    }
+    function cleanupCreateDrag() {
+      window.removeEventListener("pointermove", onCreateMove);
+      window.removeEventListener("pointerup", onCreateUp);
+      window.removeEventListener("pointercancel", onCreateCancel);
+      createStarted = false;
+    }
+    function onCreateUp() {
+      if (get(drag) && createStarted) {
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            wasDragging = false;
+          },
+          0
+        );
+      }
+      cleanupCreateDrag();
+    }
+    function onCreateCancel() {
+      if (get(drag) && createStarted) {
+        get(drag).cancel();
+        setTimeout(
+          () => {
+            wasDragging = false;
+          },
+          0
+        );
+      }
+      cleanupCreateDrag();
     }
     const DRAG_THRESHOLD = 5;
     let evDragStartX = 0;
@@ -6992,7 +7110,65 @@
       if (get(drag) && evDragStarted) get(drag).cancel();
       cleanupEvDrag();
     }
-    var div = root_17$3();
+    let rsStartX = 0;
+    let rsStarted = false;
+    let rsEdge = "end";
+    let rsEvent = null;
+    function onResizePointerDown(e, ev, edge) {
+      if (e.button !== 0 || !get(drag) || readOnly() || ev.data?.readOnly) return;
+      e.stopPropagation();
+      rsStartX = e.clientX;
+      rsStarted = false;
+      rsEdge = edge;
+      rsEvent = ev;
+      window.addEventListener("pointermove", onResizeMove);
+      window.addEventListener("pointerup", onResizeUp, { once: true });
+      window.addEventListener("pointercancel", onResizeCancel, { once: true });
+    }
+    function onResizeMove(e) {
+      const ev = rsEvent;
+      if (!get(drag) || !ev) return;
+      if (!rsStarted) {
+        if (Math.abs(e.clientX - rsStartX) < CREATE_THRESHOLD) return;
+        rsStarted = true;
+        get(drag).beginResize(ev.id, rsEdge, ev.start, ev.end);
+      }
+      const snapped = Math.round(pxToTime(trackX(e)) / get(SNAP_MS)) * get(SNAP_MS);
+      if (rsEdge === "end") {
+        const end = Math.max(snapped, ev.start.getTime() + get(SNAP_MS));
+        get(drag).updatePointer(ev.start, new Date(end));
+      } else {
+        const start = Math.min(snapped, ev.end.getTime() - get(SNAP_MS));
+        get(drag).updatePointer(new Date(start), ev.end);
+      }
+    }
+    function cleanupResize() {
+      window.removeEventListener("pointermove", onResizeMove);
+      window.removeEventListener("pointerup", onResizeUp);
+      window.removeEventListener("pointercancel", onResizeCancel);
+      rsStarted = false;
+      rsEvent = null;
+    }
+    function onResizeUp() {
+      if (get(drag) && rsStarted) {
+        wasDragging = true;
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            wasDragging = false;
+          },
+          0
+        );
+      } else if (rsEvent && !rsStarted) {
+        $$props.oneventclick?.(rsEvent);
+      }
+      cleanupResize();
+    }
+    function onResizeCancel() {
+      if (get(drag) && rsStarted) get(drag).cancel();
+      cleanupResize();
+    }
+    var div = root_20$2();
     let classes;
     let styles;
     var div_1 = child(div);
@@ -7001,14 +7177,14 @@
     let styles_1;
     var node = child(div_2);
     each(node, 17, () => get(days), (d) => d.ms, ($$anchor2, d) => {
-      var div_3 = root_5$6();
+      var div_3 = root_5$7();
       let classes_2;
       let styles_2;
       var node_1 = child(div_3);
       each(node_1, 17, () => ({ length: get(hourCount) }), index, ($$anchor3, _, h) => {
         const hour = /* @__PURE__ */ user_derived(() => get(startHour) + h);
         const x = /* @__PURE__ */ user_derived(() => h * get(hourWidth));
-        var fragment = root_1$6();
+        var fragment = root_1$7();
         var div_4 = first_child(fragment);
         let styles_3;
         var span = child(div_4);
@@ -7045,12 +7221,12 @@
                 var node_5 = first_child(fragment_3);
                 {
                   var consequent_1 = ($$anchor6) => {
-                    var div_6 = root_3$6();
+                    var div_6 = root_3$7();
                     let styles_5;
                     var node_6 = child(div_6);
                     {
                       var consequent = ($$anchor7) => {
-                        var span_1 = root_2$6();
+                        var span_1 = root_2$7();
                         var text_1 = child(span_1, true);
                         reset(span_1);
                         template_effect(() => set_text(text_1, get(slot).label));
@@ -7091,7 +7267,7 @@
       var node_7 = sibling(node_2, 2);
       {
         var consequent_4 = ($$anchor3) => {
-          var div_7 = root_4$6();
+          var div_7 = root_4$7();
           var node_8 = child(div_7);
           {
             let $0 = /* @__PURE__ */ user_derived(() => ({
@@ -7139,14 +7315,14 @@
     reset(div_8);
     var node_9 = sibling(div_8, 2);
     each(node_9, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor2, p) => {
-      var div_9 = root_13$4();
+      var div_9 = root_15$4();
       let classes_3;
       let styles_7;
       var div_10 = child(div_9);
       var node_10 = child(div_10);
       {
         var consequent_5 = ($$anchor3) => {
-          var span_4 = root_6$6();
+          var span_4 = root_6$7();
           append($$anchor3, span_4);
         };
         var consequent_6 = ($$anchor3) => {
@@ -7162,69 +7338,95 @@
         });
       }
       var node_11 = sibling(node_10, 2);
-      {
-        var consequent_7 = ($$anchor3) => {
-          var span_6 = root_8$5();
-          var text_5 = child(span_6);
-          reset(span_6);
-          template_effect(($0, $1) => set_text(text_5, `${$0 ?? ""} – ${$1 ?? ""}`), [
-            () => fmtTime$1(get(p).ev.start, $$props.locale),
-            () => fmtTime$1(get(p).ev.end, $$props.locale)
-          ]);
-          append($$anchor3, span_6);
-        };
-        if_block(node_11, ($$render) => {
-          if (get(p).fit.time) $$render(consequent_7);
-        });
-      }
-      var span_7 = sibling(node_11, 2);
-      var text_6 = child(span_7, true);
-      reset(span_7);
-      var node_12 = sibling(span_7, 2);
-      {
-        var consequent_8 = ($$anchor3) => {
-          var span_8 = root_9$5();
-          var text_7 = child(span_8, true);
-          reset(span_8);
-          template_effect(() => set_text(text_7, get(p).ev.subtitle));
-          append($$anchor3, span_8);
-        };
-        if_block(node_12, ($$render) => {
-          if (get(p).ev.subtitle && get(p).fit.subtitle) $$render(consequent_8);
-        });
-      }
-      var node_13 = sibling(node_12, 2);
-      {
-        var consequent_9 = ($$anchor3) => {
-          var span_9 = root_10$5();
-          var text_8 = child(span_9, true);
-          reset(span_9);
-          template_effect(() => set_text(text_8, get(p).ev.location));
-          append($$anchor3, span_9);
-        };
-        if_block(node_13, ($$render) => {
-          if (get(p).ev.location && get(p).fit.location) $$render(consequent_9);
-        });
-      }
-      var node_14 = sibling(node_13, 2);
-      {
-        var consequent_10 = ($$anchor3) => {
-          var span_10 = root_12$5();
-          each(span_10, 21, () => get(p).ev.tags, index, ($$anchor4, tag) => {
-            var span_11 = root_11$5();
-            var text_9 = child(span_11, true);
-            reset(span_11);
-            template_effect(() => set_text(text_9, get(tag)));
-            append($$anchor4, span_11);
-          });
-          reset(span_10);
-          append($$anchor3, span_10);
-        };
-        if_block(node_14, ($$render) => {
-          if (get(p).ev.tags?.length && get(p).fit.tags) $$render(consequent_10);
-        });
-      }
+      EventContent(node_11, {
+        get event() {
+          return get(p).ev;
+        },
+        children: ($$anchor3, $$slotProps) => {
+          var fragment_4 = root_13$4();
+          var node_12 = first_child(fragment_4);
+          {
+            var consequent_7 = ($$anchor4) => {
+              var span_6 = root_8$6();
+              var text_5 = child(span_6);
+              reset(span_6);
+              template_effect(($0, $1) => set_text(text_5, `${$0 ?? ""} – ${$1 ?? ""}`), [
+                () => fmtTime$1(get(p).ev.start, $$props.locale),
+                () => fmtTime$1(get(p).ev.end, $$props.locale)
+              ]);
+              append($$anchor4, span_6);
+            };
+            if_block(node_12, ($$render) => {
+              if (get(p).fit.time) $$render(consequent_7);
+            });
+          }
+          var span_7 = sibling(node_12, 2);
+          var text_6 = child(span_7, true);
+          reset(span_7);
+          var node_13 = sibling(span_7, 2);
+          {
+            var consequent_8 = ($$anchor4) => {
+              var span_8 = root_9$5();
+              var text_7 = child(span_8, true);
+              reset(span_8);
+              template_effect(() => set_text(text_7, get(p).ev.subtitle));
+              append($$anchor4, span_8);
+            };
+            if_block(node_13, ($$render) => {
+              if (get(p).ev.subtitle && get(p).fit.subtitle) $$render(consequent_8);
+            });
+          }
+          var node_14 = sibling(node_13, 2);
+          {
+            var consequent_9 = ($$anchor4) => {
+              var span_9 = root_10$5();
+              var text_8 = child(span_9, true);
+              reset(span_9);
+              template_effect(() => set_text(text_8, get(p).ev.location));
+              append($$anchor4, span_9);
+            };
+            if_block(node_14, ($$render) => {
+              if (get(p).ev.location && get(p).fit.location) $$render(consequent_9);
+            });
+          }
+          var node_15 = sibling(node_14, 2);
+          {
+            var consequent_10 = ($$anchor4) => {
+              var span_10 = root_12$5();
+              each(span_10, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
+                var span_11 = root_11$5();
+                var text_9 = child(span_11, true);
+                reset(span_11);
+                template_effect(() => set_text(text_9, get(tag)));
+                append($$anchor5, span_11);
+              });
+              reset(span_10);
+              append($$anchor4, span_10);
+            };
+            if_block(node_15, ($$render) => {
+              if (get(p).ev.tags?.length && get(p).fit.tags) $$render(consequent_10);
+            });
+          }
+          template_effect(() => set_text(text_6, get(p).ev.title));
+          append($$anchor3, fragment_4);
+        },
+        $$slots: { default: true }
+      });
       reset(div_10);
+      var node_16 = sibling(div_10, 2);
+      {
+        var consequent_11 = ($$anchor3) => {
+          var fragment_5 = root_14$4();
+          var div_11 = first_child(fragment_5);
+          var div_12 = sibling(div_11, 2);
+          delegated("pointerdown", div_11, (e) => onResizePointerDown(e, get(p).ev, "start"));
+          delegated("pointerdown", div_12, (e) => onResizePointerDown(e, get(p).ev, "end"));
+          append($$anchor3, fragment_5);
+        };
+        if_block(node_16, ($$render) => {
+          if (!readOnly() && !get(p).ev.data?.readOnly && !get(p).isDragged) $$render(consequent_11);
+        });
+      }
       reset(div_9);
       template_effect(() => {
         classes_3 = set_class(div_9, 1, "fs-event svelte-mrwdy7", null, classes_3, {
@@ -7232,6 +7434,7 @@
           "fs-event--current": get(p).isCurrent,
           "fs-event--next": get(p).isNext,
           "fs-event--dragging": get(p).isDragged,
+          "fs-event--resizing": get(p).isDragged && get(drag)?.mode !== "move",
           "fs-event--readonly": get(p).ev.data?.readOnly,
           "fs-event--cancelled": get(p).ev.status === "cancelled",
           "fs-event--tentative": get(p).ev.status === "tentative",
@@ -7247,7 +7450,6 @@
           height: `${get(p).heightPx ?? ""}px`,
           "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
         });
-        set_text(text_6, get(p).ev.title);
       });
       delegated("pointerdown", div_9, (e) => onEventPointerDown(e, get(p).ev));
       event("pointerenter", div_9, () => get(oneventhover)?.(get(p).ev));
@@ -7259,71 +7461,104 @@
       });
       append($$anchor2, div_9);
     });
+    var node_17 = sibling(node_9, 2);
+    {
+      var consequent_12 = ($$anchor2) => {
+        const gx = /* @__PURE__ */ user_derived(() => timeToPx(get(drag).payload.start.getTime()));
+        const gw = /* @__PURE__ */ user_derived(() => Math.max(timeToPx(get(drag).payload.end.getTime()) - get(gx), 8));
+        const gh = /* @__PURE__ */ user_derived(() => Math.max(MIN_EVENT_H, get(containerH) - get(contentTop) - 8 - EVENT_GAP));
+        var div_13 = root_16$4();
+        let styles_8;
+        var span_12 = child(div_13);
+        var text_10 = child(span_12);
+        reset(span_12);
+        reset(div_13);
+        template_effect(
+          ($0, $1) => {
+            styles_8 = set_style(div_13, "", styles_8, {
+              left: `${get(gx) ?? ""}px`,
+              width: `${get(gw) ?? ""}px`,
+              top: `${get(contentTop) ?? ""}px`,
+              height: `${get(gh) ?? ""}px`
+            });
+            set_text(text_10, `${$0 ?? ""} – ${$1 ?? ""}`);
+          },
+          [
+            () => fmtTime$1(get(drag).payload.start, $$props.locale),
+            () => fmtTime$1(get(drag).payload.end, $$props.locale)
+          ]
+        );
+        append($$anchor2, div_13);
+      };
+      if_block(node_17, ($$render) => {
+        if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_12);
+      });
+    }
     reset(div_2);
     reset(div_1);
     bind_this(div_1, ($$value) => el = $$value, () => el);
-    var node_15 = sibling(div_1, 2);
+    var node_18 = sibling(div_1, 2);
     {
-      var consequent_12 = ($$anchor2) => {
-        var div_11 = root_16$4();
-        set_style(div_11, "", {}, { top: "56px" });
-        each(div_11, 21, () => get(allDayEvents), (seg) => seg.ev.id, ($$anchor3, seg) => {
-          var div_12 = root_15$4();
+      var consequent_14 = ($$anchor2) => {
+        var div_14 = root_19$3();
+        set_style(div_14, "", {}, { top: "56px" });
+        each(div_14, 21, () => get(allDayEvents), (seg) => seg.ev.id, ($$anchor3, seg) => {
+          var div_15 = root_18$4();
           let classes_4;
-          let styles_8;
-          var span_12 = sibling(child(div_12), 2);
-          var text_10 = child(span_12, true);
-          reset(span_12);
-          var node_16 = sibling(span_12, 2);
+          let styles_9;
+          var span_13 = sibling(child(div_15), 2);
+          var text_11 = child(span_13, true);
+          reset(span_13);
+          var node_19 = sibling(span_13, 2);
           {
-            var consequent_11 = ($$anchor4) => {
-              var span_13 = root_14$4();
-              var text_11 = child(span_13);
-              reset(span_13);
-              template_effect(() => set_text(text_11, `${get(L).day ?? ""} ${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
-              append($$anchor4, span_13);
-            };
-            var alternate = ($$anchor4) => {
-              var span_14 = root_14$4();
-              var text_12 = child(span_14, true);
+            var consequent_13 = ($$anchor4) => {
+              var span_14 = root_17$4();
+              var text_12 = child(span_14);
               reset(span_14);
-              template_effect(() => set_text(text_12, get(L).allDay));
+              template_effect(() => set_text(text_12, `${get(L).day ?? ""} ${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
               append($$anchor4, span_14);
             };
-            if_block(node_16, ($$render) => {
-              if (get(seg).totalDays > 1) $$render(consequent_11);
+            var alternate = ($$anchor4) => {
+              var span_15 = root_17$4();
+              var text_13 = child(span_15, true);
+              reset(span_15);
+              template_effect(() => set_text(text_13, get(L).allDay));
+              append($$anchor4, span_15);
+            };
+            if_block(node_19, ($$render) => {
+              if (get(seg).totalDays > 1) $$render(consequent_13);
               else $$render(alternate, -1);
             });
           }
-          reset(div_12);
+          reset(div_15);
           template_effect(
             ($0) => {
-              classes_4 = set_class(div_12, 1, "fs-ad svelte-mrwdy7", null, classes_4, {
+              classes_4 = set_class(div_15, 1, "fs-ad svelte-mrwdy7", null, classes_4, {
                 "fs-ad--start": get(seg).isStart,
                 "fs-ad--selected": selectedEventId() === get(seg).ev.id
               });
-              set_attribute(div_12, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
-              styles_8 = set_style(div_12, "", styles_8, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
-              set_text(text_10, get(seg).ev.title);
+              set_attribute(div_15, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
+              styles_9 = set_style(div_15, "", styles_9, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+              set_text(text_11, get(seg).ev.title);
             },
             [
               () => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`
             ]
           );
-          delegated("click", div_12, () => $$props.oneventclick?.(get(seg).ev));
-          delegated("keydown", div_12, (e) => {
+          delegated("click", div_15, () => $$props.oneventclick?.(get(seg).ev));
+          delegated("keydown", div_15, (e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               $$props.oneventclick?.(get(seg).ev);
             }
           });
-          append($$anchor3, div_12);
+          append($$anchor3, div_15);
         });
-        reset(div_11);
-        append($$anchor2, div_11);
+        reset(div_14);
+        append($$anchor2, div_14);
       };
-      if_block(node_15, ($$render) => {
-        if (get(allDayEvents).length > 0) $$render(consequent_12);
+      if_block(node_18, ($$render) => {
+        if (get(allDayEvents).length > 0) $$render(consequent_14);
       });
     }
     reset(div);
@@ -7409,18 +7644,18 @@
     "(prefers-reduced-motion: reduce)"
   );
   const allDaySegmentContent = ($$anchor, seg = noop) => {
-    var fragment = root_3$5();
+    var fragment = root_3$6();
     var node = first_child(fragment);
     {
       var consequent = ($$anchor2) => {
-        var span = root$4();
+        var span = root$5();
         var text2 = child(span, true);
         reset(span);
         template_effect(() => set_text(text2, seg().ev.title));
         append($$anchor2, span);
       };
       var alternate = ($$anchor2) => {
-        var fragment_1 = root_1$5();
+        var fragment_1 = root_1$6();
         var span_1 = sibling(first_child(fragment_1), 2);
         var text_1 = child(span_1, true);
         reset(span_1);
@@ -7435,7 +7670,7 @@
     var node_1 = sibling(node, 2);
     {
       var consequent_1 = ($$anchor2) => {
-        var span_2 = root_2$5();
+        var span_2 = root_2$6();
         append($$anchor2, span_2);
       };
       if_block(node_1, ($$render) => {
@@ -7444,15 +7679,15 @@
     }
     append($$anchor, fragment);
   };
-  var root$4 = /* @__PURE__ */ from_html(`<span class="wg-ad-title svelte-j4rvbp"> </span>`);
-  var root_1$5 = /* @__PURE__ */ from_html(`<span class="wg-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span> <span class="wg-ad-title svelte-j4rvbp"> </span>`, 1);
-  var root_2$5 = /* @__PURE__ */ from_html(`<span class="wg-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
-  var root_3$5 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-  var root_4$5 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-j4rvbp"> </span>`);
-  var root_5$5 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-j4rvbp"> </span> <span class="wg-ev-title svelte-j4rvbp"> </span> <!>`, 1);
-  var root_6$5 = /* @__PURE__ */ from_html(`<span> </span>`);
+  var root$5 = /* @__PURE__ */ from_html(`<span class="wg-ad-title svelte-j4rvbp"> </span>`);
+  var root_1$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span> <span class="wg-ad-title svelte-j4rvbp"> </span>`, 1);
+  var root_2$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
+  var root_3$6 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+  var root_4$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-j4rvbp"> </span>`);
+  var root_5$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-j4rvbp"> </span> <span class="wg-ev-title svelte-j4rvbp"> </span> <!>`, 1);
+  var root_6$6 = /* @__PURE__ */ from_html(`<span> </span>`);
   var root_7$5 = /* @__PURE__ */ from_html(`<span class="wg-cell-month svelte-j4rvbp"> </span>`);
-  var root_8$4 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-j4rvbp"><!></div>`);
+  var root_8$5 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-j4rvbp"><!></div>`);
   var root_9$4 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-j4rvbp"> </span>`);
   var root_10$4 = /* @__PURE__ */ from_html(`<div class="wg-blocked svelte-j4rvbp"><!></div>`);
   var root_11$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
@@ -7461,39 +7696,47 @@
   var root_14$3 = /* @__PURE__ */ from_html(`<div class="wg-ev wg-ev--drag-preview svelte-j4rvbp" aria-hidden="true"><!></div>`);
   var root_15$3 = /* @__PURE__ */ from_html(`<div class="wg-ev-more svelte-j4rvbp"> </div>`);
   var root_16$3 = /* @__PURE__ */ from_html(`<div role="gridcell" tabindex="0"><div><!> <span class="wg-day-wd svelte-j4rvbp"> </span></div> <!> <!> <!> <!> <div class="wg-cell-events svelte-j4rvbp"><!> <!> <!></div></div>`);
-  var root_17$2 = /* @__PURE__ */ from_html(`<div><div class="wg-week-body svelte-j4rvbp"><div class="wg-days svelte-j4rvbp"></div></div></div>`);
-  var root_18$2 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-j4rvbp" role="grid"></div></div>`);
+  var root_17$3 = /* @__PURE__ */ from_html(`<div><div class="wg-week-body svelte-j4rvbp"><div class="wg-days svelte-j4rvbp"></div></div></div>`);
+  var root_18$3 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-j4rvbp" role="grid"></div></div>`);
   function PlannerWeek($$anchor, $$props) {
     push($$props, true);
     const timedEventContent = ($$anchor2, ev = noop) => {
-      var fragment_2 = root_5$5();
-      var span_3 = first_child(fragment_2);
-      var text_2 = child(span_3, true);
-      reset(span_3);
-      var span_4 = sibling(span_3, 2);
-      var text_3 = child(span_4, true);
-      reset(span_4);
-      var node_2 = sibling(span_4, 2);
-      {
-        var consequent_2 = ($$anchor3) => {
-          var span_5 = root_4$5();
-          var text_4 = child(span_5, true);
-          reset(span_5);
-          template_effect(() => set_text(text_4, ev().location));
-          append($$anchor3, span_5);
-        };
-        if_block(node_2, ($$render) => {
-          if (ev().location) $$render(consequent_2);
-        });
-      }
-      template_effect(
-        ($0) => {
-          set_text(text_2, $0);
-          set_text(text_3, ev().title);
+      EventContent($$anchor2, {
+        get event() {
+          return ev();
         },
-        [() => fmtAmPm(ev().start)]
-      );
-      append($$anchor2, fragment_2);
+        children: ($$anchor3, $$slotProps) => {
+          var fragment_3 = root_5$6();
+          var span_3 = first_child(fragment_3);
+          var text_2 = child(span_3, true);
+          reset(span_3);
+          var span_4 = sibling(span_3, 2);
+          var text_3 = child(span_4, true);
+          reset(span_4);
+          var node_2 = sibling(span_4, 2);
+          {
+            var consequent_2 = ($$anchor4) => {
+              var span_5 = root_4$6();
+              var text_4 = child(span_5, true);
+              reset(span_5);
+              template_effect(() => set_text(text_4, ev().location));
+              append($$anchor4, span_5);
+            };
+            if_block(node_2, ($$render) => {
+              if (ev().location) $$render(consequent_2);
+            });
+          }
+          template_effect(
+            ($0) => {
+              set_text(text_2, $0);
+              set_text(text_3, ev().title);
+            },
+            [() => fmtAmPm(ev().start)]
+          );
+          append($$anchor3, fragment_3);
+        },
+        $$slots: { default: true }
+      });
     };
     const L = /* @__PURE__ */ user_derived(getLabels);
     let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
@@ -7767,12 +8010,12 @@
       if (get(drag) && evDragStarted) get(drag).cancel();
       cleanupEvDrag();
     }
-    var div = root_18$2();
+    var div = root_18$3();
     let classes;
     let styles;
     var div_1 = child(div);
     each(div_1, 21, () => get(weeks), (week) => week.weekStart, ($$anchor2, week) => {
-      var div_2 = root_17$2();
+      var div_2 = root_17$3();
       let classes_1;
       var div_3 = child(div_2);
       var div_4 = child(div_3);
@@ -7788,7 +8031,7 @@
         var node_3 = child(div_6);
         {
           var consequent_3 = ($$anchor4) => {
-            var span_6 = root_6$5();
+            var span_6 = root_6$6();
             let classes_4;
             var text_5 = child(span_6, true);
             reset(span_6);
@@ -7822,7 +8065,7 @@
         var node_5 = sibling(node_4, 2);
         {
           var consequent_5 = ($$anchor4) => {
-            var div_7 = root_8$4();
+            var div_7 = root_8$5();
             var node_6 = child(div_7);
             {
               let $0 = /* @__PURE__ */ user_derived(() => ({
@@ -7844,11 +8087,11 @@
           var consequent_8 = ($$anchor4) => {
             const jsDay = /* @__PURE__ */ user_derived(() => new Date(get(day).ms).getDay());
             const isoDay = /* @__PURE__ */ user_derived(() => get(jsDay) === 0 ? 7 : get(jsDay));
-            var fragment_3 = comment();
-            var node_8 = first_child(fragment_3);
+            var fragment_4 = comment();
+            var node_8 = first_child(fragment_4);
             each(node_8, 17, () => get(blockedSlots), index, ($$anchor5, slot) => {
-              var fragment_4 = comment();
-              var node_9 = first_child(fragment_4);
+              var fragment_5 = comment();
+              var node_9 = first_child(fragment_5);
               {
                 var consequent_7 = ($$anchor6) => {
                   var div_8 = root_10$4();
@@ -7873,9 +8116,9 @@
                   if (!get(slot).day || get(slot).day === get(isoDay)) $$render(consequent_7);
                 });
               }
-              append($$anchor5, fragment_4);
+              append($$anchor5, fragment_5);
             });
-            append($$anchor4, fragment_3);
+            append($$anchor4, fragment_4);
           };
           if_block(node_7, ($$render) => {
             if (get(blockedSlots)?.length) $$render(consequent_8);
@@ -8147,32 +8390,39 @@
     }
     return slots;
   }
-  var root$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-n8lbn1"></span> <span class="ag-allday-title svelte-n8lbn1"> </span></div>`);
-  var root_1$4 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-n8lbn1"><div class="ag-allday-label svelte-n8lbn1"> </div> <div class="ag-allday-items svelte-n8lbn1"></div></div>`);
-  var root_2$4 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"> </div>`);
-  var root_3$4 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
-  var root_4$4 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
-  var root_5$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!> <span class="ag-compact-row-dur svelte-n8lbn1"> </span></div>`);
-  var root_6$4 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
-  var root_7$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-q-done-check svelte-n8lbn1">✓</span> <span class="ag-q-done-title svelte-n8lbn1"> </span></div>`);
-  var root_8$3 = /* @__PURE__ */ from_html(`<div class="ag-q-done-section svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div>`);
-  var root_9$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></div>`);
+  var root$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-n8lbn1"></span> <span class="ag-allday-title svelte-n8lbn1"> </span></div>`);
+  var root_1$5 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-n8lbn1"><div class="ag-allday-label svelte-n8lbn1"> </div> <div class="ag-allday-items svelte-n8lbn1"></div></div>`);
+  var root_2$5 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"><!></div>`);
+  var root_3$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
+  var root_4$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
+  var root_5$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
+  var root_6$5 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
+  var root_7$4 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
+  var root_8$4 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
+  var root_9$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <!> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></div>`);
   var root_10$3 = /* @__PURE__ */ from_html(`<div class="ag-q-free svelte-n8lbn1"><div class="ag-q-free-label svelte-n8lbn1"> </div></div>`);
-  var root_11$3 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-n8lbn1"> </span>`);
-  var root_12$3 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
-  var root_13$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
-  var root_14$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-n8lbn1"><div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!></div></div>`);
-  var root_15$2 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><!> <div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
-  var root_16$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></div>`);
-  var root_17$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
-  var root_18$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
-  var root_19$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-n8lbn1"><div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <!> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!></div></div>`);
-  var root_20$1 = /* @__PURE__ */ from_html(`<div class="ag-plan svelte-n8lbn1"><!></div>`);
-  var root_21$1 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-n8lbn1" role="list"><!> <!></div></div>`);
+  var root_11$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-q-done-check svelte-n8lbn1">✓</span> <span class="ag-q-done-title svelte-n8lbn1"> </span></div>`);
+  var root_12$3 = /* @__PURE__ */ from_html(`<button class="ag-q-done-toggle svelte-n8lbn1"> </button>`);
+  var root_13$2 = /* @__PURE__ */ from_html(`<div class="ag-q-done-section svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!> <!></div>`);
+  var root_14$2 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"> </div>`);
+  var root_15$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!>`, 1);
+  var root_16$2 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-n8lbn1"> </span>`);
+  var root_17$2 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
+  var root_18$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
+  var root_19$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+  var root_20$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-n8lbn1"><!></div></div>`);
+  var root_21$1 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
+  var root_22$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></div>`);
+  var root_23$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
+  var root_24$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
+  var root_25$1 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <!> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+  var root_26$1 = /* @__PURE__ */ from_html(`<div class="ag-plan svelte-n8lbn1"><!></div>`);
+  var root_27$1 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-n8lbn1" role="list"><!> <!></div></div>`);
   function AgendaDay($$anchor, $$props) {
     push($$props, true);
     const L = /* @__PURE__ */ user_derived(getLabels);
     const ctx = useCalendarContext();
+    const emptySnippet = /* @__PURE__ */ user_derived(() => ctx.emptySnippet);
     let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
     const clock = createClock();
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
@@ -8242,27 +8492,29 @@
     const upcomingNext = /* @__PURE__ */ user_derived(() => {
       const all = [];
       for (const slot of get(dayCat).upcomingSlots) {
-        for (const ev of slot.events) {
-          all.push(ev);
-          if (all.length >= 5) return all;
-        }
+        for (const ev of slot.events) all.push(ev);
       }
       return all;
     });
-    var div = root_21$1();
+    const UPCOMING_CARDS = 4;
+    const DONE_VISIBLE = 3;
+    let showAllDone = /* @__PURE__ */ state(false);
+    const visibleDone = /* @__PURE__ */ user_derived(() => get(showAllDone) ? get(dayCat).past : get(dayCat).past.slice(-DONE_VISIBLE));
+    const hiddenDoneCount = /* @__PURE__ */ user_derived(() => get(showAllDone) ? 0 : Math.max(0, get(dayCat).past.length - DONE_VISIBLE));
+    var div = root_27$1();
     let classes;
     let styles;
     var div_1 = child(div);
     var node = child(div_1);
     {
       var consequent = ($$anchor2) => {
-        var div_2 = root_1$4();
+        var div_2 = root_1$5();
         var div_3 = child(div_2);
         var text2 = child(div_3, true);
         reset(div_3);
         var div_4 = sibling(div_3, 2);
         each(div_4, 21, () => get(allDayBanner), (ev) => ev.id, ($$anchor3, ev) => {
-          var div_5 = root$3();
+          var div_5 = root$4();
           let classes_1;
           let styles_1;
           var span = sibling(child(div_5), 2);
@@ -8293,67 +8545,102 @@
     }
     var node_1 = sibling(node, 2);
     {
-      var consequent_4 = ($$anchor2) => {
-        var div_6 = root_6$4();
+      var consequent_5 = ($$anchor2) => {
+        var div_6 = root_7$4();
         var node_2 = child(div_6);
         {
-          var consequent_1 = ($$anchor3) => {
-            var div_7 = root_2$4();
-            var text_2 = child(div_7, true);
+          var consequent_2 = ($$anchor3) => {
+            var div_7 = root_2$5();
+            var node_3 = child(div_7);
+            {
+              var consequent_1 = ($$anchor4) => {
+                var fragment = comment();
+                var node_4 = first_child(fragment);
+                snippet(node_4, () => get(emptySnippet));
+                append($$anchor4, fragment);
+              };
+              var alternate = ($$anchor4) => {
+                var text_2 = text();
+                template_effect(() => set_text(text_2, get(L).nothingScheduledYet));
+                append($$anchor4, text_2);
+              };
+              if_block(node_3, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_1);
+                else $$render(alternate, -1);
+              });
+            }
             reset(div_7);
-            template_effect(() => set_text(text_2, get(L).nothingScheduledYet));
             append($$anchor3, div_7);
           };
-          var alternate = ($$anchor3) => {
-            var fragment = comment();
-            var node_3 = first_child(fragment);
-            each(node_3, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
-              var div_8 = root_5$4();
+          var alternate_1 = ($$anchor3) => {
+            var fragment_2 = comment();
+            var node_5 = first_child(fragment_2);
+            each(node_5, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
+              var div_8 = root_6$5();
               let classes_2;
               let styles_2;
-              var span_1 = sibling(child(div_8), 2);
-              var text_3 = child(span_1, true);
-              reset(span_1);
-              var span_2 = sibling(span_1, 2);
-              var text_4 = child(span_2, true);
-              reset(span_2);
-              var node_4 = sibling(span_2, 2);
-              {
-                var consequent_2 = ($$anchor5) => {
-                  var span_3 = root_3$4();
-                  var text_5 = child(span_3, true);
-                  reset(span_3);
-                  template_effect(() => set_text(text_5, get(ev).subtitle));
-                  append($$anchor5, span_3);
-                };
-                if_block(node_4, ($$render) => {
-                  if (get(ev).subtitle) $$render(consequent_2);
-                });
-              }
-              var node_5 = sibling(node_4, 2);
-              {
-                var consequent_3 = ($$anchor5) => {
-                  var fragment_1 = comment();
-                  var node_6 = first_child(fragment_1);
-                  each(node_6, 17, () => get(ev).tags, index, ($$anchor6, tag) => {
-                    var span_4 = root_4$4();
-                    var text_6 = child(span_4, true);
-                    reset(span_4);
-                    template_effect(() => set_text(text_6, get(tag)));
-                    append($$anchor6, span_4);
-                  });
-                  append($$anchor5, fragment_1);
-                };
-                if_block(node_5, ($$render) => {
-                  if (get(ev).tags?.length) $$render(consequent_3);
-                });
-              }
-              var span_5 = sibling(node_5, 2);
-              var text_7 = child(span_5, true);
-              reset(span_5);
+              var node_6 = child(div_8);
+              EventContent(node_6, {
+                get event() {
+                  return get(ev);
+                },
+                children: ($$anchor5, $$slotProps) => {
+                  var fragment_3 = root_5$5();
+                  var span_1 = sibling(first_child(fragment_3), 2);
+                  var text_3 = child(span_1, true);
+                  reset(span_1);
+                  var span_2 = sibling(span_1, 2);
+                  var text_4 = child(span_2, true);
+                  reset(span_2);
+                  var node_7 = sibling(span_2, 2);
+                  {
+                    var consequent_3 = ($$anchor6) => {
+                      var span_3 = root_3$5();
+                      var text_5 = child(span_3, true);
+                      reset(span_3);
+                      template_effect(() => set_text(text_5, get(ev).subtitle));
+                      append($$anchor6, span_3);
+                    };
+                    if_block(node_7, ($$render) => {
+                      if (get(ev).subtitle) $$render(consequent_3);
+                    });
+                  }
+                  var node_8 = sibling(node_7, 2);
+                  {
+                    var consequent_4 = ($$anchor6) => {
+                      var fragment_4 = comment();
+                      var node_9 = first_child(fragment_4);
+                      each(node_9, 17, () => get(ev).tags, index, ($$anchor7, tag) => {
+                        var span_4 = root_4$5();
+                        var text_6 = child(span_4, true);
+                        reset(span_4);
+                        template_effect(() => set_text(text_6, get(tag)));
+                        append($$anchor7, span_4);
+                      });
+                      append($$anchor6, fragment_4);
+                    };
+                    if_block(node_8, ($$render) => {
+                      if (get(ev).tags?.length) $$render(consequent_4);
+                    });
+                  }
+                  var span_5 = sibling(node_8, 2);
+                  var text_7 = child(span_5, true);
+                  reset(span_5);
+                  template_effect(
+                    ($0, $1) => {
+                      set_text(text_3, $0);
+                      set_text(text_4, get(ev).title);
+                      set_text(text_7, $1);
+                    },
+                    [() => fmt(get(ev).start), () => duration(get(ev))]
+                  );
+                  append($$anchor5, fragment_3);
+                },
+                $$slots: { default: true }
+              });
               reset(div_8);
               template_effect(
-                ($0, $1, $2, $3) => {
+                ($0, $1) => {
                   classes_2 = set_class(div_8, 1, "ag-compact-row svelte-n8lbn1", null, classes_2, {
                     "ag-compact-row--selected": selectedEventId() === get(ev).id,
                     "ag-compact-row--cancelled": get(ev).status === "cancelled",
@@ -8361,106 +8648,74 @@
                   });
                   set_attribute(div_8, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
                   styles_2 = set_style(div_8, "", styles_2, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_3, $2);
-                  set_text(text_4, get(ev).title);
-                  set_text(text_7, $3);
                 },
-                [
-                  () => fmt(get(ev).start),
-                  () => duration(get(ev)),
-                  () => fmt(get(ev).start),
-                  () => duration(get(ev))
-                ]
+                [() => fmt(get(ev).start), () => duration(get(ev))]
               );
               delegated("click", div_8, () => handleClick(get(ev)));
               event("pointerenter", div_8, () => get(oneventhover)?.(get(ev)));
               delegated("keydown", div_8, (e) => handleKeydown(e, get(ev)));
               append($$anchor4, div_8);
             });
-            append($$anchor3, fragment);
+            append($$anchor3, fragment_2);
           };
           if_block(node_2, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_1);
-            else $$render(alternate, -1);
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_2);
+            else $$render(alternate_1, -1);
           });
         }
         reset(div_6);
         append($$anchor2, div_6);
       };
-      var consequent_10 = ($$anchor2) => {
-        var div_9 = root_15$2();
+      var consequent_15 = ($$anchor2) => {
+        var div_9 = root_21$1();
         var div_10 = child(div_9);
-        var node_7 = child(div_10);
+        var div_11 = child(div_10);
+        var text_8 = child(div_11);
+        var span_6 = sibling(text_8);
+        var text_9 = child(span_6, true);
+        reset(span_6);
+        reset(div_11);
+        var node_10 = sibling(div_11, 2);
         {
-          var consequent_5 = ($$anchor3) => {
-            var div_11 = root_8$3();
-            var div_12 = child(div_11);
-            var text_8 = child(div_12, true);
-            reset(div_12);
-            var node_8 = sibling(div_12, 2);
-            each(node_8, 17, () => get(dayCat).past, (ev) => ev.id, ($$anchor4, ev) => {
-              var div_13 = root_7$4();
+          var consequent_7 = ($$anchor3) => {
+            var fragment_5 = comment();
+            var node_11 = first_child(fragment_5);
+            each(node_11, 17, () => get(dayCat).current, (ev) => ev.id, ($$anchor4, ev) => {
+              var div_12 = root_9$3();
               let classes_3;
-              var span_6 = sibling(child(div_13), 2);
-              var text_9 = child(span_6, true);
-              reset(span_6);
-              reset(div_13);
-              template_effect(
-                ($0) => {
-                  classes_3 = set_class(div_13, 1, "ag-q-done-item svelte-n8lbn1", null, classes_3, {
-                    "ag-q-done-item--selected": selectedEventId() === get(ev).id
-                  });
-                  set_attribute(div_13, "aria-label", `${get(ev).title ?? ""}, ${get(L).completed ?? ""}, ${$0 ?? ""}`);
-                  set_text(text_9, get(ev).title);
-                },
-                [() => fmt(get(ev).start)]
-              );
-              delegated("click", div_13, () => handleClick(get(ev)));
-              delegated("keydown", div_13, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_13);
-            });
-            reset(div_11);
-            template_effect(() => set_text(text_8, get(L).done));
-            append($$anchor3, div_11);
-          };
-          if_block(node_7, ($$render) => {
-            if (get(dayCat).past.length > 0) $$render(consequent_5);
-          });
-        }
-        var div_14 = sibling(node_7, 2);
-        var text_10 = child(div_14);
-        var span_7 = sibling(text_10);
-        var text_11 = child(span_7, true);
-        reset(span_7);
-        reset(div_14);
-        var node_9 = sibling(div_14, 2);
-        {
-          var consequent_6 = ($$anchor3) => {
-            var fragment_2 = comment();
-            var node_10 = first_child(fragment_2);
-            each(node_10, 17, () => get(dayCat).current, (ev) => ev.id, ($$anchor4, ev) => {
-              var div_15 = root_9$3();
-              let classes_4;
               let styles_3;
-              var div_16 = sibling(child(div_15), 2);
-              var text_12 = child(div_16, true);
-              reset(div_16);
-              var div_17 = sibling(div_16, 2);
-              var text_13 = child(div_17);
-              reset(div_17);
-              var div_18 = sibling(div_17, 2);
-              var div_19 = child(div_18);
-              let styles_4;
-              reset(div_18);
+              var div_13 = sibling(child(div_12), 2);
+              var text_10 = child(div_13, true);
+              reset(div_13);
+              var node_12 = sibling(div_13, 2);
+              {
+                var consequent_6 = ($$anchor5) => {
+                  var div_14 = root_8$4();
+                  var text_11 = child(div_14, true);
+                  reset(div_14);
+                  template_effect(() => set_text(text_11, get(ev).subtitle));
+                  append($$anchor5, div_14);
+                };
+                if_block(node_12, ($$render) => {
+                  if (get(ev).subtitle) $$render(consequent_6);
+                });
+              }
+              var div_15 = sibling(node_12, 2);
+              var text_12 = child(div_15);
               reset(div_15);
+              var div_16 = sibling(div_15, 2);
+              var div_17 = child(div_16);
+              let styles_4;
+              reset(div_16);
+              reset(div_12);
               template_effect(
                 ($0, $1, $2) => {
-                  classes_4 = set_class(div_15, 1, "ag-q-now svelte-n8lbn1", null, classes_4, { "ag-q-now--selected": selectedEventId() === get(ev).id });
-                  set_attribute(div_15, "aria-label", `${get(ev).title ?? ""}, ${get(L).happeningNow ?? ""}, ${$0 ?? ""}`);
-                  styles_3 = set_style(div_15, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_12, get(ev).title);
-                  set_text(text_13, `${get(L).until ?? ""} ${$1 ?? ""}`);
-                  styles_4 = set_style(div_19, "", styles_4, $2);
+                  classes_3 = set_class(div_12, 1, "ag-q-now svelte-n8lbn1", null, classes_3, { "ag-q-now--selected": selectedEventId() === get(ev).id });
+                  set_attribute(div_12, "aria-label", `${get(ev).title ?? ""}, ${get(L).happeningNow ?? ""}, ${$0 ?? ""}`);
+                  styles_3 = set_style(div_12, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_text(text_10, get(ev).title);
+                  set_text(text_12, `${get(L).until ?? ""} ${$1 ?? ""}`);
+                  styles_4 = set_style(div_17, "", styles_4, $2);
                 },
                 [
                   () => get(L).percentComplete(Math.round(prog(get(ev)) * 100)),
@@ -8468,178 +8723,313 @@
                   () => ({ width: `${prog(get(ev)) * 100}%` })
                 ]
               );
-              delegated("click", div_15, () => handleClick(get(ev)));
-              event("pointerenter", div_15, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_15, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_15);
+              delegated("click", div_12, () => handleClick(get(ev)));
+              event("pointerenter", div_12, () => get(oneventhover)?.(get(ev)));
+              delegated("keydown", div_12, (e) => handleKeydown(e, get(ev)));
+              append($$anchor4, div_12);
             });
-            append($$anchor3, fragment_2);
-          };
-          var alternate_1 = ($$anchor3) => {
-            var div_20 = root_10$3();
-            var div_21 = child(div_20);
-            var text_14 = child(div_21, true);
-            reset(div_21);
-            reset(div_20);
-            template_effect(() => set_text(text_14, get(L).free));
-            append($$anchor3, div_20);
-          };
-          if_block(node_9, ($$render) => {
-            if (get(dayCat).current.length > 0) $$render(consequent_6);
-            else $$render(alternate_1, -1);
-          });
-        }
-        reset(div_10);
-        var div_22 = sibling(div_10, 2);
-        var div_23 = child(div_22);
-        var text_15 = child(div_23, true);
-        reset(div_23);
-        var node_11 = sibling(div_23, 2);
-        {
-          var consequent_7 = ($$anchor3) => {
-            var div_24 = root_2$4();
-            var text_16 = child(div_24, true);
-            reset(div_24);
-            template_effect(() => set_text(text_16, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
-            append($$anchor3, div_24);
+            append($$anchor3, fragment_5);
           };
           var alternate_2 = ($$anchor3) => {
-            var fragment_3 = comment();
-            var node_12 = first_child(fragment_3);
-            each(node_12, 19, () => get(upcomingNext), (ev) => ev.id, ($$anchor4, ev, i) => {
-              var div_25 = root_14$2();
-              let classes_5;
-              let styles_5;
-              var div_26 = child(div_25);
-              var div_27 = child(div_26);
-              var span_8 = child(div_27);
-              var text_17 = child(span_8, true);
-              reset(span_8);
-              var span_9 = sibling(span_8, 2);
-              var text_18 = child(span_9, true);
-              reset(span_9);
-              reset(div_27);
-              var node_13 = sibling(div_27, 2);
-              {
-                var consequent_8 = ($$anchor5) => {
-                  var span_10 = root_11$3();
-                  var text_19 = child(span_10, true);
-                  reset(span_10);
-                  template_effect(() => set_text(text_19, get(ev).subtitle));
-                  append($$anchor5, span_10);
-                };
-                if_block(node_13, ($$render) => {
-                  if (get(ev).subtitle) $$render(consequent_8);
-                });
-              }
-              var div_28 = sibling(node_13, 2);
-              var text_20 = child(div_28);
-              var span_11 = sibling(text_20);
-              var text_21 = child(span_11, true);
-              reset(span_11);
-              reset(div_28);
-              var node_14 = sibling(div_28, 2);
-              {
-                var consequent_9 = ($$anchor5) => {
-                  var div_29 = root_13$2();
-                  each(div_29, 21, () => get(ev).tags, index, ($$anchor6, tag) => {
-                    var span_12 = root_12$3();
-                    var text_22 = child(span_12, true);
-                    reset(span_12);
-                    template_effect(() => set_text(text_22, get(tag)));
-                    append($$anchor6, span_12);
-                  });
-                  reset(div_29);
-                  append($$anchor5, div_29);
-                };
-                if_block(node_14, ($$render) => {
-                  if (get(ev).tags?.length) $$render(consequent_9);
-                });
-              }
-              reset(div_26);
-              reset(div_25);
-              template_effect(
-                ($0, $1, $2, $3, $4, $5) => {
-                  classes_5 = set_class(div_25, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_5, {
-                    "ag-card--hero": get(i) === 0,
-                    "ag-card--selected": selectedEventId() === get(ev).id
-                  });
-                  set_attribute(div_25, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                  styles_5 = set_style(div_25, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_17, get(ev).title);
-                  set_text(text_18, $2);
-                  set_text(text_20, `${$3 ?? ""} – ${$4 ?? ""} `);
-                  set_text(text_21, $5);
-                },
-                [
-                  () => fmt(get(ev).start),
-                  () => duration(get(ev)),
-                  () => eta(get(ev).start.getTime()),
-                  () => fmt(get(ev).start),
-                  () => fmt(get(ev).end),
-                  () => duration(get(ev))
-                ]
-              );
-              delegated("click", div_25, () => handleClick(get(ev)));
-              event("pointerenter", div_25, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_25, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_25);
-            });
-            append($$anchor3, fragment_3);
+            var div_18 = root_10$3();
+            var div_19 = child(div_18);
+            var text_13 = child(div_19, true);
+            reset(div_19);
+            reset(div_18);
+            template_effect(() => set_text(text_13, get(L).free));
+            append($$anchor3, div_18);
           };
-          if_block(node_11, ($$render) => {
-            if (get(upcomingNext).length === 0) $$render(consequent_7);
+          if_block(node_10, ($$render) => {
+            if (get(dayCat).current.length > 0) $$render(consequent_7);
             else $$render(alternate_2, -1);
           });
         }
-        reset(div_22);
+        var node_13 = sibling(node_10, 2);
+        {
+          var consequent_9 = ($$anchor3) => {
+            var div_20 = root_13$2();
+            var div_21 = child(div_20);
+            var text_14 = child(div_21, true);
+            reset(div_21);
+            var node_14 = sibling(div_21, 2);
+            each(node_14, 17, () => get(visibleDone), (ev) => ev.id, ($$anchor4, ev) => {
+              var div_22 = root_11$3();
+              let classes_4;
+              var span_7 = sibling(child(div_22), 2);
+              var text_15 = child(span_7, true);
+              reset(span_7);
+              reset(div_22);
+              template_effect(
+                ($0) => {
+                  classes_4 = set_class(div_22, 1, "ag-q-done-item svelte-n8lbn1", null, classes_4, {
+                    "ag-q-done-item--selected": selectedEventId() === get(ev).id
+                  });
+                  set_attribute(div_22, "aria-label", `${get(ev).title ?? ""}, ${get(L).completed ?? ""}, ${$0 ?? ""}`);
+                  set_text(text_15, get(ev).title);
+                },
+                [() => fmt(get(ev).start)]
+              );
+              delegated("click", div_22, () => handleClick(get(ev)));
+              delegated("keydown", div_22, (e) => handleKeydown(e, get(ev)));
+              append($$anchor4, div_22);
+            });
+            var node_15 = sibling(node_14, 2);
+            {
+              var consequent_8 = ($$anchor4) => {
+                var button = root_12$3();
+                var text_16 = child(button, true);
+                reset(button);
+                template_effect(($0) => set_text(text_16, $0), [
+                  () => get(showAllDone) ? get(L).showLess : get(L).nCompleted(get(hiddenDoneCount))
+                ]);
+                delegated("click", button, () => set(showAllDone, !get(showAllDone)));
+                append($$anchor4, button);
+              };
+              if_block(node_15, ($$render) => {
+                if (get(hiddenDoneCount) > 0) $$render(consequent_8);
+              });
+            }
+            reset(div_20);
+            template_effect(() => set_text(text_14, get(L).done));
+            append($$anchor3, div_20);
+          };
+          if_block(node_13, ($$render) => {
+            if (get(dayCat).past.length > 0) $$render(consequent_9);
+          });
+        }
+        reset(div_10);
+        var div_23 = sibling(div_10, 2);
+        var div_24 = child(div_23);
+        var text_17 = child(div_24, true);
+        reset(div_24);
+        var node_16 = sibling(div_24, 2);
+        {
+          var consequent_10 = ($$anchor3) => {
+            var div_25 = root_14$2();
+            var text_18 = child(div_25, true);
+            reset(div_25);
+            template_effect(() => set_text(text_18, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
+            append($$anchor3, div_25);
+          };
+          var alternate_4 = ($$anchor3) => {
+            var fragment_6 = comment();
+            var node_17 = first_child(fragment_6);
+            each(node_17, 19, () => get(upcomingNext), (ev) => ev.id, ($$anchor4, ev, i) => {
+              var fragment_7 = comment();
+              var node_18 = first_child(fragment_7);
+              {
+                var consequent_12 = ($$anchor5) => {
+                  var div_26 = root_6$5();
+                  let classes_5;
+                  let styles_5;
+                  var node_19 = child(div_26);
+                  EventContent(node_19, {
+                    get event() {
+                      return get(ev);
+                    },
+                    children: ($$anchor6, $$slotProps) => {
+                      var fragment_8 = root_15$2();
+                      var span_8 = sibling(first_child(fragment_8), 2);
+                      var text_19 = child(span_8, true);
+                      reset(span_8);
+                      var span_9 = sibling(span_8, 2);
+                      var text_20 = child(span_9, true);
+                      reset(span_9);
+                      var node_20 = sibling(span_9, 2);
+                      {
+                        var consequent_11 = ($$anchor7) => {
+                          var span_10 = root_3$5();
+                          var text_21 = child(span_10, true);
+                          reset(span_10);
+                          template_effect(() => set_text(text_21, get(ev).subtitle));
+                          append($$anchor7, span_10);
+                        };
+                        if_block(node_20, ($$render) => {
+                          if (get(ev).subtitle) $$render(consequent_11);
+                        });
+                      }
+                      template_effect(
+                        ($0) => {
+                          set_text(text_19, $0);
+                          set_text(text_20, get(ev).title);
+                        },
+                        [() => fmt(get(ev).start)]
+                      );
+                      append($$anchor6, fragment_8);
+                    },
+                    $$slots: { default: true }
+                  });
+                  reset(div_26);
+                  template_effect(
+                    ($0, $1) => {
+                      classes_5 = set_class(div_26, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_5, {
+                        "ag-compact-row--selected": selectedEventId() === get(ev).id
+                      });
+                      set_attribute(div_26, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                      styles_5 = set_style(div_26, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                    },
+                    [() => fmt(get(ev).start), () => duration(get(ev))]
+                  );
+                  delegated("click", div_26, () => handleClick(get(ev)));
+                  event("pointerenter", div_26, () => get(oneventhover)?.(get(ev)));
+                  delegated("keydown", div_26, (e) => handleKeydown(e, get(ev)));
+                  append($$anchor5, div_26);
+                };
+                var alternate_3 = ($$anchor5) => {
+                  var div_27 = root_20$1();
+                  let classes_6;
+                  let styles_6;
+                  var div_28 = child(div_27);
+                  var node_21 = child(div_28);
+                  EventContent(node_21, {
+                    get event() {
+                      return get(ev);
+                    },
+                    children: ($$anchor6, $$slotProps) => {
+                      var fragment_9 = root_19$2();
+                      var div_29 = first_child(fragment_9);
+                      var span_11 = child(div_29);
+                      var text_22 = child(span_11, true);
+                      reset(span_11);
+                      var span_12 = sibling(span_11, 2);
+                      var text_23 = child(span_12, true);
+                      reset(span_12);
+                      reset(div_29);
+                      var node_22 = sibling(div_29, 2);
+                      {
+                        var consequent_13 = ($$anchor7) => {
+                          var span_13 = root_16$2();
+                          var text_24 = child(span_13, true);
+                          reset(span_13);
+                          template_effect(() => set_text(text_24, get(ev).subtitle));
+                          append($$anchor7, span_13);
+                        };
+                        if_block(node_22, ($$render) => {
+                          if (get(ev).subtitle) $$render(consequent_13);
+                        });
+                      }
+                      var div_30 = sibling(node_22, 2);
+                      var text_25 = child(div_30);
+                      var span_14 = sibling(text_25);
+                      var text_26 = child(span_14, true);
+                      reset(span_14);
+                      reset(div_30);
+                      var node_23 = sibling(div_30, 2);
+                      {
+                        var consequent_14 = ($$anchor7) => {
+                          var div_31 = root_18$2();
+                          each(div_31, 21, () => get(ev).tags, index, ($$anchor8, tag) => {
+                            var span_15 = root_17$2();
+                            var text_27 = child(span_15, true);
+                            reset(span_15);
+                            template_effect(() => set_text(text_27, get(tag)));
+                            append($$anchor8, span_15);
+                          });
+                          reset(div_31);
+                          append($$anchor7, div_31);
+                        };
+                        if_block(node_23, ($$render) => {
+                          if (get(ev).tags?.length) $$render(consequent_14);
+                        });
+                      }
+                      template_effect(
+                        ($0, $1, $2, $3) => {
+                          set_text(text_22, get(ev).title);
+                          set_text(text_23, $0);
+                          set_text(text_25, `${$1 ?? ""} – ${$2 ?? ""} `);
+                          set_text(text_26, $3);
+                        },
+                        [
+                          () => eta(get(ev).start.getTime()),
+                          () => fmt(get(ev).start),
+                          () => fmt(get(ev).end),
+                          () => duration(get(ev))
+                        ]
+                      );
+                      append($$anchor6, fragment_9);
+                    },
+                    $$slots: { default: true }
+                  });
+                  reset(div_28);
+                  reset(div_27);
+                  template_effect(
+                    ($0, $1) => {
+                      classes_6 = set_class(div_27, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_6, {
+                        "ag-card--hero": get(i) === 0,
+                        "ag-card--selected": selectedEventId() === get(ev).id
+                      });
+                      set_attribute(div_27, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                      styles_6 = set_style(div_27, "", styles_6, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                    },
+                    [() => fmt(get(ev).start), () => duration(get(ev))]
+                  );
+                  delegated("click", div_27, () => handleClick(get(ev)));
+                  event("pointerenter", div_27, () => get(oneventhover)?.(get(ev)));
+                  delegated("keydown", div_27, (e) => handleKeydown(e, get(ev)));
+                  append($$anchor5, div_27);
+                };
+                if_block(node_18, ($$render) => {
+                  if (get(i) >= UPCOMING_CARDS) $$render(consequent_12);
+                  else $$render(alternate_3, -1);
+                });
+              }
+              append($$anchor4, fragment_7);
+            });
+            append($$anchor3, fragment_6);
+          };
+          if_block(node_16, ($$render) => {
+            if (get(upcomingNext).length === 0) $$render(consequent_10);
+            else $$render(alternate_4, -1);
+          });
+        }
+        reset(div_23);
         reset(div_9);
         template_effect(() => {
-          set_text(text_10, `${get(L).now ?? ""} `);
-          set_text(text_11, clock.hm);
-          set_text(text_15, get(L).upNext);
+          set_text(text_8, `${get(L).now ?? ""} `);
+          set_text(text_9, clock.hm);
+          set_text(text_17, get(L).upNext);
         });
         append($$anchor2, div_9);
       };
-      var consequent_12 = ($$anchor2) => {
-        var div_30 = root_17$1();
-        var node_15 = child(div_30);
+      var consequent_17 = ($$anchor2) => {
+        var div_32 = root_23$1();
+        var node_24 = child(div_32);
         {
-          var consequent_11 = ($$anchor3) => {
-            var div_31 = root_2$4();
-            var text_23 = child(div_31, true);
-            reset(div_31);
-            template_effect(() => set_text(text_23, get(L).nothingWasScheduled));
-            append($$anchor3, div_31);
+          var consequent_16 = ($$anchor3) => {
+            var div_33 = root_14$2();
+            var text_28 = child(div_33, true);
+            reset(div_33);
+            template_effect(() => set_text(text_28, get(L).nothingWasScheduled));
+            append($$anchor3, div_33);
           };
-          var alternate_3 = ($$anchor3) => {
-            var fragment_4 = comment();
-            var node_16 = first_child(fragment_4);
-            each(node_16, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
-              var div_32 = root_16$2();
-              let classes_6;
-              let styles_6;
-              var span_13 = sibling(child(div_32), 2);
-              var text_24 = child(span_13, true);
-              reset(span_13);
-              var span_14 = sibling(span_13, 2);
+          var alternate_5 = ($$anchor3) => {
+            var fragment_10 = comment();
+            var node_25 = first_child(fragment_10);
+            each(node_25, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
+              var div_34 = root_22$1();
+              let classes_7;
               let styles_7;
-              var span_15 = sibling(span_14, 2);
-              var text_25 = child(span_15, true);
-              reset(span_15);
-              var span_16 = sibling(span_15, 2);
-              var text_26 = child(span_16, true);
+              var span_16 = sibling(child(div_34), 2);
+              var text_29 = child(span_16, true);
               reset(span_16);
-              reset(div_32);
+              var span_17 = sibling(span_16, 2);
+              let styles_8;
+              var span_18 = sibling(span_17, 2);
+              var text_30 = child(span_18, true);
+              reset(span_18);
+              var span_19 = sibling(span_18, 2);
+              var text_31 = child(span_19, true);
+              reset(span_19);
+              reset(div_34);
               template_effect(
                 ($0, $1, $2, $3) => {
-                  classes_6 = set_class(div_32, 1, "ag-log-row svelte-n8lbn1", null, classes_6, { "ag-log-row--selected": selectedEventId() === get(ev).id });
-                  set_attribute(div_32, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""} to ${$1 ?? ""}`);
-                  styles_6 = set_style(div_32, "", styles_6, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_24, $2);
-                  styles_7 = set_style(span_14, "", styles_7, { background: get(ev).color || "var(--dt-accent)" });
-                  set_text(text_25, get(ev).title);
-                  set_text(text_26, $3);
+                  classes_7 = set_class(div_34, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
+                  set_attribute(div_34, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""} to ${$1 ?? ""}`);
+                  styles_7 = set_style(div_34, "", styles_7, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_text(text_29, $2);
+                  styles_8 = set_style(span_17, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
+                  set_text(text_30, get(ev).title);
+                  set_text(text_31, $3);
                 },
                 [
                   () => fmt(get(ev).start),
@@ -8648,103 +9038,143 @@
                   () => duration(get(ev))
                 ]
               );
-              delegated("click", div_32, () => handleClick(get(ev)));
-              event("pointerenter", div_32, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_32, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_32);
+              delegated("click", div_34, () => handleClick(get(ev)));
+              event("pointerenter", div_34, () => get(oneventhover)?.(get(ev)));
+              delegated("keydown", div_34, (e) => handleKeydown(e, get(ev)));
+              append($$anchor4, div_34);
             });
-            append($$anchor3, fragment_4);
+            append($$anchor3, fragment_10);
           };
-          if_block(node_15, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_11);
-            else $$render(alternate_3, -1);
+          if_block(node_24, ($$render) => {
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_16);
+            else $$render(alternate_5, -1);
           });
         }
-        reset(div_30);
-        append($$anchor2, div_30);
+        reset(div_32);
+        append($$anchor2, div_32);
       };
-      var alternate_5 = ($$anchor2) => {
-        var div_33 = root_20$1();
-        var node_17 = child(div_33);
+      var alternate_8 = ($$anchor2) => {
+        var div_35 = root_26$1();
+        var node_26 = child(div_35);
         {
-          var consequent_13 = ($$anchor3) => {
-            var div_34 = root_2$4();
-            var text_27 = child(div_34, true);
-            reset(div_34);
-            template_effect(() => set_text(text_27, get(L).nothingScheduledYet));
-            append($$anchor3, div_34);
+          var consequent_19 = ($$anchor3) => {
+            var div_36 = root_2$5();
+            var node_27 = child(div_36);
+            {
+              var consequent_18 = ($$anchor4) => {
+                var fragment_11 = comment();
+                var node_28 = first_child(fragment_11);
+                snippet(node_28, () => get(emptySnippet));
+                append($$anchor4, fragment_11);
+              };
+              var alternate_6 = ($$anchor4) => {
+                var text_32 = text();
+                template_effect(() => set_text(text_32, get(L).nothingScheduledYet));
+                append($$anchor4, text_32);
+              };
+              if_block(node_27, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_18);
+                else $$render(alternate_6, -1);
+              });
+            }
+            reset(div_36);
+            append($$anchor3, div_36);
           };
-          var alternate_4 = ($$anchor3) => {
-            var fragment_5 = comment();
-            var node_18 = first_child(fragment_5);
-            each(node_18, 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev, i) => {
-              var div_35 = root_19$1();
-              let classes_7;
-              let styles_8;
-              var div_36 = child(div_35);
-              var div_37 = child(div_36);
-              var span_17 = child(div_37);
-              var text_28 = child(span_17, true);
-              reset(span_17);
-              var span_18 = sibling(span_17, 2);
-              var text_29 = child(span_18, true);
-              reset(span_18);
-              reset(div_37);
-              var node_19 = sibling(div_37, 2);
-              {
-                var consequent_14 = ($$anchor5) => {
-                  var span_19 = root_11$3();
-                  var text_30 = child(span_19, true);
-                  reset(span_19);
-                  template_effect(() => set_text(text_30, get(ev).subtitle));
-                  append($$anchor5, span_19);
-                };
-                if_block(node_19, ($$render) => {
-                  if (get(ev).subtitle) $$render(consequent_14);
-                });
-              }
-              var node_20 = sibling(node_19, 2);
-              {
-                var consequent_15 = ($$anchor5) => {
-                  var span_20 = root_18$1();
-                  var text_31 = child(span_20, true);
+          var alternate_7 = ($$anchor3) => {
+            var fragment_13 = comment();
+            var node_29 = first_child(fragment_13);
+            each(node_29, 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev, i) => {
+              var div_37 = root_20$1();
+              let classes_8;
+              let styles_9;
+              var div_38 = child(div_37);
+              var node_30 = child(div_38);
+              EventContent(node_30, {
+                get event() {
+                  return get(ev);
+                },
+                children: ($$anchor5, $$slotProps) => {
+                  var fragment_14 = root_25$1();
+                  var div_39 = first_child(fragment_14);
+                  var span_20 = child(div_39);
+                  var text_33 = child(span_20, true);
                   reset(span_20);
-                  template_effect(() => set_text(text_31, get(ev).location));
-                  append($$anchor5, span_20);
-                };
-                if_block(node_20, ($$render) => {
-                  if (get(ev).location) $$render(consequent_15);
-                });
-              }
-              var div_38 = sibling(node_20, 2);
-              var text_32 = child(div_38);
-              var span_21 = sibling(text_32);
-              var text_33 = child(span_21, true);
-              reset(span_21);
-              reset(div_38);
-              var node_21 = sibling(div_38, 2);
-              {
-                var consequent_16 = ($$anchor5) => {
-                  var div_39 = root_13$2();
-                  each(div_39, 21, () => get(ev).tags, index, ($$anchor6, tag) => {
-                    var span_22 = root_12$3();
-                    var text_34 = child(span_22, true);
-                    reset(span_22);
-                    template_effect(() => set_text(text_34, get(tag)));
-                    append($$anchor6, span_22);
-                  });
+                  var span_21 = sibling(span_20, 2);
+                  var text_34 = child(span_21, true);
+                  reset(span_21);
                   reset(div_39);
-                  append($$anchor5, div_39);
-                };
-                if_block(node_21, ($$render) => {
-                  if (get(ev).tags?.length) $$render(consequent_16);
-                });
-              }
-              reset(div_36);
-              reset(div_35);
+                  var node_31 = sibling(div_39, 2);
+                  {
+                    var consequent_20 = ($$anchor6) => {
+                      var span_22 = root_16$2();
+                      var text_35 = child(span_22, true);
+                      reset(span_22);
+                      template_effect(() => set_text(text_35, get(ev).subtitle));
+                      append($$anchor6, span_22);
+                    };
+                    if_block(node_31, ($$render) => {
+                      if (get(ev).subtitle) $$render(consequent_20);
+                    });
+                  }
+                  var node_32 = sibling(node_31, 2);
+                  {
+                    var consequent_21 = ($$anchor6) => {
+                      var span_23 = root_24$1();
+                      var text_36 = child(span_23, true);
+                      reset(span_23);
+                      template_effect(() => set_text(text_36, get(ev).location));
+                      append($$anchor6, span_23);
+                    };
+                    if_block(node_32, ($$render) => {
+                      if (get(ev).location) $$render(consequent_21);
+                    });
+                  }
+                  var div_40 = sibling(node_32, 2);
+                  var text_37 = child(div_40);
+                  var span_24 = sibling(text_37);
+                  var text_38 = child(span_24, true);
+                  reset(span_24);
+                  reset(div_40);
+                  var node_33 = sibling(div_40, 2);
+                  {
+                    var consequent_22 = ($$anchor6) => {
+                      var div_41 = root_18$2();
+                      each(div_41, 21, () => get(ev).tags, index, ($$anchor7, tag) => {
+                        var span_25 = root_17$2();
+                        var text_39 = child(span_25, true);
+                        reset(span_25);
+                        template_effect(() => set_text(text_39, get(tag)));
+                        append($$anchor7, span_25);
+                      });
+                      reset(div_41);
+                      append($$anchor6, div_41);
+                    };
+                    if_block(node_33, ($$render) => {
+                      if (get(ev).tags?.length) $$render(consequent_22);
+                    });
+                  }
+                  template_effect(
+                    ($0, $1, $2) => {
+                      set_text(text_33, get(i) + 1);
+                      set_text(text_34, get(ev).title);
+                      set_text(text_37, `${$0 ?? ""} – ${$1 ?? ""} `);
+                      set_text(text_38, $2);
+                    },
+                    [
+                      () => fmt(get(ev).start),
+                      () => fmt(get(ev).end),
+                      () => duration(get(ev))
+                    ]
+                  );
+                  append($$anchor5, fragment_14);
+                },
+                $$slots: { default: true }
+              });
+              reset(div_38);
+              reset(div_37);
               template_effect(
-                ($0, $1, $2, $3, $4, $5) => {
-                  classes_7 = set_class(div_35, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_7, {
+                ($0, $1, $2) => {
+                  classes_8 = set_class(div_37, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_8, {
                     "ag-card--first": get(i) === 0,
                     "ag-card--selected": selectedEventId() === get(ev).id,
                     "ag-card--cancelled": get(ev).status === "cancelled",
@@ -8752,42 +9182,35 @@
                     "ag-card--full": get(ev).status === "full",
                     "ag-card--limited": get(ev).status === "limited"
                   });
-                  set_attribute(div_35, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? " (cancelled)" : ""}${get(ev).status === "tentative" ? " (tentative)" : ""}${get(ev).status === "full" ? " (full)" : ""}${get(ev).status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
-                  styles_8 = set_style(div_35, "", styles_8, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_28, get(i) + 1);
-                  set_text(text_29, get(ev).title);
-                  set_text(text_32, `${$3 ?? ""} – ${$4 ?? ""} `);
-                  set_text(text_33, $5);
+                  set_attribute(div_37, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? " (cancelled)" : ""}${get(ev).status === "tentative" ? " (tentative)" : ""}${get(ev).status === "full" ? " (full)" : ""}${get(ev).status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
+                  styles_9 = set_style(div_37, "", styles_9, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                 },
                 [
-                  () => fmt(get(ev).start),
-                  () => fmt(get(ev).end),
-                  () => duration(get(ev)),
                   () => fmt(get(ev).start),
                   () => fmt(get(ev).end),
                   () => duration(get(ev))
                 ]
               );
-              delegated("click", div_35, () => handleClick(get(ev)));
-              event("pointerenter", div_35, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_35, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_35);
+              delegated("click", div_37, () => handleClick(get(ev)));
+              event("pointerenter", div_37, () => get(oneventhover)?.(get(ev)));
+              delegated("keydown", div_37, (e) => handleKeydown(e, get(ev)));
+              append($$anchor4, div_37);
             });
-            append($$anchor3, fragment_5);
+            append($$anchor3, fragment_13);
           };
-          if_block(node_17, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_13);
-            else $$render(alternate_4, -1);
+          if_block(node_26, ($$render) => {
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_19);
+            else $$render(alternate_7, -1);
           });
         }
-        reset(div_33);
-        append($$anchor2, div_33);
+        reset(div_35);
+        append($$anchor2, div_35);
       };
       if_block(node_1, ($$render) => {
-        if (get(compact)) $$render(consequent_4);
-        else if (get(isToday)) $$render(consequent_10, 1);
-        else if (get(isPastDay)) $$render(consequent_12, 2);
-        else $$render(alternate_5, -1);
+        if (get(compact)) $$render(consequent_5);
+        else if (get(isToday)) $$render(consequent_15, 1);
+        else if (get(isPastDay)) $$render(consequent_17, 2);
+        else $$render(alternate_8, -1);
       });
     }
     reset(div_1);
@@ -8812,143 +9235,163 @@
     pop();
   }
   delegate(["pointerdown", "pointerup", "click", "keydown"]);
-  var root$2 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
-  var root_1$3 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
-  var root_2$3 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
-  var root_3$3 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-uhwfyj"> </span>`);
-  var root_4$3 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-uhwfyj"></div>`);
-  var root_5$3 = /* @__PURE__ */ from_html(`<div class="ag-card-progress svelte-uhwfyj"><div class="ag-card-progress-fill svelte-uhwfyj"></div></div>`);
-  var root_6$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-uhwfyj"><span class="ag-card-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!> <!></div></div>`);
-  var root_7$3 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
-  var root_8$2 = /* @__PURE__ */ from_html(`<div class="ag-wday-custom-header svelte-uhwfyj"><!></div>`);
-  var root_9$2 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div></div>`);
-  var root_10$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
-  var root_11$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
-  var root_12$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span></div>`);
-  var root_13$1 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
-  var root_14$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-empty svelte-uhwfyj"> </div>`);
-  var root_15$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
-  var root_16$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
-  var root_17 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span></div>`);
-  var root_18 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
-  var root_19 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
-  var root_20 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
-  var root_21 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
-  var root_22 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line svelte-uhwfyj"> </div>`);
-  var root_23 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
-  var root_24 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
-  var root_25 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span></div>`);
-  var root_26 = /* @__PURE__ */ from_html(`<div class="ag-compact-more svelte-uhwfyj"> </div>`);
-  var root_27 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
-  var root_28 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
-  var root_29 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
+  var root$3 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
+  var root_1$4 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
+  var root_2$4 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
+  var root_3$4 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-uhwfyj"> </span>`);
+  var root_4$4 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-uhwfyj"></div>`);
+  var root_5$4 = /* @__PURE__ */ from_html(`<span class="ag-card-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!>`, 1);
+  var root_6$4 = /* @__PURE__ */ from_html(`<div class="ag-card-progress svelte-uhwfyj"><div class="ag-card-progress-fill svelte-uhwfyj"></div></div>`);
+  var root_7$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-uhwfyj"><!> <!></div></div>`);
+  var root_8$3 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
+  var root_9$2 = /* @__PURE__ */ from_html(`<div class="ag-wday-custom-header svelte-uhwfyj"><!></div>`);
+  var root_10$2 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div></div>`);
+  var root_11$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
+  var root_12$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
+  var root_13$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span></div>`);
+  var root_14$1 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
+  var root_15$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-empty svelte-uhwfyj"> </div>`);
+  var root_16$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
+  var root_17$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
+  var root_18$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
+  var root_19$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
+  var root_20 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
+  var root_21 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
+  var root_22 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
+  var root_23 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
+  var root_24 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line svelte-uhwfyj"> </div>`);
+  var root_25 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
+  var root_26 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
+  var root_27 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
+  var root_28 = /* @__PURE__ */ from_html(`<div class="ag-compact-more svelte-uhwfyj"> </div>`);
+  var root_29 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
+  var root_30 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
+  var root_31 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
   function AgendaWeek($$anchor, $$props) {
     push($$props, true);
     const eventCard = ($$anchor2, ev = noop, isNow = noop, eta2 = noop) => {
-      var div = root_6$3();
+      var div = root_7$3();
       let classes;
       let styles;
       var div_1 = child(div);
-      var span = child(div_1);
-      var text$1 = child(span, true);
-      reset(span);
-      var node = sibling(span, 2);
-      {
-        var consequent = ($$anchor3) => {
-          var span_1 = root$2();
-          var text_1 = child(span_1, true);
-          reset(span_1);
-          template_effect(() => set_text(text_1, ev().subtitle));
-          append($$anchor3, span_1);
-        };
-        if_block(node, ($$render) => {
-          if (ev().subtitle) $$render(consequent);
-        });
-      }
-      var node_1 = sibling(node, 2);
-      {
-        var consequent_1 = ($$anchor3) => {
-          var span_2 = root_1$3();
-          var text_2 = child(span_2, true);
-          reset(span_2);
-          template_effect(() => set_text(text_2, ev().location));
-          append($$anchor3, span_2);
-        };
-        if_block(node_1, ($$render) => {
-          if (ev().location) $$render(consequent_1);
-        });
-      }
-      var span_3 = sibling(node_1, 2);
-      var node_2 = child(span_3);
-      {
-        var consequent_2 = ($$anchor3) => {
-          var text_3 = text();
-          template_effect(($0) => set_text(text_3, `${get(L).until ?? ""} ${$0 ?? ""}`), [() => fmt(ev().end)]);
-          append($$anchor3, text_3);
-        };
-        var alternate = ($$anchor3) => {
-          var text_4 = text();
-          template_effect(($0, $1) => set_text(text_4, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmt(ev().start), () => fmt(ev().end)]);
-          append($$anchor3, text_4);
-        };
-        if_block(node_2, ($$render) => {
-          if (isNow()) $$render(consequent_2);
-          else $$render(alternate, -1);
-        });
-      }
-      var span_4 = sibling(node_2, 2);
-      var text_5 = child(span_4, true);
-      reset(span_4);
-      var node_3 = sibling(span_4, 2);
-      {
-        var consequent_3 = ($$anchor3) => {
-          var span_5 = root_2$3();
-          var text_6 = child(span_5, true);
-          reset(span_5);
-          template_effect(() => set_text(text_6, eta2()));
-          append($$anchor3, span_5);
-        };
-        if_block(node_3, ($$render) => {
-          if (eta2()) $$render(consequent_3);
-        });
-      }
-      reset(span_3);
-      var node_4 = sibling(span_3, 2);
-      {
-        var consequent_4 = ($$anchor3) => {
-          var div_2 = root_4$3();
-          each(div_2, 21, () => ev().tags, index, ($$anchor4, tag) => {
-            var span_6 = root_3$3();
-            var text_7 = child(span_6, true);
-            reset(span_6);
-            template_effect(() => set_text(text_7, get(tag)));
-            append($$anchor4, span_6);
-          });
-          reset(div_2);
-          append($$anchor3, div_2);
-        };
-        if_block(node_4, ($$render) => {
-          if (ev().tags?.length) $$render(consequent_4);
-        });
-      }
-      var node_5 = sibling(node_4, 2);
+      var node = child(div_1);
+      EventContent(node, {
+        get event() {
+          return ev();
+        },
+        children: ($$anchor3, $$slotProps) => {
+          var fragment = root_5$4();
+          var span = first_child(fragment);
+          var text$1 = child(span, true);
+          reset(span);
+          var node_1 = sibling(span, 2);
+          {
+            var consequent = ($$anchor4) => {
+              var span_1 = root$3();
+              var text_1 = child(span_1, true);
+              reset(span_1);
+              template_effect(() => set_text(text_1, ev().subtitle));
+              append($$anchor4, span_1);
+            };
+            if_block(node_1, ($$render) => {
+              if (ev().subtitle) $$render(consequent);
+            });
+          }
+          var node_2 = sibling(node_1, 2);
+          {
+            var consequent_1 = ($$anchor4) => {
+              var span_2 = root_1$4();
+              var text_2 = child(span_2, true);
+              reset(span_2);
+              template_effect(() => set_text(text_2, ev().location));
+              append($$anchor4, span_2);
+            };
+            if_block(node_2, ($$render) => {
+              if (ev().location) $$render(consequent_1);
+            });
+          }
+          var span_3 = sibling(node_2, 2);
+          var node_3 = child(span_3);
+          {
+            var consequent_2 = ($$anchor4) => {
+              var text_3 = text();
+              template_effect(($0) => set_text(text_3, `${get(L).until ?? ""} ${$0 ?? ""}`), [() => fmt(ev().end)]);
+              append($$anchor4, text_3);
+            };
+            var alternate = ($$anchor4) => {
+              var text_4 = text();
+              template_effect(($0, $1) => set_text(text_4, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmt(ev().start), () => fmt(ev().end)]);
+              append($$anchor4, text_4);
+            };
+            if_block(node_3, ($$render) => {
+              if (isNow()) $$render(consequent_2);
+              else $$render(alternate, -1);
+            });
+          }
+          var span_4 = sibling(node_3, 2);
+          var text_5 = child(span_4, true);
+          reset(span_4);
+          var node_4 = sibling(span_4, 2);
+          {
+            var consequent_3 = ($$anchor4) => {
+              var span_5 = root_2$4();
+              var text_6 = child(span_5, true);
+              reset(span_5);
+              template_effect(() => set_text(text_6, eta2()));
+              append($$anchor4, span_5);
+            };
+            if_block(node_4, ($$render) => {
+              if (eta2()) $$render(consequent_3);
+            });
+          }
+          reset(span_3);
+          var node_5 = sibling(span_3, 2);
+          {
+            var consequent_4 = ($$anchor4) => {
+              var div_2 = root_4$4();
+              each(div_2, 21, () => ev().tags, index, ($$anchor5, tag) => {
+                var span_6 = root_3$4();
+                var text_7 = child(span_6, true);
+                reset(span_6);
+                template_effect(() => set_text(text_7, get(tag)));
+                append($$anchor5, span_6);
+              });
+              reset(div_2);
+              append($$anchor4, div_2);
+            };
+            if_block(node_5, ($$render) => {
+              if (ev().tags?.length) $$render(consequent_4);
+            });
+          }
+          template_effect(
+            ($0) => {
+              set_text(text$1, ev().title);
+              set_text(text_5, $0);
+            },
+            [() => duration(ev())]
+          );
+          append($$anchor3, fragment);
+        },
+        $$slots: { default: true }
+      });
+      var node_6 = sibling(node, 2);
       {
         var consequent_5 = ($$anchor3) => {
-          var div_3 = root_5$3();
+          var div_3 = root_6$4();
           var div_4 = child(div_3);
           let styles_1;
           reset(div_3);
           template_effect(($0) => styles_1 = set_style(div_4, "", styles_1, $0), [() => ({ width: `${prog(ev()) * 100}%` })]);
           append($$anchor3, div_3);
         };
-        if_block(node_5, ($$render) => {
+        if_block(node_6, ($$render) => {
           if (isNow()) $$render(consequent_5);
         });
       }
       reset(div_1);
       reset(div);
       template_effect(
-        ($0, $1, $2, $3) => {
+        ($0, $1, $2) => {
           classes = set_class(div, 1, "ag-card svelte-uhwfyj", null, classes, {
             "ag-card--selected": selectedEventId() === ev().id,
             "ag-card--cancelled": ev().status === "cancelled",
@@ -8958,13 +9401,10 @@
           });
           set_attribute(div, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
           styles = set_style(div, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
-          set_text(text$1, ev().title);
-          set_text(text_5, $3);
         },
         [
           () => fmt(ev().start),
           () => fmt(ev().end),
-          () => duration(ev()),
           () => duration(ev())
         ]
       );
@@ -9082,42 +9522,42 @@
       }
       return out;
     });
-    var div_5 = root_29();
+    var div_5 = root_31();
     let classes_1;
     var div_6 = child(div_5);
     each(div_6, 21, () => get(weekDays), (day) => day.ms, ($$anchor2, day) => {
       const expanded = /* @__PURE__ */ user_derived(() => get(day).tier === "today" || get(day).tier === "tomorrow");
-      var fragment_2 = comment();
-      var node_6 = first_child(fragment_2);
+      var fragment_3 = comment();
+      var node_7 = first_child(fragment_3);
       {
         var consequent_8 = ($$anchor3) => {
-          var div_7 = root_9$2();
+          var div_7 = root_10$2();
           let classes_2;
           var div_8 = child(div_7);
           var div_9 = child(div_8);
           var span_7 = child(div_9);
           var text_8 = child(span_7, true);
           reset(span_7);
-          var node_7 = sibling(span_7, 2);
+          var node_8 = sibling(span_7, 2);
           {
             var consequent_6 = ($$anchor4) => {
-              var span_8 = root_7$3();
+              var span_8 = root_8$3();
               var text_9 = child(span_8, true);
               reset(span_8);
               template_effect(() => set_text(text_9, get(day).dateLabel));
               append($$anchor4, span_8);
             };
-            if_block(node_7, ($$render) => {
+            if_block(node_8, ($$render) => {
               if (get(showDates)) $$render(consequent_6);
             });
           }
           reset(div_9);
-          var node_8 = sibling(div_9, 2);
+          var node_9 = sibling(div_9, 2);
           {
             var consequent_7 = ($$anchor4) => {
-              var div_10 = root_8$2();
-              var node_9 = child(div_10);
-              snippet(node_9, () => get(dayHeaderSnippet), () => ({
+              var div_10 = root_9$2();
+              var node_10 = child(div_10);
+              snippet(node_10, () => get(dayHeaderSnippet), () => ({
                 date: new Date(get(day).ms),
                 isToday: false,
                 dayName: get(day).dayName
@@ -9125,7 +9565,7 @@
               reset(div_10);
               append($$anchor4, div_10);
             };
-            if_block(node_8, ($$render) => {
+            if_block(node_9, ($$render) => {
               if (get(dayHeaderSnippet)) $$render(consequent_7);
             });
           }
@@ -9143,54 +9583,54 @@
           append($$anchor3, div_7);
         };
         var alternate_2 = ($$anchor3) => {
-          var div_11 = root_28();
+          var div_11 = root_30();
           let classes_3;
           var div_12 = child(div_11);
           var div_13 = child(div_12);
-          var node_10 = child(div_13);
+          var node_11 = child(div_13);
           {
             var consequent_9 = ($$anchor4) => {
-              var span_9 = root_10$2();
+              var span_9 = root_11$2();
               var text_10 = child(span_9, true);
               reset(span_9);
               template_effect(() => set_text(text_10, get(L).today));
               append($$anchor4, span_9);
             };
             var consequent_10 = ($$anchor4) => {
-              var span_10 = root_11$2();
+              var span_10 = root_12$2();
               var text_11 = child(span_10, true);
               reset(span_10);
               template_effect(() => set_text(text_11, get(L).tomorrow));
               append($$anchor4, span_10);
             };
-            if_block(node_10, ($$render) => {
+            if_block(node_11, ($$render) => {
               if (get(day).tier === "today") $$render(consequent_9);
               else if (get(day).tier === "tomorrow") $$render(consequent_10, 1);
             });
           }
-          var span_11 = sibling(node_10, 2);
+          var span_11 = sibling(node_11, 2);
           var text_12 = child(span_11, true);
           reset(span_11);
-          var node_11 = sibling(span_11, 2);
+          var node_12 = sibling(span_11, 2);
           {
             var consequent_11 = ($$anchor4) => {
-              var span_12 = root_7$3();
+              var span_12 = root_8$3();
               var text_13 = child(span_12, true);
               reset(span_12);
               template_effect(() => set_text(text_13, get(day).dateLabel));
               append($$anchor4, span_12);
             };
-            if_block(node_11, ($$render) => {
+            if_block(node_12, ($$render) => {
               if (get(showDates)) $$render(consequent_11);
             });
           }
           reset(div_13);
-          var node_12 = sibling(div_13, 2);
+          var node_13 = sibling(div_13, 2);
           {
             var consequent_12 = ($$anchor4) => {
-              var div_14 = root_8$2();
-              var node_13 = child(div_14);
-              snippet(node_13, () => get(dayHeaderSnippet), () => ({
+              var div_14 = root_9$2();
+              var node_14 = child(div_14);
+              snippet(node_14, () => get(dayHeaderSnippet), () => ({
                 date: new Date(get(day).ms),
                 isToday: get(day).tier === "today",
                 dayName: get(day).dayName
@@ -9198,17 +9638,17 @@
               reset(div_14);
               append($$anchor4, div_14);
             };
-            if_block(node_12, ($$render) => {
+            if_block(node_13, ($$render) => {
               if (get(dayHeaderSnippet)) $$render(consequent_12);
             });
           }
           reset(div_12);
-          var node_14 = sibling(div_12, 2);
+          var node_15 = sibling(div_12, 2);
           {
             var consequent_13 = ($$anchor4) => {
-              var div_15 = root_13$1();
+              var div_15 = root_14$1();
               each(div_15, 21, () => get(day).allDayEvents, (ev) => ev.id, ($$anchor5, ev) => {
-                var div_16 = root_12$2();
+                var div_16 = root_13$1();
                 let classes_4;
                 let styles_2;
                 var span_13 = sibling(child(div_16), 2);
@@ -9231,68 +9671,87 @@
               reset(div_15);
               append($$anchor4, div_15);
             };
-            if_block(node_14, ($$render) => {
+            if_block(node_15, ($$render) => {
               if (get(day).allDayEvents.length > 0) $$render(consequent_13);
             });
           }
-          var node_15 = sibling(node_14, 2);
+          var node_16 = sibling(node_15, 2);
           {
             var consequent_14 = ($$anchor4) => {
-              var div_17 = root_14$1();
+              var div_17 = root_15$1();
               var text_15 = child(div_17, true);
               reset(div_17);
               template_effect(() => set_text(text_15, get(L).noEvents));
               append($$anchor4, div_17);
             };
             var consequent_17 = ($$anchor4) => {
-              var div_18 = root_18();
+              var div_18 = root_20();
               each(div_18, 21, () => get(day).timedEvents, (ev) => ev.id, ($$anchor5, ev) => {
-                var div_19 = root_17();
+                var div_19 = root_19$1();
                 let classes_5;
                 let styles_3;
-                var span_14 = sibling(child(div_19), 2);
-                var text_16 = child(span_14, true);
-                reset(span_14);
-                var span_15 = sibling(span_14, 2);
-                var text_17 = child(span_15, true);
-                reset(span_15);
-                var node_16 = sibling(span_15, 2);
-                {
-                  var consequent_15 = ($$anchor6) => {
-                    var span_16 = root_15$1();
-                    var text_18 = child(span_16, true);
-                    reset(span_16);
-                    template_effect(() => set_text(text_18, get(ev).subtitle));
-                    append($$anchor6, span_16);
-                  };
-                  if_block(node_16, ($$render) => {
-                    if (get(ev).subtitle) $$render(consequent_15);
-                  });
-                }
-                var node_17 = sibling(node_16, 2);
-                {
-                  var consequent_16 = ($$anchor6) => {
-                    var fragment_3 = comment();
-                    var node_18 = first_child(fragment_3);
-                    each(node_18, 17, () => get(ev).tags, index, ($$anchor7, tag) => {
-                      var span_17 = root_16$1();
-                      var text_19 = child(span_17, true);
-                      reset(span_17);
-                      template_effect(() => set_text(text_19, get(tag)));
-                      append($$anchor7, span_17);
-                    });
-                    append($$anchor6, fragment_3);
-                  };
-                  if_block(node_17, ($$render) => {
-                    if (get(ev).tags?.length) $$render(consequent_16);
-                  });
-                }
-                var span_18 = sibling(node_17, 2);
-                var text_20 = child(span_18, true);
-                reset(span_18);
+                var node_17 = child(div_19);
+                EventContent(node_17, {
+                  get event() {
+                    return get(ev);
+                  },
+                  children: ($$anchor6, $$slotProps) => {
+                    var fragment_4 = root_18$1();
+                    var span_14 = sibling(first_child(fragment_4), 2);
+                    var text_16 = child(span_14, true);
+                    reset(span_14);
+                    var span_15 = sibling(span_14, 2);
+                    var text_17 = child(span_15, true);
+                    reset(span_15);
+                    var node_18 = sibling(span_15, 2);
+                    {
+                      var consequent_15 = ($$anchor7) => {
+                        var span_16 = root_16$1();
+                        var text_18 = child(span_16, true);
+                        reset(span_16);
+                        template_effect(() => set_text(text_18, get(ev).subtitle));
+                        append($$anchor7, span_16);
+                      };
+                      if_block(node_18, ($$render) => {
+                        if (get(ev).subtitle) $$render(consequent_15);
+                      });
+                    }
+                    var node_19 = sibling(node_18, 2);
+                    {
+                      var consequent_16 = ($$anchor7) => {
+                        var fragment_5 = comment();
+                        var node_20 = first_child(fragment_5);
+                        each(node_20, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
+                          var span_17 = root_17$1();
+                          var text_19 = child(span_17, true);
+                          reset(span_17);
+                          template_effect(() => set_text(text_19, get(tag)));
+                          append($$anchor8, span_17);
+                        });
+                        append($$anchor7, fragment_5);
+                      };
+                      if_block(node_19, ($$render) => {
+                        if (get(ev).tags?.length) $$render(consequent_16);
+                      });
+                    }
+                    var span_18 = sibling(node_19, 2);
+                    var text_20 = child(span_18, true);
+                    reset(span_18);
+                    template_effect(
+                      ($0, $1) => {
+                        set_text(text_16, $0);
+                        set_text(text_17, get(ev).title);
+                        set_text(text_20, $1);
+                      },
+                      [() => fmt(get(ev).start), () => duration(get(ev))]
+                    );
+                    append($$anchor6, fragment_4);
+                  },
+                  $$slots: { default: true }
+                });
                 reset(div_19);
                 template_effect(
-                  ($0, $1, $2, $3) => {
+                  ($0, $1) => {
                     classes_5 = set_class(div_19, 1, "ag-compact svelte-uhwfyj", null, classes_5, {
                       "ag-compact--selected": selectedEventId() === get(ev).id,
                       "ag-compact--cancelled": get(ev).status === "cancelled",
@@ -9302,16 +9761,8 @@
                     });
                     set_attribute(div_19, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
                     styles_3 = set_style(div_19, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                    set_text(text_16, $2);
-                    set_text(text_17, get(ev).title);
-                    set_text(text_20, $3);
                   },
-                  [
-                    () => fmt(get(ev).start),
-                    () => duration(get(ev)),
-                    () => fmt(get(ev).start),
-                    () => duration(get(ev))
-                  ]
+                  [() => fmt(get(ev).start), () => duration(get(ev))]
                 );
                 delegated("click", div_19, () => handleClick(get(ev)));
                 event("pointerenter", div_19, () => get(oneventhover)?.(get(ev)));
@@ -9322,9 +9773,9 @@
               append($$anchor4, div_18);
             };
             var consequent_18 = ($$anchor4) => {
-              var div_20 = root_20();
+              var div_20 = root_22();
               each(div_20, 21, () => groupIntoSlots(get(day).timedEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
-                var div_21 = root_19();
+                var div_21 = root_21();
                 var div_22 = child(div_21);
                 let classes_6;
                 each(div_22, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
@@ -9339,34 +9790,34 @@
               append($$anchor4, div_20);
             };
             var consequent_21 = ($$anchor4) => {
-              var div_23 = root_23();
-              var node_19 = child(div_23);
+              var div_23 = root_25();
+              var node_21 = child(div_23);
               {
                 var consequent_19 = ($$anchor5) => {
-                  var fragment_5 = comment();
-                  var node_20 = first_child(fragment_5);
-                  each(node_20, 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor6, ev) => {
-                    var div_24 = root_21();
+                  var fragment_7 = comment();
+                  var node_22 = first_child(fragment_7);
+                  each(node_22, 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor6, ev) => {
+                    var div_24 = root_23();
                     var div_25 = child(div_24);
                     var span_19 = child(div_25);
                     var text_21 = child(span_19, true);
                     reset(span_19);
                     reset(div_25);
-                    var node_21 = sibling(div_25, 2);
-                    eventCard(node_21, () => get(ev), () => true);
+                    var node_23 = sibling(div_25, 2);
+                    eventCard(node_23, () => get(ev), () => true);
                     reset(div_24);
                     template_effect(() => set_text(text_21, get(L).now));
                     append($$anchor6, div_24);
                   });
-                  append($$anchor5, fragment_5);
+                  append($$anchor5, fragment_7);
                 };
-                if_block(node_19, ($$render) => {
+                if_block(node_21, ($$render) => {
                   if (get(day).currentEvents.length > 0) $$render(consequent_19);
                 });
               }
-              var node_22 = sibling(node_19, 2);
-              each(node_22, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
-                var div_26 = root_19();
+              var node_24 = sibling(node_21, 2);
+              each(node_24, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
+                var div_26 = root_21();
                 var div_27 = child(div_26);
                 let classes_7;
                 each(div_27, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
@@ -9380,16 +9831,16 @@
                 template_effect(() => classes_7 = set_class(div_27, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_7, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
                 append($$anchor5, div_26);
               });
-              var node_23 = sibling(node_22, 2);
+              var node_25 = sibling(node_24, 2);
               {
                 var consequent_20 = ($$anchor5) => {
-                  var div_28 = root_22();
+                  var div_28 = root_24();
                   var text_22 = child(div_28);
                   reset(div_28);
                   template_effect(($0) => set_text(text_22, `✓ ${$0 ?? ""}`), [() => get(L).nCompleted(get(day).pastEvents.length)]);
                   append($$anchor5, div_28);
                 };
-                if_block(node_23, ($$render) => {
+                if_block(node_25, ($$render) => {
                   if (get(day).pastEvents.length > 0) $$render(consequent_20);
                 });
               }
@@ -9397,68 +9848,87 @@
               append($$anchor4, div_23);
             };
             var alternate_1 = ($$anchor4) => {
-              var div_29 = root_27();
-              var node_24 = child(div_29);
-              each(node_24, 17, () => get(day).timedEvents.slice(0, 4), (ev) => ev.id, ($$anchor5, ev) => {
-                var div_30 = root_25();
+              var div_29 = root_29();
+              var node_26 = child(div_29);
+              each(node_26, 17, () => get(day).timedEvents.slice(0, 4), (ev) => ev.id, ($$anchor5, ev) => {
+                var div_30 = root_19$1();
                 let classes_8;
                 let styles_4;
-                var span_20 = sibling(child(div_30), 2);
-                var text_23 = child(span_20, true);
-                reset(span_20);
-                var span_21 = sibling(span_20, 2);
-                var text_24 = child(span_21, true);
-                reset(span_21);
-                var node_25 = sibling(span_21, 2);
-                {
-                  var consequent_22 = ($$anchor6) => {
-                    var span_22 = root_24();
-                    var text_25 = child(span_22, true);
-                    reset(span_22);
-                    template_effect(() => set_text(text_25, get(ev).location));
-                    append($$anchor6, span_22);
-                  };
-                  if_block(node_25, ($$render) => {
-                    if (get(ev).location) $$render(consequent_22);
-                  });
-                }
-                var node_26 = sibling(node_25, 2);
-                {
-                  var consequent_23 = ($$anchor6) => {
-                    var span_23 = root_15$1();
-                    var text_26 = child(span_23, true);
-                    reset(span_23);
-                    template_effect(() => set_text(text_26, get(ev).subtitle));
-                    append($$anchor6, span_23);
-                  };
-                  if_block(node_26, ($$render) => {
-                    if (get(ev).subtitle) $$render(consequent_23);
-                  });
-                }
-                var node_27 = sibling(node_26, 2);
-                {
-                  var consequent_24 = ($$anchor6) => {
-                    var fragment_7 = comment();
-                    var node_28 = first_child(fragment_7);
-                    each(node_28, 17, () => get(ev).tags, index, ($$anchor7, tag) => {
-                      var span_24 = root_16$1();
-                      var text_27 = child(span_24, true);
-                      reset(span_24);
-                      template_effect(() => set_text(text_27, get(tag)));
-                      append($$anchor7, span_24);
-                    });
-                    append($$anchor6, fragment_7);
-                  };
-                  if_block(node_27, ($$render) => {
-                    if (get(ev).tags?.length) $$render(consequent_24);
-                  });
-                }
-                var span_25 = sibling(node_27, 2);
-                var text_28 = child(span_25, true);
-                reset(span_25);
+                var node_27 = child(div_30);
+                EventContent(node_27, {
+                  get event() {
+                    return get(ev);
+                  },
+                  children: ($$anchor6, $$slotProps) => {
+                    var fragment_9 = root_27();
+                    var span_20 = sibling(first_child(fragment_9), 2);
+                    var text_23 = child(span_20, true);
+                    reset(span_20);
+                    var span_21 = sibling(span_20, 2);
+                    var text_24 = child(span_21, true);
+                    reset(span_21);
+                    var node_28 = sibling(span_21, 2);
+                    {
+                      var consequent_22 = ($$anchor7) => {
+                        var span_22 = root_26();
+                        var text_25 = child(span_22, true);
+                        reset(span_22);
+                        template_effect(() => set_text(text_25, get(ev).location));
+                        append($$anchor7, span_22);
+                      };
+                      if_block(node_28, ($$render) => {
+                        if (get(ev).location) $$render(consequent_22);
+                      });
+                    }
+                    var node_29 = sibling(node_28, 2);
+                    {
+                      var consequent_23 = ($$anchor7) => {
+                        var span_23 = root_16$1();
+                        var text_26 = child(span_23, true);
+                        reset(span_23);
+                        template_effect(() => set_text(text_26, get(ev).subtitle));
+                        append($$anchor7, span_23);
+                      };
+                      if_block(node_29, ($$render) => {
+                        if (get(ev).subtitle) $$render(consequent_23);
+                      });
+                    }
+                    var node_30 = sibling(node_29, 2);
+                    {
+                      var consequent_24 = ($$anchor7) => {
+                        var fragment_10 = comment();
+                        var node_31 = first_child(fragment_10);
+                        each(node_31, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
+                          var span_24 = root_17$1();
+                          var text_27 = child(span_24, true);
+                          reset(span_24);
+                          template_effect(() => set_text(text_27, get(tag)));
+                          append($$anchor8, span_24);
+                        });
+                        append($$anchor7, fragment_10);
+                      };
+                      if_block(node_30, ($$render) => {
+                        if (get(ev).tags?.length) $$render(consequent_24);
+                      });
+                    }
+                    var span_25 = sibling(node_30, 2);
+                    var text_28 = child(span_25, true);
+                    reset(span_25);
+                    template_effect(
+                      ($0, $1) => {
+                        set_text(text_23, $0);
+                        set_text(text_24, get(ev).title);
+                        set_text(text_28, $1);
+                      },
+                      [() => fmt(get(ev).start), () => duration(get(ev))]
+                    );
+                    append($$anchor6, fragment_9);
+                  },
+                  $$slots: { default: true }
+                });
                 reset(div_30);
                 template_effect(
-                  ($0, $1, $2, $3) => {
+                  ($0, $1) => {
                     classes_8 = set_class(div_30, 1, "ag-compact svelte-uhwfyj", null, classes_8, {
                       "ag-compact--selected": selectedEventId() === get(ev).id,
                       "ag-compact--cancelled": get(ev).status === "cancelled",
@@ -9468,39 +9938,31 @@
                     });
                     set_attribute(div_30, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
                     styles_4 = set_style(div_30, "", styles_4, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                    set_text(text_23, $2);
-                    set_text(text_24, get(ev).title);
-                    set_text(text_28, $3);
                   },
-                  [
-                    () => fmt(get(ev).start),
-                    () => duration(get(ev)),
-                    () => fmt(get(ev).start),
-                    () => duration(get(ev))
-                  ]
+                  [() => fmt(get(ev).start), () => duration(get(ev))]
                 );
                 delegated("click", div_30, () => handleClick(get(ev)));
                 event("pointerenter", div_30, () => get(oneventhover)?.(get(ev)));
                 delegated("keydown", div_30, (e) => handleKeydown(e, get(ev)));
                 append($$anchor5, div_30);
               });
-              var node_29 = sibling(node_24, 2);
+              var node_32 = sibling(node_26, 2);
               {
                 var consequent_25 = ($$anchor5) => {
-                  var div_31 = root_26();
+                  var div_31 = root_28();
                   var text_29 = child(div_31, true);
                   reset(div_31);
                   template_effect(($0) => set_text(text_29, $0), [() => get(L).nMore(get(day).timedEvents.length - 4)]);
                   append($$anchor5, div_31);
                 };
-                if_block(node_29, ($$render) => {
+                if_block(node_32, ($$render) => {
                   if (get(day).timedEvents.length > 4) $$render(consequent_25);
                 });
               }
               reset(div_29);
               append($$anchor4, div_29);
             };
-            if_block(node_15, ($$render) => {
+            if_block(node_16, ($$render) => {
               if (get(day).events.length === 0) $$render(consequent_14);
               else if (get(compact)) $$render(consequent_17, 1);
               else if (get(equalDays)) $$render(consequent_18, 2);
@@ -9525,12 +9987,12 @@
           );
           append($$anchor3, div_11);
         };
-        if_block(node_6, ($$render) => {
+        if_block(node_7, ($$render) => {
           if (get(day).tier === "past") $$render(consequent_8);
           else $$render(alternate_2, -1);
         });
       }
-      append($$anchor2, fragment_2);
+      append($$anchor2, fragment_3);
     });
     reset(div_6);
     reset(div_5);
@@ -9564,22 +10026,25 @@
     }
     append($$anchor, fragment);
   }
-  var root_1$2 = /* @__PURE__ */ from_html(`<span class="mb-allday-span svelte-zbkzcp"> </span>`);
-  var root_2$2 = /* @__PURE__ */ from_html(`<button><span class="mb-allday-dot svelte-zbkzcp"></span> <span class="mb-allday-title svelte-zbkzcp"> </span> <!></button>`);
-  var root_3$2 = /* @__PURE__ */ from_html(`<span class="mb-allday-more svelte-zbkzcp"> </span>`);
-  var root_4$2 = /* @__PURE__ */ from_html(`<div class="mb-allday svelte-zbkzcp"><!> <!></div>`);
-  var root_5$2 = /* @__PURE__ */ from_html(`<span class="mb-blocked-label svelte-zbkzcp"> </span>`);
-  var root_6$2 = /* @__PURE__ */ from_html(`<div><div class="mb-hour-label svelte-zbkzcp"> </div> <div class="mb-hour-line svelte-zbkzcp"></div> <!></div>`);
+  var root_1$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-span svelte-zbkzcp"> </span>`);
+  var root_2$3 = /* @__PURE__ */ from_html(`<button><span class="mb-allday-dot svelte-zbkzcp"></span> <span class="mb-allday-title svelte-zbkzcp"> </span> <!></button>`);
+  var root_3$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-more svelte-zbkzcp"> </span>`);
+  var root_4$3 = /* @__PURE__ */ from_html(`<div class="mb-allday svelte-zbkzcp"><!> <!></div>`);
+  var root_5$3 = /* @__PURE__ */ from_html(`<span class="mb-blocked-label svelte-zbkzcp"> </span>`);
+  var root_6$3 = /* @__PURE__ */ from_html(`<div><div class="mb-hour-label svelte-zbkzcp"> </div> <div class="mb-hour-line svelte-zbkzcp"></div> <!></div>`);
   var root_7$2 = /* @__PURE__ */ from_html(`<div class="mb-now svelte-zbkzcp"><span class="mb-now-label svelte-zbkzcp"> </span> <div class="mb-now-line svelte-zbkzcp"></div></div>`);
-  var root_8$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
+  var root_8$2 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
   var root_9$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-sub svelte-zbkzcp"> </span>`);
   var root_10$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-loc svelte-zbkzcp"> </span>`);
   var root_11$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
   var root_12$1 = /* @__PURE__ */ from_html(`<div class="mb-ev-tags svelte-zbkzcp"></div>`);
-  var root_13 = /* @__PURE__ */ from_html(`<span class="mb-ev-live svelte-zbkzcp"></span>`);
-  var root_14 = /* @__PURE__ */ from_html(`<span class="mb-ev-next-badge svelte-zbkzcp"> </span>`);
-  var root_15 = /* @__PURE__ */ from_html(`<button><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><span class="mb-ev-title svelte-zbkzcp"> </span> <!> <!> <!> <!></div> <!></button>`);
-  var root_16 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="mb-grid svelte-zbkzcp" role="grid" tabindex="-1"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!></div></div></div>`);
+  var root_13 = /* @__PURE__ */ from_html(`<span class="mb-ev-title svelte-zbkzcp"> </span> <!> <!> <!> <!>`, 1);
+  var root_14 = /* @__PURE__ */ from_html(`<span class="mb-ev-live svelte-zbkzcp"></span>`);
+  var root_15 = /* @__PURE__ */ from_html(`<span class="mb-ev-next-badge svelte-zbkzcp"> </span>`);
+  var root_16 = /* @__PURE__ */ from_html(`<span class="mb-ev-handle mb-ev-handle--start svelte-zbkzcp" aria-hidden="true"></span> <span class="mb-ev-handle mb-ev-handle--end svelte-zbkzcp" aria-hidden="true"></span>`, 1);
+  var root_17 = /* @__PURE__ */ from_html(`<button><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><!></div> <!> <!></button>`);
+  var root_18 = /* @__PURE__ */ from_html(`<div class="mb-create-ghost svelte-zbkzcp" aria-hidden="true"><span class="mb-create-ghost-time svelte-zbkzcp"> </span></div>`);
+  var root_19 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="mb-grid svelte-zbkzcp" role="grid" tabindex="-1"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!> <!></div></div></div>`);
   function MobileDay($$anchor, $$props) {
     push($$props, true);
     const L = /* @__PURE__ */ user_derived(getLabels);
@@ -9592,6 +10057,9 @@
     const loadRangeCtx = /* @__PURE__ */ user_derived(() => ctx.loadRange);
     const minDuration = /* @__PURE__ */ user_derived(() => ctx.minDuration);
     const blockedSlots = /* @__PURE__ */ user_derived(() => ctx.blockedSlots);
+    const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
+    const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
+    const SNAP_MS = /* @__PURE__ */ user_derived(() => ctx.snapInterval * 6e4);
     const clock = createClock();
     const HOUR_HEIGHT = 64;
     const GUTTER_W = 40;
@@ -9623,6 +10091,7 @@
     const positionedEvents = /* @__PURE__ */ user_derived(() => {
       const now2 = clock.tick;
       const sorted = [...get(timedEvents)];
+      const rsP = get(drag)?.active && (get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
       let nextEventId = null;
       if (get(isToday)) {
         for (const ev of [...sorted].sort((a, b) => a.start.getTime() - b.start.getTime())) {
@@ -9634,8 +10103,11 @@
         }
       }
       const infos = sorted.map((ev) => {
-        const sMs = Math.max(ev.start.getTime(), get(dayMs) + get(startHour) * HOUR_MS);
-        const eMs = Math.min(ev.end.getTime(), get(dayMs) + get(endHour) * HOUR_MS);
+        const resizing = rsP?.eventId === ev.id;
+        const evStart = resizing ? rsP.start : ev.start;
+        const evEnd = resizing ? rsP.end : ev.end;
+        const sMs = Math.max(evStart.getTime(), get(dayMs) + get(startHour) * HOUR_MS);
+        const eMs = Math.min(evEnd.getTime(), get(dayMs) + get(endHour) * HOUR_MS);
         const topH = (sMs - get(dayMs)) / HOUR_MS - get(startHour);
         const botH = (eMs - get(dayMs)) / HOUR_MS - get(startHour);
         return {
@@ -9644,6 +10116,7 @@
           height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
           isCurrent: ev.start.getTime() <= now2 && ev.end.getTime() > now2,
           isNext: ev.id === nextEventId,
+          isResizing: resizing,
           startMs: sMs,
           endMs: eMs,
           col: 0,
@@ -9695,6 +10168,7 @@
         width: `calc(${100 / info.totalCols}% - ${GUTTER_W / info.totalCols + 2}px)`,
         isCurrent: info.isCurrent,
         isNext: info.isNext,
+        isResizing: info.isResizing,
         col: info.col,
         totalCols: info.totalCols
       }));
@@ -9753,6 +10227,10 @@
       swiping = false;
     }
     function handleGridClick(e) {
+      if (suppressGridClick) {
+        suppressGridClick = false;
+        return;
+      }
       if (!$$props.oneventcreate || readOnly() || get(isDisabled)) return;
       if (e.target.closest(".mb-event")) return;
       const grid = e.currentTarget;
@@ -9766,6 +10244,122 @@
       const end = new Date(start.getTime() + durMin * 6e4);
       $$props.oneventcreate({ start, end });
     }
+    const CREATE_THRESHOLD = 4;
+    let suppressGridClick = false;
+    let mbCreateStartY = 0;
+    let mbCreateAnchorMs = 0;
+    let mbCreateStarted = false;
+    function gridTimeMs(clientY) {
+      const rect = gridEl.getBoundingClientRect();
+      const y = clientY - rect.top + gridEl.scrollTop;
+      return get(dayMs) + (get(startHour) + y / HOUR_HEIGHT) * HOUR_MS;
+    }
+    function clampToDay(ms) {
+      return Math.max(get(dayMs) + get(startHour) * HOUR_MS, Math.min(get(dayMs) + get(endHour) * HOUR_MS, ms));
+    }
+    function onGridPointerDown(e) {
+      if (e.button !== 0 || !get(drag) || !$$props.oneventcreate || readOnly() || get(isDisabled)) return;
+      if (e.target.closest(".mb-event")) return;
+      mbCreateStartY = e.clientY;
+      mbCreateAnchorMs = gridTimeMs(e.clientY);
+      mbCreateStarted = false;
+      window.addEventListener("pointermove", onGridCreateMove);
+      window.addEventListener("pointerup", onGridCreateUp, { once: true });
+      window.addEventListener("pointercancel", onGridCreateCancel, { once: true });
+    }
+    function onGridCreateMove(e) {
+      if (!get(drag)) return;
+      if (!mbCreateStarted) {
+        if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
+        mbCreateStarted = true;
+        mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / get(SNAP_MS)) * get(SNAP_MS));
+        get(drag).beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + get(SNAP_MS)));
+      }
+      const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
+      get(drag).updatePointer(new Date(Math.min(mbCreateAnchorMs, snapped)), new Date(Math.max(mbCreateAnchorMs + get(SNAP_MS), snapped)));
+    }
+    function cleanupGridCreate() {
+      window.removeEventListener("pointermove", onGridCreateMove);
+      window.removeEventListener("pointerup", onGridCreateUp);
+      window.removeEventListener("pointercancel", onGridCreateCancel);
+      mbCreateStarted = false;
+    }
+    function onGridCreateUp() {
+      if (get(drag) && mbCreateStarted) {
+        suppressGridClick = true;
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            suppressGridClick = false;
+          },
+          0
+        );
+      }
+      cleanupGridCreate();
+    }
+    function onGridCreateCancel() {
+      if (get(drag) && mbCreateStarted) get(drag).cancel();
+      cleanupGridCreate();
+    }
+    let suppressEventClick = false;
+    let mbRsStartY = 0;
+    let mbRsStarted = false;
+    let mbRsEdge = "end";
+    let mbRsEvent = null;
+    function onResizePointerDown(e, ev, edge) {
+      if (e.button !== 0 || !get(drag) || readOnly() || ev.data?.readOnly) return;
+      e.stopPropagation();
+      mbRsStartY = e.clientY;
+      mbRsStarted = false;
+      mbRsEdge = edge;
+      mbRsEvent = ev;
+      window.addEventListener("pointermove", onResizeMove);
+      window.addEventListener("pointerup", onResizeUp, { once: true });
+      window.addEventListener("pointercancel", onResizeCancel, { once: true });
+    }
+    function onResizeMove(e) {
+      const ev = mbRsEvent;
+      if (!get(drag) || !ev) return;
+      if (!mbRsStarted) {
+        if (Math.abs(e.clientY - mbRsStartY) < CREATE_THRESHOLD) return;
+        mbRsStarted = true;
+        get(drag).beginResize(ev.id, mbRsEdge, ev.start, ev.end);
+      }
+      const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
+      if (mbRsEdge === "end") {
+        const end = Math.max(snapped, ev.start.getTime() + get(SNAP_MS));
+        get(drag).updatePointer(ev.start, new Date(end));
+      } else {
+        const start = Math.min(snapped, ev.end.getTime() - get(SNAP_MS));
+        get(drag).updatePointer(new Date(start), ev.end);
+      }
+    }
+    function cleanupResize() {
+      window.removeEventListener("pointermove", onResizeMove);
+      window.removeEventListener("pointerup", onResizeUp);
+      window.removeEventListener("pointercancel", onResizeCancel);
+      mbRsStarted = false;
+      mbRsEvent = null;
+    }
+    function onResizeUp() {
+      if (get(drag) && mbRsStarted) {
+        suppressEventClick = true;
+        suppressGridClick = true;
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            suppressEventClick = false;
+            suppressGridClick = false;
+          },
+          0
+        );
+      }
+      cleanupResize();
+    }
+    function onResizeCancel() {
+      if (get(drag) && mbRsStarted) get(drag).cancel();
+      cleanupResize();
+    }
     let gridEl;
     onMount(() => {
       if (get(nowOffset) > 0 && gridEl) {
@@ -9773,16 +10367,16 @@
         gridEl.scrollTop = scrollTarget;
       }
     });
-    var div = root_16();
+    var div = root_19();
     let classes;
     let styles;
     var node = child(div);
     {
       var consequent_2 = ($$anchor2) => {
-        var div_1 = root_4$2();
+        var div_1 = root_4$3();
         var node_1 = child(div_1);
         each(node_1, 17, () => get(allDayEvents).slice(0, 3), (seg) => seg.ev.id, ($$anchor3, seg) => {
-          var button = root_2$2();
+          var button = root_2$3();
           let classes_1;
           let styles_1;
           var span = sibling(child(button), 2);
@@ -9791,7 +10385,7 @@
           var node_2 = sibling(span, 2);
           {
             var consequent = ($$anchor4) => {
-              var span_1 = root_1$2();
+              var span_1 = root_1$3();
               var text_1 = child(span_1);
               reset(span_1);
               template_effect(() => set_text(text_1, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
@@ -9815,7 +10409,7 @@
         var node_3 = sibling(node_1, 2);
         {
           var consequent_1 = ($$anchor3) => {
-            var span_2 = root_3$2();
+            var span_2 = root_3$3();
             var text_2 = child(span_2, true);
             reset(span_2);
             template_effect(($0) => set_text(text_2, $0), [() => get(L).nMore(get(allDayEvents).length - 3)]);
@@ -9839,7 +10433,7 @@
     each(node_4, 17, () => ({ length: get(hourCount) }), index, ($$anchor2, _, h) => {
       const hour = /* @__PURE__ */ user_derived(() => get(startHour) + h);
       const blocked = /* @__PURE__ */ user_derived(() => isBlockedAt(get(hour)));
-      var div_4 = root_6$2();
+      var div_4 = root_6$3();
       let classes_2;
       set_style(div_4, "", {}, { top: `${h * HOUR_HEIGHT}px`, height: "64px" });
       var div_5 = child(div_4);
@@ -9853,7 +10447,7 @@
           var node_6 = first_child(fragment);
           {
             var consequent_3 = ($$anchor4) => {
-              var span_3 = root_5$2();
+              var span_3 = root_5$3();
               var text_4 = child(span_3, true);
               reset(span_3);
               template_effect(() => set_text(text_4, get(slot).label));
@@ -9901,90 +10495,116 @@
     }
     var node_8 = sibling(node_7, 2);
     each(node_8, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor2, p) => {
-      var button_1 = root_15();
+      var button_1 = root_17();
       let classes_3;
       let styles_4;
       var div_7 = sibling(child(button_1), 2);
-      var span_5 = child(div_7);
-      var text_6 = child(span_5, true);
-      reset(span_5);
-      var node_9 = sibling(span_5, 2);
-      {
-        var consequent_6 = ($$anchor3) => {
-          var span_6 = root_8$1();
-          var text_7 = child(span_6);
-          reset(span_6);
-          template_effect(($0, $1) => set_text(text_7, `${$0 ?? ""} – ${$1 ?? ""}`), [
-            () => fmtTime$1(get(p).ev.start, $$props.locale),
-            () => fmtTime$1(get(p).ev.end, $$props.locale)
-          ]);
-          append($$anchor3, span_6);
-        };
-        if_block(node_9, ($$render) => {
-          if (get(p).height > 32) $$render(consequent_6);
-        });
-      }
-      var node_10 = sibling(node_9, 2);
-      {
-        var consequent_7 = ($$anchor3) => {
-          var span_7 = root_9$1();
-          var text_8 = child(span_7, true);
-          reset(span_7);
-          template_effect(() => set_text(text_8, get(p).ev.subtitle));
-          append($$anchor3, span_7);
-        };
-        if_block(node_10, ($$render) => {
-          if (get(p).ev.subtitle && get(p).height > 48) $$render(consequent_7);
-        });
-      }
-      var node_11 = sibling(node_10, 2);
-      {
-        var consequent_8 = ($$anchor3) => {
-          var span_8 = root_10$1();
-          var text_9 = child(span_8, true);
-          reset(span_8);
-          template_effect(() => set_text(text_9, get(p).ev.location));
-          append($$anchor3, span_8);
-        };
-        if_block(node_11, ($$render) => {
-          if (get(p).ev.location && get(p).height > 56) $$render(consequent_8);
-        });
-      }
-      var node_12 = sibling(node_11, 2);
-      {
-        var consequent_9 = ($$anchor3) => {
-          var div_8 = root_12$1();
-          each(div_8, 21, () => get(p).ev.tags, index, ($$anchor4, tag) => {
-            var span_9 = root_11$1();
-            var text_10 = child(span_9, true);
-            reset(span_9);
-            template_effect(() => set_text(text_10, get(tag)));
-            append($$anchor4, span_9);
-          });
-          reset(div_8);
-          append($$anchor3, div_8);
-        };
-        if_block(node_12, ($$render) => {
-          if (get(p).ev.tags?.length && get(p).height > 56) $$render(consequent_9);
-        });
-      }
+      var node_9 = child(div_7);
+      EventContent(node_9, {
+        get event() {
+          return get(p).ev;
+        },
+        children: ($$anchor3, $$slotProps) => {
+          var fragment_1 = root_13();
+          var span_5 = first_child(fragment_1);
+          var text_6 = child(span_5, true);
+          reset(span_5);
+          var node_10 = sibling(span_5, 2);
+          {
+            var consequent_6 = ($$anchor4) => {
+              var span_6 = root_8$2();
+              var text_7 = child(span_6);
+              reset(span_6);
+              template_effect(($0, $1) => set_text(text_7, `${$0 ?? ""} – ${$1 ?? ""}`), [
+                () => fmtTime$1(get(p).ev.start, $$props.locale),
+                () => fmtTime$1(get(p).ev.end, $$props.locale)
+              ]);
+              append($$anchor4, span_6);
+            };
+            if_block(node_10, ($$render) => {
+              if (get(p).height > 32) $$render(consequent_6);
+            });
+          }
+          var node_11 = sibling(node_10, 2);
+          {
+            var consequent_7 = ($$anchor4) => {
+              var span_7 = root_9$1();
+              var text_8 = child(span_7, true);
+              reset(span_7);
+              template_effect(() => set_text(text_8, get(p).ev.subtitle));
+              append($$anchor4, span_7);
+            };
+            if_block(node_11, ($$render) => {
+              if (get(p).ev.subtitle && get(p).height > 48) $$render(consequent_7);
+            });
+          }
+          var node_12 = sibling(node_11, 2);
+          {
+            var consequent_8 = ($$anchor4) => {
+              var span_8 = root_10$1();
+              var text_9 = child(span_8, true);
+              reset(span_8);
+              template_effect(() => set_text(text_9, get(p).ev.location));
+              append($$anchor4, span_8);
+            };
+            if_block(node_12, ($$render) => {
+              if (get(p).ev.location && get(p).height > 56) $$render(consequent_8);
+            });
+          }
+          var node_13 = sibling(node_12, 2);
+          {
+            var consequent_9 = ($$anchor4) => {
+              var div_8 = root_12$1();
+              each(div_8, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
+                var span_9 = root_11$1();
+                var text_10 = child(span_9, true);
+                reset(span_9);
+                template_effect(() => set_text(text_10, get(tag)));
+                append($$anchor5, span_9);
+              });
+              reset(div_8);
+              append($$anchor4, div_8);
+            };
+            if_block(node_13, ($$render) => {
+              if (get(p).ev.tags?.length && get(p).height > 56) $$render(consequent_9);
+            });
+          }
+          template_effect(() => set_text(text_6, get(p).ev.title));
+          append($$anchor3, fragment_1);
+        },
+        $$slots: { default: true }
+      });
       reset(div_7);
-      var node_13 = sibling(div_7, 2);
+      var node_14 = sibling(div_7, 2);
       {
         var consequent_10 = ($$anchor3) => {
-          var span_10 = root_13();
+          var span_10 = root_14();
           append($$anchor3, span_10);
         };
         var consequent_11 = ($$anchor3) => {
-          var span_11 = root_14();
+          var span_11 = root_15();
           var text_11 = child(span_11, true);
           reset(span_11);
           template_effect(() => set_text(text_11, get(L).upNext));
           append($$anchor3, span_11);
         };
-        if_block(node_13, ($$render) => {
+        if_block(node_14, ($$render) => {
           if (get(p).isCurrent) $$render(consequent_10);
           else if (get(p).isNext) $$render(consequent_11, 1);
+        });
+      }
+      var node_15 = sibling(node_14, 2);
+      {
+        var consequent_12 = ($$anchor3) => {
+          var fragment_2 = root_16();
+          var span_12 = first_child(fragment_2);
+          var span_13 = sibling(span_12, 2);
+          delegated("pointerdown", span_12, (e) => onResizePointerDown(e, get(p).ev, "start"));
+          delegated("pointerdown", span_13, (e) => onResizePointerDown(e, get(p).ev, "end"));
+          append($$anchor3, fragment_2);
+        };
+        if_block(node_15, ($$render) => {
+          if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_12);
         });
       }
       reset(button_1);
@@ -9996,7 +10616,8 @@
           "mb-event--cancelled": get(p).ev.status === "cancelled",
           "mb-event--tentative": get(p).ev.status === "tentative",
           "mb-event--full": get(p).ev.status === "full",
-          "mb-event--limited": get(p).ev.status === "limited"
+          "mb-event--limited": get(p).ev.status === "limited",
+          "mb-event--resizing": get(p).isResizing
         });
         set_attribute(button_1, "aria-label", `${get(p).ev.title ?? ""}${get(p).ev.status === "cancelled" ? " (cancelled)" : ""}${get(p).ev.status === "tentative" ? " (tentative)" : ""}${get(p).ev.status === "full" ? " (full)" : ""}${get(p).ev.status === "limited" ? " (limited)" : ""}${get(p).isCurrent ? `, ${get(L).inProgress}` : ""}${get(p).isNext ? `, ${get(L).upNext}` : ""}`);
         styles_4 = set_style(button_1, "", styles_4, {
@@ -10006,15 +10627,48 @@
           width: get(p).width,
           "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
         });
-        set_text(text_6, get(p).ev.title);
       });
       delegated("click", button_1, (e) => {
         e.stopPropagation();
+        if (suppressEventClick) {
+          suppressEventClick = false;
+          return;
+        }
         $$props.oneventclick?.(get(p).ev);
       });
       event("pointerenter", button_1, () => get(oneventhover)?.(get(p).ev));
       append($$anchor2, button_1);
     });
+    var node_16 = sibling(node_8, 2);
+    {
+      var consequent_13 = ($$anchor2) => {
+        const gTop = /* @__PURE__ */ user_derived(() => ((get(drag).payload.start.getTime() - get(dayMs)) / HOUR_MS - get(startHour)) * HOUR_HEIGHT);
+        const gH = /* @__PURE__ */ user_derived(() => Math.max(12, (get(drag).payload.end.getTime() - get(drag).payload.start.getTime()) / HOUR_MS * HOUR_HEIGHT));
+        var div_9 = root_18();
+        let styles_5;
+        var span_14 = child(div_9);
+        var text_12 = child(span_14);
+        reset(span_14);
+        reset(div_9);
+        template_effect(
+          ($0, $1) => {
+            styles_5 = set_style(div_9, "", styles_5, {
+              top: `${get(gTop) ?? ""}px`,
+              height: `${get(gH) ?? ""}px`
+            });
+            set_text(text_12, `${$0 ?? ""} – ${$1 ?? ""}`);
+          },
+          [
+            () => fmtTime$1(get(drag).payload.start, $$props.locale),
+            () => fmtTime$1(get(drag).payload.end, $$props.locale)
+          ]
+        );
+        append($$anchor2, div_9);
+      };
+      if_block(node_16, ($$render) => {
+        if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_13);
+      });
+    }
     reset(div_3);
     reset(div_2);
     bind_this(div_2, ($$value) => gridEl = $$value, () => gridEl);
@@ -10031,21 +10685,30 @@
     delegated("touchmove", div, onTouchMove);
     delegated("touchend", div, onTouchEnd);
     delegated("click", div_2, handleGridClick);
+    delegated("pointerdown", div_2, onGridPointerDown);
     delegated("keydown", div_2, (e) => {
       if (e.key === "Enter" || e.key === " ") handleGridClick(e);
     });
     append($$anchor, div);
     pop();
   }
-  delegate(["touchstart", "touchmove", "touchend", "click", "keydown"]);
-  var root$1 = /* @__PURE__ */ from_html(`<span> </span>`);
-  var root_1$1 = /* @__PURE__ */ from_html(`<span class="mw-empty svelte-1d18hkf"> </span>`);
-  var root_2$1 = /* @__PURE__ */ from_html(`<span class="mw-ev-time svelte-1d18hkf"> </span>`);
-  var root_3$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="mw-ev-stripe svelte-1d18hkf"></span> <div class="mw-ev-body svelte-1d18hkf"><span class="mw-ev-title svelte-1d18hkf"> </span> <!></div></button>`);
-  var root_4$1 = /* @__PURE__ */ from_html(`<span class="mw-ev-more svelte-1d18hkf"> </span>`);
-  var root_5$1 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-  var root_6$1 = /* @__PURE__ */ from_html(`<div role="listitem"><button class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
-  var root_7$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="mw-list svelte-1d18hkf" role="list"></div></div>`);
+  delegate([
+    "touchstart",
+    "touchmove",
+    "touchend",
+    "click",
+    "pointerdown",
+    "keydown"
+  ]);
+  var root$2 = /* @__PURE__ */ from_html(`<span> </span>`);
+  var root_1$2 = /* @__PURE__ */ from_html(`<span class="mw-empty svelte-1d18hkf"> </span>`);
+  var root_2$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-time svelte-1d18hkf"> </span>`);
+  var root_3$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-title svelte-1d18hkf"> </span> <!>`, 1);
+  var root_4$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="mw-ev-stripe svelte-1d18hkf"></span> <div class="mw-ev-body svelte-1d18hkf"><!></div></button>`);
+  var root_5$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-more svelte-1d18hkf"> </span>`);
+  var root_6$2 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+  var root_7$1 = /* @__PURE__ */ from_html(`<div role="listitem"><button class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
+  var root_8$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="mw-list svelte-1d18hkf" role="list"></div></div>`);
   function MobileWeek($$anchor, $$props) {
     push($$props, true);
     const L = /* @__PURE__ */ user_derived(getLabels);
@@ -10158,12 +10821,12 @@
       e.preventDefault();
       handleDayTap(dayMs);
     }
-    var div = root_7$1();
+    var div = root_8$1();
     let classes;
     let styles;
     var div_1 = child(div);
     each(div_1, 21, () => get(dayCells), (cell) => cell.ms, ($$anchor2, cell) => {
-      var div_2 = root_6$1();
+      var div_2 = root_7$1();
       let classes_1;
       var button = child(div_2);
       var div_3 = sibling(button, 2);
@@ -10174,7 +10837,7 @@
       var node = sibling(span, 2);
       {
         var consequent = ($$anchor3) => {
-          var span_1 = root$1();
+          var span_1 = root$2();
           let classes_3;
           var text_1 = child(span_1, true);
           reset(span_1);
@@ -10193,52 +10856,63 @@
       var node_1 = child(div_4);
       {
         var consequent_1 = ($$anchor3) => {
-          var span_2 = root_1$1();
+          var span_2 = root_1$2();
           var text_2 = child(span_2, true);
           reset(span_2);
           template_effect(() => set_text(text_2, get(L).noEvents));
           append($$anchor3, span_2);
         };
         var alternate_1 = ($$anchor3) => {
-          var fragment = root_5$1();
+          var fragment = root_6$2();
           var node_2 = first_child(fragment);
           each(node_2, 17, () => get(cell).events.slice(0, MAX_EVENTS), (ev) => ev.id, ($$anchor4, ev) => {
-            var button_1 = root_3$1();
+            var button_1 = root_4$2();
             let classes_4;
             let styles_1;
             var div_5 = sibling(child(button_1), 2);
-            var span_3 = child(div_5);
-            var text_3 = child(span_3, true);
-            reset(span_3);
-            var node_3 = sibling(span_3, 2);
-            {
-              var consequent_2 = ($$anchor5) => {
-                var span_4 = root_2$1();
-                var text_4 = child(span_4, true);
-                reset(span_4);
-                template_effect(() => set_text(text_4, get(L).allDay));
-                append($$anchor5, span_4);
-              };
-              var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
-              var alternate = ($$anchor5) => {
-                var span_5 = root_2$1();
-                var text_5 = child(span_5, true);
-                reset(span_5);
-                template_effect(($0) => set_text(text_5, $0), [() => fmtTime2(get(ev).start)]);
-                append($$anchor5, span_5);
-              };
-              if_block(node_3, ($$render) => {
-                if (get(d_1)) $$render(consequent_2);
-                else $$render(alternate, -1);
-              });
-            }
+            var node_3 = child(div_5);
+            EventContent(node_3, {
+              get event() {
+                return get(ev);
+              },
+              children: ($$anchor5, $$slotProps) => {
+                var fragment_1 = root_3$2();
+                var span_3 = first_child(fragment_1);
+                var text_3 = child(span_3, true);
+                reset(span_3);
+                var node_4 = sibling(span_3, 2);
+                {
+                  var consequent_2 = ($$anchor6) => {
+                    var span_4 = root_2$2();
+                    var text_4 = child(span_4, true);
+                    reset(span_4);
+                    template_effect(() => set_text(text_4, get(L).allDay));
+                    append($$anchor6, span_4);
+                  };
+                  var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
+                  var alternate = ($$anchor6) => {
+                    var span_5 = root_2$2();
+                    var text_5 = child(span_5, true);
+                    reset(span_5);
+                    template_effect(($0) => set_text(text_5, $0), [() => fmtTime2(get(ev).start)]);
+                    append($$anchor6, span_5);
+                  };
+                  if_block(node_4, ($$render) => {
+                    if (get(d_1)) $$render(consequent_2);
+                    else $$render(alternate, -1);
+                  });
+                }
+                template_effect(() => set_text(text_3, get(ev).title));
+                append($$anchor5, fragment_1);
+              },
+              $$slots: { default: true }
+            });
             reset(div_5);
             reset(button_1);
             template_effect(
               ($0) => {
                 classes_4 = set_class(button_1, 1, "mw-ev svelte-1d18hkf", null, classes_4, $0);
                 styles_1 = set_style(button_1, "", styles_1, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
-                set_text(text_3, get(ev).title);
               },
               [
                 () => ({
@@ -10266,16 +10940,16 @@
             event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
             append($$anchor4, button_1);
           });
-          var node_4 = sibling(node_2, 2);
+          var node_5 = sibling(node_2, 2);
           {
             var consequent_3 = ($$anchor4) => {
-              var span_6 = root_4$1();
+              var span_6 = root_5$2();
               var text_6 = child(span_6, true);
               reset(span_6);
               template_effect(($0) => set_text(text_6, $0), [() => get(L).nMore(get(cell).totalCount - MAX_EVENTS)]);
               append($$anchor4, span_6);
             };
-            if_block(node_4, ($$render) => {
+            if_block(node_5, ($$render) => {
               if (get(cell).totalCount > MAX_EVENTS) $$render(consequent_3);
             });
           }
@@ -10340,6 +11014,225 @@
     }
     append($$anchor, fragment);
   }
+  var root$1 = /* @__PURE__ */ from_html(`<div class="mg-head-cell svelte-pvjuld" role="columnheader"> </div>`);
+  var root_1$1 = /* @__PURE__ */ from_html(`<button><!></button>`);
+  var root_2$1 = /* @__PURE__ */ from_html(`<span class="mg-chip-time svelte-pvjuld"> </span>`);
+  var root_3$1 = /* @__PURE__ */ from_html(`<button><span class="mg-chip-dot svelte-pvjuld" aria-hidden="true"></span> <!> <span class="mg-chip-title svelte-pvjuld"> </span></button>`);
+  var root_4$1 = /* @__PURE__ */ from_html(`<span class="mg-more svelte-pvjuld"> </span>`);
+  var root_5$1 = /* @__PURE__ */ from_html(`<div role="gridcell"><span> </span> <div class="mg-chips svelte-pvjuld"><!> <!></div></div>`);
+  var root_6$1 = /* @__PURE__ */ from_html(`<div role="grid"><div class="mg-head svelte-pvjuld" role="row"></div> <div class="mg-body svelte-pvjuld"></div></div>`);
+  function MonthGrid($$anchor, $$props) {
+    push($$props, true);
+    const L = /* @__PURE__ */ user_derived(getLabels);
+    let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), height = prop($$props, "height", 3, null), selectedEventId = prop($$props, "selectedEventId", 3, null);
+    const ctx = useCalendarContext();
+    const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
+    const autoHeight = /* @__PURE__ */ user_derived(() => ctx.autoHeight);
+    const isMobile = /* @__PURE__ */ user_derived(() => ctx.isMobile);
+    const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
+    const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
+    const ondayclick = /* @__PURE__ */ user_derived(() => ctx.ondayclick);
+    const eventSnippet = /* @__PURE__ */ user_derived(() => ctx.eventSnippet);
+    const loadRangeCtx = /* @__PURE__ */ user_derived(() => ctx.loadRange);
+    const clock = createClock();
+    const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
+    const MAX_CHIPS = /* @__PURE__ */ user_derived(() => get(isMobile) ? 2 : 3);
+    const range = /* @__PURE__ */ user_derived(() => get(viewState)?.range);
+    const focusMonth = /* @__PURE__ */ user_derived(() => ($$props.focusDate ?? /* @__PURE__ */ new Date()).getMonth());
+    user_effect(() => {
+      if (!get(loadRangeCtx) || !get(range)) return;
+      get(loadRangeCtx).set({
+        start: new Date(get(range).start.getTime() - 7 * DAY_MS),
+        end: new Date(get(range).end.getTime() + 7 * DAY_MS)
+      });
+      return () => get(loadRangeCtx).set(null);
+    });
+    function eventsForDay(ms) {
+      const dayStart = ms;
+      const dayEnd = ms + DAY_MS;
+      return events().filter((e) => e.start.getTime() < dayEnd && e.end.getTime() > dayStart).sort((a, b) => {
+        const aAll = isAllDay(a) ? 0 : 1;
+        const bAll = isAllDay(b) ? 0 : 1;
+        return aAll - bAll || a.start.getTime() - b.start.getTime();
+      });
+    }
+    const weeks = /* @__PURE__ */ user_derived(() => {
+      if (!get(range)) return [];
+      const rows = [];
+      for (let ms = sod(get(range).start.getTime()); ms < get(range).end.getTime(); ms += 7 * DAY_MS) {
+        const row = [];
+        for (let i = 0; i < 7; i++) {
+          const cellMs = ms + i * DAY_MS;
+          const date = new Date(cellMs);
+          const jsDay = date.getDay();
+          const dayEvents = eventsForDay(cellMs);
+          row.push({
+            ms: cellMs,
+            date,
+            dayNum: date.getDate(),
+            inMonth: date.getMonth() === get(focusMonth),
+            isToday: cellMs === get(todayMs),
+            isWeekend: jsDay === 0 || jsDay === 6,
+            isDisabled: get(disabledSet).has(cellMs),
+            chips: dayEvents.slice(0, get(MAX_CHIPS)),
+            overflow: Math.max(0, dayEvents.length - get(MAX_CHIPS))
+          });
+        }
+        rows.push(row);
+      }
+      return rows;
+    });
+    const weekdayLabels = /* @__PURE__ */ user_derived(() => {
+      const first = get(weeks)[0];
+      if (!first) return [];
+      return first.map((c) => weekdayShort(c.ms, $$props.locale));
+    });
+    function chipTime(e) {
+      return isAllDay(e) ? "" : fmtTime$1(e.start, $$props.locale);
+    }
+    var div = root_6$1();
+    let classes;
+    let styles;
+    var div_1 = child(div);
+    each(div_1, 20, () => get(weekdayLabels), (name) => name, ($$anchor2, name) => {
+      var div_2 = root$1();
+      var text2 = child(div_2, true);
+      reset(div_2);
+      template_effect(() => set_text(text2, name));
+      append($$anchor2, div_2);
+    });
+    reset(div_1);
+    var div_3 = sibling(div_1, 2);
+    let styles_1;
+    each(div_3, 21, () => get(weeks), index, ($$anchor2, row) => {
+      var fragment = comment();
+      var node = first_child(fragment);
+      each(node, 17, () => get(row), (cell) => cell.ms, ($$anchor3, cell) => {
+        var div_4 = root_5$1();
+        let classes_1;
+        var span = child(div_4);
+        let classes_2;
+        var text_1 = child(span, true);
+        reset(span);
+        var div_5 = sibling(span, 2);
+        var node_1 = child(div_5);
+        each(node_1, 17, () => get(cell).chips, (ev) => ev.id + get(cell).ms, ($$anchor4, ev) => {
+          var fragment_1 = comment();
+          var node_2 = first_child(fragment_1);
+          {
+            var consequent = ($$anchor5) => {
+              var button = root_1$1();
+              let classes_3;
+              var node_3 = child(button);
+              snippet(node_3, () => get(eventSnippet), () => get(ev));
+              reset(button);
+              template_effect(() => classes_3 = set_class(button, 1, "mg-chip mg-chip--custom svelte-pvjuld", null, classes_3, { "mg-chip--selected": get(ev).id === selectedEventId() }));
+              delegated("click", button, (e) => {
+                e.stopPropagation();
+                $$props.oneventclick?.(get(ev));
+              });
+              event("mouseenter", button, () => get(oneventhover)?.(get(ev)));
+              append($$anchor5, button);
+            };
+            var alternate = ($$anchor5) => {
+              var button_1 = root_3$1();
+              let classes_4;
+              let styles_2;
+              var node_4 = sibling(child(button_1), 2);
+              {
+                var consequent_1 = ($$anchor6) => {
+                  var span_1 = root_2$1();
+                  var text_2 = child(span_1, true);
+                  reset(span_1);
+                  template_effect(($0) => set_text(text_2, $0), [() => chipTime(get(ev))]);
+                  append($$anchor6, span_1);
+                };
+                var d = /* @__PURE__ */ user_derived(() => chipTime(get(ev)));
+                if_block(node_4, ($$render) => {
+                  if (get(d)) $$render(consequent_1);
+                });
+              }
+              var span_2 = sibling(node_4, 2);
+              var text_3 = child(span_2, true);
+              reset(span_2);
+              reset(button_1);
+              template_effect(() => {
+                classes_4 = set_class(button_1, 1, "mg-chip svelte-pvjuld", null, classes_4, {
+                  "mg-chip--selected": get(ev).id === selectedEventId(),
+                  "mg-chip--cancelled": get(ev).status === "cancelled"
+                });
+                set_attribute(button_1, "title", get(ev).title);
+                styles_2 = set_style(button_1, "", styles_2, { "--mg-chip-color": get(ev).color ?? "var(--dt-accent)" });
+                set_text(text_3, get(ev).title);
+              });
+              delegated("click", button_1, (e) => {
+                e.stopPropagation();
+                $$props.oneventclick?.(get(ev));
+              });
+              event("mouseenter", button_1, () => get(oneventhover)?.(get(ev)));
+              append($$anchor5, button_1);
+            };
+            if_block(node_2, ($$render) => {
+              if (get(eventSnippet)) $$render(consequent);
+              else $$render(alternate, -1);
+            });
+          }
+          append($$anchor4, fragment_1);
+        });
+        var node_5 = sibling(node_1, 2);
+        {
+          var consequent_2 = ($$anchor4) => {
+            var span_3 = root_4$1();
+            var text_4 = child(span_3, true);
+            reset(span_3);
+            template_effect(($0) => set_text(text_4, $0), [() => get(L).nMore(get(cell).overflow)]);
+            append($$anchor4, span_3);
+          };
+          if_block(node_5, ($$render) => {
+            if (get(cell).overflow > 0) $$render(consequent_2);
+          });
+        }
+        reset(div_5);
+        reset(div_4);
+        template_effect(() => {
+          classes_1 = set_class(div_4, 1, "mg-cell svelte-pvjuld", null, classes_1, {
+            "mg-cell--out": !get(cell).inMonth,
+            "mg-cell--today": get(cell).isToday,
+            "mg-cell--weekend": get(cell).isWeekend,
+            "mg-cell--disabled": get(cell).isDisabled,
+            "mg-cell--clickable": !!get(ondayclick) && !get(cell).isDisabled
+          });
+          set_attribute(div_4, "tabindex", get(ondayclick) && !get(cell).isDisabled ? 0 : void 0);
+          classes_2 = set_class(span, 1, "mg-daynum svelte-pvjuld", null, classes_2, { "mg-daynum--today": get(cell).isToday });
+          set_text(text_1, get(cell).dayNum);
+        });
+        delegated("click", div_4, () => {
+          if (!get(cell).isDisabled) get(ondayclick)?.(get(cell).date);
+        });
+        delegated("keydown", div_4, (e) => {
+          if ((e.key === "Enter" || e.key === " ") && !get(cell).isDisabled) {
+            e.preventDefault();
+            get(ondayclick)?.(get(cell).date);
+          }
+        });
+        append($$anchor3, div_4);
+      });
+      append($$anchor2, fragment);
+    });
+    reset(div_3);
+    reset(div);
+    template_effect(() => {
+      classes = set_class(div, 1, "mg svelte-pvjuld", null, classes, { "mg--auto": get(autoHeight) });
+      styles = set_style(div, style() || void 0, styles, {
+        height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%"
+      });
+      set_attribute(div, "aria-label", get(L).month);
+      styles_1 = set_style(div_3, "", styles_1, { "--mg-rows": get(weeks).length });
+    });
+    append($$anchor, div);
+    pop();
+  }
+  delegate(["click", "keydown"]);
   var root = /* @__PURE__ */ from_html(`<button class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button>`);
   var root_1 = /* @__PURE__ */ from_html(`<button> </button>`);
   var root_2 = /* @__PURE__ */ from_html(`<div class="cal-m-pills svelte-1b53e7w" role="group"></div>`);
@@ -10392,11 +11285,21 @@
         label: "Mobile",
         mode: "week",
         component: Mobile
+      },
+      {
+        id: "month-grid",
+        label: "Month",
+        mode: "month",
+        component: MonthGrid
       }
     ];
     let views = prop($$props, "views", 3, DEFAULT_VIEWS), theme = prop($$props, "theme", 3, auto), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 12), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
     const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() ? void 0 : $$props.oneventcreate);
     const effectiveMove = /* @__PURE__ */ user_derived(() => readOnly() ? void 0 : $$props.oneventmove);
+    function handleEventClick(ev) {
+      selection.select(ev.id);
+      $$props.oneventclick?.(ev);
+    }
     let containerWidth = /* @__PURE__ */ state(0);
     const isMobileContainer = /* @__PURE__ */ user_derived(() => get(containerWidth) > 0 && get(containerWidth) < MOBILE_BREAKPOINT);
     const useMobile = /* @__PURE__ */ user_derived(() => mobileProp() === "auto" ? get(isMobileContainer) : Boolean(mobileProp()));
@@ -10445,6 +11348,11 @@
       if (!payload) return;
       let { start, end } = payload;
       if (mode === "create" || mode === "resize-start" || mode === "resize-end") {
+        if (end.getTime() <= start.getTime()) {
+          const floorMs = Math.max(1, snapInterval()) * 6e4;
+          if (mode === "resize-start") start = new Date(end.getTime() - floorMs);
+          else end = new Date(start.getTime() + floorMs);
+        }
         const durationMs = end.getTime() - start.getTime();
         const durationMin = durationMs / 6e4;
         if ($$props.minDuration && durationMin < $$props.minDuration) {
@@ -10491,8 +11399,12 @@
           if (ev) get(effectiveMove)?.(ev, start, end);
         } catch (e) {
           const msg = e instanceof Error ? e.message : "";
-          if (!msg.includes("read-only") && !msg.includes("not found")) {
-            console.warn("[calendar] drag commit failed:", e);
+          if (msg.includes("read-only")) {
+            const ev = get(store).byId(payload.eventId);
+            if (ev) get(effectiveMove)?.(ev, start, end);
+          } else if (!msg.includes("not found")) {
+            if ($$props.onerror) $$props.onerror(e instanceof Error ? e : new Error(String(e)));
+            else console.warn("[calendar] drag commit failed:", e);
           }
         }
       } else if (mode === "create") {
@@ -10511,7 +11423,7 @@
       commitDrag,
       // Callbacks
       get oneventclick() {
-        return $$props.oneventclick;
+        return handleEventClick;
       },
       get oneventcreate() {
         return get(effectiveCreate);
@@ -10521,6 +11433,9 @@
       },
       get oneventhover() {
         return $$props.oneventhover;
+      },
+      get ondayclick() {
+        return $$props.ondayclick;
       },
       // Config (reactive via getters)
       get readOnly() {
@@ -10605,6 +11520,9 @@
     user_effect(() => {
       $$props.onviewchange?.(viewState.view);
     });
+    user_effect(() => {
+      if (get(store).error && $$props.onerror) $$props.onerror(new Error(get(store).error));
+    });
     const resolvedView = /* @__PURE__ */ user_derived(() => {
       const requested = views().find((v) => v.id === viewState.view) ?? views()[0];
       if (!get(useMobile) || !requested) return requested;
@@ -10617,9 +11535,6 @@
     const desktopViews = /* @__PURE__ */ user_derived(() => views().filter((v) => !v.id.endsWith("-mobile")));
     const dateLabel = /* @__PURE__ */ user_derived(() => {
       if (!showDates()) {
-        if (viewState.mode === "day") {
-          return viewState.focusDate.toLocaleDateString($$props.locale, { weekday: "long" });
-        }
         return "";
       }
       if (viewState.mode === "day") {
@@ -10629,7 +11544,7 @@
     });
     const modes = /* @__PURE__ */ user_derived(() => {
       const g = new Set(get(desktopViews).map((v) => v.mode));
-      return ["day", "week"].filter((key) => g.has(key));
+      return ["day", "week", "month"].filter((key) => g.has(key));
     });
     const L = /* @__PURE__ */ user_derived(getLabels);
     function switchMode(g) {
@@ -10687,7 +11602,7 @@
           };
           var consequent_2 = ($$anchor3) => {
             var button = root();
-            template_effect(() => set_attribute(button, "aria-label", viewState.mode === "day" ? get(L).previousDay : get(L).previousWeek));
+            template_effect(() => set_attribute(button, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek));
             delegated("click", button, () => viewState.prev());
             append($$anchor3, button);
           };
@@ -10708,7 +11623,7 @@
               template_effect(() => {
                 classes_1 = set_class(button_1, 1, "cal-m-pill svelte-1b53e7w", null, classes_1, { "cal-m-pill--active": viewState.mode === get(g) });
                 set_attribute(button_1, "aria-pressed", viewState.mode === get(g));
-                set_text(text2, get(g) === "day" ? get(L).day : get(L).week);
+                set_text(text2, get(g) === "day" ? get(L).day : get(g) === "week" ? get(L).week : get(L).month);
               });
               delegated("click", button_1, () => switchMode(get(g)));
               append($$anchor4, button_1);
@@ -10730,7 +11645,7 @@
         {
           var consequent_4 = ($$anchor3) => {
             var button_2 = root_3();
-            template_effect(() => set_attribute(button_2, "aria-label", viewState.mode === "day" ? get(L).nextDay : get(L).nextWeek));
+            template_effect(() => set_attribute(button_2, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek));
             delegated("click", button_2, () => viewState.next());
             append($$anchor3, button_2);
           };
@@ -10792,8 +11707,8 @@
             var button_5 = sibling(node_9, 2);
             var button_6 = sibling(button_5, 2);
             template_effect(() => {
-              set_attribute(button_5, "aria-label", viewState.mode === "day" ? get(L).previousDay : get(L).previousWeek);
-              set_attribute(button_6, "aria-label", viewState.mode === "day" ? get(L).nextDay : get(L).nextWeek);
+              set_attribute(button_5, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
+              set_attribute(button_6, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
             });
             delegated("click", button_5, () => viewState.prev());
             delegated("click", button_6, () => viewState.next());
@@ -10821,7 +11736,7 @@
               template_effect(() => {
                 classes_2 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_2, { "cal-pill--active": viewState.mode === get(g) });
                 set_attribute(button_7, "aria-pressed", viewState.mode === get(g));
-                set_text(text_5, get(g) === "day" ? get(L).day : get(L).week);
+                set_text(text_5, get(g) === "day" ? get(L).day : get(g) === "week" ? get(L).week : get(L).month);
               });
               delegated("click", button_7, () => switchMode(get(g)));
               append($$anchor4, button_7);
@@ -10841,7 +11756,7 @@
       };
       if_block(node, ($$render) => {
         if ($$props.header) $$render(consequent);
-        else if (get(useMobile)) $$render(consequent_6, 1);
+        else if (get(useMobile) && (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel))) $$render(consequent_6, 1);
         else if (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel)) $$render(consequent_11, 2);
       });
     }
@@ -10874,9 +11789,7 @@
               get focusDate() {
                 return viewState.focusDate;
               },
-              get oneventclick() {
-                return $$props.oneventclick;
-              },
+              oneventclick: handleEventClick,
               get oneventcreate() {
                 return get(effectiveCreate);
               },

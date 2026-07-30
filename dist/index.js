@@ -2,6 +2,9 @@
 export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, } from './primitives/index.js';
 // ─── Calendar shell ─────────────────────────────────────
 export { Calendar } from './calendar/index.js';
+// Raw view components — compose your own shell around the engine if needed
+export { Planner, Agenda, Mobile } from './views/index.js';
+export { default as MonthGrid } from './views/month/MonthGrid.svelte';
 // ─── Engine (reactive state) ────────────────────────────
 export { createEventStore, createViewState, createSelection, createDragState, } from './engine/index.js';
 // ─── Adapters ───────────────────────────────────────────

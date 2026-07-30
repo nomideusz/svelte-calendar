@@ -25,6 +25,7 @@ export interface CalendarLabels {
 	// ── View / section labels ──
 	day: string;
 	week: string;
+	month: string;
 	planner: string;
 	agenda: string;
 	now: string;
@@ -46,7 +47,9 @@ export interface CalendarLabels {
 	previousDay: string;
 	nextDay: string;
 	previousWeek: string;
+	previousMonth: string;
 	nextWeek: string;
+	nextMonth: string;
 
 	// ── Aria / accessibility labels ──
 	calendar: string;
@@ -72,6 +75,7 @@ export interface CalendarLabels {
 	nEvents: (n: number) => string;
 	/** e.g. "3 completed" */
 	nCompleted: (n: number) => string;
+	showLess: string;
 	/** e.g. "day 2 of 4" */
 	dayNOfTotal: (current: number, total: number) => string;
 	/** e.g. "75% complete" */
@@ -86,6 +90,7 @@ export const defaultLabels: CalendarLabels = {
 
 	day: 'Day',
 	week: 'Week',
+	month: 'Month',
 	planner: 'Planner',
 	agenda: 'Agenda',
 	now: 'now',
@@ -105,7 +110,9 @@ export const defaultLabels: CalendarLabels = {
 	previousDay: 'Previous day',
 	nextDay: 'Next day',
 	previousWeek: 'Previous week',
+	previousMonth: 'Previous month',
 	nextWeek: 'Next week',
+	nextMonth: 'Next month',
 
 	calendar: 'Calendar',
 	viewMode: 'View mode',
@@ -126,6 +133,7 @@ export const defaultLabels: CalendarLabels = {
 	nMore: (n) => `+${n} more`,
 	nEvents: (n) => `${n} event${n === 1 ? '' : 's'}`,
 	nCompleted: (n) => `${n} completed`,
+	showLess: 'Show less',
 	dayNOfTotal: (current, total) => `day ${current} of ${total}`,
 	percentComplete: (pct) => `${pct}% complete`,
 };

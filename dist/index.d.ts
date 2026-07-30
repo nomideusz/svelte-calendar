@@ -1,5 +1,7 @@
 export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, } from './primitives/index.js';
 export { Calendar } from './calendar/index.js';
+export { Planner, Agenda, Mobile } from './views/index.js';
+export { default as MonthGrid } from './views/month/MonthGrid.svelte';
 export type { CalendarView } from './calendar/index.js';
 export { createEventStore, createViewState, createSelection, createDragState, } from './engine/index.js';
 export type { EventStore, ViewState, ViewStateOptions, CalendarViewId, BuiltInViewId, ViewMode, Selection, DragState, DragMode, DragPayload, } from './engine/index.js';

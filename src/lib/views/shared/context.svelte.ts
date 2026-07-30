@@ -27,6 +27,7 @@ interface CalendarContextRaw {
 	readonly oneventcreate?: (range: { start: Date; end: Date }) => void;
 	readonly oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
 	readonly oneventhover?: (event: TimelineEvent) => void;
+	readonly ondayclick?: (date: Date) => void;
 
 	// Config
 	readonly readOnly: boolean;
@@ -68,6 +69,7 @@ export interface CalendarContext {
 	readonly minDuration: number | undefined;
 	readonly maxDuration: number | undefined;
 	readonly oneventhover: ((event: TimelineEvent) => void) | undefined;
+	readonly ondayclick: ((date: Date) => void) | undefined;
 	readonly disabledDates: Date[] | undefined;
 	readonly disabledSet: Set<number>;
 	readonly loadRange: { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
@@ -100,6 +102,7 @@ export function useCalendarContext(): CalendarContext {
 		get minDuration() { return raw?.minDuration; },
 		get maxDuration() { return raw?.maxDuration; },
 		get oneventhover() { return raw?.oneventhover; },
+		get ondayclick() { return raw?.ondayclick; },
 		get disabledDates() { return raw?.disabledDates; },
 		get disabledSet() { return new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []); },
 		get loadRange() {

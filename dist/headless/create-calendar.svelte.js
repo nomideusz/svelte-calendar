@@ -182,7 +182,7 @@ export function createCalendar(options) {
         return {
             dateLabel,
             mode,
-            modes: ['day', 'week'],
+            modes: ['day', 'week', 'month'],
             switchMode: (m) => {
                 const currentView = viewState.view;
                 const currentLabel = currentView.replace(/^(day|week)-/, '');
@@ -220,6 +220,15 @@ export function createCalendar(options) {
         let { start, end } = payload;
         // Enforce min/max duration
         if (mode === 'create' || mode === 'resize-start' || mode === 'resize-end') {
+            // Defensive floor: never accept a zero/negative duration, even when
+            // minDuration is unset (views clamp, but the engine must hold alone).
+            if (end.getTime() <= start.getTime()) {
+                const floorMs = Math.max(1, snapInterval) * 60_000;
+                if (mode === 'resize-start')
+                    start = new Date(end.getTime() - floorMs);
+                else
+                    end = new Date(start.getTime() + floorMs);
+            }
             const durationMs = end.getTime() - start.getTime();
             const durationMin = durationMs / 60_000;
             if (minDuration && durationMin < minDuration) {
@@ -276,7 +285,14 @@ export function createCalendar(options) {
             }
             catch (e) {
                 const msg = e instanceof Error ? e.message : '';
-                if (!msg.includes('read-only') && !msg.includes('not found')) {
+                // Read-only adapter: the host still gets the callback — it owns
+                // persistence and refetches.
+                if (msg.includes('read-only')) {
+                    const ev = store.byId(payload.eventId);
+                    if (ev)
+                        oneventmove?.(ev, start, end);
+                }
+                else if (!msg.includes('not found')) {
                     console.warn('[calendar] drag commit failed:', e);
                 }
                 return null;

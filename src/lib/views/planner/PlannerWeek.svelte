@@ -14,6 +14,7 @@
 	import { crossfade } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
 	import type { DragState } from '../../engine/drag.svelte.js';
@@ -430,11 +431,13 @@
 {/snippet}
 
 {#snippet timedEventContent(ev: TimelineEvent)}
-	<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
-	<span class="wg-ev-title">{ev.title}</span>
-	{#if ev.location}
-		<span class="wg-ev-loc">{ev.location}</span>
-	{/if}
+	<EventContent event={ev}>
+		<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
+		<span class="wg-ev-title">{ev.title}</span>
+		{#if ev.location}
+			<span class="wg-ev-loc">{ev.location}</span>
+		{/if}
+	</EventContent>
 {/snippet}
 
 <div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}>

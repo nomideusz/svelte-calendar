@@ -17,11 +17,13 @@
 	import { sod, DAY_MS, isAllDay, isMultiDay } from '../../core/time.js';
 	import { getLabels } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
 	import type { TimeSlot } from '../shared/format.js';
 
 	const L = $derived(getLabels());
 	const ctx = useCalendarContext();
+	const emptySnippet = $derived(ctx.emptySnippet);
 
 	interface Props {
 		locale?: string;
@@ -125,17 +127,25 @@
 		return { past, current, upcomingSlots: groupIntoSlots(upcoming), totalUp: upcoming.length };
 	});
 
-	/** Flat list of next upcoming events (max 5) for the "Up next" column */
+	/** Flat list of ALL upcoming events for the "Up next" column. The first
+	 *  few get card treatment; the rest render as compact rows — busy days
+	 *  (a city-wide feed) would otherwise drown the queue. */
 	const upcomingNext = $derived.by((): TimelineEvent[] => {
 		const all: TimelineEvent[] = [];
 		for (const slot of dayCat.upcomingSlots) {
-			for (const ev of slot.events) {
-				all.push(ev);
-				if (all.length >= 5) return all;
-			}
+			for (const ev of slot.events) all.push(ev);
 		}
 		return all;
 	});
+	const UPCOMING_CARDS = 4;
+
+	/** Done list collapses past this many items (most recent stay visible). */
+	const DONE_VISIBLE = 3;
+	let showAllDone = $state(false);
+	const visibleDone = $derived(
+		showAllDone ? dayCat.past : dayCat.past.slice(-DONE_VISIBLE),
+	);
+	const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.length - DONE_VISIBLE));
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -179,7 +189,9 @@
 			<!-- ─── Compact: minimal text rows ─── -->
 			<div class="ag-compact-list">
 				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+					<div class="ag-q-empty">
+						{#if emptySnippet}{@render emptySnippet()}{:else}{L.nothingScheduledYet}{/if}
+					</div>
 				{:else}
 					{#each timedDayEvents as ev (ev.id)}
 						<div
@@ -195,6 +207,7 @@
 							onpointerenter={() => oneventhover?.(ev)}
 							onkeydown={(e) => handleKeydown(e, ev)}
 						>
+							<EventContent event={ev}>
 							<span class="ag-compact-row-dot"></span>
 							<span class="ag-compact-row-time">{fmt(ev.start)}</span>
 							<span class="ag-compact-row-title">{ev.title}</span>
@@ -207,6 +220,7 @@
 								{/each}
 							{/if}
 							<span class="ag-compact-row-dur">{duration(ev)}</span>
+							</EventContent>
 						</div>
 					{/each}
 				{/if}
@@ -215,28 +229,8 @@
 		{:else if isToday}
 			<!-- ─── Today: "The Queue" — upcoming is the hero ─── -->
 			<div class="ag-q">
-				<!-- NOW column: past events stacked above NOW strip -->
+				<!-- NOW column: the live strip first, completed collapsed below -->
 				<div class="ag-q-status">
-					{#if dayCat.past.length > 0}
-						<div class="ag-q-done-section">
-							<div class="ag-q-label">{L.done}</div>
-							{#each dayCat.past as ev (ev.id)}
-								<div
-									class="ag-q-done-item"
-									class:ag-q-done-item--selected={selectedEventId === ev.id}
-									role="button"
-									tabindex="0"
-									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
-									onclick={() => handleClick(ev)}
-									onkeydown={(e) => handleKeydown(e, ev)}
-								>
-									<span class="ag-q-done-check">✓</span>
-									<span class="ag-q-done-title">{ev.title}</span>
-								</div>
-							{/each}
-						</div>
-					{/if}
-
 					<div class="ag-q-label">{L.now} <span class="ag-q-clock">{clock.hm}</span></div>
 					{#if dayCat.current.length > 0}
 						{#each dayCat.current as ev (ev.id)}
@@ -251,6 +245,7 @@
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
+								{#if ev.subtitle}<div class="ag-q-now-sub">{ev.subtitle}</div>{/if}
 								<div class="ag-q-now-time">{L.until} {fmt(ev.end)}</div>
 								<div class="ag-q-now-track">
 									<div class="ag-q-now-fill" style:width="{prog(ev) * 100}%"></div>
@@ -260,6 +255,31 @@
 					{:else}
 						<div class="ag-q-free">
 							<div class="ag-q-free-label">{L.free}</div>
+						</div>
+					{/if}
+
+					{#if dayCat.past.length > 0}
+						<div class="ag-q-done-section">
+							<div class="ag-q-label">{L.done}</div>
+							{#each visibleDone as ev (ev.id)}
+								<div
+									class="ag-q-done-item"
+									class:ag-q-done-item--selected={selectedEventId === ev.id}
+									role="button"
+									tabindex="0"
+									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
+									onclick={() => handleClick(ev)}
+									onkeydown={(e) => handleKeydown(e, ev)}
+								>
+									<span class="ag-q-done-check">✓</span>
+									<span class="ag-q-done-title">{ev.title}</span>
+								</div>
+							{/each}
+							{#if hiddenDoneCount > 0}
+								<button class="ag-q-done-toggle" onclick={() => (showAllDone = !showAllDone)}>
+									{showAllDone ? L.showLess : L.nCompleted(hiddenDoneCount)}
+								</button>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -273,6 +293,28 @@
 						</div>
 					{:else}
 						{#each upcomingNext as ev, i (ev.id)}
+							{#if i >= UPCOMING_CARDS}
+								<div
+									class="ag-compact-row ag-compact-row--queue"
+									class:ag-compact-row--selected={selectedEventId === ev.id}
+									style:--ev-color={ev.color || 'var(--dt-accent)'}
+									role="button"
+									tabindex="0"
+									aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+									onclick={() => handleClick(ev)}
+									onpointerenter={() => oneventhover?.(ev)}
+									onkeydown={(e) => handleKeydown(e, ev)}
+								>
+									<EventContent event={ev}>
+									<span class="ag-compact-row-dot"></span>
+									<span class="ag-compact-row-time">{fmt(ev.start)}</span>
+									<span class="ag-compact-row-title">{ev.title}</span>
+									{#if ev.subtitle}
+										<span class="ag-compact-row-sub">{ev.subtitle}</span>
+									{/if}
+									</EventContent>
+								</div>
+							{:else}
 							<div
 								class="ag-card ag-card--q"
 								class:ag-card--hero={i === 0}
@@ -286,6 +328,7 @@
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-card-body">
+									<EventContent event={ev}>
 									<div class="ag-card-top">
 										<span class="ag-card-title">{ev.title}</span>
 										<span class="ag-card-eta">{eta(ev.start.getTime())}</span>
@@ -304,8 +347,10 @@
 											{/each}
 										</div>
 									{/if}
+									</EventContent>
 								</div>
 							</div>
+							{/if}
 						{/each}
 					{/if}
 				</div>
@@ -341,7 +386,9 @@
 			<!-- ─── Future day: "The Plan" — everything is ahead ─── -->
 			<div class="ag-plan">
 				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+					<div class="ag-q-empty">
+						{#if emptySnippet}{@render emptySnippet()}{:else}{L.nothingScheduledYet}{/if}
+					</div>
 				{:else}
 					{#each timedDayEvents as ev, i (ev.id)}
 						<div
@@ -359,6 +406,7 @@
 							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<div class="ag-card-body">
+								<EventContent event={ev}>
 								<div class="ag-card-top">
 									<span class="ag-card-order">{i + 1}</span>
 									<span class="ag-card-title">{ev.title}</span>
@@ -380,6 +428,7 @@
 										{/each}
 									</div>
 								{/if}
+								</EventContent>
 							</div>
 						</div>
 					{/each}
@@ -596,8 +645,10 @@
 
 	/* ── Queue card variant ── */
 	.ag-card--q {
-		margin-bottom: 6px;
 		transition: border-color 150ms, transform 100ms;
+	}
+	.ag-compact-row--queue {
+		margin: 0;
 	}
 
 	.ag-card--q .ag-card-body {
@@ -750,10 +801,31 @@
 	.ag-q-status::-webkit-scrollbar {
 		display: none;
 	}
+	.ag-q-done-toggle {
+		align-self: flex-start;
+		margin-top: 2px;
+		padding: 3px 8px;
+		border: 1px solid var(--dt-border);
+		border-radius: 999px;
+		background: none;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		color: var(--dt-text-3);
+		cursor: pointer;
+	}
+	.ag-q-done-toggle:hover {
+		color: var(--dt-text);
+		border-color: var(--dt-text-3);
+	}
+	.ag-q-now-sub {
+		font-size: 12px;
+		color: var(--dt-text-2);
+		margin-top: 1px;
+	}
 	.ag-q-done-section {
-		margin-bottom: 10px;
-		padding-bottom: 8px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		margin-top: 12px;
+		padding-top: 10px;
+		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-q-clock {
 		font-size: 10px;
@@ -764,6 +836,7 @@
 	}
 	.ag-q-now {
 		padding: 8px 10px;
+		margin-bottom: 8px;
 		border-radius: 8px;
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
@@ -840,6 +913,7 @@
 		scrollbar-width: none;
 		display: flex;
 		flex-direction: column;
+		gap: 8px;
 	}
 	.ag-q-queue::-webkit-scrollbar {
 		display: none;
@@ -966,10 +1040,11 @@
 	.ag-compact-list::-webkit-scrollbar { display: none; }
 	.ag-compact-row {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 8px;
 		padding: 4px 0;
 		cursor: pointer;
+		min-width: 0;
 	}
 	.ag-compact-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -988,6 +1063,7 @@
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;
+		align-self: center;
 	}
 	.ag-compact-row-time {
 		font-size: 11px;
@@ -995,6 +1071,7 @@
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 64px;
 		flex-shrink: 0;
+		line-height: 1.4;
 	}
 	.ag-compact-row-title {
 		font-size: 12px;
@@ -1005,17 +1082,24 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
+		line-height: 1.4;
 	}
 	.ag-compact-row-dur {
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
+		line-height: 1.4;
 	}
 	.ag-compact-row-sub {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		flex-shrink: 0;
+		flex-shrink: 1;
+		max-width: 45%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 1.4;
 	}
 	.ag-compact-row-tag {
 		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);

@@ -31,18 +31,25 @@ That's it — 6 views (Day/Week × Planner, Agenda, Mobile), auto-coloring, drag
 
 ## Views
 
-Switch between **Planner** (time grid) and **Agenda** (list) in Day or Week mode:
+Switch between **Planner** (time grid), **Agenda** (list) and the **Month** grid:
 
 ```svelte
 <Calendar {adapter} view="week-planner" />  <!-- default -->
 <Calendar {adapter} view="day-planner" />
 <Calendar {adapter} view="week-agenda" />
 <Calendar {adapter} view="day-agenda" />
+<Calendar {adapter} view="month-grid" />
 ```
 
-Users can also switch via the built-in Day/Week pills.
+Users can also switch via the built-in Day/Week/Month pills.
 
-Planner views are designed for direct manipulation: drag an event to another day or time and the calendar renders a ghost preview at the target position before committing the move.
+Planner views are designed for direct manipulation:
+
+- **Move** — drag an event to another day or time; a ghost previews the target before the move commits.
+- **Resize** — drag an event's edge handles (`day-planner`: left/right, `day-mobile`: top/bottom) to change its duration; `minDuration`/`maxDuration` clamp at commit.
+- **Drag-to-create** — press on empty canvas and sweep to draw a new event; a plain click still creates a default-length slot. Both fire `oneventcreate` with the final range, after blocked-slot and disabled-date validation.
+
+The month grid lists events as chips per day with a "+N more" overflow; clicking a day fires `ondayclick(date)` — the natural month → day drill-down.
 
 Hide the pills when your app controls the view externally:
 
@@ -100,8 +107,14 @@ Agenda views keep their list-based layout on mobile; navigation stays in the cal
   oneventcreate={(range) => console.log('New slot', range.start, range.end)}
   oneventmove={(event, start, end) => console.log('Moved', event.title, start, end)}
   onviewchange={(viewId) => console.log('View', viewId)}
+  ondayclick={(date) => console.log('Day', date)}
+  onerror={(error) => console.error('Calendar', error)}
 />
 ```
+
+`onerror` surfaces adapter load failures and rejected drag commits that would
+otherwise only reach the console. Clicking an event also selects it — the
+active event is highlighted across views.
 
 Set `readOnly` to disable drag, resize, and click-to-create:
 
@@ -392,7 +405,9 @@ const events = [
 
 ### Custom Event Rendering
 
-Use the `event` snippet to fully control how events look:
+Use the `event` snippet to replace the event *content* in every view (the
+interactive shell — click, keyboard, drag, selection — stays intact). The
+`empty` snippet replaces the day-agenda empty state:
 
 ```svelte
 <Calendar {adapter}>

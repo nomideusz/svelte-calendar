@@ -7,8 +7,8 @@ import type { AutoThemeOptions } from '../theme/auto.js';
 export interface CalendarView {
     id: CalendarViewId;
     label: string;
-    /** day or week */
-    mode: 'day' | 'week';
+    /** day, week or month */
+    mode: 'day' | 'week' | 'month';
     /** The Svelte component to render */
     component: Component<Record<string, unknown>>;
     /** Extra props to pass through (e.g. hourHeight, specialized settings) */
@@ -112,6 +112,10 @@ interface Props {
     ondatechange?: (date: Date) => void;
     /** Called when the pointer enters an event (hover). */
     oneventhover?: (event: TimelineEvent) => void;
+    /** Called when a day cell is clicked (month grid; more views over time). */
+    ondayclick?: (date: Date) => void;
+    /** Surfaced instead of silent console output when loading or mutations fail. */
+    onerror?: (error: Error) => void;
 }
 declare const Calendar: Component<Props, {}, "">;
 type Calendar = ReturnType<typeof Calendar>;

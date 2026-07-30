@@ -1,193 +1,124 @@
-<script lang="ts">
-	/**
-	 * AgendaWeek — rolling N-day agenda view.
-	 *
-	 * "The Week Ahead":
-	 *   Today + tomorrow expanded with time slots/countdowns.
-	 *   Future days compact (dot + time + title).
-	 *   Past days dimmed.
-	 *
-	 * Answers: "What's coming up and when do I need to be ready?"
-	 */
-	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
-	import { weekdayLong, monthLong, getLabels } from '../../core/locale.js';
-	import { useCalendarContext } from '../shared/context.svelte.js';
-	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
-
-	const L = $derived(getLabels());
-	const ctx = useCalendarContext();
-
-	interface Props {
-		mondayStart?: boolean;
-		locale?: string;
-		height?: number;
-		events?: TimelineEvent[];
-		style?: string;
-		focusDate?: Date;
-		oneventclick?: (event: TimelineEvent) => void;
-		selectedEventId?: string | null;
-		[key: string]: unknown;
-	}
-
-	let {
-		mondayStart = true,
-		locale,
-		height = 520,
-		events = [],
-		style = '',
-		focusDate,
-		oneventclick,
-		selectedEventId = null,
-	}: Props = $props();
-
-	const clock = createClock();
-	const viewState = $derived(ctx.viewState);
-	const equalDays = $derived(ctx.equalDays);
-	const showDates = $derived(ctx.showDates);
-	const hideDays = $derived(ctx.hideDays);
-	const isMobile = $derived(ctx.isMobile);
-	const autoHeight = $derived(ctx.autoHeight);
-	const compact = $derived(ctx.compact);
-	const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
-	const oneventhover = $derived(ctx.oneventhover);
-	const disabledSet = $derived(ctx.disabledSet);
-
-	// ── Swipe navigation (mobile) ──────────────────────
-	let swipeStartX = 0;
-	let swipeStartY = 0;
-	const SWIPE_THRESHOLD = 50;
-
-	function onPointerDown(e: PointerEvent) {
-		if (!isMobile) return;
-		swipeStartX = e.clientX;
-		swipeStartY = e.clientY;
-	}
-
-	function onPointerUp(e: PointerEvent) {
-		if (!isMobile) return;
-		const dx = e.clientX - swipeStartX;
-		const dy = e.clientY - swipeStartY;
-		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-			if (dx > 0) viewState?.prev();
-			else viewState?.next();
-		}
-	}
-
-	// ── Format helpers (delegated to shared/format.ts) ──
-	// fmtTime, duration, groupIntoSlots imported at top
-	// Thin wrappers that bind locale / clock.tick:
-	const fmt = (d: Date) => fmtTime(d, locale);
-	const eta = (ms: number) => timeUntilMs(ms, clock.tick);
-	const prog = (ev: TimelineEvent) => progress(ev, clock.tick);
-
-	// ── Event handlers ──────────────────────────────────
-	function handleClick(ev: TimelineEvent): void {
-		oneventclick?.(ev);
-	}
-
-	function handleKeydown(e: KeyboardEvent, ev: TimelineEvent): void {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			oneventclick?.(ev);
-		}
-	}
-
-	// ── Week derivations ────────────────────────────────
-	type DayTier = 'today' | 'tomorrow' | 'upcoming' | 'past';
-
-	interface DayGroup {
-		ms: number;
-		dayName: string;
-		dateLabel: string;
-		tier: DayTier;
-		events: TimelineEvent[];
-		allDayEvents: TimelineEvent[];
-		timedEvents: TimelineEvent[];
-		pastEvents: TimelineEvent[];
-		currentEvents: TimelineEvent[];
-		upcomingEvents: TimelineEvent[];
-		totalHours: number;
-	}
-
-	const weekStartMs = $derived(
-		focusDate
-			? (viewState?.dayCount === 7
-				? startOfWeek(sod(focusDate.getTime()), mondayStart)
-				: sod(focusDate.getTime()))
-			: (viewState?.dayCount === 7
-				? startOfWeek(clock.today, mondayStart)
-				: clock.today),
-	);
-
-	const customDays = $derived(viewState?.dayCount ?? 7);
-
-	const weekDays = $derived.by((): DayGroup[] => {
-		const now = clock.tick;
-		const todayMs = clock.today;
-		const tomorrowMs = todayMs + DAY_MS;
-		const out: DayGroup[] = [];
-		for (let i = 0; i < customDays; i++) {
-			const ms = weekStartMs + i * DAY_MS;
-			const dEnd = ms + DAY_MS;
-			const dayEvts = events
-				.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms)
-				.sort((a, b) => a.start.getTime() - b.start.getTime());
-			const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
-			const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
-			const totalMinutes = timedEvts.reduce((sum, ev) => {
-				const s = Math.max(ev.start.getTime(), ms);
-				const e = Math.min(ev.end.getTime(), dEnd);
-				return sum + (e - s) / 60000;
-			}, 0);
-			const pastEvents: TimelineEvent[] = [];
-			const currentEvents: TimelineEvent[] = [];
-			const upcomingEvents: TimelineEvent[] = [];
-			for (const ev of timedEvts) {
-				if (ev.end.getTime() <= now) pastEvents.push(ev);
-				else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
-				else upcomingEvents.push(ev);
-			}
-			let tier: DayTier;
-			if (equalDays) {
-				tier = 'upcoming';
-			} else if (ms === todayMs) {
-				tier = 'today';
-			} else if (ms === tomorrowMs) {
-				tier = 'tomorrow';
-			} else if (ms < todayMs) {
-				tier = 'past';
-			} else {
-				tier = 'upcoming';
-			}
-
-			out.push({
-				ms,
-				dayName: weekdayLong(ms, locale),
-				dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
-				tier,
-				events: dayEvts,
-				allDayEvents: allDayEvts,
-				timedEvents: timedEvts,
-				pastEvents,
-				currentEvents,
-				upcomingEvents,
-				totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-			});
-		}
-
-		// Filter hidden days if hideDays is set
-		if (hideDays?.length) {
-			return out.filter((d) => {
-				const jsDay = new Date(d.ms).getDay();
-				const iso = jsDay === 0 ? 7 : jsDay;
-				return !hideDays.includes(iso);
-			});
-		}
-
-		return out;
-	});
+<script lang="ts">import { createClock } from "../../core/clock.svelte.js";
+import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay } from "../../core/time.js";
+import { weekdayLong, monthLong, getLabels } from "../../core/locale.js";
+import { useCalendarContext } from "../shared/context.svelte.js";
+import EventContent from "../shared/EventContent.svelte";
+import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from "../shared/format.js";
+const L = $derived(getLabels());
+const ctx = useCalendarContext();
+let {
+  mondayStart = true,
+  locale,
+  height = 520,
+  events = [],
+  style = "",
+  focusDate,
+  oneventclick,
+  selectedEventId = null
+} = $props();
+const clock = createClock();
+const viewState = $derived(ctx.viewState);
+const equalDays = $derived(ctx.equalDays);
+const showDates = $derived(ctx.showDates);
+const hideDays = $derived(ctx.hideDays);
+const isMobile = $derived(ctx.isMobile);
+const autoHeight = $derived(ctx.autoHeight);
+const compact = $derived(ctx.compact);
+const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
+const oneventhover = $derived(ctx.oneventhover);
+const disabledSet = $derived(ctx.disabledSet);
+let swipeStartX = 0;
+let swipeStartY = 0;
+const SWIPE_THRESHOLD = 50;
+function onPointerDown(e) {
+  if (!isMobile) return;
+  swipeStartX = e.clientX;
+  swipeStartY = e.clientY;
+}
+function onPointerUp(e) {
+  if (!isMobile) return;
+  const dx = e.clientX - swipeStartX;
+  const dy = e.clientY - swipeStartY;
+  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    if (dx > 0) viewState?.prev();
+    else viewState?.next();
+  }
+}
+const fmt = (d) => fmtTime(d, locale);
+const eta = (ms) => timeUntilMs(ms, clock.tick);
+const prog = (ev) => progress(ev, clock.tick);
+function handleClick(ev) {
+  oneventclick?.(ev);
+}
+function handleKeydown(e, ev) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    oneventclick?.(ev);
+  }
+}
+const weekStartMs = $derived(
+  focusDate ? viewState?.dayCount === 7 ? startOfWeek(sod(focusDate.getTime()), mondayStart) : sod(focusDate.getTime()) : viewState?.dayCount === 7 ? startOfWeek(clock.today, mondayStart) : clock.today
+);
+const customDays = $derived(viewState?.dayCount ?? 7);
+const weekDays = $derived.by(() => {
+  const now = clock.tick;
+  const todayMs = clock.today;
+  const tomorrowMs = todayMs + DAY_MS;
+  const out = [];
+  for (let i = 0; i < customDays; i++) {
+    const ms = weekStartMs + i * DAY_MS;
+    const dEnd = ms + DAY_MS;
+    const dayEvts = events.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
+    const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
+    const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
+    const totalMinutes = timedEvts.reduce((sum, ev) => {
+      const s = Math.max(ev.start.getTime(), ms);
+      const e = Math.min(ev.end.getTime(), dEnd);
+      return sum + (e - s) / 6e4;
+    }, 0);
+    const pastEvents = [];
+    const currentEvents = [];
+    const upcomingEvents = [];
+    for (const ev of timedEvts) {
+      if (ev.end.getTime() <= now) pastEvents.push(ev);
+      else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
+      else upcomingEvents.push(ev);
+    }
+    let tier;
+    if (equalDays) {
+      tier = "upcoming";
+    } else if (ms === todayMs) {
+      tier = "today";
+    } else if (ms === tomorrowMs) {
+      tier = "tomorrow";
+    } else if (ms < todayMs) {
+      tier = "past";
+    } else {
+      tier = "upcoming";
+    }
+    out.push({
+      ms,
+      dayName: weekdayLong(ms, locale),
+      dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
+      tier,
+      events: dayEvts,
+      allDayEvents: allDayEvts,
+      timedEvents: timedEvts,
+      pastEvents,
+      currentEvents,
+      upcomingEvents,
+      totalHours: Math.round(totalMinutes / 60 * 10) / 10
+    });
+  }
+  if (hideDays?.length) {
+    return out.filter((d) => {
+      const jsDay = new Date(d.ms).getDay();
+      const iso = jsDay === 0 ? 7 : jsDay;
+      return !hideDays.includes(iso);
+    });
+  }
+  return out;
+});
 </script>
 
 <!-- ═══ Shared event card snippet ═══ -->
@@ -208,6 +139,7 @@
 		onkeydown={(e) => handleKeydown(e, ev)}
 	>
 		<div class="ag-card-body">
+			<EventContent event={ev}>
 			<span class="ag-card-title">{ev.title}</span>
 			{#if ev.subtitle}
 				<span class="ag-card-sub">{ev.subtitle}</span>
@@ -233,6 +165,7 @@
 					{/each}
 				</div>
 			{/if}
+			</EventContent>
 			{#if isNow}
 				<div class="ag-card-progress">
 					<div class="ag-card-progress-fill" style:width="{prog(ev) * 100}%"></div>
@@ -260,7 +193,7 @@
 					<div class="ag-wday-head">
 						<div class="ag-wday-head-left">
 							<span class="ag-wday-name">{day.dayName}</span>
-						{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
+							{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
 						</div>
 						{#if dayHeaderSnippet}
 							<div class="ag-wday-custom-header">
@@ -338,6 +271,7 @@
 								onpointerenter={() => oneventhover?.(ev)}
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
+								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
@@ -350,6 +284,7 @@
 									{/each}
 								{/if}
 								<span class="ag-compact-dur">{duration(ev)}</span>
+								</EventContent>
 							</div>
 						{/each}
 					</div>
@@ -411,6 +346,7 @@
 								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
 							>
+								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
 								<span class="ag-compact-title">{ev.title}</span>
@@ -426,6 +362,7 @@
 									{/each}
 								{/if}
 								<span class="ag-compact-dur">{duration(ev)}</span>
+								</EventContent>
 							</div>
 						{/each}
 						{#if day.timedEvents.length > 4}
@@ -642,6 +579,9 @@
 	.ag-wday {
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
+	.ag-wday:last-child {
+		border-bottom: none;
+	}
 	.ag-wday--today {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
 	}
@@ -682,7 +622,7 @@
 	}
 	.ag-wday-head-left {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 8px;
 	}
 	.ag-wday-badge {
@@ -706,11 +646,13 @@
 	.ag-wday-name {
 		font-size: 13px;
 		font-weight: 600;
+		line-height: 1.2;
 	}
 	.ag-wday-date {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		line-height: 1.2;
 	}
 
 	.ag-wday-empty {
@@ -759,16 +701,15 @@
 
 	/* Compact day events */
 	.ag-wday-compact {
-		padding: 0 20px 6px;
+		padding: 0 20px 8px;
 	}
 	.ag-compact {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 6px;
 		padding: 3px 0;
 		cursor: pointer;
 		min-width: 0;
-		overflow: hidden;
 	}
 	.ag-compact--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -789,6 +730,7 @@
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;
+		align-self: center;
 	}
 	.ag-compact-time {
 		font-size: 11px;
@@ -797,6 +739,7 @@
 		min-width: 40px;
 		flex-shrink: 0;
 		white-space: nowrap;
+		line-height: 1.4;
 	}
 	.ag-compact-title {
 		font-size: 12px;
@@ -808,6 +751,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
+		line-height: 1.4;
 	}
 	.ag-compact-dur {
 		font-size: 10px;
@@ -815,6 +759,7 @@
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;
+		line-height: 1.4;
 	}
 	.ag-compact-sub {
 		font-size: 10px;
@@ -824,6 +769,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: 120px;
+		line-height: 1.4;
 	}
 	.ag-compact-loc {
 		font-size: 9px;

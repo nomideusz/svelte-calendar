@@ -8,6 +8,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { useCalendarContext } from '../shared/context.svelte.js';
+	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
 	import { DAY_MS, HOUR_MS, sod, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
@@ -52,6 +53,9 @@
 	const loadRangeCtx = $derived(ctx.loadRange);
 	const minDuration = $derived(ctx.minDuration);
 	const blockedSlots = $derived(ctx.blockedSlots);
+	const drag = $derived(ctx.drag);
+	const commitDragCtx = $derived(ctx.commitDrag);
+	const SNAP_MS = $derived(ctx.snapInterval * 60_000);
 
 	const clock = createClock();
 
@@ -105,6 +109,7 @@
 		width: string;
 		isCurrent: boolean;
 		isNext: boolean;
+		isResizing: boolean;
 		col: number;
 		totalCols: number;
 	}
@@ -112,6 +117,9 @@
 	const positionedEvents = $derived.by(() => {
 		const now = clock.tick;
 		const sorted = [...timedEvents];
+		const rsP = drag?.active && (drag.mode === 'resize-start' || drag.mode === 'resize-end')
+			? drag.payload
+			: null;
 
 		// Find the next upcoming event today
 		let nextEventId: string | null = null;
@@ -124,8 +132,12 @@
 
 		// Overlap grouping
 		const infos = sorted.map(ev => {
-			const sMs = Math.max(ev.start.getTime(), dayMs + startHour * HOUR_MS);
-			const eMs = Math.min(ev.end.getTime(), dayMs + endHour * HOUR_MS);
+			// While resizing, this event tracks the tentative drag payload
+			const resizing = rsP?.eventId === ev.id;
+			const evStart = resizing ? rsP!.start : ev.start;
+			const evEnd = resizing ? rsP!.end : ev.end;
+			const sMs = Math.max(evStart.getTime(), dayMs + startHour * HOUR_MS);
+			const eMs = Math.min(evEnd.getTime(), dayMs + endHour * HOUR_MS);
 			const topH = (sMs - dayMs) / HOUR_MS - startHour;
 			const botH = (eMs - dayMs) / HOUR_MS - startHour;
 			return {
@@ -134,6 +146,7 @@
 				height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
 				isCurrent: ev.start.getTime() <= now && ev.end.getTime() > now,
 				isNext: ev.id === nextEventId,
+				isResizing: resizing,
 				startMs: sMs,
 				endMs: eMs,
 				col: 0,
@@ -183,6 +196,7 @@
 			width: `calc(${100 / info.totalCols}% - ${GUTTER_W / info.totalCols + 2}px)`,
 			isCurrent: info.isCurrent,
 			isNext: info.isNext,
+			isResizing: info.isResizing,
 			col: info.col,
 			totalCols: info.totalCols,
 		})) as PosEvent[];
@@ -248,6 +262,7 @@
 
 	// ── Click-to-create ────────────────────────────────
 	function handleGridClick(e: MouseEvent) {
+		if (suppressGridClick) { suppressGridClick = false; return; }
 		if (!oneventcreate || readOnly || isDisabled) return;
 		if ((e.target as HTMLElement).closest('.mb-event')) return;
 		const grid = (e.currentTarget as HTMLElement);
@@ -260,6 +275,137 @@
 		const start = new Date(dayMs + snapHour * HOUR_MS);
 		const end = new Date(start.getTime() + durMin * 60_000);
 		oneventcreate({ start, end });
+	}
+
+	// ── Drag-to-create (vertical sweep on empty grid) ──
+	// Movement below CREATE_THRESHOLD stays a plain tap (handleGridClick).
+	const CREATE_THRESHOLD = 4;
+	let suppressGridClick = false;
+	let mbCreateStartY = 0;
+	let mbCreateAnchorMs = 0;
+	let mbCreateStarted = false;
+
+	/** Pointer Y → epoch ms within the day grid (accounts for scroll). */
+	function gridTimeMs(clientY: number): number {
+		const rect = gridEl.getBoundingClientRect();
+		const y = clientY - rect.top + gridEl.scrollTop;
+		return dayMs + (startHour + y / HOUR_HEIGHT) * HOUR_MS;
+	}
+
+	/** Clamp a timestamp into the visible hour range of this day. */
+	function clampToDay(ms: number): number {
+		return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
+	}
+
+	function onGridPointerDown(e: PointerEvent) {
+		if (e.button !== 0 || !drag || !oneventcreate || readOnly || isDisabled) return;
+		if ((e.target as HTMLElement).closest('.mb-event')) return;
+		mbCreateStartY = e.clientY;
+		mbCreateAnchorMs = gridTimeMs(e.clientY);
+		mbCreateStarted = false;
+		window.addEventListener('pointermove', onGridCreateMove);
+		window.addEventListener('pointerup', onGridCreateUp, { once: true });
+		window.addEventListener('pointercancel', onGridCreateCancel, { once: true });
+	}
+
+	function onGridCreateMove(e: PointerEvent) {
+		if (!drag) return;
+		if (!mbCreateStarted) {
+			if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
+			mbCreateStarted = true;
+			mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / SNAP_MS) * SNAP_MS);
+			drag.beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + SNAP_MS));
+		}
+		const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
+		drag.updatePointer(
+			new Date(Math.min(mbCreateAnchorMs, snapped)),
+			new Date(Math.max(mbCreateAnchorMs + SNAP_MS, snapped)),
+		);
+	}
+
+	function cleanupGridCreate() {
+		window.removeEventListener('pointermove', onGridCreateMove);
+		window.removeEventListener('pointerup', onGridCreateUp);
+		window.removeEventListener('pointercancel', onGridCreateCancel);
+		mbCreateStarted = false;
+	}
+
+	function onGridCreateUp() {
+		if (drag && mbCreateStarted) {
+			// The click event (if any) fires synchronously after pointerup
+			suppressGridClick = true;
+			commitDragCtx?.();
+			setTimeout(() => { suppressGridClick = false; }, 0);
+		}
+		cleanupGridCreate();
+	}
+
+	function onGridCreateCancel() {
+		// Touch scroll took over — abandon the tentative create
+		if (drag && mbCreateStarted) drag.cancel();
+		cleanupGridCreate();
+	}
+
+	// ── Event resize (top/bottom edge handles) ─────────
+	let suppressEventClick = false;
+	let mbRsStartY = 0;
+	let mbRsStarted = false;
+	let mbRsEdge: 'start' | 'end' = 'end';
+	let mbRsEvent: TimelineEvent | null = null;
+
+	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end') {
+		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
+		e.stopPropagation();
+		mbRsStartY = e.clientY;
+		mbRsStarted = false;
+		mbRsEdge = edge;
+		mbRsEvent = ev;
+		window.addEventListener('pointermove', onResizeMove);
+		window.addEventListener('pointerup', onResizeUp, { once: true });
+		window.addEventListener('pointercancel', onResizeCancel, { once: true });
+	}
+
+	function onResizeMove(e: PointerEvent) {
+		const ev = mbRsEvent;
+		if (!drag || !ev) return;
+		if (!mbRsStarted) {
+			if (Math.abs(e.clientY - mbRsStartY) < CREATE_THRESHOLD) return;
+			mbRsStarted = true;
+			drag.beginResize(ev.id, mbRsEdge, ev.start, ev.end);
+		}
+		const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
+		if (mbRsEdge === 'end') {
+			const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
+			drag.updatePointer(ev.start, new Date(end));
+		} else {
+			const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
+			drag.updatePointer(new Date(start), ev.end);
+		}
+	}
+
+	function cleanupResize() {
+		window.removeEventListener('pointermove', onResizeMove);
+		window.removeEventListener('pointerup', onResizeUp);
+		window.removeEventListener('pointercancel', onResizeCancel);
+		mbRsStarted = false;
+		mbRsEvent = null;
+	}
+
+	function onResizeUp() {
+		if (drag && mbRsStarted) {
+			// The synthesized click can land on the button OR (if the pointer
+			// ended off the block) on the grid — suppress both paths.
+			suppressEventClick = true;
+			suppressGridClick = true;
+			commitDragCtx?.();
+			setTimeout(() => { suppressEventClick = false; suppressGridClick = false; }, 0);
+		}
+		cleanupResize();
+	}
+
+	function onResizeCancel() {
+		if (drag && mbRsStarted) drag.cancel();
+		cleanupResize();
 	}
 
 	// ── Auto-scroll to now ─────────────────────────────
@@ -311,6 +457,7 @@
 		class="mb-grid"
 		bind:this={gridEl}
 		onclick={handleGridClick}
+		onpointerdown={onGridPointerDown}
 		onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGridClick(e as unknown as MouseEvent); }}
 		role="grid"
 		tabindex="-1"
@@ -356,17 +503,19 @@
 					class:mb-event--tentative={p.ev.status === 'tentative'}
 					class:mb-event--full={p.ev.status === 'full'}
 					class:mb-event--limited={p.ev.status === 'limited'}
+					class:mb-event--resizing={p.isResizing}
 					style:top="{p.top}px"
 					style:height="{p.height}px"
 					style:left={p.left}
 					style:width={p.width}
 					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
-					onclick={(e) => { e.stopPropagation(); oneventclick?.(p.ev); }}
+					onclick={(e) => { e.stopPropagation(); if (suppressEventClick) { suppressEventClick = false; return; } oneventclick?.(p.ev); }}
 					onpointerenter={() => oneventhover?.(p.ev)}
 					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
 				>
 					<div class="mb-ev-stripe"></div>
 					<div class="mb-ev-body">
+						<EventContent event={p.ev}>
 						<span class="mb-ev-title">{p.ev.title}</span>
 						{#if p.height > 32}
 							<span class="mb-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
@@ -384,14 +533,38 @@
 								{/each}
 							</div>
 						{/if}
+						</EventContent>
 					</div>
 					{#if p.isCurrent}
 						<span class="mb-ev-live"></span>
 					{:else if p.isNext}
 						<span class="mb-ev-next-badge">{L.upNext}</span>
 					{/if}
+					{#if !readOnly && !p.ev.data?.readOnly}
+						<span
+							class="mb-ev-handle mb-ev-handle--start"
+							aria-hidden="true"
+							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
+						></span>
+						<span
+							class="mb-ev-handle mb-ev-handle--end"
+							aria-hidden="true"
+							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
+						></span>
+					{/if}
 				</button>
 			{/each}
+
+			<!-- Drag-to-create ghost -->
+			{#if !readOnly && drag?.active && drag.mode === 'create' && drag.payload}
+				{@const gTop = ((drag.payload.start.getTime() - dayMs) / HOUR_MS - startHour) * HOUR_HEIGHT}
+				{@const gH = Math.max(12, ((drag.payload.end.getTime() - drag.payload.start.getTime()) / HOUR_MS) * HOUR_HEIGHT)}
+				<div class="mb-create-ghost" style:top="{gTop}px" style:height="{gH}px" aria-hidden="true">
+					<span class="mb-create-ghost-time">
+						{fmtTime(drag.payload.start, locale)} – {fmtTime(drag.payload.end, locale)}
+					</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -626,6 +799,62 @@
 	.mb-event--limited {
 		opacity: 0.65;
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+	}
+	.mb-event--resizing {
+		z-index: 50;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+		cursor: ns-resize;
+	}
+
+	/* ─── Resize handles ─────────────────────────────── */
+	.mb-ev-handle {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 10px;
+		z-index: 2;
+		cursor: ns-resize;
+		touch-action: none;
+	}
+	.mb-ev-handle--start { top: 0; }
+	.mb-ev-handle--end { bottom: 0; }
+	.mb-ev-handle::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 24px;
+		height: 3px;
+		border-radius: 2px;
+		background: var(--ev-color);
+		opacity: 0;
+		transition: opacity 120ms;
+	}
+	.mb-ev-handle--start::after { top: 2px; }
+	.mb-ev-handle--end::after { bottom: 2px; }
+	.mb-event:hover .mb-ev-handle::after,
+	.mb-event--resizing .mb-ev-handle::after,
+	.mb-event--selected .mb-ev-handle::after { opacity: 0.55; }
+
+	/* ─── Drag-to-create ghost ───────────────────────── */
+	.mb-create-ghost {
+		position: absolute;
+		left: 40px;
+		right: 4px;
+		z-index: 40;
+		border-radius: 8px;
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
+		border: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
+		display: flex;
+		align-items: flex-start;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.mb-create-ghost-time {
+		font: 600 10px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-accent, #2563eb);
+		padding: 4px 8px;
+		white-space: nowrap;
 	}
 
 	.mb-ev-stripe {

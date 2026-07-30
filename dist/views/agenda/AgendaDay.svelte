@@ -1,141 +1,95 @@
-<script lang="ts">
-	/**
-	 * AgendaDay — single-day agenda view.
-	 *
-	 * Today ("The Queue"):
-	 *   3-column layout: Done | Now | Up next (hero).
-	 *   Answers: "What's coming up next?"
-	 *
-	 * Past day ("The Log"):
-	 *   Quiet chronological record of completed events.
-	 *
-	 * Future day ("The Plan"):
-	 *   Clean numbered schedule list.
-	 */
-	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, isAllDay, isMultiDay } from '../../core/time.js';
-	import { getLabels } from '../../core/locale.js';
-	import { useCalendarContext } from '../shared/context.svelte.js';
-	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
-	import type { TimeSlot } from '../shared/format.js';
-
-	const L = $derived(getLabels());
-	const ctx = useCalendarContext();
-
-	interface Props {
-		locale?: string;
-		height?: number;
-		events?: TimelineEvent[];
-		style?: string;
-		focusDate?: Date;
-		oneventclick?: (event: TimelineEvent) => void;
-		selectedEventId?: string | null;
-		[key: string]: unknown;
-	}
-
-	let {
-		locale,
-		height,
-		events = [],
-		style = '',
-		focusDate,
-		oneventclick,
-		selectedEventId = null,
-	}: Props = $props();
-
-	const clock = createClock();
-	const viewState = $derived(ctx.viewState);
-	const equalDays = $derived(ctx.equalDays);
-	const isMobile = $derived(ctx.isMobile);
-	const autoHeight = $derived(ctx.autoHeight);
-	const compact = $derived(ctx.compact);
-	const oneventhover = $derived(ctx.oneventhover);
-	const disabledSet = $derived(ctx.disabledSet);
-
-	// ── Swipe navigation (mobile) ──────────────────────
-	let swipeStartX = 0;
-	let swipeStartY = 0;
-	const SWIPE_THRESHOLD = 50;
-
-	function onPointerDown(e: PointerEvent) {
-		if (!isMobile) return;
-		swipeStartX = e.clientX;
-		swipeStartY = e.clientY;
-	}
-
-	function onPointerUp(e: PointerEvent) {
-		if (!isMobile) return;
-		const dx = e.clientX - swipeStartX;
-		const dy = e.clientY - swipeStartY;
-		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-			if (dx > 0) viewState?.prev();
-			else viewState?.next();
-		}
-	}
-
-	// ── Format helpers (delegated to shared/format.ts) ──
-	const fmt = (d: Date) => fmtTime(d, locale);
-	const eta = (ms: number) => timeUntilMs(ms, clock.tick);
-	const prog = (ev: TimelineEvent) => progress(ev, clock.tick);
-
-	// ── Event handlers ──────────────────────────────────
-	function handleClick(ev: TimelineEvent): void {
-		oneventclick?.(ev);
-	}
-
-	function handleKeydown(e: KeyboardEvent, ev: TimelineEvent): void {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			oneventclick?.(ev);
-		}
-	}
-
-	// ── Day derivations ─────────────────────────────────
-	const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
-	const dayEnd = $derived(dayMs + DAY_MS);
-	const isToday = $derived(dayMs === clock.today);
-	const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
-
-	/** All events for this day, sorted chronologically */
-	const dayEvents = $derived.by((): TimelineEvent[] => {
-		return events
-			.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs)
-			.sort((a, b) => a.start.getTime() - b.start.getTime());
-	});
-
-	/** All-day / multi-day events shown in a separate strip */
-	const allDayBanner = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
-
-	/** Timed events (non-all-day) for normal slot rendering */
-	const timedDayEvents = $derived(dayEvents.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
-
-	const dayCat = $derived.by(() => {
-		const now = clock.tick;
-		const past: TimelineEvent[] = [];
-		const current: TimelineEvent[] = [];
-		const upcoming: TimelineEvent[] = [];
-		for (const ev of timedDayEvents) {
-			const s = ev.start.getTime();
-			const e = ev.end.getTime();
-			if (e <= now) past.push(ev);
-			else if (s <= now && e > now) current.push(ev);
-			else upcoming.push(ev);
-		}
-		return { past, current, upcomingSlots: groupIntoSlots(upcoming), totalUp: upcoming.length };
-	});
-
-	/** Flat list of next upcoming events (max 5) for the "Up next" column */
-	const upcomingNext = $derived.by((): TimelineEvent[] => {
-		const all: TimelineEvent[] = [];
-		for (const slot of dayCat.upcomingSlots) {
-			for (const ev of slot.events) {
-				all.push(ev);
-				if (all.length >= 5) return all;
-			}
-		}
-		return all;
-	});
+<script lang="ts">import { createClock } from "../../core/clock.svelte.js";
+import { sod, DAY_MS, isAllDay, isMultiDay } from "../../core/time.js";
+import { getLabels } from "../../core/locale.js";
+import { useCalendarContext } from "../shared/context.svelte.js";
+import EventContent from "../shared/EventContent.svelte";
+import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from "../shared/format.js";
+const L = $derived(getLabels());
+const ctx = useCalendarContext();
+const emptySnippet = $derived(ctx.emptySnippet);
+let {
+  locale,
+  height,
+  events = [],
+  style = "",
+  focusDate,
+  oneventclick,
+  selectedEventId = null
+} = $props();
+const clock = createClock();
+const viewState = $derived(ctx.viewState);
+const equalDays = $derived(ctx.equalDays);
+const isMobile = $derived(ctx.isMobile);
+const autoHeight = $derived(ctx.autoHeight);
+const compact = $derived(ctx.compact);
+const oneventhover = $derived(ctx.oneventhover);
+const disabledSet = $derived(ctx.disabledSet);
+let swipeStartX = 0;
+let swipeStartY = 0;
+const SWIPE_THRESHOLD = 50;
+function onPointerDown(e) {
+  if (!isMobile) return;
+  swipeStartX = e.clientX;
+  swipeStartY = e.clientY;
+}
+function onPointerUp(e) {
+  if (!isMobile) return;
+  const dx = e.clientX - swipeStartX;
+  const dy = e.clientY - swipeStartY;
+  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    if (dx > 0) viewState?.prev();
+    else viewState?.next();
+  }
+}
+const fmt = (d) => fmtTime(d, locale);
+const eta = (ms) => timeUntilMs(ms, clock.tick);
+const prog = (ev) => progress(ev, clock.tick);
+function handleClick(ev) {
+  oneventclick?.(ev);
+}
+function handleKeydown(e, ev) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    oneventclick?.(ev);
+  }
+}
+const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
+const dayEnd = $derived(dayMs + DAY_MS);
+const isToday = $derived(dayMs === clock.today);
+const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
+const dayEvents = $derived.by(() => {
+  return events.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs).sort((a, b) => a.start.getTime() - b.start.getTime());
+});
+const allDayBanner = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
+const timedDayEvents = $derived(dayEvents.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
+const dayCat = $derived.by(() => {
+  const now = clock.tick;
+  const past = [];
+  const current = [];
+  const upcoming = [];
+  for (const ev of timedDayEvents) {
+    const s = ev.start.getTime();
+    const e = ev.end.getTime();
+    if (e <= now) past.push(ev);
+    else if (s <= now && e > now) current.push(ev);
+    else upcoming.push(ev);
+  }
+  return { past, current, upcomingSlots: groupIntoSlots(upcoming), totalUp: upcoming.length };
+});
+const upcomingNext = $derived.by(() => {
+  const all = [];
+  for (const slot of dayCat.upcomingSlots) {
+    for (const ev of slot.events) all.push(ev);
+  }
+  return all;
+});
+const UPCOMING_CARDS = 4;
+const DONE_VISIBLE = 3;
+let showAllDone = $state(false);
+const visibleDone = $derived(
+  showAllDone ? dayCat.past : dayCat.past.slice(-DONE_VISIBLE)
+);
+const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.length - DONE_VISIBLE));
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -179,7 +133,9 @@
 			<!-- ─── Compact: minimal text rows ─── -->
 			<div class="ag-compact-list">
 				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+					<div class="ag-q-empty">
+						{#if emptySnippet}{@render emptySnippet()}{:else}{L.nothingScheduledYet}{/if}
+					</div>
 				{:else}
 					{#each timedDayEvents as ev (ev.id)}
 						<div
@@ -195,6 +151,7 @@
 							onpointerenter={() => oneventhover?.(ev)}
 							onkeydown={(e) => handleKeydown(e, ev)}
 						>
+							<EventContent event={ev}>
 							<span class="ag-compact-row-dot"></span>
 							<span class="ag-compact-row-time">{fmt(ev.start)}</span>
 							<span class="ag-compact-row-title">{ev.title}</span>
@@ -207,6 +164,7 @@
 								{/each}
 							{/if}
 							<span class="ag-compact-row-dur">{duration(ev)}</span>
+							</EventContent>
 						</div>
 					{/each}
 				{/if}
@@ -215,28 +173,8 @@
 		{:else if isToday}
 			<!-- ─── Today: "The Queue" — upcoming is the hero ─── -->
 			<div class="ag-q">
-				<!-- NOW column: past events stacked above NOW strip -->
+				<!-- NOW column: the live strip first, completed collapsed below -->
 				<div class="ag-q-status">
-					{#if dayCat.past.length > 0}
-						<div class="ag-q-done-section">
-							<div class="ag-q-label">{L.done}</div>
-							{#each dayCat.past as ev (ev.id)}
-								<div
-									class="ag-q-done-item"
-									class:ag-q-done-item--selected={selectedEventId === ev.id}
-									role="button"
-									tabindex="0"
-									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
-									onclick={() => handleClick(ev)}
-									onkeydown={(e) => handleKeydown(e, ev)}
-								>
-									<span class="ag-q-done-check">✓</span>
-									<span class="ag-q-done-title">{ev.title}</span>
-								</div>
-							{/each}
-						</div>
-					{/if}
-
 					<div class="ag-q-label">{L.now} <span class="ag-q-clock">{clock.hm}</span></div>
 					{#if dayCat.current.length > 0}
 						{#each dayCat.current as ev (ev.id)}
@@ -251,6 +189,7 @@
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
+								{#if ev.subtitle}<div class="ag-q-now-sub">{ev.subtitle}</div>{/if}
 								<div class="ag-q-now-time">{L.until} {fmt(ev.end)}</div>
 								<div class="ag-q-now-track">
 									<div class="ag-q-now-fill" style:width="{prog(ev) * 100}%"></div>
@@ -260,6 +199,31 @@
 					{:else}
 						<div class="ag-q-free">
 							<div class="ag-q-free-label">{L.free}</div>
+						</div>
+					{/if}
+
+					{#if dayCat.past.length > 0}
+						<div class="ag-q-done-section">
+							<div class="ag-q-label">{L.done}</div>
+							{#each visibleDone as ev (ev.id)}
+								<div
+									class="ag-q-done-item"
+									class:ag-q-done-item--selected={selectedEventId === ev.id}
+									role="button"
+									tabindex="0"
+									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
+									onclick={() => handleClick(ev)}
+									onkeydown={(e) => handleKeydown(e, ev)}
+								>
+									<span class="ag-q-done-check">✓</span>
+									<span class="ag-q-done-title">{ev.title}</span>
+								</div>
+							{/each}
+							{#if hiddenDoneCount > 0}
+								<button class="ag-q-done-toggle" onclick={() => (showAllDone = !showAllDone)}>
+									{showAllDone ? L.showLess : L.nCompleted(hiddenDoneCount)}
+								</button>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -273,6 +237,28 @@
 						</div>
 					{:else}
 						{#each upcomingNext as ev, i (ev.id)}
+							{#if i >= UPCOMING_CARDS}
+								<div
+									class="ag-compact-row ag-compact-row--queue"
+									class:ag-compact-row--selected={selectedEventId === ev.id}
+									style:--ev-color={ev.color || 'var(--dt-accent)'}
+									role="button"
+									tabindex="0"
+									aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+									onclick={() => handleClick(ev)}
+									onpointerenter={() => oneventhover?.(ev)}
+									onkeydown={(e) => handleKeydown(e, ev)}
+								>
+									<EventContent event={ev}>
+									<span class="ag-compact-row-dot"></span>
+									<span class="ag-compact-row-time">{fmt(ev.start)}</span>
+									<span class="ag-compact-row-title">{ev.title}</span>
+									{#if ev.subtitle}
+										<span class="ag-compact-row-sub">{ev.subtitle}</span>
+									{/if}
+									</EventContent>
+								</div>
+							{:else}
 							<div
 								class="ag-card ag-card--q"
 								class:ag-card--hero={i === 0}
@@ -286,6 +272,7 @@
 								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-card-body">
+									<EventContent event={ev}>
 									<div class="ag-card-top">
 										<span class="ag-card-title">{ev.title}</span>
 										<span class="ag-card-eta">{eta(ev.start.getTime())}</span>
@@ -304,8 +291,10 @@
 											{/each}
 										</div>
 									{/if}
+									</EventContent>
 								</div>
 							</div>
+							{/if}
 						{/each}
 					{/if}
 				</div>
@@ -341,7 +330,9 @@
 			<!-- ─── Future day: "The Plan" — everything is ahead ─── -->
 			<div class="ag-plan">
 				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingScheduledYet}</div>
+					<div class="ag-q-empty">
+						{#if emptySnippet}{@render emptySnippet()}{:else}{L.nothingScheduledYet}{/if}
+					</div>
 				{:else}
 					{#each timedDayEvents as ev, i (ev.id)}
 						<div
@@ -359,6 +350,7 @@
 							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<div class="ag-card-body">
+								<EventContent event={ev}>
 								<div class="ag-card-top">
 									<span class="ag-card-order">{i + 1}</span>
 									<span class="ag-card-title">{ev.title}</span>
@@ -380,6 +372,7 @@
 										{/each}
 									</div>
 								{/if}
+								</EventContent>
 							</div>
 						</div>
 					{/each}
@@ -596,8 +589,10 @@
 
 	/* ── Queue card variant ── */
 	.ag-card--q {
-		margin-bottom: 6px;
 		transition: border-color 150ms, transform 100ms;
+	}
+	.ag-compact-row--queue {
+		margin: 0;
 	}
 
 	.ag-card--q .ag-card-body {
@@ -750,10 +745,31 @@
 	.ag-q-status::-webkit-scrollbar {
 		display: none;
 	}
+	.ag-q-done-toggle {
+		align-self: flex-start;
+		margin-top: 2px;
+		padding: 3px 8px;
+		border: 1px solid var(--dt-border);
+		border-radius: 999px;
+		background: none;
+		font-family: var(--dt-mono);
+		font-size: 11px;
+		color: var(--dt-text-3);
+		cursor: pointer;
+	}
+	.ag-q-done-toggle:hover {
+		color: var(--dt-text);
+		border-color: var(--dt-text-3);
+	}
+	.ag-q-now-sub {
+		font-size: 12px;
+		color: var(--dt-text-2);
+		margin-top: 1px;
+	}
 	.ag-q-done-section {
-		margin-bottom: 10px;
-		padding-bottom: 8px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		margin-top: 12px;
+		padding-top: 10px;
+		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-q-clock {
 		font-size: 10px;
@@ -764,6 +780,7 @@
 	}
 	.ag-q-now {
 		padding: 8px 10px;
+		margin-bottom: 8px;
 		border-radius: 8px;
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
@@ -840,6 +857,7 @@
 		scrollbar-width: none;
 		display: flex;
 		flex-direction: column;
+		gap: 8px;
 	}
 	.ag-q-queue::-webkit-scrollbar {
 		display: none;
@@ -966,10 +984,11 @@
 	.ag-compact-list::-webkit-scrollbar { display: none; }
 	.ag-compact-row {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 8px;
 		padding: 4px 0;
 		cursor: pointer;
+		min-width: 0;
 	}
 	.ag-compact-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -988,6 +1007,7 @@
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;
+		align-self: center;
 	}
 	.ag-compact-row-time {
 		font-size: 11px;
@@ -995,6 +1015,7 @@
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 64px;
 		flex-shrink: 0;
+		line-height: 1.4;
 	}
 	.ag-compact-row-title {
 		font-size: 12px;
@@ -1005,17 +1026,24 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
+		line-height: 1.4;
 	}
 	.ag-compact-row-dur {
 		font-size: 10px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
+		line-height: 1.4;
 	}
 	.ag-compact-row-sub {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		flex-shrink: 0;
+		flex-shrink: 1;
+		max-width: 45%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 1.4;
 	}
 	.ag-compact-row-tag {
 		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);

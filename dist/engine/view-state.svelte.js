@@ -15,6 +15,8 @@ import { startOfWeek as calcStartOfWeek, addDaysMs, DAY_MS } from '../core/time.
 function inferMode(view) {
     if (view.startsWith('day'))
         return 'day';
+    if (view.startsWith('month'))
+        return 'month';
     return 'week';
 }
 function computeRange(focus, mode, mondayStart, dayCount = 7) {
@@ -23,6 +25,15 @@ function computeRange(focus, mode, mondayStart, dayCount = 7) {
         start.setHours(0, 0, 0, 0);
         const end = new Date(start.getTime() + DAY_MS);
         return { start, end };
+    }
+    if (mode === 'month') {
+        // Week-aligned grid covering the focus month: 4–6 rows depending on
+        // where the month's edges fall.
+        const first = new Date(focus.getFullYear(), focus.getMonth(), 1);
+        const last = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
+        const gridStart = calcStartOfWeek(first.getTime(), mondayStart);
+        const gridEnd = addDaysMs(calcStartOfWeek(last.getTime(), mondayStart), 7);
+        return { start: new Date(gridStart), end: new Date(gridEnd) };
     }
     // week / custom period
     if (dayCount === 7) {
@@ -84,10 +95,19 @@ export function createViewState(options = {}) {
             dayCount = n;
         },
         next() {
+            if (mode === 'month') {
+                // Anchor to the 1st so a Jan 31 focus can't skip February.
+                focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth() + 1, 1);
+                return;
+            }
             const days = mode === 'day' ? 1 : dayCount;
             focusDate = new Date(addDaysMs(focusDate.getTime(), days));
         },
         prev() {
+            if (mode === 'month') {
+                focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth() - 1, 1);
+                return;
+            }
             const days = mode === 'day' ? -1 : -dayCount;
             focusDate = new Date(addDaysMs(focusDate.getTime(), days));
         },

@@ -23,7 +23,8 @@ export type BuiltInViewId =
 	| 'day-planner'
 	| 'day-agenda'
 	| 'week-planner'
-	| 'week-agenda';
+	| 'week-agenda'
+	| 'month-grid';
 
 /**
  * Any view identifier. Use built-in strings like 'day-planner' or your own
@@ -31,7 +32,7 @@ export type BuiltInViewId =
  */
 export type CalendarViewId = string;
 
-export type ViewMode = 'day' | 'week';
+export type ViewMode = 'day' | 'week' | 'month';
 
 export interface ViewStateOptions {
 	view?: CalendarViewId;
@@ -72,6 +73,7 @@ export interface ViewState {
 
 function inferMode(view: CalendarViewId): ViewMode {
 	if (view.startsWith('day')) return 'day';
+	if (view.startsWith('month')) return 'month';
 	return 'week';
 }
 
@@ -86,6 +88,15 @@ function computeRange(
 		start.setHours(0, 0, 0, 0);
 		const end = new Date(start.getTime() + DAY_MS);
 		return { start, end };
+	}
+	if (mode === 'month') {
+		// Week-aligned grid covering the focus month: 4–6 rows depending on
+		// where the month's edges fall.
+		const first = new Date(focus.getFullYear(), focus.getMonth(), 1);
+		const last = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
+		const gridStart = calcStartOfWeek(first.getTime(), mondayStart);
+		const gridEnd = addDaysMs(calcStartOfWeek(last.getTime(), mondayStart), 7);
+		return { start: new Date(gridStart), end: new Date(gridEnd) };
 	}
 	// week / custom period
 	if (dayCount === 7) {
@@ -155,11 +166,20 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 		},
 
 		next() {
+			if (mode === 'month') {
+				// Anchor to the 1st so a Jan 31 focus can't skip February.
+				focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth() + 1, 1);
+				return;
+			}
 			const days = mode === 'day' ? 1 : dayCount;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
 
 		prev() {
+			if (mode === 'month') {
+				focusDate = new Date(focusDate.getFullYear(), focusDate.getMonth() - 1, 1);
+				return;
+			}
 			const days = mode === 'day' ? -1 : -dayCount;
 			focusDate = new Date(addDaysMs(focusDate.getTime(), days));
 		},
