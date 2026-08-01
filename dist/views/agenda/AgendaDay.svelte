@@ -160,7 +160,6 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 							onpointerenter={() => oneventhover?.(ev)}
 						>
 							<EventContent event={ev}>
-							<span class="ag-compact-row-dot"></span>
 							<span class="ag-compact-row-time">{fmt(ev.start)}</span>
 							<div class="ag-compact-row-main">
 								<span class="ag-compact-row-title">{ev.title}</span>
@@ -256,7 +255,6 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 									onpointerenter={() => oneventhover?.(ev)}
 								>
 									<EventContent event={ev}>
-									<span class="ag-compact-row-dot"></span>
 									<span class="ag-compact-row-time">{fmt(ev.start)}</span>
 									<div class="ag-compact-row-main">
 										<span class="ag-compact-row-title">{ev.title}</span>
@@ -1156,18 +1154,14 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 		border-radius: 4px;
 	}
-	.ag-compact-row-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background: var(--ev-color, var(--dt-accent));
-		flex-shrink: 0;
-		align-self: center;
-	}
+	/* The time label doubles as the class-color signal (replaces the old
+	   dot): the event color mixed toward the text color, so it stays
+	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-row-time {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font-weight: 500;
+		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
 		min-width: 64px;
 		flex-shrink: 0;
 		line-height: 1.4;
@@ -1194,12 +1188,6 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	/* On its own wrapped line the subtitle gets the full width */
 	.ag--mobile .ag-compact-row-sub {
 		max-width: 100%;
-	}
-	/* Wrapped rows are two lines tall — center-aligning the dot floats it
-	   between lines; pin it optically to the first (title) line instead. */
-	.ag--mobile .ag-compact-row-dot {
-		align-self: flex-start;
-		margin-top: 8px;
 	}
 	.ag-compact-row-title {
 		font-size: 12px;

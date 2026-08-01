@@ -199,7 +199,6 @@ const weekDays = $derived.by(() => {
 		onpointerenter={() => oneventhover?.(ev)}
 	>
 		<EventContent event={ev}>
-		<span class="ag-compact-dot"></span>
 		<span class="ag-compact-time">{fmt(ev.start)}</span>
 		<div class="ag-compact-main">
 			<span class="ag-compact-title">{ev.title}</span>
@@ -814,8 +813,9 @@ const weekDays = $derived.by(() => {
 		text-decoration: line-through;
 		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
-	.ag-compact--done .ag-compact-dot {
-		opacity: 0.5;
+	.ag-compact--done .ag-compact-time {
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font-weight: 400;
 	}
 
 	/* Compact day events */
@@ -855,18 +855,14 @@ const weekDays = $derived.by(() => {
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 		border-radius: 4px;
 	}
-	.ag-compact-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background: var(--ev-color, var(--dt-accent));
-		flex-shrink: 0;
-		align-self: center;
-	}
+	/* The time label doubles as the class-color signal (replaces the old
+	   dot): the event color mixed toward the text color, so it stays
+	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-time {
 		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font-weight: 500;
+		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
 		min-width: 40px;
 		flex-shrink: 0;
 		white-space: nowrap;
@@ -896,12 +892,6 @@ const weekDays = $derived.by(() => {
 	.ag--mobile .ag-compact-loc,
 	.ag--mobile .ag-compact-sub {
 		max-width: 100%;
-	}
-	/* Wrapped rows are two/three lines tall — center-aligning the dot floats
-	   it between lines; pin it optically to the first (title) line instead. */
-	.ag--mobile .ag-compact-dot {
-		align-self: flex-start;
-		margin-top: 8px;
 	}
 	.ag-compact-title {
 		font-size: 12px;
