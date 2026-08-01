@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.12.0 — 2026-08-01
+
+### Changed (breaking)
+- **Day Planner is now a traditional vertical time grid** — a single-day column of the week grid (one geometry, one drag mapping, one overlap engine for both planner modes), replacing the horizontal filmstrip timeline. Full-date day header, all-day strip, blocked/disabled regions, now-line, drag/resize/create all carry over from the week grid. `PlannerWeek` accepts a `mode` prop (`'day' | 'week'`) for direct/headless use.
+- **Text-measurement (Pretext) integration removed.** `createTextMeasure`, `initTextMeasure`, `TextMeasure`, `TextMeasureOptions`, and `ContentFit` are no longer exported, and the optional `@chenglou/pretext` peer dependency is gone. The filmstrip was its only consumer; the remaining views fit text with plain CSS.
+- **Exported `Selection` type renamed `CalendarSelection`** — the bare name shadowed the DOM global `Selection` in consumer files.
+- Day views no longer render their own date header while the Calendar chrome's date label shows the same day (i.e. when `showDates` is on): the planner's single-day column header and AgendaDay's in-view header are suppressed, so the date never appears twice. `showDates={false}`, headless use, and custom `dayHeader` snippets keep the in-view header.
+
+### Added
+- `columns` prop: renders the week agenda as side-by-side day columns — a classic class-schedule timetable — on desktop; mobile keeps the stacked list. Pairs with `equalDays` for recurring templates and takes precedence over `compact` (single-line rows truncate at column width).
+- The `auto` theme now genuinely adopts the host page's fonts: `--dt-sans` from the host's computed `font-family` (webfont names come through verbatim) and `--dt-mono` from common root variables (`--font-mono`, `--font-family-mono`, …) or any `pre`/`code` element. The previous `--dt-sans: inherit` never worked — a custom property declared `inherit` with no ancestor value is invalid, so the calendar always fell back to `system-ui`.
+- The `auto` theme re-probes once the document finishes loading and once webfonts settle, fixing wrong light/dark detection when the first probe ran before stylesheets applied.
+
+### Fixed
+- `BuiltInViewId` now includes the mobile view IDs (`day-mobile`, `week-mobile`), and `CalendarViewId` preserves IDE autocomplete for built-ins while staying open to custom IDs.
+- `MemoryAdapterOptions` is exported from the package root (it was documented but unavailable).
+- The `neutral`/`midnight` presets no longer declare a do-nothing `--dt-sans: inherit`.
+
+### Demo
+- New "Studio timetable" recipe and Timetable Columns toggle.
+- Settings toggles that the current view doesn't read are disabled with an explanatory reason instead of silently doing nothing (e.g. Read Only in agendas, Compact while Timetable Columns is active, planner-only options outside planners).
+- Removed the "Text fitting" toggle along with the Pretext integration.
+
 ## 0.11.0 — 2026-08-01
 
 ### Added

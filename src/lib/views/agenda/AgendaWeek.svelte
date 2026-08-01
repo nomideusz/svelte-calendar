@@ -51,6 +51,8 @@
 	const isMobile = $derived(ctx.isMobile);
 	const autoHeight = $derived(ctx.autoHeight);
 	const compact = $derived(ctx.compact);
+	// Timetable layout is a desktop affordance — stacked list stays on mobile.
+	const cols = $derived(ctx.columns && !isMobile);
 	const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
 	const oneventhover = $derived(ctx.oneventhover);
 	const disabledSet = $derived(ctx.disabledSet);
@@ -319,13 +321,14 @@
 	class="ag ag--week"
 	class:ag--mobile={isMobile}
 	class:ag--auto={autoHeight}
+	class:ag--cols={cols}
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
 	onpointerdown={onPointerDown}
 	onpointerup={onPointerUp}
 	onpointercancel={onPointerCancel}
 >
-	<div class="ag-body" role="list" aria-label={L.weekAhead}>
+	<div class="ag-body" role="list" aria-label={L.weekAhead} style:--ag-cols={weekDays.length}>
 		{#each weekDays as day (day.ms)}
 			{@const expanded = day.tier === 'today' || day.tier === 'tomorrow'}
 			{#if day.tier === 'past'}
@@ -408,15 +411,19 @@
 
 				{#if day.events.length === 0}
 					<div class="ag-wday-empty">{L.noEvents}</div>
-				{:else if compact}
-					<!-- Compact: minimal dot + time + title rows for all days -->
+				{:else if compact && !cols}
+					<!-- Compact: minimal dot + time + title rows for all days.
+					     Ignored in columns mode — single-line rows truncate to
+					     nothing at column width; cards wrap instead. -->
 					<div class="ag-wday-compact">
 						{#each day.timedEvents as ev (ev.id)}
 							{@render compactRow(ev, false, false)}
 						{/each}
 					</div>
-				{:else if equalDays}
-					<!-- Equal days: card layout for all days, no time-relative badges -->
+				{:else if equalDays || (cols && !expanded)}
+					<!-- Equal days (or timetable columns): card layout, no time-relative
+					     badges. In columns, today/tomorrow still fall through to the
+					     expanded branch below for now/ETA treatment. -->
 					<div class="ag-wday-expanded">
 						{#each groupIntoSlots(day.timedEvents) as slot (slot.startMs)}
 							<div class="ag-wslot">
@@ -1056,6 +1063,51 @@
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 		border-radius: 4px;
+	}
+
+	/* ═══ Timetable columns (desktop) ═══ */
+	.ag--cols .ag-body {
+		display: grid;
+		grid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));
+	}
+	/* Columns stretch to the tallest day, so the separator runs full height */
+	.ag--cols .ag-wday {
+		border-bottom: none;
+		border-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		min-width: 0;
+	}
+	.ag--cols .ag-wday:first-child {
+		border-inline-start: none;
+	}
+	/* Uniform head padding — the :first-child top bump would misalign columns.
+	   Also overrides the past-day head variant (extra class = higher specificity). */
+	.ag--cols .ag-wday .ag-wday-head {
+		padding: 12px 10px 8px;
+	}
+	/* Badge + name + date won't fit one line in a ~160px column */
+	.ag--cols .ag-wday-head-left {
+		flex-wrap: wrap;
+		row-gap: 2px;
+	}
+	.ag--cols .ag-wday-expanded,
+	.ag--cols .ag-wday-compact,
+	.ag--cols .ag-wday-empty,
+	.ag--cols .ag-wday-past-line--summary {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+	.ag--cols .ag-allday {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+	/* Narrow cards: long titles get a third line, meta wraps instead of clipping */
+	.ag--cols .ag-card-title {
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+	}
+	.ag--cols .ag-card-meta {
+		flex-wrap: wrap;
+		row-gap: 3px;
 	}
 
 	/* ═══ Mobile adaptations ═══ */

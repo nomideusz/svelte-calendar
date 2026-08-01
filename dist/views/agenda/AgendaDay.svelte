@@ -19,6 +19,8 @@ let {
 const clock = createClock(ctx.timezone);
 const viewState = $derived(ctx.viewState);
 const equalDays = $derived(ctx.equalDays);
+const showDates = $derived(ctx.showDates);
+const hideDayHead = $derived(showDates && !!viewState);
 const isMobile = $derived(ctx.isMobile);
 const autoHeight = $derived(ctx.autoHeight);
 const compact = $derived(ctx.compact);
@@ -106,7 +108,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	onpointercancel={onPointerCancel}
 >
 	<div class="ag-body" role="group" aria-label={L.todaysLineup}>
-		<!-- ─── In-view date header (swipe nav is otherwise unlabelled) ─── -->
+		<!-- ─── In-view date header (only when the chrome doesn't label the day) ─── -->
+		{#if !hideDayHead}
 		<div class="ag-day-head">
 			{#if !equalDays && isToday}
 				<span class="ag-day-head-badge">{L.today}</span>
@@ -116,6 +119,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 			<span class="ag-day-head-name">{weekdayLong(dayMs, locale)}</span>
 			<span class="ag-day-head-date">{monthLong(dayMs, locale)} {dayNum(dayMs)}</span>
 		</div>
+		{/if}
 		{#if allDayBanner.length > 0}
 			<!-- ─── All-day / multi-day events ─── -->
 			<div class="ag-allday">

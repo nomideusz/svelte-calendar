@@ -1,5 +1,7 @@
 <!--
-  Planner week mode — vertical time grid (Google-Calendar-style).
+  Planner time grid — vertical, Google-Calendar-style. Renders both planner
+  modes: week (N columns from viewState.dayCount) and day (a single column),
+  so the two share one geometry, one drag mapping, and one overlap engine.
 
   • Left time gutter with localized hour labels; N day columns (viewState.dayCount).
   • Sticky day-header row + sticky all-day strip; the grid scrolls vertically.
@@ -17,8 +19,9 @@ import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
 import { DAY_MS, HOUR_MS, sod, addDaysMs } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
-import { fmtH, fmtTime, fmtDuration, weekdayShort } from "../../core/locale.js";
+import { fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong } from "../../core/locale.js";
 let {
+  mode = "week",
   mondayStart = true,
   locale,
   height = 520,
@@ -59,7 +62,9 @@ const gridHeight = $derived(hourCount * HOUR_H);
 let scrollEl;
 let colsEl;
 const todayMs = $derived(clock.today);
-const customDays = $derived(viewState?.dayCount ?? 7);
+const singleDay = $derived(mode === "day" || viewState?.mode === "day");
+const customDays = $derived(singleDay ? 1 : viewState?.dayCount ?? 7);
+const hideDayHead = $derived(singleDay && showDates && !!viewState && !dayHeaderSnippet);
 const weekStartMs = $derived.by(() => {
   const r = viewState?.range;
   if (r) return sod(r.start.getTime());
@@ -259,8 +264,8 @@ function statusText(ev) {
 }
 function ghostForDay(dayMs) {
   if (!drag?.active || !drag.payload) return null;
-  const mode = drag.mode;
-  if (mode !== "move" && mode !== "create") return null;
+  const mode2 = drag.mode;
+  if (mode2 !== "move" && mode2 !== "create") return null;
   const s = drag.payload.start.getTime();
   const e = drag.payload.end.getTime();
   const bandS = dayMs + startHour * HOUR_MS;
@@ -273,7 +278,7 @@ function ghostForDay(dayMs) {
     height: Math.max(12, (ce - cs) / HOUR_MS * HOUR_H),
     start: drag.payload.start,
     end: drag.payload.end,
-    create: mode === "create",
+    create: mode2 === "create",
     // Only the segment containing the start shows the readout
     showTime: cs === Math.max(s, dayMs)
   };
@@ -570,7 +575,9 @@ function onWindowKeydown(e) {
 	<div class="tw-scroll" bind:this={scrollEl}>
 		<div class="tw-inner" style:min-width="{innerMinWidth}px">
 			<!-- Sticky top: day headers + all-day strip -->
+			{#if !hideDayHead || hasAllDayRow}
 			<div class="tw-top">
+				{#if !hideDayHead}
 				<div class="tw-head">
 					<div class="tw-corner" style:width="{GUTTER_W}px" aria-hidden="true"></div>
 					{#each dayCols as day (day.ms)}
@@ -579,7 +586,7 @@ function onWindowKeydown(e) {
 							class:tw-hd--today={day.isToday}
 							aria-current={day.isToday ? 'date' : undefined}
 						>
-							<span class="tw-hd-wd">{weekdayShort(day.ms, locale)}</span>
+							<span class="tw-hd-wd">{singleDay ? weekdayLong(day.ms, locale) : weekdayShort(day.ms, locale)}</span>
 							{#if showDates}
 								<span class="tw-hd-num" class:tw-hd-num--today={day.isToday}>{day.dayNum}</span>
 							{/if}
@@ -591,6 +598,7 @@ function onWindowKeydown(e) {
 						</div>
 					{/each}
 				</div>
+				{/if}
 
 				{#if hasAllDayRow}
 					<div class="tw-allday">
@@ -618,6 +626,7 @@ function onWindowKeydown(e) {
 					</div>
 				{/if}
 			</div>
+			{/if}
 
 			<!-- Grid body -->
 			<div class="tw-body" style:height="{gridHeight}px">

@@ -1,5 +1,7 @@
 import type { TimelineEvent } from '../../core/types.js';
 interface Props {
+    /** 'day' renders a single-day column; 'week' the multi-day grid. */
+    mode?: 'day' | 'week';
     mondayStart?: boolean;
     locale?: string;
     height?: number | null;

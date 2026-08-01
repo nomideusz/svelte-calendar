@@ -10,6 +10,12 @@
 		enabledWhen?: string;
 		/** One-line description rendered as visible helper text under the field */
 		hint?: string;
+		/**
+		 * Return a reason string to disable the field (e.g. the current view
+		 * doesn't read this option). The reason replaces the hint so the demo
+		 * explains why the control is inert. Falsy = enabled.
+		 */
+		disabledWhen?: (values: Record<string, string | number | boolean>) => string | false;
 	};
 
 	type RangeField = BaseField & {
@@ -54,6 +60,14 @@
 
 	function setVal(key: string, v: string | number | boolean) {
 		values = { ...values, [key]: v };
+	}
+
+	/* Disabled by an unmet enabledWhen dependency or a disabledWhen reason;
+	   the reason swaps in for the hint so the user sees why. */
+	function resolve<F extends SettingsField>(field: F): { field: F; disabled: boolean } {
+		const reason = field.disabledWhen?.(values) || '';
+		const disabled = (!!field.enabledWhen && values[field.enabledWhen] !== true) || !!reason;
+		return { field: reason ? { ...field, hint: reason } : field, disabled };
 	}
 
 	function fmt(v: string | number | boolean): string {
@@ -219,14 +233,14 @@
 				<div class="stg-bar">
 					{#each topSelects as f (f.key)}
 						{@const fid = controlId(f.key)}
-						{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-						{#if f.type === 'segment'}
+						{@const { field: rf, disabled } = resolve(f)}
+						{#if rf.type === 'segment'}
 							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-								{@render segmentControl(f, fid, disabled, 'stg-col-title')}
+								{@render segmentControl(rf, fid, disabled, 'stg-col-title')}
 							</div>
-						{:else if f.type === 'select'}
+						{:else if rf.type === 'select'}
 							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-								{@render selectControl(f, fid, disabled, 'stg-col-title')}
+								{@render selectControl(rf, fid, disabled, 'stg-col-title')}
 							</div>
 						{/if}
 					{/each}
@@ -237,8 +251,8 @@
 				<div class="stg-toggles">
 					{#each topToggles as f (f.key)}
 						{@const fid = controlId(f.key)}
-						{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-						{@render toggleControl(f, fid, disabled)}
+						{@const { field: rf, disabled } = resolve(f)}
+						{@render toggleControl(rf, fid, disabled)}
 					{/each}
 				</div>
 			{/if}
@@ -255,47 +269,47 @@
 									<div class="stg-toggles stg-toggles--advanced">
 										{#each section.fields.filter(isToggleField) as f (f.key)}
 											{@const fid = controlId(f.key)}
-											{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
-											{@render toggleControl(f, fid, disabled)}
+											{@const { field: rf, disabled } = resolve(f)}
+											{@render toggleControl(rf, fid, disabled)}
 										{/each}
 									</div>
 								{/if}
 
 								{#each section.fields.filter(isNotToggleField) as f (f.key)}
 									{@const fid = controlId(f.key)}
-									{@const disabled = !!f.enabledWhen && values[f.enabledWhen] !== true}
+									{@const { field: rf, disabled } = resolve(f)}
 
-									{#if f.type === 'range'}
+									{#if rf.type === 'range'}
 										<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
 											<div class="stg-rng-hd">
-												<label class="stg-lbl" for={fid}>{f.label}</label>
-												<span class="stg-num">{fmt(values[f.key])}</span>
+												<label class="stg-lbl" for={fid}>{rf.label}</label>
+												<span class="stg-num">{fmt(values[rf.key])}</span>
 											</div>
 											<input
 												id={fid}
 												class="stg-rng"
 												type="range"
-												min={f.min}
-												max={f.max}
-												step={f.step}
-												value={values[f.key]}
+												min={rf.min}
+												max={rf.max}
+												step={rf.step}
+												value={values[rf.key]}
 												{disabled}
-												aria-describedby={f.hint ? `${fid}-hint` : undefined}
-												oninput={(e) => setVal(f.key, Number((e.target as HTMLInputElement).value))}
+												aria-describedby={rf.hint ? `${fid}-hint` : undefined}
+												oninput={(e) => setVal(rf.key, Number((e.target as HTMLInputElement).value))}
 											/>
-											{#if f.hint}
-												<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
+											{#if rf.hint}
+												<small class="stg-hint" id={`${fid}-hint`}>{rf.hint}</small>
 											{/if}
 										</div>
 
-									{:else if f.type === 'select'}
+									{:else if rf.type === 'select'}
 										<div class="stg-row" class:stg-row--disabled={disabled}>
-											{@render selectControl(f, fid, disabled)}
+											{@render selectControl(rf, fid, disabled)}
 										</div>
 
-									{:else if f.type === 'segment'}
+									{:else if rf.type === 'segment'}
 										<div class="stg-row stg-row--seg" class:stg-row--disabled={disabled}>
-											{@render segmentControl(f, fid, disabled)}
+											{@render segmentControl(rf, fid, disabled)}
 										</div>
 									{/if}
 								{/each}

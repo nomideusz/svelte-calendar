@@ -48,6 +48,7 @@ interface CalendarContextRaw {
 	readonly mobile: boolean;
 	readonly autoHeight: boolean;
 	readonly compact: boolean;
+	readonly columns: boolean;
 	readonly labels: CalendarLabels;
 
 	// Load range (read/write)
@@ -66,6 +67,7 @@ export interface CalendarContext {
 	readonly isMobile: boolean;
 	readonly autoHeight: boolean;
 	readonly compact: boolean;
+	readonly columns: boolean;
 	readonly readOnly: boolean;
 	readonly blockedSlots: BlockedSlot[] | undefined;
 	readonly dayHeaderSnippet: Snippet<[{ date: Date; isToday: boolean; dayName: string }]> | undefined;
@@ -112,6 +114,7 @@ export function useCalendarContext(): CalendarContext {
 		get isMobile() { return raw?.mobile ?? false; },
 		get autoHeight() { return raw?.autoHeight ?? false; },
 		get compact() { return raw?.compact ?? false; },
+		get columns() { return raw?.columns ?? false; },
 		get readOnly() { return raw?.readOnly ?? false; },
 		get blockedSlots() { return raw?.blockedSlots; },
 		get dayHeaderSnippet() { return raw?.dayHeaderSnippet; },

@@ -82,6 +82,14 @@ interface Props {
     /** Compact mode: use minimal text-row rendering in Agenda views (dot + time + title). */
     compact?: boolean;
     /**
+     * Timetable layout: week-agenda days render as side-by-side columns
+     * (classic class-schedule grid) instead of a vertical list. Desktop
+     * only — mobile keeps the stacked layout. Pairs well with `equalDays`
+     * for recurring/template schedules. Overrides `compact` while active
+     * (single-line rows truncate at column width).
+     */
+    columns?: boolean;
+    /**
      * Mobile mode.
      * - `'auto'` (default): detect via viewport width (< 768 px)
      * - `true`: always use mobile views

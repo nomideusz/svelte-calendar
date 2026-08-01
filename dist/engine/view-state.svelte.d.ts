@@ -1,15 +1,16 @@
 import type { DateRange } from '../adapters/types.js';
 export type { DateRange };
 /**
- * Built-in view IDs. Custom view IDs are also supported — CalendarViewId
- * is typed as `string` so consumers can register any ID.
+ * Built-in view IDs. Custom view IDs are also supported — see CalendarViewId.
  */
-export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'week-planner' | 'week-agenda' | 'month-grid';
+export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'day-mobile' | 'week-planner' | 'week-agenda' | 'week-mobile' | 'month-grid';
 /**
  * Any view identifier. Use built-in strings like 'day-planner' or your own
  * custom IDs like 'day-kanban', 'week-resource', etc.
+ * (`string & {}` keeps the type open while preserving IDE autocomplete
+ * for the built-in IDs.)
  */
-export type CalendarViewId = string;
+export type CalendarViewId = BuiltInViewId | (string & {});
 export type ViewMode = 'day' | 'week' | 'month';
 export interface ViewStateOptions {
     view?: CalendarViewId;

@@ -23,7 +23,8 @@
  */
 export const auto = ``;
 /**
- * Neutral — explicit light theme. White bg, blue accent, inherits host fonts.
+ * Neutral — explicit light theme. White bg, blue accent, system font stack
+ * (set --dt-sans on an ancestor or via CSS to use a custom font).
  * Use when embedding standalone without ancestor --dt-* vars.
  */
 export const neutral = `
@@ -44,7 +45,6 @@ export const neutral = `
 	--dt-success: rgba(22, 163, 74, 0.7);
 	--dt-weekend-bg: rgba(0, 0, 0, 0.02);
 	--dt-hover: rgba(0, 0, 0, 0.04);
-	--dt-sans: inherit;
 	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
 /** Midnight Industrial — dark charcoal + red accent, tech monitoring */
@@ -66,7 +66,6 @@ export const midnight = `
 	--dt-success: rgba(74, 222, 128, 0.7);
 	--dt-weekend-bg: rgba(148, 163, 184, 0.03);
 	--dt-hover: rgba(148, 163, 184, 0.06);
-	--dt-sans: inherit;
 	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
 /** All available presets keyed by name */

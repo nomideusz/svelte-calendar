@@ -1,10 +1,6 @@
-<script lang="ts">import PlannerDay from "./PlannerDay.svelte";
-import PlannerWeek from "./PlannerWeek.svelte";
+<script lang="ts">import PlannerWeek from "./PlannerWeek.svelte";
 let { mode = "week", ...rest } = $props();
 </script>
 
-{#if mode === 'day'}
-	<PlannerDay {...rest} />
-{:else}
-	<PlannerWeek {...rest} />
-{/if}
+<!-- Both planner modes are the same vertical time grid; day is one column. -->
+<PlannerWeek {mode} {...rest} />

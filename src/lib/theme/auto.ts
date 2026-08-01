@@ -311,26 +311,54 @@ function probeAccent(root: HTMLElement): RGB | null {
 
 // ── Font detection ──────────────────────────────────────
 
-function probeFonts(el: HTMLElement): { sans: string; mono: string } {
-	let bodyFont = 'system-ui, sans-serif';
+/** Common CSS variable names for the host's monospace font stack. */
+const MONO_VAR_CANDIDATES = [
+	'--font-mono',        // Tailwind v4 theme tokens, common convention
+	'--font-family-mono',
+	'--font-monospace',
+	'--mono-font',
+	'--code-font',
+];
+
+const MONO_FALLBACK = "ui-monospace, 'SFMono-Regular', monospace";
+
+/**
+ * Adopt the host page's fonts.
+ *
+ * Sans: the host element's *computed* font-family — the resolved authored
+ * stack, so webfont names come through verbatim. (Declaring `--dt-sans:
+ * inherit` does NOT work: a custom property with no ancestor value computes
+ * to guaranteed-invalid, so `var(--dt-sans, fallback)` used the fallback and
+ * the host font never applied.)
+ *
+ * Mono: common CSS variables on :root, then any code-ish element's computed
+ * font, then a generic stack.
+ */
+function probeFonts(host: HTMLElement): { sans: string; mono: string } {
+	let sans = 'system-ui, sans-serif';
 	try {
-		const cs = getComputedStyle(el);
-		if (cs.fontFamily) bodyFont = cs.fontFamily;
+		const f = getComputedStyle(host).fontFamily;
+		if (f) sans = f;
 	} catch {
 		// getComputedStyle may fail in test environments
 	}
 
-	// For monospace, check if the page defines one
-	const pre = el.querySelector('pre, code, .mono, [class*="mono"]') as HTMLElement | null;
-	let mono = "ui-monospace, 'SFMono-Regular', monospace";
-	if (pre) {
-		try {
-			const pf = getComputedStyle(pre).fontFamily;
-			if (pf) mono = pf;
-		} catch { /* ignore */ }
+	let mono = '';
+	try {
+		const rootCs = getComputedStyle(document.documentElement);
+		for (const name of MONO_VAR_CANDIDATES) {
+			const val = rootCs.getPropertyValue(name).trim();
+			if (val) { mono = val; break; }
+		}
+	} catch { /* ignore */ }
+	if (!mono) {
+		const code = document.querySelector('pre, code, kbd, samp');
+		if (code) {
+			try { mono = getComputedStyle(code).fontFamily || ''; } catch { /* ignore */ }
+		}
 	}
 
-	return { sans: bodyFont, mono };
+	return { sans, mono: mono || MONO_FALLBACK };
 }
 
 // ── Background walking ──────────────────────────────────
@@ -474,13 +502,9 @@ export function probeHostTheme(
 	const [aH, aS, aL] = rgbToHsl(...accent);
 
 	// ── Fonts ──
-	// When auto-probing, use `inherit` so the calendar naturally inherits the
-	// host page's font via CSS inheritance. Probing getComputedStyle().fontFamily
-	// and re-declaring it can break the cascade (resolved names differ from the
-	// authored font stack). Only use an explicit value if the user overrides.
 	const fonts = options.font
-		? { sans: options.font, mono: "ui-monospace, 'SFMono-Regular', monospace" }
-		: { sans: 'inherit', mono: "ui-monospace, 'SFMono-Regular', monospace" };
+		? { sans: options.font, mono: MONO_FALLBACK }
+		: probeFonts(host);
 
 	// ── Text colors (probe host's actual text, validate contrast) ──
 	const probedText = probeTextColor(host, bg);
@@ -604,12 +628,21 @@ export function observeHostTheme(
 		attributeFilter: ['class', 'style', 'data-theme', 'data-mode', 'color-scheme'],
 	});
 
+	// 3. Re-probe once the document settles. A probe during initial load can
+	//    read pre-stylesheet values (wrong background → wrong light/dark call);
+	//    late webfonts change computed font stacks. Both are one-shot events.
+	if (document.readyState !== 'complete') {
+		window.addEventListener('load', scheduleUpdate, { once: true });
+	}
+	document.fonts?.ready?.then(scheduleUpdate).catch(() => {});
+
 	// Initial probe
 	update();
 
 	return () => {
 		cancelAnimationFrame(rafId);
 		mql?.removeEventListener('change', onScheme);
+		window.removeEventListener('load', scheduleUpdate);
 		observer.disconnect();
 	};
 }

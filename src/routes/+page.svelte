@@ -9,7 +9,6 @@
 		auto,
 		neutral,
 		presets,
-		initTextMeasure,
 	} from "$lib/index.js";
 	import type { PresetName } from "$lib/index.js";
 	import Settings from "./_components/Settings.svelte";
@@ -21,8 +20,6 @@
 	type SettingValue = string | number | boolean;
 
 	let isMobile = $state(false);
-	let pretextActive = $state(false);
-	let pretextLoading = $state(false);
 
 	onMount(() => {
 		const mql = window.matchMedia("(max-width: 768px)");
@@ -33,19 +30,6 @@
 		mql.addEventListener("change", onChange);
 		return () => mql.removeEventListener("change", onChange);
 	});
-
-	async function togglePretext() {
-		if (pretextActive) {
-			// Can't unload a module — reload to disable
-			(globalThis as any).__pretextModule = null;
-			pretextActive = false;
-			return;
-		}
-		pretextLoading = true;
-		const ok = await initTextMeasure();
-		pretextActive = ok;
-		pretextLoading = false;
-	}
 
 	function createVisibleHours(
 		enabled: boolean,
@@ -88,6 +72,7 @@
 		blockedSlotsEnabled: true,
 		disabledDatesEnabled: true,
 		compact: false,
+		columns: false,
 		rtl: false,
 		phoneFrame: false,
 	};
@@ -112,6 +97,16 @@
 				activeView: "week-planner", readOnly: true,
 				showDates: false, equalDays: true,
 				visibleHoursEnabled: true, startHour: 7, endHour: 21,
+				blockedSlotsEnabled: false, disabledDatesEnabled: false,
+			},
+		},
+		{
+			name: "Studio timetable",
+			hint: "Week agenda as side-by-side day columns — classic class-schedule grid",
+			values: {
+				activeView: "week-agenda", readOnly: true, columns: true,
+				showModePills: false, showNavigation: false,
+				showDates: false, equalDays: true,
 				blockedSlotsEnabled: false, disabledDatesEnabled: false,
 			},
 		},
@@ -162,6 +157,7 @@
 	const mobileMode = $derived<"auto" | boolean>(toMobileMode(settingsValues.mobileMode));
 	const days = $derived(Math.max(1, Math.min(14, Number(settingsValues.days ?? 7))));
 	const compact = $derived(Boolean(settingsValues.compact));
+	const columns = $derived(Boolean(settingsValues.columns));
 	const blockedSlotsEnabled = $derived(Boolean(settingsValues.blockedSlotsEnabled));
 	const disabledDatesEnabled = $derived(Boolean(settingsValues.disabledDatesEnabled));
 	const activeView = $derived(
@@ -173,6 +169,15 @@
 
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
+
+	// ── Option applicability: which views actually read each option ──
+	// Grounded in what each view pulls from context (grep ctx.* per view dir).
+	// Inert controls disable with a reason instead of silently doing nothing.
+	const inViews = (views: string[], reason: string) =>
+		(v: Record<string, SettingValue>) => !views.includes(String(v.activeView)) && reason;
+	const PLANNERS = ["week-planner", "day-planner"];
+	const AGENDAS = ["week-agenda", "day-agenda"];
+	const WEEKS = ["week-planner", "week-agenda"];
 
 	const settingsFields: SettingsField[] = [
 		{
@@ -234,9 +239,11 @@
 			label: "Monday Start",
 			group: "",
 			type: "toggle",
+			disabledWhen: inViews([...WEEKS, "month-grid"], "Single-day view — no week start"),
 		},
 		{ key: "readOnly",
-			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle" },
+			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle",
+			disabledWhen: inViews(PLANNERS, "No drag editing in this view") },
 		{
 			key: "showModePills",
 			hint: "Day/Week switch in the header (prop: showModePills)",
@@ -252,21 +259,31 @@
 			type: "toggle",
 		},
 		{ key: "equalDays",
-			hint: "No past-day dimming — for template schedules", label: "Equal Days", group: "", type: "toggle" },
+			hint: "No past-day dimming — for template schedules", label: "Equal Days", group: "", type: "toggle",
+			disabledWhen: inViews([...PLANNERS, ...AGENDAS], "Not used by Month Grid") },
 		{ key: "showDates",
-			hint: "Off: headers show day names only (Mon, Tue, …)", label: "Show Dates", group: "", type: "toggle" },
+			hint: "Off: headers show day names only (Mon, Tue, …)", label: "Show Dates", group: "", type: "toggle",
+			disabledWhen: inViews([...PLANNERS, ...AGENDAS], "Not used by Month Grid") },
 		{ key: "rtl",
 			hint: "Right-to-left text direction (prop: dir='rtl')", label: "RTL", group: "", type: "toggle" },
 		{ key: "compact",
-			hint: "Minimal dot + time + title rows in Agenda views (prop: compact)", label: "Compact Agenda", group: "", type: "toggle" },
+			hint: "Minimal dot + time + title rows in Agenda views (prop: compact)", label: "Compact Agenda", group: "", type: "toggle",
+			disabledWhen: (v) =>
+				(!AGENDAS.includes(String(v.activeView)) && "Agenda views only") ||
+				(v.activeView === "week-agenda" && v.columns === true && "Overridden by Timetable Columns") },
+		{ key: "columns",
+			hint: "Week agenda days as side-by-side timetable columns on desktop; overrides Compact (prop: columns)", label: "Timetable Columns", group: "", type: "toggle",
+			disabledWhen: inViews(["week-agenda"], "Week Agenda only") },
 		{ key: "phoneFrame",
-			hint: "Preview in a 390px frame — the container-based mobile mode kicks in", label: "Phone Frame", group: "", type: "toggle" },
+			hint: "Preview in a 390px frame — the container-based mobile mode kicks in", label: "Phone Frame", group: "", type: "toggle",
+			disabledWhen: (v) => v.mobileMode === "force" && "Mobile views already forced" },
 		{
 			key: "blockedSlotsEnabled",
 			hint: "Hatched unbookable ranges, e.g. lunch breaks (prop: blockedSlots)",
 			label: "Blocked Slots",
 			group: "Availability",
 			type: "toggle",
+			disabledWhen: inViews(PLANNERS, "Planner views only"),
 		},
 		{
 			key: "disabledDatesEnabled",
@@ -281,6 +298,7 @@
 			label: "Visible Hours",
 			group: "Planner",
 			type: "toggle",
+			disabledWhen: inViews(PLANNERS, "Planner views only"),
 		},
 		{
 			key: "startHour",
@@ -292,6 +310,7 @@
 			max: 22,
 			step: 1,
 			enabledWhen: "visibleHoursEnabled",
+			disabledWhen: inViews(PLANNERS, "Planner views only"),
 		},
 		{
 			key: "endHour",
@@ -303,6 +322,7 @@
 			max: 24,
 			step: 1,
 			enabledWhen: "visibleHoursEnabled",
+			disabledWhen: inViews(PLANNERS, "Planner views only"),
 		},
 		{
 			key: "days",
@@ -313,6 +333,7 @@
 			min: 1,
 			max: 14,
 			step: 1,
+			disabledWhen: inViews(WEEKS, "Week views only"),
 		},
 	];
 
@@ -419,6 +440,7 @@
 		if (equalDays) props.push("equalDays");
 		if (!showDates) props.push("showDates={false}");
 		if (compact) props.push("compact");
+		if (columns) props.push("columns");
 		if (days !== 7) props.push(`days={${days}}`);
 		if (visibleHours) props.push(`visibleHours={[${visibleHours[0]}, ${visibleHours[1]}]}`);
 		if (mobileMode !== "auto") props.push(`mobile={${mobileMode}}`);
@@ -465,24 +487,6 @@
 				</div>
 			{/if}
 		</div>
-		<button
-			class="pretext-toggle"
-			class:pretext-on={pretextActive}
-			onclick={togglePretext}
-			disabled={pretextLoading}
-			aria-describedby="pretext-help"
-		>
-			{#if pretextLoading}
-				Loading text fitting…
-			{:else if pretextActive}
-				Text fitting: precise
-			{:else}
-				Text fitting: basic
-			{/if}
-		</button>
-		<p class="pretext-help" id="pretext-help">
-			Pretext is optional. Turn it on to load the text-measurement engine and fit event labels more accurately.
-		</p>
 	</div>
 
 	<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
@@ -505,6 +509,7 @@
 				mobile={mobileMode}
 				{days}
 				{compact}
+				{columns}
 				{locale}
 				{dir}
 				blockedSlots={blockedSlots}
@@ -669,52 +674,11 @@
 		background: var(--dt-success, #34d399);
 		flex-shrink: 0;
 	}
-	.pretext-toggle {
-		border: 1px solid color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 25%, transparent);
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.6));
-		font: 600 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		padding: 5px 10px;
-		border-radius: 6px;
-		cursor: pointer;
-		white-space: nowrap;
-		transition: all 150ms;
-		flex-shrink: 0;
-	}
-	.pretext-help {
-		max-width: 360px;
-		margin: 0;
-		font: 400 11px/1.4 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(148, 163, 184, 0.52));
-		text-align: right;
-	}
-	.pretext-toggle:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
-		border-color: color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 50%, transparent);
-	}
-	.pretext-on {
-		background: color-mix(in srgb, var(--dt-success, #34d399) 14%, transparent);
-		border-color: color-mix(in srgb, var(--dt-success, #34d399) 40%, transparent);
-		color: var(--dt-success, #34d399);
-	}
-	.pretext-on:hover {
-		background: color-mix(in srgb, var(--dt-success, #34d399) 22%, transparent);
-		color: var(--dt-success, #34d399);
-	}
 	@media (max-width: 760px) {
 		.toolbar {
 			flex-direction: column;
 			align-items: stretch;
 			padding: 0 16px;
-		}
-		.pretext-toggle {
-			width: fit-content;
-		}
-		.pretext-help {
-			text-align: left;
-			max-width: none;
 		}
 	}
 </style>

@@ -46,7 +46,7 @@ Users can also switch via the built-in Day/Week/Month pills.
 Planner views are designed for direct manipulation:
 
 - **Move** — drag an event to another day or time; a ghost previews the target before the move commits.
-- **Resize** — drag an event's edge handles (`day-planner`: left/right, `day-mobile`: top/bottom) to change its duration; `minDuration`/`maxDuration` clamp at commit.
+- **Resize** — drag an event's top/bottom edge handles to change its duration; `minDuration`/`maxDuration` clamp at commit.
 - **Drag-to-create** — press on empty canvas and sweep to draw a new event; a plain click still creates a default-length slot. Both fire `oneventcreate` with the final range, after blocked-slot and disabled-date validation.
 
 The month grid lists events as chips per day with a "+N more" overflow; clicking a day fires `ondayclick(date)` — the natural month → day drill-down.
@@ -743,21 +743,6 @@ const now = nowInZone('Asia/Tokyo');
 formatInTimeZone(date, 'America/New_York', { hour: '2-digit', minute: '2-digit' });
 ```
 
-## Text Fitting (optional)
-
-Event cards fit their labels using character-width heuristics. For pixel-precise fitting (long titles, narrow columns, custom fonts), initialize the optional [Pretext](https://www.npmjs.com/package/pretext) measurement engine once at app startup — everything falls back gracefully if you don't:
-
-```svelte
-<script>
-  import { onMount } from 'svelte';
-  import { initTextMeasure } from '@nomideusz/svelte-calendar';
-
-  onMount(() => initTextMeasure());  // resolves true if Pretext loaded
-</script>
-```
-
-Custom views can measure text themselves via `createTextMeasure(options)` → `fitContent({ title, subtitle, maxWidth, maxHeight, … })`.
-
 ## Utilities
 
 Small helpers used by the built-in views, exported for custom rendering:
@@ -838,6 +823,7 @@ The widget renders inside shadow DOM: host-page CSS (resets, theme stylesheets) 
 | `minDuration` | `number` | — | Minimum event duration in minutes (enforced on create & resize) |
 | `maxDuration` | `number` | — | Maximum event duration in minutes (enforced on create & resize) |
 | `compact` | `boolean` | `false` | Minimal text-row rendering in Agenda views (dot + time + title) |
+| `columns` | `boolean` | `false` | Timetable layout: week-agenda days as side-by-side columns on desktop (mobile keeps the stacked list). Pairs well with `equalDays`; overrides `compact` while active |
 | `dayHeader` | `Snippet<[{ date, isToday, dayName }]>` | — | Custom day header snippet for planner/agenda views |
 | `header` | `Snippet<[HeaderContext]>` | — | Replace entire header chrome (date label + mode pills + nav) |
 | `navigation` | `Snippet<[NavigationContext]>` | — | Replace just the prev/next/today controls |

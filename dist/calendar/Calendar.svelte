@@ -69,6 +69,7 @@ let {
   maxDuration,
   disabledDates,
   compact = false,
+  columns = false,
   mobile: mobileProp = "auto",
   event: eventSnippet,
   empty: emptySnippet,
@@ -293,6 +294,9 @@ setContext("calendar", {
   },
   get compact() {
     return compact;
+  },
+  get columns() {
+    return columns;
   },
   get labels() {
     return mergedLabels;

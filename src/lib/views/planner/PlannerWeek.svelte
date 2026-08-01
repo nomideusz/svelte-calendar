@@ -1,5 +1,7 @@
 <!--
-  Planner week mode — vertical time grid (Google-Calendar-style).
+  Planner time grid — vertical, Google-Calendar-style. Renders both planner
+  modes: week (N columns from viewState.dayCount) and day (a single column),
+  so the two share one geometry, one drag mapping, and one overlap engine.
 
   • Left time gutter with localized hour labels; N day columns (viewState.dayCount).
   • Sticky day-header row + sticky all-day strip; the grid scrolls vertically.
@@ -20,10 +22,12 @@
 	import { DAY_MS, HOUR_MS, sod, addDaysMs } from '../../core/time.js';
 	import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { fmtH, fmtTime, fmtDuration, weekdayShort } from '../../core/locale.js';
+	import { fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong } from '../../core/locale.js';
 
 
 	interface Props {
+		/** 'day' renders a single-day column; 'week' the multi-day grid. */
+		mode?: 'day' | 'week';
 		mondayStart?: boolean;
 		locale?: string;
 		height?: number | null;
@@ -40,6 +44,7 @@
 	}
 
 	let {
+		mode = 'week',
 		mondayStart = true,
 		locale,
 		height = 520,
@@ -90,7 +95,15 @@
 	// The engine (viewState.range) already computes the week window; fall back
 	// to a local computation when running headless.
 	const todayMs = $derived(clock.today);
-	const customDays = $derived(viewState?.dayCount ?? 7);
+	// Day mode is the same grid at one column (viewState.mode covers in-Calendar
+	// use where the view id decides; the prop covers headless/direct use).
+	const singleDay = $derived(mode === 'day' || viewState?.mode === 'day');
+	const customDays = $derived(singleDay ? 1 : (viewState?.dayCount ?? 7));
+	// Calendar's chrome date label renders exactly when showDates is on, and in
+	// day mode it already names the visible day — drop the column header so the
+	// date never appears twice. Headless or showDates=false hosts keep it; a
+	// custom dayHeader snippet always renders.
+	const hideDayHead = $derived(singleDay && showDates && !!viewState && !dayHeaderSnippet);
 	const weekStartMs = $derived.by(() => {
 		const r = viewState?.range;
 		if (r) return sod(r.start.getTime());
@@ -212,7 +225,7 @@
 
 			infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
 
-			// Union-find overlap groups (same algorithm as PlannerDay/MobileDay)
+			// Union-find overlap groups (same algorithm as MobileDay)
 			const par = infos.map((_, i) => i);
 			function find(i: number): number {
 				while (par[i] !== i) { par[i] = par[par[i]]; i = par[i]; }
@@ -712,7 +725,9 @@
 	<div class="tw-scroll" bind:this={scrollEl}>
 		<div class="tw-inner" style:min-width="{innerMinWidth}px">
 			<!-- Sticky top: day headers + all-day strip -->
+			{#if !hideDayHead || hasAllDayRow}
 			<div class="tw-top">
+				{#if !hideDayHead}
 				<div class="tw-head">
 					<div class="tw-corner" style:width="{GUTTER_W}px" aria-hidden="true"></div>
 					{#each dayCols as day (day.ms)}
@@ -721,7 +736,7 @@
 							class:tw-hd--today={day.isToday}
 							aria-current={day.isToday ? 'date' : undefined}
 						>
-							<span class="tw-hd-wd">{weekdayShort(day.ms, locale)}</span>
+							<span class="tw-hd-wd">{singleDay ? weekdayLong(day.ms, locale) : weekdayShort(day.ms, locale)}</span>
 							{#if showDates}
 								<span class="tw-hd-num" class:tw-hd-num--today={day.isToday}>{day.dayNum}</span>
 							{/if}
@@ -733,6 +748,7 @@
 						</div>
 					{/each}
 				</div>
+				{/if}
 
 				{#if hasAllDayRow}
 					<div class="tw-allday">
@@ -760,6 +776,7 @@
 					</div>
 				{/if}
 			</div>
+			{/if}
 
 			<!-- Grid body -->
 			<div class="tw-body" style:height="{gridHeight}px">

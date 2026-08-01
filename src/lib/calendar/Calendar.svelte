@@ -119,6 +119,14 @@
 		/** Compact mode: use minimal text-row rendering in Agenda views (dot + time + title). */
 		compact?: boolean;
 		/**
+		 * Timetable layout: week-agenda days render as side-by-side columns
+		 * (classic class-schedule grid) instead of a vertical list. Desktop
+		 * only — mobile keeps the stacked layout. Pairs well with `equalDays`
+		 * for recurring/template schedules. Overrides `compact` while active
+		 * (single-line rows truncate at column width).
+		 */
+		columns?: boolean;
+		/**
 		 * Mobile mode.
 		 * - `'auto'` (default): detect via viewport width (< 768 px)
 		 * - `true`: always use mobile views
@@ -205,6 +213,7 @@
 		maxDuration,
 		disabledDates,
 		compact = false,
+		columns = false,
 		mobile: mobileProp = 'auto',
 		event: eventSnippet,
 		empty: emptySnippet,
@@ -399,7 +408,7 @@
 
 	// ── Load range signal ──
 	// Views can write a wider range here to override the default viewState.range.
-	// This lets infinite-scroll views (PlannerWeek, PlannerDay) declare their
+	// This lets infinite-scroll views (PlannerWeek) declare their
 	// buffer needs without directly calling store.load().
 	let viewLoadRange = $state<{ start: Date; end: Date } | null>(null);
 
@@ -439,6 +448,7 @@
 		get mobile() { return useMobile; },
 		get autoHeight() { return heightProp === 'auto'; },
 		get compact() { return compact; },
+		get columns() { return columns; },
 		get labels() { return mergedLabels; },
 
 		// Load range (read/write)

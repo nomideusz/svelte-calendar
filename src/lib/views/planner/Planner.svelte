@@ -1,5 +1,4 @@
 <script lang="ts">
-	import PlannerDay from './PlannerDay.svelte';
 	import PlannerWeek from './PlannerWeek.svelte';
 
 	interface Props {
@@ -10,8 +9,5 @@
 	let { mode = 'week', ...rest }: Props = $props();
 </script>
 
-{#if mode === 'day'}
-	<PlannerDay {...rest} />
-{:else}
-	<PlannerWeek {...rest} />
-{/if}
+<!-- Both planner modes are the same vertical time grid; day is one column. -->
+<PlannerWeek {mode} {...rest} />

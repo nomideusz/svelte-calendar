@@ -34,6 +34,7 @@ export function useCalendarContext() {
         get isMobile() { return raw?.mobile ?? false; },
         get autoHeight() { return raw?.autoHeight ?? false; },
         get compact() { return raw?.compact ?? false; },
+        get columns() { return raw?.columns ?? false; },
         get readOnly() { return raw?.readOnly ?? false; },
         get blockedSlots() { return raw?.blockedSlots; },
         get dayHeaderSnippet() { return raw?.dayHeaderSnippet; },

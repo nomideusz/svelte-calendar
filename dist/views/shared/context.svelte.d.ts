@@ -14,6 +14,7 @@ export interface CalendarContext {
     readonly isMobile: boolean;
     readonly autoHeight: boolean;
     readonly compact: boolean;
+    readonly columns: boolean;
     readonly readOnly: boolean;
     readonly blockedSlots: BlockedSlot[] | undefined;
     readonly dayHeaderSnippet: Snippet<[{

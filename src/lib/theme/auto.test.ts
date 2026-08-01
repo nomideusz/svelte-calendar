@@ -73,6 +73,31 @@ describe('probeHostTheme', () => {
 
 		document.body.removeChild(el);
 	});
+
+	it('adopts the host font as --dt-sans', () => {
+		const wrap = document.createElement('div');
+		wrap.style.fontFamily = 'Georgia, serif';
+		const el = document.createElement('div');
+		wrap.appendChild(el);
+		document.body.appendChild(wrap);
+
+		const css = probeHostTheme(el);
+		expect(css).toContain('--dt-sans: Georgia, serif');
+
+		document.body.removeChild(wrap);
+	});
+
+	it('adopts a host --font-mono variable as --dt-mono', () => {
+		document.documentElement.style.setProperty('--font-mono', '"JetBrains Mono", monospace');
+		const el = document.createElement('div');
+		document.body.appendChild(el);
+
+		const css = probeHostTheme(el);
+		expect(css).toContain('--dt-mono: "JetBrains Mono", monospace');
+
+		document.body.removeChild(el);
+		document.documentElement.style.removeProperty('--font-mono');
+	});
 });
 
 describe('observeHostTheme', () => {

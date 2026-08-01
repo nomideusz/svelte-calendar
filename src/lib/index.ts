@@ -28,7 +28,8 @@ export type {
 	CalendarViewId,
 	BuiltInViewId,
 	ViewMode,
-	Selection,
+	// Renamed export: the bare name `Selection` shadows the DOM global.
+	Selection as CalendarSelection,
 	DragState,
 	DragMode,
 	DragPayload,
@@ -40,6 +41,7 @@ export type {
 	CalendarAdapter,
 	WritableCalendarAdapter,
 	DateRange,
+	MemoryAdapterOptions,
 	RestAdapterOptions,
 	RecurringEvent,
 	RecurringAdapterOptions,
@@ -83,8 +85,6 @@ export {
 	isMultiDay,
 	isAllDay,
 	segmentForDay,
-	createTextMeasure,
-	initTextMeasure,
 } from './core/index.js';
 export type {
 	Clock,
@@ -93,9 +93,6 @@ export type {
 	DaySegment,
 	CalendarLabels,
 	EventStatus,
-	TextMeasure,
-	TextMeasureOptions,
-	ContentFit,
 } from './core/index.js';
 
 // ─── Themes ─────────────────────────────────────────────
