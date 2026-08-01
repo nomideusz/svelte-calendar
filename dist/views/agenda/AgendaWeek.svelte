@@ -54,6 +54,10 @@ let expandedDays = $state([]);
 function toggleDayExpand(ms) {
   expandedDays = expandedDays.includes(ms) ? expandedDays.filter((m) => m !== ms) : [...expandedDays, ms];
 }
+let expandedPast = $state([]);
+function togglePastExpand(ms) {
+  expandedPast = expandedPast.includes(ms) ? expandedPast.filter((m) => m !== ms) : [...expandedPast, ms];
+}
 const fmt = (d) => fmtTime(d, locale);
 const eta = (ms) => timeUntilMs(ms, clock.tick, L);
 const prog = (ev) => progress(ev, clock.tick);
@@ -178,6 +182,59 @@ const weekDays = $derived.by(() => {
 	</button>
 {/snippet}
 
+<!-- ═══ Shared compact row snippet ═══ -->
+{#snippet compactRow(ev: TimelineEvent, showLoc: boolean, done: boolean)}
+	<button
+		type="button"
+		class="ag-compact"
+		class:ag-compact--selected={selectedEventId === ev.id}
+		class:ag-compact--done={done}
+		class:ag-compact--cancelled={ev.status === 'cancelled'}
+		class:ag-compact--tentative={ev.status === 'tentative'}
+		class:ag-compact--full={ev.status === 'full'}
+		class:ag-compact--limited={ev.status === 'limited'}
+		style:--ev-color={ev.color || 'var(--dt-accent)'}
+		aria-label="{ev.title}{done ? `, ${L.completed}` : ''}, {fmt(ev.start)}, {duration(ev)}"
+		onclick={() => handleClick(ev)}
+		onpointerenter={() => oneventhover?.(ev)}
+	>
+		<EventContent event={ev}>
+		<span class="ag-compact-dot"></span>
+		<span class="ag-compact-time">{fmt(ev.start)}</span>
+		<div class="ag-compact-main">
+			<span class="ag-compact-title">{ev.title}</span>
+			{#if showLoc && ev.location}
+				<span class="ag-compact-loc">{ev.location}</span>
+			{/if}
+			{#if ev.subtitle}
+				<span class="ag-compact-sub">{ev.subtitle}</span>
+			{/if}
+			{#if ev.tags?.length}
+				{#each ev.tags as tag}
+					<span class="ag-compact-tag">{tag}</span>
+				{/each}
+			{/if}
+		</div>
+		<span class="ag-compact-dur">{duration(ev)}</span>
+		</EventContent>
+	</button>
+{/snippet}
+
+<!-- ═══ "✓ N completed" disclosure toggle ═══ -->
+{#snippet pastToggle(ms: number, count: number, summary: boolean)}
+	{@const open = expandedPast.includes(ms)}
+	<button
+		type="button"
+		class="ag-wday-past-line ag-past-toggle"
+		class:ag-wday-past-line--summary={summary}
+		aria-expanded={open}
+		onclick={() => togglePastExpand(ms)}
+	>
+		✓ {L.nCompleted(count)}
+		<svg class="ag-past-chevron" class:ag-past-chevron--open={open} viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>
+	</button>
+{/snippet}
+
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="ag ag--week"
@@ -207,7 +264,14 @@ const weekDays = $derived.by(() => {
 						{/if}
 					</div>
 					{#if day.timedEvents.length > 0}
-						<div class="ag-wday-past-line ag-wday-past-line--summary">✓ {L.nCompleted(day.timedEvents.length)}</div>
+						{@render pastToggle(day.ms, day.timedEvents.length, true)}
+						{#if expandedPast.includes(day.ms)}
+							<div class="ag-wday-compact">
+								{#each day.timedEvents as ev (ev.id)}
+									{@render compactRow(ev, false, true)}
+								{/each}
+							</div>
+						{/if}
 					{:else if day.events.length === 0}
 						<div class="ag-wday-past-line ag-wday-past-line--summary">{L.noEvents}</div>
 					{/if}
@@ -269,36 +333,7 @@ const weekDays = $derived.by(() => {
 					<!-- Compact: minimal dot + time + title rows for all days -->
 					<div class="ag-wday-compact">
 						{#each day.timedEvents as ev (ev.id)}
-							<button
-								type="button"
-								class="ag-compact"
-								class:ag-compact--selected={selectedEventId === ev.id}
-								class:ag-compact--cancelled={ev.status === 'cancelled'}
-								class:ag-compact--tentative={ev.status === 'tentative'}
-								class:ag-compact--full={ev.status === 'full'}
-								class:ag-compact--limited={ev.status === 'limited'}
-								style:--ev-color={ev.color || 'var(--dt-accent)'}
-								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
-								onclick={() => handleClick(ev)}
-								onpointerenter={() => oneventhover?.(ev)}
-							>
-								<EventContent event={ev}>
-								<span class="ag-compact-dot"></span>
-								<span class="ag-compact-time">{fmt(ev.start)}</span>
-								<div class="ag-compact-main">
-									<span class="ag-compact-title">{ev.title}</span>
-									{#if ev.subtitle}
-										<span class="ag-compact-sub">{ev.subtitle}</span>
-									{/if}
-									{#if ev.tags?.length}
-										{#each ev.tags as tag}
-											<span class="ag-compact-tag">{tag}</span>
-										{/each}
-									{/if}
-								</div>
-								<span class="ag-compact-dur">{duration(ev)}</span>
-								</EventContent>
-							</button>
+							{@render compactRow(ev, false, false)}
 						{/each}
 					</div>
 				{:else if equalDays}
@@ -339,7 +374,12 @@ const weekDays = $derived.by(() => {
 							</div>
 						{/each}
 						{#if day.pastEvents.length > 0}
-							<div class="ag-wday-past-line">✓ {L.nCompleted(day.pastEvents.length)}</div>
+							{@render pastToggle(day.ms, day.pastEvents.length, false)}
+							{#if expandedPast.includes(day.ms)}
+								{#each day.pastEvents as ev (ev.id)}
+									{@render compactRow(ev, false, true)}
+								{/each}
+							{/if}
 						{/if}
 					</div>
 				{:else}
@@ -347,39 +387,7 @@ const weekDays = $derived.by(() => {
 					{@const dayExpanded = expandedDays.includes(day.ms)}
 					<div class="ag-wday-compact">
 						{#each (dayExpanded ? day.timedEvents : day.timedEvents.slice(0, 4)) as ev (ev.id)}
-							<button
-								type="button"
-								class="ag-compact"
-								class:ag-compact--selected={selectedEventId === ev.id}
-								class:ag-compact--cancelled={ev.status === 'cancelled'}
-								class:ag-compact--tentative={ev.status === 'tentative'}
-								class:ag-compact--full={ev.status === 'full'}
-								class:ag-compact--limited={ev.status === 'limited'}
-								style:--ev-color={ev.color || 'var(--dt-accent)'}
-								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
-								onclick={() => handleClick(ev)}
-								onpointerenter={() => oneventhover?.(ev)}
-							>
-								<EventContent event={ev}>
-								<span class="ag-compact-dot"></span>
-								<span class="ag-compact-time">{fmt(ev.start)}</span>
-								<div class="ag-compact-main">
-									<span class="ag-compact-title">{ev.title}</span>
-									{#if ev.location}
-										<span class="ag-compact-loc">{ev.location}</span>
-									{/if}
-									{#if ev.subtitle}
-										<span class="ag-compact-sub">{ev.subtitle}</span>
-									{/if}
-									{#if ev.tags?.length}
-										{#each ev.tags as tag}
-											<span class="ag-compact-tag">{tag}</span>
-										{/each}
-									{/if}
-								</div>
-								<span class="ag-compact-dur">{duration(ev)}</span>
-								</EventContent>
-							</button>
+							{@render compactRow(ev, true, false)}
 						{/each}
 						{#if day.timedEvents.length > 4}
 							<button
@@ -425,7 +433,8 @@ const weekDays = $derived.by(() => {
 	.ag-card,
 	.ag-allday-chip,
 	.ag-compact,
-	.ag-compact-more {
+	.ag-compact-more,
+	.ag-past-toggle {
 		font: inherit;
 		color: inherit;
 		text-align: left;
@@ -687,6 +696,10 @@ const weekDays = $derived.by(() => {
 		top: 0;
 		background: var(--dt-bg, #fff);
 		z-index: 1;
+		/* Own compositor layer: without it, fast (async) scrolling repaints
+		   the pinned header a frame late and a gap flashes above it. */
+		transform: translateZ(0);
+		will-change: transform;
 	}
 	.ag-wday-head-left {
 		display: flex;
@@ -767,6 +780,42 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-wday-past-line--summary {
 		padding: 0 20px 8px;
+	}
+	/* "✓ N completed" is a disclosure — tap to reveal the finished events */
+	.ag-past-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		cursor: pointer;
+		min-height: 32px;
+		transition: color 150ms;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.ag-past-toggle:hover,
+	.ag-past-toggle:active {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.ag-past-toggle:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		border-radius: 4px;
+	}
+	.ag-past-chevron {
+		transition: transform 120ms;
+	}
+	.ag-past-chevron--open {
+		transform: rotate(180deg);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ag-past-chevron { transition: none; }
+	}
+	/* Revealed completed events: dim + strike, single token layer */
+	.ag-compact--done .ag-compact-title {
+		text-decoration: line-through;
+		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+	}
+	.ag-compact--done .ag-compact-dot {
+		opacity: 0.5;
 	}
 
 	/* Compact day events */
