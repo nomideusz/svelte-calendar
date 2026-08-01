@@ -24,5 +24,6 @@ export interface SwipeHandlers {
     ontouchstart: (e: TouchEvent) => void;
     ontouchmove: (e: TouchEvent) => void;
     ontouchend: () => void;
+    ontouchcancel: () => void;
 }
 export declare function createSwipe(cb: SwipeCallbacks): SwipeHandlers;

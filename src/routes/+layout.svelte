@@ -203,7 +203,10 @@
 	@media (max-width: 600px) {
 		.site-hd {
 			padding: 12px 16px;
-			gap: 10px;
+			gap: 6px 10px;
+			/* Never force the page wider than the viewport — overflowing
+			   items wrap to a second row instead. */
+			flex-wrap: wrap;
 		}
 		.site-logo {
 			font-size: 14px;

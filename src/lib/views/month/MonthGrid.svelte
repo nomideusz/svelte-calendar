@@ -50,7 +50,11 @@
 	const clock = createClock(ctx.timezone);
 	const todayMs = $derived(clock.today);
 
-	const MAX_CHIPS = $derived(isMobile ? 2 : 3);
+	// Mobile cells are too narrow for text chips (a 55px cell fits ~1 character)
+	// and too short for stacked rows — render color dots instead, and let the
+	// cell tap (day drill-down) carry the interaction.
+	const dotsMode = $derived(isMobile);
+	const MAX_CHIPS = 3;
 
 	const range = $derived(viewState?.range);
 	const focusMonth = $derived((focusDate ?? new Date()).getMonth());
@@ -191,6 +195,7 @@
 <div
 	class="mg"
 	class:mg--auto={autoHeight}
+	class:mg--dots={dotsMode}
 	style={style || undefined}
 	style:height={autoHeight ? undefined : height ? `${height}px` : '100%'}
 	role="grid"
@@ -257,6 +262,7 @@
 									class:mg-chip--cancelled={ev.status === 'cancelled'}
 									style:--mg-chip-color={ev.color ?? 'var(--dt-accent)'}
 									title={ev.title}
+									aria-label="{ev.title}{chipTime(ev) ? `, ${chipTime(ev)}` : ''}"
 									onclick={(e) => {
 										e.stopPropagation();
 										oneventclick?.(ev);
@@ -274,9 +280,10 @@
 								type="button"
 								class="mg-more"
 								aria-expanded={ondayclick ? undefined : false}
+								aria-label={L.nMore(cell.overflow)}
 								onclick={(e) => overflowClick(e, cell)}
 							>
-								{L.nMore(cell.overflow)}
+								{dotsMode ? `+${cell.overflow}` : L.nMore(cell.overflow)}
 							</button>
 						{:else if expandedMs === cell.ms}
 							<button
@@ -500,5 +507,34 @@
 		.mg-more {
 			min-height: 30px;
 		}
+	}
+
+	/* ── Dots mode (mobile) ─────────────────────────────
+	   Cells are too narrow for text chips, so events render as colored
+	   dots in a wrapping row. The cell itself stays the tap target
+	   (day drill-down); dots keep their title/aria-label for a11y. */
+	.mg--dots .mg-chips {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 3px;
+	}
+	.mg--dots .mg-chip {
+		padding: 3px;
+		min-height: 0;
+	}
+	.mg--dots .mg-chip-title,
+	.mg--dots .mg-chip-time {
+		display: none;
+	}
+	.mg--dots .mg-chip-dot {
+		width: 8px;
+		height: 8px;
+	}
+	.mg--dots .mg-more {
+		padding: 0 3px;
+		min-height: 0;
+		align-self: center;
+		font-size: 10px;
 	}
 </style>

@@ -27,6 +27,7 @@ export interface SwipeHandlers {
 	ontouchstart: (e: TouchEvent) => void;
 	ontouchmove: (e: TouchEvent) => void;
 	ontouchend: () => void;
+	ontouchcancel: () => void;
 }
 
 export function createSwipe(cb: SwipeCallbacks): SwipeHandlers {
@@ -83,6 +84,15 @@ export function createSwipe(cb: SwipeCallbacks): SwipeHandlers {
 			const dir: -1 | 0 | 1 = Math.abs(dx) > SWIPE_THRESHOLD ? (dx > 0 ? 1 : -1) : 0;
 			dx = 0;
 			cb.onend(dir);
+		},
+
+		ontouchcancel() {
+			// The browser took over the gesture (scroll, edge-swipe, system UI).
+			// Without this, the view stays stuck at the last swipe offset.
+			if (!tracking) return;
+			tracking = false;
+			dx = 0;
+			cb.onend(0);
 		},
 	};
 }

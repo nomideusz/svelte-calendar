@@ -439,9 +439,14 @@ const weekDays = $derived.by(() => {
 		overflow-y: auto;
 		overflow-x: hidden;
 		box-sizing: border-box;
-		padding-top: 8px;
+		/* No padding-top here: the sticky day headers pin at the scrollport
+		   edge, and container padding would leave a see-through band above
+		   them where scrolled cards bleed out. */
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
+	}
+	.ag-wday:first-child .ag-wday-head {
+		padding-top: 12px;
 	}
 	.ag--auto .ag-body {
 		overflow-y: visible;
@@ -776,8 +781,13 @@ const weekDays = $derived.by(() => {
 	.ag-compact--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
 		border-radius: 4px;
+		/* Highlight gutter comes from negative margins so the row's content
+		   stays aligned with its unselected siblings (no tap-shift). */
 		padding-left: 6px;
 		padding-right: 6px;
+		margin-left: -6px;
+		margin-right: -6px;
+		width: calc(100% + 12px);
 	}
 	.ag-compact:hover .ag-compact-title,
 	.ag-compact:active .ag-compact-title {
@@ -814,7 +824,9 @@ const weekDays = $derived.by(() => {
 		font-weight: 500;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex: 1;
-		min-width: 0;
+		/* The title is the row's identity — never let subtitle/tags/duration
+		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
+		min-width: 35%;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -832,7 +844,8 @@ const weekDays = $derived.by(() => {
 	.ag-compact-sub {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		flex-shrink: 0;
+		flex-shrink: 3;
+		min-width: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -842,7 +855,8 @@ const weekDays = $derived.by(() => {
 	.ag-compact-loc {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		flex-shrink: 0;
+		flex-shrink: 3;
+		min-width: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -870,7 +884,8 @@ const weekDays = $derived.by(() => {
 		padding: 1px 4px;
 		border-radius: 3px;
 		white-space: nowrap;
-		flex-shrink: 0;
+		flex-shrink: 1;
+		min-width: 2.5em;
 		max-width: 80px;
 		overflow: hidden;
 		text-overflow: ellipsis;

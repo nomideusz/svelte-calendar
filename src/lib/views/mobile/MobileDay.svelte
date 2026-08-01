@@ -490,6 +490,7 @@
 	ontouchstart={swipe.ontouchstart}
 	ontouchmove={swipe.ontouchmove}
 	ontouchend={swipe.ontouchend}
+	ontouchcancel={swipe.ontouchcancel}
 >
 	<div
 		class="mb-swipe"

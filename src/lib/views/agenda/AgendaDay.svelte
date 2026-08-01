@@ -770,7 +770,11 @@
 		font-size: 16px;
 		font-weight: 700;
 	}
-	.ag-card--plan .ag-card-sub {
+	/* Everything under the title aligns past the order number — the
+	   subtitle, location, time and tags share one left edge. */
+	.ag-card--plan .ag-card-sub,
+	.ag-card--plan .ag-card-loc,
+	.ag-card--plan .ag-card-meta {
 		padding-left: 22px;
 	}
 	.ag-card--plan .ag-card-tags {
@@ -1120,6 +1124,9 @@
 		border-radius: 6px;
 		padding-left: 8px;
 		padding-right: 8px;
+		margin-left: -8px;
+		margin-right: -8px;
+		width: calc(100% + 16px);
 	}
 	.ag-log-check {
 		font-size: 10px;
@@ -1181,8 +1188,13 @@
 	.ag-compact-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
 		border-radius: 4px;
+		/* Highlight gutter comes from negative margins so the row's content
+		   stays aligned with its unselected siblings (no tap-shift). */
 		padding-left: 6px;
 		padding-right: 6px;
+		margin-left: -6px;
+		margin-right: -6px;
+		width: calc(100% + 12px);
 	}
 	.ag-compact-row:hover .ag-compact-row-title,
 	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
@@ -1216,6 +1228,9 @@
 		font-weight: 500;
 		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);
 		flex: 1;
+		/* The title is the row's identity — never let subtitle/tags/duration
+		   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */
+		min-width: 35%;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1233,7 +1248,8 @@
 	.ag-compact-row-sub {
 		font-size: 10px;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		flex-shrink: 1;
+		flex-shrink: 3;
+		min-width: 0;
 		max-width: 45%;
 		white-space: nowrap;
 		overflow: hidden;
@@ -1247,7 +1263,10 @@
 		padding: 1px 4px;
 		border-radius: 3px;
 		white-space: nowrap;
-		flex-shrink: 0;
+		flex-shrink: 1;
+		min-width: 2.5em;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.ag-compact-row--cancelled { opacity: 0.5; }
 	.ag-compact-row--cancelled .ag-compact-row-title { text-decoration: line-through; }

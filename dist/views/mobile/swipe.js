@@ -60,5 +60,14 @@ export function createSwipe(cb) {
             dx = 0;
             cb.onend(dir);
         },
+        ontouchcancel() {
+            // The browser took over the gesture (scroll, edge-swipe, system UI).
+            // Without this, the view stays stuck at the last swipe offset.
+            if (!tracking)
+                return;
+            tracking = false;
+            dx = 0;
+            cb.onend(0);
+        },
     };
 }

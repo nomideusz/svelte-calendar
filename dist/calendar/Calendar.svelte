@@ -97,11 +97,15 @@ function handleEventClick(ev) {
   oneventclick?.(ev);
 }
 let containerWidth = $state(
-  typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? MOBILE_BREAKPOINT - 1 : 0
+  typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? window.innerWidth : 0
 );
 const isMobileContainer = $derived(containerWidth > 0 && containerWidth < MOBILE_BREAKPOINT);
 const useMobile = $derived(
   mobileProp === "auto" ? isMobileContainer : Boolean(mobileProp)
+);
+const HEADER_STACK_BREAKPOINT = 520;
+const stackHeader = $derived(
+  useMobile && containerWidth > 0 && containerWidth < HEADER_STACK_BREAKPOINT
 );
 let calEl = $state();
 let probedTheme = $state("");
@@ -480,7 +484,8 @@ const navCtx = $derived({
 
 	<!-- ─── Mobile header (flow layout, no absolute) ─── -->
 	{:else if useMobile && (showNavigation || (showModePills && modes.length > 1) || dateLabel)}
-		<div class="cal-m-hd">
+		{@const titleBelow = stackHeader && !!dateLabel}
+		<div class="cal-m-hd" class:cal-m-hd--stack={stackHeader} class:cal-m-hd--titled={titleBelow}>
 			<div class="cal-m-left">
 				{#if showModePills && modes.length > 1}
 					<div class="cal-m-pills" role="radiogroup" aria-label={L.viewMode}>
@@ -500,7 +505,9 @@ const navCtx = $derived({
 				{/if}
 			</div>
 
-			<span class="cal-m-title" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
+			{#if !titleBelow}
+				<span class="cal-m-title" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
+			{/if}
 
 			<div class="cal-m-right">
 				{#if navigationSnippet}
@@ -525,6 +532,11 @@ const navCtx = $derived({
 				{/if}
 			</div>
 		</div>
+		{#if titleBelow}
+			<div class="cal-m-titlebar">
+				<span class="cal-m-title" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
+			</div>
+		{/if}
 
 	<!-- ─── Desktop header ─── -->
 	{:else if showNavigation || (showModePills && modes.length > 1) || dateLabel}
@@ -804,6 +816,26 @@ const navCtx = $derived({
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
 		min-height: 44px;
+	}
+
+	/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),
+	   so the controls row spreads pills and nav to the edges. */
+	.cal-m-hd--stack {
+		justify-content: space-between;
+	}
+	.cal-m-hd--titled {
+		border-bottom: none;
+		padding-bottom: 2px;
+	}
+	.cal-m-titlebar {
+		display: flex;
+		justify-content: center;
+		padding: 0 8px 8px;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		flex-shrink: 0;
+	}
+	.cal-m-titlebar .cal-m-title {
+		flex: 0 1 auto;
 	}
 
 	.cal-m-left,
