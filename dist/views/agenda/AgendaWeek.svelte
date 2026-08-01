@@ -834,13 +834,10 @@ const weekDays = $derived.by(() => {
 	.ag-compact--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
 		border-radius: 4px;
-		/* Highlight gutter comes from negative margins so the row's content
-		   stays aligned with its unselected siblings (no tap-shift). */
-		padding-left: 6px;
-		padding-right: 6px;
-		margin-left: -6px;
-		margin-right: -6px;
-		width: calc(100% + 12px);
+		/* The highlight bleeds into the gutter via a spread shadow — zero
+		   layout impact, so nothing shifts or clips even when the host
+		   reduces the gutters below the bleed width. */
+		box-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);
 	}
 	.ag-compact:hover .ag-compact-title,
 	.ag-compact:active .ag-compact-title {

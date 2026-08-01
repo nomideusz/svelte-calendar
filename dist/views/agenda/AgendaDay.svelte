@@ -1069,11 +1069,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-log-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 6%, transparent);
 		border-radius: 6px;
-		padding-left: 8px;
-		padding-right: 8px;
-		margin-left: -8px;
-		margin-right: -8px;
-		width: calc(100% + 16px);
+		box-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);
 	}
 	.ag-log-check {
 		font-size: 10px;
@@ -1135,13 +1131,10 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-compact-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
 		border-radius: 4px;
-		/* Highlight gutter comes from negative margins so the row's content
-		   stays aligned with its unselected siblings (no tap-shift). */
-		padding-left: 6px;
-		padding-right: 6px;
-		margin-left: -6px;
-		margin-right: -6px;
-		width: calc(100% + 12px);
+		/* The highlight bleeds into the gutter via a spread shadow — zero
+		   layout impact, so nothing shifts or clips even when the host
+		   reduces the gutters below the bleed width. */
+		box-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);
 	}
 	.ag-compact-row:hover .ag-compact-row-title,
 	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
