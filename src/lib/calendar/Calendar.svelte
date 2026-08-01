@@ -965,7 +965,9 @@
 		transition: background 100ms, color 100ms;
 	}
 
-	.cal-pill:hover {
+	/* :not(--active) — the hover rule otherwise outranks the active color,
+	   and iOS keeps :hover stuck after a tap (dark text on the accent). */
+	.cal-pill:hover:not(.cal-pill--active) {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
@@ -1112,7 +1114,7 @@
 		transition: background 100ms, color 100ms;
 		-webkit-tap-highlight-color: transparent;
 	}
-	.cal-m-pill:hover {
+	.cal-m-pill:hover:not(.cal-m-pill--active) {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.cal-m-pill--active {

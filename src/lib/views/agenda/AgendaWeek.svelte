@@ -361,15 +361,17 @@
 								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
-								<span class="ag-compact-title">{ev.title}</span>
-								{#if ev.subtitle}
-									<span class="ag-compact-sub">{ev.subtitle}</span>
-								{/if}
-								{#if ev.tags?.length}
-									{#each ev.tags as tag}
-										<span class="ag-compact-tag">{tag}</span>
-									{/each}
-								{/if}
+								<div class="ag-compact-main">
+									<span class="ag-compact-title">{ev.title}</span>
+									{#if ev.subtitle}
+										<span class="ag-compact-sub">{ev.subtitle}</span>
+									{/if}
+									{#if ev.tags?.length}
+										{#each ev.tags as tag}
+											<span class="ag-compact-tag">{tag}</span>
+										{/each}
+									{/if}
+								</div>
 								<span class="ag-compact-dur">{duration(ev)}</span>
 								</EventContent>
 							</button>
@@ -437,18 +439,20 @@
 								<EventContent event={ev}>
 								<span class="ag-compact-dot"></span>
 								<span class="ag-compact-time">{fmt(ev.start)}</span>
-								<span class="ag-compact-title">{ev.title}</span>
-								{#if ev.location}
-									<span class="ag-compact-loc">{ev.location}</span>
-								{/if}
-								{#if ev.subtitle}
-									<span class="ag-compact-sub">{ev.subtitle}</span>
-								{/if}
-								{#if ev.tags?.length}
-									{#each ev.tags as tag}
-										<span class="ag-compact-tag">{tag}</span>
-									{/each}
-								{/if}
+								<div class="ag-compact-main">
+									<span class="ag-compact-title">{ev.title}</span>
+									{#if ev.location}
+										<span class="ag-compact-loc">{ev.location}</span>
+									{/if}
+									{#if ev.subtitle}
+										<span class="ag-compact-sub">{ev.subtitle}</span>
+									{/if}
+									{#if ev.tags?.length}
+										{#each ev.tags as tag}
+											<span class="ag-compact-tag">{tag}</span>
+										{/each}
+									{/if}
+								</div>
 								<span class="ag-compact-dur">{duration(ev)}</span>
 								</EventContent>
 							</button>
@@ -894,6 +898,19 @@
 		flex-shrink: 0;
 		white-space: nowrap;
 		line-height: 1.4;
+	}
+	/* Title + location + subtitle + tags cluster. One line while it fits; on
+	   mobile the metadata wraps to a second line instead of crushing the title. */
+	.ag-compact-main {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		flex: 1;
+		min-width: 0;
+	}
+	.ag--mobile .ag-compact-main {
+		flex-wrap: wrap;
+		row-gap: 2px;
 	}
 	.ag-compact-title {
 		font-size: 12px;

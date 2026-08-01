@@ -505,17 +505,20 @@ $effect(() => {
 						<div class="mb-ev-stripe"></div>
 						<div class="mb-ev-body">
 							<EventContent event={p.ev}>
+							<!-- Line thresholds must track real content height (title 18 +
+							     time 13 + sub 14 + loc 12 + tags 19 + padding 8) — showing
+							     a line the block can't hold clips text at both ends. -->
 							<span class="mb-ev-title">{p.ev.title}</span>
 							{#if p.height > 32}
 								<span class="mb-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
 							{/if}
-							{#if p.ev.subtitle && p.height > 48}
+							{#if p.ev.subtitle && p.height > 56}
 								<span class="mb-ev-sub">{p.ev.subtitle}</span>
 							{/if}
-							{#if p.ev.location && p.height > 56}
+							{#if p.ev.location && p.height > 72}
 								<span class="mb-ev-loc">{p.ev.location}</span>
 							{/if}
-							{#if p.ev.tags?.length && p.height > 56}
+							{#if p.ev.tags?.length && p.height > 88}
 								<div class="mb-ev-tags">
 									{#each p.ev.tags as tag}
 										<span class="mb-ev-tag">{tag}</span>
@@ -752,6 +755,9 @@ $effect(() => {
 
 	.mb-hour-label {
 		width: 40px;
+		/* border-box keeps the label inside the 40px gutter that events
+		   start at — content-box pushed digits flush under the event edge */
+		box-sizing: border-box;
 		flex-shrink: 0;
 		font: 500 11px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
@@ -802,6 +808,7 @@ $effect(() => {
 
 	.mb-now-label {
 		width: 40px;
+		box-sizing: border-box;
 		flex-shrink: 0;
 		text-align: right;
 		padding-right: 6px;

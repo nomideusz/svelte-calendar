@@ -327,6 +327,7 @@
 	.mw-list {
 		flex: 1;
 		overflow-y: auto;
+		overflow-x: hidden;
 		overscroll-behavior: contain;
 		-webkit-overflow-scrolling: touch;
 		scrollbar-width: thin;
@@ -346,6 +347,10 @@
 		align-items: center;
 		gap: 12px;
 		position: relative;
+		/* border-box: width 100% + padding otherwise overflows the list by
+		   24px, which iOS turns into a horizontal pan that clips the date
+		   column off the left edge */
+		box-sizing: border-box;
 		padding: 10px 12px;
 		background: transparent;
 		transition: background 120ms;

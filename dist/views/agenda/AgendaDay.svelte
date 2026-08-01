@@ -162,15 +162,17 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 							<EventContent event={ev}>
 							<span class="ag-compact-row-dot"></span>
 							<span class="ag-compact-row-time">{fmt(ev.start)}</span>
-							<span class="ag-compact-row-title">{ev.title}</span>
-							{#if ev.subtitle}
-								<span class="ag-compact-row-sub">{ev.subtitle}</span>
-							{/if}
-							{#if ev.tags?.length}
-								{#each ev.tags as tag}
-									<span class="ag-compact-row-tag">{tag}</span>
-								{/each}
-							{/if}
+							<div class="ag-compact-row-main">
+								<span class="ag-compact-row-title">{ev.title}</span>
+								{#if ev.subtitle}
+									<span class="ag-compact-row-sub">{ev.subtitle}</span>
+								{/if}
+								{#if ev.tags?.length}
+									{#each ev.tags as tag}
+										<span class="ag-compact-row-tag">{tag}</span>
+									{/each}
+								{/if}
+							</div>
 							<span class="ag-compact-row-dur">{duration(ev)}</span>
 							</EventContent>
 						</button>
@@ -256,10 +258,12 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 									<EventContent event={ev}>
 									<span class="ag-compact-row-dot"></span>
 									<span class="ag-compact-row-time">{fmt(ev.start)}</span>
-									<span class="ag-compact-row-title">{ev.title}</span>
-									{#if ev.subtitle}
-										<span class="ag-compact-row-sub">{ev.subtitle}</span>
-									{/if}
+									<div class="ag-compact-row-main">
+										<span class="ag-compact-row-title">{ev.title}</span>
+										{#if ev.subtitle}
+											<span class="ag-compact-row-sub">{ev.subtitle}</span>
+										{/if}
+									</div>
 									</EventContent>
 								</button>
 							{:else}
@@ -1167,6 +1171,19 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		min-width: 64px;
 		flex-shrink: 0;
 		line-height: 1.4;
+	}
+	/* Title + subtitle + tags cluster. One line while it fits; on mobile the
+	   metadata wraps to a second line under the title instead of crushing it. */
+	.ag-compact-row-main {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		flex: 1;
+		min-width: 0;
+	}
+	.ag--mobile .ag-compact-row-main {
+		flex-wrap: wrap;
+		row-gap: 2px;
 	}
 	.ag-compact-row-title {
 		font-size: 12px;
