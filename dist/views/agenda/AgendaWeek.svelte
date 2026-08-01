@@ -885,6 +885,24 @@ const weekDays = $derived.by(() => {
 		flex-wrap: wrap;
 		row-gap: 2px;
 	}
+	/* Mobile: size the title by its content when deciding line breaks — a long
+	   title claims the first line whole (ellipsizing only against the full row)
+	   and pushes location/subtitle/tags down instead of truncating at 35%. */
+	.ag--mobile .ag-compact-title {
+		flex-basis: auto;
+	}
+	/* On their own wrapped line the metadata gets the full width — the tight
+	   desktop caps would truncate it beside empty space. */
+	.ag--mobile .ag-compact-loc,
+	.ag--mobile .ag-compact-sub {
+		max-width: 100%;
+	}
+	/* Wrapped rows are two/three lines tall — center-aligning the dot floats
+	   it between lines; pin it optically to the first (title) line instead. */
+	.ag--mobile .ag-compact-dot {
+		align-self: flex-start;
+		margin-top: 8px;
+	}
 	.ag-compact-title {
 		font-size: 12px;
 		font-weight: 500;

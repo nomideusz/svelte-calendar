@@ -1240,6 +1240,22 @@
 		flex-wrap: wrap;
 		row-gap: 2px;
 	}
+	/* Mobile: size the title by its content when deciding line breaks — a long
+	   title claims the first line whole (ellipsizing only against the full row)
+	   and pushes subtitle/tags down instead of truncating at 35%. */
+	.ag--mobile .ag-compact-row-title {
+		flex-basis: auto;
+	}
+	/* On its own wrapped line the subtitle gets the full width */
+	.ag--mobile .ag-compact-row-sub {
+		max-width: 100%;
+	}
+	/* Wrapped rows are two lines tall — center-aligning the dot floats it
+	   between lines; pin it optically to the first (title) line instead. */
+	.ag--mobile .ag-compact-row-dot {
+		align-self: flex-start;
+		margin-top: 8px;
+	}
 	.ag-compact-row-title {
 		font-size: 12px;
 		font-weight: 500;
