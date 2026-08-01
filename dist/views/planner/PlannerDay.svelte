@@ -8,14 +8,11 @@
 <script lang="ts">import { onMount, tick, untrack } from "svelte";
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
-import { fly } from "svelte/transition";
 import { createClock } from "../../core/clock.svelte.js";
 import { createTextMeasure } from "../../core/measure.js";
 import { DAY_MS, HOUR_MS, sod } from "../../core/time.js";
 import { isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
-import { fmtH, fmtTime, weekdayShort } from "../../core/locale.js";
-import { getLabels } from "../../core/locale.js";
-const L = $derived(getLabels());
+import { fmtDuration, fmtH, fmtTime, weekdayShort } from "../../core/locale.js";
 let {
   height = 520,
   events = [],
@@ -29,6 +26,7 @@ let {
   visibleHours
 } = $props();
 const ctx = useCalendarContext();
+const L = $derived(ctx.labels);
 const clock = createClock(ctx.timezone);
 const drag = $derived(ctx.drag);
 const commitDragCtx = $derived(ctx.commitDrag);
@@ -92,8 +90,8 @@ function timeToPx(ms) {
   const elapsed = ms - origin;
   const dayIndex = Math.floor(elapsed / DAY_MS);
   const hourInDay = (elapsed - dayIndex * DAY_MS) / HOUR_MS;
-  const hourOffset = hourInDay - startHour;
-  return dayIndex * (dayWidth + DAY_GAP) + hourOffset * hourWidth;
+  const clamped = Math.min(Math.max(hourInDay, startHour), endHour);
+  return dayIndex * (dayWidth + DAY_GAP) + (clamped - startHour) * hourWidth;
 }
 function pxToTime(px) {
   const dayStride = dayWidth + DAY_GAP;
@@ -103,6 +101,8 @@ function pxToTime(px) {
   return origin + dayIndex * DAY_MS + hour * HOUR_MS;
 }
 const nowPx = $derived(timeToPx(clock.tick));
+const nowHour = $derived((clock.tick - clock.today) / HOUR_MS);
+const nowInBand = $derived(nowHour >= startHour && nowHour < endHour);
 const timedEvents = $derived(events.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
 const allDayEvents = $derived.by(() => {
   const segs = [];
@@ -126,8 +126,25 @@ const measure = createTextMeasure({
   secondaryLineHeight: 13,
   contentGap: 6
 });
-const positionedEvents = $derived.by(() => {
+const nowInfo = $derived.by(() => {
   const now = clock.tick;
+  const current = /* @__PURE__ */ new Set();
+  const todayStart = clock.today;
+  const todayEnd = todayStart + DAY_MS;
+  let nextId = null;
+  let nextStart = Infinity;
+  for (const ev of timedEvents) {
+    const s = ev.start.getTime();
+    const e = ev.end.getTime();
+    if (s <= now && e > now) current.add(ev.id);
+    else if (s >= todayStart && s < todayEnd && s > now && s < nextStart) {
+      nextStart = s;
+      nextId = ev.id;
+    }
+  }
+  return { current, nextId };
+});
+const positionedEvents = $derived.by(() => {
   const dragP = drag?.active && (drag.mode === "move" || drag.mode === "resize-start" || drag.mode === "resize-end") ? drag.payload : null;
   const staticEvents = [];
   let draggedEv = null;
@@ -136,17 +153,6 @@ const positionedEvents = $derived.by(() => {
     else staticEvents.push(ev);
   }
   const sorted = [...staticEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
-  const todayStart = sod(now);
-  const todayEnd = todayStart + DAY_MS;
-  let nextEventId = null;
-  for (const ev of sorted) {
-    const s = ev.start.getTime();
-    const e = ev.end.getTime();
-    if (s >= todayStart && s < todayEnd && s > now && !(s <= now && e > now)) {
-      nextEventId = ev.id;
-      break;
-    }
-  }
   const infos = sorted.map((ev) => {
     const s = ev.start.getTime();
     const e = ev.end.getTime();
@@ -158,13 +164,12 @@ const positionedEvents = $derived.by(() => {
       width: Math.max(xEnd - x, 28),
       row: 0,
       groupMaxRow: 1,
-      isCurrent: s <= now && e > now,
-      isNext: ev.id === nextEventId,
       isDragged: false,
       startMs: s,
-      endMs: e
+      endMs: e,
+      clippedWidth: xEnd - x
     };
-  });
+  }).filter((info) => info.clippedWidth > 0);
   const par = infos.map((_, i) => i);
   function find(i) {
     while (par[i] !== i) {
@@ -204,7 +209,7 @@ const positionedEvents = $derived.by(() => {
     for (const idx of indices) infos[idx].groupMaxRow = rows.length;
   }
   const availH = containerH - contentTop - 8;
-  const result = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
+  const result = infos.map(({ startMs: _s, endMs: _e, clippedWidth: _c, ...info }) => {
     const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
     const topPx = contentTop + info.row * (availH / info.groupMaxRow);
     const fit = measure.fitContent({
@@ -216,7 +221,7 @@ const positionedEvents = $derived.by(() => {
       maxWidth: laneH - 16,
       maxHeight: info.width - 16
     });
-    return { ...info, topPx, heightPx: laneH, isNext: info.isNext, fit };
+    return { ...info, topPx, heightPx: laneH, fit };
   });
   if (draggedEv && dragP) {
     const x = timeToPx(dragP.start.getTime());
@@ -231,8 +236,6 @@ const positionedEvents = $derived.by(() => {
       groupMaxRow: 1,
       topPx: contentTop,
       heightPx: dragH,
-      isCurrent: draggedEv.start.getTime() <= now && draggedEv.end.getTime() > now,
-      isNext: false,
       isDragged: true,
       fit: measure.fitContent({
         title: draggedEv.title,
@@ -297,16 +300,20 @@ function syncFocusFromScroll() {
     viewState.setFocusDate(new Date(centerDayMs));
   }
 }
-onMount(() => {
-  const ro = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      containerW = entry.contentRect.width;
-      containerH = entry.contentRect.height;
-    }
+let scrollRaf = 0;
+function handleScroll() {
+  if (following || rebasing || scrollRaf) return;
+  scrollRaf = requestAnimationFrame(() => {
+    scrollRaf = 0;
+    if (!el || following || rebasing) return;
+    checkEdges();
+    syncFocusFromScroll();
   });
-  ro.observe(el);
+}
+$effect(() => {
+  if (!following) return;
   function frame() {
-    if (following && el && !scrollDragging) {
+    if (el && !scrollDragging) {
       if (internalCenterMs !== clock.today) {
         internalCenterMs = clock.today;
         lastExternalMs = clock.today;
@@ -317,15 +324,22 @@ onMount(() => {
       if (todayD) {
         el.scrollLeft = todayD.x + dayWidth / 2 - el.clientWidth / 2;
       }
-    } else if (el && !rebasing) {
-      checkEdges();
-      syncFocusFromScroll();
     }
     rafId = requestAnimationFrame(frame);
   }
   rafId = requestAnimationFrame(frame);
+  return () => cancelAnimationFrame(rafId);
+});
+onMount(() => {
+  const ro = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      containerW = entry.contentRect.width;
+      containerH = entry.contentRect.height;
+    }
+  });
+  ro.observe(el);
   return () => {
-    cancelAnimationFrame(rafId);
+    cancelAnimationFrame(scrollRaf);
     ro.disconnect();
   };
 });
@@ -558,7 +572,24 @@ function onResizeCancel() {
   if (drag && rsStarted) drag.cancel();
   cleanupResize();
 }
+function onWindowKeydown(e) {
+  if (e.key !== "Escape" || !drag?.active) return;
+  drag.cancel();
+  cleanupCreateDrag();
+  cleanupEvDrag();
+  cleanupResize();
+  wasDragging = true;
+  window.addEventListener(
+    "pointerup",
+    () => setTimeout(() => {
+      wasDragging = false;
+    }, 0),
+    { once: true }
+  );
+}
 </script>
+
+<svelte:window onkeydown={onWindowKeydown} />
 
 <div class="fs" class:fs--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')} role="region" aria-label={L.dayPlanner}>
 	<div
@@ -566,12 +597,27 @@ function onResizeCancel() {
 		class:fs-grabbing={scrollDragging}
 		class:fs-readonly={readOnly}
 		bind:this={el}
-		onwheel={(e) => { e.preventDefault(); el.scrollLeft += e.deltaY || e.deltaX; following = false; }}
+		onwheel={(e) => {
+			const delta = e.deltaY || e.deltaX;
+			if (delta === 0) return;
+			// Only capture the wheel when the track can consume the delta in
+			// that direction — otherwise let the page scroll normally.
+			const maxScroll = el.scrollWidth - el.clientWidth;
+			const canConsume = delta < 0 ? el.scrollLeft > 0 : el.scrollLeft < maxScroll - 1;
+			if (!canConsume) return;
+			e.preventDefault();
+			el.scrollLeft += delta;
+			following = false;
+		}}
+		onscroll={handleScroll}
 		onpointerdown={onPointerDown}
-		role="application"
+		role="region"
 		aria-label={L.scrollableDayPlanner}
 	>
-		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="none">
+		<!-- Presentational layer: the click handler is a convenience delegate for
+		     click-to-create on empty canvas; keyboard users create events via the
+		     host UI, and events themselves are focusable buttons. -->
+		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="presentation">
 			{#each days as d (d.ms)}
 				<div
 					class="fs-day"
@@ -623,19 +669,23 @@ function onResizeCancel() {
 				</div>
 			{/each}
 
-			<!-- Now line -->
-			<div class="fs-now" style:left="{nowPx}px">
-				<span class="fs-now-tag">{clock.hm}<span class="fs-now-sec">{clock.s}</span></span>
-				<div class="fs-now-line"></div>
-			</div>
+			<!-- Now line (hidden when the clock is outside the visible hour band) -->
+			{#if nowInBand}
+				<div class="fs-now" style:left="{nowPx}px">
+					<span class="fs-now-tag">{clock.hm}</span>
+					<div class="fs-now-line"></div>
+				</div>
+			{/if}
 
 			<!-- Events -->
 			{#each positionedEvents as p (p.ev.id)}
+				{@const isCurrent = nowInfo.current.has(p.ev.id)}
+				{@const isNext = !p.isDragged && p.ev.id === nowInfo.nextId}
 				<div
 					class="fs-event"
 					class:fs-event--selected={selectedEventId === p.ev.id}
-					class:fs-event--current={p.isCurrent}
-					class:fs-event--next={p.isNext}
+					class:fs-event--current={isCurrent}
+					class:fs-event--next={isNext}
 					class:fs-event--dragging={p.isDragged}
 					class:fs-event--resizing={p.isDragged && drag?.mode !== 'move'}
 					class:fs-event--readonly={p.ev.data?.readOnly}
@@ -651,15 +701,15 @@ function onResizeCancel() {
 					role="button"
 					tabindex="0"
 					title={p.ev.title}
-					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{p.isCurrent ? ` (${L.inProgress})` : ''}{p.isNext ? ` (${L.upNext})` : ''}"
+					aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{isCurrent ? ` (${L.inProgress})` : ''}{isNext ? ` (${L.upNext})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 					onpointerenter={() => oneventhover?.(p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
 				>
 					<div class="fs-ev-inner">
-						{#if p.isCurrent}
+						{#if isCurrent}
 							<span class="fs-ev-live" aria-hidden="true"></span>
-						{:else if p.isNext}
+						{:else if isNext}
 							<span class="fs-ev-next-badge" aria-hidden="true">{L.upNext}</span>
 						{/if}
 						<EventContent event={p.ev}>
@@ -797,9 +847,10 @@ function onResizeCancel() {
 		border-left: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.14));
 		box-sizing: border-box;
 	}
-	.fs-day:first-of-type { border-left: none; }
-	.fs-today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
-	.fs-past { opacity: 0.7; }
+	.fs-today { background: var(--dt-today-bg, color-mix(in srgb, var(--dt-accent, #2563eb) 8%, transparent)); }
+	/* Past days: dim via a background wash instead of a subtree opacity so
+	   event text keeps full contrast. */
+	.fs-past { background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent); }
 
 	/* ─── Disabled day ───────────────────────────────── */
 	.fs-disabled {
@@ -877,12 +928,11 @@ function onResizeCancel() {
 		white-space: nowrap;
 		pointer-events: none;
 	}
-	.fs-tick--half { bottom: auto; height: calc(18px + 8px); }
+	/* Half-hour guide: full-height line at low opacity through the event area */
 	.fs-tick--half::before {
 		top: 18px;
-		height: 6px;
-		bottom: auto;
-		opacity: 0.4;
+		bottom: 0;
+		opacity: 0.35;
 	}
 
 	/* ─── Now-line ────────────────────────────────────── */
@@ -905,7 +955,9 @@ function onResizeCancel() {
 	}
 	.fs-now-tag {
 		position: absolute;
-		top: 8px;
+		/* Below the hour-label row (labels sit at top: 2px) so the tag never
+		   collides with an hour label near hour boundaries. */
+		top: 20px;
 		left: 8px;
 		font: 700 11px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-accent, #2563eb);
@@ -916,13 +968,9 @@ function onResizeCancel() {
 		white-space: nowrap;
 		z-index: 1;
 	}
-	.fs-now-sec {
-		font-weight: 400;
-		opacity: 0.5;
-		font-size: 10px;
-	}
-
 	/* ─── All-day strip ─────────────────────────────── */
+	/* The container is a full-width overlay — let clicks pass through it and
+	   only the chips themselves capture pointer events. */
 	.fs-allday {
 		position: absolute;
 		left: 0;
@@ -933,7 +981,7 @@ function onResizeCancel() {
 		z-index: 7;
 		overflow-x: auto;
 		scrollbar-width: none;
-		pointer-events: auto;
+		pointer-events: none;
 	}
 	.fs-allday::-webkit-scrollbar { display: none; }
 
@@ -947,15 +995,18 @@ function onResizeCancel() {
 		border-left: 3px solid var(--ev-color);
 		white-space: nowrap;
 		flex-shrink: 0;
+		min-width: 0;
+		max-width: 320px;
 		cursor: pointer;
 		transition: background 0.15s;
+		pointer-events: auto;
 	}
 	.fs-ad:hover {
 		background: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));
 	}
 	.fs-ad:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.fs-ad--selected {
 		background: color-mix(in srgb, var(--ev-color) 30%, var(--dt-surface, var(--dt-bg, #ffffff)));
@@ -974,7 +1025,8 @@ function onResizeCancel() {
 		font-size: 0.7rem;
 		font-weight: 500;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		max-width: 120px;
+		flex: 0 1 auto;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -990,7 +1042,10 @@ function onResizeCancel() {
 		position: absolute;
 		z-index: 6;
 		border-radius: 6px;
-		cursor: pointer;
+		/* Editable events are grabbable; touch drags move the event instead of
+		   scrolling the strip. */
+		cursor: grab;
+		touch-action: none;
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 40%, transparent);
 		/* Solid stripe at the start edge — matches the week view, keeps the
@@ -1041,6 +1096,15 @@ function onResizeCancel() {
 		cursor: ew-resize;
 		touch-action: none;
 	}
+	/* Hit-slop: ~20px effective grab zone while the visual stays 6px */
+	.fs-ev-handle::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: -7px;
+		right: -7px;
+	}
 	.fs-ev-handle--start { left: 0; }
 	.fs-ev-handle--end { right: 0; }
 	.fs-ev-handle::after {
@@ -1055,7 +1119,12 @@ function onResizeCancel() {
 		opacity: 0;
 		transition: opacity 120ms;
 	}
-	.fs-event:hover .fs-ev-handle::after { opacity: 0.55; }
+	.fs-event:hover .fs-ev-handle::after,
+	.fs-event:focus-within .fs-ev-handle::after { opacity: 0.55; }
+	/* Coarse pointers can't hover — show the grips persistently */
+	@media (hover: none) {
+		.fs-ev-handle::after { opacity: 0.55; }
+	}
 
 	/* ─── Drag-to-create ghost ───────────────────────── */
 	.fs-create-ghost {
@@ -1082,12 +1151,16 @@ function onResizeCancel() {
 		.fs-event--dragging {
 			transition: box-shadow 120ms, background 120ms;
 		}
+		.fs-create-ghost,
+		.fs-ad,
+		.fs-ev-handle::after {
+			transition: none;
+		}
 	}
-	.fs-event--cancelled {
-		opacity: 0.5;
-	}
+	/* Cancelled: strikethrough + secondary text, not a subtree opacity dim */
 	.fs-event--cancelled .fs-ev-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.fs-event--tentative {
 		opacity: 0.65;
@@ -1100,7 +1173,8 @@ function onResizeCancel() {
 		opacity: 0.65;
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
 	}
-	.fs-event--readonly {
+	.fs-event--readonly,
+	.fs-readonly .fs-event {
 		cursor: default;
 	}
 
@@ -1149,6 +1223,7 @@ function onResizeCancel() {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		white-space: normal;
 		max-height: 100%;
 		flex-shrink: 0;
@@ -1156,14 +1231,12 @@ function onResizeCancel() {
 	.fs-ev-time {
 		font: 400 10px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		opacity: 0.7;
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 	.fs-ev-sub {
 		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		opacity: 0.6;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1172,7 +1245,7 @@ function onResizeCancel() {
 	}
 	.fs-ev-loc {
 		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1195,9 +1268,11 @@ function onResizeCancel() {
 	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
+	/* box-shadow instead of outline: outlines get clipped by the
+	   overflow: hidden scroll container. */
 	.fs-event:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 </style>
 

@@ -13,6 +13,8 @@ interface Props {
     }) => void;
     selectedEventId?: string | null;
     readOnly?: boolean;
+    /** Visible hour range [startHour, endHour) */
+    visibleHours?: [number, number];
     [key: string]: unknown;
 }
 declare const PlannerWeek: import("svelte").Component<Props, {}, "">;

@@ -2,6 +2,7 @@ import { type Component, type Snippet } from 'svelte';
 import type { CalendarAdapter } from '../adapters/types.js';
 import type { CalendarViewId } from '../engine/view-state.svelte.js';
 import type { TimelineEvent, BlockedSlot } from '../core/types.js';
+import { type CalendarLabels } from '../core/locale.js';
 import type { AutoThemeOptions } from '../theme/auto.js';
 /** One view registration */
 export interface CalendarView {
@@ -42,6 +43,12 @@ interface Props {
     dir?: 'ltr' | 'rtl' | 'auto';
     /** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
     locale?: string;
+    /**
+     * Per-instance UI label overrides (merged over the global `setLabels()` set).
+     * Reactive: changing the prop re-renders all label text, and two calendars
+     * on one page can carry different languages.
+     */
+    labels?: Partial<CalendarLabels>;
     /** Read-only mode: disables drag, resize, empty-slot creation */
     readOnly?: boolean;
     /** Visible hour range: [startHour, endHour). Crops the grid to these hours. */

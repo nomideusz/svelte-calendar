@@ -3,20 +3,70 @@
  *
  * This file is the entry point for the standalone widget bundle (widget.js).
  * Import it via a <script> tag on any HTML page.
+ *
+ * The component mounts into an open shadow root so host-page CSS (resets,
+ * theme stylesheets) cannot bleed into the calendar and calendar styles
+ * cannot leak out. The bundled CSS is injected into each shadow root — see
+ * `injectStyles` below and the inlineCss plugin in vite.config.widget.ts.
  */
 import { asClassComponent } from 'svelte/legacy';
 import CalendarWidget from './CalendarWidget.svelte';
 const CalendarWidgetClass = asClassComponent(CalendarWidget);
+/**
+ * Shared constructable stylesheet — parsed once, adopted by every
+ * <day-calendar> shadow root on the page.
+ */
+let sharedSheet = null;
+/**
+ * Add the bundled widget CSS to a shadow root.
+ *
+ * Prefers `adoptedStyleSheets` (one parse for N widgets); falls back to a
+ * <style> element where constructable stylesheets are unavailable. No-op
+ * when the CSS global is undefined (dev / library usage).
+ */
+function injectStyles(root) {
+    const css = globalThis.__DAY_CALENDAR_CSS__;
+    if (!css)
+        return;
+    if ('adoptedStyleSheets' in root && typeof CSSStyleSheet !== 'undefined') {
+        try {
+            if (!sharedSheet) {
+                sharedSheet = new CSSStyleSheet();
+                sharedSheet.replaceSync(css);
+            }
+            root.adoptedStyleSheets = [...root.adoptedStyleSheets, sharedSheet];
+            return;
+        }
+        catch {
+            // Constructable stylesheets unsupported (older engines) — fall through.
+        }
+    }
+    const style = document.createElement('style');
+    style.setAttribute('data-day-calendar', '');
+    style.textContent = css;
+    root.appendChild(style);
+}
+const WIDGET_ATTRS = [
+    'api', 'events', 'theme', 'view', 'height', 'locale', 'dir', 'mondaystart',
+    'headers', 'readonly', 'pills', 'nav', 'mobile', 'days', 'compact', 'timezone',
+];
 class DayCalendarElement extends HTMLElement {
     instance = null;
+    stylesInjected = false;
     static get observedAttributes() {
-        return ['api', 'events', 'theme', 'view', 'height', 'locale', 'dir', 'mondaystart', 'headers'];
+        return [...WIDGET_ATTRS];
     }
     connectedCallback() {
         if (this.instance)
             return;
+        // The shadow root survives disconnect/reconnect — attach only once.
+        const root = this.shadowRoot ?? this.attachShadow({ mode: 'open' });
+        if (!this.stylesInjected) {
+            injectStyles(root);
+            this.stylesInjected = true;
+        }
         this.instance = new CalendarWidgetClass({
-            target: this,
+            target: root,
             props: this.readProps(),
         });
     }
@@ -32,17 +82,13 @@ class DayCalendarElement extends HTMLElement {
         });
     }
     readProps() {
-        return {
-            api: this.getAttribute('api') ?? undefined,
-            events: this.getAttribute('events') ?? undefined,
-            theme: this.getAttribute('theme') ?? undefined,
-            view: this.getAttribute('view') ?? undefined,
-            height: this.getAttribute('height') ?? undefined,
-            locale: this.getAttribute('locale') ?? undefined,
-            dir: this.getAttribute('dir') ?? undefined,
-            mondaystart: this.getAttribute('mondaystart') ?? undefined,
-            headers: this.getAttribute('headers') ?? undefined,
-        };
+        const props = {};
+        for (const attr of WIDGET_ATTRS) {
+            const value = this.getAttribute(attr);
+            if (value !== null)
+                props[attr] = value;
+        }
+        return props;
     }
 }
 if (!customElements.get('day-calendar')) {

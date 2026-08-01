@@ -5,6 +5,7 @@
  * This module reads it and returns a typed interface for views.
  */
 import { getContext } from 'svelte';
+import { getLabels } from '../../core/locale.js';
 import { sod } from '../../core/time.js';
 /**
  * Read the calendar context.
@@ -13,6 +14,15 @@ import { sod } from '../../core/time.js';
  */
 export function useCalendarContext() {
     const raw = getContext('calendar');
+    // Memoized: views read these per-cell per-render (often at 1Hz), so avoid
+    // allocating a fresh Set / wrapper object on every access.
+    const disabledSet = $derived(new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []));
+    const loadRange = raw
+        ? {
+            get current() { return raw.loadRange; },
+            set: (r) => raw.setLoadRange(r),
+        }
+        : undefined;
     return {
         get viewState() { return raw?.viewState; },
         get drag() { return raw?.drag; },
@@ -33,16 +43,10 @@ export function useCalendarContext() {
         get ondayclick() { return raw?.ondayclick; },
         get timezone() { return raw?.timezone; },
         get disabledDates() { return raw?.disabledDates; },
-        get disabledSet() { return new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []); },
-        get loadRange() {
-            if (!raw)
-                return undefined;
-            return {
-                get current() { return raw.loadRange; },
-                set: (r) => raw.setLoadRange(r),
-            };
-        },
+        get disabledSet() { return disabledSet; },
+        get loadRange() { return loadRange; },
         get eventSnippet() { return raw?.eventSnippet; },
         get emptySnippet() { return raw?.emptySnippet; },
+        get labels() { return raw?.labels ?? getLabels(); },
     };
 }

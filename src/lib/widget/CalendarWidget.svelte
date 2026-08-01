@@ -26,11 +26,11 @@
 		api?: string;
 		/** JSON string of events for static/inline data (alternative to api) */
 		events?: string;
-		/** Theme preset name: midnight, neutral */
+		/** Theme preset name: auto (default — adapts to the host page), neutral, midnight */
 		theme?: string;
 		/** Default view ID */
 		view?: string;
-		/** Calendar height in pixels */
+		/** Calendar height: pixels (e.g. "600") or "auto" */
 		height?: string;
 		/** BCP 47 locale tag (e.g. 'en-US', 'pl-PL') */
 		locale?: string;
@@ -40,29 +40,65 @@
 		mondaystart?: string;
 		/** Custom HTTP headers as JSON string for REST adapter */
 		headers?: string;
+		/** Read-only mode: "true" disables drag/resize/create */
+		readonly?: string;
+		/** Show the Day/Week/Month pills (default: true) */
+		pills?: string;
+		/** Show prev/next/today navigation (default: true) */
+		nav?: string;
+		/** Mobile mode: "auto" (default), "true", "false" */
+		mobile?: string;
+		/** Days shown in week mode, e.g. "3" or "5" */
+		days?: string;
+		/** Compact agenda rendering: "true" */
+		compact?: string;
+		/** IANA timezone, e.g. "Europe/Warsaw" */
+		timezone?: string;
 	}
 
 	let {
 		api,
 		events,
-		theme = 'neutral',
+		theme = 'auto',
 		view = 'week-planner',
 		height = '600',
 		locale,
 		dir,
 		mondaystart = 'true',
 		headers,
+		readonly,
+		pills,
+		nav,
+		mobile,
+		days,
+		compact,
+		timezone,
 	}: Props = $props();
 
 	// ── Parse attributes ──
-	const heightPx = $derived(parseInt(height, 10) || 600);
+	const heightValue = $derived.by((): number | 'auto' => {
+		const trimmed = height.trim();
+		if (trimmed === 'auto') return 'auto';
+		if (/^\d+(px)?$/.test(trimmed)) return parseInt(trimmed, 10);
+		// "100%" / "50vh" aren't supported — warn instead of rendering a 100px sliver
+		console.warn(`[day-calendar] Unsupported height "${height}" — use pixels or "auto". Falling back to 600.`);
+		return 600;
+	});
 	const isMondayStart = $derived(mondaystart !== 'false');
 	const themeStyle = $derived(
-		(presets as Record<string, string>)[theme] || presets.neutral
+		theme in presets ? presets[theme as PresetName] : presets.neutral
 	);
 	const dirValue = $derived(
 		(dir === 'rtl' || dir === 'ltr' || dir === 'auto') ? dir as 'ltr' | 'rtl' | 'auto' : undefined
 	);
+	const mobileValue = $derived(
+		mobile === 'true' ? true : mobile === 'false' ? false : ('auto' as const)
+	);
+	const daysValue = $derived.by(() => {
+		if (!days) return undefined;
+		const n = parseInt(days, 10);
+		return Number.isNaN(n) || n < 1 || n > 7 ? undefined : n;
+	});
 
 	// ── Parse static events from JSON attribute ──
 	function parseHeaders(json?: string): Record<string, string> | undefined {
@@ -135,8 +171,15 @@
 	{adapter}
 	{view}
 	theme={themeStyle}
-	height={heightPx}
+	height={heightValue}
 	mondayStart={isMondayStart}
 	dir={dirValue}
 	{locale}
+	readOnly={readonly === 'true'}
+	showModePills={pills !== 'false'}
+	showNavigation={nav !== 'false'}
+	mobile={mobileValue}
+	days={daysValue}
+	compact={compact === 'true'}
+	timezone={timezone || undefined}
 />

@@ -27,7 +27,7 @@
 	import { createDragState, type DragState } from '../engine/drag.svelte.js';
 	import { onMount } from 'svelte';
 	import type { TimelineEvent, BlockedSlot } from '../core/types.js';
-	import { getLabels } from '../core/locale.js';
+	import { getLabels, fmtWeekRange, type CalendarLabels } from '../core/locale.js';
 	import { auto } from '../theme/presets.js';
 	import { probeHostTheme, observeHostTheme } from '../theme/auto.js';
 	import type { AutoThemeOptions } from '../theme/auto.js';
@@ -80,6 +80,12 @@
 		dir?: 'ltr' | 'rtl' | 'auto';
 		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
 		locale?: string;
+		/**
+		 * Per-instance UI label overrides (merged over the global `setLabels()` set).
+		 * Reactive: changing the prop re-renders all label text, and two calendars
+		 * on one page can carry different languages.
+		 */
+		labels?: Partial<CalendarLabels>;
 		/** Read-only mode: disables drag, resize, empty-slot creation */
 		readOnly?: boolean;
 		/** Visible hour range: [startHour, endHour). Crops the grid to these hours. */
@@ -182,6 +188,7 @@
 		borderRadius = 12,
 		dir,
 		locale,
+		labels: labelsProp,
 		readOnly = false,
 		visibleHours,
 		initialDate,
@@ -238,7 +245,14 @@
 	}
 
 	// ── Mobile detection (container-based, not viewport) ──
-	let containerWidth = $state(0);
+	// Seeded from viewport width so the first client paint doesn't flash the
+	// desktop chrome on phones; the ResizeObserver measurement takes over on mount.
+	let containerWidth = $state(
+		typeof window !== 'undefined' &&
+			window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches
+			? MOBILE_BREAKPOINT - 1
+			: 0,
+	);
 	const isMobileContainer = $derived(containerWidth > 0 && containerWidth < MOBILE_BREAKPOINT);
 
 	const useMobile = $derived(
@@ -398,7 +412,7 @@
 		get oneventcreate() { return effectiveCreate; },
 		get oneventmove() { return effectiveMove; },
 		get oneventhover() { return oneventhover; },
-		get ondayclick() { return ondayclick; },
+		get ondayclick() { return ondayclick ?? defaultDayClick; },
 		get timezone() { return timezone; },
 
 		// Config (reactive via getters)
@@ -418,6 +432,7 @@
 		get mobile() { return useMobile; },
 		get autoHeight() { return heightProp === 'auto'; },
 		get compact() { return compact; },
+		get labels() { return mergedLabels; },
 
 		// Load range (read/write)
 		get loadRange() { return viewLoadRange; },
@@ -508,6 +523,14 @@
 				day: 'numeric',
 			});
 		}
+		if (viewState.mode === 'week') {
+			// The actual visible span — respects custom day counts (3/5-day views).
+			return fmtWeekRange(
+				viewState.range.start.getTime(),
+				locale,
+				viewState.range.end.getTime() - 1,
+			);
+		}
 		return viewState.focusDate.toLocaleDateString(locale, {
 			month: 'long',
 			year: 'numeric',
@@ -520,24 +543,109 @@
 		return (['day', 'week', 'month'] as const).filter((key) => g.has(key));
 	});
 
-	const L = $derived(getLabels());
+	// Per-instance labels: prop overrides merged over the global set, memoized so
+	// views reading ctx.labels per-render don't allocate a fresh object each access.
+	const mergedLabels = $derived(
+		labelsProp ? { ...getLabels(), ...labelsProp } : getLabels(),
+	);
+	const L = $derived(mergedLabels);
 
-	/** Switch to a different mode (day/week), preserving the current view label. */
+	// Remember the last non-month view label so Month → Week round-trips
+	// restore the user's chosen view type (Agenda used to downgrade to Planner).
+	let lastViewLabel = $state<string | undefined>(undefined);
+	$effect(() => {
+		const current = views.find((v) => v.id === viewState.view);
+		if (current && current.mode !== 'month') lastViewLabel = current.label;
+	});
+
+	/** Switch to a different mode (day/week/month), preserving the current view label. */
 	function switchMode(g: 'day' | 'week' | 'month') {
-		const currentLabel = desktopViews.find((v) => v.id === viewState.view)?.label
-			?? activeView?.label;
-		const match = desktopViews.find((v) => v.mode === g && v.label === currentLabel);
+		const currentView = desktopViews.find((v) => v.id === viewState.view) ?? activeView;
+		const preferredLabel =
+			currentView?.mode === 'month' ? (lastViewLabel ?? currentView?.label) : currentView?.label;
+		const match = desktopViews.find((v) => v.mode === g && v.label === preferredLabel);
 		const fallback = desktopViews.find((v) => v.mode === g);
 		const target = match ?? fallback;
 		if (target) viewState.setView(target.id);
 	}
 
+	// ── View-type switcher (Planner ↔ Agenda) ──
+	// Distinct labels registered for the current mode; when there's more than
+	// one, the header shows a second pill group to switch between them.
+	const labelsForMode = $derived.by(() => {
+		const seen: string[] = [];
+		for (const v of desktopViews) {
+			if (v.mode === viewState.mode && !seen.includes(v.label)) seen.push(v.label);
+		}
+		return seen;
+	});
+
+	function switchLabel(label: string) {
+		const target = desktopViews.find((v) => v.mode === viewState.mode && v.label === label);
+		if (target) viewState.setView(target.id);
+	}
+
+	// Default month → day drill-down: when the host doesn't wire ondayclick,
+	// clicking a month cell (or its "+N more") focuses that date in a day view,
+	// so the month grid is usable out of the box.
+	const defaultDayClick = $derived.by(() => {
+		const target =
+			desktopViews.find((v) => v.mode === 'day' && v.label === lastViewLabel) ??
+			desktopViews.find((v) => v.mode === 'day');
+		if (!target) return undefined;
+		return (date: Date) => {
+			viewState.setFocusDate(date);
+			viewState.setView(target.id);
+		};
+	});
+
 	/** True when the current view range already includes today. */
 	const viewIncludesToday = $derived.by(() => {
-		const now = Date.now();
+		const now = new Date();
+		if (viewState.mode === 'month') {
+			// The month grid's range is week-aligned and includes adjacent-month
+			// spill days — compare against the focused month instead.
+			const f = viewState.focusDate;
+			return f.getMonth() === now.getMonth() && f.getFullYear() === now.getFullYear();
+		}
 		const { start, end } = viewState.range;
-		return now >= start.getTime() && now < end.getTime();
+		return now.getTime() >= start.getTime() && now.getTime() < end.getTime();
 	});
+
+	/** Text direction: explicit prop wins, otherwise derived from the locale. */
+	const resolvedDir = $derived.by(() => {
+		if (dir) return dir;
+		if (!locale) return undefined;
+		try {
+			const info = new Intl.Locale(locale) as Intl.Locale & {
+				textInfo?: { direction?: string };
+				getTextInfo?: () => { direction?: string };
+			};
+			const direction = info.textInfo?.direction ?? info.getTextInfo?.().direction;
+			return direction === 'rtl' ? 'rtl' : undefined;
+		} catch {
+			return undefined;
+		}
+	});
+
+	// ── Keyboard shortcuts (scoped to focus-within-calendar, not global) ──
+	// t → today, ←/→ → prev/next. Skips events already handled by views
+	// (e.g. month-grid arrow navigation) and anything typed into a field.
+	function handleShortcuts(e: KeyboardEvent) {
+		if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+		const t = e.target as HTMLElement | null;
+		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+		if (e.key === 't' || e.key === 'T') {
+			e.preventDefault();
+			viewState.goToday();
+		} else if (e.key === 'ArrowLeft') {
+			e.preventDefault();
+			viewState.prev();
+		} else if (e.key === 'ArrowRight') {
+			e.preventDefault();
+			viewState.next();
+		}
+	}
 
 	/** Header context for custom header snippet */
 	const headerCtx = $derived({
@@ -563,6 +671,7 @@
 	});
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -- shortcut keys (t/←/→) act on events bubbling from the calendar's focusable controls; the region itself is not a tab stop -->
 <div
 	class="cal"
 	bind:this={calEl}
@@ -570,8 +679,10 @@
 	class:cal--auto={heightProp === 'auto'}
 	role="region"
 	aria-label={L.calendar}
-	dir={dir}
+	aria-busy={store.loading || undefined}
+	dir={resolvedDir}
 	lang={locale}
+	onkeydown={handleShortcuts}
 >
 	<!-- ─── Custom header snippet (replaces all chrome) ─── -->
 	{#if headerSnippet}
@@ -581,21 +692,15 @@
 	{:else if useMobile && (showNavigation || (showModePills && modes.length > 1) || dateLabel)}
 		<div class="cal-m-hd">
 			<div class="cal-m-left">
-				{#if navigationSnippet}
-					{@render navigationSnippet(navCtx)}
-				{:else if showNavigation}
-					<button class="cal-m-nav" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
-						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
-					</button>
-				{/if}
-
 				{#if showModePills && modes.length > 1}
-					<div class="cal-m-pills" role="group" aria-label={L.viewMode}>
-						{#each modes as g}
+					<div class="cal-m-pills" role="radiogroup" aria-label={L.viewMode}>
+						{#each modes as g (g)}
 							<button
+								type="button"
 								class="cal-m-pill"
 								class:cal-m-pill--active={viewState.mode === g}
-								aria-pressed={viewState.mode === g}
+								role="radio"
+								aria-checked={viewState.mode === g}
 								onclick={() => switchMode(g)}
 							>
 								{g === 'day' ? L.day : g === 'week' ? L.week : L.month}
@@ -605,25 +710,31 @@
 				{/if}
 			</div>
 
-			<span class="cal-m-title">{dateLabel}</span>
+			<span class="cal-m-title" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
 
 			<div class="cal-m-right">
-				{#if !navigationSnippet && showNavigation}
-					<button class="cal-m-nav" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
+				{#if navigationSnippet}
+					{@render navigationSnippet(navCtx)}
+				{:else if showNavigation}
+					<!-- Always rendered (disabled on today) so navigating never shifts layout -->
+					<button
+						type="button"
+						class="cal-m-today"
+						onclick={() => viewState.goToday()}
+						disabled={viewIncludesToday}
+						title={L.goToToday}
+					>
+						{L.today}
+					</button>
+					<button type="button" class="cal-m-nav" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
+						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
+					</button>
+					<button type="button" class="cal-m-nav" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 					</button>
 				{/if}
 			</div>
 		</div>
-
-		<!-- Today pill — floats below header, doesn't affect header flow -->
-		{#if !navigationSnippet && showNavigation && !viewIncludesToday}
-			<div class="cal-m-today-bar">
-				<button class="cal-m-today" onclick={() => viewState.goToday()}>
-					{L.today}
-				</button>
-			</div>
-		{/if}
 
 	<!-- ─── Desktop header ─── -->
 	{:else if showNavigation || (showModePills && modes.length > 1) || dateLabel}
@@ -632,28 +743,52 @@
 				{#if navigationSnippet}
 					{@render navigationSnippet(navCtx)}
 				{:else if showNavigation}
-					{#if !viewIncludesToday}
-						<button class="cal-hd-today" onclick={() => viewState.goToday()} title={L.goToToday}>
-							{L.today}
-						</button>
-					{/if}
-					<button class="cal-hd-btn" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
+					<!-- Always rendered (disabled on today) so navigating never shifts the centered title -->
+					<button
+						type="button"
+						class="cal-hd-today"
+						onclick={() => viewState.goToday()}
+						disabled={viewIncludesToday}
+						title={L.goToToday}
+					>
+						{L.today}
+					</button>
+					<button type="button" class="cal-hd-btn" onclick={() => viewState.prev()} aria-label={viewState.mode === 'day' ? L.previousDay : viewState.mode === 'month' ? L.previousMonth : L.previousWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
 					</button>
-					<button class="cal-hd-btn" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
+					<button type="button" class="cal-hd-btn" onclick={() => viewState.next()} aria-label={viewState.mode === 'day' ? L.nextDay : viewState.mode === 'month' ? L.nextMonth : L.nextWeek}>
 						<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
 					</button>
 				{/if}
 			</div>
-			<span class="cal-hd-title">{dateLabel}</span>
+			<span class="cal-hd-title" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
 			<div class="cal-hd-side cal-hd-side--end">
-				{#if showModePills && modes.length > 1}
-					<div class="cal-pills" role="group" aria-label={L.viewMode}>
-						{#each modes as g}
+				{#if showModePills && labelsForMode.length > 1}
+					<!-- View-type switcher (e.g. Planner ↔ Agenda) for the current mode -->
+					<div class="cal-pills cal-pills--labels" role="radiogroup" aria-label={L.viewMode}>
+						{#each labelsForMode as label (label)}
 							<button
+								type="button"
+								class="cal-pill"
+								class:cal-pill--active={activeView?.label === label}
+								role="radio"
+								aria-checked={activeView?.label === label}
+								onclick={() => switchLabel(label)}
+							>
+								{label}
+							</button>
+						{/each}
+					</div>
+				{/if}
+				{#if showModePills && modes.length > 1}
+					<div class="cal-pills" role="radiogroup" aria-label={L.viewMode}>
+						{#each modes as g (g)}
+							<button
+								type="button"
 								class="cal-pill"
 								class:cal-pill--active={viewState.mode === g}
-								aria-pressed={viewState.mode === g}
+								role="radio"
+								aria-checked={viewState.mode === g}
 								onclick={() => switchMode(g)}
 							>
 								{g === 'day' ? L.day : g === 'week' ? L.week : L.month}
@@ -716,6 +851,7 @@
 	/* ── Desktop header ── */
 	.cal-hd {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: 8px;
 		padding: 8px 12px;
@@ -784,9 +920,13 @@
 		transition: background 120ms, color 120ms, border-color 120ms;
 	}
 
-	.cal-hd-today:hover {
+	.cal-hd-today:hover:not(:disabled) {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		border-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.cal-hd-today:disabled {
+		opacity: 0.45;
+		cursor: default;
 	}
 
 	.cal-pills {
@@ -858,6 +998,13 @@
 		100% { transform: translateX(100%); }
 	}
 
+	@media (prefers-reduced-motion: reduce) {
+		.cal-loading {
+			animation: none;
+			background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		}
+	}
+
 	/* ── Mobile header (flow layout) ── */
 	.cal-m-hd {
 		display: flex;
@@ -885,8 +1032,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 32px;
-		height: 32px;
+		width: 40px;
+		height: 40px;
 		border: none;
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
@@ -922,8 +1069,8 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		cursor: pointer;
-		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		padding: 5px 10px;
+		font: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);
+		padding: 9px 12px;
 		border-radius: 6px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
@@ -949,19 +1096,13 @@
 		min-width: 0;
 	}
 
-	.cal-m-today-bar {
-		display: flex;
-		justify-content: center;
-		padding: 12px 8px 6px;
-		flex-shrink: 0;
-	}
-
 	.cal-m-today {
-		font: 600 11px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-accent, #2563eb);
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);
 		border: none;
-		padding: 5px 10px;
+		min-height: 40px;
+		padding: 5px 12px;
 		border-radius: 6px;
 		cursor: pointer;
 		white-space: nowrap;
@@ -971,11 +1112,15 @@
 		-webkit-tap-highlight-color: transparent;
 		flex-shrink: 0;
 	}
-	.cal-m-today:hover {
+	.cal-m-today:hover:not(:disabled) {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);
 	}
-	.cal-m-today:active {
+	.cal-m-today:active:not(:disabled) {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);
+	}
+	.cal-m-today:disabled {
+		opacity: 0.45;
+		cursor: default;
 	}
 	.cal-m-today:focus-visible {
 		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);

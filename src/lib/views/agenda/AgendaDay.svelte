@@ -14,15 +14,14 @@
 	 */
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, isAllDay, isMultiDay } from '../../core/time.js';
-	import { getLabels } from '../../core/locale.js';
+	import { sod, DAY_MS, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
+	import { weekdayLong, monthLong } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
-	import type { TimeSlot } from '../shared/format.js';
 
-	const L = $derived(getLabels());
 	const ctx = useCalendarContext();
+	const L = $derived(ctx.labels);
 	const emptySnippet = $derived(ctx.emptySnippet);
 
 	interface Props {
@@ -55,19 +54,22 @@
 	const oneventhover = $derived(ctx.oneventhover);
 	const disabledSet = $derived(ctx.disabledSet);
 
-	// ── Swipe navigation (mobile) ──────────────────────
+	// ── Swipe navigation (mobile, touch only) ──────────
 	let swipeStartX = 0;
 	let swipeStartY = 0;
+	let swipeActive = false;
 	const SWIPE_THRESHOLD = 50;
 
 	function onPointerDown(e: PointerEvent) {
-		if (!isMobile) return;
+		if (!isMobile || e.pointerType !== 'touch') return;
+		swipeActive = true;
 		swipeStartX = e.clientX;
 		swipeStartY = e.clientY;
 	}
 
 	function onPointerUp(e: PointerEvent) {
-		if (!isMobile) return;
+		if (!swipeActive || e.pointerType !== 'touch') return;
+		swipeActive = false;
 		const dx = e.clientX - swipeStartX;
 		const dy = e.clientY - swipeStartY;
 		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
@@ -76,9 +78,13 @@
 		}
 	}
 
+	function onPointerCancel() {
+		swipeActive = false;
+	}
+
 	// ── Format helpers (delegated to shared/format.ts) ──
 	const fmt = (d: Date) => fmtTime(d, locale);
-	const eta = (ms: number) => timeUntilMs(ms, clock.tick);
+	const eta = (ms: number) => timeUntilMs(ms, clock.tick, L);
 	const prog = (ev: TimelineEvent) => progress(ev, clock.tick);
 
 	// ── Event handlers ──────────────────────────────────
@@ -86,17 +92,11 @@
 		oneventclick?.(ev);
 	}
 
-	function handleKeydown(e: KeyboardEvent, ev: TimelineEvent): void {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			oneventclick?.(ev);
-		}
-	}
-
 	// ── Day derivations ─────────────────────────────────
 	const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
 	const dayEnd = $derived(dayMs + DAY_MS);
 	const isToday = $derived(dayMs === clock.today);
+	const isTomorrow = $derived(dayMs === clock.today + DAY_MS);
 	const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
 
 	/** All events for this day, sorted chronologically */
@@ -158,28 +158,37 @@
 	style:height={height ? `${height}px` : undefined}
 	onpointerdown={onPointerDown}
 	onpointerup={onPointerUp}
+	onpointercancel={onPointerCancel}
 >
-	<div class="ag-body" role="list" aria-label={L.todaysLineup}>
+	<div class="ag-body" role="group" aria-label={L.todaysLineup}>
+		<!-- ─── In-view date header (swipe nav is otherwise unlabelled) ─── -->
+		<div class="ag-day-head">
+			{#if !equalDays && isToday}
+				<span class="ag-day-head-badge">{L.today}</span>
+			{:else if !equalDays && isTomorrow}
+				<span class="ag-day-head-badge ag-day-head-badge--muted">{L.tomorrow}</span>
+			{/if}
+			<span class="ag-day-head-name">{weekdayLong(dayMs, locale)}</span>
+			<span class="ag-day-head-date">{monthLong(dayMs, locale)} {dayNum(dayMs)}</span>
+		</div>
 		{#if allDayBanner.length > 0}
 			<!-- ─── All-day / multi-day events ─── -->
 			<div class="ag-allday">
 				<div class="ag-allday-label">{L.allDay}</div>
 				<div class="ag-allday-items">
 					{#each allDayBanner as ev (ev.id)}
-						<div
+						<button
+							type="button"
 							class="ag-allday-chip"
 							class:ag-allday-chip--selected={selectedEventId === ev.id}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							role="button"
-							tabindex="0"
 							aria-label="{ev.title}, {L.allDay}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
-							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<span class="ag-allday-dot"></span>
 							<span class="ag-allday-title">{ev.title}</span>
-						</div>
+						</button>
 					{/each}
 				</div>
 			</div>
@@ -194,18 +203,16 @@
 					</div>
 				{:else}
 					{#each timedDayEvents as ev (ev.id)}
-						<div
+						<button
+							type="button"
 							class="ag-compact-row"
 							class:ag-compact-row--selected={selectedEventId === ev.id}
 							class:ag-compact-row--cancelled={ev.status === 'cancelled'}
 							class:ag-compact-row--tentative={ev.status === 'tentative'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							role="button"
-							tabindex="0"
 							aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
-							onkeydown={(e) => handleKeydown(e, ev)}
 						>
 							<EventContent event={ev}>
 							<span class="ag-compact-row-dot"></span>
@@ -221,7 +228,7 @@
 							{/if}
 							<span class="ag-compact-row-dur">{duration(ev)}</span>
 							</EventContent>
-						</div>
+						</button>
 					{/each}
 				{/if}
 			</div>
@@ -234,23 +241,23 @@
 					<div class="ag-q-label">{L.now} <span class="ag-q-clock">{clock.hm}</span></div>
 					{#if dayCat.current.length > 0}
 						{#each dayCat.current as ev (ev.id)}
-							<div
+							<button
+								type="button"
 								class="ag-q-now"
 								class:ag-q-now--selected={selectedEventId === ev.id}
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
-								role="button"
-								tabindex="0"
 								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(prog(ev) * 100))}"
-								onclick={() => handleClick(ev)}							onpointerenter={() => oneventhover?.(ev)}								onkeydown={(e) => handleKeydown(e, ev)}
+								onclick={() => handleClick(ev)}
+								onpointerenter={() => oneventhover?.(ev)}
 							>
 								<div class="ag-q-now-dot"></div>
 								<div class="ag-q-now-title">{ev.title}</div>
 								{#if ev.subtitle}<div class="ag-q-now-sub">{ev.subtitle}</div>{/if}
 								<div class="ag-q-now-time">{L.until} {fmt(ev.end)}</div>
 								<div class="ag-q-now-track">
-									<div class="ag-q-now-fill" style:width="{prog(ev) * 100}%"></div>
+									<div class="ag-q-now-fill" style:transform="scaleX({prog(ev)})"></div>
 								</div>
-							</div>
+							</button>
 						{/each}
 					{:else}
 						<div class="ag-q-free">
@@ -262,21 +269,19 @@
 						<div class="ag-q-done-section">
 							<div class="ag-q-label">{L.done}</div>
 							{#each visibleDone as ev (ev.id)}
-								<div
+								<button
+									type="button"
 									class="ag-q-done-item"
 									class:ag-q-done-item--selected={selectedEventId === ev.id}
-									role="button"
-									tabindex="0"
 									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
 									onclick={() => handleClick(ev)}
-									onkeydown={(e) => handleKeydown(e, ev)}
 								>
 									<span class="ag-q-done-check">✓</span>
 									<span class="ag-q-done-title">{ev.title}</span>
-								</div>
+								</button>
 							{/each}
 							{#if hiddenDoneCount > 0}
-								<button class="ag-q-done-toggle" onclick={() => (showAllDone = !showAllDone)}>
+								<button type="button" class="ag-q-done-toggle" onclick={() => (showAllDone = !showAllDone)}>
 									{showAllDone ? L.showLess : L.nCompleted(hiddenDoneCount)}
 								</button>
 							{/if}
@@ -289,21 +294,19 @@
 					<div class="ag-q-label">{L.upNext}</div>
 					{#if upcomingNext.length === 0}
 						<div class="ag-q-empty">
-							{dayCat.past.length > 0 ? L.allDoneForToday : L.nothingScheduled}
+							{#if emptySnippet}{@render emptySnippet()}{:else}{dayCat.past.length > 0 ? L.allDoneForToday : L.nothingScheduled}{/if}
 						</div>
 					{:else}
 						{#each upcomingNext as ev, i (ev.id)}
 							{#if i >= UPCOMING_CARDS}
-								<div
+								<button
+									type="button"
 									class="ag-compact-row ag-compact-row--queue"
 									class:ag-compact-row--selected={selectedEventId === ev.id}
 									style:--ev-color={ev.color || 'var(--dt-accent)'}
-									role="button"
-									tabindex="0"
 									aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 									onclick={() => handleClick(ev)}
 									onpointerenter={() => oneventhover?.(ev)}
-									onkeydown={(e) => handleKeydown(e, ev)}
 								>
 									<EventContent event={ev}>
 									<span class="ag-compact-row-dot"></span>
@@ -313,19 +316,17 @@
 										<span class="ag-compact-row-sub">{ev.subtitle}</span>
 									{/if}
 									</EventContent>
-								</div>
+								</button>
 							{:else}
-							<div
+							<button
+								type="button"
 								class="ag-card ag-card--q"
 								class:ag-card--hero={i === 0}
 								class:ag-card--selected={selectedEventId === ev.id}
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
-								role="button"
-								tabindex="0"
 								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}
 								onpointerenter={() => oneventhover?.(ev)}
-								onkeydown={(e) => handleKeydown(e, ev)}
 							>
 								<div class="ag-card-body">
 									<EventContent event={ev}>
@@ -349,7 +350,7 @@
 									{/if}
 									</EventContent>
 								</div>
-							</div>
+							</button>
 							{/if}
 						{/each}
 					{/if}
@@ -360,24 +361,26 @@
 			<!-- ─── Past day: "The Log" — everything happened ─── -->
 			<div class="ag-log">
 				{#if timedDayEvents.length === 0 && allDayBanner.length === 0}
-					<div class="ag-q-empty">{L.nothingWasScheduled}</div>
+					<div class="ag-q-empty">
+						{#if emptySnippet}{@render emptySnippet()}{:else}{L.nothingWasScheduled}{/if}
+					</div>
 				{:else}
 					{#each timedDayEvents as ev (ev.id)}
-						<div
+						<button
+							type="button"
 							class="ag-log-row"
 							class:ag-log-row--selected={selectedEventId === ev.id}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							role="button"
-							tabindex="0"
 							aria-label="{ev.title}, {fmt(ev.start)} to {fmt(ev.end)}"
-							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
+							onclick={() => handleClick(ev)}
+							onpointerenter={() => oneventhover?.(ev)}
 						>
 							<span class="ag-log-check">✓</span>
 							<span class="ag-log-time">{fmt(ev.start)}</span>
 							<span class="ag-log-dot" style:background={ev.color || 'var(--dt-accent)'}></span>
 							<span class="ag-log-title">{ev.title}</span>
 							<span class="ag-log-dur">{duration(ev)}</span>
-						</div>
+						</button>
 					{/each}
 				{/if}
 			</div>
@@ -391,7 +394,8 @@
 					</div>
 				{:else}
 					{#each timedDayEvents as ev, i (ev.id)}
-						<div
+						<button
+							type="button"
 							class="ag-card ag-card--plan"
 							class:ag-card--first={i === 0}
 							class:ag-card--selected={selectedEventId === ev.id}
@@ -400,10 +404,9 @@
 							class:ag-card--full={ev.status === 'full'}
 							class:ag-card--limited={ev.status === 'limited'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							role="button"
-							tabindex="0"
 							aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
-							onclick={() => handleClick(ev)}						onpointerenter={() => oneventhover?.(ev)}							onkeydown={(e) => handleKeydown(e, ev)}
+							onclick={() => handleClick(ev)}
+							onpointerenter={() => oneventhover?.(ev)}
 						>
 							<div class="ag-card-body">
 								<EventContent event={ev}>
@@ -430,7 +433,7 @@
 								{/if}
 								</EventContent>
 							</div>
-						</div>
+						</button>
 					{/each}
 				{/if}
 			</div>
@@ -444,7 +447,6 @@
 	.ag {
 		position: relative;
 		overflow: hidden;
-		user-select: none;
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -456,6 +458,27 @@
 	}
 
 	.ag--auto { height: auto; overflow: visible; }
+
+	/* Button UA reset for interactive cards/rows (real <button>s for a11y).
+	   Placed first so later component rules override it.
+	   user-select is scoped here (not on .ag) so event text stays copyable. */
+	.ag-card,
+	.ag-allday-chip,
+	.ag-compact-row,
+	.ag-q-now,
+	.ag-q-done-item,
+	.ag-log-row,
+	.ag-q-done-toggle {
+		font: inherit;
+		color: inherit;
+		text-align: left;
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		box-sizing: border-box;
+		user-select: none;
+	}
 
 	.ag--disabled {
 		background-image: repeating-linear-gradient(
@@ -476,9 +499,44 @@
 		flex-direction: column;
 		overflow-y: auto;
 		overflow-x: hidden;
+		overscroll-behavior: contain;
 		padding-top: 8px;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-border) transparent;
+	}
+
+	/* ═══ In-view date header ═══ */
+	.ag-day-head {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		padding: 0 16px 6px;
+		flex-shrink: 0;
+	}
+	.ag-day-head-badge {
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--dt-accent, #2563eb);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
+		padding: 2px 7px;
+		border-radius: 3px;
+	}
+	.ag-day-head-badge--muted {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		background: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);
+	}
+	.ag-day-head-name {
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1.2;
+	}
+	.ag-day-head-date {
+		font-size: 11px;
+		font-family: var(--dt-mono, monospace);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		line-height: 1.2;
 	}
 	.ag--auto .ag-body { overflow-y: visible; min-height: auto; }
 	.ag-body::-webkit-scrollbar {
@@ -521,13 +579,14 @@
 		cursor: pointer;
 		transition: background 0.15s, border-color 0.15s;
 	}
-	.ag-allday-chip:hover {
+	.ag-allday-chip:hover,
+	.ag-allday-chip:active {
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
 	.ag-allday-chip:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-allday-chip--selected {
 		border-color: var(--ev-color);
@@ -557,13 +616,14 @@
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
 	}
-	.ag-card:hover {
+	.ag-card:hover,
+	.ag-card:active {
 		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color) 40%, transparent);
 	}
 	.ag-card:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-card--selected {
 		border-color: var(--ev-color);
@@ -635,7 +695,7 @@
 		flex-wrap: wrap;
 	}
 	.ag-card-tag {
-		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;
@@ -658,7 +718,7 @@
 		margin-top: 2px;
 	}
 	.ag-card-eta {
-		font-size: 9px;
+		font-size: 11px;
 		font-weight: 600;
 		letter-spacing: 0.04em;
 		color: var(--dt-accent, #2563eb);
@@ -727,19 +787,22 @@
 		padding: 8px 0 10px;
 		min-height: 0;
 	}
-	/* Mobile: stack queue columns vertically */
+	/* Mobile: stack queue columns vertically — "Up next" (hero) first,
+	   Now/Done status column second */
 	.ag--mobile .ag-q {
 		grid-template-columns: 1fr;
 		min-height: auto;
 	}
 	.ag--mobile .ag-q-status {
+		order: 2;
 		border-right: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
-		padding-bottom: 10px;
-		margin-bottom: 8px;
+		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		padding-top: 10px;
+		margin-top: 8px;
 		overflow-y: visible;
 	}
 	.ag--mobile .ag-q-queue {
+		order: 1;
 		overflow-y: visible;
 		padding-bottom: 16px;
 	}
@@ -769,8 +832,52 @@
 	.ag--mobile .ag-card--plan .ag-card-title {
 		font-size: 15px;
 	}
+	/* Mobile: Now/Done status subtree type scale */
+	.ag--mobile .ag-q-label {
+		font-size: 11px;
+	}
+	.ag--mobile .ag-q-clock {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-q-now-title {
+		font-size: 16px;
+	}
+	.ag--mobile .ag-q-now-sub {
+		font-size: 13px;
+	}
+	.ag--mobile .ag-q-now-time {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-q-free-label {
+		font-size: 13px;
+	}
+	.ag--mobile .ag-q-done-title {
+		font-size: 13px;
+	}
+	.ag--mobile .ag-q-done-check {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-card-eta {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-card-sub {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-card-loc {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-card-tag {
+		font-size: 11px;
+	}
+	.ag--mobile .ag-log-time,
+	.ag--mobile .ag-log-dur {
+		font-size: 12px;
+	}
+	.ag--mobile .ag-log-title {
+		font-size: 15px;
+	}
 	.ag-q-label {
-		font-size: 8px;
+		font-size: 10px;
 		font-weight: 600;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
@@ -813,9 +920,14 @@
 		color: var(--dt-text-3);
 		cursor: pointer;
 	}
-	.ag-q-done-toggle:hover {
+	.ag-q-done-toggle:hover,
+	.ag-q-done-toggle:active {
 		color: var(--dt-text);
 		border-color: var(--dt-text-3);
+	}
+	.ag-q-done-toggle:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-q-now-sub {
 		font-size: 12px;
@@ -828,13 +940,15 @@
 		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-q-clock {
-		font-size: 10px;
+		font-size: 11px;
 		font-weight: 600;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-accent, #2563eb);
 		margin-left: 4px;
 	}
 	.ag-q-now {
+		display: block;
+		width: 100%;
 		padding: 8px 10px;
 		margin-bottom: 8px;
 		border-radius: 8px;
@@ -842,15 +956,15 @@
 		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		cursor: pointer;
 		transition: background 150ms, border-color 150ms;
-		margin-right: 10px;
 	}
-	.ag-q-now:hover {
+	.ag-q-now:hover,
+	.ag-q-now:active {
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);
 	}
 	.ag-q-now:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-q-now--selected {
 		border-color: var(--ev-color, var(--dt-accent));
@@ -867,18 +981,29 @@
 		0%, 100% { opacity: 1; }
 		50% { opacity: 0.4; }
 	}
+	@media (prefers-reduced-motion: reduce) {
+		.ag-q-now-dot {
+			animation: none;
+		}
+		.ag-q-now-fill {
+			transition: none;
+		}
+	}
 	.ag-q-now-title {
-		font-size: 11px;
+		font-size: 12px;
 		font-weight: 600;
-		line-height: 1.2;
+		line-height: 1.25;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		white-space: nowrap;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		overflow: hidden;
-		text-overflow: ellipsis;
+		word-break: break-word;
 		margin-bottom: 3px;
 	}
 	.ag-q-now-time {
-		font-size: 9px;
+		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		margin-bottom: 6px;
@@ -891,9 +1016,11 @@
 	}
 	.ag-q-now-fill {
 		height: 100%;
+		width: 100%;
 		background: var(--ev-color, var(--dt-accent, #2563eb));
 		border-radius: 1px;
-		transition: width 1s linear;
+		transform-origin: left;
+		transition: transform 1s linear;
 	}
 	.ag-q-free {
 		padding: 8px 10px;
@@ -925,43 +1052,43 @@
 		align-items: center;
 		gap: 5px;
 		padding: 3px 0;
-		opacity: 0.35;
+		width: 100%;
 		cursor: pointer;
 	}
-	.ag-q-done-item:hover {
-		opacity: 0.6;
+	.ag-q-done-item:hover .ag-q-done-title,
+	.ag-q-done-item:active .ag-q-done-title,
+	.ag-q-done-item--selected .ag-q-done-title {
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.ag-q-done-item:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
-		opacity: 0.6;
-	}
-	.ag-q-done-item--selected {
-		opacity: 0.7;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		border-radius: 4px;
 	}
 	.ag-q-done-check {
-		font-size: 9px;
+		font-size: 11px;
 		color: var(--dt-success, rgba(22, 163, 74, 0.7));
 		flex-shrink: 0;
 	}
 	.ag-q-done-title {
-		font-size: 10px;
+		font-size: 12px;
 		line-height: 1.2;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		text-decoration: line-through;
 		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		transition: color 150ms;
 	}
 
-	/* ═══ Past Day: "The Log" ═══ */
+	/* ═══ Past Day: "The Log" ═══
+	   Dim comes from text tokens only (single layer) — no subtree opacity. */
 	.ag-log {
 		flex: 1;
 		padding: 8px 20px 12px;
 		overflow-y: auto;
 		scrollbar-width: none;
-		opacity: 0.7;
 	}
 	.ag-log::-webkit-scrollbar {
 		display: none;
@@ -971,22 +1098,24 @@
 		align-items: center;
 		gap: 10px;
 		padding: 8px 0;
+		width: 100%;
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		cursor: pointer;
-		transition: opacity 150ms;
 	}
 	.ag-log-row:last-child {
 		border-bottom: none;
 	}
-	.ag-log-row:hover {
-		opacity: 1;
+	.ag-log-row:hover .ag-log-title,
+	.ag-log-row:active .ag-log-title,
+	.ag-log-row--selected .ag-log-title {
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.ag-log-row:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		border-radius: 6px;
 	}
 	.ag-log-row--selected {
-		opacity: 1;
 		background: color-mix(in srgb, var(--ev-color) 6%, transparent);
 		border-radius: 6px;
 		padding-left: 8px;
@@ -1022,9 +1151,11 @@
 		text-overflow: ellipsis;
 		text-decoration: line-through;
 		text-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));
+		transition: color 150ms;
+		text-align: left;
 	}
 	.ag-log-dur {
-		font-size: 10px;
+		font-size: 11px;
 		font-family: var(--dt-mono, monospace);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
@@ -1045,6 +1176,7 @@
 		padding: 4px 0;
 		cursor: pointer;
 		min-width: 0;
+		width: 100%;
 	}
 	.ag-compact-row--selected {
 		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
@@ -1052,10 +1184,16 @@
 		padding-left: 6px;
 		padding-right: 6px;
 	}
-	.ag-compact-row:hover .ag-compact-row-title { color: var(--dt-text); }
+	.ag-compact-row:hover .ag-compact-row-title,
+	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
+	.ag-compact-row:active {
+		background: color-mix(in srgb, var(--ev-color) 8%, transparent);
+		border-radius: 4px;
+	}
 	.ag-compact-row:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		border-radius: 4px;
 	}
 	.ag-compact-row-dot {
 		width: 5px;
@@ -1076,13 +1214,14 @@
 	.ag-compact-row-title {
 		font-size: 12px;
 		font-weight: 500;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);
 		flex: 1;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
 		line-height: 1.4;
+		text-align: left;
 	}
 	.ag-compact-row-dur {
 		font-size: 10px;
@@ -1102,7 +1241,7 @@
 		line-height: 1.4;
 	}
 	.ag-compact-row-tag {
-		font: 500 8px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);
 		padding: 1px 4px;
@@ -1115,8 +1254,17 @@
 	.ag-compact-row--tentative { opacity: 0.65; }
 	/* Mobile: larger touch targets for compact rows */
 	.ag--mobile .ag-compact-row { padding: 8px 0; }
-	.ag--mobile .ag-compact-row-title { font-size: 14px; }
+	.ag--mobile .ag-compact-row-title { font-size: 15px; }
 	.ag--mobile .ag-compact-row-time { font-size: 12px; }
+	.ag--mobile .ag-compact-row-dur { font-size: 12px; }
+	.ag--mobile .ag-compact-row-sub { font-size: 12px; }
+	.ag--mobile .ag-compact-row-tag { font-size: 11px; }
+	.ag--mobile .ag-day-head { padding: 0 16px 8px; }
+	.ag--mobile .ag-day-head-name { font-size: 15px; }
+	.ag--mobile .ag-day-head-date { font-size: 12px; }
+	.ag--mobile .ag-day-head-badge { font-size: 11px; }
+	.ag--mobile .ag-allday-title { font-size: 0.85rem; }
+	.ag--mobile .ag-allday-label { font-size: 11px; }
 
 	/* ═══ Future Day: "The Plan" ═══ */
 	.ag-plan {

@@ -1,30 +1,27 @@
 <!--
-  Planner week mode — Multi-week vertical scroll.
+  Planner week mode — vertical time grid (Google-Calendar-style).
 
-  Modelled after Hey Calendar's week view:
-  • Weeks stack vertically. Scroll up = past, down = future.
-  • Day headers in each week row: "MON 23", "TUE 24", with accent pill for today.
-  • Month label in left gutter, vertical bottom-to-top.
-  • Events are clean horizontal bars with colour fill, "9AM- 10AM Title" inline.
-  • Generous whitespace, thin dividers, minimal chrome.
+  • Left time gutter with localized hour labels; N day columns (viewState.dayCount).
+  • Sticky day-header row + sticky all-day strip; the grid scrolls vertically.
+  • Timed events are absolutely positioned by start/end; overlaps share the
+    column via union-find lanes.
+  • Drag-to-move (vertical = time, horizontal = day), top/bottom resize
+    handles, drag-to-create with ghost preview — all through ctx.drag /
+    ctx.commitDrag so Calendar's validation (min/max duration, blocked,
+    disabled) applies on drop.
+  • Now-line across today's column only; auto-scrolls to the current time.
 -->
 <script lang="ts">
-	import { onMount, tick, untrack } from 'svelte';
-	import { flip } from 'svelte/animate';
-	import { crossfade } from 'svelte/transition';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { untrack } from 'svelte';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
-	import type { DragState } from '../../engine/drag.svelte.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
-	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
-	import { startOfWeek as sowFn, fractionalHour, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import type { TimelineEvent } from '../../core/types.js';
+	import { DAY_MS, HOUR_MS, sod, addDaysMs } from '../../core/time.js';
+	import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { weekdayShort, monthLong, fmtTime as _fmtTime, getLabels } from '../../core/locale.js';
+	import { fmtH, fmtTime, fmtDuration, weekdayShort } from '../../core/locale.js';
 
-	const L = $derived(getLabels());
 
 	interface Props {
 		mondayStart?: boolean;
@@ -37,6 +34,8 @@
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		selectedEventId?: string | null;
 		readOnly?: boolean;
+		/** Visible hour range [startHour, endHour) */
+		visibleHours?: [number, number];
 		[key: string]: unknown;
 	}
 
@@ -51,15 +50,13 @@
 		oneventcreate,
 		selectedEventId = null,
 		readOnly = false,
+		visibleHours,
 	}: Props = $props();
 
+	// ── Context ────────────────────────────────────────
 	const ctx = useCalendarContext();
+	const L = $derived(ctx.labels);
 	const clock = createClock(ctx.timezone);
-
-	// Drag ghost flies between day cells instead of teleporting.
-	// No fallback: without a counterpart (drag start/end) it appears/disappears instantly.
-	const ANIM = $derived(prefersReducedMotion.current ? 0 : 180);
-	const [previewSend, previewReceive] = crossfade({ duration: () => (prefersReducedMotion.current ? 0 : 160) });
 	const drag = $derived(ctx.drag);
 	const commitDragCtx = $derived(ctx.commitDrag);
 	const viewState = $derived(ctx.viewState);
@@ -73,623 +70,1161 @@
 	const autoHeight = $derived(ctx.autoHeight);
 	const oneventhover = $derived(ctx.oneventhover);
 	const disabledSet = $derived(ctx.disabledSet);
+	const SNAP_MS = $derived(ctx.snapInterval * 60_000);
 
-	// ─── Buffer config ─────────────────────────────
-	const INITIAL_BUFFER = 52;   // ±1 year on load
-	const EXTEND_BY = 26;        // +6 months when user hits edge
-	const EDGE_PX = 200;         // extend when this close to scroll edge
-	let bufferBefore = $state(INITIAL_BUFFER);
-	let bufferAfter = $state(INITIAL_BUFFER);
-	const MAX_EVENTS_SHOWN = 5;
+	// ── Config ─────────────────────────────────────────
+	const HOUR_H = 48;
+	const GUTTER_W = 48;
+	const MIN_COL_W = 110;
+	const ALLDAY_MAX = 3;
 
-	const _initMs = untrack(() => sod(focusDate?.getTime() ?? Date.now()));
-	let internalFocusMs = $state(_initMs);
-	let lastExternalMs = _initMs;
+	const startHour = $derived(visibleHours?.[0] ?? 0);
+	const endHour = $derived(visibleHours?.[1] ?? 24);
+	const hourCount = $derived(Math.max(1, endHour - startHour));
+	const gridHeight = $derived(hourCount * HOUR_H);
 
-	let el: HTMLDivElement;
+	let scrollEl: HTMLDivElement;
+	let colsEl: HTMLDivElement;
 
-	function scrollWeekIntoContainer(targetMs?: number, behavior: ScrollBehavior = 'auto') {
-		if (!el) return;
-		let target: HTMLElement | null = null;
-		if (targetMs !== undefined) {
-			// Find the week row containing this date
-			const rows = el.querySelectorAll<HTMLElement>('[data-week]');
-			for (const row of rows) {
-				const weekMs = Number(row.dataset.week);
-				if (weekMs <= targetMs && targetMs < weekMs + customDays * DAY_MS) {
-					target = row;
-					break;
-				}
-			}
-		}
-		// Fall back to current week
-		if (!target) target = el.querySelector<HTMLElement>('.wg-week--current');
-		if (!target) return;
-		const targetTop = target.offsetTop - (el.clientHeight - target.offsetHeight) / 2;
-		el.scrollTo({ top: Math.max(0, targetTop), behavior });
-	}
-
-	// ─── Derived ────────────────────────────────────────
+	// ── Week window ────────────────────────────────────
+	// The engine (viewState.range) already computes the week window; fall back
+	// to a local computation when running headless.
 	const todayMs = $derived(clock.today);
 	const customDays = $derived(viewState?.dayCount ?? 7);
-	const anchorPeriodStart = $derived(
-		customDays === 7
-			? sowFn(internalFocusMs, mondayStart)
-			: sod(internalFocusMs)
-	);
+	const weekStartMs = $derived.by(() => {
+		const r = viewState?.range;
+		if (r) return sod(r.start.getTime());
+		const f = focusDate?.getTime() ?? todayMs;
+		return customDays === 7 ? sowFn(f, mondayStart) : sod(f);
+	});
+	const weekEndMs = $derived(addDaysMs(weekStartMs, customDays));
+	const weekHasToday = $derived(todayMs >= weekStartMs && todayMs < weekEndMs);
 
-	// ─── Declare load range for entire visible buffer ────────
-	// Instead of calling store.load() directly, we tell Calendar
-	// what range we need. Calendar's single $effect handles loading.
+	interface DayCol {
+		ms: number;
+		isToday: boolean;
+		isPast: boolean;
+		isWeekend: boolean;
+		isDisabled: boolean;
+		isoDay: number;
+		dayNum: number;
+	}
+
+	const dayCols = $derived.by(() => {
+		const cols: DayCol[] = [];
+		for (let d = 0; d < customDays; d++) {
+			const ms = addDaysMs(weekStartMs, d);
+			const date = new Date(ms);
+			const dow = date.getDay();
+			const isoDay = dow === 0 ? 7 : dow;
+			if (hideDays?.includes(isoDay)) continue;
+			cols.push({
+				ms,
+				isToday: ms === todayMs,
+				isPast: equalDays ? false : ms < todayMs,
+				isWeekend: dow === 0 || dow === 6,
+				isDisabled: disabledSet.has(ms),
+				isoDay,
+				dayNum: date.getDate(),
+			});
+		}
+		return cols;
+	});
+
+	const innerMinWidth = $derived(GUTTER_W + dayCols.length * MIN_COL_W);
+
+	// ── Load range: visible week ±7 days ───────────────
 	$effect(() => {
 		if (!loadRangeCtx) return;
-		const rangeStart = new Date(anchorPeriodStart - bufferBefore * customDays * DAY_MS);
-		const rangeEnd = new Date(anchorPeriodStart + (bufferAfter + 1) * customDays * DAY_MS);
+		const rangeStart = new Date(weekStartMs - 7 * DAY_MS);
+		const rangeEnd = new Date(weekEndMs + 7 * DAY_MS);
 		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
 		return () => loadRangeCtx.set(null);
 	});
 
-	// ─── Week data ──────────────────────────────────────
-	interface WeekRow {
-		weekStart: number;
-		isCurrent: boolean;
-		monthLabel: string | null;
-		days: DayCell[];
+	// ── All-day / multi-day segments per day ───────────
+	const allDayByDay = $derived.by(() => {
+		const map = new Map<number, DaySegment[]>();
+		for (const day of dayCols) {
+			const segs: DaySegment[] = [];
+			for (const ev of events) {
+				if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+				const seg = segmentForDay(ev, day.ms);
+				if (seg) segs.push(seg);
+			}
+			if (segs.length) map.set(day.ms, segs);
+		}
+		return map;
+	});
+	const hasAllDayRow = $derived(allDayByDay.size > 0);
+
+	let adExpanded = $state<Record<number, boolean>>({});
+
+	// ── Timed event layout (union-find lanes, vertical) ─
+	// The dragged (move-mode) event is excluded from lanes and rendered as a
+	// ghost instead; resize tracks the tentative payload in place.
+	const movingId = $derived(drag?.active && drag.mode === 'move' ? drag.payload?.eventId ?? null : null);
+	const movingEvent = $derived(movingId ? events.find((e) => e.id === movingId) ?? null : null);
+
+	interface PosEvent {
+		ev: TimelineEvent;
+		top: number;
+		height: number;
+		col: number;
+		totalCols: number;
+		isResizing: boolean;
 	}
 
-	interface DayCell {
-		ms: number;
-		dayNum: number;
-		isToday: boolean;
-		isPast: boolean;
-		isWeekend: boolean;
-		isFirstOfMonth: boolean;
-		monthLabel: string | null;
-		events: TimelineEvent[];
-		/** All-day or multi-day event segments for this day */
-		allDaySegments: DaySegment[];
+	interface LaneInfo {
+		ev: TimelineEvent;
+		startMs: number;
+		endMs: number;
+		isResizing: boolean;
+		col: number;
+		totalCols: number;
 	}
 
-	const weeks = $derived.by(() => {
-		const result: WeekRow[] = [];
+	const layoutByDay = $derived.by(() => {
+		const rsP = drag?.active && (drag.mode === 'resize-start' || drag.mode === 'resize-end')
+			? drag.payload
+			: null;
+		const map = new Map<number, PosEvent[]>();
 
-		for (let w = -bufferBefore; w <= bufferAfter; w++) {
-			const periodStart = anchorPeriodStart + w * customDays * DAY_MS;
-			const isCurrent = todayMs >= periodStart && todayMs < periodStart + customDays * DAY_MS;
-			const days: DayCell[] = [];
+		for (const day of dayCols) {
+			const dayEnd = day.ms + DAY_MS;
+			const bandStart = day.ms + startHour * HOUR_MS;
+			const bandEnd = day.ms + endHour * HOUR_MS;
+			const infos: LaneInfo[] = [];
 
-			for (let d = 0; d < customDays; d++) {
-				const ms = periodStart + d * DAY_MS;
-				const date = new Date(ms);
-				const dayNum = date.getDate();
-				const dow = date.getDay();
-				const isWeekend = dow === 0 || dow === 6;
-				const isToday = ms === todayMs;
-				const isPast = equalDays ? false : ms < todayMs;
-				const isFirstOfMonth = dayNum === 1;
-				const monthLabel = (d === 0 || isFirstOfMonth)
-					? monthLong(ms, locale).toUpperCase()
-					: null;
+			for (const ev of events) {
+				if (isAllDay(ev) || isMultiDay(ev)) continue;
+				if (ev.id === movingId) continue;
+				const isResizing = rsP?.eventId === ev.id;
+				const s0 = isResizing ? rsP!.start.getTime() : ev.start.getTime();
+				const e0 = isResizing ? rsP!.end.getTime() : ev.end.getTime();
+				if (s0 >= dayEnd || e0 <= day.ms) continue;
+				const sMs = Math.max(s0, bandStart);
+				const eMs = Math.min(e0, bandEnd);
+				// Entirely outside the visible hour band — skip, don't paint a sliver
+				if (eMs <= sMs) continue;
+				infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, col: 0, totalCols: 1 });
+			}
 
-				const dayEnd = ms + DAY_MS;
-				const dayEventsAll = events
-					.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
-					.sort((a, b) => a.start.getTime() - b.start.getTime());
+			infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
 
-				// Separate all-day / multi-day from timed events
-				const timedEvents: TimelineEvent[] = [];
-				const allDaySegments: DaySegment[] = [];
-				for (const ev of dayEventsAll) {
-					if (isAllDay(ev) || isMultiDay(ev)) {
-						const seg = segmentForDay(ev, ms);
-						if (seg) allDaySegments.push(seg);
-					} else {
-						timedEvents.push(ev);
+			// Union-find overlap groups (same algorithm as PlannerDay/MobileDay)
+			const par = infos.map((_, i) => i);
+			function find(i: number): number {
+				while (par[i] !== i) { par[i] = par[par[i]]; i = par[i]; }
+				return i;
+			}
+			for (let i = 0; i < infos.length; i++) {
+				for (let j = i + 1; j < infos.length; j++) {
+					if (infos[j].startMs < infos[i].endMs) par[find(i)] = find(j);
+					else break;
+				}
+			}
+
+			const groups = new Map<number, number[]>();
+			for (let i = 0; i < infos.length; i++) {
+				const root = find(i);
+				if (!groups.has(root)) groups.set(root, []);
+				groups.get(root)!.push(i);
+			}
+
+			for (const [, indices] of groups) {
+				const lanes: number[] = [];
+				for (const idx of indices) {
+					const inf = infos[idx];
+					let lane = 0;
+					for (let r = 0; r < lanes.length; r++) {
+						if (lanes[r] <= inf.startMs) { lane = r; lanes[r] = inf.endMs; break; }
+						lane = r + 1;
 					}
+					if (lane >= lanes.length) lanes.push(inf.endMs);
+					infos[idx].col = lane;
 				}
-
-				days.push({ ms, dayNum, isToday, isPast, isWeekend, isFirstOfMonth, monthLabel, events: timedEvents, allDaySegments });
+				for (const idx of indices) infos[idx].totalCols = lanes.length;
 			}
 
-			// Month label: show when first day of period is day 1-7 (for 7-day), or first day of period (for custom)
-			const startDate = new Date(periodStart);
-			const showMonth = customDays === 7 ? startDate.getDate() <= 7 : startDate.getDate() <= customDays;
-			const monthLabel = showMonth ? monthLong(periodStart, locale).toUpperCase() : null;
-
-			result.push({ weekStart: periodStart, isCurrent, monthLabel, days });
+			map.set(
+				day.ms,
+				infos.map((inf) => ({
+					ev: inf.ev,
+					top: ((inf.startMs - day.ms) / HOUR_MS - startHour) * HOUR_H,
+					height: Math.max(24, ((inf.endMs - inf.startMs) / HOUR_MS) * HOUR_H),
+					col: inf.col,
+					totalCols: inf.totalCols,
+					isResizing: inf.isResizing,
+				})),
+			);
 		}
-
-		// Filter hidden days if hideDays is set
-		if (hideDays?.length) {
-			for (const row of result) {
-				row.days = row.days.filter((d) => {
-					const isoDay = new Date(d.ms).getDay();
-					// Convert JS day (0=Sun) to ISO (7=Sun)
-					const iso = isoDay === 0 ? 7 : isoDay;
-					return !hideDays.includes(iso);
-				});
-			}
-		}
-
-		return result;
+		return map;
 	});
 
-	// ─── Format helpers ─────────────────────────────────
-	function fmtAmPm(d: Date): string {
-		return _fmtTime(d, locale);
-	}
-
-	function fmtNowTime(tick: number): string {
-		return _fmtTime(new Date(tick), locale);
-	}
-
-	// ─── Now indicator fraction ─────────────────────────
-	const nowFrac = $derived(fractionalHour(clock.tick) / 24);
-
-	// ─── Scroll to current week on mount ────────────────
-	onMount(async () => {
-		await tick();
-		scrollWeekIntoContainer();
+	// ── Now markers (separate from layout — 1Hz tick must not re-lane) ──
+	const nowIds = $derived.by(() => {
+		const now = clock.tick;
+		const s = new Set<string>();
+		for (const ev of events) {
+			if (ev.start.getTime() <= now && ev.end.getTime() > now) s.add(ev.id);
+		}
+		return s;
 	});
 
-	// ─── External navigation (arrows, goToday) ──────────
+	const nowFracHour = $derived((clock.tick - clock.today) / HOUR_MS);
+	/** Y offset of the now-line, or null when outside visibleHours */
+	const nowY = $derived.by(() => {
+		if (nowFracHour < startHour || nowFracHour > endHour) return null;
+		return (nowFracHour - startHour) * HOUR_H;
+	});
+
+	// ── Empty week ─────────────────────────────────────
+	const weekIsEmpty = $derived(
+		!events.some((ev) => ev.start.getTime() < weekEndMs && ev.end.getTime() > weekStartMs),
+	);
+
+	// ── Auto-scroll (mount + week change) ──────────────
+	// Week with today → current time minus ~1h of context; otherwise the
+	// visibleHours start or 08:00, whichever is later.
 	$effect(() => {
-		const ext = focusDate ? sod(focusDate.getTime()) : clock.today;
-		if (ext !== lastExternalMs) {
-			lastExternalMs = ext;
-			internalFocusMs = ext;
-			tick().then(() => scrollWeekIntoContainer(ext));
-		}
+		void weekStartMs; // re-run on week change
+		const el = scrollEl;
+		if (!el) return;
+		untrack(() => {
+			let targetHour: number;
+			if (weekHasToday) {
+				const clamped = Math.min(Math.max(nowFracHour, startHour), endHour);
+				targetHour = Math.max(startHour, clamped - 1);
+			} else {
+				targetHour = Math.max(startHour, Math.min(8, endHour - 1));
+			}
+			el.scrollTop = (targetHour - startHour) * HOUR_H;
+		});
 	});
 
-	/** Push the week at the viewport centre to viewState (drives the header label + Today button). */
-	function syncFocusFromScroll() {
-		if (!el || !viewState) return;
-		const centerY = el.scrollTop + el.clientHeight / 2;
-		const rows = el.querySelectorAll<HTMLElement>('[data-week]');
-		for (const row of rows) {
-			if (row.offsetTop + row.offsetHeight >= centerY) {
-				const ms = Number(row.dataset.week);
-				if (Number.isFinite(ms) && ms !== lastExternalMs) {
-					lastExternalMs = ms;
-					viewState.setFocusDate(new Date(ms));
-				}
+	// ── Geometry helpers ───────────────────────────────
+	function colsRect(): DOMRect {
+		return colsEl.getBoundingClientRect();
+	}
+
+	/** Pointer X → index into dayCols (clamped) */
+	function pointerDayIndex(clientX: number): number {
+		const r = colsRect();
+		const n = dayCols.length;
+		if (n === 0) return 0;
+		const w = r.width / n;
+		return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+	}
+
+	/** Pointer Y → fractional hour (unclamped) */
+	function pointerHour(clientY: number): number {
+		return startHour + (clientY - colsRect().top) / HOUR_H;
+	}
+
+	/** Pointer → epoch ms (day from X, time from Y, clamped into the band) */
+	function pointerTimeMs(clientX: number, clientY: number): number {
+		const dayMs = dayCols[pointerDayIndex(clientX)]?.ms ?? weekStartMs;
+		const hour = Math.min(Math.max(pointerHour(clientY), startHour), endHour);
+		return dayMs + hour * HOUR_MS;
+	}
+
+	/** Clamp a timestamp into the visible band of a specific day */
+	function clampToDayBand(ms: number, dayMs: number): number {
+		return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
+	}
+
+	// ── Blocked slot helpers ───────────────────────────
+	function isBlockedAt(dayMs: number, hour: number): boolean {
+		if (!blockedSlots?.length) return false;
+		const jsDay = new Date(dayMs).getDay();
+		const isoDay = jsDay === 0 ? 7 : jsDay;
+		return blockedSlots.some((slot) => {
+			if (slot.day && slot.day !== isoDay) return false;
+			return hour >= slot.start && hour < slot.end;
+		});
+	}
+
+	function blockedRangeLabel(dayMs: number, slotStart: number, slotEnd: number): string {
+		return `${fmtTime(new Date(dayMs + slotStart * HOUR_MS), locale)} – ${fmtTime(new Date(dayMs + slotEnd * HOUR_MS), locale)}`;
+	}
+
+	// ── Status label (aria) ────────────────────────────
+	function statusText(ev: TimelineEvent): string {
+		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
+		if (ev.status === 'tentative') return ` (${L.tentative})`;
+		if (ev.status === 'full') return ` (${L.full})`;
+		if (ev.status === 'limited') return ` (${L.limited})`;
+		return '';
+	}
+
+	// ── Ghost preview (move + create) ──────────────────
+	interface Ghost {
+		top: number;
+		height: number;
+		start: Date;
+		end: Date;
+		create: boolean;
+		showTime: boolean;
+	}
+
+	function ghostForDay(dayMs: number): Ghost | null {
+		if (!drag?.active || !drag.payload) return null;
+		const mode = drag.mode;
+		if (mode !== 'move' && mode !== 'create') return null;
+		const s = drag.payload.start.getTime();
+		const e = drag.payload.end.getTime();
+		const bandS = dayMs + startHour * HOUR_MS;
+		const bandE = dayMs + endHour * HOUR_MS;
+		const cs = Math.max(s, bandS);
+		const ce = Math.min(e, bandE);
+		if (ce <= cs) return null;
+		return {
+			top: ((cs - dayMs) / HOUR_MS - startHour) * HOUR_H,
+			height: Math.max(12, ((ce - cs) / HOUR_MS) * HOUR_H),
+			start: drag.payload.start,
+			end: drag.payload.end,
+			create: mode === 'create',
+			// Only the segment containing the start shows the readout
+			showTime: cs === Math.max(s, dayMs),
+		};
+	}
+
+	// ── Drag-to-create (mouse: sweep; touch: long-press) ──
+	// Mouse movement below CREATE_THRESHOLD stays a plain click. On touch a
+	// vertical drag must remain a scroll, so create only arms after a ~350ms
+	// still hold (moving > 8px first cancels it).
+	const CREATE_THRESHOLD = 4;
+	const LONG_PRESS_MS = 350;
+	const LONG_PRESS_TOLERANCE = 8;
+	let suppressColsClick = false;
+	let crStartX = 0;
+	let crStartY = 0;
+	let crAnchorMs = 0;
+	let crDayMs = 0;
+	let crStarted = false;
+	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	// touch-action can't change mid-gesture, so once a touch drag-create/resize
+	// is live we block native scrolling with a non-passive touchmove listener.
+	function blockTouchScroll(e: TouchEvent) { e.preventDefault(); }
+	function addTouchScrollBlock() {
+		window.addEventListener('touchmove', blockTouchScroll, { passive: false });
+	}
+	function removeTouchScrollBlock() {
+		window.removeEventListener('touchmove', blockTouchScroll);
+	}
+
+	function clearLongPress() {
+		if (longPressTimer !== null) { clearTimeout(longPressTimer); longPressTimer = null; }
+	}
+
+	function startColsCreate() {
+		if (!drag) return;
+		crStarted = true;
+		crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / SNAP_MS) * SNAP_MS, crDayMs);
+		drag.beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + SNAP_MS));
+		addTouchScrollBlock();
+	}
+
+	function onColsPointerDown(e: PointerEvent) {
+		if (e.button !== 0 || !drag || !oneventcreate || readOnly) return;
+		if ((e.target as HTMLElement).closest('.tw-ev, .tw-ghost')) return;
+		const day = dayCols[pointerDayIndex(e.clientX)];
+		if (!day || day.isDisabled) return;
+		// Never arm a create on a blocked region (Calendar validates on commit too)
+		if (isBlockedAt(day.ms, Math.min(Math.max(pointerHour(e.clientY), startHour), endHour))) return;
+		crStartX = e.clientX;
+		crStartY = e.clientY;
+		crDayMs = day.ms;
+		crAnchorMs = clampToDayBand(
+			day.ms + Math.max(pointerHour(e.clientY), startHour) * HOUR_MS,
+			day.ms,
+		);
+		crStarted = false;
+		if (e.pointerType === 'touch') {
+			longPressTimer = setTimeout(() => {
+				longPressTimer = null;
+				startColsCreate();
+			}, LONG_PRESS_MS);
+		}
+		window.addEventListener('pointermove', onColsCreateMove);
+		window.addEventListener('pointerup', onColsCreateUp, { once: true });
+		window.addEventListener('pointercancel', onColsCreateCancel, { once: true });
+	}
+
+	function onColsCreateMove(e: PointerEvent) {
+		if (!drag) return;
+		if (!crStarted) {
+			if (longPressTimer !== null) {
+				// Finger moved before the hold completed → it's a scroll
+				const moved = Math.hypot(e.clientX - crStartX, e.clientY - crStartY);
+				if (moved > LONG_PRESS_TOLERANCE) cleanupColsCreate();
 				return;
 			}
+			if (e.pointerType === 'touch') return; // touch requires the long-press first
+			if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
+			startColsCreate();
 		}
-	}
-
-	let extending = false;
-
-	function handleUserScroll() {
-		syncFocusFromScroll();
-		if (!el || extending) return;
-		// Extend buffer when user scrolls near the edge
-		if (el.scrollTop < EDGE_PX) {
-			extending = true;
-			const oldHeight = el.scrollHeight;
-			bufferBefore += EXTEND_BY;
-			// After DOM updates, compensate scroll for prepended content
-			tick().then(() => {
-				el.scrollTop += el.scrollHeight - oldHeight;
-				extending = false;
-			});
-		} else {
-			const bottomRemaining = el.scrollHeight - el.clientHeight - el.scrollTop;
-			if (bottomRemaining < EDGE_PX) {
-				bufferAfter += EXTEND_BY;
-			}
-		}
-	}
-
-	function handleDayCellClick(ms: number, e: Event) {
-		const target = e.target as HTMLElement;
-		if (target.closest('.wg-ev')) return;
-		if (readOnly || !oneventcreate) return;
-		// Check disabled dates
-		if (disabledSet.has(ms)) return;
-		// Check blocked slots (all-day block check: if entire day is blocked, prevent)
-		const durMin = minDuration ? Math.max(60, minDuration) : 60;
-		const start = new Date(ms + 9 * HOUR_MS);
-		const end = new Date(start.getTime() + durMin * 60_000);
-		oneventcreate({ start, end });
-	}
-
-	// ─── Event drag-to-move ───────────────────────────────────────
-	const DRAG_THRESHOLD = 8;
-	let evDragStartX = 0;
-	let evDragStartY = 0;
-	let evDragStarted = false;
-	let evDragging = $state(false);
-	let evDragId = $state<string | null>(null);
-	let evDragEvent: TimelineEvent | null = null;
-
-	const dragPreviewEvent = $derived.by(() => {
-		const payload = drag?.active && drag.mode === 'move' ? drag.payload : null;
-		if (!payload?.eventId) return null;
-		const ev = events.find((event) => event.id === payload.eventId);
-		if (!ev) return null;
-		return { ...ev, start: payload.start, end: payload.end };
-	});
-
-	function isDraggedEvent(eventId: string): boolean {
-		return dragPreviewEvent?.id === eventId;
-	}
-
-	function timedEventsForDay(day: DayCell): TimelineEvent[] {
-		if (!dragPreviewEvent) return day.events;
-		return day.events.filter((ev) => ev.id !== dragPreviewEvent.id);
-	}
-
-	// Crossfade keys for the previews, snapshotted at render time. Transition
-	// params are evaluated lazily at unmount — after the drag payload is
-	// already null — so they must never read the reactive preview directly.
-	// Plain Map (not $state): written during render, read only by transitions.
-	const previewKeySnapshot = new Map<number | 'timed', string>();
-
-	function dragPreviewTimedForDay(dayMs: number): TimelineEvent | null {
-		const ev = dragPreviewEvent;
-		if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
-		const dayEnd = dayMs + DAY_MS;
-		const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
-		if (hit) previewKeySnapshot.set('timed', ev.id);
-		return hit ? ev : null;
-	}
-
-	function dragPreviewSegmentForDay(dayMs: number): DaySegment | null {
-		const ev = dragPreviewEvent;
-		if (!ev || (!isAllDay(ev) && !isMultiDay(ev))) return null;
-		const seg = segmentForDay(ev, dayMs);
-		if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
-		return seg;
-	}
-
-	function getCellWidth(): number {
-		const cell = el?.querySelector('.wg-cell');
-		return cell ? cell.getBoundingClientRect().width : 100;
-	}
-
-	function getRowHeight(): number {
-		const row = el?.querySelector('.wg-week');
-		return row ? row.getBoundingClientRect().height + 24 : 200; // 24 ≈ vertical margin between weeks
-	}
-
-	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
-		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
-		e.stopPropagation();
-		evDragStartX = e.clientX;
-		evDragStartY = e.clientY;
-		evDragStarted = false;
-		evDragId = ev.id;
-		evDragEvent = ev;
-
-		window.addEventListener('pointermove', onEvWindowPointerMove);
-		window.addEventListener('pointerup', onEvWindowPointerUp, { once: true });
-		window.addEventListener('pointercancel', onEvWindowPointerCancel, { once: true });
-	}
-
-	function onEvWindowPointerMove(e: PointerEvent) {
-		const ev = evDragEvent;
-		if (!drag || !ev || evDragId !== ev.id) return;
-		const dx = e.clientX - evDragStartX;
-		const dy = e.clientY - evDragStartY;
-		if (!evDragStarted && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
-
-		if (!evDragStarted) {
-			evDragStarted = true;
-			evDragging = true;
-			drag.beginMove(ev.id, ev.start, ev.end);
-		}
-
-		const cellW = getCellWidth();
-		const rowH = getRowHeight();
-		const dayOffset = Math.round(dx / cellW);
-		const weekOffset = Math.round(dy / rowH);
-		const deltaMs = (dayOffset + weekOffset * 7) * DAY_MS;
+		const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
+		const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, crDayMs);
 		drag.updatePointer(
-			new Date(ev.start.getTime() + deltaMs),
-			new Date(ev.end.getTime() + deltaMs),
+			new Date(Math.min(crAnchorMs, snapped)),
+			new Date(Math.max(crAnchorMs + SNAP_MS, snapped)),
 		);
 	}
 
-	function cleanupEvDrag() {
-		window.removeEventListener('pointermove', onEvWindowPointerMove);
-		window.removeEventListener('pointerup', onEvWindowPointerUp);
-		window.removeEventListener('pointercancel', onEvWindowPointerCancel);
+	function cleanupColsCreate() {
+		clearLongPress();
+		removeTouchScrollBlock();
+		window.removeEventListener('pointermove', onColsCreateMove);
+		window.removeEventListener('pointerup', onColsCreateUp);
+		window.removeEventListener('pointercancel', onColsCreateCancel);
+		crStarted = false;
+	}
+
+	function onColsCreateUp() {
+		if (drag && crStarted) {
+			// The click event (if any) fires synchronously after pointerup
+			suppressColsClick = true;
+			commitDragCtx?.();
+			setTimeout(() => { suppressColsClick = false; }, 0);
+		}
+		cleanupColsCreate();
+	}
+
+	function onColsCreateCancel() {
+		if (drag && crStarted) drag.cancel();
+		cleanupColsCreate();
+	}
+
+	function onColsContextMenu(e: Event) {
+		// Long-press on touch fires contextmenu on some platforms — keep it
+		// from interrupting an armed or pending drag-create.
+		if (crStarted || longPressTimer !== null) e.preventDefault();
+	}
+
+	// ── Click-to-create (plain click → default slot) ───
+	function handleColsClick(e: MouseEvent) {
+		if (suppressColsClick) { suppressColsClick = false; return; }
+		if (!oneventcreate || readOnly) return;
+		if ((e.target as HTMLElement).closest('.tw-ev, .tw-ghost')) return;
+		const day = dayCols[pointerDayIndex(e.clientX)];
+		if (!day || day.isDisabled) return;
+		const hour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
+		if (isBlockedAt(day.ms, hour)) return;
+		const startMs = clampToDayBand(
+			Math.floor((day.ms + hour * HOUR_MS) / SNAP_MS) * SNAP_MS,
+			day.ms,
+		);
+		const durMin = minDuration ?? 60;
+		oneventcreate({ start: new Date(startMs), end: new Date(startMs + durMin * 60_000) });
+	}
+
+	// ── Drag-to-move (vertical = time, horizontal = day) ──
+	const DRAG_THRESHOLD = 5;
+	let evDragStartX = 0;
+	let evDragStartY = 0;
+	let evGrabOffsetMs = 0;
+	let evDragStarted = false;
+	let evDragMovable = false;
+	let evDragEvent: TimelineEvent | null = null;
+
+	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
+		if (e.button !== 0) return;
+		e.stopPropagation();
+		// Even non-movable events (readOnly view, per-event readOnly) go through
+		// the pointerup path so a plain click still opens them.
+		evDragMovable = !!drag && !readOnly && !ev.data?.readOnly;
+		evDragStartX = e.clientX;
+		evDragStartY = e.clientY;
+		evGrabOffsetMs = pointerTimeMs(e.clientX, e.clientY) - ev.start.getTime();
 		evDragStarted = false;
-		evDragging = false;
-		evDragId = null;
+		evDragEvent = ev;
+		window.addEventListener('pointermove', onEvMove);
+		window.addEventListener('pointerup', onEvUp, { once: true });
+		window.addEventListener('pointercancel', onEvCancel, { once: true });
+	}
+
+	function onEvMove(e: PointerEvent) {
+		const ev = evDragEvent;
+		if (!drag || !ev || !evDragMovable) return;
+		if (!evDragStarted) {
+			const moved = Math.abs(e.clientX - evDragStartX) + Math.abs(e.clientY - evDragStartY);
+			if (moved < DRAG_THRESHOLD) return;
+			evDragStarted = true;
+			drag.beginMove(ev.id, ev.start, ev.end);
+		}
+		const duration = ev.end.getTime() - ev.start.getTime();
+		const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
+		const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
+		drag.updatePointer(new Date(snapped), new Date(snapped + duration));
+	}
+
+	function cleanupEvDrag() {
+		window.removeEventListener('pointermove', onEvMove);
+		window.removeEventListener('pointerup', onEvUp);
+		window.removeEventListener('pointercancel', onEvCancel);
+		evDragStarted = false;
+		evDragMovable = false;
 		evDragEvent = null;
 	}
 
-	function onEvWindowPointerUp() {
-		if (!drag) { cleanupEvDrag(); return; }
-		if (!evDragStarted) {
-			if (evDragEvent) oneventclick?.(evDragEvent);
-		} else {
+	function onEvUp() {
+		if (!evDragStarted && evDragEvent) {
+			oneventclick?.(evDragEvent);
+		} else if (evDragStarted && drag) {
+			// If the pointer ends off the block, the synthesized click lands on
+			// the grid — suppress the click-to-create it would trigger.
+			suppressColsClick = true;
 			commitDragCtx?.();
+			setTimeout(() => { suppressColsClick = false; }, 0);
 		}
 		cleanupEvDrag();
 	}
 
-	function onEvWindowPointerCancel() {
+	function onEvCancel() {
 		if (drag && evDragStarted) drag.cancel();
 		cleanupEvDrag();
 	}
+
+	// ── Resize (top/bottom edge handles) ───────────────
+	let rsStartY = 0;
+	let rsStarted = false;
+	let rsEdge: 'start' | 'end' = 'end';
+	let rsEvent: TimelineEvent | null = null;
+
+	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end') {
+		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
+		e.stopPropagation();
+		rsStartY = e.clientY;
+		rsStarted = false;
+		rsEdge = edge;
+		rsEvent = ev;
+		window.addEventListener('pointermove', onResizeMove);
+		window.addEventListener('pointerup', onResizeUp, { once: true });
+		window.addEventListener('pointercancel', onResizeCancel, { once: true });
+	}
+
+	function onResizeMove(e: PointerEvent) {
+		const ev = rsEvent;
+		if (!drag || !ev) return;
+		if (!rsStarted) {
+			if (Math.abs(e.clientY - rsStartY) < CREATE_THRESHOLD) return;
+			rsStarted = true;
+			drag.beginResize(ev.id, rsEdge, ev.start, ev.end);
+			addTouchScrollBlock();
+		}
+		const evDayMs = sod(ev.start.getTime());
+		const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
+		const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, evDayMs);
+		if (rsEdge === 'end') {
+			const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
+			drag.updatePointer(ev.start, new Date(end));
+		} else {
+			const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
+			drag.updatePointer(new Date(start), ev.end);
+		}
+	}
+
+	function cleanupResize() {
+		removeTouchScrollBlock();
+		window.removeEventListener('pointermove', onResizeMove);
+		window.removeEventListener('pointerup', onResizeUp);
+		window.removeEventListener('pointercancel', onResizeCancel);
+		rsStarted = false;
+		rsEvent = null;
+	}
+
+	function onResizeUp() {
+		if (drag && rsStarted) {
+			// If the pointer ends off the block, the synthesized click lands on
+			// the grid — suppress the click-to-create it would trigger.
+			suppressColsClick = true;
+			commitDragCtx?.();
+			setTimeout(() => { suppressColsClick = false; }, 0);
+		} else if (rsEvent && !rsStarted) {
+			oneventclick?.(rsEvent); // edge click = plain click
+		}
+		cleanupResize();
+	}
+
+	function onResizeCancel() {
+		if (drag && rsStarted) drag.cancel();
+		cleanupResize();
+	}
+
+	// ── Escape cancels any in-flight drag ──────────────
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Escape' || !drag?.active) return;
+		drag.cancel();
+		cleanupColsCreate();
+		cleanupEvDrag();
+		cleanupResize();
+		// Suppress the click the trailing pointerup would synthesize on the
+		// grid (it would otherwise create an event).
+		suppressColsClick = true;
+		window.addEventListener(
+			'pointerup',
+			() => setTimeout(() => { suppressColsClick = false; }, 0),
+			{ once: true },
+		);
+	}
 </script>
 
-{#snippet allDaySegmentContent(seg: DaySegment)}
-	{#if seg.isStart}
-		<span class="wg-ad-title">{seg.ev.title}</span>
-	{:else}
-		<span class="wg-ad-cont" aria-hidden="true">◂</span>
-		<span class="wg-ad-title">{seg.ev.title}</span>
-	{/if}
-	{#if !seg.isEnd && seg.totalDays > 1}
-		<span class="wg-ad-arrow" aria-hidden="true">▸</span>
-	{/if}
-{/snippet}
-
-{#snippet timedEventContent(ev: TimelineEvent)}
-	<EventContent event={ev}>
-		<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>
-		<span class="wg-ev-title">{ev.title}</span>
-		{#if ev.location}
-			<span class="wg-ev-loc">{ev.location}</span>
-		{/if}
-	</EventContent>
-{/snippet}
-
-<div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}>
-	<div
-		class="wg-body"
-		bind:this={el}
-		onscroll={handleUserScroll}
-		role="grid"
-		aria-label={L.multiWeekGrid}
+{#snippet allDayChip(seg: DaySegment)}
+	<button
+		type="button"
+		class="tw-ad"
+		class:tw-ad--start={seg.isStart}
+		class:tw-ad--end={seg.isEnd}
+		class:tw-ad--mid={!seg.isStart && !seg.isEnd}
+		class:tw-ad--selected={selectedEventId === seg.ev.id}
+		class:tw-ad--cancelled={seg.ev.status === 'cancelled'}
+		style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
+		aria-label="{seg.ev.title}{seg.totalDays > 1 ? `, ${L.dayNOfTotal(seg.dayIndex, seg.totalDays)}` : `, ${L.allDay}`}{statusText(seg.ev)}"
+		onclick={() => oneventclick?.(seg.ev)}
+		onpointerenter={() => oneventhover?.(seg.ev)}
 	>
-		{#each weeks as week (week.weekStart)}
-			<div class="wg-week" class:wg-week--current={week.isCurrent} data-week={week.weekStart}>
-				<div class="wg-week-body">
-					<!-- Day columns (header inside each cell) -->
-					<div class="wg-days">
-						{#each week.days as day (day.ms)}
-							{@const visibleAllDaySegments = day.allDaySegments.filter((seg) => !isDraggedEvent(seg.ev.id))}
-							{@const visibleTimedEvents = timedEventsForDay(day)}
-							{@const previewTimedEvent = dragPreviewTimedForDay(day.ms)}
-							{@const previewSegment = dragPreviewSegmentForDay(day.ms)}
-							<div
-								class="wg-cell"
-								class:wg-cell--today={day.isToday}
-								class:wg-cell--past={day.isPast}
-								class:wg-cell--weekend={day.isWeekend}
-								class:wg-cell--disabled={disabledSet.has(day.ms)}
-								role="gridcell"
-								tabindex="0"
-								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ` (${L.today.toLowerCase()})` : ''}, {L.nEvents(day.events.length)}"
-								onclick={(e) => handleDayCellClick(day.ms, e)}
-								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDayCellClick(day.ms, e); } }}
-							>
-								<!-- Day label in top-right corner -->
-								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
-									{#if showDates}
-										<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
-											{day.dayNum}
-										</span>
-									{/if}
-									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
+		{#if !seg.isStart}
+			<span class="tw-ad-cont" aria-hidden="true">◂</span>
+		{/if}
+		<span class="tw-ad-title">{seg.ev.title}</span>
+		{#if seg.totalDays > 1}
+			<span class="tw-ad-span" aria-hidden="true">{seg.dayIndex}/{seg.totalDays}</span>
+		{/if}
+		{#if !seg.isEnd && seg.totalDays > 1}
+			<span class="tw-ad-arrow" aria-hidden="true">▸</span>
+		{/if}
+	</button>
+{/snippet}
+
+<svelte:window onkeydown={onWindowKeydown} />
+
+<div
+	class="tw"
+	class:tw--auto={autoHeight}
+	style={style || undefined}
+	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
+	role="region"
+	aria-label={L.weekAhead}
+>
+	<div class="tw-scroll" bind:this={scrollEl}>
+		<div class="tw-inner" style:min-width="{innerMinWidth}px">
+			<!-- Sticky top: day headers + all-day strip -->
+			<div class="tw-top">
+				<div class="tw-head">
+					<div class="tw-corner" style:width="{GUTTER_W}px" aria-hidden="true"></div>
+					{#each dayCols as day (day.ms)}
+						<div
+							class="tw-hd"
+							class:tw-hd--today={day.isToday}
+							aria-current={day.isToday ? 'date' : undefined}
+						>
+							<span class="tw-hd-wd">{weekdayShort(day.ms, locale)}</span>
+							{#if showDates}
+								<span class="tw-hd-num" class:tw-hd-num--today={day.isToday}>{day.dayNum}</span>
+							{/if}
+							{#if dayHeaderSnippet}
+								<div class="tw-hd-custom">
+									{@render dayHeaderSnippet({ date: new Date(day.ms), isToday: day.isToday, dayName: weekdayShort(day.ms, locale) })}
 								</div>
+							{/if}
+						</div>
+					{/each}
+				</div>
 
-								{#if day.monthLabel && showDates}
-									<span class="wg-cell-month">{day.monthLabel}</span>
+				{#if hasAllDayRow}
+					<div class="tw-allday">
+						<div class="tw-ad-gutter" style:width="{GUTTER_W}px">
+							<span class="tw-ad-gutter-lb">{L.allDay}</span>
+						</div>
+						{#each dayCols as day (day.ms)}
+							{@const segs = allDayByDay.get(day.ms) ?? []}
+							{@const isExpanded = adExpanded[day.ms] ?? false}
+							{@const shown = isExpanded ? segs : segs.slice(0, ALLDAY_MAX)}
+							<div class="tw-ad-cell" class:tw-ad-cell--today={day.isToday}>
+								{#each shown as seg (seg.ev.id)}
+									{@render allDayChip(seg)}
+								{/each}
+								{#if segs.length > ALLDAY_MAX}
+									<button
+										type="button"
+										class="tw-ad-more"
+										aria-expanded={isExpanded}
+										onclick={() => { adExpanded[day.ms] = !isExpanded; }}
+									>{isExpanded ? L.showLess : L.nMore(segs.length - ALLDAY_MAX)}</button>
 								{/if}
-
-								<!-- Custom day header snippet -->
-								{#if dayHeaderSnippet}
-									<div class="wg-cell-custom-header">
-										{@render dayHeaderSnippet({ date: new Date(day.ms), isToday: day.isToday, dayName: weekdayShort(day.ms, locale) })}
-									</div>
-								{/if}
-
-								<!-- Blocked slots indicator -->
-								{#if blockedSlots?.length}
-									{@const jsDay = new Date(day.ms).getDay()}
-									{@const isoDay = jsDay === 0 ? 7 : jsDay}
-									{#each blockedSlots as slot}
-										{#if !slot.day || slot.day === isoDay}
-											<div class="wg-blocked" aria-label={slot.label || 'Unavailable'}>
-												{#if slot.label}
-													<span class="wg-blocked-label">{slot.label}</span>
-												{/if}
-											</div>
-										{/if}
-									{/each}
-								{/if}
-
-								<!-- All-day / multi-day events -->
-								{#if visibleAllDaySegments.length > 0 || previewSegment}
-									<div class="wg-allday">
-										{#each visibleAllDaySegments as seg (seg.ev.id)}
-											<div
-												animate:flip={{ duration: ANIM }}
-												in:previewReceive={{ key: `${seg.ev.id}:${seg.dayIndex}` }}
-												out:previewSend={{ key: `${seg.ev.id}:${seg.dayIndex}` }}
-												class="wg-ad"
-												class:wg-ad--start={seg.isStart}
-												class:wg-ad--end={seg.isEnd}
-												class:wg-ad--mid={!seg.isStart && !seg.isEnd}
-												class:wg-ad--selected={selectedEventId === seg.ev.id}
-												style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
-												role="button"
-												tabindex="0"
-												aria-label="{seg.ev.title}{seg.totalDays > 1 ? `, ${L.dayNOfTotal(seg.dayIndex, seg.totalDays)}` : `, ${L.allDay}`}"
-												onpointerdown={(e) => onEventPointerDown(e, seg.ev)}
-												onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(seg.ev); } }}
-											>
-												{@render allDaySegmentContent(seg)}
-											</div>
-										{/each}
-										{#if previewSegment}
-											<!-- key by event id + dayIndex: multi-day previews render one segment
-											     per cell, and each pairs with its own real-card counterpart -->
-											<div
-												class="wg-ad wg-ad--drag-preview"
-												class:wg-ad--start={previewSegment.isStart}
-												class:wg-ad--end={previewSegment.isEnd}
-												class:wg-ad--mid={!previewSegment.isStart && !previewSegment.isEnd}
-												style:--ev-color={previewSegment.ev.color ?? 'var(--dt-accent)'}
-												aria-hidden="true"
-												in:previewReceive={{ key: previewKeySnapshot.get(day.ms) ?? '' }}
-												out:previewSend={{ key: previewKeySnapshot.get(day.ms) ?? '' }}
-											>
-												{@render allDaySegmentContent(previewSegment)}
-											</div>
-										{/if}
-									</div>
-								{/if}
-
-								<!-- Timed events -->
-								<div class="wg-cell-events">
-									{#each visibleTimedEvents.slice(0, MAX_EVENTS_SHOWN) as ev (ev.id)}
-										<!-- send/receive keyed by event id pair the card with the drag ghost:
-										     drag start morphs card → ghost, drop morphs ghost → placed card -->
-										<div
-											animate:flip={{ duration: ANIM }}
-											in:previewReceive={{ key: ev.id }}
-											out:previewSend={{ key: ev.id }}
-											class="wg-ev"
-											class:wg-ev--selected={selectedEventId === ev.id}
-											class:wg-ev--current={ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
-											class:wg-ev--dragging={evDragging && evDragId === ev.id}
-											class:wg-ev--readonly={ev.data?.readOnly}
-											class:wg-ev--cancelled={ev.status === 'cancelled'}
-											class:wg-ev--tentative={ev.status === 'tentative'}
-											class:wg-ev--full={ev.status === 'full'}
-											class:wg-ev--limited={ev.status === 'limited'}
-											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
-											role="button"
-											tabindex="0"
-											aria-label="{ev.title}{ev.status === 'cancelled' ? ` (cancelled)` : ''}{ev.status === 'tentative' ? ` (tentative)` : ''}{ev.status === 'full' ? ` (full)` : ''}{ev.status === 'limited' ? ` (limited)` : ''}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
-											onpointerdown={(e) => onEventPointerDown(e, ev)}
-											onpointerenter={() => oneventhover?.(ev)}
-											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
-										>
-											{@render timedEventContent(ev)}
-										</div>
-									{/each}
-									{#if previewTimedEvent}
-										<div
-											class="wg-ev wg-ev--drag-preview"
-											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
-											aria-hidden="true"
-											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
-											out:previewSend={{ key: previewKeySnapshot.get('timed') ?? '' }}
-										>
-											{@render timedEventContent(previewTimedEvent)}
-										</div>
-									{/if}
-									{#if visibleTimedEvents.length > MAX_EVENTS_SHOWN}
-										<div class="wg-ev-more">{L.nMore(visibleTimedEvents.length - MAX_EVENTS_SHOWN)}</div>
-									{/if}
-								</div>
 							</div>
 						{/each}
 					</div>
+				{/if}
+			</div>
+
+			<!-- Grid body -->
+			<div class="tw-body" style:height="{gridHeight}px">
+				<!-- Time gutter -->
+				<div class="tw-gutter" style:width="{GUTTER_W}px" aria-hidden="true">
+					{#each { length: hourCount } as _, i}
+						{#if i > 0}
+							<span class="tw-gutter-lb" style:top="{i * HOUR_H}px">{fmtH(startHour + i, locale)}</span>
+						{/if}
+					{/each}
+					{#if nowY !== null && weekHasToday}
+						<span class="tw-gutter-now" style:top="{nowY}px"></span>
+					{/if}
+				</div>
+
+				<!-- Day columns -->
+				<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+				<div
+					class="tw-cols"
+					bind:this={colsEl}
+					onclick={handleColsClick}
+					onpointerdown={onColsPointerDown}
+					oncontextmenu={onColsContextMenu}
+					role="presentation"
+				>
+					<!-- Hour / half-hour guide lines (shared layer behind columns) -->
+					<div class="tw-lines" aria-hidden="true">
+						{#each { length: hourCount } as _, i}
+							<div class="tw-line" style:top="{i * HOUR_H}px"></div>
+							<div class="tw-line tw-line--half" style:top="{i * HOUR_H + HOUR_H / 2}px"></div>
+						{/each}
+					</div>
+
+					{#each dayCols as day (day.ms)}
+						{@const positioned = layoutByDay.get(day.ms) ?? []}
+						{@const ghost = ghostForDay(day.ms)}
+						<div
+							class="tw-col"
+							class:tw-col--today={day.isToday}
+							class:tw-col--past={day.isPast}
+							class:tw-col--weekend={day.isWeekend}
+							class:tw-col--disabled={day.isDisabled}
+							data-day={day.ms}
+						>
+							<!-- Blocked slot overlays -->
+							{#if blockedSlots?.length}
+								{#each blockedSlots as slot}
+									{#if !slot.day || slot.day === day.isoDay}
+										{@const s = Math.max(slot.start, startHour)}
+										{@const e = Math.min(slot.end, endHour)}
+										{#if e > s}
+											{@const range = blockedRangeLabel(day.ms, slot.start, slot.end)}
+											<div
+												class="tw-blocked"
+												style:top="{(s - startHour) * HOUR_H}px"
+												style:height="{(e - s) * HOUR_H}px"
+												title="{slot.label ? `${slot.label}, ` : ''}{range}"
+												aria-label="{slot.label || 'Unavailable'}, {range}"
+											>
+												{#if slot.label}
+													<span class="tw-blocked-lb">{slot.label}</span>
+												{/if}
+											</div>
+										{/if}
+									{/if}
+								{/each}
+							{/if}
+
+							<!-- Timed events -->
+							{#each positioned as p (p.ev.id)}
+								{@const isCurrent = nowIds.has(p.ev.id)}
+								<div
+									class="tw-ev"
+									class:tw-ev--selected={selectedEventId === p.ev.id}
+									class:tw-ev--current={isCurrent}
+									class:tw-ev--resizing={p.isResizing}
+									class:tw-ev--readonly={p.ev.data?.readOnly}
+									class:tw-ev--cancelled={p.ev.status === 'cancelled'}
+									class:tw-ev--tentative={p.ev.status === 'tentative'}
+									class:tw-ev--full={p.ev.status === 'full'}
+									class:tw-ev--limited={p.ev.status === 'limited'}
+									class:tw-ev--short={p.height < 44}
+									class:tw-ev--compact={p.height < 34}
+									style:top="{p.top}px"
+									style:height="{p.height}px"
+									style:left="calc({(p.col / p.totalCols) * 100}% + 1px)"
+									style:width="calc({100 / p.totalCols}% - {p.totalCols > 1 ? 3 : 8}px)"
+									style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
+									role="button"
+									tabindex="0"
+									title={p.ev.title}
+									aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{statusText(p.ev)}{isCurrent ? ` (${L.inProgress})` : ''}"
+									onpointerdown={(e) => onEventPointerDown(e, p.ev)}
+									onpointerenter={() => oneventhover?.(p.ev)}
+									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev); } }}
+								>
+									<div class="tw-ev-stripe" aria-hidden="true"></div>
+									<div class="tw-ev-body">
+										<EventContent event={p.ev}>
+											<span class="tw-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
+											<span class="tw-ev-title">{p.ev.title}</span>
+											{#if p.ev.location && p.height > 56}
+												<span class="tw-ev-loc">{p.ev.location}</span>
+											{/if}
+										</EventContent>
+									</div>
+									{#if isCurrent}
+										<span class="tw-ev-live" aria-hidden="true"></span>
+									{/if}
+									{#if !readOnly && !p.ev.data?.readOnly}
+										<span
+											class="tw-ev-handle tw-ev-handle--start"
+											aria-hidden="true"
+											onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
+										></span>
+										<span
+											class="tw-ev-handle tw-ev-handle--end"
+											aria-hidden="true"
+											onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
+										></span>
+									{/if}
+								</div>
+							{/each}
+
+							<!-- Move / create ghost -->
+							{#if ghost}
+								<div
+									class="tw-ghost"
+									class:tw-ghost--create={ghost.create}
+									style:top="{ghost.top}px"
+									style:height="{ghost.height}px"
+									style:--ev-color={ghost.create
+										? 'var(--dt-accent, #2563eb)'
+										: (movingEvent?.color ?? 'var(--dt-accent, #2563eb)')}
+									aria-hidden="true"
+								>
+									{#if ghost.showTime}
+										<span class="tw-ghost-time">
+											{fmtTime(ghost.start, locale)} – {fmtTime(ghost.end, locale)}
+										</span>
+										{#if !ghost.create && movingEvent}
+											<span class="tw-ghost-title">{movingEvent.title}</span>
+										{/if}
+									{/if}
+								</div>
+							{/if}
+
+							<!-- Now line (today's column only) -->
+							{#if day.isToday && nowY !== null}
+								<div class="tw-now" style:top="{nowY}px" aria-label={L.currentTime}>
+									<span class="tw-now-dot" aria-hidden="true"></span>
+								</div>
+							{/if}
+						</div>
+					{/each}
 				</div>
 			</div>
-		{/each}
+		</div>
 	</div>
 
+	<!-- Empty-week hint — overlaid, pointer events pass through to the grid -->
+	{#if weekIsEmpty && ctx.emptySnippet}
+		<div class="tw-empty">
+			{@render ctx.emptySnippet()}
+		</div>
+	{/if}
 </div>
 
 <style>
 	/* ─── Container ──────────────────────────────────── */
-	.wg {
+	.tw {
 		position: relative;
-		overflow: hidden;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 		user-select: none;
 		font-variant-numeric: tabular-nums;
+		background: var(--dt-bg, #ffffff);
+		-webkit-tap-highlight-color: transparent;
 	}
-	.wg--auto { overflow: visible; }
+	.tw--auto { overflow: visible; }
 
-	/* ─── Scrollable body ────────────────────────────── */
-	.wg-body {
+	/* ─── Scroll container ───────────────────────────── */
+	.tw-scroll {
 		flex: 1;
+		min-height: 0;
 		overflow-y: auto;
-		overflow-x: hidden;
-		box-sizing: border-box;
+		overflow-x: auto;
+		overscroll-behavior: contain;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
 	}
-	.wg--auto .wg-body { overflow-y: visible; }
-
-	.wg-body::-webkit-scrollbar { width: 4px; }
-	.wg-body::-webkit-scrollbar-thumb {
+	.tw--auto .tw-scroll { overflow-y: visible; }
+	.tw-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+	.tw-scroll::-webkit-scrollbar-thumb {
 		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));
 		border-radius: 4px;
 	}
-	.wg-body::-webkit-scrollbar-track { background: transparent; }
+	.tw-scroll::-webkit-scrollbar-track { background: transparent; }
 
-	/* ─── Week row ───────────────────────────────────── */
-	.wg-week {
+	.tw-inner {
 		display: flex;
-		border-radius: 10px;
-		margin: 12px 8px;
-		border: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		flex-direction: column;
+		width: 100%;
+	}
+
+	/* ─── Sticky top (header + all-day) ──────────────── */
+	.tw-top {
+		position: sticky;
+		top: 0;
+		z-index: 30;
+		background: var(--dt-bg, #ffffff);
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+	}
+
+	/* ─── Day header row ─────────────────────────────── */
+	.tw-head {
+		display: flex;
+	}
+
+	.tw-corner {
+		flex-shrink: 0;
+		position: sticky;
+		left: 0;
+		z-index: 2;
+		background: var(--dt-bg, #ffffff);
+	}
+
+	.tw-hd {
+		flex: 1 1 0;
+		min-width: 110px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		padding: 8px 4px 6px;
+		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+	}
+
+	.tw-hd-wd {
+		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+	}
+	.tw-hd--today .tw-hd-wd {
+		color: var(--dt-accent, #2563eb);
+		font-weight: 600;
+	}
+
+	.tw-hd-num {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		font: 600 14px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+	}
+	.tw-hd-num--today {
+		background: var(--dt-accent, #2563eb);
+		color: var(--dt-accent-fg, #ffffff);
+		font-weight: 700;
+	}
+
+	.tw-hd-custom {
+		max-width: 100%;
 		overflow: hidden;
 	}
 
-	.wg-week--current {
-		background: var(--dt-today-bg, rgba(37, 99, 235, 0.04));
-		border: 2.5px solid var(--dt-accent, #2563eb);
-		box-shadow: 0 0 0 1px color-mix(in srgb, var(--dt-accent, #2563eb) 15%, transparent);
+	/* ─── All-day strip ──────────────────────────────── */
+	.tw-allday {
+		display: flex;
+		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 
-	/* ─── Week body ──────────────────────────────────── */
-	.wg-week-body {
-		flex: 1;
-		min-width: 0;
+	.tw-ad-gutter {
+		flex-shrink: 0;
+		position: sticky;
+		left: 0;
+		z-index: 2;
+		background: var(--dt-bg, #ffffff);
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-end;
+		padding: 4px 6px 4px 0;
+	}
+	.tw-ad-gutter-lb {
+		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		text-align: right;
+	}
+
+	.tw-ad-cell {
+		flex: 1 1 0;
+		min-width: 110px;
 		display: flex;
 		flex-direction: column;
+		gap: 2px;
+		padding: 3px 3px 4px;
+		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
+	.tw-ad-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
 
-	/* ─── Day columns ────────────────────────────────── */
-	.wg-days {
+	.tw-ad {
+		appearance: none;
 		display: flex;
-		flex: 1;
-	}
-
-	.wg-cell {
-		flex: 1;
-		position: relative;
-		min-height: 170px;
-		padding: 4px 4px 8px;
-		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		align-items: center;
+		gap: 3px;
+		padding: 2px 6px;
+		min-height: 18px;
+		border: none;
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border-left: 2.5px solid var(--ev-color);
 		cursor: pointer;
-		transition: background 0.15s;
+		overflow: hidden;
+		text-align: left;
+		transition: background 0.12s;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.tw-ad:hover {
+		background: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));
+	}
+	.tw-ad--mid,
+	.tw-ad--end:not(.tw-ad--start) {
+		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+		border-radius: 0 3px 3px 0;
+	}
+	.tw-ad--selected {
+		box-shadow: 0 0 0 1.5px var(--ev-color);
+	}
+	.tw-ad--cancelled .tw-ad-title {
+		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.tw-ad:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
-	.wg-cell:last-child { border-right: none; }
-	.wg-cell:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }
+	.tw-ad-title {
+		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex: 1;
+		min-width: 0;
+	}
+	.tw-ad-span {
+		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		flex-shrink: 0;
+	}
+	.tw-ad-cont,
+	.tw-ad-arrow {
+		font-size: 10px;
+		color: var(--ev-color);
+		flex-shrink: 0;
+		line-height: 1;
+	}
+	.tw-ad-arrow { margin-left: auto; }
 
-	.wg-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
-	.wg-cell--today:hover { background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent); }
+	.tw-ad-more {
+		appearance: none;
+		background: none;
+		border: none;
+		border-radius: 3px;
+		text-align: left;
+		align-self: flex-start;
+		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		padding: 2px 6px;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.tw-ad-more:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }
+	.tw-ad-more:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+	}
 
-	/* Dim all cells by default; current week overrides to full brightness */
-	.wg-cell { opacity: 0.55; }
-	.wg-cell:hover { opacity: 0.75; }
-	.wg-week--current .wg-cell { opacity: 1; }
-	.wg-week--current .wg-cell--past { opacity: 0.8; }
-	.wg-week--current .wg-cell--past:hover { opacity: 0.9; }
+	/* ─── Grid body ──────────────────────────────────── */
+	.tw-body {
+		display: flex;
+		position: relative;
+	}
 
-	/* equalDays: when no cells are marked past, all are full brightness */
+	/* ─── Time gutter ────────────────────────────────── */
+	.tw-gutter {
+		flex-shrink: 0;
+		position: sticky;
+		left: 0;
+		z-index: 20;
+		background: var(--dt-bg, #ffffff);
+		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+	}
 
-	.wg-cell--weekend { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }
+	.tw-gutter-lb {
+		position: absolute;
+		right: 6px;
+		transform: translateY(-50%);
+		font: 500 11px/1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		white-space: nowrap;
+	}
 
-	/* ─── Disabled cell ──────────────────────────────── */
-	.wg-cell--disabled {
+	.tw-gutter-now {
+		position: absolute;
+		right: -3px;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--dt-accent, #2563eb);
+		transform: translateY(-50%);
+		z-index: 2;
+	}
+
+	/* ─── Columns wrapper ────────────────────────────── */
+	.tw-cols {
+		flex: 1;
+		display: flex;
+		position: relative;
+		min-width: 0;
+	}
+
+	/* ─── Guide lines ────────────────────────────────── */
+	.tw-lines {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		/* Above the columns' background washes, below blocked/events/now */
+		z-index: 1;
+	}
+	.tw-line {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: var(--dt-border, rgba(0, 0, 0, 0.08));
+	}
+	.tw-line--half { opacity: 0.4; }
+
+	/* ─── Day column ─────────────────────────────────── */
+	.tw-col {
+		flex: 1 1 0;
+		min-width: 110px;
+		position: relative;
+		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		box-sizing: border-box;
+	}
+	/* The gutter's right border already bounds the first column */
+	.tw-lines + .tw-col { border-left: none; }
+
+	.tw-col--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
+	/* Dim past days with a wash, never a subtree opacity (event contrast) */
+	.tw-col--past {
+		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);
+	}
+	.tw-col--weekend:not(.tw-col--today):not(.tw-col--past) {
+		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
+	}
+	.tw-col--disabled {
 		background: repeating-linear-gradient(
 			45deg,
 			transparent,
@@ -699,288 +1234,304 @@
 		) !important;
 	}
 
-	/* ─── Blocked slot indicator ─────────────────────── */
-	.wg-blocked {
-		display: flex;
-		align-items: center;
-		gap: 3px;
-		padding: 2px 4px;
-		border-radius: 3px;
+	/* ─── Blocked slot overlay ───────────────────────── */
+	.tw-blocked {
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: 2;
 		background: repeating-linear-gradient(
 			-45deg,
 			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,
-			transparent 3px,
-			transparent 6px
+			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,
+			transparent 4px,
+			transparent 8px
 		);
-		margin-bottom: 2px;
-		min-height: 14px;
+		pointer-events: none;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		overflow: hidden;
 	}
-
-	.wg-blocked-label {
-		font: 500 8px/1 var(--dt-sans, system-ui, sans-serif);
+	.tw-blocked-lb {
+		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		white-space: nowrap;
+		padding-top: 4px;
 	}
 
-	/* ─── Custom day header ──────────────────────────── */
-	.wg-cell-custom-header {
-		padding: 0 4px 2px;
-	}
-
-	/* ─── Cell header (day label top-right) ──────────── */
-	.wg-cell-hd {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 4px;
-		padding: 4px 5px 2px 0;
-		margin-bottom: 2px;
-	}
-
-	.wg-day-wd {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-	}
-
-	.wg-week--current .wg-day-wd {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-	}
-
-	.wg-cell-hd--today .wg-day-wd {
-		color: var(--dt-accent, #2563eb);
-		font-weight: 600;
-	}
-
-	.wg-day-num {
-		font: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-	}
-
-	.wg-week--current .wg-day-num {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-	}
-
-	.wg-day-num--today {
-		color: var(--dt-accent, #2563eb);
-		font-weight: 900;
-	}
-
-	/* ─── Month label (top-left, behind events) ─────── */
-	.wg-cell-month {
+	/* ─── Now line ───────────────────────────────────── */
+	.tw-now {
 		position: absolute;
-		left: 4px;
-		top: 4px;
-		writing-mode: vertical-rl;
-		transform: rotate(180deg);
-		font: 800 22px / 1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: var(--dt-accent, #2563eb);
+		box-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));
+		z-index: 12;
 		pointer-events: none;
-		white-space: nowrap;
+		transform: translateY(-1px);
 	}
-
-	.wg-week--current .wg-cell-month {
-		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);
-	}
-
-	/* ─── All-day / multi-day events ─────────────────── */
-	.wg-allday {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		margin-bottom: 4px;
-	}
-
-	.wg-ad {
-		display: flex;
-		align-items: center;
-		gap: 3px;
-		padding: 2px 5px;
-		border-radius: 3px;
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		cursor: pointer;
-		overflow: hidden;
-		transition: background 0.12s;
-		min-height: 18px;
-	}
-
-	.wg-ad--drag-preview {
-		position: relative;
-		z-index: 8;
-		opacity: 0.95;
-		pointer-events: none;
-		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 26%, rgba(0, 0, 0, 0.22));
-		outline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);
-		cursor: grabbing;
-	}
-
-	.wg-ad:hover {
-		background: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
-
-	.wg-ad--start {
-		border-left: 2.5px solid var(--ev-color);
-	}
-
-	.wg-ad--mid {
-		border-radius: 0;
-		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
-	}
-
-	.wg-ad--end:not(.wg-ad--start) {
-		border-radius: 0 3px 3px 0;
-		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
-	}
-
-	.wg-ad--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
-	}
-
-	.wg-ad-title {
-		font: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		flex: 1;
-	}
-
-	.wg-ad-cont {
-		font-size: 8px;
-		color: var(--ev-color);
-		flex-shrink: 0;
-		line-height: 1;
-	}
-
-	.wg-ad-arrow {
-		font-size: 8px;
-		color: var(--ev-color);
-		flex-shrink: 0;
-		margin-left: auto;
-		line-height: 1;
+	.tw-now-dot {
+		position: absolute;
+		left: -4px;
+		top: -3px;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--dt-accent, #2563eb);
 	}
 
 	/* ─── Events ─────────────────────────────────────── */
-	.wg-cell-events {
-		position: relative;
+	.tw-ev {
+		position: absolute;
+		z-index: 6;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		display: flex;
-		flex-direction: column;
-		gap: 3px;
-	}
-
-	.wg-ev {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 3px 5px;
-		padding: 3px 6px;
-		border-radius: 4px;
-		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		cursor: pointer;
+		align-items: stretch;
 		overflow: hidden;
-		transition: background 0.12s;
+		cursor: grab;
+		/* Pointer drags move the event, never scroll the grid */
+		touch-action: none;
+		transition: box-shadow 120ms, background 120ms;
+		box-sizing: border-box;
+		min-height: 24px;
+		-webkit-tap-highlight-color: transparent;
 	}
-
-	.wg-ev:hover {
-		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
-
-	.wg-ev--drag-preview {
-		position: relative;
+	.tw-ev:hover {
+		background: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		z-index: 8;
-		opacity: 0.95;
-		pointer-events: none;
-		background: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
-		outline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);
-		cursor: grabbing;
 	}
-
-	.wg-ev--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+	/* Short blocks keep duration-proportional height, but get a 44px
+	   transparent hit-slop so clicks/taps still land. */
+	.tw-ev--short { overflow: visible; }
+	.tw-ev--short::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 44px;
 	}
-
-	.wg-ev--current {
+	.tw-ev--selected {
+		box-shadow: 0 0 0 2px var(--ev-color),
+			0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);
+		z-index: 9;
+	}
+	.tw-ev--current {
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 	}
-
-	.wg-ev--cancelled {
-		opacity: 0.5;
+	.tw-ev--resizing {
+		z-index: 50;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+		cursor: ns-resize;
 	}
-	.wg-ev--cancelled .wg-ev-title {
+	/* Status treatments: token-level dims + a non-opacity signal
+	   (strikethrough / border style) — consistent with the other views. */
+	.tw-ev--cancelled {
+		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));
+	}
+	.tw-ev--cancelled .tw-ev-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.wg-ev--tentative {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	.tw-ev--cancelled .tw-ev-stripe { opacity: 0.45; /* decorative bar only */ }
+	.tw-ev--tentative {
+		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
 	}
-	.wg-ev--full {
-		opacity: 0.55;
+	.tw-ev--full {
+		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);
 	}
-	.wg-ev--limited {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	.tw-ev--full .tw-ev-title { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }
+	.tw-ev--limited {
+		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
 	}
-	.wg-ev--readonly {
-		cursor: default;
-	}
+	.tw-ev--readonly { cursor: default; }
 
-	.wg-ev-time {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+	.tw-ev-stripe {
+		width: 3px;
+		background: var(--ev-color);
 		flex-shrink: 0;
-		white-space: nowrap;
+		border-radius: 5px 0 0 5px;
 	}
 
-	.wg-ev-title {
-		font: 500 12px / 1.1 var(--dt-sans, system-ui, sans-serif);
+	.tw-ev-body {
+		flex: 1;
+		min-width: 0;
+		padding: 3px 6px;
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		overflow: hidden;
+	}
+	/* Compact (< ~35min at default zoom): single inline line "9:00 Title" */
+	.tw-ev--compact .tw-ev-body {
+		flex-direction: row;
+		align-items: center;
+		gap: 4px;
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+
+	.tw-ev-time {
+		font: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+	.tw-ev--compact .tw-ev-time { order: 0; }
+
+	.tw-ev-title {
+		font: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.wg-ev-loc {
-		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+	.tw-ev-loc {
+		font: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		flex-shrink: 1;
 	}
 
-	.wg-ev-more {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		padding: 2px 8px;
-		cursor: pointer;
+	.tw-ev-live {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--ev-color, var(--dt-accent));
+		animation: tw-pulse 2s ease-in-out infinite;
+	}
+	@keyframes tw-pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
 	}
 
-	.wg-ev-more:hover {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	/* ─── Resize handles ─────────────────────────────── */
+	.tw-ev-handle {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 8px;
+		z-index: 2;
+		cursor: ns-resize;
+		touch-action: none;
+	}
+	.tw-ev-handle--start { top: 0; }
+	.tw-ev-handle--end { bottom: 0; }
+	/* Hit-slop: ≥20px effective, extending inward so overflow clipping
+	   can't cut it off. */
+	.tw-ev-handle::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 20px;
+	}
+	.tw-ev-handle--start::before { top: 0; }
+	.tw-ev-handle--end::before { bottom: 0; }
+	/* Short events: shrink the slop so a move-grab area survives */
+	.tw-ev--short .tw-ev-handle::before { height: 12px; }
+	.tw-ev-handle::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 20px;
+		height: 3px;
+		border-radius: 2px;
+		background: var(--ev-color);
+		opacity: 0;
+		transition: opacity 120ms;
+	}
+	.tw-ev-handle--start::after { top: 1px; }
+	.tw-ev-handle--end::after { bottom: 1px; }
+	.tw-ev:hover .tw-ev-handle::after,
+	.tw-ev:focus-within .tw-ev-handle::after,
+	.tw-ev:focus-visible .tw-ev-handle::after,
+	.tw-ev--resizing .tw-ev-handle::after,
+	.tw-ev--selected .tw-ev-handle::after { opacity: 0.55; }
+	/* Coarse pointers can't hover — show the grips persistently */
+	@media (hover: none) {
+		.tw-ev-handle::after { opacity: 0.55; }
+	}
+
+	/* ─── Move / create ghost ────────────────────────── */
+	.tw-ghost {
+		position: absolute;
+		left: 1px;
+		right: 3px;
+		z-index: 40;
+		border-radius: 5px;
+		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		outline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);
+		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		padding: 3px 6px;
+		overflow: hidden;
+		pointer-events: none;
+		cursor: grabbing;
+		box-sizing: border-box;
+	}
+	.tw-ghost--create {
+		background: color-mix(in srgb, var(--ev-color) 12%, transparent);
+		outline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);
+		box-shadow: none;
+	}
+	.tw-ghost-time {
+		font: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);
+		color: var(--ev-color, var(--dt-accent, #2563eb));
+		white-space: nowrap;
+	}
+	.tw-ghost-title {
+		font: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* ─── Empty overlay ──────────────────────────────── */
+	.tw-empty {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+		z-index: 4;
 	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
-	.wg-cell:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: -2px;
+	/* box-shadow instead of outline: outlines get clipped by the
+	   overflow: hidden scroll container. */
+	.tw-ev:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		z-index: 9;
 	}
 
-	.wg-ev:focus-visible {
-		outline: 2px solid var(--ev-color, var(--dt-accent, #2563eb));
-		outline-offset: 1px;
-	}
-
-	.wg-ev--dragging {
-		opacity: 0.6;
-		cursor: grabbing;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	/* ─── Reduced motion ─────────────────────────────── */
+	@media (prefers-reduced-motion: reduce) {
+		.tw-ev,
+		.tw-ad,
+		.tw-ev-handle::after {
+			transition: none;
+		}
+		.tw-ev-live { animation: none; }
 	}
 </style>
-

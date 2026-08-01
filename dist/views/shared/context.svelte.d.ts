@@ -1,5 +1,6 @@
 import type { Snippet } from 'svelte';
 import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
+import { type CalendarLabels } from '../../core/locale.js';
 import type { DragState } from '../../engine/drag.svelte.js';
 import type { ViewState } from '../../engine/view-state.svelte.js';
 export interface CalendarContext {
@@ -39,6 +40,8 @@ export interface CalendarContext {
     } | undefined;
     readonly eventSnippet: Snippet<[TimelineEvent]> | undefined;
     readonly emptySnippet: Snippet | undefined;
+    /** Per-instance labels (Calendar's `labels` prop merged over globals); global labels when headless. */
+    readonly labels: CalendarLabels;
 }
 /**
  * Read the calendar context.

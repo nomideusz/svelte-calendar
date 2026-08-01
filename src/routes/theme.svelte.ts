@@ -116,6 +116,10 @@ function getStored(): DemoThemeName {
 		const v = localStorage.getItem(STORAGE_KEY);
 		if (v && (v in demoThemes)) return v as DemoThemeName;
 	}
+	// First visit: seed from the OS color-scheme preference.
+	if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'light';
+	}
 	return 'slate';
 }
 

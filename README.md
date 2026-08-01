@@ -657,19 +657,25 @@ The `locale` prop controls date/time formatting (BCP 47):
 
 `setDefaultLocale('de-DE')` sets the locale globally instead of per component (`getDefaultLocale()` reads it back, `is24HourLocale(tag)` tells you how times will format).
 
-Override UI labels for full translation:
+Override UI labels per calendar with the `labels` prop — it's reactive (swap it to switch language live) and instance-scoped (two calendars on one page can carry different languages):
+
+```svelte
+<Calendar {adapter} locale="de-DE" labels={{
+  today: 'Heute', day: 'Tag', week: 'Woche',
+  noEvents: 'Keine Termine',
+  nMore: (n) => `+${n} weitere`,
+}} />
+```
+
+Or set labels globally before mount:
 
 ```ts
 import { setLabels } from '@nomideusz/svelte-calendar';
 
-setLabels({
-  today: 'Heute', day: 'Tag', week: 'Woche',
-  noEvents: 'Keine Termine',
-  nMore: (n) => `+${n} weitere`,
-});
+setLabels({ today: 'Heute', day: 'Tag', week: 'Woche' });
 ```
 
-Call `resetLabels()` to restore English defaults (`defaultLabels` exports them; `getLabels()` reads the active set).
+The `labels` prop merges over the global set. Call `resetLabels()` to restore English defaults (`defaultLabels` exports them; `getLabels()` reads the active set). Note: global `setLabels()` calls after mount don't re-render already-mounted calendars — use the `labels` prop for dynamic language switching. Standalone primitives (`DayHeader`, `EventBlock`, …) always read the global set.
 
 <details>
 <summary>All label keys</summary>
@@ -783,6 +789,8 @@ Drop into any HTML page — no build tools needed. Registers a `<day-calendar>` 
   mondaystart="true"
 ></day-calendar>
 ```
+
+The widget renders inside shadow DOM: host-page CSS (resets, theme stylesheets) cannot affect the calendar and calendar styles never leak out, while the `auto` theme still probes the host page's colors and fonts across the shadow boundary.
 
 | Attribute | Description |
 |-----------|-------------|

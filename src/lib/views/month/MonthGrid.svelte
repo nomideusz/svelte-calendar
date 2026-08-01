@@ -11,9 +11,8 @@
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { DAY_MS, sod, isAllDay } from '../../core/time.js';
-	import { fmtTime, weekdayShort, getLabels } from '../../core/locale.js';
+	import { fmtTime, weekdayShort } from '../../core/locale.js';
 
-	const L = $derived(getLabels());
 
 	interface Props {
 		events?: TimelineEvent[];
@@ -38,6 +37,7 @@
 	}: Props = $props();
 
 	const ctx = useCalendarContext();
+	const L = $derived(ctx.labels);
 	const viewState = $derived(ctx.viewState);
 	const autoHeight = $derived(ctx.autoHeight);
 	const isMobile = $derived(ctx.isMobile);
@@ -73,7 +73,68 @@
 		isWeekend: boolean;
 		isDisabled: boolean;
 		chips: TimelineEvent[];
+		all: TimelineEvent[];
 		overflow: number;
+	}
+
+	/** Day (ms) whose cell is inline-expanded to show all events (no-ondayclick fallback). */
+	let expandedMs = $state<number | null>(null);
+	/** Roving-tabindex anchor: the one cell reachable via Tab. */
+	let focusMs = $state<number | null>(null);
+	let bodyEl = $state<HTMLElement | null>(null);
+
+	const cellsInteractive = $derived(!!ondayclick);
+
+	const rovingMs = $derived.by(() => {
+		if (!range) return null;
+		const start = sod(range.start.getTime());
+		const end = range.end.getTime();
+		if (focusMs !== null && focusMs >= start && focusMs < end) return focusMs;
+		if (todayMs >= start && todayMs < end) return todayMs;
+		return start;
+	});
+
+	function moveFocus(fromMs: number, deltaDays: number) {
+		if (!range) return;
+		const target = fromMs + deltaDays * DAY_MS;
+		if (target < sod(range.start.getTime()) || target >= range.end.getTime()) return;
+		focusMs = target;
+		const el = bodyEl?.querySelector<HTMLElement>(`[data-ms="${target}"]`);
+		el?.focus();
+	}
+
+	function cellKeydown(e: KeyboardEvent, cell: MonthCell) {
+		switch (e.key) {
+			case 'ArrowRight': e.preventDefault(); moveFocus(cell.ms, 1); break;
+			case 'ArrowLeft': e.preventDefault(); moveFocus(cell.ms, -1); break;
+			case 'ArrowDown': e.preventDefault(); moveFocus(cell.ms, 7); break;
+			case 'ArrowUp': e.preventDefault(); moveFocus(cell.ms, -7); break;
+			case 'Escape':
+				if (expandedMs !== null) { e.preventDefault(); expandedMs = null; }
+				break;
+			case 'Enter':
+			case ' ':
+				if (!cell.isDisabled) {
+					e.preventDefault();
+					ondayclick?.(cell.date);
+				}
+				break;
+		}
+	}
+
+	function overflowClick(e: MouseEvent, cell: MonthCell) {
+		e.stopPropagation();
+		if (ondayclick) ondayclick(cell.date);
+		else expandedMs = expandedMs === cell.ms ? null : cell.ms;
+	}
+
+	function cellLabel(cell: MonthCell): string {
+		const date = cell.date.toLocaleDateString(locale, {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+		});
+		return `${date}, ${L.nEvents(cell.all.length)}`;
 	}
 
 	function eventsForDay(ms: number): TimelineEvent[] {
@@ -107,6 +168,7 @@
 					isWeekend: jsDay === 0 || jsDay === 6,
 					isDisabled: disabledSet.has(cellMs),
 					chips: dayEvents.slice(0, MAX_CHIPS),
+					all: dayEvents,
 					overflow: Math.max(0, dayEvents.length - MAX_CHIPS),
 				});
 			}
@@ -135,40 +197,48 @@
 	aria-label={L.month}
 >
 	<div class="mg-head" role="row">
-		{#each weekdayLabels as name (name)}
+		{#each weekdayLabels as name, i (i)}
 			<div class="mg-head-cell" role="columnheader">{name}</div>
 		{/each}
 	</div>
 
-	<div class="mg-body" style:--mg-rows={weeks.length}>
+	<div class="mg-body" style:--mg-rows={weeks.length} role="rowgroup" bind:this={bodyEl}>
 		{#each weeks as row, ri (ri)}
-			{#each row as cell (cell.ms)}
+			<div class="mg-row" role="row">
+				{#each row as cell (cell.ms)}
 				<div
 					class="mg-cell"
 					class:mg-cell--out={!cell.inMonth}
 					class:mg-cell--today={cell.isToday}
 					class:mg-cell--weekend={cell.isWeekend}
 					class:mg-cell--disabled={cell.isDisabled}
-					class:mg-cell--clickable={!!ondayclick && !cell.isDisabled}
+					class:mg-cell--clickable={cellsInteractive && !cell.isDisabled}
+					class:mg-cell--expanded={expandedMs === cell.ms}
 					role="gridcell"
-					tabindex={ondayclick && !cell.isDisabled ? 0 : undefined}
+					aria-label={cellLabel(cell)}
+					aria-current={cell.isToday ? 'date' : undefined}
+					data-ms={cell.ms}
+					tabindex={cell.isDisabled
+						? undefined
+						: cellsInteractive || cell.overflow > 0
+							? cell.ms === rovingMs
+								? 0
+								: -1
+							: undefined}
 					onclick={() => {
 						if (!cell.isDisabled) ondayclick?.(cell.date);
 					}}
-					onkeydown={(e) => {
-						if ((e.key === 'Enter' || e.key === ' ') && !cell.isDisabled) {
-							e.preventDefault();
-							ondayclick?.(cell.date);
-						}
-					}}
+					onfocusin={() => (focusMs = cell.ms)}
+					onkeydown={(e) => cellKeydown(e, cell)}
 				>
 					<span class="mg-daynum" class:mg-daynum--today={cell.isToday}>
 						{cell.dayNum}
 					</span>
 					<div class="mg-chips">
-						{#each cell.chips as ev (ev.id + cell.ms)}
+						{#each expandedMs === cell.ms ? cell.all : cell.chips as ev (ev.id + cell.ms)}
 							{#if eventSnippet}
 								<button
+									type="button"
 									class="mg-chip mg-chip--custom"
 									class:mg-chip--selected={ev.id === selectedEventId}
 									onclick={(e) => {
@@ -181,6 +251,7 @@
 								</button>
 							{:else}
 								<button
+									type="button"
 									class="mg-chip"
 									class:mg-chip--selected={ev.id === selectedEventId}
 									class:mg-chip--cancelled={ev.status === 'cancelled'}
@@ -198,12 +269,32 @@
 								</button>
 							{/if}
 						{/each}
-						{#if cell.overflow > 0}
-							<span class="mg-more">{L.nMore(cell.overflow)}</span>
+						{#if cell.overflow > 0 && expandedMs !== cell.ms}
+							<button
+								type="button"
+								class="mg-more"
+								aria-expanded={ondayclick ? undefined : false}
+								onclick={(e) => overflowClick(e, cell)}
+							>
+								{L.nMore(cell.overflow)}
+							</button>
+						{:else if expandedMs === cell.ms}
+							<button
+								type="button"
+								class="mg-more"
+								aria-expanded="true"
+								onclick={(e) => {
+									e.stopPropagation();
+									expandedMs = null;
+								}}
+							>
+								{L.showLess}
+							</button>
 						{/if}
 					</div>
 				</div>
-			{/each}
+				{/each}
+			</div>
 		{/each}
 	</div>
 </div>
@@ -216,6 +307,7 @@
 		color: var(--dt-text);
 		font-family: var(--dt-sans);
 		overflow: hidden;
+		container-type: inline-size;
 	}
 	.mg--auto {
 		height: auto;
@@ -241,11 +333,16 @@
 		flex: 1;
 		display: grid;
 		grid-template-columns: repeat(7, 1fr);
-		grid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, 1fr));
+		/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */
+		grid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));
 		min-height: 0;
+		overflow-y: auto;
 	}
 	.mg--auto .mg-body {
 		grid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));
+	}
+	.mg-row {
+		display: contents;
 	}
 
 	.mg-cell {
@@ -263,13 +360,20 @@
 		border-right: none;
 	}
 	.mg-cell--weekend {
-		background: var(--dt-weekend-bg);
+		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));
 	}
+	/* Dim only the day number for adjacent-month cells — their events stay legible */
 	.mg-cell--out {
-		opacity: 0.45;
+		background: var(--dt-surface, transparent);
+	}
+	.mg-cell--out .mg-daynum {
+		color: var(--dt-text-3);
 	}
 	.mg-cell--today {
 		background: var(--dt-today-bg);
+	}
+	.mg-cell--expanded .mg-chips {
+		overflow-y: auto;
 	}
 	.mg-cell--disabled {
 		opacity: 0.35;
@@ -279,10 +383,10 @@
 		cursor: pointer;
 	}
 	.mg-cell--clickable:hover {
-		background: var(--dt-hover);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
-	.mg-cell--clickable:focus-visible {
-		outline: 2px solid var(--dt-accent);
+	.mg-cell:focus-visible {
+		outline: 2px solid var(--dt-accent, #2563eb);
 		outline-offset: -2px;
 	}
 
@@ -328,14 +432,23 @@
 		text-align: left;
 	}
 	.mg-chip:hover {
-		background: var(--dt-hover);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+	}
+	.mg-chip:focus-visible {
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		outline: none;
 	}
 	.mg-chip--selected {
 		background: var(--dt-accent-dim);
 	}
 	.mg-chip--cancelled {
 		text-decoration: line-through;
-		opacity: 0.55;
+	}
+	.mg-chip--cancelled .mg-chip-title {
+		color: var(--dt-text-2);
+	}
+	.mg-chip--cancelled .mg-chip-dot {
+		opacity: 0.5;
 	}
 	.mg-chip-dot {
 		flex: none;
@@ -356,18 +469,36 @@
 		white-space: nowrap;
 	}
 	.mg-more {
+		align-self: flex-start;
+		border: none;
+		background: none;
 		padding: 1px 4px;
+		border-radius: 5px;
 		font-family: var(--dt-mono);
 		font-size: 11px;
-		color: var(--dt-text-3);
+		color: var(--dt-text-2);
+		cursor: pointer;
+	}
+	.mg-more:hover {
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		color: var(--dt-text);
+	}
+	.mg-more:focus-visible {
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		outline: none;
 	}
 
-	@media (max-width: 640px) {
-		.mg-body {
-			grid-template-rows: repeat(var(--mg-rows, 5), minmax(64px, 1fr));
-		}
+	/* Container-based (the calendar adapts to its box, not the viewport) */
+	@container (max-width: 640px) {
 		.mg-chip-time {
 			display: none;
+		}
+	}
+
+	@media (hover: none) {
+		.mg-chip,
+		.mg-more {
+			min-height: 30px;
 		}
 	}
 </style>

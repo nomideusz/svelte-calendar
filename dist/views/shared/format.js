@@ -5,24 +5,27 @@ export function fmtTime(d, locale) {
 export function duration(ev) {
     return fmtDuration(ev.start, ev.end);
 }
-export function timeUntilMs(ms, now) {
-    const L = getLabels();
+export function timeUntilMs(ms, now, labels) {
+    const L = labels ?? getLabels();
     const diff = ms - now;
     if (diff <= 0)
         return L.now;
     const tMins = Math.floor(diff / 60000);
     if (tMins < 60)
-        return `in ${tMins}m`;
+        return L.inMinutes(tMins);
     const hrs = Math.floor(tMins / 60);
     const rm = tMins % 60;
     if (hrs < 24)
-        return rm > 0 ? `in ${hrs}h ${rm}m` : `in ${hrs}h`;
+        return L.inHours(hrs, rm);
     const days = Math.floor(hrs / 24);
-    return `in ${days}d`;
+    return L.inDays(days);
 }
 export function progress(ev, now) {
     const s = ev.start.getTime();
     const e = ev.end.getTime();
+    // Zero-length (or inverted) event: fully "done" once its start has passed.
+    if (e <= s)
+        return now >= s ? 1 : 0;
     return Math.min(1, Math.max(0, (now - s) / (e - s)));
 }
 export function groupIntoSlots(evts) {

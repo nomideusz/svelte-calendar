@@ -40,6 +40,14 @@ export interface CalendarLabels {
     nextMonth: string;
     calendar: string;
     viewMode: string;
+    /** Event status: cancelled */
+    cancelled: string;
+    /** Event status: tentative */
+    tentative: string;
+    /** Event status: fully booked */
+    full: string;
+    /** Event status: limited availability */
+    limited: string;
     dayNavigation: string;
     weekNavigation: string;
     dayPlanner: string;
@@ -64,6 +72,12 @@ export interface CalendarLabels {
     dayNOfTotal: (current: number, total: number) => string;
     /** e.g. "75% complete" */
     percentComplete: (pct: number) => string;
+    /** Relative countdown, e.g. "in 45m" */
+    inMinutes: (mins: number) => string;
+    /** Relative countdown, e.g. "in 2h 15m" / "in 2h" */
+    inHours: (hours: number, mins: number) => string;
+    /** Relative countdown, e.g. "in 3d" */
+    inDays: (days: number) => string;
 }
 /** English defaults — used unless overridden via `setLabels()`. */
 export declare const defaultLabels: CalendarLabels;
@@ -102,7 +116,7 @@ export declare function fmtDay(ms: number, todayMs: number, opts?: {
 /**
  * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
  */
-export declare function fmtWeekRange(weekStartMs: number, locale?: string): string;
+export declare function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: number): string;
 /**
  * Format a Date as a compact time string.
  *

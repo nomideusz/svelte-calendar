@@ -54,6 +54,14 @@ export interface CalendarLabels {
 	// ── Aria / accessibility labels ──
 	calendar: string;
 	viewMode: string;
+	/** Event status: cancelled */
+	cancelled: string;
+	/** Event status: tentative */
+	tentative: string;
+	/** Event status: fully booked */
+	full: string;
+	/** Event status: limited availability */
+	limited: string;
 	dayNavigation: string;
 	weekNavigation: string;
 	dayPlanner: string;
@@ -80,6 +88,12 @@ export interface CalendarLabels {
 	dayNOfTotal: (current: number, total: number) => string;
 	/** e.g. "75% complete" */
 	percentComplete: (pct: number) => string;
+	/** Relative countdown, e.g. "in 45m" */
+	inMinutes: (mins: number) => string;
+	/** Relative countdown, e.g. "in 2h 15m" / "in 2h" */
+	inHours: (hours: number, mins: number) => string;
+	/** Relative countdown, e.g. "in 3d" */
+	inDays: (days: number) => string;
 }
 
 /** English defaults — used unless overridden via `setLabels()`. */
@@ -116,6 +130,10 @@ export const defaultLabels: CalendarLabels = {
 
 	calendar: 'Calendar',
 	viewMode: 'View mode',
+	cancelled: 'cancelled',
+	tentative: 'tentative',
+	full: 'full',
+	limited: 'limited',
 	dayNavigation: 'Day navigation',
 	weekNavigation: 'Week navigation',
 	dayPlanner: 'Day planner',
@@ -136,6 +154,9 @@ export const defaultLabels: CalendarLabels = {
 	showLess: 'Show less',
 	dayNOfTotal: (current, total) => `day ${current} of ${total}`,
 	percentComplete: (pct) => `${pct}% complete`,
+	inMinutes: (mins) => `in ${mins}m`,
+	inHours: (hours, mins) => (mins > 0 ? `in ${hours}h ${mins}m` : `in ${hours}h`),
+	inDays: (days) => `in ${days}d`,
 };
 
 let _labels: CalendarLabels = { ...defaultLabels };
@@ -258,10 +279,10 @@ export function fmtDay(
 /**
  * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
  */
-export function fmtWeekRange(weekStartMs: number, locale?: string): string {
+export function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: number): string {
 	const loc = locale ?? defaultLocale;
 	const s = new Date(weekStartMs);
-	const e = new Date(weekStartMs + 6 * DAY_MS);
+	const e = new Date(weekEndMs ?? weekStartMs + 6 * DAY_MS);
 	const sm = s.toLocaleDateString(loc, { month: 'short' });
 	const em = e.toLocaleDateString(loc, { month: 'short' });
 	const sy = s.getFullYear();

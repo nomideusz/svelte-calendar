@@ -47,6 +47,23 @@ describe('probeHostTheme', () => {
 		document.body.removeChild(el);
 	});
 
+	it('probes the host page across a shadow boundary', () => {
+		const host = document.createElement('div');
+		host.style.backgroundColor = 'rgb(20, 20, 30)';
+		document.body.appendChild(host);
+
+		const shadow = host.attachShadow({ mode: 'open' });
+		const el = document.createElement('div');
+		shadow.appendChild(el);
+
+		// The dark inline background lives on the shadow host — only reachable
+		// by hopping from the shadow root to its host element.
+		const css = probeHostTheme(el);
+		expect(css).toContain('--dt-stage-bg: #14141e');
+
+		document.body.removeChild(host);
+	});
+
 	it('uses custom font when provided', () => {
 		const el = document.createElement('div');
 		document.body.appendChild(el);

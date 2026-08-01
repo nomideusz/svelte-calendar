@@ -8,15 +8,37 @@
 
 	const path = $derived(page.url.pathname);
 
+	// Properties we set on <html> last time, so a theme switch can remove
+	// tokens the new theme doesn't define without clobbering unrelated
+	// inline styles (which the old cssText assignment did).
+	let appliedProps: string[] = [];
+
 	$effect(() => {
 		const t = themeStore.current;
 		const dt = demoThemes[t];
 		const scheme = dt.dark ? 'dark' : 'light';
-		document.documentElement.dataset.theme = t;
-		document.documentElement.dataset.scheme = scheme;
+		const root = document.documentElement;
+		root.dataset.theme = t;
+		root.dataset.scheme = scheme;
 		// Set --dt-* vars on <html> to simulate the host page's design system.
 		// Also expose --accent so Calendar's auto-probe can discover the brand color.
-		document.documentElement.style.cssText = `${dt.vars}; --accent: ${dt.accent}; color-scheme: ${scheme};`;
+		const next = new Map<string, string>();
+		for (const decl of dt.vars.split(';')) {
+			const i = decl.indexOf(':');
+			if (i === -1) continue;
+			const prop = decl.slice(0, i).trim();
+			const value = decl.slice(i + 1).trim();
+			if (prop) next.set(prop, value);
+		}
+		next.set('--accent', dt.accent);
+		next.set('color-scheme', scheme);
+		for (const prop of appliedProps) {
+			if (!next.has(prop)) root.style.removeProperty(prop);
+		}
+		for (const [prop, value] of next) {
+			root.style.setProperty(prop, value);
+		}
+		appliedProps = [...next.keys()];
 		document.body.style.background = dt.stageBg;
 	});
 </script>
@@ -136,29 +158,45 @@
 	.theme-pills {
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 2px;
 	}
 
+	/* Button provides a >=24px hit area; the visible dot is the ::before. */
 	.theme-dot {
-		width: 11px;
-		height: 11px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 26px;
+		height: 26px;
 		border-radius: 50%;
 		border: none;
 		padding: 0;
-		background: var(--dot);
+		background: transparent;
 		cursor: pointer;
+	}
+	.theme-dot::before {
+		content: '';
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		background: var(--dot);
 		outline: 2px solid transparent;
 		outline-offset: 2px;
-		transition: outline-color 150ms, transform 150ms;
-		opacity: 0.55;
+		opacity: 0.8;
+		transition: outline-color 150ms, transform 150ms, opacity 150ms;
 	}
-	.theme-dot:hover {
+	.theme-dot:hover::before {
 		opacity: 1;
-		transform: scale(1.2);
+		transform: scale(1.18);
 	}
-	.theme-dot.active {
+	.theme-dot.active::before {
 		opacity: 1;
+		transform: scale(1.18);
 		outline-color: var(--dot);
+	}
+	.theme-dot:focus-visible {
+		outline: 2px solid var(--dot);
+		outline-offset: 1px;
 	}
 
 	/* ─── Mobile layout ─────────────────────────────── */

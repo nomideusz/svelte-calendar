@@ -24,6 +24,11 @@
 </div>
 
 <style>
+	/*
+	 * The docs chrome uses the same --dt-* tokens the demo themes set on
+	 * <html>, so it stays readable in all five themes (dark and light).
+	 * Fallbacks match the slate defaults.
+	 */
 	.doc-layout {
 		display: flex;
 		align-items: flex-start;
@@ -50,15 +55,15 @@
 		gap: 2px;
 	}
 	.doc-toc-title {
-		font: 700 10px/1 'Outfit', system-ui, sans-serif;
+		font: 700 10px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: rgba(148, 163, 184, 0.5);
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.5));
 		margin-bottom: 10px;
 	}
 	.doc-toc a {
-		font: 500 12.5px/1.4 'Outfit', system-ui, sans-serif;
-		color: rgba(148, 163, 184, 0.75);
+		font: 500 12.5px/1.4 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.75));
 		text-decoration: none;
 		padding: 4px 8px;
 		border-radius: 5px;
@@ -66,8 +71,8 @@
 		transition: color 120ms, background 120ms;
 	}
 	.doc-toc a:hover {
-		color: rgba(226, 232, 240, 0.95);
-		background: rgba(148, 163, 184, 0.07);
+		color: var(--dt-text, rgba(226, 232, 240, 0.95));
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
 	}
 
 	@media (max-width: 900px) {
@@ -81,7 +86,7 @@
 		flex: 1;
 		min-width: 0;
 		padding: 48px 0 96px;
-		color: rgba(226, 232, 240, 0.82);
+		color: var(--dt-text, rgba(226, 232, 240, 0.82));
 		line-height: 1.7;
 	}
 	.doc-content :global(h2) {
@@ -90,22 +95,22 @@
 
 	/* ── Typography ── */
 	.doc-content :global(h1) {
-		font: 700 28px/1.2 'Outfit', system-ui, sans-serif;
-		color: rgba(226, 232, 240, 0.95);
+		font: 700 28px/1.2 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.95));
 		margin: 0 0 8px;
 	}
 
 	.doc-content :global(h2) {
-		font: 600 20px/1.3 'Outfit', system-ui, sans-serif;
-		color: rgba(226, 232, 240, 0.92);
+		font: 600 20px/1.3 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.92));
 		margin: 48px 0 16px;
 		padding-bottom: 8px;
-		border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 	}
 
 	.doc-content :global(h3) {
-		font: 600 15px/1.3 'Outfit', system-ui, sans-serif;
-		color: rgba(226, 232, 240, 0.88);
+		font: 600 15px/1.3 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.88));
 		margin: 32px 0 12px;
 	}
 
@@ -116,18 +121,18 @@
 
 	.doc-content :global(> p:first-of-type) {
 		font-size: 15px;
-		color: rgba(148, 163, 184, 0.7);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.7));
 		margin-bottom: 32px;
 	}
 
 	.doc-content :global(blockquote) {
 		margin: 0 0 16px;
 		padding: 10px 16px;
-		border-left: 3px solid rgba(239, 68, 68, 0.4);
-		background: rgba(239, 68, 68, 0.04);
+		border-left: 3px solid color-mix(in srgb, var(--dt-accent, #ef4444) 40%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #ef4444) 5%, transparent);
 		border-radius: 0 6px 6px 0;
 		font-size: 13px;
-		color: rgba(226, 232, 240, 0.7);
+		color: var(--dt-text-2, rgba(226, 232, 240, 0.7));
 	}
 	.doc-content :global(blockquote p) {
 		margin: 0;
@@ -135,24 +140,24 @@
 
 	/* ── Code blocks ── */
 	.doc-content :global(pre) {
-		background: #0d1017;
-		border: 1px solid rgba(148, 163, 184, 0.06);
+		background: var(--dt-surface, #0d1017);
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.06));
 		border-radius: 8px;
 		padding: 16px 20px;
 		overflow-x: auto;
 		margin: 0 0 20px;
-		font: 400 13px/1.55 ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
-		color: rgba(226, 232, 240, 0.78);
+		font: 400 13px/1.55 var(--dt-mono, ui-monospace, 'Cascadia Code', 'Fira Code', monospace);
+		color: var(--dt-text, rgba(226, 232, 240, 0.78));
 		scrollbar-width: thin;
-		scrollbar-color: rgba(148, 163, 184, 0.1) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(148, 163, 184, 0.1)) transparent;
 	}
 
 	.doc-content :global(code) {
-		font: 400 12.5px/1 ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
-		background: rgba(148, 163, 184, 0.08);
+		font: 400 12.5px/1 var(--dt-mono, ui-monospace, 'Cascadia Code', 'Fira Code', monospace);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 14%, transparent);
 		padding: 2px 6px;
 		border-radius: 4px;
-		color: rgba(226, 232, 240, 0.85);
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
 	}
 
 	.doc-content :global(pre code) {
@@ -174,28 +179,28 @@
 	.doc-content :global(th) {
 		text-align: left;
 		padding: 8px 12px;
-		font: 600 11px/1 'Outfit', system-ui, sans-serif;
+		font: 600 11px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		color: rgba(148, 163, 184, 0.5);
-		border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+		color: var(--dt-text-3, rgba(148, 163, 184, 0.5));
+		border-bottom: 1px solid var(--dt-border-day, rgba(148, 163, 184, 0.1));
 	}
 
 	.doc-content :global(td) {
 		padding: 7px 12px;
-		border-bottom: 1px solid rgba(148, 163, 184, 0.05);
-		color: rgba(226, 232, 240, 0.72);
+		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.05));
+		color: var(--dt-text-2, rgba(226, 232, 240, 0.72));
 		vertical-align: top;
 	}
 
 	.doc-content :global(td code) {
 		font-size: 12px;
-		color: #ef4444;
-		background: rgba(239, 68, 68, 0.08);
+		color: var(--dt-accent, #ef4444);
+		background: var(--dt-accent-dim, rgba(239, 68, 68, 0.08));
 	}
 
 	.doc-content :global(tr:hover td) {
-		background: rgba(148, 163, 184, 0.03);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 6%, transparent);
 	}
 
 	/* ── Lists ── */
@@ -212,31 +217,31 @@
 
 	/* ── Links ── */
 	.doc-content :global(a) {
-		color: #ef4444;
+		color: var(--dt-accent, #ef4444);
 		text-decoration: none;
-		border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+		border-bottom: 1px solid color-mix(in srgb, var(--dt-accent, #ef4444) 25%, transparent);
 		transition: border-color 120ms;
 	}
 	.doc-content :global(a:hover) {
-		border-color: #ef4444;
+		border-color: var(--dt-accent, #ef4444);
 	}
 
 	/* ── Details ── */
 	.doc-content :global(details) {
 		margin: 0 0 20px;
-		border: 1px solid rgba(148, 163, 184, 0.07);
+		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 		border-radius: 8px;
 		overflow: hidden;
 	}
 	.doc-content :global(summary) {
 		padding: 10px 16px;
 		cursor: pointer;
-		font: 500 13px/1 'Outfit', system-ui, sans-serif;
-		color: rgba(226, 232, 240, 0.8);
-		background: rgba(148, 163, 184, 0.03);
+		font: 500 13px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		color: var(--dt-text, rgba(226, 232, 240, 0.8));
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 6%, transparent);
 	}
 	.doc-content :global(details[open] summary) {
-		border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 	}
 	.doc-content :global(details > :not(summary)) {
 		padding: 0 16px;
@@ -250,14 +255,14 @@
 	/* ── Horizontal rule ── */
 	.doc-content :global(hr) {
 		border: none;
-		border-top: 1px solid rgba(148, 163, 184, 0.07);
+		border-top: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
 		margin: 32px 0;
 	}
 
 	/* ── Strong / em ── */
 	.doc-content :global(strong) {
 		font-weight: 600;
-		color: rgba(226, 232, 240, 0.92);
+		color: var(--dt-text, rgba(226, 232, 240, 0.92));
 	}
 
 	/* ─── Responsive ─────────────────────────────────── */
@@ -295,89 +300,5 @@
 			margin: 8px 12px;
 			width: calc(100% - 24px);
 		}
-	}
-
-	/* ─── Light scheme overrides ────────────────────── */
-	:global([data-scheme="light"]) .doc-toc-title {
-		color: rgba(0, 0, 0, 0.4);
-	}
-	:global([data-scheme="light"]) .doc-toc a {
-		color: rgba(0, 0, 0, 0.55);
-	}
-	:global([data-scheme="light"]) .doc-toc a:hover {
-		color: rgba(0, 0, 0, 0.85);
-		background: rgba(0, 0, 0, 0.04);
-	}
-	:global([data-scheme="light"]) .doc-content {
-		color: rgba(0, 0, 0, 0.72);
-	}
-	:global([data-scheme="light"]) .doc-content :global(h1) {
-		color: rgba(0, 0, 0, 0.9);
-	}
-	:global([data-scheme="light"]) .doc-content :global(h2) {
-		color: rgba(0, 0, 0, 0.85);
-		border-bottom-color: rgba(0, 0, 0, 0.08);
-	}
-	:global([data-scheme="light"]) .doc-content :global(h3) {
-		color: rgba(0, 0, 0, 0.8);
-	}
-	:global([data-scheme="light"]) .doc-content :global(> p:first-of-type) {
-		color: rgba(0, 0, 0, 0.5);
-	}
-	:global([data-scheme="light"]) .doc-content :global(blockquote) {
-		border-left-color: rgba(37, 99, 235, 0.4);
-		background: rgba(37, 99, 235, 0.04);
-		color: rgba(0, 0, 0, 0.6);
-	}
-	:global([data-scheme="light"]) .doc-content :global(pre) {
-		background: #f8f9fa;
-		border-color: rgba(0, 0, 0, 0.08);
-		color: rgba(0, 0, 0, 0.72);
-		scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
-	}
-	:global([data-scheme="light"]) .doc-content :global(code) {
-		background: rgba(0, 0, 0, 0.05);
-		color: rgba(0, 0, 0, 0.78);
-	}
-	:global([data-scheme="light"]) .doc-content :global(pre code) {
-		background: none;
-	}
-	:global([data-scheme="light"]) .doc-content :global(th) {
-		color: rgba(0, 0, 0, 0.45);
-		border-bottom-color: rgba(0, 0, 0, 0.1);
-	}
-	:global([data-scheme="light"]) .doc-content :global(td) {
-		border-bottom-color: rgba(0, 0, 0, 0.05);
-		color: rgba(0, 0, 0, 0.65);
-	}
-	:global([data-scheme="light"]) .doc-content :global(td code) {
-		color: #2563eb;
-		background: rgba(37, 99, 235, 0.07);
-	}
-	:global([data-scheme="light"]) .doc-content :global(tr:hover td) {
-		background: rgba(0, 0, 0, 0.02);
-	}
-	:global([data-scheme="light"]) .doc-content :global(a) {
-		color: #2563eb;
-		border-bottom-color: rgba(37, 99, 235, 0.2);
-	}
-	:global([data-scheme="light"]) .doc-content :global(a:hover) {
-		border-color: #2563eb;
-	}
-	:global([data-scheme="light"]) .doc-content :global(details) {
-		border-color: rgba(0, 0, 0, 0.08);
-	}
-	:global([data-scheme="light"]) .doc-content :global(summary) {
-		color: rgba(0, 0, 0, 0.75);
-		background: rgba(0, 0, 0, 0.02);
-	}
-	:global([data-scheme="light"]) .doc-content :global(details[open] summary) {
-		border-bottom-color: rgba(0, 0, 0, 0.08);
-	}
-	:global([data-scheme="light"]) .doc-content :global(hr) {
-		border-top-color: rgba(0, 0, 0, 0.08);
-	}
-	:global([data-scheme="light"]) .doc-content :global(strong) {
-		color: rgba(0, 0, 0, 0.87);
 	}
 </style>

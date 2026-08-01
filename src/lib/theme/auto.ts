@@ -107,6 +107,24 @@ function mix(c1: RGB, c2: RGB, t: number): RGB {
 	];
 }
 
+// ── Shadow-aware DOM walking ────────────────────────────
+
+/**
+ * Parent element that hops shadow boundaries. When a node is a direct child
+ * of a ShadowRoot, `parentElement` is null — continue the walk from the
+ * shadow host so probes can still see the host page (the embeddable widget
+ * mounts the calendar inside a shadow root).
+ */
+function parentAcrossShadow(node: HTMLElement): HTMLElement | null {
+	if (node.parentElement) return node.parentElement;
+	const root = node.getRootNode();
+	return typeof ShadowRoot !== 'undefined' &&
+		root instanceof ShadowRoot &&
+		root.host instanceof HTMLElement
+		? root.host
+		: null;
+}
+
 // ── Text color detection ────────────────────────────────
 
 /**
@@ -169,7 +187,7 @@ function probeTextColor(el: HTMLElement, bg: RGB): RGB | null {
 			const rgb = parseColor(raw);
 			if (rgb) { candidates.push(rgb); break; }
 		}
-		node = node.parentElement;
+		node = parentAcrossShadow(node);
 	}
 
 	// 3. Walk up the DOM reading *computed* color
@@ -180,7 +198,7 @@ function probeTextColor(el: HTMLElement, bg: RGB): RGB | null {
 			const rgb = parseColor(raw);
 			if (rgb) { candidates.push(rgb); break; }
 		} catch { /* ignore */ }
-		node = node.parentElement;
+		node = parentAcrossShadow(node);
 	}
 
 	// Pick the first candidate with adequate contrast against the background.
@@ -375,7 +393,7 @@ function probeBackground(el: HTMLElement): { bg: RGB; isDark: boolean } {
 			const rgb = parseColor(raw);
 			if (rgb) return result(rgb);
 		}
-		node = node.parentElement;
+		node = parentAcrossShadow(node);
 	}
 
 	// 3. Fall back to computed backgroundColor (may be mid-transition, but
@@ -389,7 +407,7 @@ function probeBackground(el: HTMLElement): { bg: RGB; isDark: boolean } {
 		} catch {
 			// getComputedStyle may fail in test environments
 		}
-		node = node.parentElement;
+		node = parentAcrossShadow(node);
 	}
 
 	// 4. Ultimate fallback: check color-scheme preference
@@ -435,7 +453,9 @@ export function probeHostTheme(
 ): string {
 	// Start probing from the parent — `el` itself is the calendar root, which
 	// has its own --dt-bg fallback in CSS. We need the *host page's* context.
-	const host = el.parentElement ?? el;
+	// (Shadow-aware: inside a shadow root the parent hop lands on the shadow
+	// host, i.e. the <day-calendar> element in the light DOM.)
+	const host = parentAcrossShadow(el) ?? el;
 	const htmlRoot = (host.closest('body') ?? host) instanceof HTMLElement
 		? (host.closest('body') ?? host) as HTMLElement
 		: document.body;
@@ -488,7 +508,7 @@ export function probeHostTheme(
 	// ── Accent derivatives ──
 	const accentDim = isDark ? 0.15 : 0.12;
 	const glow = isDark ? 0.30 : 0.25;
-	const todayBg = isDark ? 0.03 : 0.04;
+	const todayBg = isDark ? 0.07 : 0.07;
 
 	// Ensure accent is readable on the background — adjust lightness if needed
 	const accentL = isDark
@@ -523,6 +543,8 @@ export function probeHostTheme(
 		`--dt-btn-text: ${btnText}`,
 		`--dt-scrollbar: ${rgba(...borderRgb, scrollAlpha)}`,
 		`--dt-success: ${rgba(...successRgb, 0.7)}`,
+		`--dt-weekend-bg: ${rgba(...borderRgb, isDark ? 0.03 : 0.02)}`,
+		`--dt-hover: ${rgba(...borderRgb, isDark ? 0.06 : 0.04)}`,
 		`--dt-sans: ${fonts.sans}`,
 		`--dt-mono: ${fonts.mono}`,
 	];

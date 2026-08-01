@@ -9,19 +9,14 @@
 	import { onMount, tick, untrack } from 'svelte';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
-	import { fly } from 'svelte/transition';
 	import { createClock } from '../../core/clock.svelte.js';
 	import { createTextMeasure, type ContentFit } from '../../core/measure.js';
-	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
-	import type { DragState } from '../../engine/drag.svelte.js';
-	import type { ViewState } from '../../engine/view-state.svelte.js';
+	import type { TimelineEvent } from '../../core/types.js';
 	import { DAY_MS, HOUR_MS, sod } from '../../core/time.js';
 	import { isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { fmtH, fmtTime, weekdayShort } from '../../core/locale.js';
-	import { getLabels } from '../../core/locale.js';
+	import { fmtDuration, fmtH, fmtTime, weekdayShort } from '../../core/locale.js';
 
-	const L = $derived(getLabels());
 
 	interface Props {
 		/** Total height (null = fill parent) */
@@ -62,6 +57,7 @@
 
 	// ── Context (available when inside Calendar) ──
 	const ctx = useCalendarContext();
+	const L = $derived(ctx.labels);
 	const clock = createClock(ctx.timezone);
 	const drag = $derived(ctx.drag);
 	const commitDragCtx = $derived(ctx.commitDrag);
@@ -150,8 +146,10 @@
 		const elapsed = ms - origin;
 		const dayIndex = Math.floor(elapsed / DAY_MS);
 		const hourInDay = (elapsed - dayIndex * DAY_MS) / HOUR_MS;
-		const hourOffset = hourInDay - startHour;
-		return dayIndex * (dayWidth + DAY_GAP) + hourOffset * hourWidth;
+		// Clamp into the visible band so out-of-band times clip to the day's
+		// edges instead of painting into a neighbouring day column.
+		const clamped = Math.min(Math.max(hourInDay, startHour), endHour);
+		return dayIndex * (dayWidth + DAY_GAP) + (clamped - startHour) * hourWidth;
 	}
 
 	function pxToTime(px: number): number {
@@ -163,6 +161,9 @@
 	}
 
 	const nowPx = $derived(timeToPx(clock.tick));
+	/** Current wall-clock hour (fractional) — hides the now-line outside the visible band. */
+	const nowHour = $derived((clock.tick - clock.today) / HOUR_MS);
+	const nowInBand = $derived(nowHour >= startHour && nowHour < endHour);
 
 	// ─── Separate all-day from timed events ────────────
 	const timedEvents = $derived(events.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
@@ -201,14 +202,33 @@
 		groupMaxRow: number;
 		topPx: number;
 		heightPx: number;
-		isCurrent: boolean;
-		isNext: boolean;
 		isDragged: boolean;
 		fit: ContentFit;
 	}
 
-	const positionedEvents = $derived.by(() => {
+	// "Now" markers derived separately from layout so the 1Hz clock tick
+	// doesn't re-run the union-find layout + fitContent measurement.
+	const nowInfo = $derived.by(() => {
 		const now = clock.tick;
+		const current = new Set<string>();
+		// Earliest future event today that isn't currently running
+		const todayStart = clock.today;
+		const todayEnd = todayStart + DAY_MS;
+		let nextId: string | null = null;
+		let nextStart = Infinity;
+		for (const ev of timedEvents) {
+			const s = ev.start.getTime();
+			const e = ev.end.getTime();
+			if (s <= now && e > now) current.add(ev.id);
+			else if (s >= todayStart && s < todayEnd && s > now && s < nextStart) {
+				nextStart = s;
+				nextId = ev.id;
+			}
+		}
+		return { current, nextId };
+	});
+
+	const positionedEvents = $derived.by(() => {
 		const dragP = drag?.active && (drag.mode === 'move' || drag.mode === 'resize-start' || drag.mode === 'resize-end')
 			? drag.payload
 			: null;
@@ -222,30 +242,20 @@
 
 		const sorted = [...staticEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
 
-		// Find the earliest future event on today to mark as "next"
-		const todayStart = sod(now);
-		const todayEnd = todayStart + DAY_MS;
-		let nextEventId: string | null = null;
-		for (const ev of sorted) {
-			const s = ev.start.getTime();
-			const e = ev.end.getTime();
-			// Must be today, start in the future, and not currently running
-			if (s >= todayStart && s < todayEnd && s > now && !(s <= now && e > now)) {
-				nextEventId = ev.id;
-				break;
-			}
-		}
-
-		const infos = sorted.map((ev) => {
-			const s = ev.start.getTime();
-			const e = ev.end.getTime();
-			const x = timeToPx(s);
-			const xEnd = timeToPx(e);
-			return {
-				ev, x, width: Math.max(xEnd - x, 28), row: 0, groupMaxRow: 1,
-				isCurrent: s <= now && e > now, isNext: ev.id === nextEventId, isDragged: false, startMs: s, endMs: e,
-			};
-		});
+		const infos = sorted
+			.map((ev) => {
+				const s = ev.start.getTime();
+				const e = ev.end.getTime();
+				const x = timeToPx(s);
+				const xEnd = timeToPx(e);
+				return {
+					ev, x, width: Math.max(xEnd - x, 28), row: 0, groupMaxRow: 1,
+					isDragged: false, startMs: s, endMs: e, clippedWidth: xEnd - x,
+				};
+			})
+			// Events entirely outside the visible hour band collapse to zero
+			// width after clamping — skip them instead of painting a sliver.
+			.filter((info) => info.clippedWidth > 0);
 
 		// Union-find overlap groups
 		const par = infos.map((_, i) => i);
@@ -283,7 +293,7 @@
 		}
 
 		const availH = containerH - contentTop - 8;
-		const result: PositionedEvent[] = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
+		const result: PositionedEvent[] = infos.map(({ startMs: _s, endMs: _e, clippedWidth: _c, ...info }) => {
 			const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
 			const topPx = contentTop + info.row * (availH / info.groupMaxRow);
 			// Vertical labels: text runs along lane height, columns stack across duration width.
@@ -296,7 +306,7 @@
 				maxWidth: laneH - 16,
 				maxHeight: info.width - 16,
 			});
-			return { ...info, topPx, heightPx: laneH, isNext: info.isNext, fit };
+			return { ...info, topPx, heightPx: laneH, fit };
 		});
 
 		if (draggedEv && dragP) {
@@ -309,8 +319,6 @@
 				row: 0, groupMaxRow: 1,
 				topPx: contentTop,
 				heightPx: dragH,
-				isCurrent: draggedEv.start.getTime() <= now && draggedEv.end.getTime() > now,
-				isNext: false,
 				isDragged: true,
 				fit: measure.fitContent({
 					title: draggedEv.title,
@@ -394,17 +402,23 @@
 	}
 
 	// ─── Lifecycle ──────────────────────────────────────
-	onMount(() => {
-		const ro = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				containerW = entry.contentRect.width;
-				containerH = entry.contentRect.height;
-			}
+	// Scroll handling is event-driven (rAF-throttled); a rAF loop only runs
+	// while `following` is active to keep today centred as the clock moves.
+	let scrollRaf = 0;
+	function handleScroll() {
+		if (following || rebasing || scrollRaf) return;
+		scrollRaf = requestAnimationFrame(() => {
+			scrollRaf = 0;
+			if (!el || following || rebasing) return;
+			checkEdges();
+			syncFocusFromScroll();
 		});
-		ro.observe(el);
+	}
 
+	$effect(() => {
+		if (!following) return;
 		function frame() {
-			if (following && el && !scrollDragging) {
+			if (el && !scrollDragging) {
 				// Ensure today is in the strip.
 				if (internalCenterMs !== clock.today) {
 					internalCenterMs = clock.today;
@@ -416,14 +430,22 @@
 				if (todayD) {
 					el.scrollLeft = todayD.x + dayWidth / 2 - el.clientWidth / 2;
 				}
-			} else if (el && !rebasing) {
-				checkEdges();
-				syncFocusFromScroll();
 			}
 			rafId = requestAnimationFrame(frame);
 		}
 		rafId = requestAnimationFrame(frame);
-		return () => { cancelAnimationFrame(rafId); ro.disconnect(); };
+		return () => cancelAnimationFrame(rafId);
+	});
+
+	onMount(() => {
+		const ro = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				containerW = entry.contentRect.width;
+				containerH = entry.contentRect.height;
+			}
+		});
+		ro.observe(el);
+		return () => { cancelAnimationFrame(scrollRaf); ro.disconnect(); };
 	});
 
 	// ─── Drag-to-scroll ─────────────────────────────────
@@ -689,7 +711,27 @@
 		if (drag && rsStarted) drag.cancel();
 		cleanupResize();
 	}
+
+	// ─── Escape cancels any in-flight drag ──────────────
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Escape' || !drag?.active) return;
+		drag.cancel();
+		cleanupCreateDrag();
+		cleanupEvDrag();
+		cleanupResize();
+		// Suppress the click the trailing pointerup would synthesize on the
+		// track (it would otherwise create an event). Reset after that
+		// pointerup/click cycle completes.
+		wasDragging = true;
+		window.addEventListener(
+			'pointerup',
+			() => setTimeout(() => { wasDragging = false; }, 0),
+			{ once: true },
+		);
+	}
 </script>
+
+<svelte:window onkeydown={onWindowKeydown} />
 
 <div class="fs" class:fs--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')} role="region" aria-label={L.dayPlanner}>
 	<div
@@ -697,12 +739,27 @@
 		class:fs-grabbing={scrollDragging}
 		class:fs-readonly={readOnly}
 		bind:this={el}
-		onwheel={(e) => { e.preventDefault(); el.scrollLeft += e.deltaY || e.deltaX; following = false; }}
+		onwheel={(e) => {
+			const delta = e.deltaY || e.deltaX;
+			if (delta === 0) return;
+			// Only capture the wheel when the track can consume the delta in
+			// that direction — otherwise let the page scroll normally.
+			const maxScroll = el.scrollWidth - el.clientWidth;
+			const canConsume = delta < 0 ? el.scrollLeft > 0 : el.scrollLeft < maxScroll - 1;
+			if (!canConsume) return;
+			e.preventDefault();
+			el.scrollLeft += delta;
+			following = false;
+		}}
+		onscroll={handleScroll}
 		onpointerdown={onPointerDown}
-		role="application"
+		role="region"
 		aria-label={L.scrollableDayPlanner}
 	>
-		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="none">
+		<!-- Presentational layer: the click handler is a convenience delegate for
+		     click-to-create on empty canvas; keyboard users create events via the
+		     host UI, and events themselves are focusable buttons. -->
+		<div class="fs-track" style:width="{totalWidth}px" onclick={handleTrackClick} role="presentation">
 			{#each days as d (d.ms)}
 				<div
 					class="fs-day"
@@ -754,19 +811,23 @@
 				</div>
 			{/each}
 
-			<!-- Now line -->
-			<div class="fs-now" style:left="{nowPx}px">
-				<span class="fs-now-tag">{clock.hm}<span class="fs-now-sec">{clock.s}</span></span>
-				<div class="fs-now-line"></div>
-			</div>
+			<!-- Now line (hidden when the clock is outside the visible hour band) -->
+			{#if nowInBand}
+				<div class="fs-now" style:left="{nowPx}px">
+					<span class="fs-now-tag">{clock.hm}</span>
+					<div class="fs-now-line"></div>
+				</div>
+			{/if}
 
 			<!-- Events -->
 			{#each positionedEvents as p (p.ev.id)}
+				{@const isCurrent = nowInfo.current.has(p.ev.id)}
+				{@const isNext = !p.isDragged && p.ev.id === nowInfo.nextId}
 				<div
 					class="fs-event"
 					class:fs-event--selected={selectedEventId === p.ev.id}
-					class:fs-event--current={p.isCurrent}
-					class:fs-event--next={p.isNext}
+					class:fs-event--current={isCurrent}
+					class:fs-event--next={isNext}
 					class:fs-event--dragging={p.isDragged}
 					class:fs-event--resizing={p.isDragged && drag?.mode !== 'move'}
 					class:fs-event--readonly={p.ev.data?.readOnly}
@@ -782,15 +843,15 @@
 					role="button"
 					tabindex="0"
 					title={p.ev.title}
-					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{p.isCurrent ? ` (${L.inProgress})` : ''}{p.isNext ? ` (${L.upNext})` : ''}"
+					aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{isCurrent ? ` (${L.inProgress})` : ''}{isNext ? ` (${L.upNext})` : ''}"
 					onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 					onpointerenter={() => oneventhover?.(p.ev)}
 					onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); oneventclick?.(p.ev); } }}
 				>
 					<div class="fs-ev-inner">
-						{#if p.isCurrent}
+						{#if isCurrent}
 							<span class="fs-ev-live" aria-hidden="true"></span>
-						{:else if p.isNext}
+						{:else if isNext}
 							<span class="fs-ev-next-badge" aria-hidden="true">{L.upNext}</span>
 						{/if}
 						<EventContent event={p.ev}>
@@ -928,9 +989,10 @@
 		border-left: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.14));
 		box-sizing: border-box;
 	}
-	.fs-day:first-of-type { border-left: none; }
-	.fs-today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
-	.fs-past { opacity: 0.7; }
+	.fs-today { background: var(--dt-today-bg, color-mix(in srgb, var(--dt-accent, #2563eb) 8%, transparent)); }
+	/* Past days: dim via a background wash instead of a subtree opacity so
+	   event text keeps full contrast. */
+	.fs-past { background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent); }
 
 	/* ─── Disabled day ───────────────────────────────── */
 	.fs-disabled {
@@ -1008,12 +1070,11 @@
 		white-space: nowrap;
 		pointer-events: none;
 	}
-	.fs-tick--half { bottom: auto; height: calc(18px + 8px); }
+	/* Half-hour guide: full-height line at low opacity through the event area */
 	.fs-tick--half::before {
 		top: 18px;
-		height: 6px;
-		bottom: auto;
-		opacity: 0.4;
+		bottom: 0;
+		opacity: 0.35;
 	}
 
 	/* ─── Now-line ────────────────────────────────────── */
@@ -1036,7 +1097,9 @@
 	}
 	.fs-now-tag {
 		position: absolute;
-		top: 8px;
+		/* Below the hour-label row (labels sit at top: 2px) so the tag never
+		   collides with an hour label near hour boundaries. */
+		top: 20px;
 		left: 8px;
 		font: 700 11px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-accent, #2563eb);
@@ -1047,13 +1110,9 @@
 		white-space: nowrap;
 		z-index: 1;
 	}
-	.fs-now-sec {
-		font-weight: 400;
-		opacity: 0.5;
-		font-size: 10px;
-	}
-
 	/* ─── All-day strip ─────────────────────────────── */
+	/* The container is a full-width overlay — let clicks pass through it and
+	   only the chips themselves capture pointer events. */
 	.fs-allday {
 		position: absolute;
 		left: 0;
@@ -1064,7 +1123,7 @@
 		z-index: 7;
 		overflow-x: auto;
 		scrollbar-width: none;
-		pointer-events: auto;
+		pointer-events: none;
 	}
 	.fs-allday::-webkit-scrollbar { display: none; }
 
@@ -1078,15 +1137,18 @@
 		border-left: 3px solid var(--ev-color);
 		white-space: nowrap;
 		flex-shrink: 0;
+		min-width: 0;
+		max-width: 320px;
 		cursor: pointer;
 		transition: background 0.15s;
+		pointer-events: auto;
 	}
 	.fs-ad:hover {
 		background: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));
 	}
 	.fs-ad:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.fs-ad--selected {
 		background: color-mix(in srgb, var(--ev-color) 30%, var(--dt-surface, var(--dt-bg, #ffffff)));
@@ -1105,7 +1167,8 @@
 		font-size: 0.7rem;
 		font-weight: 500;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		max-width: 120px;
+		flex: 0 1 auto;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
@@ -1121,7 +1184,10 @@
 		position: absolute;
 		z-index: 6;
 		border-radius: 6px;
-		cursor: pointer;
+		/* Editable events are grabbable; touch drags move the event instead of
+		   scrolling the strip. */
+		cursor: grab;
+		touch-action: none;
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		border: 1px solid color-mix(in srgb, var(--ev-color) 40%, transparent);
 		/* Solid stripe at the start edge — matches the week view, keeps the
@@ -1172,6 +1238,15 @@
 		cursor: ew-resize;
 		touch-action: none;
 	}
+	/* Hit-slop: ~20px effective grab zone while the visual stays 6px */
+	.fs-ev-handle::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: -7px;
+		right: -7px;
+	}
 	.fs-ev-handle--start { left: 0; }
 	.fs-ev-handle--end { right: 0; }
 	.fs-ev-handle::after {
@@ -1186,7 +1261,12 @@
 		opacity: 0;
 		transition: opacity 120ms;
 	}
-	.fs-event:hover .fs-ev-handle::after { opacity: 0.55; }
+	.fs-event:hover .fs-ev-handle::after,
+	.fs-event:focus-within .fs-ev-handle::after { opacity: 0.55; }
+	/* Coarse pointers can't hover — show the grips persistently */
+	@media (hover: none) {
+		.fs-ev-handle::after { opacity: 0.55; }
+	}
 
 	/* ─── Drag-to-create ghost ───────────────────────── */
 	.fs-create-ghost {
@@ -1213,12 +1293,16 @@
 		.fs-event--dragging {
 			transition: box-shadow 120ms, background 120ms;
 		}
+		.fs-create-ghost,
+		.fs-ad,
+		.fs-ev-handle::after {
+			transition: none;
+		}
 	}
-	.fs-event--cancelled {
-		opacity: 0.5;
-	}
+	/* Cancelled: strikethrough + secondary text, not a subtree opacity dim */
 	.fs-event--cancelled .fs-ev-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.fs-event--tentative {
 		opacity: 0.65;
@@ -1231,7 +1315,8 @@
 		opacity: 0.65;
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
 	}
-	.fs-event--readonly {
+	.fs-event--readonly,
+	.fs-readonly .fs-event {
 		cursor: default;
 	}
 
@@ -1280,6 +1365,7 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		white-space: normal;
 		max-height: 100%;
 		flex-shrink: 0;
@@ -1287,14 +1373,12 @@
 	.fs-ev-time {
 		font: 400 10px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		opacity: 0.7;
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 	.fs-ev-sub {
 		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		opacity: 0.6;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1303,7 +1387,7 @@
 	}
 	.fs-ev-loc {
 		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1326,9 +1410,11 @@
 	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
+	/* box-shadow instead of outline: outlines get clipped by the
+	   overflow: hidden scroll container. */
 	.fs-event:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 </style>
 

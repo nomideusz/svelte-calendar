@@ -8,7 +8,7 @@
 		label: string;
 		group?: string;
 		enabledWhen?: string;
-		/** One-line description shown as a tooltip */
+		/** One-line description rendered as visible helper text under the field */
 		hint?: string;
 	};
 
@@ -116,13 +116,14 @@
 
 {#snippet segmentControl(f: SegmentField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
 	{#if f.label}
-		<span class={labelClass} id={`${fid}-label`} title={f.hint}>{f.label}</span>
+		<span class={labelClass} id={`${fid}-label`}>{f.label}</span>
 	{/if}
 	<div
 		class="stg-pills"
 		role="radiogroup"
 		aria-labelledby={f.label ? `${fid}-label` : undefined}
 		aria-label={f.label ? undefined : f.key}
+		aria-describedby={f.hint ? `${fid}-hint` : undefined}
 	>
 		{#each f.options as option (option.value)}
 			<button
@@ -138,41 +139,54 @@
 			</button>
 		{/each}
 	</div>
+	{#if f.hint}
+		<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
+	{/if}
 {/snippet}
 
 {#snippet selectControl(f: SelectField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
 	{#if f.label}
-		<label class={labelClass} for={fid} title={f.hint}>{f.label}</label>
+		<label class={labelClass} for={fid}>{f.label}</label>
 	{/if}
 	<select
 		id={fid}
 		class="stg-sel"
 		value={String(values[f.key] ?? '')}
 		{disabled}
+		aria-describedby={f.hint ? `${fid}-hint` : undefined}
 		onchange={(e) => setVal(f.key, (e.target as HTMLSelectElement).value)}
 	>
 		{#each f.options as option (option.value)}
 			<option value={option.value}>{option.label}</option>
 		{/each}
 	</select>
+	{#if f.hint}
+		<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
+	{/if}
 {/snippet}
 
 {#snippet toggleControl(f: ToggleField, fid: string, disabled: boolean)}
-	<label class="stg-row stg-row--toggle" class:stg-row--disabled={disabled} for={fid} title={f.hint}>
-		<span class="stg-lbl">{f.label}</span>
-		<input
-			id={fid}
-			class="stg-sr"
-			type="checkbox"
-			role="switch"
-			checked={values[f.key] === true}
-			{disabled}
-			onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
-		/>
-		<span class="stg-sw" aria-hidden="true">
-			<span class="stg-sw-knob"></span>
-		</span>
-	</label>
+	<div class="stg-field" class:stg-row--disabled={disabled}>
+		<label class="stg-row stg-row--toggle" for={fid}>
+			<span class="stg-lbl">{f.label}</span>
+			<input
+				id={fid}
+				class="stg-sr"
+				type="checkbox"
+				role="switch"
+				checked={values[f.key] === true}
+				{disabled}
+				aria-describedby={f.hint ? `${fid}-hint` : undefined}
+				onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
+			/>
+			<span class="stg-sw" aria-hidden="true">
+				<span class="stg-sw-knob"></span>
+			</span>
+		</label>
+		{#if f.hint}
+			<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
+		{/if}
+	</div>
 {/snippet}
 
 <div class="stg">
@@ -254,7 +268,7 @@
 									{#if f.type === 'range'}
 										<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
 											<div class="stg-rng-hd">
-												<label class="stg-lbl" for={fid} title={f.hint}>{f.label}</label>
+												<label class="stg-lbl" for={fid}>{f.label}</label>
 												<span class="stg-num">{fmt(values[f.key])}</span>
 											</div>
 											<input
@@ -266,8 +280,12 @@
 												step={f.step}
 												value={values[f.key]}
 												{disabled}
+												aria-describedby={f.hint ? `${fid}-hint` : undefined}
 												oninput={(e) => setVal(f.key, Number((e.target as HTMLInputElement).value))}
 											/>
+											{#if f.hint}
+												<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
+											{/if}
 										</div>
 
 									{:else if f.type === 'select'}
@@ -360,13 +378,18 @@
 	}
 
 	.stg-toggles {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		align-items: start;
 		gap: 10px 16px;
+		width: 100%;
 	}
 	.stg-toggles--advanced {
 		margin-bottom: 8px;
+	}
+
+	.stg-field {
+		min-width: 0;
 	}
 
 	.stg-advanced {
@@ -473,6 +496,29 @@
 		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
 		white-space: nowrap;
 		flex-shrink: 0;
+	}
+
+	/* ─── Field hints ────────────────────────────────── */
+	.stg-hint {
+		display: block;
+		margin-top: 3px;
+		font-weight: 400;
+		font-size: 10.5px;
+		line-height: 1.35;
+		color: var(--dt-text-3, rgba(148, 160, 180, 0.55));
+	}
+	/* In the two-column select bar, hints span under label + control */
+	.stg-bar-item > .stg-hint {
+		grid-column: 1 / -1;
+		margin-top: 0;
+	}
+	/* In flex rows (advanced selects/segments), hints drop to their own line */
+	.stg-row {
+		flex-wrap: wrap;
+	}
+	.stg-row > .stg-hint {
+		flex-basis: 100%;
+		margin-top: 0;
 	}
 
 	/* ─── Toggle switch ──────────────────────────────── */
@@ -610,7 +656,7 @@
 		padding: 6px 10px;
 		border-radius: 999px;
 		border: 1px solid color-mix(in srgb, var(--stg-border) 68%, transparent);
-		background: var(--stg-surface-soft);
+		background: var(--stg-soft);
 		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
 		font-weight: 600;
 		font-size: 12px;

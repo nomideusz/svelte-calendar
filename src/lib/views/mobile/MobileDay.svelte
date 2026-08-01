@@ -6,16 +6,16 @@
   Events positioned absolutely within hour lanes.
 -->
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
-	import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
+	import type { TimelineEvent } from '../../core/types.js';
 	import { DAY_MS, HOUR_MS, sod, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { fmtH, fmtTime, getLabels } from '../../core/locale.js';
+	import { fmtH, fmtTime } from '../../core/locale.js';
+	import { createSwipe } from './swipe.js';
 
-	const L = $derived(getLabels());
 
 	interface Props {
 		height?: number | null;
@@ -46,6 +46,7 @@
 
 	// ── Context ────────────────────────────────────────
 	const ctx = useCalendarContext();
+	const L = $derived(ctx.labels);
 	const viewState = $derived(ctx.viewState);
 	const autoHeight = $derived(ctx.autoHeight);
 	const oneventhover = $derived(ctx.oneventhover);
@@ -71,7 +72,6 @@
 	const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
 	const dayEnd = $derived(dayMs + DAY_MS);
 	const isToday = $derived(dayMs === clock.today);
-	const isPast = $derived(dayMs < clock.today);
 	const isDisabled = $derived(disabledSet.has(dayMs));
 
 	// ── Load range ─────────────────────────────────────
@@ -99,6 +99,13 @@
 		}
 		return segs;
 	});
+
+	const isEmpty = $derived(timedEvents.length === 0 && allDayEvents.length === 0);
+
+	// ── All-day strip expansion ────────────────────────
+	const ALLDAY_MAX = 3;
+	let allDayExpanded = $state(false);
+	const visibleAllDay = $derived(allDayExpanded ? allDayEvents : allDayEvents.slice(0, ALLDAY_MAX));
 
 	// ── Positioned events ──────────────────────────────
 	interface PosEvent {
@@ -221,69 +228,92 @@
 		});
 	}
 
+	// ── Status label (aria) ────────────────────────────
+	function statusText(ev: TimelineEvent): string {
+		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
+		if (ev.status === 'tentative') return ` (${L.tentative})`;
+		if (ev.status === 'full') return ` (${L.full})`;
+		if (ev.status === 'limited') return ` (${L.limited})`;
+		return '';
+	}
+
 	// ── Touch swipe navigation ─────────────────────────
-	let el: HTMLDivElement;
-	let touchStartX = 0;
-	let touchStartY = 0;
-	let swiping = false;
 	let swipeOffset = $state(0);
-	const SWIPE_THRESHOLD = 50;
+	let swipeAnimate = $state(false);
 
-	function onTouchStart(e: TouchEvent) {
-		const t = e.touches[0];
-		touchStartX = t.clientX;
-		touchStartY = t.clientY;
-		swiping = true;
-		swipeOffset = 0;
-	}
-
-	function onTouchMove(e: TouchEvent) {
-		if (!swiping) return;
-		const t = e.touches[0];
-		const dx = t.clientX - touchStartX;
-		const dy = t.clientY - touchStartY;
-		// Only swipe if horizontal movement dominates
-		if (Math.abs(dy) > Math.abs(dx) * 0.8) { swiping = false; return; }
-		swipeOffset = dx;
-	}
-
-	function onTouchEnd() {
-		if (!swiping) { swipeOffset = 0; return; }
-		if (Math.abs(swipeOffset) > SWIPE_THRESHOLD) {
-			if (swipeOffset > 0) {
-				viewState?.prev();
+	const swipe = createSwipe({
+		disabled: () => !!drag?.active || mbCreateStarted || mbRsStarted || longPressTimer !== null,
+		onmove: (dx) => {
+			swipeAnimate = false;
+			swipeOffset = dx;
+		},
+		onend: (dir) => {
+			if (dir !== 0) {
+				// Committed — the day changes, so jump rather than slide new content.
+				swipeAnimate = false;
+				swipeOffset = 0;
+				if (dir > 0) viewState?.prev();
+				else viewState?.next();
 			} else {
-				viewState?.next();
+				// Snap back (CSS drops the transition under prefers-reduced-motion).
+				swipeAnimate = true;
+				swipeOffset = 0;
 			}
-		}
-		swipeOffset = 0;
-		swiping = false;
-	}
+		},
+	});
 
-	// ── Click-to-create ────────────────────────────────
+	// ── Tap-to-create ──────────────────────────────────
 	function handleGridClick(e: MouseEvent) {
 		if (suppressGridClick) { suppressGridClick = false; return; }
 		if (!oneventcreate || readOnly || isDisabled) return;
 		if ((e.target as HTMLElement).closest('.mb-event')) return;
-		const grid = (e.currentTarget as HTMLElement);
-		const rect = grid.getBoundingClientRect();
-		const y = e.clientY - rect.top + grid.scrollTop;
-		const hour = startHour + y / HOUR_HEIGHT;
-		if (isBlockedAt(hour)) return;
-		const snapHour = Math.floor(hour);
-		const durMin = minDuration ? Math.max(60, minDuration) : 60;
-		const start = new Date(dayMs + snapHour * HOUR_MS);
-		const end = new Date(start.getTime() + durMin * 60_000);
-		oneventcreate({ start, end });
+		const tMs = gridTimeMs(e.clientY);
+		if (isBlockedAt((tMs - dayMs) / HOUR_MS)) return;
+		const startMs = clampToDay(Math.floor(tMs / SNAP_MS) * SNAP_MS);
+		const durMin = minDuration ?? 60;
+		oneventcreate({ start: new Date(startMs), end: new Date(startMs + durMin * 60_000) });
 	}
 
-	// ── Drag-to-create (vertical sweep on empty grid) ──
-	// Movement below CREATE_THRESHOLD stays a plain tap (handleGridClick).
+	// Keyboard create-at-default: next snap boundary from now (today),
+	// otherwise the first visible hour.
+	function onGridKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		if (!oneventcreate || readOnly || isDisabled) return;
+		e.preventDefault();
+		const raw = isToday ? clock.tick : dayMs + startHour * HOUR_MS;
+		const startMs = clampToDay(Math.ceil(raw / SNAP_MS) * SNAP_MS);
+		if (isBlockedAt((startMs - dayMs) / HOUR_MS)) return;
+		const durMin = minDuration ?? 60;
+		oneventcreate({ start: new Date(startMs), end: new Date(startMs + durMin * 60_000) });
+	}
+
+	// ── Drag-to-create (mouse: sweep; touch: long-press, then sweep) ──
+	// Mouse movement below CREATE_THRESHOLD stays a plain tap (handleGridClick).
+	// On touch, a vertical drag must remain a scroll, so drag-create only arms
+	// after a ~350ms still hold (moving > 8px first cancels it).
 	const CREATE_THRESHOLD = 4;
+	const LONG_PRESS_MS = 350;
+	const LONG_PRESS_TOLERANCE = 8;
 	let suppressGridClick = false;
+	let mbCreateStartX = 0;
 	let mbCreateStartY = 0;
 	let mbCreateAnchorMs = 0;
 	let mbCreateStarted = false;
+	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	// touch-action can't change mid-gesture, so once a touch drag-create/resize
+	// is live we block native scrolling with a non-passive touchmove listener.
+	function blockTouchScroll(e: TouchEvent) { e.preventDefault(); }
+	function addTouchScrollBlock() {
+		window.addEventListener('touchmove', blockTouchScroll, { passive: false });
+	}
+	function removeTouchScrollBlock() {
+		window.removeEventListener('touchmove', blockTouchScroll);
+	}
+
+	function clearLongPress() {
+		if (longPressTimer !== null) { clearTimeout(longPressTimer); longPressTimer = null; }
+	}
 
 	/** Pointer Y → epoch ms within the day grid (accounts for scroll). */
 	function gridTimeMs(clientY: number): number {
@@ -297,12 +327,27 @@
 		return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
 	}
 
+	function startGridCreate() {
+		if (!drag) return;
+		mbCreateStarted = true;
+		mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / SNAP_MS) * SNAP_MS);
+		drag.beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + SNAP_MS));
+		addTouchScrollBlock();
+	}
+
 	function onGridPointerDown(e: PointerEvent) {
 		if (e.button !== 0 || !drag || !oneventcreate || readOnly || isDisabled) return;
 		if ((e.target as HTMLElement).closest('.mb-event')) return;
+		mbCreateStartX = e.clientX;
 		mbCreateStartY = e.clientY;
 		mbCreateAnchorMs = gridTimeMs(e.clientY);
 		mbCreateStarted = false;
+		if (e.pointerType === 'touch') {
+			longPressTimer = setTimeout(() => {
+				longPressTimer = null;
+				startGridCreate();
+			}, LONG_PRESS_MS);
+		}
 		window.addEventListener('pointermove', onGridCreateMove);
 		window.addEventListener('pointerup', onGridCreateUp, { once: true });
 		window.addEventListener('pointercancel', onGridCreateCancel, { once: true });
@@ -311,10 +356,15 @@
 	function onGridCreateMove(e: PointerEvent) {
 		if (!drag) return;
 		if (!mbCreateStarted) {
+			if (longPressTimer !== null) {
+				// Finger moved before the hold completed → it's a scroll/swipe.
+				const moved = Math.hypot(e.clientX - mbCreateStartX, e.clientY - mbCreateStartY);
+				if (moved > LONG_PRESS_TOLERANCE) cleanupGridCreate();
+				return;
+			}
+			if (e.pointerType === 'touch') return; // touch requires the long-press first
 			if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
-			mbCreateStarted = true;
-			mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / SNAP_MS) * SNAP_MS);
-			drag.beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + SNAP_MS));
+			startGridCreate();
 		}
 		const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
 		drag.updatePointer(
@@ -324,6 +374,8 @@
 	}
 
 	function cleanupGridCreate() {
+		clearLongPress();
+		removeTouchScrollBlock();
 		window.removeEventListener('pointermove', onGridCreateMove);
 		window.removeEventListener('pointerup', onGridCreateUp);
 		window.removeEventListener('pointercancel', onGridCreateCancel);
@@ -341,9 +393,15 @@
 	}
 
 	function onGridCreateCancel() {
-		// Touch scroll took over — abandon the tentative create
+		// Gesture was taken over by the browser — abandon the tentative create
 		if (drag && mbCreateStarted) drag.cancel();
 		cleanupGridCreate();
+	}
+
+	function onGridContextMenu(e: Event) {
+		// Long-press on touch fires contextmenu on some platforms — keep it
+		// from interrupting an armed or pending drag-create.
+		if (mbCreateStarted || longPressTimer !== null) e.preventDefault();
 	}
 
 	// ── Event resize (top/bottom edge handles) ─────────
@@ -372,6 +430,7 @@
 			if (Math.abs(e.clientY - mbRsStartY) < CREATE_THRESHOLD) return;
 			mbRsStarted = true;
 			drag.beginResize(ev.id, mbRsEdge, ev.start, ev.end);
+			addTouchScrollBlock();
 		}
 		const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
 		if (mbRsEdge === 'end') {
@@ -384,6 +443,7 @@
 	}
 
 	function cleanupResize() {
+		removeTouchScrollBlock();
 		window.removeEventListener('pointermove', onResizeMove);
 		window.removeEventListener('pointerup', onResizeUp);
 		window.removeEventListener('pointercancel', onResizeCancel);
@@ -410,11 +470,13 @@
 
 	// ── Auto-scroll to now ─────────────────────────────
 	let gridEl: HTMLDivElement;
-	onMount(() => {
-		if (nowOffset > 0 && gridEl) {
-			const scrollTarget = Math.max(0, nowOffset - 120);
-			gridEl.scrollTop = scrollTarget;
-		}
+	$effect(() => {
+		void dayMs; // re-center whenever the focused day changes (incl. returning to today)
+		const el = gridEl;
+		if (!el) return;
+		untrack(() => {
+			if (nowOffset >= 0) el.scrollTop = Math.max(0, nowOffset - 120);
+		});
 	});
 </script>
 
@@ -425,147 +487,177 @@
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
 	aria-label={L.dayPlanner}
-	ontouchstart={onTouchStart}
-	ontouchmove={onTouchMove}
-	ontouchend={onTouchEnd}
+	ontouchstart={swipe.ontouchstart}
+	ontouchmove={swipe.ontouchmove}
+	ontouchend={swipe.ontouchend}
 >
-	<!-- All-day events bar -->
-	{#if allDayEvents.length > 0}
-		<div class="mb-allday">
-			{#each allDayEvents.slice(0, 3) as seg (seg.ev.id)}
-				<button
-					class="mb-allday-chip"
-					class:mb-allday-chip--selected={selectedEventId === seg.ev.id}
-					style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
-					onclick={() => oneventclick?.(seg.ev)}
-				>
-					<span class="mb-allday-dot"></span>
-					<span class="mb-allday-title">{seg.ev.title}</span>
-					{#if seg.totalDays > 1}
-						<span class="mb-allday-span">{seg.dayIndex}/{seg.totalDays}</span>
-					{/if}
-				</button>
-			{/each}
-			{#if allDayEvents.length > 3}
-				<span class="mb-allday-more">{L.nMore(allDayEvents.length - 3)}</span>
-			{/if}
-		</div>
-	{/if}
-
-	<!-- Scrollable time grid -->
 	<div
-		class="mb-grid"
-		bind:this={gridEl}
-		onclick={handleGridClick}
-		onpointerdown={onGridPointerDown}
-		onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGridClick(e as unknown as MouseEvent); }}
-		role="grid"
-		tabindex="-1"
+		class="mb-swipe"
+		class:mb-swipe--animate={swipeAnimate}
+		style:transform={swipeOffset !== 0 ? `translateX(${swipeOffset}px)` : undefined}
 	>
-		<div class="mb-grid-inner" style:height="{gridHeight}px">
-			<!-- Hour lanes -->
-			{#each { length: hourCount } as _, h}
-				{@const hour = startHour + h}
-				{@const blocked = isBlockedAt(hour)}
-				<div
-					class="mb-hour"
-					class:mb-hour--blocked={blocked}
-					style:top="{h * HOUR_HEIGHT}px"
-					style:height="{HOUR_HEIGHT}px"
-				>
-					<div class="mb-hour-label">{fmtH(hour, locale)}</div>
-					<div class="mb-hour-line"></div>
-					{#if blocked && blockedSlots}
-						{@const slot = blockedSlots.find(s => (!s.day || s.day === (new Date(dayMs).getDay() === 0 ? 7 : new Date(dayMs).getDay())) && hour >= s.start && hour < s.end)}
-						{#if slot?.label}
-							<span class="mb-blocked-label">{slot.label}</span>
+		<!-- All-day events bar -->
+		{#if allDayEvents.length > 0}
+			<div class="mb-allday" class:mb-allday--expanded={allDayExpanded}>
+				{#each visibleAllDay as seg (seg.ev.id)}
+					<button
+						type="button"
+						class="mb-allday-chip"
+						class:mb-allday-chip--selected={selectedEventId === seg.ev.id}
+						style:--ev-color={seg.ev.color ?? 'var(--dt-accent)'}
+						onclick={() => oneventclick?.(seg.ev)}
+					>
+						<span class="mb-allday-dot"></span>
+						<span class="mb-allday-title">{seg.ev.title}</span>
+						{#if seg.totalDays > 1}
+							<span class="mb-allday-span">{seg.dayIndex}/{seg.totalDays}</span>
 						{/if}
-					{/if}
-				</div>
-			{/each}
+					</button>
+				{/each}
+				{#if allDayEvents.length > ALLDAY_MAX}
+					<button
+						type="button"
+						class="mb-allday-more"
+						aria-expanded={allDayExpanded}
+						onclick={() => { allDayExpanded = !allDayExpanded; }}
+					>
+						{allDayExpanded ? L.showLess : L.nMore(allDayEvents.length - ALLDAY_MAX)}
+					</button>
+				{/if}
+			</div>
+		{/if}
 
-			<!-- Now line -->
-			{#if nowOffset >= 0}
-				<div class="mb-now" style:top="{nowOffset}px">
-					<span class="mb-now-label">{clock.hm}</span>
-					<div class="mb-now-line"></div>
-				</div>
-			{/if}
-
-			<!-- Events -->
-			{#each positionedEvents as p (p.ev.id)}
-				<button
-					class="mb-event"
-					class:mb-event--selected={selectedEventId === p.ev.id}
-					class:mb-event--current={p.isCurrent}
-					class:mb-event--next={p.isNext}
-					class:mb-event--cancelled={p.ev.status === 'cancelled'}
-					class:mb-event--tentative={p.ev.status === 'tentative'}
-					class:mb-event--full={p.ev.status === 'full'}
-					class:mb-event--limited={p.ev.status === 'limited'}
-					class:mb-event--resizing={p.isResizing}
-					style:top="{p.top}px"
-					style:height="{p.height}px"
-					style:left={p.left}
-					style:width={p.width}
-					style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
-					onclick={(e) => { e.stopPropagation(); if (suppressEventClick) { suppressEventClick = false; return; } oneventclick?.(p.ev); }}
-					onpointerenter={() => oneventhover?.(p.ev)}
-					aria-label="{p.ev.title}{p.ev.status === 'cancelled' ? ' (cancelled)' : ''}{p.ev.status === 'tentative' ? ' (tentative)' : ''}{p.ev.status === 'full' ? ' (full)' : ''}{p.ev.status === 'limited' ? ' (limited)' : ''}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
-				>
-					<div class="mb-ev-stripe"></div>
-					<div class="mb-ev-body">
-						<EventContent event={p.ev}>
-						<span class="mb-ev-title">{p.ev.title}</span>
-						{#if p.height > 32}
-							<span class="mb-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
+		<!-- Scrollable time grid -->
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+		<div
+			class="mb-grid"
+			bind:this={gridEl}
+			onclick={handleGridClick}
+			onpointerdown={onGridPointerDown}
+			onkeydown={onGridKeydown}
+			oncontextmenu={onGridContextMenu}
+			role="region"
+			aria-label={L.scrollableDayPlanner}
+			tabindex="0"
+		>
+			<div class="mb-grid-inner" style:height="{gridHeight}px">
+				<!-- Hour lanes -->
+				{#each { length: hourCount } as _, h}
+					{@const hour = startHour + h}
+					{@const blocked = isBlockedAt(hour)}
+					<div
+						class="mb-hour"
+						class:mb-hour--blocked={blocked}
+						style:top="{h * HOUR_HEIGHT}px"
+						style:height="{HOUR_HEIGHT}px"
+					>
+						<div class="mb-hour-label">{fmtH(hour, locale)}</div>
+						<div class="mb-hour-line"></div>
+						{#if blocked && blockedSlots}
+							{@const slot = blockedSlots.find(s => (!s.day || s.day === (new Date(dayMs).getDay() === 0 ? 7 : new Date(dayMs).getDay())) && hour >= s.start && hour < s.end)}
+							{#if slot?.label}
+								<span class="mb-blocked-label">{slot.label}</span>
+							{/if}
 						{/if}
-						{#if p.ev.subtitle && p.height > 48}
-							<span class="mb-ev-sub">{p.ev.subtitle}</span>
-						{/if}
-						{#if p.ev.location && p.height > 56}
-							<span class="mb-ev-loc">{p.ev.location}</span>
-						{/if}
-						{#if p.ev.tags?.length && p.height > 56}
-							<div class="mb-ev-tags">
-								{#each p.ev.tags as tag}
-									<span class="mb-ev-tag">{tag}</span>
-								{/each}
-							</div>
-						{/if}
-						</EventContent>
 					</div>
-					{#if p.isCurrent}
-						<span class="mb-ev-live"></span>
-					{:else if p.isNext}
-						<span class="mb-ev-next-badge">{L.upNext}</span>
-					{/if}
-					{#if !readOnly && !p.ev.data?.readOnly}
-						<span
-							class="mb-ev-handle mb-ev-handle--start"
-							aria-hidden="true"
-							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
-						></span>
-						<span
-							class="mb-ev-handle mb-ev-handle--end"
-							aria-hidden="true"
-							onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
-						></span>
-					{/if}
-				</button>
-			{/each}
+				{/each}
 
-			<!-- Drag-to-create ghost -->
-			{#if !readOnly && drag?.active && drag.mode === 'create' && drag.payload}
-				{@const gTop = ((drag.payload.start.getTime() - dayMs) / HOUR_MS - startHour) * HOUR_HEIGHT}
-				{@const gH = Math.max(12, ((drag.payload.end.getTime() - drag.payload.start.getTime()) / HOUR_MS) * HOUR_HEIGHT)}
-				<div class="mb-create-ghost" style:top="{gTop}px" style:height="{gH}px" aria-hidden="true">
-					<span class="mb-create-ghost-time">
-						{fmtTime(drag.payload.start, locale)} – {fmtTime(drag.payload.end, locale)}
-					</span>
-				</div>
-			{/if}
+				<!-- Now line -->
+				{#if nowOffset >= 0}
+					<div class="mb-now" style:top="{nowOffset}px">
+						<span class="mb-now-label">{clock.hm}</span>
+						<div class="mb-now-line"></div>
+					</div>
+				{/if}
+
+				<!-- Events -->
+				{#each positionedEvents as p (p.ev.id)}
+					<button
+						type="button"
+						class="mb-event"
+						class:mb-event--selected={selectedEventId === p.ev.id}
+						class:mb-event--current={p.isCurrent}
+						class:mb-event--next={p.isNext}
+						class:mb-event--cancelled={p.ev.status === 'cancelled'}
+						class:mb-event--tentative={p.ev.status === 'tentative'}
+						class:mb-event--full={p.ev.status === 'full'}
+						class:mb-event--limited={p.ev.status === 'limited'}
+						class:mb-event--resizing={p.isResizing}
+						class:mb-event--short={p.height < 44}
+						style:top="{p.top}px"
+						style:height="{p.height}px"
+						style:left={p.left}
+						style:width={p.width}
+						style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
+						onclick={(e) => { e.stopPropagation(); if (suppressEventClick) { suppressEventClick = false; return; } oneventclick?.(p.ev); }}
+						onpointerenter={() => oneventhover?.(p.ev)}
+						aria-label="{p.ev.title}{statusText(p.ev)}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
+					>
+						<div class="mb-ev-stripe"></div>
+						<div class="mb-ev-body">
+							<EventContent event={p.ev}>
+							<span class="mb-ev-title">{p.ev.title}</span>
+							{#if p.height > 32}
+								<span class="mb-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
+							{/if}
+							{#if p.ev.subtitle && p.height > 48}
+								<span class="mb-ev-sub">{p.ev.subtitle}</span>
+							{/if}
+							{#if p.ev.location && p.height > 56}
+								<span class="mb-ev-loc">{p.ev.location}</span>
+							{/if}
+							{#if p.ev.tags?.length && p.height > 56}
+								<div class="mb-ev-tags">
+									{#each p.ev.tags as tag}
+										<span class="mb-ev-tag">{tag}</span>
+									{/each}
+								</div>
+							{/if}
+							</EventContent>
+						</div>
+						{#if p.isCurrent}
+							<span class="mb-ev-live"></span>
+						{:else if p.isNext}
+							<span class="mb-ev-next-badge">{L.upNext}</span>
+						{/if}
+						{#if !readOnly && !p.ev.data?.readOnly}
+							<span
+								class="mb-ev-handle mb-ev-handle--start"
+								aria-hidden="true"
+								onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
+							></span>
+							<span
+								class="mb-ev-handle mb-ev-handle--end"
+								aria-hidden="true"
+								onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
+							></span>
+						{/if}
+					</button>
+				{/each}
+
+				<!-- Drag-to-create ghost -->
+				{#if !readOnly && drag?.active && drag.mode === 'create' && drag.payload}
+					{@const gTop = ((drag.payload.start.getTime() - dayMs) / HOUR_MS - startHour) * HOUR_HEIGHT}
+					{@const gH = Math.max(12, ((drag.payload.end.getTime() - drag.payload.start.getTime()) / HOUR_MS) * HOUR_HEIGHT)}
+					<div class="mb-create-ghost" style:top="{gTop}px" style:height="{gH}px" aria-hidden="true">
+						<span class="mb-create-ghost-time">
+							{fmtTime(drag.payload.start, locale)} – {fmtTime(drag.payload.end, locale)}
+						</span>
+					</div>
+				{/if}
+			</div>
 		</div>
+
+		<!-- Empty state — overlaid, taps pass through to the grid -->
+		{#if isEmpty}
+			<div class="mb-empty">
+				{#if ctx.emptySnippet}
+					{@render ctx.emptySnippet()}
+				{:else}
+					<span class="mb-empty-text">{L.nothingScheduled}</span>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -580,8 +672,24 @@
 		overflow: hidden;
 		background: var(--dt-bg, #fff);
 		-webkit-tap-highlight-color: transparent;
+		touch-action: pan-y;
 	}
 	.mb--auto { overflow: visible; }
+
+	/* ─── Swipe wrapper (follows the finger) ─────────── */
+	.mb-swipe {
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+	}
+	.mb-swipe--animate {
+		transition: transform 180ms ease;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.mb-swipe--animate { transition: none; }
+	}
 
 	/* ─── All-day bar ────────────────────────────────── */
 	.mb-allday {
@@ -595,12 +703,17 @@
 		align-items: center;
 	}
 	.mb-allday::-webkit-scrollbar { display: none; }
+	.mb-allday--expanded {
+		flex-wrap: wrap;
+		overflow-x: visible;
+	}
 
 	.mb-allday-chip {
 		display: flex;
 		align-items: center;
 		gap: 4px;
 		padding: 4px 8px;
+		min-height: 32px;
 		border-radius: 5px;
 		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));
 		border: none;
@@ -609,12 +722,27 @@
 		transition: background 120ms;
 		-webkit-tap-highlight-color: transparent;
 		max-width: 160px;
+		position: relative;
+	}
+	/* Hit-slop: 44px effective touch target */
+	.mb-allday-chip::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 44px;
 	}
 	.mb-allday-chip:active {
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));
 	}
 	.mb-allday-chip--selected {
 		box-shadow: 0 0 0 1.5px var(--ev-color);
+	}
+	.mb-allday-chip:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
 	.mb-allday-dot {
@@ -626,7 +754,7 @@
 	}
 
 	.mb-allday-title {
-		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		max-width: 100px;
@@ -635,16 +763,35 @@
 	}
 
 	.mb-allday-span {
-		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
 	.mb-allday-more {
-		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;
-		padding: 0 4px;
+		padding: 0 6px;
+		min-height: 32px;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		position: relative;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.mb-allday-more::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 44px;
+	}
+	.mb-allday-more:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
 	/* ─── Grid ───────────────────────────────────────── */
@@ -652,6 +799,7 @@
 		flex: 1;
 		overflow-y: auto;
 		overflow-x: hidden;
+		overscroll-behavior: contain;
 		-webkit-overflow-scrolling: touch;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
@@ -659,10 +807,29 @@
 		padding-top: 8px;
 	}
 	.mb--auto .mb-grid { overflow-y: visible; }
+	.mb-grid:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);
+	}
 
 	.mb-grid-inner {
 		position: relative;
 		min-width: 100%;
+	}
+
+	/* ─── Empty state ────────────────────────────────── */
+	.mb-empty {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+		z-index: 4;
+	}
+	.mb-empty-text {
+		font: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
 	/* ─── Hour row ───────────────────────────────────── */
@@ -707,8 +874,8 @@
 		left: 44px;
 		top: 50%;
 		transform: translateY(-50%);
-		font: 500 9px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 	}
@@ -772,6 +939,24 @@
 	.mb-event:active {
 		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));
 	}
+	/* Short blocks keep their duration-proportional height, but get a 44px
+	   transparent hit-slop so taps still land. */
+	.mb-event--short {
+		overflow: visible;
+	}
+	.mb-event--short::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		height: 44px;
+	}
+	.mb-event--short .mb-ev-body {
+		padding-top: 2px;
+		padding-bottom: 2px;
+	}
 	.mb-event--selected {
 		box-shadow: 0 0 0 2px var(--ev-color),
 			0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);
@@ -783,22 +968,32 @@
 		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
 		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
 	}
+	/* Status treatments: token-level dims + a non-opacity signal
+	   (strikethrough / border style) — never a bare opacity on the block. */
 	.mb-event--cancelled {
-		opacity: 0.5;
+		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));
 	}
 	.mb-event--cancelled .mb-ev-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.mb-event--cancelled .mb-ev-stripe {
+		opacity: 0.45; /* decorative bar only */
 	}
 	.mb-event--tentative {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
 	}
 	.mb-event--full {
-		opacity: 0.55;
+		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
+		border: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);
+	}
+	.mb-event--full .mb-ev-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.mb-event--limited {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
+		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
+		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
 	}
 	.mb-event--resizing {
 		z-index: 50;
@@ -818,6 +1013,17 @@
 	}
 	.mb-ev-handle--start { top: 0; }
 	.mb-ev-handle--end { bottom: 0; }
+	/* Hit-slop: ≥24px effective, extending inward so the block's
+	   overflow clipping can't cut it off. */
+	.mb-ev-handle::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 24px;
+	}
+	.mb-ev-handle--start::before { top: 0; }
+	.mb-ev-handle--end::before { bottom: 0; }
 	.mb-ev-handle::after {
 		content: '';
 		position: absolute;
@@ -833,8 +1039,13 @@
 	.mb-ev-handle--start::after { top: 2px; }
 	.mb-ev-handle--end::after { bottom: 2px; }
 	.mb-event:hover .mb-ev-handle::after,
+	.mb-event:focus-within .mb-ev-handle::after,
 	.mb-event--resizing .mb-ev-handle::after,
 	.mb-event--selected .mb-ev-handle::after { opacity: 0.55; }
+	/* Touch devices have no hover — show the handles persistently. */
+	@media (hover: none) {
+		.mb-ev-handle::after { opacity: 0.55; }
+	}
 
 	/* ─── Drag-to-create ghost ───────────────────────── */
 	.mb-create-ghost {
@@ -851,7 +1062,7 @@
 		pointer-events: none;
 	}
 	.mb-create-ghost-time {
-		font: 600 10px/1 var(--dt-mono, ui-monospace, monospace);
+		font: 600 11px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-accent, #2563eb);
 		padding: 4px 8px;
 		white-space: nowrap;
@@ -875,7 +1086,7 @@
 	}
 
 	.mb-ev-title {
-		font: 600 13px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -883,21 +1094,21 @@
 	}
 
 	.mb-ev-time {
-		font: 400 11px/1 var(--dt-mono, ui-monospace, monospace);
+		font: 400 12px/1 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
 	.mb-ev-sub {
-		font: 400 11px/1.1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
 	.mb-ev-loc {
-		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -910,7 +1121,7 @@
 	}
 
 	.mb-ev-tag {
-		font: 500 9px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;
@@ -928,11 +1139,14 @@
 		background: var(--ev-color, var(--dt-accent));
 		animation: mb-pulse 2s ease-in-out infinite;
 	}
+	@media (prefers-reduced-motion: reduce) {
+		.mb-ev-live { animation: none; }
+	}
 	.mb-ev-next-badge {
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		font: 600 8px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
 		color: var(--ev-color, var(--dt-accent));
@@ -949,7 +1163,7 @@
 
 	/* ─── Focus ──────────────────────────────────────── */
 	.mb-event:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
-		outline-offset: 2px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 </style>

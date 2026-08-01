@@ -20,22 +20,43 @@ import { presets } from "../theme/presets.js";
 let {
   api,
   events,
-  theme = "neutral",
+  theme = "auto",
   view = "week-planner",
   height = "600",
   locale,
   dir,
   mondaystart = "true",
-  headers
+  headers,
+  readonly,
+  pills,
+  nav,
+  mobile,
+  days,
+  compact,
+  timezone
 } = $props();
-const heightPx = $derived(parseInt(height, 10) || 600);
+const heightValue = $derived.by(() => {
+  const trimmed = height.trim();
+  if (trimmed === "auto") return "auto";
+  if (/^\d+(px)?$/.test(trimmed)) return parseInt(trimmed, 10);
+  console.warn(`[day-calendar] Unsupported height "${height}" \u2014 use pixels or "auto". Falling back to 600.`);
+  return 600;
+});
 const isMondayStart = $derived(mondaystart !== "false");
 const themeStyle = $derived(
-  presets[theme] || presets.neutral
+  theme in presets ? presets[theme] : presets.neutral
 );
 const dirValue = $derived(
   dir === "rtl" || dir === "ltr" || dir === "auto" ? dir : void 0
 );
+const mobileValue = $derived(
+  mobile === "true" ? true : mobile === "false" ? false : "auto"
+);
+const daysValue = $derived.by(() => {
+  if (!days) return void 0;
+  const n = parseInt(days, 10);
+  return Number.isNaN(n) || n < 1 || n > 7 ? void 0 : n;
+});
 function parseHeaders(json) {
   if (!json) return void 0;
   try {
@@ -98,8 +119,15 @@ const adapter = $derived.by(() => {
 	{adapter}
 	{view}
 	theme={themeStyle}
-	height={heightPx}
+	height={heightValue}
 	mondayStart={isMondayStart}
 	dir={dirValue}
 	{locale}
+	readOnly={readonly === 'true'}
+	showModePills={pills !== 'false'}
+	showNavigation={nav !== 'false'}
+	mobile={mobileValue}
+	days={daysValue}
+	compact={compact === 'true'}
+	timezone={timezone || undefined}
 />

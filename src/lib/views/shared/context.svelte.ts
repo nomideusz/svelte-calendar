@@ -7,6 +7,7 @@
 import { getContext } from 'svelte';
 import type { Snippet } from 'svelte';
 import type { TimelineEvent, BlockedSlot } from '../../core/types.js';
+import { getLabels, type CalendarLabels } from '../../core/locale.js';
 import type { DragState } from '../../engine/drag.svelte.js';
 import type { ViewState } from '../../engine/view-state.svelte.js';
 import type { Selection } from '../../engine/selection.svelte.js';
@@ -47,6 +48,7 @@ interface CalendarContextRaw {
 	readonly mobile: boolean;
 	readonly autoHeight: boolean;
 	readonly compact: boolean;
+	readonly labels: CalendarLabels;
 
 	// Load range (read/write)
 	readonly loadRange: { start: Date; end: Date } | null;
@@ -77,6 +79,8 @@ export interface CalendarContext {
 	readonly loadRange: { current: { start: Date; end: Date } | null; set: (r: { start: Date; end: Date } | null) => void } | undefined;
 	readonly eventSnippet: Snippet<[TimelineEvent]> | undefined;
 	readonly emptySnippet: Snippet | undefined;
+	/** Per-instance labels (Calendar's `labels` prop merged over globals); global labels when headless. */
+	readonly labels: CalendarLabels;
 }
 
 /**
@@ -86,6 +90,16 @@ export interface CalendarContext {
  */
 export function useCalendarContext(): CalendarContext {
 	const raw = getContext<CalendarContextRaw>('calendar') as CalendarContextRaw | undefined;
+
+	// Memoized: views read these per-cell per-render (often at 1Hz), so avoid
+	// allocating a fresh Set / wrapper object on every access.
+	const disabledSet = $derived(new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []));
+	const loadRange = raw
+		? {
+			get current() { return raw.loadRange; },
+			set: (r: { start: Date; end: Date } | null) => raw.setLoadRange(r),
+		}
+		: undefined;
 
 	return {
 		get viewState() { return raw?.viewState; },
@@ -107,15 +121,10 @@ export function useCalendarContext(): CalendarContext {
 		get ondayclick() { return raw?.ondayclick; },
 		get timezone() { return raw?.timezone; },
 		get disabledDates() { return raw?.disabledDates; },
-		get disabledSet() { return new Set(raw?.disabledDates?.map(d => sod(d.getTime())) ?? []); },
-		get loadRange() {
-			if (!raw) return undefined;
-			return {
-				get current() { return raw.loadRange; },
-				set: (r: { start: Date; end: Date } | null) => raw.setLoadRange(r),
-			};
-		},
+		get disabledSet() { return disabledSet; },
+		get loadRange() { return loadRange; },
 		get eventSnippet() { return raw?.eventSnippet; },
 		get emptySnippet() { return raw?.emptySnippet; },
+		get labels() { return raw?.labels ?? getLabels(); },
 	};
 }

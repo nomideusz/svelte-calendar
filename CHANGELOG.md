@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.10.0 — 2026-08-01
+
+### Changed (breaking-ish)
+- **PlannerWeek is now a real time grid.** The week planner was a stacked list per day (no hour axis); it's now a Google-Calendar-style vertical grid: hour gutter, sticky day headers + all-day strip, overlap lanes, now-line, drag-to-move (vertical = time, horizontal = day), top/bottom resize, drag-to-create with ghost + snapping, long-press create on touch. Consequences for hosts: the multi-week infinite scroll is gone (use `month-grid` for overviews), scroll no longer writes back `focusDate`, timed events outside `visibleHours` aren't rendered, and empty-canvas clicks create at the clicked time (was fixed 09:00).
+- **The `<day-calendar>` widget renders in shadow DOM.** Host-page CSS can no longer restyle the calendar's internals (previously a `* { all: unset }` reset would destroy it). Bundled CSS is injected per shadow root; the `auto` theme still probes the host page across the boundary. The widget now defaults to `theme="auto"` (was a light-theme lookup bug) and forwards `readonly`/`pills`/`nav`/`mobile`/`days`/`compact`/`timezone` attributes; `height="auto"` supported.
+
+### Added
+- `labels` prop on `Calendar`: per-instance, reactive UI label overrides (merged over global `setLabels()`) — SSR-correct localization and per-calendar languages on one page.
+- Planner ↔ Agenda view-type switcher in the header when a mode has multiple registered view labels; Month → Week round-trips keep the chosen view type.
+- Keyboard shortcuts scoped to the calendar: `t` today, `←`/`→` navigate; month grid gets arrow-key cell navigation with roving tabindex.
+- Month grid: "+N more" is a real button (drills into a day view by default — no `ondayclick` wiring needed — or inline-expands headlessly); day cells carry full date `aria-label`s and `aria-current="date"`.
+- New label keys: `month`-related navigation, statuses, ETA countdowns (`inMinutes`/`inHours`/`inDays`), `dayNOfTotal`, `percentComplete`, `showLess`, and more.
+
+### Fixed
+- Week-mode header now shows the week range (respecting 3/5-day views) instead of the month name.
+- Month view weekend shading and hover feedback (the `--dt-weekend-bg`/`--dt-hover` tokens were consumed but never defined in any theme).
+- Widget embeds were completely unstyled (CSS shipped as a separate file the docs never mentioned); CSS is now bundled into `widget.js`.
+- Touch: drag-to-create/move now work on touch devices (long-press + scroll suppression), 44px effective hit targets, swipe navigation follows the finger, `overscroll-behavior` contained.
+- Accessibility: valid ARIA grid structures, Escape cancels drags, event labels include time ranges, `aria-live` range announcements, focus rings that don't get clipped.
+- Legibility: 10px type floor everywhere (15/12/11px mobile scale), opacity-stacking contrast failures replaced with token-based dims, `prefers-reduced-motion` guards on all loops.
+- Performance: planner layout no longer recomputes every second; permanent 60fps rAF loop removed; week buffer cut from ±52 weeks to the visible week.
+- Today button no longer mounts/unmounts (layout jump); mobile nav targets enlarged and grouped; desktop chrome no longer flashes on mobile first paint.
+
 ## 0.7.5 — 2026-07-06
 
 ### Changed

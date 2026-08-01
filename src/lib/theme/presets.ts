@@ -37,14 +37,15 @@ export const neutral = `
 	--dt-text: rgba(0, 0, 0, 0.87);
 	--dt-text-2: rgba(0, 0, 0, 0.54);
 	--dt-text-3: rgba(0, 0, 0, 0.38);
-	--dt-accent: #2563eb;
-	--dt-accent-dim: rgba(37, 99, 235, 0.12);
-	--dt-glow: rgba(37, 99, 235, 0.25);
-	--dt-today-bg: rgba(37, 99, 235, 0.04);
+	--dt-accent: var(--asini-accent, #2563eb);
+	--dt-accent-dim: color-mix(in srgb, var(--dt-accent) 12%, transparent);
+	--dt-glow: color-mix(in srgb, var(--dt-accent) 25%, transparent);
+	--dt-today-bg: color-mix(in srgb, var(--dt-accent) 7%, transparent);
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(0, 0, 0, 0.1);
 	--dt-success: rgba(22, 163, 74, 0.7);
-	--dt-serif: inherit;
+	--dt-weekend-bg: rgba(0, 0, 0, 0.02);
+	--dt-hover: rgba(0, 0, 0, 0.04);
 	--dt-sans: inherit;
 	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
@@ -62,11 +63,14 @@ export const midnight = `
 	--dt-accent: #ef4444;
 	--dt-accent-dim: rgba(239, 68, 68, 0.18);
 	--dt-glow: rgba(239, 68, 68, 0.35);
-	--dt-today-bg: rgba(239, 68, 68, 0.02);
+	--dt-today-bg: rgba(239, 68, 68, 0.07);
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(148, 163, 184, 0.12);
 	--dt-success: rgba(74, 222, 128, 0.7);
-	--dt-serif: Georgia, 'Times New Roman', serif;
+	--dt-weekend-bg: rgba(148, 163, 184, 0.03);
+	--dt-hover: rgba(148, 163, 184, 0.06);
+	--dt-sans: inherit;
+	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
 
 /** All available presets keyed by name */

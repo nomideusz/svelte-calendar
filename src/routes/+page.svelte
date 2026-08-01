@@ -88,6 +88,8 @@
 		blockedSlotsEnabled: true,
 		disabledDatesEnabled: true,
 		compact: false,
+		rtl: false,
+		phoneFrame: false,
 	};
 
 	let settingsValues = $state<Record<string, SettingValue>>({ ...DEFAULT_SETTINGS });
@@ -167,6 +169,7 @@
 	);
 	const locale = $derived((settingsValues.locale as string) ?? "en-US");
 	const dir = $derived<"ltr" | "rtl">(settingsValues.rtl ? "rtl" : "ltr");
+	const phoneFrame = $derived(Boolean(settingsValues.phoneFrame));
 
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
@@ -256,6 +259,8 @@
 			hint: "Right-to-left text direction (prop: dir='rtl')", label: "RTL", group: "", type: "toggle" },
 		{ key: "compact",
 			hint: "Minimal dot + time + title rows in Agenda views (prop: compact)", label: "Compact Agenda", group: "", type: "toggle" },
+		{ key: "phoneFrame",
+			hint: "Preview in a 390px frame — the container-based mobile mode kicks in", label: "Phone Frame", group: "", type: "toggle" },
 		{
 			key: "blockedSlotsEnabled",
 			hint: "Hatched unbookable ranges, e.g. lunch breaks (prop: blockedSlots)",
@@ -353,6 +358,16 @@
 			settingsValues = { ...settingsValues, activeView: viewId };
 		}
 	}
+	// Month → day drill-down: clicking a month cell (or "+N more") jumps to
+	// the day planner focused on that date, via the controlled currentDate prop.
+	let focusedDate = $state<Date | undefined>(undefined);
+	function handleDayClick(date: Date) {
+		focusedDate = date;
+		if (activeView !== "day-planner") {
+			settingsValues = { ...settingsValues, activeView: "day-planner" };
+		}
+		lastAction = `Day: ${date.toLocaleDateString()}`;
+	}
 
 	const blockedSlots = $derived(
 		blockedSlotsEnabled
@@ -420,6 +435,10 @@
 </svelte:head>
 
 <main>
+	<h1 class="page-title">
+		svelte-calendar <span class="page-title-sub">— interactive demo</span>
+	</h1>
+
 	<div class="recipes" role="group" aria-label="Example setups">
 		<span class="recipes-lbl">Examples</span>
 		{#each recipes as r (r.name)}
@@ -466,32 +485,38 @@
 		</p>
 	</div>
 
-	<Calendar
-		{adapter}
-		view={activeView}
-		theme={calendarTheme}
-		autoTheme={autoThemeProp}
-		height={calendarHeight}
-		borderRadius={calendarRadius}
-		{readOnly}
-		{mondayStart}
-		{showModePills}
-		{showNavigation}
-		{equalDays}
-		{showDates}
-		{visibleHours}
-		mobile={mobileMode}
-		{days}
-		{compact}
-		{locale}
-		{dir}
-		blockedSlots={blockedSlots}
-		disabledDates={disabledDates}
-		onviewchange={handleViewChange}
-		oneventclick={handleClick}
-		oneventcreate={handleCreate}
-		oneventmove={handleMove}
-	/>
+	<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
+		<div class="cal-frame">
+			<Calendar
+				{adapter}
+				view={activeView}
+				theme={calendarTheme}
+				autoTheme={autoThemeProp}
+				height={phoneFrame ? 688 : calendarHeight}
+				borderRadius={phoneFrame ? 0 : calendarRadius}
+				currentDate={focusedDate}
+				{readOnly}
+				{mondayStart}
+				{showModePills}
+				{showNavigation}
+				{equalDays}
+				{showDates}
+				{visibleHours}
+				mobile={mobileMode}
+				{days}
+				{compact}
+				{locale}
+				{dir}
+				blockedSlots={blockedSlots}
+				disabledDates={disabledDates}
+				onviewchange={handleViewChange}
+				oneventclick={handleClick}
+				oneventcreate={handleCreate}
+				oneventmove={handleMove}
+				ondayclick={handleDayClick}
+			/>
+		</div>
+	</div>
 
 	<details class="code-panel" open>
 		<summary>Code for this setup</summary>
@@ -516,6 +541,19 @@
 		}
 	}
 
+	.page-title {
+		margin: 0 0 14px;
+		padding: 0 10px;
+		font: 600 18px/1.25 var(--dt-sans, "Outfit", system-ui, sans-serif);
+		letter-spacing: -0.01em;
+		color: var(--dt-text, rgba(226, 232, 240, 0.9));
+	}
+	.page-title-sub {
+		font-weight: 400;
+		font-size: 15px;
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.6));
+	}
+
 	.recipes {
 		display: flex;
 		flex-wrap: wrap;
@@ -534,15 +572,15 @@
 		font: 600 12px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
 		padding: 6px 12px;
 		border-radius: 999px;
-		border: 1px solid rgba(148, 163, 184, 0.18);
-		background: rgba(148, 163, 184, 0.06);
+		border: 1px solid color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 30%, transparent);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
 		color: var(--dt-text-2, rgba(226, 232, 240, 0.6));
 		cursor: pointer;
 		transition: all 150ms;
 	}
 	.recipe:hover {
 		color: var(--dt-text, rgba(226, 232, 240, 0.9));
-		border-color: rgba(148, 163, 184, 0.35);
+		border-color: color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 58%, transparent);
 	}
 	.recipe--on {
 		background: color-mix(in srgb, var(--dt-accent, #6366f1) 22%, transparent);
@@ -554,9 +592,23 @@
 		border-style: dashed;
 	}
 
+	.cal-stage--phone {
+		display: flex;
+		justify-content: center;
+		padding: 12px 0;
+	}
+	.cal-stage--phone .cal-frame {
+		width: 390px;
+		max-width: 100%;
+		border: 8px solid color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 35%, var(--dt-surface, #10141c));
+		border-radius: 30px;
+		overflow: hidden;
+		box-shadow: 0 18px 48px color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.8)) 12%, transparent);
+	}
+
 	.code-panel {
 		margin-top: 16px;
-		border: 1px solid rgba(148, 163, 184, 0.14);
+		border: 1px solid var(--dt-border-day, rgba(148, 163, 184, 0.14));
 		border-radius: 10px;
 		overflow: hidden;
 	}
@@ -568,7 +620,7 @@
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-text-3, rgba(148, 163, 184, 0.55));
-		background: rgba(148, 163, 184, 0.04);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 8%, transparent);
 	}
 	.code-panel summary::-webkit-details-marker {
 		display: none;
@@ -585,7 +637,7 @@
 		overflow-x: auto;
 		font: 400 12.5px/1.55 var(--dt-mono, ui-monospace, "Cascadia Code", monospace);
 		color: var(--dt-text-2, rgba(226, 232, 240, 0.72));
-		background: rgba(0, 0, 0, 0.18);
+		background: var(--dt-surface, rgba(0, 0, 0, 0.18));
 		scrollbar-width: thin;
 	}
 
@@ -618,9 +670,9 @@
 		flex-shrink: 0;
 	}
 	.pretext-toggle {
-		border: 1px solid rgba(148, 163, 184, 0.15);
-		background: rgba(148, 163, 184, 0.06);
-		color: rgba(148, 163, 184, 0.55);
+		border: 1px solid color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 25%, transparent);
+		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
+		color: var(--dt-text-2, rgba(148, 163, 184, 0.6));
 		font: 600 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -639,17 +691,17 @@
 		text-align: right;
 	}
 	.pretext-toggle:hover {
-		color: rgba(226, 232, 240, 0.85);
-		border-color: rgba(148, 163, 184, 0.3);
+		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		border-color: color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 50%, transparent);
 	}
 	.pretext-on {
-		background: rgba(52, 211, 153, 0.12);
-		border-color: rgba(52, 211, 153, 0.3);
-		color: #34d399;
+		background: color-mix(in srgb, var(--dt-success, #34d399) 14%, transparent);
+		border-color: color-mix(in srgb, var(--dt-success, #34d399) 40%, transparent);
+		color: var(--dt-success, #34d399);
 	}
 	.pretext-on:hover {
-		background: rgba(52, 211, 153, 0.2);
-		color: #34d399;
+		background: color-mix(in srgb, var(--dt-success, #34d399) 22%, transparent);
+		color: var(--dt-success, #34d399);
 	}
 	@media (max-width: 760px) {
 		.toolbar {

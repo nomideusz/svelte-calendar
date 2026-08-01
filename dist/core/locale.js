@@ -38,6 +38,10 @@ export const defaultLabels = {
     nextMonth: 'Next month',
     calendar: 'Calendar',
     viewMode: 'View mode',
+    cancelled: 'cancelled',
+    tentative: 'tentative',
+    full: 'full',
+    limited: 'limited',
     dayNavigation: 'Day navigation',
     weekNavigation: 'Week navigation',
     dayPlanner: 'Day planner',
@@ -57,6 +61,9 @@ export const defaultLabels = {
     showLess: 'Show less',
     dayNOfTotal: (current, total) => `day ${current} of ${total}`,
     percentComplete: (pct) => `${pct}% complete`,
+    inMinutes: (mins) => `in ${mins}m`,
+    inHours: (hours, mins) => (mins > 0 ? `in ${hours}h ${mins}m` : `in ${hours}h`),
+    inDays: (days) => `in ${days}d`,
 };
 let _labels = { ...defaultLabels };
 /** Replace one or more UI labels. Merges with current labels. */
@@ -160,10 +167,10 @@ export function fmtDay(ms, todayMs, opts, locale) {
 /**
  * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
  */
-export function fmtWeekRange(weekStartMs, locale) {
+export function fmtWeekRange(weekStartMs, locale, weekEndMs) {
     const loc = locale ?? defaultLocale;
     const s = new Date(weekStartMs);
-    const e = new Date(weekStartMs + 6 * DAY_MS);
+    const e = new Date(weekEndMs ?? weekStartMs + 6 * DAY_MS);
     const sm = s.toLocaleDateString(loc, { month: 'short' });
     const em = e.toLocaleDateString(loc, { month: 'short' });
     const sy = s.getFullYear();

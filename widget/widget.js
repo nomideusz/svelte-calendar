@@ -1,3 +1,4 @@
+globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.fs.svelte-mrwdy7 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\t/* The track is px-sized from the container width; never let it feed\n\t\t   back into our own intrinsic size (host flex/grid min-width:auto\n\t\t   would otherwise loop container → hourWidth → track → container). */\n\t\tcontain: inline-size;\n\t}\n\t.fs--auto.svelte-mrwdy7 { overflow: visible; }\n\n\t/* ─── Horizontal scroll ──────────────────────────── */\n\t.fs-scroll.svelte-mrwdy7 {\n\t\twidth: 100%;\n\t\theight: 100%;\n\t\toverflow-x: auto;\n\t\toverflow-y: hidden;\n\t\ttouch-action: pan-x;\n\t\tcursor: default;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t/* Auto height grows vertically, but horizontal containment must stay —\n\t   overflow: visible here painted the whole track outside the calendar. */\n\t.fs--auto.svelte-mrwdy7 .fs-scroll:where(.svelte-mrwdy7) { height: auto; overflow-x: auto; overflow-y: hidden; }\n\t.fs-scroll.svelte-mrwdy7::-webkit-scrollbar { height: 5px; }\n\t.fs-scroll.svelte-mrwdy7::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.fs-scroll.svelte-mrwdy7::-webkit-scrollbar-track { background: transparent; }\n\t.fs-readonly.svelte-mrwdy7 { cursor: grab; }\n\t.fs-grabbing.svelte-mrwdy7 { cursor: grabbing; }\n\n\t.fs-track.svelte-mrwdy7 {\n\t\tposition: relative;\n\t\theight: 100%;\n\t}\n\n\t/* ─── Day block ──────────────────────────────────── */\n\t.fs-day.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\theight: 100%;\n\t\tborder-left: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.14));\n\t\tbox-sizing: border-box;\n\t}\n\t.fs-today.svelte-mrwdy7 { background: var(--dt-today-bg, color-mix(in srgb, var(--dt-accent, #2563eb) 8%, transparent)); }\n\t/* Past days: dim via a background wash instead of a subtree opacity so\n\t   event text keeps full contrast. */\n\t.fs-past.svelte-mrwdy7 { background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent); }\n\n\t/* ─── Disabled day ───────────────────────────────── */\n\t.fs-disabled.svelte-mrwdy7 {\n\t\topacity: 0.35;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.fs-blocked.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 18px;\n\t\tbottom: 0;\n\t\tz-index: 3;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tborder-radius: 4px;\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-end;\n\t\tjustify-content: center;\n\t\tpadding-bottom: 6px;\n\t}\n\n\t.fs-blocked-label.svelte-mrwdy7 {\n\t\tfont: 500 9px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.fs-day-header-custom.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 16px;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\tz-index: 4;\n\t\tpointer-events: auto;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Hour ticks ─────────────────────────────────── */\n\t.fs-tick.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 0;\n\t}\n\t.fs-tick.svelte-mrwdy7::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\ttop: 18px;\n\t\tbottom: 0;\n\t\twidth: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.fs-tick-lb.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 2px;\n\t\tleft: 5px;\n\t\tfont: 500 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t\tpointer-events: none;\n\t}\n\t/* Half-hour guide: full-height line at low opacity through the event area */\n\t.fs-tick--half.svelte-mrwdy7::before {\n\t\ttop: 18px;\n\t\tbottom: 0;\n\t\topacity: 0.35;\n\t}\n\n\t/* ─── Now-line ────────────────────────────────────── */\n\t.fs-now.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\tz-index: 10;\n\t\tpointer-events: none;\n\t\ttransform: translateX(-1px);\n\t}\n\t.fs-now-line.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\tleft: 0;\n\t\twidth: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 8px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t}\n\t.fs-now-tag.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\t/* Below the hour-label row (labels sit at top: 2px) so the tag never\n\t\t   collides with an hour label near hour boundaries. */\n\t\ttop: 20px;\n\t\tleft: 8px;\n\t\tfont: 700 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-bg, #ffffff) 92%, var(--dt-accent, #2563eb));\n\t\tborder: 1px solid var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\tpadding: 3px 6px;\n\t\tborder-radius: 4px;\n\t\twhite-space: nowrap;\n\t\tz-index: 1;\n\t}\n\t/* ─── All-day strip ─────────────────────────────── */\n\t/* The container is a full-width overlay — let clicks pass through it and\n\t   only the chips themselves capture pointer events. */\n\t.fs-allday.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\tgap: 6px;\n\t\tpadding: 0 8px;\n\t\tz-index: 7;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tpointer-events: none;\n\t}\n\t.fs-allday.svelte-mrwdy7::-webkit-scrollbar { display: none; }\n\n\t.fs-ad.svelte-mrwdy7 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 4px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 3px solid var(--ev-color);\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tmin-width: 0;\n\t\tmax-width: 320px;\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t\tpointer-events: auto;\n\t}\n\t.fs-ad.svelte-mrwdy7:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.fs-ad.svelte-mrwdy7:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.fs-ad--selected.svelte-mrwdy7 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 30%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left-width: 4px;\n\t}\n\n\t.fs-ad-dot.svelte-mrwdy7 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.fs-ad-title.svelte-mrwdy7 {\n\t\tfont-size: 0.7rem;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.fs-ad-span.svelte-mrwdy7 {\n\t\tfont-size: 0.6rem;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.fs-event.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 6px;\n\t\t/* Editable events are grabbable; touch drags move the event instead of\n\t\t   scrolling the strip. */\n\t\tcursor: grab;\n\t\ttouch-action: none;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\t/* Solid stripe at the start edge — matches the week view, keeps the\n\t\t   pure tour color visible while the body stays a readable tint. */\n\t\tborder-left: 3px solid var(--ev-color);\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\t/* top/height only: lane reflow animates on drop; left/width stay instant so\n\t\t   mount-time width measurement and infinite-scroll rebases don't slide cards */\n\t\ttransition: box-shadow 120ms, background 120ms,\n\t\t\ttop 180ms cubic-bezier(0.2, 0.8, 0.2, 1), height 180ms cubic-bezier(0.2, 0.8, 0.2, 1);\n\t}\n\t.fs-event.svelte-mrwdy7:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tbox-shadow: 0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.fs-event--selected.svelte-mrwdy7 {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color), 0 2px 14px color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.fs-event--current.svelte-mrwdy7 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tbox-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t}\n\t.fs-event--next.svelte-mrwdy7 {\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 75%, transparent);\n\t}\n\t.fs-event--dragging.svelte-mrwdy7 {\n\t\topacity: 0.85;\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);\n\t\tcursor: grabbing;\n\t\t/* fast ease toward the snapped cursor position */\n\t\ttransition: left 80ms ease-out, width 80ms ease-out;\n\t}\n\t.fs-event--resizing.svelte-mrwdy7 {\n\t\tcursor: ew-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t.fs-ev-handle.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 6px;\n\t\tz-index: 2;\n\t\tcursor: ew-resize;\n\t\ttouch-action: none;\n\t}\n\t/* Hit-slop: ~20px effective grab zone while the visual stays 6px */\n\t.fs-ev-handle.svelte-mrwdy7::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\tleft: -7px;\n\t\tright: -7px;\n\t}\n\t.fs-ev-handle--start.svelte-mrwdy7 { left: 0; }\n\t.fs-ev-handle--end.svelte-mrwdy7 { right: 0; }\n\t.fs-ev-handle.svelte-mrwdy7::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\ttop: 20%;\n\t\tbottom: 20%;\n\t\tleft: 2px;\n\t\twidth: 2px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.fs-event.svelte-mrwdy7:hover .fs-ev-handle:where(.svelte-mrwdy7)::after,\n\t.fs-event.svelte-mrwdy7:focus-within .fs-ev-handle:where(.svelte-mrwdy7)::after { opacity: 0.55; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.fs-ev-handle.svelte-mrwdy7::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.fs-create-ghost.svelte-mrwdy7 {\n\t\tposition: absolute;\n\t\tz-index: 40;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 14%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 60%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.fs-create-ghost-time.svelte-mrwdy7 {\n\t\tfont: 600 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 6px 4px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.fs-event.svelte-mrwdy7,\n\t\t.fs-event--dragging.svelte-mrwdy7 {\n\t\t\ttransition: box-shadow 120ms, background 120ms;\n\t\t}\n\t\t.fs-create-ghost.svelte-mrwdy7,\n\t\t.fs-ad.svelte-mrwdy7,\n\t\t.fs-ev-handle.svelte-mrwdy7::after {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t/* Cancelled: strikethrough + secondary text, not a subtree opacity dim */\n\t.fs-event--cancelled.svelte-mrwdy7 .fs-ev-title:where(.svelte-mrwdy7) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.fs-event--tentative.svelte-mrwdy7 {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.fs-event--full.svelte-mrwdy7 {\n\t\topacity: 0.55;\n\t}\n\t.fs-event--limited.svelte-mrwdy7 {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.fs-event--readonly.svelte-mrwdy7,\n\t.fs-readonly.svelte-mrwdy7 .fs-event:where(.svelte-mrwdy7) {\n\t\tcursor: default;\n\t}\n\n\t/* Event inner — vertical text along lane height (day filmstrip) */\n\t.fs-ev-inner.svelte-mrwdy7 {\n\t\twriting-mode: vertical-rl;\n\t\ttext-orientation: mixed;\n\t\ttransform: rotate(180deg);\n\t\tdisplay: flex;\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tgap: 6px;\n\t\theight: 100%;\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t\tbox-sizing: border-box;\n\t\tpadding: 8px 4px;\n\t}\n\t.fs-ev-live.svelte-mrwdy7 {\n\t\tflex-shrink: 0;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t}\n\t.fs-ev-next-badge.svelte-mrwdy7 {\n\t\tflex-shrink: 0;\n\t\tfont: 600 8px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.fs-ev-title.svelte-mrwdy7 {\n\t\tfont: 600 13px/1.15 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\t/* In vertical writing mode line boxes stack as columns — allow a\n\t\t   second column before truncating so overlapping (short) cards keep\n\t\t   readable names. Full name is in the title tooltip. */\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\twhite-space: normal;\n\t\tmax-height: 100%;\n\t\tflex-shrink: 0;\n\t}\n\t.fs-ev-time.svelte-mrwdy7 {\n\t\tfont: 400 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.fs-ev-sub.svelte-mrwdy7 {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-height: 100%;\n\t\tflex-shrink: 0;\n\t}\n\t.fs-ev-loc.svelte-mrwdy7 {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-height: 100%;\n\t\tflex-shrink: 0;\n\t}\n\t.fs-ev-tags.svelte-mrwdy7 {\n\t\tdisplay: flex;\n\t\tflex-direction: row;\n\t\tgap: 4px;\n\t\tflex-shrink: 0;\n\t}\n\t.fs-ev-tag.svelte-mrwdy7 {\n\t\tfont: 500 8px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 18%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.fs-event.svelte-mrwdy7:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\toverscroll-behavior: contain;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: 110px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tpadding: 8px 4px 6px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tmin-width: 26px;\n\t\theight: 26px;\n\t\tborder-radius: 50%;\n\t\tfont: 600 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-accent-fg, #ffffff);\n\t\tfont-weight: 700;\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 4px 6px 4px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: 110px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 3px 3px 4px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 6px;\n\t\tmin-height: 18px;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: background 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\tborder-radius: 0 3px 3px 0;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 6px;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t}\n\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: -3px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\ttransform: translateY(-50%);\n\t\tz-index: 2;\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: 110px;\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -3px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t.tw-ev--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.tw-ev--limited.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 5px 0 0 5px;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 6px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t.tw-ev-time.svelte-j4rvbp {\n\t\tfont: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\tfont: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 10px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-n8lbn1 {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: border-color 150ms, transform 100ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 999px;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 1px;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 1px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 6px;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t\tborder-radius: 6px;\n\t\tpadding-left: 8px;\n\t\tpadding-right: 8px;\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tflex-shrink: 0;\n\t\topacity: 0.6;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\tpadding-left: 6px;\n\t\tpadding-right: 6px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\talign-self: center;\n\t}\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 1;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 { opacity: 0.5; }\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { text-decoration: line-through; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 { opacity: 0.65; }\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 2px;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 2px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(\n\t\t\tin srgb,\n\t\t\tvar(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,\n\t\t\ttransparent\n\t\t);\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t.ag-compact.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\tpadding-left: 6px;\n\t\tpadding-right: 6px;\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\talign-self: center;\n\t}\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-compact--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\ttext-align: right;\n\t\tpadding-right: 6px;\n\t\tfont: 700 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 8px;\n\t\tcursor: pointer;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--next.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the block. */\n\t.mb-event--cancelled.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--limited.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 600 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 4px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 8px 0 0 8px;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\twidth: 30px;\n\t\theight: 30px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 50%;\n\t\tfont-size: 15px;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the chip. */\n\t.mw-ev--cancelled.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--limited.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 6px 0 0 6px;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tcolor: var(--dt-text-2);\n\t\twidth: 22px;\n\t\theight: 22px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 999px;\n\t}\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tbackground: var(--dt-accent);\n\t\tcolor: var(--dt-btn-text);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 999px;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 12px);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 8px 12px;\n\t\tmin-height: 48px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding: 6px 10px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\ttransition: background 100ms, color 100ms;\n\t}\n\n\t.cal-pill.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 9px 12px;\n\t\tborder-radius: 6px;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);\n\t\tborder: none;\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n";
 (function() {
   "use strict";
   const DERIVED = 1 << 1;
@@ -158,9 +159,6 @@
   const PROPS_IS_UPDATED = 1 << 2;
   const PROPS_IS_BINDABLE = 1 << 3;
   const PROPS_IS_LAZY_INITIAL = 1 << 4;
-  const TRANSITION_IN = 1;
-  const TRANSITION_OUT = 1 << 1;
-  const TRANSITION_GLOBAL = 1 << 2;
   const TEMPLATE_FRAGMENT = 1;
   const TEMPLATE_USE_IMPORT_NODE = 1 << 1;
   const HYDRATION_START = "[";
@@ -2973,8 +2971,8 @@
     remove_reactions(effect2, 0);
     var transitions = effect2.nodes && effect2.nodes.t;
     if (transitions !== null) {
-      for (const transition2 of transitions) {
-        transition2.stop();
+      for (const transition of transitions) {
+        transition.stop();
       }
     }
     execute_effect_teardown(effect2);
@@ -3014,8 +3012,8 @@
     var remaining = transitions.length;
     if (remaining > 0) {
       var check = () => --remaining || fn();
-      for (var transition2 of transitions) {
-        transition2.out(check);
+      for (var transition of transitions) {
+        transition.out(check);
       }
     } else {
       fn();
@@ -3026,9 +3024,9 @@
     effect2.f ^= INERT;
     var t = effect2.nodes && effect2.nodes.t;
     if (t !== null) {
-      for (const transition2 of t) {
-        if (transition2.is_global || local) {
-          transitions.push(transition2);
+      for (const transition of t) {
+        if (transition.is_global || local) {
+          transitions.push(transition);
         }
       }
     }
@@ -3064,9 +3062,9 @@
     }
     var t = effect2.nodes && effect2.nodes.t;
     if (t !== null) {
-      for (const transition2 of t) {
-        if (transition2.is_global || local) {
-          transition2.in();
+      for (const transition of t) {
+        if (transition.is_global || local) {
+          transition.in();
         }
       }
     }
@@ -3103,12 +3101,6 @@
       dom.addEventListener(event_name, target_handler, options);
     }
     return target_handler;
-  }
-  function on(element, type, handler, options = {}) {
-    var target_handler = create_event(type, element, handler, options);
-    return () => {
-      element.removeEventListener(type, target_handler, options);
-    };
   }
   function event(event_name, dom, handler, capture2, passive) {
     var options = { capture: capture2, passive };
@@ -3339,7 +3331,6 @@
   function is_passive_event(name) {
     return PASSIVE_EVENTS.includes(name);
   }
-  let should_intro = true;
   function set_text(text2, value) {
     var str = value == null ? "" : typeof value === "object" ? `${value}` : value;
     if (str !== /** @type {any} */
@@ -3426,9 +3417,7 @@
               null
             );
           }
-          should_intro = intro;
           component2 = Component(anchor_node2, props) || {};
-          should_intro = true;
           if (hydrating) {
             active_effect.nodes.end = hydrate_node;
             if (hydrate_node === null || hydrate_node.nodeType !== COMMENT_NODE || /** @type {Comment} */
@@ -3653,9 +3642,9 @@
      * @param {TemplateNode} anchor
      * @param {boolean} transition
      */
-    constructor(anchor, transition2 = true) {
+    constructor(anchor, transition = true) {
       this.anchor = anchor;
-      this.#transition = transition2;
+      this.#transition = transition;
     }
     /**
      * @param {Batch} batch
@@ -4312,359 +4301,6 @@
       branches.ensure(component2, component2 && ((target) => render_fn(target, component2)));
     }, EFFECT_TRANSPARENT);
   }
-  const now = () => performance.now();
-  const raf = {
-    // don't access requestAnimationFrame eagerly outside method
-    // this allows basic testing of user code without JSDOM
-    // bunder will eval and remove ternary when the user's app is built
-    tick: (
-      /** @param {any} _ */
-      (_) => requestAnimationFrame(_)
-    ),
-    now: () => now(),
-    tasks: /* @__PURE__ */ new Set()
-  };
-  function run_tasks() {
-    const now2 = raf.now();
-    raf.tasks.forEach((task) => {
-      if (!task.c(now2)) {
-        raf.tasks.delete(task);
-        task.f();
-      }
-    });
-    if (raf.tasks.size !== 0) {
-      raf.tick(run_tasks);
-    }
-  }
-  function loop(callback) {
-    let task;
-    if (raf.tasks.size === 0) {
-      raf.tick(run_tasks);
-    }
-    return {
-      promise: new Promise((fulfill) => {
-        raf.tasks.add(task = { c: callback, f: fulfill });
-      }),
-      abort() {
-        raf.tasks.delete(task);
-      }
-    };
-  }
-  function dispatch_event(element, type) {
-    without_reactive_context(() => {
-      element.dispatchEvent(new CustomEvent(type));
-    });
-  }
-  function css_property_to_camelcase(style) {
-    if (style === "float") return "cssFloat";
-    if (style === "offset") return "cssOffset";
-    if (style.startsWith("--")) return style;
-    const parts = style.split("-");
-    if (parts.length === 1) return parts[0];
-    return parts[0] + parts.slice(1).map(
-      /** @param {any} word */
-      (word) => word[0].toUpperCase() + word.slice(1)
-    ).join("");
-  }
-  function css_to_keyframe(css) {
-    const keyframe = {};
-    const parts = css.split(";");
-    for (const part of parts) {
-      const [property, value] = part.split(":");
-      if (!property || value === void 0) break;
-      const formatted_property = css_property_to_camelcase(property.trim());
-      keyframe[formatted_property] = value.trim();
-    }
-    return keyframe;
-  }
-  const linear = (t) => t;
-  function animation(element, get_fn, get_params) {
-    var effect2 = (
-      /** @type {Effect} */
-      active_effect
-    );
-    var nodes = (
-      /** @type {EffectNodes} */
-      effect2.nodes
-    );
-    var from;
-    var to;
-    var animation2;
-    var original_styles = null;
-    nodes.a ??= {
-      element,
-      measure() {
-        from = this.element.getBoundingClientRect();
-      },
-      apply() {
-        animation2?.abort();
-        to = this.element.getBoundingClientRect();
-        if (from.left !== to.left || from.right !== to.right || from.top !== to.top || from.bottom !== to.bottom) {
-          const options = get_fn()(this.element, { from, to }, get_params?.());
-          animation2 = animate(
-            this.element,
-            options,
-            void 0,
-            1,
-            () => {
-            },
-            () => {
-              animation2?.abort();
-              animation2 = void 0;
-            }
-          );
-        }
-      },
-      fix() {
-        if (element.getAnimations().length) return;
-        var { position, width, height } = getComputedStyle(element);
-        if (position !== "absolute" && position !== "fixed") {
-          var style = (
-            /** @type {HTMLElement | SVGElement} */
-            element.style
-          );
-          original_styles = {
-            position: style.position,
-            width: style.width,
-            height: style.height,
-            transform: style.transform
-          };
-          style.position = "absolute";
-          style.width = width;
-          style.height = height;
-          var to2 = element.getBoundingClientRect();
-          if (from.left !== to2.left || from.top !== to2.top) {
-            var transform = `translate(${from.left - to2.left}px, ${from.top - to2.top}px)`;
-            style.transform = style.transform ? `${style.transform} ${transform}` : transform;
-          }
-        }
-      },
-      unfix() {
-        if (original_styles) {
-          var style = (
-            /** @type {HTMLElement | SVGElement} */
-            element.style
-          );
-          style.position = original_styles.position;
-          style.width = original_styles.width;
-          style.height = original_styles.height;
-          style.transform = original_styles.transform;
-        }
-      }
-    };
-    nodes.a.element = element;
-  }
-  function transition(flags2, element, get_fn, get_params) {
-    var is_intro = (flags2 & TRANSITION_IN) !== 0;
-    var is_outro = (flags2 & TRANSITION_OUT) !== 0;
-    var is_both = is_intro && is_outro;
-    var is_global = (flags2 & TRANSITION_GLOBAL) !== 0;
-    var direction = is_both ? "both" : is_intro ? "in" : "out";
-    var current_options;
-    var inert = element.inert;
-    var overflow = element.style.overflow;
-    var intro;
-    var outro;
-    function get_options() {
-      return without_reactive_context(() => {
-        return current_options ??= get_fn()(element, get_params?.() ?? /** @type {P} */
-        {}, {
-          direction
-        });
-      });
-    }
-    var transition2 = {
-      is_global,
-      in() {
-        element.inert = inert;
-        if (!is_intro) {
-          outro?.abort();
-          outro?.reset?.();
-          return;
-        }
-        if (!is_outro) {
-          intro?.abort();
-        }
-        intro = animate(
-          element,
-          get_options(),
-          outro,
-          1,
-          () => {
-            dispatch_event(element, "introstart");
-          },
-          () => {
-            dispatch_event(element, "introend");
-            intro?.abort();
-            intro = current_options = void 0;
-            element.style.overflow = overflow;
-          }
-        );
-      },
-      out(fn) {
-        if (!is_outro) {
-          fn?.();
-          current_options = void 0;
-          return;
-        }
-        element.inert = true;
-        outro = animate(
-          element,
-          get_options(),
-          intro,
-          0,
-          () => {
-            dispatch_event(element, "outrostart");
-          },
-          () => {
-            dispatch_event(element, "outroend");
-            fn?.();
-          }
-        );
-      },
-      stop: () => {
-        intro?.abort();
-        outro?.abort();
-      }
-    };
-    var e = (
-      /** @type {Effect & { nodes: EffectNodes }} */
-      active_effect
-    );
-    (e.nodes.t ??= []).push(transition2);
-    if (is_intro && should_intro) {
-      var run = is_global;
-      if (!run) {
-        var block2 = (
-          /** @type {Effect | null} */
-          e.parent
-        );
-        while (block2 && (block2.f & EFFECT_TRANSPARENT) !== 0) {
-          while (block2 = block2.parent) {
-            if ((block2.f & BLOCK_EFFECT) !== 0) break;
-          }
-        }
-        run = !block2 || (block2.f & REACTION_RAN) !== 0;
-      }
-      if (run) {
-        effect(() => {
-          untrack(() => transition2.in());
-        });
-      }
-    }
-  }
-  function animate(element, options, counterpart, t2, on_begin, on_finish) {
-    var is_intro = t2 === 1;
-    if (is_function(options)) {
-      var a;
-      var aborted = false;
-      queue_micro_task(() => {
-        if (aborted) return;
-        var o = options({ direction: is_intro ? "in" : "out" });
-        a = animate(element, o, counterpart, t2, on_begin, on_finish);
-      });
-      return {
-        abort: () => {
-          aborted = true;
-          a?.abort();
-        },
-        deactivate: () => a.deactivate(),
-        reset: () => a.reset(),
-        t: () => a.t()
-      };
-    }
-    counterpart?.deactivate();
-    if (!options?.duration && !options?.delay) {
-      on_begin();
-      on_finish();
-      return {
-        abort: noop,
-        deactivate: noop,
-        reset: noop,
-        t: () => t2
-      };
-    }
-    const { delay = 0, css, tick: tick2, easing = linear } = options;
-    var keyframes = [];
-    if (is_intro && counterpart === void 0) {
-      if (tick2) {
-        tick2(0, 1);
-      }
-      if (css) {
-        var styles = css_to_keyframe(css(0, 1));
-        keyframes.push(styles, styles);
-      }
-    }
-    var get_t = () => 1 - t2;
-    var animation2 = element.animate(keyframes, { duration: delay, fill: "forwards" });
-    animation2.onfinish = () => {
-      animation2.cancel();
-      on_begin();
-      var t1 = counterpart?.t() ?? 1 - t2;
-      counterpart?.abort();
-      var delta = t2 - t1;
-      var duration2 = (
-        /** @type {number} */
-        options.duration * Math.abs(delta)
-      );
-      var keyframes2 = [];
-      if (duration2 > 0) {
-        var needs_overflow_hidden = false;
-        if (css) {
-          var n = Math.ceil(duration2 / (1e3 / 60));
-          for (var i = 0; i <= n; i += 1) {
-            var t = t1 + delta * easing(i / n);
-            var styles2 = css_to_keyframe(css(t, 1 - t));
-            keyframes2.push(styles2);
-            needs_overflow_hidden ||= styles2.overflow === "hidden";
-          }
-        }
-        if (needs_overflow_hidden) {
-          element.style.overflow = "hidden";
-        }
-        get_t = () => {
-          var time = (
-            /** @type {number} */
-            /** @type {globalThis.Animation} */
-            animation2.currentTime
-          );
-          return t1 + delta * easing(time / duration2);
-        };
-        if (tick2) {
-          loop(() => {
-            if (animation2.playState !== "running") return false;
-            var t3 = get_t();
-            tick2(t3, 1 - t3);
-            return true;
-          });
-        }
-      }
-      animation2 = element.animate(keyframes2, { duration: duration2, fill: "forwards" });
-      animation2.onfinish = () => {
-        get_t = () => t2;
-        tick2?.(t2, 1 - t2);
-        on_finish();
-      };
-    };
-    return {
-      abort: () => {
-        if (animation2) {
-          animation2.cancel();
-          animation2.effect = null;
-          animation2.onfinish = noop;
-        }
-      },
-      deactivate: () => {
-        on_finish = noop;
-      },
-      reset: () => {
-        if (t2 === 0) {
-          tick2?.(1, 0);
-        }
-      },
-      t: () => get_t()
-    };
-  }
   const whitespace = [..." 	\n\r\f \v\uFEFF"];
   function to_class(value, hash, directives) {
     var classname = value == null ? "" : "" + value;
@@ -5316,40 +4952,6 @@
       return super.size;
     }
   }
-  class ReactiveValue {
-    #fn;
-    #subscribe;
-    /**
-     *
-     * @param {() => T} fn
-     * @param {(update: () => void) => void} onsubscribe
-     */
-    constructor(fn, onsubscribe) {
-      this.#fn = fn;
-      this.#subscribe = createSubscriber(onsubscribe);
-    }
-    get current() {
-      this.#subscribe();
-      return this.#fn();
-    }
-  }
-  const parenthesis_regex = /\(.+\)/;
-  const non_parenthesized_keywords = /* @__PURE__ */ new Set(["all", "print", "screen", "and", "or", "not", "only"]);
-  class MediaQuery extends ReactiveValue {
-    /**
-     * @param {string} query A media query string
-     * @param {boolean} [fallback] Fallback value for the server
-     */
-    constructor(query, fallback) {
-      let final_query = parenthesis_regex.test(query) || // we need to use `some` here because technically this `window.matchMedia('random,screen')` still returns true
-      query.split(/[\s,]+/).some((keyword) => non_parenthesized_keywords.has(keyword.trim())) ? query : `(${query})`;
-      const q = window.matchMedia(final_query);
-      super(
-        () => q.matches,
-        (update) => on(q, "change", update)
-      );
-    }
-  }
   const constructFromSymbol = /* @__PURE__ */ Symbol.for("constructDateFrom");
   function constructFrom(date, value) {
     if (typeof date === "function") return date(value);
@@ -5783,6 +5385,10 @@
     nextMonth: "Next month",
     calendar: "Calendar",
     viewMode: "View mode",
+    cancelled: "cancelled",
+    tentative: "tentative",
+    full: "full",
+    limited: "limited",
     dayNavigation: "Day navigation",
     weekNavigation: "Week navigation",
     dayPlanner: "Day planner",
@@ -5801,7 +5407,10 @@
     nCompleted: (n) => `${n} completed`,
     showLess: "Show less",
     dayNOfTotal: (current, total) => `day ${current} of ${total}`,
-    percentComplete: (pct) => `${pct}% complete`
+    percentComplete: (pct) => `${pct}% complete`,
+    inMinutes: (mins) => `in ${mins}m`,
+    inHours: (hours, mins) => mins > 0 ? `in ${hours}h ${mins}m` : `in ${hours}h`,
+    inDays: (days) => `in ${days}d`
   };
   let _labels = { ...defaultLabels };
   function getLabels() {
@@ -5834,6 +5443,22 @@
   function monthLong(ms, locale) {
     return new Date(ms).toLocaleDateString(locale ?? defaultLocale, { month: "long" });
   }
+  function fmtWeekRange(weekStartMs, locale, weekEndMs) {
+    const loc = locale ?? defaultLocale;
+    const s = new Date(weekStartMs);
+    const e = new Date(weekEndMs ?? weekStartMs + 6 * DAY_MS);
+    const sm = s.toLocaleDateString(loc, { month: "short" });
+    const em = e.toLocaleDateString(loc, { month: "short" });
+    const sy = s.getFullYear();
+    const ey = e.getFullYear();
+    if (sy !== ey) {
+      return `${sm} ${s.getDate()}, ${sy} – ${em} ${e.getDate()}, ${ey}`;
+    }
+    if (sm !== em) {
+      return `${sm} ${s.getDate()} – ${em} ${e.getDate()}, ${ey}`;
+    }
+    return `${sm} ${s.getDate()} – ${e.getDate()}, ${ey}`;
+  }
   function fmtTime$1(d, locale) {
     if (is24HourLocale(locale)) {
       const h2 = d.getHours();
@@ -5863,14 +5488,15 @@
 	--dt-text: rgba(0, 0, 0, 0.87);
 	--dt-text-2: rgba(0, 0, 0, 0.54);
 	--dt-text-3: rgba(0, 0, 0, 0.38);
-	--dt-accent: #2563eb;
-	--dt-accent-dim: rgba(37, 99, 235, 0.12);
-	--dt-glow: rgba(37, 99, 235, 0.25);
-	--dt-today-bg: rgba(37, 99, 235, 0.04);
+	--dt-accent: var(--asini-accent, #2563eb);
+	--dt-accent-dim: color-mix(in srgb, var(--dt-accent) 12%, transparent);
+	--dt-glow: color-mix(in srgb, var(--dt-accent) 25%, transparent);
+	--dt-today-bg: color-mix(in srgb, var(--dt-accent) 7%, transparent);
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(0, 0, 0, 0.1);
 	--dt-success: rgba(22, 163, 74, 0.7);
-	--dt-serif: inherit;
+	--dt-weekend-bg: rgba(0, 0, 0, 0.02);
+	--dt-hover: rgba(0, 0, 0, 0.04);
 	--dt-sans: inherit;
 	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
@@ -5886,11 +5512,14 @@
 	--dt-accent: #ef4444;
 	--dt-accent-dim: rgba(239, 68, 68, 0.18);
 	--dt-glow: rgba(239, 68, 68, 0.35);
-	--dt-today-bg: rgba(239, 68, 68, 0.02);
+	--dt-today-bg: rgba(239, 68, 68, 0.07);
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(148, 163, 184, 0.12);
 	--dt-success: rgba(74, 222, 128, 0.7);
-	--dt-serif: Georgia, 'Times New Roman', serif;
+	--dt-weekend-bg: rgba(148, 163, 184, 0.03);
+	--dt-hover: rgba(148, 163, 184, 0.06);
+	--dt-sans: inherit;
+	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `;
   const presets = { auto, neutral, midnight };
   function parseColor(raw) {
@@ -5963,6 +5592,11 @@
       Math.round(c1[2] + (c2[2] - c1[2]) * t)
     ];
   }
+  function parentAcrossShadow(node) {
+    if (node.parentElement) return node.parentElement;
+    const root2 = node.getRootNode();
+    return typeof ShadowRoot !== "undefined" && root2 instanceof ShadowRoot && root2.host instanceof HTMLElement ? root2.host : null;
+  }
   const TEXT_VAR_CANDIDATES = [
     // Generic
     "--text",
@@ -6013,7 +5647,7 @@
           break;
         }
       }
-      node = node.parentElement;
+      node = parentAcrossShadow(node);
     }
     node = el;
     while (node) {
@@ -6026,7 +5660,7 @@
         }
       } catch {
       }
-      node = node.parentElement;
+      node = parentAcrossShadow(node);
     }
     const bgLum = luminance(bg);
     for (const c of candidates) {
@@ -6149,7 +5783,7 @@
         const rgb = parseColor(raw);
         if (rgb) return result(rgb);
       }
-      node = node.parentElement;
+      node = parentAcrossShadow(node);
     }
     node = el;
     while (node) {
@@ -6159,7 +5793,7 @@
         if (rgb) return result(rgb);
       } catch {
       }
-      node = node.parentElement;
+      node = parentAcrossShadow(node);
     }
     if (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
       return { bg: [18, 18, 18], isDark: true };
@@ -6167,7 +5801,7 @@
     return { bg: [255, 255, 255], isDark: false };
   }
   function probeHostTheme(el, options = {}) {
-    const host = el.parentElement ?? el;
+    const host = parentAcrossShadow(el) ?? el;
     const htmlRoot = (host.closest("body") ?? host) instanceof HTMLElement ? host.closest("body") ?? host : document.body;
     const { bg, isDark: autoDark } = probeBackground(host);
     const isDark = options.mode === "auto" || !options.mode ? autoDark : options.mode === "dark";
@@ -6189,7 +5823,7 @@
     const borderRgb = isDark ? [148, 163, 184] : [0, 0, 0];
     const accentDim = isDark ? 0.15 : 0.12;
     const glow = isDark ? 0.3 : 0.25;
-    const todayBg = isDark ? 0.03 : 0.04;
+    const todayBg = isDark ? 0.07 : 0.07;
     const accentL = isDark ? Math.max(aL, 0.45) : Math.min(aL, 0.48);
     const accentAdj = hslToRgb(aH, Math.max(aS, 0.5), accentL);
     const accentLum = luminance(accentAdj);
@@ -6212,6 +5846,8 @@
       `--dt-btn-text: ${btnText}`,
       `--dt-scrollbar: ${rgba(...borderRgb, scrollAlpha)}`,
       `--dt-success: ${rgba(...successRgb, 0.7)}`,
+      `--dt-weekend-bg: ${rgba(...borderRgb, isDark ? 0.03 : 0.02)}`,
+      `--dt-hover: ${rgba(...borderRgb, isDark ? 0.06 : 0.04)}`,
       `--dt-sans: ${fonts.sans}`,
       `--dt-mono: ${fonts.mono}`
     ];
@@ -6255,6 +5891,13 @@
   }
   function useCalendarContext() {
     const raw = getContext("calendar");
+    const disabledSet = /* @__PURE__ */ user_derived(() => new Set(raw?.disabledDates?.map((d) => sod(d.getTime())) ?? []));
+    const loadRange = raw ? {
+      get current() {
+        return raw.loadRange;
+      },
+      set: (r) => raw.setLoadRange(r)
+    } : void 0;
     return {
       get viewState() {
         return raw?.viewState;
@@ -6314,22 +5957,19 @@
         return raw?.disabledDates;
       },
       get disabledSet() {
-        return new Set(raw?.disabledDates?.map((d) => sod(d.getTime())) ?? []);
+        return get(disabledSet);
       },
       get loadRange() {
-        if (!raw) return void 0;
-        return {
-          get current() {
-            return raw.loadRange;
-          },
-          set: (r) => raw.setLoadRange(r)
-        };
+        return loadRange;
       },
       get eventSnippet() {
         return raw?.eventSnippet;
       },
       get emptySnippet() {
         return raw?.emptySnippet;
+      },
+      get labels() {
+        return raw?.labels ?? getLabels();
       }
     };
   }
@@ -6359,71 +5999,6 @@
     }
     append($$anchor, fragment);
     pop();
-  }
-  function cubic_out(t) {
-    const f = t - 1;
-    return f * f * f + 1;
-  }
-  function assign(tar, src) {
-    for (const k in src) tar[k] = src[k];
-    return (
-      /** @type {T & S} */
-      tar
-    );
-  }
-  function crossfade({ fallback, ...defaults }) {
-    const to_receive = /* @__PURE__ */ new Map();
-    const to_send = /* @__PURE__ */ new Map();
-    function crossfade2(from_node, node, params) {
-      const {
-        delay = 0,
-        duration: duration2 = (
-          /** @param {number} d */
-          (d2) => Math.sqrt(d2) * 30
-        ),
-        easing = cubic_out
-      } = assign(assign({}, defaults), params);
-      const from = from_node.getBoundingClientRect();
-      const to = node.getBoundingClientRect();
-      const dx = from.left - to.left;
-      const dy = from.top - to.top;
-      const dw = from.width / to.width;
-      const dh = from.height / to.height;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      const style = getComputedStyle(node);
-      const transform = style.transform === "none" ? "" : style.transform;
-      const opacity = +style.opacity;
-      return {
-        delay,
-        duration: typeof duration2 === "function" ? duration2(d) : duration2,
-        easing,
-        css: (t, u) => `
-			   opacity: ${t * opacity};
-			   transform-origin: top left;
-			   transform: ${transform} translate(${u * dx}px,${u * dy}px) scale(${t + (1 - t) * dw}, ${t + (1 - t) * dh});
-		   `
-      };
-    }
-    function transition2(items, counterparts, intro) {
-      return (node, params) => {
-        items.set(params.key, node);
-        return () => {
-          if (counterparts.has(params.key)) {
-            const other_node = counterparts.get(params.key);
-            counterparts.delete(params.key);
-            return crossfade2(
-              /** @type {Element} */
-              other_node,
-              node,
-              params
-            );
-          }
-          items.delete(params.key);
-          return fallback && fallback(node, params, intro);
-        };
-      };
-    }
-    return [transition2(to_send, to_receive, false), transition2(to_receive, to_send, true)];
   }
   function tzTokenizeDate(date, timeZone) {
     const dtf = getDateTimeFormat(timeZone);
@@ -6954,14 +6529,14 @@
     return wrapped;
   }
   function createClock(timezone) {
-    const now2 = () => timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now();
-    let tick2 = /* @__PURE__ */ state(proxy(now2()));
+    const now = () => timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now();
+    let tick2 = /* @__PURE__ */ state(proxy(now()));
     let today = /* @__PURE__ */ state(proxy(sod(get(tick2))));
     let intervalId = null;
     function start() {
       intervalId = setInterval(
         () => {
-          set(tick2, now2(), true);
+          set(tick2, now(), true);
           const sd = sod(get(tick2));
           if (sd !== get(today)) set(today, sd, true);
         },
@@ -7145,26 +6720,27 @@
   var root_3$7 = /* @__PURE__ */ from_html(`<div class="fs-blocked svelte-mrwdy7"><!></div>`);
   var root_4$7 = /* @__PURE__ */ from_html(`<div class="fs-day-header-custom svelte-mrwdy7"><!></div>`);
   var root_5$7 = /* @__PURE__ */ from_html(`<div><!> <!> <!></div>`);
-  var root_6$7 = /* @__PURE__ */ from_html(`<span class="fs-ev-live svelte-mrwdy7" aria-hidden="true"></span>`);
-  var root_7$6 = /* @__PURE__ */ from_html(`<span class="fs-ev-next-badge svelte-mrwdy7" aria-hidden="true"> </span>`);
-  var root_8$6 = /* @__PURE__ */ from_html(`<span class="fs-ev-time svelte-mrwdy7"> </span>`);
-  var root_9$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-sub svelte-mrwdy7"> </span>`);
-  var root_10$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-loc svelte-mrwdy7"> </span>`);
-  var root_11$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-tag svelte-mrwdy7"> </span>`);
-  var root_12$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-tags svelte-mrwdy7"></span>`);
-  var root_13$4 = /* @__PURE__ */ from_html(`<!> <span class="fs-ev-title svelte-mrwdy7"> </span> <!> <!> <!>`, 1);
-  var root_14$4 = /* @__PURE__ */ from_html(`<div class="fs-ev-handle fs-ev-handle--start svelte-mrwdy7" aria-hidden="true"></div> <div class="fs-ev-handle fs-ev-handle--end svelte-mrwdy7" aria-hidden="true"></div>`, 1);
-  var root_15$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="fs-ev-inner svelte-mrwdy7"><!> <!></div> <!></div>`);
-  var root_16$4 = /* @__PURE__ */ from_html(`<div class="fs-create-ghost svelte-mrwdy7" aria-hidden="true"><span class="fs-create-ghost-time svelte-mrwdy7"> </span></div>`);
-  var root_17$4 = /* @__PURE__ */ from_html(`<span class="fs-ad-span svelte-mrwdy7"> </span>`);
-  var root_18$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="fs-ad-dot svelte-mrwdy7" aria-hidden="true"></span> <span class="fs-ad-title svelte-mrwdy7"> </span> <!></div>`);
-  var root_19$3 = /* @__PURE__ */ from_html(`<div class="fs-allday svelte-mrwdy7"></div>`);
-  var root_20$2 = /* @__PURE__ */ from_html(`<div role="region"><div role="application"><div class="fs-track svelte-mrwdy7" role="none"><!> <div class="fs-now svelte-mrwdy7"><span class="fs-now-tag svelte-mrwdy7"> <span class="fs-now-sec svelte-mrwdy7"> </span></span> <div class="fs-now-line svelte-mrwdy7"></div></div> <!> <!></div></div> <!></div>`);
+  var root_6$7 = /* @__PURE__ */ from_html(`<div class="fs-now svelte-mrwdy7"><span class="fs-now-tag svelte-mrwdy7"> </span> <div class="fs-now-line svelte-mrwdy7"></div></div>`);
+  var root_7$7 = /* @__PURE__ */ from_html(`<span class="fs-ev-live svelte-mrwdy7" aria-hidden="true"></span>`);
+  var root_8$7 = /* @__PURE__ */ from_html(`<span class="fs-ev-next-badge svelte-mrwdy7" aria-hidden="true"> </span>`);
+  var root_9$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-time svelte-mrwdy7"> </span>`);
+  var root_10$5 = /* @__PURE__ */ from_html(`<span class="fs-ev-sub svelte-mrwdy7"> </span>`);
+  var root_11$4 = /* @__PURE__ */ from_html(`<span class="fs-ev-loc svelte-mrwdy7"> </span>`);
+  var root_12$4 = /* @__PURE__ */ from_html(`<span class="fs-ev-tag svelte-mrwdy7"> </span>`);
+  var root_13$4 = /* @__PURE__ */ from_html(`<span class="fs-ev-tags svelte-mrwdy7"></span>`);
+  var root_14$4 = /* @__PURE__ */ from_html(`<!> <span class="fs-ev-title svelte-mrwdy7"> </span> <!> <!> <!>`, 1);
+  var root_15$4 = /* @__PURE__ */ from_html(`<div class="fs-ev-handle fs-ev-handle--start svelte-mrwdy7" aria-hidden="true"></div> <div class="fs-ev-handle fs-ev-handle--end svelte-mrwdy7" aria-hidden="true"></div>`, 1);
+  var root_16$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="fs-ev-inner svelte-mrwdy7"><!> <!></div> <!></div>`);
+  var root_17$4 = /* @__PURE__ */ from_html(`<div class="fs-create-ghost svelte-mrwdy7" aria-hidden="true"><span class="fs-create-ghost-time svelte-mrwdy7"> </span></div>`);
+  var root_18$4 = /* @__PURE__ */ from_html(`<span class="fs-ad-span svelte-mrwdy7"> </span>`);
+  var root_19$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="fs-ad-dot svelte-mrwdy7" aria-hidden="true"></span> <span class="fs-ad-title svelte-mrwdy7"> </span> <!></div>`);
+  var root_20$4 = /* @__PURE__ */ from_html(`<div class="fs-allday svelte-mrwdy7"></div>`);
+  var root_21$4 = /* @__PURE__ */ from_html(`<div role="region"><div role="region"><div class="fs-track svelte-mrwdy7" role="presentation"><!> <!> <!> <!></div></div> <!></div>`);
   function PlannerDay($$anchor, $$props) {
     push($$props, true);
-    const L = /* @__PURE__ */ user_derived(getLabels);
     let height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const clock = createClock(ctx.timezone);
     const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
     const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
@@ -7228,8 +6804,8 @@
       const elapsed = ms - get(origin);
       const dayIndex = Math.floor(elapsed / DAY_MS);
       const hourInDay = (elapsed - dayIndex * DAY_MS) / HOUR_MS;
-      const hourOffset = hourInDay - get(startHour);
-      return dayIndex * (get(dayWidth) + DAY_GAP) + hourOffset * get(hourWidth);
+      const clamped = Math.min(Math.max(hourInDay, get(startHour)), get(endHour));
+      return dayIndex * (get(dayWidth) + DAY_GAP) + (clamped - get(startHour)) * get(hourWidth);
     }
     function pxToTime(px) {
       const dayStride = get(dayWidth) + DAY_GAP;
@@ -7239,6 +6815,8 @@
       return get(origin) + dayIndex * DAY_MS + hour * HOUR_MS;
     }
     const nowPx = /* @__PURE__ */ user_derived(() => timeToPx(clock.tick));
+    const nowHour = /* @__PURE__ */ user_derived(() => (clock.tick - clock.today) / HOUR_MS);
+    const nowInBand = /* @__PURE__ */ user_derived(() => get(nowHour) >= get(startHour) && get(nowHour) < get(endHour));
     const timedEvents = /* @__PURE__ */ user_derived(() => events().filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
     const allDayEvents = /* @__PURE__ */ user_derived(() => {
       const segs = [];
@@ -7262,8 +6840,25 @@
       secondaryLineHeight: 13,
       contentGap: 6
     });
+    const nowInfo = /* @__PURE__ */ user_derived(() => {
+      const now = clock.tick;
+      const current = /* @__PURE__ */ new Set();
+      const todayStart = clock.today;
+      const todayEnd = todayStart + DAY_MS;
+      let nextId = null;
+      let nextStart = Infinity;
+      for (const ev of get(timedEvents)) {
+        const s = ev.start.getTime();
+        const e = ev.end.getTime();
+        if (s <= now && e > now) current.add(ev.id);
+        else if (s >= todayStart && s < todayEnd && s > now && s < nextStart) {
+          nextStart = s;
+          nextId = ev.id;
+        }
+      }
+      return { current, nextId };
+    });
     const positionedEvents = /* @__PURE__ */ user_derived(() => {
-      const now2 = clock.tick;
       const dragP = get(drag)?.active && (get(drag).mode === "move" || get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
       const staticEvents = [];
       let draggedEv = null;
@@ -7272,17 +6867,6 @@
         else staticEvents.push(ev);
       }
       const sorted = [...staticEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
-      const todayStart = sod(now2);
-      const todayEnd = todayStart + DAY_MS;
-      let nextEventId = null;
-      for (const ev of sorted) {
-        const s = ev.start.getTime();
-        const e = ev.end.getTime();
-        if (s >= todayStart && s < todayEnd && s > now2 && !(s <= now2 && e > now2)) {
-          nextEventId = ev.id;
-          break;
-        }
-      }
       const infos = sorted.map((ev) => {
         const s = ev.start.getTime();
         const e = ev.end.getTime();
@@ -7294,13 +6878,12 @@
           width: Math.max(xEnd - x, 28),
           row: 0,
           groupMaxRow: 1,
-          isCurrent: s <= now2 && e > now2,
-          isNext: ev.id === nextEventId,
           isDragged: false,
           startMs: s,
-          endMs: e
+          endMs: e,
+          clippedWidth: xEnd - x
         };
-      });
+      }).filter((info) => info.clippedWidth > 0);
       const par = infos.map((_, i) => i);
       function find(i) {
         while (par[i] !== i) {
@@ -7340,7 +6923,7 @@
         for (const idx of indices) infos[idx].groupMaxRow = rows.length;
       }
       const availH = get(containerH) - get(contentTop) - 8;
-      const result = infos.map(({ startMs: _s, endMs: _e, ...info }) => {
+      const result = infos.map(({ startMs: _s, endMs: _e, clippedWidth: _c, ...info }) => {
         const laneH = Math.max(MIN_EVENT_H, availH / info.groupMaxRow - EVENT_GAP);
         const topPx = get(contentTop) + info.row * (availH / info.groupMaxRow);
         const fit = measure.fitContent({
@@ -7352,7 +6935,7 @@
           maxWidth: laneH - 16,
           maxHeight: info.width - 16
         });
-        return { ...info, topPx, heightPx: laneH, isNext: info.isNext, fit };
+        return { ...info, topPx, heightPx: laneH, fit };
       });
       if (draggedEv && dragP) {
         const x = timeToPx(dragP.start.getTime());
@@ -7367,8 +6950,6 @@
           groupMaxRow: 1,
           topPx: get(contentTop),
           heightPx: dragH,
-          isCurrent: draggedEv.start.getTime() <= now2 && draggedEv.end.getTime() > now2,
-          isNext: false,
           isDragged: true,
           fit: measure.fitContent({
             title: draggedEv.title,
@@ -7433,16 +7014,20 @@
         get(viewState).setFocusDate(new Date(centerDayMs));
       }
     }
-    onMount(() => {
-      const ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          set(containerW, entry.contentRect.width, true);
-          set(containerH, entry.contentRect.height, true);
-        }
+    let scrollRaf = 0;
+    function handleScroll() {
+      if (get(following) || rebasing || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = 0;
+        if (!el || get(following) || rebasing) return;
+        checkEdges();
+        syncFocusFromScroll();
       });
-      ro.observe(el);
+    }
+    user_effect(() => {
+      if (!get(following)) return;
       function frame() {
-        if (get(following) && el && !get(scrollDragging)) {
+        if (el && !get(scrollDragging)) {
           if (get(internalCenterMs) !== clock.today) {
             set(internalCenterMs, clock.today, true);
             lastExternalMs = clock.today;
@@ -7453,15 +7038,22 @@
           if (todayD) {
             el.scrollLeft = todayD.x + get(dayWidth) / 2 - el.clientWidth / 2;
           }
-        } else if (el && !rebasing) {
-          checkEdges();
-          syncFocusFromScroll();
         }
         rafId = requestAnimationFrame(frame);
       }
       rafId = requestAnimationFrame(frame);
+      return () => cancelAnimationFrame(rafId);
+    });
+    onMount(() => {
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          set(containerW, entry.contentRect.width, true);
+          set(containerH, entry.contentRect.height, true);
+        }
+      });
+      ro.observe(el);
       return () => {
-        cancelAnimationFrame(rafId);
+        cancelAnimationFrame(scrollRaf);
         ro.disconnect();
       };
     });
@@ -7700,7 +7292,26 @@
       if (get(drag) && rsStarted) get(drag).cancel();
       cleanupResize();
     }
-    var div = root_20$2();
+    function onWindowKeydown(e) {
+      if (e.key !== "Escape" || !get(drag)?.active) return;
+      get(drag).cancel();
+      cleanupCreateDrag();
+      cleanupEvDrag();
+      cleanupResize();
+      wasDragging = true;
+      window.addEventListener(
+        "pointerup",
+        () => setTimeout(
+          () => {
+            wasDragging = false;
+          },
+          0
+        ),
+        { once: true }
+      );
+    }
+    var div = root_21$4();
+    event("keydown", $window, onWindowKeydown);
     let classes;
     let styles;
     var div_1 = child(div);
@@ -7835,154 +7446,173 @@
       );
       append($$anchor2, div_3);
     });
-    var div_8 = sibling(node, 2);
-    let styles_6;
-    var span_2 = child(div_8);
-    var text_2 = child(span_2, true);
-    var span_3 = sibling(text_2);
-    var text_3 = child(span_3, true);
-    reset(span_3);
-    reset(span_2);
-    next(2);
-    reset(div_8);
-    var node_9 = sibling(div_8, 2);
-    each(node_9, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor2, p) => {
-      var div_9 = root_15$4();
+    var node_9 = sibling(node, 2);
+    {
+      var consequent_5 = ($$anchor2) => {
+        var div_8 = root_6$7();
+        let styles_6;
+        var span_2 = child(div_8);
+        var text_2 = child(span_2, true);
+        reset(span_2);
+        next(2);
+        reset(div_8);
+        template_effect(() => {
+          styles_6 = set_style(div_8, "", styles_6, { left: `${get(nowPx) ?? ""}px` });
+          set_text(text_2, clock.hm);
+        });
+        append($$anchor2, div_8);
+      };
+      if_block(node_9, ($$render) => {
+        if (get(nowInBand)) $$render(consequent_5);
+      });
+    }
+    var node_10 = sibling(node_9, 2);
+    each(node_10, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor2, p) => {
+      const isCurrent = /* @__PURE__ */ user_derived(() => get(nowInfo).current.has(get(p).ev.id));
+      const isNext = /* @__PURE__ */ user_derived(() => !get(p).isDragged && get(p).ev.id === get(nowInfo).nextId);
+      var div_9 = root_16$4();
       let classes_3;
       let styles_7;
       var div_10 = child(div_9);
-      var node_10 = child(div_10);
+      var node_11 = child(div_10);
       {
-        var consequent_5 = ($$anchor3) => {
-          var span_4 = root_6$7();
+        var consequent_6 = ($$anchor3) => {
+          var span_3 = root_7$7();
+          append($$anchor3, span_3);
+        };
+        var consequent_7 = ($$anchor3) => {
+          var span_4 = root_8$7();
+          var text_3 = child(span_4, true);
+          reset(span_4);
+          template_effect(() => set_text(text_3, get(L).upNext));
           append($$anchor3, span_4);
         };
-        var consequent_6 = ($$anchor3) => {
-          var span_5 = root_7$6();
-          var text_4 = child(span_5, true);
-          reset(span_5);
-          template_effect(() => set_text(text_4, get(L).upNext));
-          append($$anchor3, span_5);
-        };
-        if_block(node_10, ($$render) => {
-          if (get(p).isCurrent) $$render(consequent_5);
-          else if (get(p).isNext) $$render(consequent_6, 1);
+        if_block(node_11, ($$render) => {
+          if (get(isCurrent)) $$render(consequent_6);
+          else if (get(isNext)) $$render(consequent_7, 1);
         });
       }
-      var node_11 = sibling(node_10, 2);
-      EventContent(node_11, {
+      var node_12 = sibling(node_11, 2);
+      EventContent(node_12, {
         get event() {
           return get(p).ev;
         },
         children: ($$anchor3, $$slotProps) => {
-          var fragment_4 = root_13$4();
-          var node_12 = first_child(fragment_4);
+          var fragment_4 = root_14$4();
+          var node_13 = first_child(fragment_4);
           {
-            var consequent_7 = ($$anchor4) => {
-              var span_6 = root_8$6();
-              var text_5 = child(span_6);
-              reset(span_6);
-              template_effect(($0, $1) => set_text(text_5, `${$0 ?? ""} – ${$1 ?? ""}`), [
+            var consequent_8 = ($$anchor4) => {
+              var span_5 = root_9$5();
+              var text_4 = child(span_5);
+              reset(span_5);
+              template_effect(($0, $1) => set_text(text_4, `${$0 ?? ""} – ${$1 ?? ""}`), [
                 () => fmtTime$1(get(p).ev.start, $$props.locale),
                 () => fmtTime$1(get(p).ev.end, $$props.locale)
               ]);
-              append($$anchor4, span_6);
-            };
-            if_block(node_12, ($$render) => {
-              if (get(p).fit.time) $$render(consequent_7);
-            });
-          }
-          var span_7 = sibling(node_12, 2);
-          var text_6 = child(span_7, true);
-          reset(span_7);
-          var node_13 = sibling(span_7, 2);
-          {
-            var consequent_8 = ($$anchor4) => {
-              var span_8 = root_9$5();
-              var text_7 = child(span_8, true);
-              reset(span_8);
-              template_effect(() => set_text(text_7, get(p).ev.subtitle));
-              append($$anchor4, span_8);
+              append($$anchor4, span_5);
             };
             if_block(node_13, ($$render) => {
-              if (get(p).ev.subtitle && get(p).fit.subtitle) $$render(consequent_8);
+              if (get(p).fit.time) $$render(consequent_8);
             });
           }
-          var node_14 = sibling(node_13, 2);
+          var span_6 = sibling(node_13, 2);
+          var text_5 = child(span_6, true);
+          reset(span_6);
+          var node_14 = sibling(span_6, 2);
           {
             var consequent_9 = ($$anchor4) => {
-              var span_9 = root_10$5();
-              var text_8 = child(span_9, true);
-              reset(span_9);
-              template_effect(() => set_text(text_8, get(p).ev.location));
-              append($$anchor4, span_9);
+              var span_7 = root_10$5();
+              var text_6 = child(span_7, true);
+              reset(span_7);
+              template_effect(() => set_text(text_6, get(p).ev.subtitle));
+              append($$anchor4, span_7);
             };
             if_block(node_14, ($$render) => {
-              if (get(p).ev.location && get(p).fit.location) $$render(consequent_9);
+              if (get(p).ev.subtitle && get(p).fit.subtitle) $$render(consequent_9);
             });
           }
           var node_15 = sibling(node_14, 2);
           {
             var consequent_10 = ($$anchor4) => {
-              var span_10 = root_12$5();
-              each(span_10, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
-                var span_11 = root_11$5();
-                var text_9 = child(span_11, true);
-                reset(span_11);
-                template_effect(() => set_text(text_9, get(tag)));
-                append($$anchor5, span_11);
-              });
-              reset(span_10);
-              append($$anchor4, span_10);
+              var span_8 = root_11$4();
+              var text_7 = child(span_8, true);
+              reset(span_8);
+              template_effect(() => set_text(text_7, get(p).ev.location));
+              append($$anchor4, span_8);
             };
             if_block(node_15, ($$render) => {
-              if (get(p).ev.tags?.length && get(p).fit.tags) $$render(consequent_10);
+              if (get(p).ev.location && get(p).fit.location) $$render(consequent_10);
             });
           }
-          template_effect(() => set_text(text_6, get(p).ev.title));
+          var node_16 = sibling(node_15, 2);
+          {
+            var consequent_11 = ($$anchor4) => {
+              var span_9 = root_13$4();
+              each(span_9, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
+                var span_10 = root_12$4();
+                var text_8 = child(span_10, true);
+                reset(span_10);
+                template_effect(() => set_text(text_8, get(tag)));
+                append($$anchor5, span_10);
+              });
+              reset(span_9);
+              append($$anchor4, span_9);
+            };
+            if_block(node_16, ($$render) => {
+              if (get(p).ev.tags?.length && get(p).fit.tags) $$render(consequent_11);
+            });
+          }
+          template_effect(() => set_text(text_5, get(p).ev.title));
           append($$anchor3, fragment_4);
         },
         $$slots: { default: true }
       });
       reset(div_10);
-      var node_16 = sibling(div_10, 2);
+      var node_17 = sibling(div_10, 2);
       {
-        var consequent_11 = ($$anchor3) => {
-          var fragment_5 = root_14$4();
+        var consequent_12 = ($$anchor3) => {
+          var fragment_5 = root_15$4();
           var div_11 = first_child(fragment_5);
           var div_12 = sibling(div_11, 2);
           delegated("pointerdown", div_11, (e) => onResizePointerDown(e, get(p).ev, "start"));
           delegated("pointerdown", div_12, (e) => onResizePointerDown(e, get(p).ev, "end"));
           append($$anchor3, fragment_5);
         };
-        if_block(node_16, ($$render) => {
-          if (!readOnly() && !get(p).ev.data?.readOnly && !get(p).isDragged) $$render(consequent_11);
+        if_block(node_17, ($$render) => {
+          if (!readOnly() && !get(p).ev.data?.readOnly && !get(p).isDragged) $$render(consequent_12);
         });
       }
       reset(div_9);
-      template_effect(() => {
-        classes_3 = set_class(div_9, 1, "fs-event svelte-mrwdy7", null, classes_3, {
-          "fs-event--selected": selectedEventId() === get(p).ev.id,
-          "fs-event--current": get(p).isCurrent,
-          "fs-event--next": get(p).isNext,
-          "fs-event--dragging": get(p).isDragged,
-          "fs-event--resizing": get(p).isDragged && get(drag)?.mode !== "move",
-          "fs-event--readonly": get(p).ev.data?.readOnly,
-          "fs-event--cancelled": get(p).ev.status === "cancelled",
-          "fs-event--tentative": get(p).ev.status === "tentative",
-          "fs-event--full": get(p).ev.status === "full",
-          "fs-event--limited": get(p).ev.status === "limited"
-        });
-        set_attribute(div_9, "title", get(p).ev.title);
-        set_attribute(div_9, "aria-label", `${get(p).ev.title ?? ""}${get(p).ev.status === "cancelled" ? " (cancelled)" : ""}${get(p).ev.status === "tentative" ? " (tentative)" : ""}${get(p).ev.status === "full" ? " (full)" : ""}${get(p).ev.status === "limited" ? " (limited)" : ""}${get(p).isCurrent ? ` (${get(L).inProgress})` : ""}${get(p).isNext ? ` (${get(L).upNext})` : ""}`);
-        styles_7 = set_style(div_9, "", styles_7, {
-          left: `${get(p).x ?? ""}px`,
-          width: `${get(p).width ?? ""}px`,
-          top: `${get(p).topPx ?? ""}px`,
-          height: `${get(p).heightPx ?? ""}px`,
-          "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
-        });
-      });
+      template_effect(
+        ($0, $1, $2) => {
+          classes_3 = set_class(div_9, 1, "fs-event svelte-mrwdy7", null, classes_3, {
+            "fs-event--selected": selectedEventId() === get(p).ev.id,
+            "fs-event--current": get(isCurrent),
+            "fs-event--next": get(isNext),
+            "fs-event--dragging": get(p).isDragged,
+            "fs-event--resizing": get(p).isDragged && get(drag)?.mode !== "move",
+            "fs-event--readonly": get(p).ev.data?.readOnly,
+            "fs-event--cancelled": get(p).ev.status === "cancelled",
+            "fs-event--tentative": get(p).ev.status === "tentative",
+            "fs-event--full": get(p).ev.status === "full",
+            "fs-event--limited": get(p).ev.status === "limited"
+          });
+          set_attribute(div_9, "title", get(p).ev.title);
+          set_attribute(div_9, "aria-label", `${get(p).ev.title ?? ""}, ${$0 ?? ""} – ${$1 ?? ""}, ${$2 ?? ""}${get(p).ev.status === "cancelled" ? " (cancelled)" : ""}${get(p).ev.status === "tentative" ? " (tentative)" : ""}${get(p).ev.status === "full" ? " (full)" : ""}${get(p).ev.status === "limited" ? " (limited)" : ""}${get(isCurrent) ? ` (${get(L).inProgress})` : ""}${get(isNext) ? ` (${get(L).upNext})` : ""}`);
+          styles_7 = set_style(div_9, "", styles_7, {
+            left: `${get(p).x ?? ""}px`,
+            width: `${get(p).width ?? ""}px`,
+            top: `${get(p).topPx ?? ""}px`,
+            height: `${get(p).heightPx ?? ""}px`,
+            "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
+          });
+        },
+        [
+          () => fmtTime$1(get(p).ev.start, $$props.locale),
+          () => fmtTime$1(get(p).ev.end, $$props.locale),
+          () => fmtDuration(get(p).ev.start, get(p).ev.end)
+        ]
+      );
       delegated("pointerdown", div_9, (e) => onEventPointerDown(e, get(p).ev));
       event("pointerenter", div_9, () => get(oneventhover)?.(get(p).ev));
       delegated("keydown", div_9, (e) => {
@@ -7993,17 +7623,17 @@
       });
       append($$anchor2, div_9);
     });
-    var node_17 = sibling(node_9, 2);
+    var node_18 = sibling(node_10, 2);
     {
-      var consequent_12 = ($$anchor2) => {
+      var consequent_13 = ($$anchor2) => {
         const gx = /* @__PURE__ */ user_derived(() => timeToPx(get(drag).payload.start.getTime()));
         const gw = /* @__PURE__ */ user_derived(() => Math.max(timeToPx(get(drag).payload.end.getTime()) - get(gx), 8));
         const gh = /* @__PURE__ */ user_derived(() => Math.max(MIN_EVENT_H, get(containerH) - get(contentTop) - 8 - EVENT_GAP));
-        var div_13 = root_16$4();
+        var div_13 = root_17$4();
         let styles_8;
-        var span_12 = child(div_13);
-        var text_10 = child(span_12);
-        reset(span_12);
+        var span_11 = child(div_13);
+        var text_9 = child(span_11);
+        reset(span_11);
         reset(div_13);
         template_effect(
           ($0, $1) => {
@@ -8013,7 +7643,7 @@
               top: `${get(contentTop) ?? ""}px`,
               height: `${get(gh) ?? ""}px`
             });
-            set_text(text_10, `${$0 ?? ""} – ${$1 ?? ""}`);
+            set_text(text_9, `${$0 ?? ""} – ${$1 ?? ""}`);
           },
           [
             () => fmtTime$1(get(drag).payload.start, $$props.locale),
@@ -8022,43 +7652,43 @@
         );
         append($$anchor2, div_13);
       };
-      if_block(node_17, ($$render) => {
-        if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_12);
+      if_block(node_18, ($$render) => {
+        if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_13);
       });
     }
     reset(div_2);
     reset(div_1);
     bind_this(div_1, ($$value) => el = $$value, () => el);
-    var node_18 = sibling(div_1, 2);
+    var node_19 = sibling(div_1, 2);
     {
-      var consequent_14 = ($$anchor2) => {
-        var div_14 = root_19$3();
+      var consequent_15 = ($$anchor2) => {
+        var div_14 = root_20$4();
         set_style(div_14, "", {}, { top: "56px" });
         each(div_14, 21, () => get(allDayEvents), (seg) => seg.ev.id, ($$anchor3, seg) => {
-          var div_15 = root_18$4();
+          var div_15 = root_19$4();
           let classes_4;
           let styles_9;
-          var span_13 = sibling(child(div_15), 2);
-          var text_11 = child(span_13, true);
-          reset(span_13);
-          var node_19 = sibling(span_13, 2);
+          var span_12 = sibling(child(div_15), 2);
+          var text_10 = child(span_12, true);
+          reset(span_12);
+          var node_20 = sibling(span_12, 2);
           {
-            var consequent_13 = ($$anchor4) => {
-              var span_14 = root_17$4();
-              var text_12 = child(span_14);
-              reset(span_14);
-              template_effect(() => set_text(text_12, `${get(L).day ?? ""} ${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
-              append($$anchor4, span_14);
+            var consequent_14 = ($$anchor4) => {
+              var span_13 = root_18$4();
+              var text_11 = child(span_13);
+              reset(span_13);
+              template_effect(() => set_text(text_11, `${get(L).day ?? ""} ${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
+              append($$anchor4, span_13);
             };
             var alternate = ($$anchor4) => {
-              var span_15 = root_17$4();
-              var text_13 = child(span_15, true);
-              reset(span_15);
-              template_effect(() => set_text(text_13, get(L).allDay));
-              append($$anchor4, span_15);
+              var span_14 = root_18$4();
+              var text_12 = child(span_14, true);
+              reset(span_14);
+              template_effect(() => set_text(text_12, get(L).allDay));
+              append($$anchor4, span_14);
             };
-            if_block(node_19, ($$render) => {
-              if (get(seg).totalDays > 1) $$render(consequent_13);
+            if_block(node_20, ($$render) => {
+              if (get(seg).totalDays > 1) $$render(consequent_14);
               else $$render(alternate, -1);
             });
           }
@@ -8071,7 +7701,7 @@
               });
               set_attribute(div_15, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
               styles_9 = set_style(div_15, "", styles_9, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
-              set_text(text_11, get(seg).ev.title);
+              set_text(text_10, get(seg).ev.title);
             },
             [
               () => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`
@@ -8089,8 +7719,8 @@
         reset(div_14);
         append($$anchor2, div_14);
       };
-      if_block(node_18, ($$render) => {
-        if (get(allDayEvents).length > 0) $$render(consequent_14);
+      if_block(node_19, ($$render) => {
+        if (get(allDayEvents).length > 0) $$render(consequent_15);
       });
     }
     reset(div);
@@ -8106,176 +7736,120 @@
       });
       set_attribute(div_1, "aria-label", get(L).scrollableDayPlanner);
       styles_1 = set_style(div_2, "", styles_1, { width: `${get(totalWidth) ?? ""}px` });
-      styles_6 = set_style(div_8, "", styles_6, { left: `${get(nowPx) ?? ""}px` });
-      set_text(text_2, clock.hm);
-      set_text(text_3, clock.s);
     });
     event("wheel", div_1, (e) => {
+      const delta = e.deltaY || e.deltaX;
+      if (delta === 0) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const canConsume = delta < 0 ? el.scrollLeft > 0 : el.scrollLeft < maxScroll - 1;
+      if (!canConsume) return;
       e.preventDefault();
-      el.scrollLeft += e.deltaY || e.deltaX;
+      el.scrollLeft += delta;
       set(following, false);
     });
+    event("scroll", div_1, handleScroll);
     delegated("pointerdown", div_1, onPointerDown);
     delegated("click", div_2, handleTrackClick);
     append($$anchor, div);
     pop();
   }
   delegate(["pointerdown", "click", "keydown"]);
-  function cubicOut(t) {
-    const f = t - 1;
-    return f * f * f + 1;
-  }
-  function flip(node, { from, to }, params = {}) {
-    var { delay = 0, duration: duration2 = (d) => Math.sqrt(d) * 120, easing = cubicOut } = params;
-    var style = getComputedStyle(node);
-    var transform = style.transform === "none" ? "" : style.transform;
-    var [ox, oy] = style.transformOrigin.split(" ").map(parseFloat);
-    ox /= node.clientWidth;
-    oy /= node.clientHeight;
-    var zoom = get_zoom(node);
-    var sx = node.clientWidth / to.width / zoom;
-    var sy = node.clientHeight / to.height / zoom;
-    var fx = from.left + from.width * ox;
-    var fy = from.top + from.height * oy;
-    var tx = to.left + to.width * ox;
-    var ty = to.top + to.height * oy;
-    var dx = (fx - tx) * sx;
-    var dy = (fy - ty) * sy;
-    var dsx = from.width / to.width;
-    var dsy = from.height / to.height;
-    return {
-      delay,
-      duration: typeof duration2 === "function" ? duration2(Math.sqrt(dx * dx + dy * dy)) : duration2,
-      easing,
-      css: (t, u) => {
-        var x = u * dx;
-        var y = u * dy;
-        var sx2 = t + u * dsx;
-        var sy2 = t + u * dsy;
-        return `transform: ${transform} translate(${x}px, ${y}px) scale(${sx2}, ${sy2});`;
-      }
-    };
-  }
-  function get_zoom(element) {
-    if ("currentCSSZoom" in element) {
-      return (
-        /** @type {number} */
-        element.currentCSSZoom
-      );
-    }
-    var current = element;
-    var zoom = 1;
-    while (current !== null) {
-      zoom *= +getComputedStyle(current).zoom;
-      current = /** @type {Element | null} */
-      current.parentElement;
-    }
-    return zoom;
-  }
-  const prefersReducedMotion = /* @__PURE__ */ new MediaQuery(
-    "(prefers-reduced-motion: reduce)"
-  );
-  const allDaySegmentContent = ($$anchor, seg = noop) => {
-    var fragment = root_3$6();
-    var node = first_child(fragment);
-    {
-      var consequent = ($$anchor2) => {
-        var span = root$5();
-        var text2 = child(span, true);
-        reset(span);
-        template_effect(() => set_text(text2, seg().ev.title));
-        append($$anchor2, span);
-      };
-      var alternate = ($$anchor2) => {
-        var fragment_1 = root_1$6();
-        var span_1 = sibling(first_child(fragment_1), 2);
-        var text_1 = child(span_1, true);
-        reset(span_1);
-        template_effect(() => set_text(text_1, seg().ev.title));
-        append($$anchor2, fragment_1);
-      };
-      if_block(node, ($$render) => {
-        if (seg().isStart) $$render(consequent);
-        else $$render(alternate, -1);
-      });
-    }
-    var node_1 = sibling(node, 2);
-    {
-      var consequent_1 = ($$anchor2) => {
-        var span_2 = root_2$6();
-        append($$anchor2, span_2);
-      };
-      if_block(node_1, ($$render) => {
-        if (!seg().isEnd && seg().totalDays > 1) $$render(consequent_1);
-      });
-    }
-    append($$anchor, fragment);
-  };
-  var root$5 = /* @__PURE__ */ from_html(`<span class="wg-ad-title svelte-j4rvbp"> </span>`);
-  var root_1$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span> <span class="wg-ad-title svelte-j4rvbp"> </span>`, 1);
-  var root_2$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
-  var root_3$6 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-  var root_4$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-j4rvbp"> </span>`);
-  var root_5$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-j4rvbp"> </span> <span class="wg-ev-title svelte-j4rvbp"> </span> <!>`, 1);
-  var root_6$6 = /* @__PURE__ */ from_html(`<span> </span>`);
-  var root_7$5 = /* @__PURE__ */ from_html(`<span class="wg-cell-month svelte-j4rvbp"> </span>`);
-  var root_8$5 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-j4rvbp"><!></div>`);
-  var root_9$4 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-j4rvbp"> </span>`);
-  var root_10$4 = /* @__PURE__ */ from_html(`<div class="wg-blocked svelte-j4rvbp"><!></div>`);
-  var root_11$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
-  var root_12$4 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
-  var root_13$3 = /* @__PURE__ */ from_html(`<div class="wg-allday svelte-j4rvbp"><!> <!></div>`);
-  var root_14$3 = /* @__PURE__ */ from_html(`<div class="wg-ev wg-ev--drag-preview svelte-j4rvbp" aria-hidden="true"><!></div>`);
-  var root_15$3 = /* @__PURE__ */ from_html(`<div class="wg-ev-more svelte-j4rvbp"> </div>`);
-  var root_16$3 = /* @__PURE__ */ from_html(`<div role="gridcell" tabindex="0"><div><!> <span class="wg-day-wd svelte-j4rvbp"> </span></div> <!> <!> <!> <!> <div class="wg-cell-events svelte-j4rvbp"><!> <!> <!></div></div>`);
-  var root_17$3 = /* @__PURE__ */ from_html(`<div><div class="wg-week-body svelte-j4rvbp"><div class="wg-days svelte-j4rvbp"></div></div></div>`);
-  var root_18$3 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-j4rvbp" role="grid"></div></div>`);
+  var root_1$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span>`);
+  var root_2$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-span svelte-j4rvbp" aria-hidden="true"> </span>`);
+  var root_3$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
+  var root_4$6 = /* @__PURE__ */ from_html(`<button type="button"><!> <span class="tw-ad-title svelte-j4rvbp"> </span> <!> <!></button>`);
+  var root_5$6 = /* @__PURE__ */ from_html(`<span> </span>`);
+  var root_6$6 = /* @__PURE__ */ from_html(`<div class="tw-hd-custom svelte-j4rvbp"><!></div>`);
+  var root_7$6 = /* @__PURE__ */ from_html(`<div><span class="tw-hd-wd svelte-j4rvbp"> </span> <!> <!></div>`);
+  var root_8$6 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
+  var root_9$4 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
+  var root_10$4 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
+  var root_11$3 = /* @__PURE__ */ from_html(`<span class="tw-gutter-lb svelte-j4rvbp"> </span>`);
+  var root_12$3 = /* @__PURE__ */ from_html(`<span class="tw-gutter-now svelte-j4rvbp"></span>`);
+  var root_13$3 = /* @__PURE__ */ from_html(`<div class="tw-line svelte-j4rvbp"></div> <div class="tw-line tw-line--half svelte-j4rvbp"></div>`, 1);
+  var root_14$3 = /* @__PURE__ */ from_html(`<span class="tw-blocked-lb svelte-j4rvbp"> </span>`);
+  var root_15$3 = /* @__PURE__ */ from_html(`<div class="tw-blocked svelte-j4rvbp"><!></div>`);
+  var root_16$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-loc svelte-j4rvbp"> </span>`);
+  var root_17$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-time svelte-j4rvbp"> </span> <span class="tw-ev-title svelte-j4rvbp"> </span> <!>`, 1);
+  var root_18$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-live svelte-j4rvbp" aria-hidden="true"></span>`);
+  var root_19$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--start svelte-j4rvbp" aria-hidden="true"></span> <span class="tw-ev-handle tw-ev-handle--end svelte-j4rvbp" aria-hidden="true"></span>`, 1);
+  var root_20$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="tw-ev-stripe svelte-j4rvbp" aria-hidden="true"></div> <div class="tw-ev-body svelte-j4rvbp"><!></div> <!> <!></div>`);
+  var root_21$3 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
+  var root_22$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
+  var root_23$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
+  var root_24$2 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
+  var root_25$2 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
+  var root_26$2 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
+  var root_27$2 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><div class="tw-top svelte-j4rvbp"><div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div> <!></div> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"></div> <!></div></div></div></div> <!></div>`);
   function PlannerWeek($$anchor, $$props) {
     push($$props, true);
-    const timedEventContent = ($$anchor2, ev = noop) => {
-      EventContent($$anchor2, {
-        get event() {
-          return ev();
+    const allDayChip = ($$anchor2, seg = noop) => {
+      var button = root_4$6();
+      let classes;
+      let styles;
+      var node = child(button);
+      {
+        var consequent = ($$anchor3) => {
+          var span = root_1$6();
+          append($$anchor3, span);
+        };
+        if_block(node, ($$render) => {
+          if (!seg().isStart) $$render(consequent);
+        });
+      }
+      var span_1 = sibling(node, 2);
+      var text2 = child(span_1, true);
+      reset(span_1);
+      var node_1 = sibling(span_1, 2);
+      {
+        var consequent_1 = ($$anchor3) => {
+          var span_2 = root_2$6();
+          var text_1 = child(span_2);
+          reset(span_2);
+          template_effect(() => set_text(text_1, `${seg().dayIndex ?? ""}/${seg().totalDays ?? ""}`));
+          append($$anchor3, span_2);
+        };
+        if_block(node_1, ($$render) => {
+          if (seg().totalDays > 1) $$render(consequent_1);
+        });
+      }
+      var node_2 = sibling(node_1, 2);
+      {
+        var consequent_2 = ($$anchor3) => {
+          var span_3 = root_3$6();
+          append($$anchor3, span_3);
+        };
+        if_block(node_2, ($$render) => {
+          if (!seg().isEnd && seg().totalDays > 1) $$render(consequent_2);
+        });
+      }
+      reset(button);
+      template_effect(
+        ($0, $1) => {
+          classes = set_class(button, 1, "tw-ad svelte-j4rvbp", null, classes, {
+            "tw-ad--start": seg().isStart,
+            "tw-ad--end": seg().isEnd,
+            "tw-ad--mid": !seg().isStart && !seg().isEnd,
+            "tw-ad--selected": selectedEventId() === seg().ev.id,
+            "tw-ad--cancelled": seg().ev.status === "cancelled"
+          });
+          set_attribute(button, "aria-label", `${seg().ev.title ?? ""}${$0 ?? ""}${$1 ?? ""}`);
+          styles = set_style(button, "", styles, { "--ev-color": seg().ev.color ?? "var(--dt-accent)" });
+          set_text(text2, seg().ev.title);
         },
-        children: ($$anchor3, $$slotProps) => {
-          var fragment_3 = root_5$6();
-          var span_3 = first_child(fragment_3);
-          var text_2 = child(span_3, true);
-          reset(span_3);
-          var span_4 = sibling(span_3, 2);
-          var text_3 = child(span_4, true);
-          reset(span_4);
-          var node_2 = sibling(span_4, 2);
-          {
-            var consequent_2 = ($$anchor4) => {
-              var span_5 = root_4$6();
-              var text_4 = child(span_5, true);
-              reset(span_5);
-              template_effect(() => set_text(text_4, ev().location));
-              append($$anchor4, span_5);
-            };
-            if_block(node_2, ($$render) => {
-              if (ev().location) $$render(consequent_2);
-            });
-          }
-          template_effect(
-            ($0) => {
-              set_text(text_2, $0);
-              set_text(text_3, ev().title);
-            },
-            [() => fmtAmPm(ev().start)]
-          );
-          append($$anchor3, fragment_3);
-        },
-        $$slots: { default: true }
-      });
+        [
+          () => seg().totalDays > 1 ? `, ${get(L).dayNOfTotal(seg().dayIndex, seg().totalDays)}` : `, ${get(L).allDay}`,
+          () => statusText(seg().ev)
+        ]
+      );
+      delegated("click", button, () => $$props.oneventclick?.(seg().ev));
+      event("pointerenter", button, () => get(oneventhover)?.(seg().ev));
+      append($$anchor2, button);
     };
-    const L = /* @__PURE__ */ user_derived(getLabels);
     let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const clock = createClock(ctx.timezone);
-    const ANIM = /* @__PURE__ */ user_derived(() => prefersReducedMotion.current ? 0 : 180);
-    const [previewSend, previewReceive] = crossfade({ duration: () => prefersReducedMotion.current ? 0 : 160 });
     const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
     const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
@@ -8289,579 +7863,966 @@
     const autoHeight = /* @__PURE__ */ user_derived(() => ctx.autoHeight);
     const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
     const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
-    const INITIAL_BUFFER = 52;
-    const EXTEND_BY = 26;
-    const EDGE_PX = 200;
-    let bufferBefore = /* @__PURE__ */ state(INITIAL_BUFFER);
-    let bufferAfter = /* @__PURE__ */ state(INITIAL_BUFFER);
-    const MAX_EVENTS_SHOWN = 5;
-    const _initMs = untrack(() => sod($$props.focusDate?.getTime() ?? Date.now()));
-    let internalFocusMs = /* @__PURE__ */ state(proxy(_initMs));
-    let lastExternalMs = _initMs;
-    let el;
-    function scrollWeekIntoContainer(targetMs, behavior = "auto") {
-      if (!el) return;
-      let target = null;
-      if (targetMs !== void 0) {
-        const rows = el.querySelectorAll("[data-week]");
-        for (const row of rows) {
-          const weekMs = Number(row.dataset.week);
-          if (weekMs <= targetMs && targetMs < weekMs + get(customDays) * DAY_MS) {
-            target = row;
-            break;
-          }
-        }
-      }
-      if (!target) target = el.querySelector(".wg-week--current");
-      if (!target) return;
-      const targetTop = target.offsetTop - (el.clientHeight - target.offsetHeight) / 2;
-      el.scrollTo({ top: Math.max(0, targetTop), behavior });
-    }
+    const SNAP_MS = /* @__PURE__ */ user_derived(() => ctx.snapInterval * 6e4);
+    const HOUR_H = 48;
+    const GUTTER_W = 48;
+    const MIN_COL_W = 110;
+    const ALLDAY_MAX = 3;
+    const startHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[0] ?? 0);
+    const endHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[1] ?? 24);
+    const hourCount = /* @__PURE__ */ user_derived(() => Math.max(1, get(endHour) - get(startHour)));
+    const gridHeight = /* @__PURE__ */ user_derived(() => get(hourCount) * HOUR_H);
+    let scrollEl;
+    let colsEl;
     const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
     const customDays = /* @__PURE__ */ user_derived(() => get(viewState)?.dayCount ?? 7);
-    const anchorPeriodStart = /* @__PURE__ */ user_derived(() => get(customDays) === 7 ? startOfWeek(get(internalFocusMs), mondayStart()) : sod(get(internalFocusMs)));
+    const weekStartMs = /* @__PURE__ */ user_derived(() => {
+      const r = get(viewState)?.range;
+      if (r) return sod(r.start.getTime());
+      const f = $$props.focusDate?.getTime() ?? get(todayMs);
+      return get(customDays) === 7 ? startOfWeek(f, mondayStart()) : sod(f);
+    });
+    const weekEndMs = /* @__PURE__ */ user_derived(() => addDaysMs(get(weekStartMs), get(customDays)));
+    const weekHasToday = /* @__PURE__ */ user_derived(() => get(todayMs) >= get(weekStartMs) && get(todayMs) < get(weekEndMs));
+    const dayCols = /* @__PURE__ */ user_derived(() => {
+      const cols = [];
+      for (let d = 0; d < get(customDays); d++) {
+        const ms = addDaysMs(get(weekStartMs), d);
+        const date = new Date(ms);
+        const dow = date.getDay();
+        const isoDay = dow === 0 ? 7 : dow;
+        if (get(hideDays)?.includes(isoDay)) continue;
+        cols.push({
+          ms,
+          isToday: ms === get(todayMs),
+          isPast: get(equalDays) ? false : ms < get(todayMs),
+          isWeekend: dow === 0 || dow === 6,
+          isDisabled: get(disabledSet).has(ms),
+          isoDay,
+          dayNum: date.getDate()
+        });
+      }
+      return cols;
+    });
+    const innerMinWidth = /* @__PURE__ */ user_derived(() => GUTTER_W + get(dayCols).length * MIN_COL_W);
     user_effect(() => {
       if (!get(loadRangeCtx)) return;
-      const rangeStart = new Date(get(anchorPeriodStart) - get(bufferBefore) * get(customDays) * DAY_MS);
-      const rangeEnd = new Date(get(anchorPeriodStart) + (get(bufferAfter) + 1) * get(customDays) * DAY_MS);
+      const rangeStart = new Date(get(weekStartMs) - 7 * DAY_MS);
+      const rangeEnd = new Date(get(weekEndMs) + 7 * DAY_MS);
       get(loadRangeCtx).set({ start: rangeStart, end: rangeEnd });
       return () => get(loadRangeCtx).set(null);
     });
-    const weeks = /* @__PURE__ */ user_derived(() => {
-      const result = [];
-      for (let w = -get(bufferBefore); w <= get(bufferAfter); w++) {
-        const periodStart = get(anchorPeriodStart) + w * get(customDays) * DAY_MS;
-        const isCurrent = get(todayMs) >= periodStart && get(todayMs) < periodStart + get(customDays) * DAY_MS;
-        const days = [];
-        for (let d = 0; d < get(customDays); d++) {
-          const ms = periodStart + d * DAY_MS;
-          const date = new Date(ms);
-          const dayNum2 = date.getDate();
-          const dow = date.getDay();
-          const isWeekend = dow === 0 || dow === 6;
-          const isToday = ms === get(todayMs);
-          const isPast = get(equalDays) ? false : ms < get(todayMs);
-          const isFirstOfMonth = dayNum2 === 1;
-          const monthLabel2 = d === 0 || isFirstOfMonth ? monthLong(ms, $$props.locale).toUpperCase() : null;
-          const dayEnd = ms + DAY_MS;
-          const dayEventsAll = events().filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
-          const timedEvents = [];
-          const allDaySegments = [];
-          for (const ev of dayEventsAll) {
-            if (isAllDay(ev) || isMultiDay(ev)) {
-              const seg = segmentForDay(ev, ms);
-              if (seg) allDaySegments.push(seg);
-            } else {
-              timedEvents.push(ev);
+    const allDayByDay = /* @__PURE__ */ user_derived(() => {
+      const map = /* @__PURE__ */ new Map();
+      for (const day of get(dayCols)) {
+        const segs = [];
+        for (const ev of events()) {
+          if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+          const seg = segmentForDay(ev, day.ms);
+          if (seg) segs.push(seg);
+        }
+        if (segs.length) map.set(day.ms, segs);
+      }
+      return map;
+    });
+    const hasAllDayRow = /* @__PURE__ */ user_derived(() => get(allDayByDay).size > 0);
+    let adExpanded = proxy({});
+    const movingId = /* @__PURE__ */ user_derived(() => get(drag)?.active && get(drag).mode === "move" ? get(drag).payload?.eventId ?? null : null);
+    const movingEvent = /* @__PURE__ */ user_derived(() => get(movingId) ? events().find((e) => e.id === get(movingId)) ?? null : null);
+    const layoutByDay = /* @__PURE__ */ user_derived(() => {
+      const rsP = get(drag)?.active && (get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
+      const map = /* @__PURE__ */ new Map();
+      for (const day of get(dayCols)) {
+        let find = function(i) {
+          while (par[i] !== i) {
+            par[i] = par[par[i]];
+            i = par[i];
+          }
+          return i;
+        };
+        const dayEnd = day.ms + DAY_MS;
+        const bandStart = day.ms + get(startHour) * HOUR_MS;
+        const bandEnd = day.ms + get(endHour) * HOUR_MS;
+        const infos = [];
+        for (const ev of events()) {
+          if (isAllDay(ev) || isMultiDay(ev)) continue;
+          if (ev.id === get(movingId)) continue;
+          const isResizing = rsP?.eventId === ev.id;
+          const s0 = isResizing ? rsP.start.getTime() : ev.start.getTime();
+          const e0 = isResizing ? rsP.end.getTime() : ev.end.getTime();
+          if (s0 >= dayEnd || e0 <= day.ms) continue;
+          const sMs = Math.max(s0, bandStart);
+          const eMs = Math.min(e0, bandEnd);
+          if (eMs <= sMs) continue;
+          infos.push({
+            ev,
+            startMs: sMs,
+            endMs: eMs,
+            isResizing,
+            col: 0,
+            totalCols: 1
+          });
+        }
+        infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
+        const par = infos.map((_, i) => i);
+        for (let i = 0; i < infos.length; i++) {
+          for (let j = i + 1; j < infos.length; j++) {
+            if (infos[j].startMs < infos[i].endMs) par[find(i)] = find(j);
+            else break;
+          }
+        }
+        const groups = /* @__PURE__ */ new Map();
+        for (let i = 0; i < infos.length; i++) {
+          const root2 = find(i);
+          if (!groups.has(root2)) groups.set(root2, []);
+          groups.get(root2).push(i);
+        }
+        for (const [, indices] of groups) {
+          const lanes = [];
+          for (const idx of indices) {
+            const inf = infos[idx];
+            let lane = 0;
+            for (let r = 0; r < lanes.length; r++) {
+              if (lanes[r] <= inf.startMs) {
+                lane = r;
+                lanes[r] = inf.endMs;
+                break;
+              }
+              lane = r + 1;
             }
+            if (lane >= lanes.length) lanes.push(inf.endMs);
+            infos[idx].col = lane;
           }
-          days.push({
-            ms,
-            dayNum: dayNum2,
-            isToday,
-            isPast,
-            isWeekend,
-            isFirstOfMonth,
-            monthLabel: monthLabel2,
-            events: timedEvents,
-            allDaySegments
-          });
+          for (const idx of indices) infos[idx].totalCols = lanes.length;
         }
-        const startDate = new Date(periodStart);
-        const showMonth = get(customDays) === 7 ? startDate.getDate() <= 7 : startDate.getDate() <= get(customDays);
-        const monthLabel = showMonth ? monthLong(periodStart, $$props.locale).toUpperCase() : null;
-        result.push({ weekStart: periodStart, isCurrent, monthLabel, days });
+        map.set(day.ms, infos.map((inf) => ({
+          ev: inf.ev,
+          top: ((inf.startMs - day.ms) / HOUR_MS - get(startHour)) * HOUR_H,
+          height: Math.max(24, (inf.endMs - inf.startMs) / HOUR_MS * HOUR_H),
+          col: inf.col,
+          totalCols: inf.totalCols,
+          isResizing: inf.isResizing
+        })));
       }
-      if (get(hideDays)?.length) {
-        for (const row of result) {
-          row.days = row.days.filter((d) => {
-            const isoDay = new Date(d.ms).getDay();
-            const iso = isoDay === 0 ? 7 : isoDay;
-            return !get(hideDays).includes(iso);
-          });
-        }
+      return map;
+    });
+    const nowIds = /* @__PURE__ */ user_derived(() => {
+      const now = clock.tick;
+      const s = /* @__PURE__ */ new Set();
+      for (const ev of events()) {
+        if (ev.start.getTime() <= now && ev.end.getTime() > now) s.add(ev.id);
       }
-      return result;
+      return s;
     });
-    function fmtAmPm(d) {
-      return fmtTime$1(d, $$props.locale);
-    }
-    onMount(async () => {
-      await tick();
-      scrollWeekIntoContainer();
+    const nowFracHour = /* @__PURE__ */ user_derived(() => (clock.tick - clock.today) / HOUR_MS);
+    const nowY = /* @__PURE__ */ user_derived(() => {
+      if (get(nowFracHour) < get(startHour) || get(nowFracHour) > get(endHour)) return null;
+      return (get(nowFracHour) - get(startHour)) * HOUR_H;
     });
+    const weekIsEmpty = /* @__PURE__ */ user_derived(() => !events().some((ev) => ev.start.getTime() < get(weekEndMs) && ev.end.getTime() > get(weekStartMs)));
     user_effect(() => {
-      const ext = $$props.focusDate ? sod($$props.focusDate.getTime()) : clock.today;
-      if (ext !== lastExternalMs) {
-        lastExternalMs = ext;
-        set(internalFocusMs, ext, true);
-        tick().then(() => scrollWeekIntoContainer(ext));
-      }
+      void get(weekStartMs);
+      const el = scrollEl;
+      if (!el) return;
+      untrack(() => {
+        let targetHour;
+        if (get(weekHasToday)) {
+          const clamped = Math.min(Math.max(get(nowFracHour), get(startHour)), get(endHour));
+          targetHour = Math.max(get(startHour), clamped - 1);
+        } else {
+          targetHour = Math.max(get(startHour), Math.min(8, get(endHour) - 1));
+        }
+        el.scrollTop = (targetHour - get(startHour)) * HOUR_H;
+      });
     });
-    function syncFocusFromScroll() {
-      if (!el || !get(viewState)) return;
-      const centerY = el.scrollTop + el.clientHeight / 2;
-      const rows = el.querySelectorAll("[data-week]");
-      for (const row of rows) {
-        if (row.offsetTop + row.offsetHeight >= centerY) {
-          const ms = Number(row.dataset.week);
-          if (Number.isFinite(ms) && ms !== lastExternalMs) {
-            lastExternalMs = ms;
-            get(viewState).setFocusDate(new Date(ms));
-          }
+    function colsRect() {
+      return colsEl.getBoundingClientRect();
+    }
+    function pointerDayIndex(clientX) {
+      const r = colsRect();
+      const n = get(dayCols).length;
+      if (n === 0) return 0;
+      const w = r.width / n;
+      return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+    }
+    function pointerHour(clientY) {
+      return get(startHour) + (clientY - colsRect().top) / HOUR_H;
+    }
+    function pointerTimeMs(clientX, clientY) {
+      const dayMs = get(dayCols)[pointerDayIndex(clientX)]?.ms ?? get(weekStartMs);
+      const hour = Math.min(Math.max(pointerHour(clientY), get(startHour)), get(endHour));
+      return dayMs + hour * HOUR_MS;
+    }
+    function clampToDayBand(ms, dayMs) {
+      return Math.max(dayMs + get(startHour) * HOUR_MS, Math.min(dayMs + get(endHour) * HOUR_MS, ms));
+    }
+    function isBlockedAt(dayMs, hour) {
+      if (!get(blockedSlots)?.length) return false;
+      const jsDay = new Date(dayMs).getDay();
+      const isoDay = jsDay === 0 ? 7 : jsDay;
+      return get(blockedSlots).some((slot) => {
+        if (slot.day && slot.day !== isoDay) return false;
+        return hour >= slot.start && hour < slot.end;
+      });
+    }
+    function blockedRangeLabel(dayMs, slotStart, slotEnd) {
+      return `${fmtTime$1(new Date(dayMs + slotStart * HOUR_MS), $$props.locale)} – ${fmtTime$1(new Date(dayMs + slotEnd * HOUR_MS), $$props.locale)}`;
+    }
+    function statusText(ev) {
+      if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+      if (ev.status === "tentative") return ` (${get(L).tentative})`;
+      if (ev.status === "full") return ` (${get(L).full})`;
+      if (ev.status === "limited") return ` (${get(L).limited})`;
+      return "";
+    }
+    function ghostForDay(dayMs) {
+      if (!get(drag)?.active || !get(drag).payload) return null;
+      const mode = get(drag).mode;
+      if (mode !== "move" && mode !== "create") return null;
+      const s = get(drag).payload.start.getTime();
+      const e = get(drag).payload.end.getTime();
+      const bandS = dayMs + get(startHour) * HOUR_MS;
+      const bandE = dayMs + get(endHour) * HOUR_MS;
+      const cs = Math.max(s, bandS);
+      const ce = Math.min(e, bandE);
+      if (ce <= cs) return null;
+      return {
+        top: ((cs - dayMs) / HOUR_MS - get(startHour)) * HOUR_H,
+        height: Math.max(12, (ce - cs) / HOUR_MS * HOUR_H),
+        start: get(drag).payload.start,
+        end: get(drag).payload.end,
+        create: mode === "create",
+        // Only the segment containing the start shows the readout
+        showTime: cs === Math.max(s, dayMs)
+      };
+    }
+    const CREATE_THRESHOLD = 4;
+    const LONG_PRESS_MS = 350;
+    const LONG_PRESS_TOLERANCE = 8;
+    let suppressColsClick = false;
+    let crStartX = 0;
+    let crStartY = 0;
+    let crAnchorMs = 0;
+    let crDayMs = 0;
+    let crStarted = false;
+    let longPressTimer = null;
+    function blockTouchScroll(e) {
+      e.preventDefault();
+    }
+    function addTouchScrollBlock() {
+      window.addEventListener("touchmove", blockTouchScroll, { passive: false });
+    }
+    function removeTouchScrollBlock() {
+      window.removeEventListener("touchmove", blockTouchScroll);
+    }
+    function clearLongPress() {
+      if (longPressTimer !== null) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
+    function startColsCreate() {
+      if (!get(drag)) return;
+      crStarted = true;
+      crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / get(SNAP_MS)) * get(SNAP_MS), crDayMs);
+      get(drag).beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + get(SNAP_MS)));
+      addTouchScrollBlock();
+    }
+    function onColsPointerDown(e) {
+      if (e.button !== 0 || !get(drag) || !$$props.oneventcreate || readOnly()) return;
+      if (e.target.closest(".tw-ev, .tw-ghost")) return;
+      const day = get(dayCols)[pointerDayIndex(e.clientX)];
+      if (!day || day.isDisabled) return;
+      if (isBlockedAt(day.ms, Math.min(Math.max(pointerHour(e.clientY), get(startHour)), get(endHour)))) return;
+      crStartX = e.clientX;
+      crStartY = e.clientY;
+      crDayMs = day.ms;
+      crAnchorMs = clampToDayBand(day.ms + Math.max(pointerHour(e.clientY), get(startHour)) * HOUR_MS, day.ms);
+      crStarted = false;
+      if (e.pointerType === "touch") {
+        longPressTimer = setTimeout(
+          () => {
+            longPressTimer = null;
+            startColsCreate();
+          },
+          LONG_PRESS_MS
+        );
+      }
+      window.addEventListener("pointermove", onColsCreateMove);
+      window.addEventListener("pointerup", onColsCreateUp, { once: true });
+      window.addEventListener("pointercancel", onColsCreateCancel, { once: true });
+    }
+    function onColsCreateMove(e) {
+      if (!get(drag)) return;
+      if (!crStarted) {
+        if (longPressTimer !== null) {
+          const moved = Math.hypot(e.clientX - crStartX, e.clientY - crStartY);
+          if (moved > LONG_PRESS_TOLERANCE) cleanupColsCreate();
           return;
         }
+        if (e.pointerType === "touch") return;
+        if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
+        startColsCreate();
       }
+      const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
+      const snapped = clampToDayBand(Math.round(raw / get(SNAP_MS)) * get(SNAP_MS), crDayMs);
+      get(drag).updatePointer(new Date(Math.min(crAnchorMs, snapped)), new Date(Math.max(crAnchorMs + get(SNAP_MS), snapped)));
     }
-    let extending = false;
-    function handleUserScroll() {
-      syncFocusFromScroll();
-      if (!el || extending) return;
-      if (el.scrollTop < EDGE_PX) {
-        extending = true;
-        const oldHeight = el.scrollHeight;
-        set(bufferBefore, get(bufferBefore) + EXTEND_BY);
-        tick().then(() => {
-          el.scrollTop += el.scrollHeight - oldHeight;
-          extending = false;
-        });
-      } else {
-        const bottomRemaining = el.scrollHeight - el.clientHeight - el.scrollTop;
-        if (bottomRemaining < EDGE_PX) {
-          set(bufferAfter, get(bufferAfter) + EXTEND_BY);
-        }
+    function cleanupColsCreate() {
+      clearLongPress();
+      removeTouchScrollBlock();
+      window.removeEventListener("pointermove", onColsCreateMove);
+      window.removeEventListener("pointerup", onColsCreateUp);
+      window.removeEventListener("pointercancel", onColsCreateCancel);
+      crStarted = false;
+    }
+    function onColsCreateUp() {
+      if (get(drag) && crStarted) {
+        suppressColsClick = true;
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            suppressColsClick = false;
+          },
+          0
+        );
       }
+      cleanupColsCreate();
     }
-    function handleDayCellClick(ms, e) {
-      const target = e.target;
-      if (target.closest(".wg-ev")) return;
-      if (readOnly() || !$$props.oneventcreate) return;
-      if (get(disabledSet).has(ms)) return;
-      const durMin = get(minDuration) ? Math.max(60, get(minDuration)) : 60;
-      const start = new Date(ms + 9 * HOUR_MS);
-      const end = new Date(start.getTime() + durMin * 6e4);
-      $$props.oneventcreate({ start, end });
+    function onColsCreateCancel() {
+      if (get(drag) && crStarted) get(drag).cancel();
+      cleanupColsCreate();
     }
-    const DRAG_THRESHOLD = 8;
-    let evDragStartX = 0;
-    let evDragStartY = 0;
-    let evDragStarted = false;
-    let evDragging = /* @__PURE__ */ state(false);
-    let evDragId = /* @__PURE__ */ state(null);
-    let evDragEvent = null;
-    const dragPreviewEvent = /* @__PURE__ */ user_derived(() => {
-      const payload = get(drag)?.active && get(drag).mode === "move" ? get(drag).payload : null;
-      if (!payload?.eventId) return null;
-      const ev = events().find((event2) => event2.id === payload.eventId);
-      if (!ev) return null;
-      return { ...ev, start: payload.start, end: payload.end };
-    });
-    function isDraggedEvent(eventId) {
-      return get(dragPreviewEvent)?.id === eventId;
+    function onColsContextMenu(e) {
+      if (crStarted || longPressTimer !== null) e.preventDefault();
     }
-    function timedEventsForDay(day) {
-      if (!get(dragPreviewEvent)) return day.events;
-      return day.events.filter((ev) => ev.id !== get(dragPreviewEvent).id);
-    }
-    const previewKeySnapshot = /* @__PURE__ */ new Map();
-    function dragPreviewTimedForDay(dayMs) {
-      const ev = get(dragPreviewEvent);
-      if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
-      const dayEnd = dayMs + DAY_MS;
-      const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
-      if (hit) previewKeySnapshot.set("timed", ev.id);
-      return hit ? ev : null;
-    }
-    function dragPreviewSegmentForDay(dayMs) {
-      const ev = get(dragPreviewEvent);
-      if (!ev || !isAllDay(ev) && !isMultiDay(ev)) return null;
-      const seg = segmentForDay(ev, dayMs);
-      if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
-      return seg;
-    }
-    function getCellWidth() {
-      const cell = el?.querySelector(".wg-cell");
-      return cell ? cell.getBoundingClientRect().width : 100;
-    }
-    function getRowHeight() {
-      const row = el?.querySelector(".wg-week");
-      return row ? row.getBoundingClientRect().height + 24 : 200;
-    }
-    function onEventPointerDown(e, ev) {
-      if (e.button !== 0 || !get(drag) || readOnly() || ev.data?.readOnly) return;
-      e.stopPropagation();
-      evDragStartX = e.clientX;
-      evDragStartY = e.clientY;
-      evDragStarted = false;
-      set(evDragId, ev.id, true);
-      evDragEvent = ev;
-      window.addEventListener("pointermove", onEvWindowPointerMove);
-      window.addEventListener("pointerup", onEvWindowPointerUp, { once: true });
-      window.addEventListener("pointercancel", onEvWindowPointerCancel, { once: true });
-    }
-    function onEvWindowPointerMove(e) {
-      const ev = evDragEvent;
-      if (!get(drag) || !ev || get(evDragId) !== ev.id) return;
-      const dx = e.clientX - evDragStartX;
-      const dy = e.clientY - evDragStartY;
-      if (!evDragStarted && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
-      if (!evDragStarted) {
-        evDragStarted = true;
-        set(evDragging, true);
-        get(drag).beginMove(ev.id, ev.start, ev.end);
-      }
-      const cellW = getCellWidth();
-      const rowH = getRowHeight();
-      const dayOffset = Math.round(dx / cellW);
-      const weekOffset = Math.round(dy / rowH);
-      const deltaMs = (dayOffset + weekOffset * 7) * DAY_MS;
-      get(drag).updatePointer(new Date(ev.start.getTime() + deltaMs), new Date(ev.end.getTime() + deltaMs));
-    }
-    function cleanupEvDrag() {
-      window.removeEventListener("pointermove", onEvWindowPointerMove);
-      window.removeEventListener("pointerup", onEvWindowPointerUp);
-      window.removeEventListener("pointercancel", onEvWindowPointerCancel);
-      evDragStarted = false;
-      set(evDragging, false);
-      set(evDragId, null);
-      evDragEvent = null;
-    }
-    function onEvWindowPointerUp() {
-      if (!get(drag)) {
-        cleanupEvDrag();
+    function handleColsClick(e) {
+      if (suppressColsClick) {
+        suppressColsClick = false;
         return;
       }
+      if (!$$props.oneventcreate || readOnly()) return;
+      if (e.target.closest(".tw-ev, .tw-ghost")) return;
+      const day = get(dayCols)[pointerDayIndex(e.clientX)];
+      if (!day || day.isDisabled) return;
+      const hour = Math.min(Math.max(pointerHour(e.clientY), get(startHour)), get(endHour));
+      if (isBlockedAt(day.ms, hour)) return;
+      const startMs = clampToDayBand(Math.floor((day.ms + hour * HOUR_MS) / get(SNAP_MS)) * get(SNAP_MS), day.ms);
+      const durMin = get(minDuration) ?? 60;
+      $$props.oneventcreate({
+        start: new Date(startMs),
+        end: new Date(startMs + durMin * 6e4)
+      });
+    }
+    const DRAG_THRESHOLD = 5;
+    let evDragStartX = 0;
+    let evDragStartY = 0;
+    let evGrabOffsetMs = 0;
+    let evDragStarted = false;
+    let evDragMovable = false;
+    let evDragEvent = null;
+    function onEventPointerDown(e, ev) {
+      if (e.button !== 0) return;
+      e.stopPropagation();
+      evDragMovable = !!get(drag) && !readOnly() && !ev.data?.readOnly;
+      evDragStartX = e.clientX;
+      evDragStartY = e.clientY;
+      evGrabOffsetMs = pointerTimeMs(e.clientX, e.clientY) - ev.start.getTime();
+      evDragStarted = false;
+      evDragEvent = ev;
+      window.addEventListener("pointermove", onEvMove);
+      window.addEventListener("pointerup", onEvUp, { once: true });
+      window.addEventListener("pointercancel", onEvCancel, { once: true });
+    }
+    function onEvMove(e) {
+      const ev = evDragEvent;
+      if (!get(drag) || !ev || !evDragMovable) return;
       if (!evDragStarted) {
-        if (evDragEvent) $$props.oneventclick?.(evDragEvent);
-      } else {
+        const moved = Math.abs(e.clientX - evDragStartX) + Math.abs(e.clientY - evDragStartY);
+        if (moved < DRAG_THRESHOLD) return;
+        evDragStarted = true;
+        get(drag).beginMove(ev.id, ev.start, ev.end);
+      }
+      const duration2 = ev.end.getTime() - ev.start.getTime();
+      const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
+      const snapped = Math.round(raw / get(SNAP_MS)) * get(SNAP_MS);
+      get(drag).updatePointer(new Date(snapped), new Date(snapped + duration2));
+    }
+    function cleanupEvDrag() {
+      window.removeEventListener("pointermove", onEvMove);
+      window.removeEventListener("pointerup", onEvUp);
+      window.removeEventListener("pointercancel", onEvCancel);
+      evDragStarted = false;
+      evDragMovable = false;
+      evDragEvent = null;
+    }
+    function onEvUp() {
+      if (!evDragStarted && evDragEvent) {
+        $$props.oneventclick?.(evDragEvent);
+      } else if (evDragStarted && get(drag)) {
+        suppressColsClick = true;
         get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            suppressColsClick = false;
+          },
+          0
+        );
       }
       cleanupEvDrag();
     }
-    function onEvWindowPointerCancel() {
+    function onEvCancel() {
       if (get(drag) && evDragStarted) get(drag).cancel();
       cleanupEvDrag();
     }
-    var div = root_18$3();
-    let classes;
-    let styles;
+    let rsStartY = 0;
+    let rsStarted = false;
+    let rsEdge = "end";
+    let rsEvent = null;
+    function onResizePointerDown(e, ev, edge) {
+      if (e.button !== 0 || !get(drag) || readOnly() || ev.data?.readOnly) return;
+      e.stopPropagation();
+      rsStartY = e.clientY;
+      rsStarted = false;
+      rsEdge = edge;
+      rsEvent = ev;
+      window.addEventListener("pointermove", onResizeMove);
+      window.addEventListener("pointerup", onResizeUp, { once: true });
+      window.addEventListener("pointercancel", onResizeCancel, { once: true });
+    }
+    function onResizeMove(e) {
+      const ev = rsEvent;
+      if (!get(drag) || !ev) return;
+      if (!rsStarted) {
+        if (Math.abs(e.clientY - rsStartY) < CREATE_THRESHOLD) return;
+        rsStarted = true;
+        get(drag).beginResize(ev.id, rsEdge, ev.start, ev.end);
+        addTouchScrollBlock();
+      }
+      const evDayMs = sod(ev.start.getTime());
+      const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
+      const snapped = clampToDayBand(Math.round(raw / get(SNAP_MS)) * get(SNAP_MS), evDayMs);
+      if (rsEdge === "end") {
+        const end = Math.max(snapped, ev.start.getTime() + get(SNAP_MS));
+        get(drag).updatePointer(ev.start, new Date(end));
+      } else {
+        const start = Math.min(snapped, ev.end.getTime() - get(SNAP_MS));
+        get(drag).updatePointer(new Date(start), ev.end);
+      }
+    }
+    function cleanupResize() {
+      removeTouchScrollBlock();
+      window.removeEventListener("pointermove", onResizeMove);
+      window.removeEventListener("pointerup", onResizeUp);
+      window.removeEventListener("pointercancel", onResizeCancel);
+      rsStarted = false;
+      rsEvent = null;
+    }
+    function onResizeUp() {
+      if (get(drag) && rsStarted) {
+        suppressColsClick = true;
+        get(commitDragCtx)?.();
+        setTimeout(
+          () => {
+            suppressColsClick = false;
+          },
+          0
+        );
+      } else if (rsEvent && !rsStarted) {
+        $$props.oneventclick?.(rsEvent);
+      }
+      cleanupResize();
+    }
+    function onResizeCancel() {
+      if (get(drag) && rsStarted) get(drag).cancel();
+      cleanupResize();
+    }
+    function onWindowKeydown(e) {
+      if (e.key !== "Escape" || !get(drag)?.active) return;
+      get(drag).cancel();
+      cleanupColsCreate();
+      cleanupEvDrag();
+      cleanupResize();
+      suppressColsClick = true;
+      window.addEventListener(
+        "pointerup",
+        () => setTimeout(
+          () => {
+            suppressColsClick = false;
+          },
+          0
+        ),
+        { once: true }
+      );
+    }
+    var div = root_27$2();
+    event("keydown", $window, onWindowKeydown);
+    let classes_1;
+    let styles_1;
     var div_1 = child(div);
-    each(div_1, 21, () => get(weeks), (week) => week.weekStart, ($$anchor2, week) => {
-      var div_2 = root_17$3();
-      let classes_1;
-      var div_3 = child(div_2);
-      var div_4 = child(div_3);
-      each(div_4, 21, () => get(week).days, (day) => day.ms, ($$anchor3, day) => {
-        const visibleAllDaySegments = /* @__PURE__ */ user_derived(() => get(day).allDaySegments.filter((seg) => !isDraggedEvent(seg.ev.id)));
-        const visibleTimedEvents = /* @__PURE__ */ user_derived(() => timedEventsForDay(get(day)));
-        const previewTimedEvent = /* @__PURE__ */ user_derived(() => dragPreviewTimedForDay(get(day).ms));
-        const previewSegment = /* @__PURE__ */ user_derived(() => dragPreviewSegmentForDay(get(day).ms));
-        var div_5 = root_16$3();
-        let classes_2;
-        var div_6 = child(div_5);
-        let classes_3;
-        var node_3 = child(div_6);
-        {
-          var consequent_3 = ($$anchor4) => {
-            var span_6 = root_6$6();
-            let classes_4;
-            var text_5 = child(span_6, true);
-            reset(span_6);
-            template_effect(() => {
-              classes_4 = set_class(span_6, 1, "wg-day-num svelte-j4rvbp", null, classes_4, { "wg-day-num--today": get(day).isToday });
-              set_text(text_5, get(day).dayNum);
-            });
-            append($$anchor4, span_6);
-          };
-          if_block(node_3, ($$render) => {
-            if (get(showDates)) $$render(consequent_3);
+    var div_2 = child(div_1);
+    let styles_2;
+    var div_3 = child(div_2);
+    var div_4 = child(div_3);
+    var div_5 = child(div_4);
+    set_style(div_5, "", {}, { width: "48px" });
+    var node_3 = sibling(div_5, 2);
+    each(node_3, 17, () => get(dayCols), (day) => day.ms, ($$anchor2, day) => {
+      var div_6 = root_7$6();
+      let classes_2;
+      var span_4 = child(div_6);
+      var text_2 = child(span_4, true);
+      reset(span_4);
+      var node_4 = sibling(span_4, 2);
+      {
+        var consequent_3 = ($$anchor3) => {
+          var span_5 = root_5$6();
+          let classes_3;
+          var text_3 = child(span_5, true);
+          reset(span_5);
+          template_effect(() => {
+            classes_3 = set_class(span_5, 1, "tw-hd-num svelte-j4rvbp", null, classes_3, { "tw-hd-num--today": get(day).isToday });
+            set_text(text_3, get(day).dayNum);
           });
-        }
-        var span_7 = sibling(node_3, 2);
-        var text_6 = child(span_7, true);
-        reset(span_7);
-        reset(div_6);
-        var node_4 = sibling(div_6, 2);
-        {
-          var consequent_4 = ($$anchor4) => {
-            var span_8 = root_7$5();
-            var text_7 = child(span_8, true);
-            reset(span_8);
-            template_effect(() => set_text(text_7, get(day).monthLabel));
-            append($$anchor4, span_8);
-          };
-          if_block(node_4, ($$render) => {
-            if (get(day).monthLabel && get(showDates)) $$render(consequent_4);
+          append($$anchor3, span_5);
+        };
+        if_block(node_4, ($$render) => {
+          if (get(showDates)) $$render(consequent_3);
+        });
+      }
+      var node_5 = sibling(node_4, 2);
+      {
+        var consequent_4 = ($$anchor3) => {
+          var div_7 = root_6$6();
+          var node_6 = child(div_7);
+          {
+            let $0 = /* @__PURE__ */ user_derived(() => ({
+              date: new Date(get(day).ms),
+              isToday: get(day).isToday,
+              dayName: weekdayShort(get(day).ms, $$props.locale)
+            }));
+            snippet(node_6, () => get(dayHeaderSnippet), () => get($0));
+          }
+          reset(div_7);
+          append($$anchor3, div_7);
+        };
+        if_block(node_5, ($$render) => {
+          if (get(dayHeaderSnippet)) $$render(consequent_4);
+        });
+      }
+      reset(div_6);
+      template_effect(
+        ($0) => {
+          classes_2 = set_class(div_6, 1, "tw-hd svelte-j4rvbp", null, classes_2, { "tw-hd--today": get(day).isToday });
+          set_attribute(div_6, "aria-current", get(day).isToday ? "date" : void 0);
+          set_text(text_2, $0);
+        },
+        [() => weekdayShort(get(day).ms, $$props.locale)]
+      );
+      append($$anchor2, div_6);
+    });
+    reset(div_4);
+    var node_7 = sibling(div_4, 2);
+    {
+      var consequent_6 = ($$anchor2) => {
+        var div_8 = root_10$4();
+        var div_9 = child(div_8);
+        set_style(div_9, "", {}, { width: "48px" });
+        var span_6 = child(div_9);
+        var text_4 = child(span_6, true);
+        reset(span_6);
+        reset(div_9);
+        var node_8 = sibling(div_9, 2);
+        each(node_8, 17, () => get(dayCols), (day) => day.ms, ($$anchor3, day) => {
+          const segs = /* @__PURE__ */ user_derived(() => get(allDayByDay).get(get(day).ms) ?? []);
+          const isExpanded = /* @__PURE__ */ user_derived(() => adExpanded[get(day).ms] ?? false);
+          const shown = /* @__PURE__ */ user_derived(() => get(isExpanded) ? get(segs) : get(segs).slice(0, ALLDAY_MAX));
+          var div_10 = root_9$4();
+          let classes_4;
+          var node_9 = child(div_10);
+          each(node_9, 17, () => get(shown), (seg) => seg.ev.id, ($$anchor4, seg) => {
+            allDayChip($$anchor4, () => get(seg));
           });
-        }
-        var node_5 = sibling(node_4, 2);
-        {
-          var consequent_5 = ($$anchor4) => {
-            var div_7 = root_8$5();
-            var node_6 = child(div_7);
-            {
-              let $0 = /* @__PURE__ */ user_derived(() => ({
-                date: new Date(get(day).ms),
-                isToday: get(day).isToday,
-                dayName: weekdayShort(get(day).ms, $$props.locale)
-              }));
-              snippet(node_6, () => get(dayHeaderSnippet), () => get($0));
-            }
-            reset(div_7);
-            append($$anchor4, div_7);
-          };
-          if_block(node_5, ($$render) => {
-            if (get(dayHeaderSnippet)) $$render(consequent_5);
-          });
-        }
-        var node_7 = sibling(node_5, 2);
-        {
-          var consequent_8 = ($$anchor4) => {
-            const jsDay = /* @__PURE__ */ user_derived(() => new Date(get(day).ms).getDay());
-            const isoDay = /* @__PURE__ */ user_derived(() => get(jsDay) === 0 ? 7 : get(jsDay));
-            var fragment_4 = comment();
-            var node_8 = first_child(fragment_4);
-            each(node_8, 17, () => get(blockedSlots), index, ($$anchor5, slot) => {
-              var fragment_5 = comment();
-              var node_9 = first_child(fragment_5);
-              {
-                var consequent_7 = ($$anchor6) => {
-                  var div_8 = root_10$4();
-                  var node_10 = child(div_8);
-                  {
-                    var consequent_6 = ($$anchor7) => {
-                      var span_9 = root_9$4();
-                      var text_8 = child(span_9, true);
-                      reset(span_9);
-                      template_effect(() => set_text(text_8, get(slot).label));
-                      append($$anchor7, span_9);
-                    };
-                    if_block(node_10, ($$render) => {
-                      if (get(slot).label) $$render(consequent_6);
-                    });
-                  }
-                  reset(div_8);
-                  template_effect(() => set_attribute(div_8, "aria-label", get(slot).label || "Unavailable"));
-                  append($$anchor6, div_8);
-                };
-                if_block(node_9, ($$render) => {
-                  if (!get(slot).day || get(slot).day === get(isoDay)) $$render(consequent_7);
-                });
-              }
-              append($$anchor5, fragment_5);
-            });
-            append($$anchor4, fragment_4);
-          };
-          if_block(node_7, ($$render) => {
-            if (get(blockedSlots)?.length) $$render(consequent_8);
-          });
-        }
-        var node_11 = sibling(node_7, 2);
-        {
-          var consequent_10 = ($$anchor4) => {
-            var div_9 = root_13$3();
-            var node_12 = child(div_9);
-            each(node_12, 25, () => get(visibleAllDaySegments), (seg) => seg.ev.id, ($$anchor5, seg) => {
-              var div_10 = root_11$4();
-              let classes_5;
-              let styles_1;
-              var node_13 = child(div_10);
-              allDaySegmentContent(node_13, () => get(seg));
-              reset(div_10);
+          var node_10 = sibling(node_9, 2);
+          {
+            var consequent_5 = ($$anchor4) => {
+              var button_1 = root_8$6();
+              var text_5 = child(button_1, true);
+              reset(button_1);
               template_effect(
                 ($0) => {
-                  classes_5 = set_class(div_10, 1, "wg-ad svelte-j4rvbp", null, classes_5, {
-                    "wg-ad--start": get(seg).isStart,
-                    "wg-ad--end": get(seg).isEnd,
-                    "wg-ad--mid": !get(seg).isStart && !get(seg).isEnd,
-                    "wg-ad--selected": selectedEventId() === get(seg).ev.id
-                  });
-                  set_attribute(div_10, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
-                  styles_1 = set_style(div_10, "", styles_1, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+                  set_attribute(button_1, "aria-expanded", get(isExpanded));
+                  set_text(text_5, $0);
                 },
                 [
-                  () => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`
+                  () => get(isExpanded) ? get(L).showLess : get(L).nMore(get(segs).length - ALLDAY_MAX)
                 ]
               );
-              delegated("pointerdown", div_10, (e) => onEventPointerDown(e, get(seg).ev));
-              delegated("keydown", div_10, (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  $$props.oneventclick?.(get(seg).ev);
-                }
+              delegated("click", button_1, () => {
+                adExpanded[get(day).ms] = !get(isExpanded);
               });
-              animation(div_10, () => flip, () => ({ duration: get(ANIM) }));
-              transition(1, div_10, () => previewReceive, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
-              transition(2, div_10, () => previewSend, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
-              append($$anchor5, div_10);
+              append($$anchor4, button_1);
+            };
+            if_block(node_10, ($$render) => {
+              if (get(segs).length > ALLDAY_MAX) $$render(consequent_5);
             });
-            var node_14 = sibling(node_12, 2);
+          }
+          reset(div_10);
+          template_effect(() => classes_4 = set_class(div_10, 1, "tw-ad-cell svelte-j4rvbp", null, classes_4, { "tw-ad-cell--today": get(day).isToday }));
+          append($$anchor3, div_10);
+        });
+        reset(div_8);
+        template_effect(() => set_text(text_4, get(L).allDay));
+        append($$anchor2, div_8);
+      };
+      if_block(node_7, ($$render) => {
+        if (get(hasAllDayRow)) $$render(consequent_6);
+      });
+    }
+    reset(div_3);
+    var div_11 = sibling(div_3, 2);
+    let styles_3;
+    var div_12 = child(div_11);
+    set_style(div_12, "", {}, { width: "48px" });
+    var node_11 = child(div_12);
+    each(node_11, 17, () => ({ length: get(hourCount) }), index, ($$anchor2, _, i) => {
+      var fragment_1 = comment();
+      var node_12 = first_child(fragment_1);
+      {
+        var consequent_7 = ($$anchor3) => {
+          var span_7 = root_11$3();
+          set_style(span_7, "", {}, { top: `${i * HOUR_H}px` });
+          var text_6 = child(span_7, true);
+          reset(span_7);
+          template_effect(($0) => set_text(text_6, $0), [() => fmtH(get(startHour) + i, $$props.locale)]);
+          append($$anchor3, span_7);
+        };
+        if_block(node_12, ($$render) => {
+          if (i > 0) $$render(consequent_7);
+        });
+      }
+      append($$anchor2, fragment_1);
+    });
+    var node_13 = sibling(node_11, 2);
+    {
+      var consequent_8 = ($$anchor2) => {
+        var span_8 = root_12$3();
+        let styles_4;
+        template_effect(() => styles_4 = set_style(span_8, "", styles_4, { top: `${get(nowY) ?? ""}px` }));
+        append($$anchor2, span_8);
+      };
+      if_block(node_13, ($$render) => {
+        if (get(nowY) !== null && get(weekHasToday)) $$render(consequent_8);
+      });
+    }
+    reset(div_12);
+    var div_13 = sibling(div_12, 2);
+    var div_14 = child(div_13);
+    each(div_14, 21, () => ({ length: get(hourCount) }), index, ($$anchor2, _, i) => {
+      var fragment_2 = root_13$3();
+      var div_15 = first_child(fragment_2);
+      set_style(div_15, "", {}, { top: `${i * HOUR_H}px` });
+      var div_16 = sibling(div_15, 2);
+      set_style(div_16, "", {}, { top: `${i * HOUR_H + HOUR_H / 2}px` });
+      append($$anchor2, fragment_2);
+    });
+    reset(div_14);
+    var node_14 = sibling(div_14, 2);
+    each(node_14, 17, () => get(dayCols), (day) => day.ms, ($$anchor2, day) => {
+      const positioned = /* @__PURE__ */ user_derived(() => get(layoutByDay).get(get(day).ms) ?? []);
+      const ghost = /* @__PURE__ */ user_derived(() => ghostForDay(get(day).ms));
+      var div_17 = root_25$2();
+      let classes_5;
+      var node_15 = child(div_17);
+      {
+        var consequent_12 = ($$anchor3) => {
+          var fragment_3 = comment();
+          var node_16 = first_child(fragment_3);
+          each(node_16, 17, () => get(blockedSlots), index, ($$anchor4, slot) => {
+            var fragment_4 = comment();
+            var node_17 = first_child(fragment_4);
             {
-              var consequent_9 = ($$anchor5) => {
-                var div_11 = root_12$4();
-                let classes_6;
-                let styles_2;
-                var node_15 = child(div_11);
-                allDaySegmentContent(node_15, () => get(previewSegment));
-                reset(div_11);
-                template_effect(() => {
-                  classes_6 = set_class(div_11, 1, "wg-ad wg-ad--drag-preview svelte-j4rvbp", null, classes_6, {
-                    "wg-ad--start": get(previewSegment).isStart,
-                    "wg-ad--end": get(previewSegment).isEnd,
-                    "wg-ad--mid": !get(previewSegment).isStart && !get(previewSegment).isEnd
+              var consequent_11 = ($$anchor5) => {
+                const s = /* @__PURE__ */ user_derived(() => Math.max(get(slot).start, get(startHour)));
+                const e = /* @__PURE__ */ user_derived(() => Math.min(get(slot).end, get(endHour)));
+                var fragment_5 = comment();
+                var node_18 = first_child(fragment_5);
+                {
+                  var consequent_10 = ($$anchor6) => {
+                    const range = /* @__PURE__ */ user_derived(() => blockedRangeLabel(get(day).ms, get(slot).start, get(slot).end));
+                    var div_18 = root_15$3();
+                    let styles_5;
+                    var node_19 = child(div_18);
+                    {
+                      var consequent_9 = ($$anchor7) => {
+                        var span_9 = root_14$3();
+                        var text_7 = child(span_9, true);
+                        reset(span_9);
+                        template_effect(() => set_text(text_7, get(slot).label));
+                        append($$anchor7, span_9);
+                      };
+                      if_block(node_19, ($$render) => {
+                        if (get(slot).label) $$render(consequent_9);
+                      });
+                    }
+                    reset(div_18);
+                    template_effect(() => {
+                      set_attribute(div_18, "title", `${get(slot).label ? `${get(slot).label}, ` : ""}${get(range) ?? ""}`);
+                      set_attribute(div_18, "aria-label", `${(get(slot).label || "Unavailable") ?? ""}, ${get(range) ?? ""}`);
+                      styles_5 = set_style(div_18, "", styles_5, {
+                        top: `${(get(s) - get(startHour)) * HOUR_H}px`,
+                        height: `${(get(e) - get(s)) * HOUR_H}px`
+                      });
+                    });
+                    append($$anchor6, div_18);
+                  };
+                  if_block(node_18, ($$render) => {
+                    if (get(e) > get(s)) $$render(consequent_10);
                   });
-                  styles_2 = set_style(div_11, "", styles_2, {
-                    "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)"
-                  });
-                });
-                transition(1, div_11, () => previewReceive, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
-                transition(2, div_11, () => previewSend, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
-                append($$anchor5, div_11);
+                }
+                append($$anchor5, fragment_5);
               };
-              if_block(node_14, ($$render) => {
-                if (get(previewSegment)) $$render(consequent_9);
+              if_block(node_17, ($$render) => {
+                if (!get(slot).day || get(slot).day === get(day).isoDay) $$render(consequent_11);
               });
             }
-            reset(div_9);
-            append($$anchor4, div_9);
-          };
-          if_block(node_11, ($$render) => {
-            if (get(visibleAllDaySegments).length > 0 || get(previewSegment)) $$render(consequent_10);
+            append($$anchor4, fragment_4);
           });
-        }
-        var div_12 = sibling(node_11, 2);
-        var node_16 = child(div_12);
-        each(node_16, 25, () => get(visibleTimedEvents).slice(0, MAX_EVENTS_SHOWN), (ev) => ev.id, ($$anchor4, ev) => {
-          var div_13 = root_11$4();
-          let classes_7;
-          let styles_3;
-          var node_17 = child(div_13);
-          timedEventContent(node_17, () => get(ev));
-          reset(div_13);
-          template_effect(
-            ($0, $1) => {
-              classes_7 = set_class(div_13, 1, "wg-ev svelte-j4rvbp", null, classes_7, $0);
-              set_attribute(div_13, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? ` (cancelled)` : ""}${get(ev).status === "tentative" ? ` (tentative)` : ""}${get(ev).status === "full" ? ` (full)` : ""}${get(ev).status === "limited" ? ` (limited)` : ""}${$1 ?? ""}`);
-              styles_3 = set_style(div_13, "", styles_3, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
-            },
-            [
-              () => ({
-                "wg-ev--selected": selectedEventId() === get(ev).id,
-                "wg-ev--current": get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
-                "wg-ev--dragging": get(evDragging) && get(evDragId) === get(ev).id,
-                "wg-ev--readonly": get(ev).data?.readOnly,
-                "wg-ev--cancelled": get(ev).status === "cancelled",
-                "wg-ev--tentative": get(ev).status === "tentative",
-                "wg-ev--full": get(ev).status === "full",
-                "wg-ev--limited": get(ev).status === "limited"
-              }),
-              () => get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick ? ` (${get(L).inProgress})` : ""
-            ]
-          );
-          delegated("pointerdown", div_13, (e) => onEventPointerDown(e, get(ev)));
-          event("pointerenter", div_13, () => get(oneventhover)?.(get(ev)));
-          delegated("keydown", div_13, (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              e.stopPropagation();
-              $$props.oneventclick?.(get(ev));
-            }
-          });
-          animation(div_13, () => flip, () => ({ duration: get(ANIM) }));
-          transition(1, div_13, () => previewReceive, () => ({ key: get(ev).id }));
-          transition(2, div_13, () => previewSend, () => ({ key: get(ev).id }));
-          append($$anchor4, div_13);
+          append($$anchor3, fragment_3);
+        };
+        if_block(node_15, ($$render) => {
+          if (get(blockedSlots)?.length) $$render(consequent_12);
         });
-        var node_18 = sibling(node_16, 2);
+      }
+      var node_20 = sibling(node_15, 2);
+      each(node_20, 17, () => get(positioned), (p) => p.ev.id, ($$anchor3, p) => {
+        const isCurrent = /* @__PURE__ */ user_derived(() => get(nowIds).has(get(p).ev.id));
+        var div_19 = root_20$3();
+        let classes_6;
+        let styles_6;
+        var div_20 = sibling(child(div_19), 2);
+        var node_21 = child(div_20);
+        EventContent(node_21, {
+          get event() {
+            return get(p).ev;
+          },
+          children: ($$anchor4, $$slotProps) => {
+            var fragment_6 = root_17$3();
+            var span_10 = first_child(fragment_6);
+            var text_8 = child(span_10);
+            reset(span_10);
+            var span_11 = sibling(span_10, 2);
+            var text_9 = child(span_11, true);
+            reset(span_11);
+            var node_22 = sibling(span_11, 2);
+            {
+              var consequent_13 = ($$anchor5) => {
+                var span_12 = root_16$3();
+                var text_10 = child(span_12, true);
+                reset(span_12);
+                template_effect(() => set_text(text_10, get(p).ev.location));
+                append($$anchor5, span_12);
+              };
+              if_block(node_22, ($$render) => {
+                if (get(p).ev.location && get(p).height > 56) $$render(consequent_13);
+              });
+            }
+            template_effect(
+              ($0, $1) => {
+                set_text(text_8, `${$0 ?? ""} – ${$1 ?? ""}`);
+                set_text(text_9, get(p).ev.title);
+              },
+              [
+                () => fmtTime$1(get(p).ev.start, $$props.locale),
+                () => fmtTime$1(get(p).ev.end, $$props.locale)
+              ]
+            );
+            append($$anchor4, fragment_6);
+          },
+          $$slots: { default: true }
+        });
+        reset(div_20);
+        var node_23 = sibling(div_20, 2);
         {
-          var consequent_11 = ($$anchor4) => {
-            var div_14 = root_14$3();
-            let styles_4;
-            var node_19 = child(div_14);
-            timedEventContent(node_19, () => get(previewTimedEvent));
-            reset(div_14);
-            template_effect(() => styles_4 = set_style(div_14, "", styles_4, {
-              "--ev-color": get(previewTimedEvent).color ?? "var(--dt-accent)"
-            }));
-            transition(1, div_14, () => previewReceive, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
-            transition(2, div_14, () => previewSend, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
-            append($$anchor4, div_14);
+          var consequent_14 = ($$anchor4) => {
+            var span_13 = root_18$3();
+            append($$anchor4, span_13);
           };
-          if_block(node_18, ($$render) => {
-            if (get(previewTimedEvent)) $$render(consequent_11);
+          if_block(node_23, ($$render) => {
+            if (get(isCurrent)) $$render(consequent_14);
           });
         }
-        var node_20 = sibling(node_18, 2);
+        var node_24 = sibling(node_23, 2);
         {
-          var consequent_12 = ($$anchor4) => {
-            var div_15 = root_15$3();
-            var text_9 = child(div_15, true);
-            reset(div_15);
-            template_effect(($0) => set_text(text_9, $0), [
-              () => get(L).nMore(get(visibleTimedEvents).length - MAX_EVENTS_SHOWN)
-            ]);
-            append($$anchor4, div_15);
+          var consequent_15 = ($$anchor4) => {
+            var fragment_7 = root_19$3();
+            var span_14 = first_child(fragment_7);
+            var span_15 = sibling(span_14, 2);
+            delegated("pointerdown", span_14, (e) => onResizePointerDown(e, get(p).ev, "start"));
+            delegated("pointerdown", span_15, (e) => onResizePointerDown(e, get(p).ev, "end"));
+            append($$anchor4, fragment_7);
           };
-          if_block(node_20, ($$render) => {
-            if (get(visibleTimedEvents).length > MAX_EVENTS_SHOWN) $$render(consequent_12);
+          if_block(node_24, ($$render) => {
+            if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_15);
           });
         }
-        reset(div_12);
-        reset(div_5);
+        reset(div_19);
         template_effect(
-          ($0, $1, $2, $3, $4) => {
-            classes_2 = set_class(div_5, 1, "wg-cell svelte-j4rvbp", null, classes_2, $0);
-            set_attribute(div_5, "aria-label", `${$1 ?? ""}${$2 ?? ""}, ${$3 ?? ""}`);
-            classes_3 = set_class(div_6, 1, "wg-cell-hd svelte-j4rvbp", null, classes_3, { "wg-cell-hd--today": get(day).isToday });
-            set_text(text_6, $4);
+          ($0, $1, $2, $3) => {
+            classes_6 = set_class(div_19, 1, "tw-ev svelte-j4rvbp", null, classes_6, {
+              "tw-ev--selected": selectedEventId() === get(p).ev.id,
+              "tw-ev--current": get(isCurrent),
+              "tw-ev--resizing": get(p).isResizing,
+              "tw-ev--readonly": get(p).ev.data?.readOnly,
+              "tw-ev--cancelled": get(p).ev.status === "cancelled",
+              "tw-ev--tentative": get(p).ev.status === "tentative",
+              "tw-ev--full": get(p).ev.status === "full",
+              "tw-ev--limited": get(p).ev.status === "limited",
+              "tw-ev--short": get(p).height < 44,
+              "tw-ev--compact": get(p).height < 34
+            });
+            set_attribute(div_19, "title", get(p).ev.title);
+            set_attribute(div_19, "aria-label", `${get(p).ev.title ?? ""}, ${$0 ?? ""} – ${$1 ?? ""}, ${$2 ?? ""}${$3 ?? ""}${get(isCurrent) ? ` (${get(L).inProgress})` : ""}`);
+            styles_6 = set_style(div_19, "", styles_6, {
+              top: `${get(p).top ?? ""}px`,
+              height: `${get(p).height ?? ""}px`,
+              left: `calc(${get(p).col / get(p).totalCols * 100}% + 1px)`,
+              width: `calc(${100 / get(p).totalCols}% - ${get(p).totalCols > 1 ? 3 : 8}px)`,
+              "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
+            });
           },
           [
-            () => ({
-              "wg-cell--today": get(day).isToday,
-              "wg-cell--past": get(day).isPast,
-              "wg-cell--weekend": get(day).isWeekend,
-              "wg-cell--disabled": get(disabledSet).has(get(day).ms)
-            }),
-            () => new Date(get(day).ms).toLocaleDateString($$props.locale ?? "en-US", { weekday: "long", month: "short", day: "numeric" }),
-            () => get(day).isToday ? ` (${get(L).today.toLowerCase()})` : "",
-            () => get(L).nEvents(get(day).events.length),
-            () => weekdayShort(get(day).ms, $$props.locale)
+            () => fmtTime$1(get(p).ev.start, $$props.locale),
+            () => fmtTime$1(get(p).ev.end, $$props.locale),
+            () => fmtDuration(get(p).ev.start, get(p).ev.end),
+            () => statusText(get(p).ev)
           ]
         );
-        delegated("click", div_5, (e) => handleDayCellClick(get(day).ms, e));
-        delegated("keydown", div_5, (e) => {
+        delegated("pointerdown", div_19, (e) => onEventPointerDown(e, get(p).ev));
+        event("pointerenter", div_19, () => get(oneventhover)?.(get(p).ev));
+        delegated("keydown", div_19, (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            handleDayCellClick(get(day).ms, e);
+            e.stopPropagation();
+            $$props.oneventclick?.(get(p).ev);
           }
         });
-        append($$anchor3, div_5);
+        append($$anchor3, div_19);
       });
-      reset(div_4);
-      reset(div_3);
-      reset(div_2);
+      var node_25 = sibling(node_20, 2);
+      {
+        var consequent_18 = ($$anchor3) => {
+          var div_21 = root_23$2();
+          let classes_7;
+          let styles_7;
+          var node_26 = child(div_21);
+          {
+            var consequent_17 = ($$anchor4) => {
+              var fragment_8 = root_22$2();
+              var span_16 = first_child(fragment_8);
+              var text_11 = child(span_16);
+              reset(span_16);
+              var node_27 = sibling(span_16, 2);
+              {
+                var consequent_16 = ($$anchor5) => {
+                  var span_17 = root_21$3();
+                  var text_12 = child(span_17, true);
+                  reset(span_17);
+                  template_effect(() => set_text(text_12, get(movingEvent).title));
+                  append($$anchor5, span_17);
+                };
+                if_block(node_27, ($$render) => {
+                  if (!get(ghost).create && get(movingEvent)) $$render(consequent_16);
+                });
+              }
+              template_effect(($0, $1) => set_text(text_11, `${$0 ?? ""} – ${$1 ?? ""}`), [
+                () => fmtTime$1(get(ghost).start, $$props.locale),
+                () => fmtTime$1(get(ghost).end, $$props.locale)
+              ]);
+              append($$anchor4, fragment_8);
+            };
+            if_block(node_26, ($$render) => {
+              if (get(ghost).showTime) $$render(consequent_17);
+            });
+          }
+          reset(div_21);
+          template_effect(() => {
+            classes_7 = set_class(div_21, 1, "tw-ghost svelte-j4rvbp", null, classes_7, { "tw-ghost--create": get(ghost).create });
+            styles_7 = set_style(div_21, "", styles_7, {
+              top: `${get(ghost).top ?? ""}px`,
+              height: `${get(ghost).height ?? ""}px`,
+              "--ev-color": get(ghost).create ? "var(--dt-accent, #2563eb)" : get(movingEvent)?.color ?? "var(--dt-accent, #2563eb)"
+            });
+          });
+          append($$anchor3, div_21);
+        };
+        if_block(node_25, ($$render) => {
+          if (get(ghost)) $$render(consequent_18);
+        });
+      }
+      var node_28 = sibling(node_25, 2);
+      {
+        var consequent_19 = ($$anchor3) => {
+          var div_22 = root_24$2();
+          let styles_8;
+          template_effect(() => {
+            set_attribute(div_22, "aria-label", get(L).currentTime);
+            styles_8 = set_style(div_22, "", styles_8, { top: `${get(nowY) ?? ""}px` });
+          });
+          append($$anchor3, div_22);
+        };
+        if_block(node_28, ($$render) => {
+          if (get(day).isToday && get(nowY) !== null) $$render(consequent_19);
+        });
+      }
+      reset(div_17);
       template_effect(() => {
-        classes_1 = set_class(div_2, 1, "wg-week svelte-j4rvbp", null, classes_1, { "wg-week--current": get(week).isCurrent });
-        set_attribute(div_2, "data-week", get(week).weekStart);
+        classes_5 = set_class(div_17, 1, "tw-col svelte-j4rvbp", null, classes_5, {
+          "tw-col--today": get(day).isToday,
+          "tw-col--past": get(day).isPast,
+          "tw-col--weekend": get(day).isWeekend,
+          "tw-col--disabled": get(day).isDisabled
+        });
+        set_attribute(div_17, "data-day", get(day).ms);
       });
-      append($$anchor2, div_2);
+      append($$anchor2, div_17);
     });
+    reset(div_13);
+    bind_this(div_13, ($$value) => colsEl = $$value, () => colsEl);
+    reset(div_11);
+    reset(div_2);
     reset(div_1);
-    bind_this(div_1, ($$value) => el = $$value, () => el);
+    bind_this(div_1, ($$value) => scrollEl = $$value, () => scrollEl);
+    var node_29 = sibling(div_1, 2);
+    {
+      var consequent_20 = ($$anchor2) => {
+        var div_23 = root_26$2();
+        var node_30 = child(div_23);
+        snippet(node_30, () => ctx.emptySnippet);
+        reset(div_23);
+        append($$anchor2, div_23);
+      };
+      if_block(node_29, ($$render) => {
+        if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_20);
+      });
+    }
     reset(div);
     template_effect(() => {
-      classes = set_class(div, 1, "wg svelte-j4rvbp", null, classes, { "wg--auto": get(autoHeight) });
-      styles = set_style(div, style() || void 0, styles, {
+      classes_1 = set_class(div, 1, "tw svelte-j4rvbp", null, classes_1, { "tw--auto": get(autoHeight) });
+      styles_1 = set_style(div, style() || void 0, styles_1, {
         height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%"
       });
-      set_attribute(div_1, "aria-label", get(L).multiWeekGrid);
+      set_attribute(div, "aria-label", get(L).weekAhead);
+      styles_2 = set_style(div_2, "", styles_2, { "min-width": `${get(innerMinWidth) ?? ""}px` });
+      styles_3 = set_style(div_11, "", styles_3, { height: `${get(gridHeight) ?? ""}px` });
     });
-    event("scroll", div_1, handleUserScroll);
+    delegated("click", div_13, handleColsClick);
+    delegated("pointerdown", div_13, onColsPointerDown);
+    delegated("contextmenu", div_13, onColsContextMenu);
     append($$anchor, div);
     pop();
   }
-  delegate(["click", "keydown", "pointerdown"]);
+  delegate(["click", "pointerdown", "contextmenu", "keydown"]);
   var rest_excludes$2 = /* @__PURE__ */ new Set(["$$slots", "$$events", "$$legacy", "mode"]);
   function Planner($$anchor, $$props) {
     let mode = prop($$props, "mode", 3, "week"), rest = /* @__PURE__ */ rest_props($$props, rest_excludes$2);
@@ -8887,22 +8848,23 @@
   function duration(ev) {
     return fmtDuration(ev.start, ev.end);
   }
-  function timeUntilMs(ms, now2) {
-    const L = getLabels();
-    const diff = ms - now2;
+  function timeUntilMs(ms, now, labels) {
+    const L = labels ?? getLabels();
+    const diff = ms - now;
     if (diff <= 0) return L.now;
     const tMins = Math.floor(diff / 6e4);
-    if (tMins < 60) return `in ${tMins}m`;
+    if (tMins < 60) return L.inMinutes(tMins);
     const hrs = Math.floor(tMins / 60);
     const rm = tMins % 60;
-    if (hrs < 24) return rm > 0 ? `in ${hrs}h ${rm}m` : `in ${hrs}h`;
+    if (hrs < 24) return L.inHours(hrs, rm);
     const days = Math.floor(hrs / 24);
-    return `in ${days}d`;
+    return L.inDays(days);
   }
-  function progress(ev, now2) {
+  function progress(ev, now) {
     const s = ev.start.getTime();
     const e = ev.end.getTime();
-    return Math.min(1, Math.max(0, (now2 - s) / (e - s)));
+    if (e <= s) return now >= s ? 1 : 0;
+    return Math.min(1, Math.max(0, (now - s) / (e - s)));
   }
   function groupIntoSlots(evts) {
     const sorted = [...evts].sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -8922,38 +8884,39 @@
     }
     return slots;
   }
-  var root$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-n8lbn1"></span> <span class="ag-allday-title svelte-n8lbn1"> </span></div>`);
-  var root_1$5 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-n8lbn1"><div class="ag-allday-label svelte-n8lbn1"> </div> <div class="ag-allday-items svelte-n8lbn1"></div></div>`);
-  var root_2$5 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"><!></div>`);
-  var root_3$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
-  var root_4$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
-  var root_5$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
-  var root_6$5 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
-  var root_7$4 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
-  var root_8$4 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
-  var root_9$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <!> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></div>`);
-  var root_10$3 = /* @__PURE__ */ from_html(`<div class="ag-q-free svelte-n8lbn1"><div class="ag-q-free-label svelte-n8lbn1"> </div></div>`);
-  var root_11$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-q-done-check svelte-n8lbn1">✓</span> <span class="ag-q-done-title svelte-n8lbn1"> </span></div>`);
-  var root_12$3 = /* @__PURE__ */ from_html(`<button class="ag-q-done-toggle svelte-n8lbn1"> </button>`);
-  var root_13$2 = /* @__PURE__ */ from_html(`<div class="ag-q-done-section svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!> <!></div>`);
-  var root_14$2 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"> </div>`);
-  var root_15$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!>`, 1);
-  var root_16$2 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-n8lbn1"> </span>`);
-  var root_17$2 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
-  var root_18$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
-  var root_19$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
-  var root_20$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-n8lbn1"><!></div></div>`);
-  var root_21$1 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
-  var root_22$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></div>`);
-  var root_23$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
-  var root_24$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
-  var root_25$1 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <!> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
-  var root_26$1 = /* @__PURE__ */ from_html(`<div class="ag-plan svelte-n8lbn1"><!></div>`);
-  var root_27$1 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-n8lbn1" role="list"><!> <!></div></div>`);
+  var root$4 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge svelte-n8lbn1"> </span>`);
+  var root_1$5 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge ag-day-head-badge--muted svelte-n8lbn1"> </span>`);
+  var root_2$5 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-n8lbn1"></span> <span class="ag-allday-title svelte-n8lbn1"> </span></button>`);
+  var root_3$5 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-n8lbn1"><div class="ag-allday-label svelte-n8lbn1"> </div> <div class="ag-allday-items svelte-n8lbn1"></div></div>`);
+  var root_4$5 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"><!></div>`);
+  var root_5$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
+  var root_6$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
+  var root_7$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
+  var root_8$5 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
+  var root_9$3 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
+  var root_10$3 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
+  var root_11$2 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <!> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></button>`);
+  var root_12$2 = /* @__PURE__ */ from_html(`<div class="ag-q-free svelte-n8lbn1"><div class="ag-q-free-label svelte-n8lbn1"> </div></div>`);
+  var root_13$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-q-done-check svelte-n8lbn1">✓</span> <span class="ag-q-done-title svelte-n8lbn1"> </span></button>`);
+  var root_14$2 = /* @__PURE__ */ from_html(`<button type="button" class="ag-q-done-toggle svelte-n8lbn1"> </button>`);
+  var root_15$2 = /* @__PURE__ */ from_html(`<div class="ag-q-done-section svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!> <!></div>`);
+  var root_16$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-dot svelte-n8lbn1"></span> <span class="ag-compact-row-time svelte-n8lbn1"> </span> <span class="ag-compact-row-title svelte-n8lbn1"> </span> <!>`, 1);
+  var root_17$2 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-n8lbn1"> </span>`);
+  var root_18$2 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
+  var root_19$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
+  var root_20$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+  var root_21$2 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-n8lbn1"><!></div></button>`);
+  var root_22$1 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
+  var root_23$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></button>`);
+  var root_24$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
+  var root_25$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
+  var root_26$1 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <!> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+  var root_27$1 = /* @__PURE__ */ from_html(`<div class="ag-plan svelte-n8lbn1"><!></div>`);
+  var root_28$1 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-n8lbn1" role="group"><div class="ag-day-head svelte-n8lbn1"><!> <span class="ag-day-head-name svelte-n8lbn1"> </span> <span class="ag-day-head-date svelte-n8lbn1"> </span></div> <!> <!></div></div>`);
   function AgendaDay($$anchor, $$props) {
     push($$props, true);
-    const L = /* @__PURE__ */ user_derived(getLabels);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const emptySnippet = /* @__PURE__ */ user_derived(() => ctx.emptySnippet);
     let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
     const clock = createClock(ctx.timezone);
@@ -8966,36 +8929,37 @@
     const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
     let swipeStartX = 0;
     let swipeStartY = 0;
-    const SWIPE_THRESHOLD = 50;
+    let swipeActive = false;
+    const SWIPE_THRESHOLD2 = 50;
     function onPointerDown(e) {
-      if (!get(isMobile)) return;
+      if (!get(isMobile) || e.pointerType !== "touch") return;
+      swipeActive = true;
       swipeStartX = e.clientX;
       swipeStartY = e.clientY;
     }
     function onPointerUp(e) {
-      if (!get(isMobile)) return;
+      if (!swipeActive || e.pointerType !== "touch") return;
+      swipeActive = false;
       const dx = e.clientX - swipeStartX;
       const dy = e.clientY - swipeStartY;
-      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      if (Math.abs(dx) > SWIPE_THRESHOLD2 && Math.abs(dx) > Math.abs(dy) * 1.4) {
         if (dx > 0) get(viewState)?.prev();
         else get(viewState)?.next();
       }
     }
+    function onPointerCancel() {
+      swipeActive = false;
+    }
     const fmt = (d) => fmtTime(d, $$props.locale);
-    const eta = (ms) => timeUntilMs(ms, clock.tick);
+    const eta = (ms) => timeUntilMs(ms, clock.tick, get(L));
     const prog = (ev) => progress(ev, clock.tick);
     function handleClick(ev) {
       $$props.oneventclick?.(ev);
     }
-    function handleKeydown(e, ev) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        $$props.oneventclick?.(ev);
-      }
-    }
     const dayMs = /* @__PURE__ */ user_derived(() => $$props.focusDate ? sod($$props.focusDate.getTime()) : clock.today);
     const dayEnd = /* @__PURE__ */ user_derived(() => get(dayMs) + DAY_MS);
     const isToday = /* @__PURE__ */ user_derived(() => get(dayMs) === clock.today);
+    const isTomorrow = /* @__PURE__ */ user_derived(() => get(dayMs) === clock.today + DAY_MS);
     const isPastDay = /* @__PURE__ */ user_derived(() => get(equalDays) ? false : get(dayMs) < clock.today);
     const dayEvents = /* @__PURE__ */ user_derived(() => {
       return events().filter((ev) => ev.start.getTime() < get(dayEnd) && ev.end.getTime() > get(dayMs)).sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -9003,15 +8967,15 @@
     const allDayBanner = /* @__PURE__ */ user_derived(() => get(dayEvents).filter((ev) => isAllDay(ev) || isMultiDay(ev)));
     const timedDayEvents = /* @__PURE__ */ user_derived(() => get(dayEvents).filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
     const dayCat = /* @__PURE__ */ user_derived(() => {
-      const now2 = clock.tick;
+      const now = clock.tick;
       const past = [];
       const current = [];
       const upcoming = [];
       for (const ev of get(timedDayEvents)) {
         const s = ev.start.getTime();
         const e = ev.end.getTime();
-        if (e <= now2) past.push(ev);
-        else if (s <= now2 && e > now2) current.push(ev);
+        if (e <= now) past.push(ev);
+        else if (s <= now && e > now) current.push(ev);
         else upcoming.push(ev);
       }
       return {
@@ -9033,71 +8997,99 @@
     let showAllDone = /* @__PURE__ */ state(false);
     const visibleDone = /* @__PURE__ */ user_derived(() => get(showAllDone) ? get(dayCat).past : get(dayCat).past.slice(-DONE_VISIBLE));
     const hiddenDoneCount = /* @__PURE__ */ user_derived(() => get(showAllDone) ? 0 : Math.max(0, get(dayCat).past.length - DONE_VISIBLE));
-    var div = root_27$1();
+    var div = root_28$1();
     let classes;
     let styles;
     var div_1 = child(div);
-    var node = child(div_1);
+    var div_2 = child(div_1);
+    var node = child(div_2);
     {
       var consequent = ($$anchor2) => {
-        var div_2 = root_1$5();
-        var div_3 = child(div_2);
-        var text2 = child(div_3, true);
-        reset(div_3);
-        var div_4 = sibling(div_3, 2);
-        each(div_4, 21, () => get(allDayBanner), (ev) => ev.id, ($$anchor3, ev) => {
-          var div_5 = root$4();
-          let classes_1;
-          let styles_1;
-          var span = sibling(child(div_5), 2);
-          var text_1 = child(span, true);
-          reset(span);
-          reset(div_5);
-          template_effect(() => {
-            classes_1 = set_class(div_5, 1, "ag-allday-chip svelte-n8lbn1", null, classes_1, {
-              "ag-allday-chip--selected": selectedEventId() === get(ev).id
-            });
-            set_attribute(div_5, "aria-label", `${get(ev).title ?? ""}, ${get(L).allDay ?? ""}`);
-            styles_1 = set_style(div_5, "", styles_1, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-            set_text(text_1, get(ev).title);
-          });
-          delegated("click", div_5, () => handleClick(get(ev)));
-          event("pointerenter", div_5, () => get(oneventhover)?.(get(ev)));
-          delegated("keydown", div_5, (e) => handleKeydown(e, get(ev)));
-          append($$anchor3, div_5);
-        });
-        reset(div_4);
-        reset(div_2);
-        template_effect(() => set_text(text2, get(L).allDay));
-        append($$anchor2, div_2);
+        var span = root$4();
+        var text2 = child(span, true);
+        reset(span);
+        template_effect(() => set_text(text2, get(L).today));
+        append($$anchor2, span);
+      };
+      var consequent_1 = ($$anchor2) => {
+        var span_1 = root_1$5();
+        var text_1 = child(span_1, true);
+        reset(span_1);
+        template_effect(() => set_text(text_1, get(L).tomorrow));
+        append($$anchor2, span_1);
       };
       if_block(node, ($$render) => {
-        if (get(allDayBanner).length > 0) $$render(consequent);
+        if (!get(equalDays) && get(isToday)) $$render(consequent);
+        else if (!get(equalDays) && get(isTomorrow)) $$render(consequent_1, 1);
       });
     }
-    var node_1 = sibling(node, 2);
+    var span_2 = sibling(node, 2);
+    var text_2 = child(span_2, true);
+    reset(span_2);
+    var span_3 = sibling(span_2, 2);
+    var text_3 = child(span_3);
+    reset(span_3);
+    reset(div_2);
+    var node_1 = sibling(div_2, 2);
     {
-      var consequent_5 = ($$anchor2) => {
-        var div_6 = root_7$4();
-        var node_2 = child(div_6);
+      var consequent_2 = ($$anchor2) => {
+        var div_3 = root_3$5();
+        var div_4 = child(div_3);
+        var text_4 = child(div_4, true);
+        reset(div_4);
+        var div_5 = sibling(div_4, 2);
+        each(div_5, 21, () => get(allDayBanner), (ev) => ev.id, ($$anchor3, ev) => {
+          var button = root_2$5();
+          let classes_1;
+          let styles_1;
+          var span_4 = sibling(child(button), 2);
+          var text_5 = child(span_4, true);
+          reset(span_4);
+          reset(button);
+          template_effect(() => {
+            classes_1 = set_class(button, 1, "ag-allday-chip svelte-n8lbn1", null, classes_1, {
+              "ag-allday-chip--selected": selectedEventId() === get(ev).id
+            });
+            set_attribute(button, "aria-label", `${get(ev).title ?? ""}, ${get(L).allDay ?? ""}`);
+            styles_1 = set_style(button, "", styles_1, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+            set_text(text_5, get(ev).title);
+          });
+          delegated("click", button, () => handleClick(get(ev)));
+          event("pointerenter", button, () => get(oneventhover)?.(get(ev)));
+          append($$anchor3, button);
+        });
+        reset(div_5);
+        reset(div_3);
+        template_effect(() => set_text(text_4, get(L).allDay));
+        append($$anchor2, div_3);
+      };
+      if_block(node_1, ($$render) => {
+        if (get(allDayBanner).length > 0) $$render(consequent_2);
+      });
+    }
+    var node_2 = sibling(node_1, 2);
+    {
+      var consequent_7 = ($$anchor2) => {
+        var div_6 = root_9$3();
+        var node_3 = child(div_6);
         {
-          var consequent_2 = ($$anchor3) => {
-            var div_7 = root_2$5();
-            var node_3 = child(div_7);
+          var consequent_4 = ($$anchor3) => {
+            var div_7 = root_4$5();
+            var node_4 = child(div_7);
             {
-              var consequent_1 = ($$anchor4) => {
+              var consequent_3 = ($$anchor4) => {
                 var fragment = comment();
-                var node_4 = first_child(fragment);
-                snippet(node_4, () => get(emptySnippet));
+                var node_5 = first_child(fragment);
+                snippet(node_5, () => get(emptySnippet));
                 append($$anchor4, fragment);
               };
               var alternate = ($$anchor4) => {
-                var text_2 = text();
-                template_effect(() => set_text(text_2, get(L).nothingScheduledYet));
-                append($$anchor4, text_2);
+                var text_6 = text();
+                template_effect(() => set_text(text_6, get(L).nothingScheduledYet));
+                append($$anchor4, text_6);
               };
-              if_block(node_3, ($$render) => {
-                if (get(emptySnippet)) $$render(consequent_1);
+              if_block(node_4, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_3);
                 else $$render(alternate, -1);
               });
             }
@@ -9106,63 +9098,63 @@
           };
           var alternate_1 = ($$anchor3) => {
             var fragment_2 = comment();
-            var node_5 = first_child(fragment_2);
-            each(node_5, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
-              var div_8 = root_6$5();
+            var node_6 = first_child(fragment_2);
+            each(node_6, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
+              var button_1 = root_8$5();
               let classes_2;
               let styles_2;
-              var node_6 = child(div_8);
-              EventContent(node_6, {
+              var node_7 = child(button_1);
+              EventContent(node_7, {
                 get event() {
                   return get(ev);
                 },
                 children: ($$anchor5, $$slotProps) => {
-                  var fragment_3 = root_5$5();
-                  var span_1 = sibling(first_child(fragment_3), 2);
-                  var text_3 = child(span_1, true);
-                  reset(span_1);
-                  var span_2 = sibling(span_1, 2);
-                  var text_4 = child(span_2, true);
-                  reset(span_2);
-                  var node_7 = sibling(span_2, 2);
+                  var fragment_3 = root_7$5();
+                  var span_5 = sibling(first_child(fragment_3), 2);
+                  var text_7 = child(span_5, true);
+                  reset(span_5);
+                  var span_6 = sibling(span_5, 2);
+                  var text_8 = child(span_6, true);
+                  reset(span_6);
+                  var node_8 = sibling(span_6, 2);
                   {
-                    var consequent_3 = ($$anchor6) => {
-                      var span_3 = root_3$5();
-                      var text_5 = child(span_3, true);
-                      reset(span_3);
-                      template_effect(() => set_text(text_5, get(ev).subtitle));
-                      append($$anchor6, span_3);
+                    var consequent_5 = ($$anchor6) => {
+                      var span_7 = root_5$5();
+                      var text_9 = child(span_7, true);
+                      reset(span_7);
+                      template_effect(() => set_text(text_9, get(ev).subtitle));
+                      append($$anchor6, span_7);
                     };
-                    if_block(node_7, ($$render) => {
-                      if (get(ev).subtitle) $$render(consequent_3);
+                    if_block(node_8, ($$render) => {
+                      if (get(ev).subtitle) $$render(consequent_5);
                     });
                   }
-                  var node_8 = sibling(node_7, 2);
+                  var node_9 = sibling(node_8, 2);
                   {
-                    var consequent_4 = ($$anchor6) => {
+                    var consequent_6 = ($$anchor6) => {
                       var fragment_4 = comment();
-                      var node_9 = first_child(fragment_4);
-                      each(node_9, 17, () => get(ev).tags, index, ($$anchor7, tag) => {
-                        var span_4 = root_4$5();
-                        var text_6 = child(span_4, true);
-                        reset(span_4);
-                        template_effect(() => set_text(text_6, get(tag)));
-                        append($$anchor7, span_4);
+                      var node_10 = first_child(fragment_4);
+                      each(node_10, 17, () => get(ev).tags, index, ($$anchor7, tag) => {
+                        var span_8 = root_6$5();
+                        var text_10 = child(span_8, true);
+                        reset(span_8);
+                        template_effect(() => set_text(text_10, get(tag)));
+                        append($$anchor7, span_8);
                       });
                       append($$anchor6, fragment_4);
                     };
-                    if_block(node_8, ($$render) => {
-                      if (get(ev).tags?.length) $$render(consequent_4);
+                    if_block(node_9, ($$render) => {
+                      if (get(ev).tags?.length) $$render(consequent_6);
                     });
                   }
-                  var span_5 = sibling(node_8, 2);
-                  var text_7 = child(span_5, true);
-                  reset(span_5);
+                  var span_9 = sibling(node_9, 2);
+                  var text_11 = child(span_9, true);
+                  reset(span_9);
                   template_effect(
                     ($0, $1) => {
-                      set_text(text_3, $0);
-                      set_text(text_4, get(ev).title);
-                      set_text(text_7, $1);
+                      set_text(text_7, $0);
+                      set_text(text_8, get(ev).title);
+                      set_text(text_11, $1);
                     },
                     [() => fmt(get(ev).start), () => duration(get(ev))]
                   );
@@ -9170,306 +9162,318 @@
                 },
                 $$slots: { default: true }
               });
-              reset(div_8);
+              reset(button_1);
               template_effect(
                 ($0, $1) => {
-                  classes_2 = set_class(div_8, 1, "ag-compact-row svelte-n8lbn1", null, classes_2, {
+                  classes_2 = set_class(button_1, 1, "ag-compact-row svelte-n8lbn1", null, classes_2, {
                     "ag-compact-row--selected": selectedEventId() === get(ev).id,
                     "ag-compact-row--cancelled": get(ev).status === "cancelled",
                     "ag-compact-row--tentative": get(ev).status === "tentative"
                   });
-                  set_attribute(div_8, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                  styles_2 = set_style(div_8, "", styles_2, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                  styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                 },
                 [() => fmt(get(ev).start), () => duration(get(ev))]
               );
-              delegated("click", div_8, () => handleClick(get(ev)));
-              event("pointerenter", div_8, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_8, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_8);
+              delegated("click", button_1, () => handleClick(get(ev)));
+              event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
+              append($$anchor4, button_1);
             });
             append($$anchor3, fragment_2);
           };
-          if_block(node_2, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_2);
+          if_block(node_3, ($$render) => {
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_4);
             else $$render(alternate_1, -1);
           });
         }
         reset(div_6);
         append($$anchor2, div_6);
       };
-      var consequent_15 = ($$anchor2) => {
-        var div_9 = root_21$1();
+      var consequent_18 = ($$anchor2) => {
+        var div_8 = root_22$1();
+        var div_9 = child(div_8);
         var div_10 = child(div_9);
-        var div_11 = child(div_10);
-        var text_8 = child(div_11);
-        var span_6 = sibling(text_8);
-        var text_9 = child(span_6, true);
-        reset(span_6);
-        reset(div_11);
-        var node_10 = sibling(div_11, 2);
+        var text_12 = child(div_10);
+        var span_10 = sibling(text_12);
+        var text_13 = child(span_10, true);
+        reset(span_10);
+        reset(div_10);
+        var node_11 = sibling(div_10, 2);
         {
-          var consequent_7 = ($$anchor3) => {
+          var consequent_9 = ($$anchor3) => {
             var fragment_5 = comment();
-            var node_11 = first_child(fragment_5);
-            each(node_11, 17, () => get(dayCat).current, (ev) => ev.id, ($$anchor4, ev) => {
-              var div_12 = root_9$3();
+            var node_12 = first_child(fragment_5);
+            each(node_12, 17, () => get(dayCat).current, (ev) => ev.id, ($$anchor4, ev) => {
+              var button_2 = root_11$2();
               let classes_3;
               let styles_3;
-              var div_13 = sibling(child(div_12), 2);
-              var text_10 = child(div_13, true);
-              reset(div_13);
-              var node_12 = sibling(div_13, 2);
+              var div_11 = sibling(child(button_2), 2);
+              var text_14 = child(div_11, true);
+              reset(div_11);
+              var node_13 = sibling(div_11, 2);
               {
-                var consequent_6 = ($$anchor5) => {
-                  var div_14 = root_8$4();
-                  var text_11 = child(div_14, true);
-                  reset(div_14);
-                  template_effect(() => set_text(text_11, get(ev).subtitle));
-                  append($$anchor5, div_14);
+                var consequent_8 = ($$anchor5) => {
+                  var div_12 = root_10$3();
+                  var text_15 = child(div_12, true);
+                  reset(div_12);
+                  template_effect(() => set_text(text_15, get(ev).subtitle));
+                  append($$anchor5, div_12);
                 };
-                if_block(node_12, ($$render) => {
-                  if (get(ev).subtitle) $$render(consequent_6);
+                if_block(node_13, ($$render) => {
+                  if (get(ev).subtitle) $$render(consequent_8);
                 });
               }
-              var div_15 = sibling(node_12, 2);
-              var text_12 = child(div_15);
-              reset(div_15);
-              var div_16 = sibling(div_15, 2);
-              var div_17 = child(div_16);
+              var div_13 = sibling(node_13, 2);
+              var text_16 = child(div_13);
+              reset(div_13);
+              var div_14 = sibling(div_13, 2);
+              var div_15 = child(div_14);
               let styles_4;
-              reset(div_16);
-              reset(div_12);
+              reset(div_14);
+              reset(button_2);
               template_effect(
                 ($0, $1, $2) => {
-                  classes_3 = set_class(div_12, 1, "ag-q-now svelte-n8lbn1", null, classes_3, { "ag-q-now--selected": selectedEventId() === get(ev).id });
-                  set_attribute(div_12, "aria-label", `${get(ev).title ?? ""}, ${get(L).happeningNow ?? ""}, ${$0 ?? ""}`);
-                  styles_3 = set_style(div_12, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_10, get(ev).title);
-                  set_text(text_12, `${get(L).until ?? ""} ${$1 ?? ""}`);
-                  styles_4 = set_style(div_17, "", styles_4, $2);
+                  classes_3 = set_class(button_2, 1, "ag-q-now svelte-n8lbn1", null, classes_3, { "ag-q-now--selected": selectedEventId() === get(ev).id });
+                  set_attribute(button_2, "aria-label", `${get(ev).title ?? ""}, ${get(L).happeningNow ?? ""}, ${$0 ?? ""}`);
+                  styles_3 = set_style(button_2, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_text(text_14, get(ev).title);
+                  set_text(text_16, `${get(L).until ?? ""} ${$1 ?? ""}`);
+                  styles_4 = set_style(div_15, "", styles_4, $2);
                 },
                 [
                   () => get(L).percentComplete(Math.round(prog(get(ev)) * 100)),
                   () => fmt(get(ev).end),
-                  () => ({ width: `${prog(get(ev)) * 100}%` })
+                  () => ({ transform: `scaleX(${prog(get(ev)) ?? ""})` })
                 ]
               );
-              delegated("click", div_12, () => handleClick(get(ev)));
-              event("pointerenter", div_12, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_12, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_12);
+              delegated("click", button_2, () => handleClick(get(ev)));
+              event("pointerenter", button_2, () => get(oneventhover)?.(get(ev)));
+              append($$anchor4, button_2);
             });
             append($$anchor3, fragment_5);
           };
           var alternate_2 = ($$anchor3) => {
-            var div_18 = root_10$3();
-            var div_19 = child(div_18);
-            var text_13 = child(div_19, true);
-            reset(div_19);
-            reset(div_18);
-            template_effect(() => set_text(text_13, get(L).free));
-            append($$anchor3, div_18);
+            var div_16 = root_12$2();
+            var div_17 = child(div_16);
+            var text_17 = child(div_17, true);
+            reset(div_17);
+            reset(div_16);
+            template_effect(() => set_text(text_17, get(L).free));
+            append($$anchor3, div_16);
           };
-          if_block(node_10, ($$render) => {
-            if (get(dayCat).current.length > 0) $$render(consequent_7);
+          if_block(node_11, ($$render) => {
+            if (get(dayCat).current.length > 0) $$render(consequent_9);
             else $$render(alternate_2, -1);
           });
         }
-        var node_13 = sibling(node_10, 2);
+        var node_14 = sibling(node_11, 2);
         {
-          var consequent_9 = ($$anchor3) => {
-            var div_20 = root_13$2();
-            var div_21 = child(div_20);
-            var text_14 = child(div_21, true);
-            reset(div_21);
-            var node_14 = sibling(div_21, 2);
-            each(node_14, 17, () => get(visibleDone), (ev) => ev.id, ($$anchor4, ev) => {
-              var div_22 = root_11$3();
+          var consequent_11 = ($$anchor3) => {
+            var div_18 = root_15$2();
+            var div_19 = child(div_18);
+            var text_18 = child(div_19, true);
+            reset(div_19);
+            var node_15 = sibling(div_19, 2);
+            each(node_15, 17, () => get(visibleDone), (ev) => ev.id, ($$anchor4, ev) => {
+              var button_3 = root_13$2();
               let classes_4;
-              var span_7 = sibling(child(div_22), 2);
-              var text_15 = child(span_7, true);
-              reset(span_7);
-              reset(div_22);
+              var span_11 = sibling(child(button_3), 2);
+              var text_19 = child(span_11, true);
+              reset(span_11);
+              reset(button_3);
               template_effect(
                 ($0) => {
-                  classes_4 = set_class(div_22, 1, "ag-q-done-item svelte-n8lbn1", null, classes_4, {
+                  classes_4 = set_class(button_3, 1, "ag-q-done-item svelte-n8lbn1", null, classes_4, {
                     "ag-q-done-item--selected": selectedEventId() === get(ev).id
                   });
-                  set_attribute(div_22, "aria-label", `${get(ev).title ?? ""}, ${get(L).completed ?? ""}, ${$0 ?? ""}`);
-                  set_text(text_15, get(ev).title);
+                  set_attribute(button_3, "aria-label", `${get(ev).title ?? ""}, ${get(L).completed ?? ""}, ${$0 ?? ""}`);
+                  set_text(text_19, get(ev).title);
                 },
                 [() => fmt(get(ev).start)]
               );
-              delegated("click", div_22, () => handleClick(get(ev)));
-              delegated("keydown", div_22, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_22);
+              delegated("click", button_3, () => handleClick(get(ev)));
+              append($$anchor4, button_3);
             });
-            var node_15 = sibling(node_14, 2);
+            var node_16 = sibling(node_15, 2);
             {
-              var consequent_8 = ($$anchor4) => {
-                var button = root_12$3();
-                var text_16 = child(button, true);
-                reset(button);
-                template_effect(($0) => set_text(text_16, $0), [
+              var consequent_10 = ($$anchor4) => {
+                var button_4 = root_14$2();
+                var text_20 = child(button_4, true);
+                reset(button_4);
+                template_effect(($0) => set_text(text_20, $0), [
                   () => get(showAllDone) ? get(L).showLess : get(L).nCompleted(get(hiddenDoneCount))
                 ]);
-                delegated("click", button, () => set(showAllDone, !get(showAllDone)));
-                append($$anchor4, button);
+                delegated("click", button_4, () => set(showAllDone, !get(showAllDone)));
+                append($$anchor4, button_4);
               };
-              if_block(node_15, ($$render) => {
-                if (get(hiddenDoneCount) > 0) $$render(consequent_8);
+              if_block(node_16, ($$render) => {
+                if (get(hiddenDoneCount) > 0) $$render(consequent_10);
               });
             }
-            reset(div_20);
-            template_effect(() => set_text(text_14, get(L).done));
-            append($$anchor3, div_20);
+            reset(div_18);
+            template_effect(() => set_text(text_18, get(L).done));
+            append($$anchor3, div_18);
           };
-          if_block(node_13, ($$render) => {
-            if (get(dayCat).past.length > 0) $$render(consequent_9);
+          if_block(node_14, ($$render) => {
+            if (get(dayCat).past.length > 0) $$render(consequent_11);
           });
         }
-        reset(div_10);
-        var div_23 = sibling(div_10, 2);
-        var div_24 = child(div_23);
-        var text_17 = child(div_24, true);
-        reset(div_24);
-        var node_16 = sibling(div_24, 2);
+        reset(div_9);
+        var div_20 = sibling(div_9, 2);
+        var div_21 = child(div_20);
+        var text_21 = child(div_21, true);
+        reset(div_21);
+        var node_17 = sibling(div_21, 2);
         {
-          var consequent_10 = ($$anchor3) => {
-            var div_25 = root_14$2();
-            var text_18 = child(div_25, true);
-            reset(div_25);
-            template_effect(() => set_text(text_18, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
-            append($$anchor3, div_25);
+          var consequent_13 = ($$anchor3) => {
+            var div_22 = root_4$5();
+            var node_18 = child(div_22);
+            {
+              var consequent_12 = ($$anchor4) => {
+                var fragment_6 = comment();
+                var node_19 = first_child(fragment_6);
+                snippet(node_19, () => get(emptySnippet));
+                append($$anchor4, fragment_6);
+              };
+              var alternate_3 = ($$anchor4) => {
+                var text_22 = text();
+                template_effect(() => set_text(text_22, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
+                append($$anchor4, text_22);
+              };
+              if_block(node_18, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_12);
+                else $$render(alternate_3, -1);
+              });
+            }
+            reset(div_22);
+            append($$anchor3, div_22);
           };
-          var alternate_4 = ($$anchor3) => {
-            var fragment_6 = comment();
-            var node_17 = first_child(fragment_6);
-            each(node_17, 19, () => get(upcomingNext), (ev) => ev.id, ($$anchor4, ev, i) => {
-              var fragment_7 = comment();
-              var node_18 = first_child(fragment_7);
+          var alternate_5 = ($$anchor3) => {
+            var fragment_8 = comment();
+            var node_20 = first_child(fragment_8);
+            each(node_20, 19, () => get(upcomingNext), (ev) => ev.id, ($$anchor4, ev, i) => {
+              var fragment_9 = comment();
+              var node_21 = first_child(fragment_9);
               {
-                var consequent_12 = ($$anchor5) => {
-                  var div_26 = root_6$5();
+                var consequent_15 = ($$anchor5) => {
+                  var button_5 = root_8$5();
                   let classes_5;
                   let styles_5;
-                  var node_19 = child(div_26);
-                  EventContent(node_19, {
+                  var node_22 = child(button_5);
+                  EventContent(node_22, {
                     get event() {
                       return get(ev);
                     },
                     children: ($$anchor6, $$slotProps) => {
-                      var fragment_8 = root_15$2();
-                      var span_8 = sibling(first_child(fragment_8), 2);
-                      var text_19 = child(span_8, true);
-                      reset(span_8);
-                      var span_9 = sibling(span_8, 2);
-                      var text_20 = child(span_9, true);
-                      reset(span_9);
-                      var node_20 = sibling(span_9, 2);
+                      var fragment_10 = root_16$2();
+                      var span_12 = sibling(first_child(fragment_10), 2);
+                      var text_23 = child(span_12, true);
+                      reset(span_12);
+                      var span_13 = sibling(span_12, 2);
+                      var text_24 = child(span_13, true);
+                      reset(span_13);
+                      var node_23 = sibling(span_13, 2);
                       {
-                        var consequent_11 = ($$anchor7) => {
-                          var span_10 = root_3$5();
-                          var text_21 = child(span_10, true);
-                          reset(span_10);
-                          template_effect(() => set_text(text_21, get(ev).subtitle));
-                          append($$anchor7, span_10);
+                        var consequent_14 = ($$anchor7) => {
+                          var span_14 = root_5$5();
+                          var text_25 = child(span_14, true);
+                          reset(span_14);
+                          template_effect(() => set_text(text_25, get(ev).subtitle));
+                          append($$anchor7, span_14);
                         };
-                        if_block(node_20, ($$render) => {
-                          if (get(ev).subtitle) $$render(consequent_11);
+                        if_block(node_23, ($$render) => {
+                          if (get(ev).subtitle) $$render(consequent_14);
                         });
                       }
                       template_effect(
                         ($0) => {
-                          set_text(text_19, $0);
-                          set_text(text_20, get(ev).title);
+                          set_text(text_23, $0);
+                          set_text(text_24, get(ev).title);
                         },
                         [() => fmt(get(ev).start)]
                       );
-                      append($$anchor6, fragment_8);
+                      append($$anchor6, fragment_10);
                     },
                     $$slots: { default: true }
                   });
-                  reset(div_26);
+                  reset(button_5);
                   template_effect(
                     ($0, $1) => {
-                      classes_5 = set_class(div_26, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_5, {
+                      classes_5 = set_class(button_5, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_5, {
                         "ag-compact-row--selected": selectedEventId() === get(ev).id
                       });
-                      set_attribute(div_26, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                      styles_5 = set_style(div_26, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                      set_attribute(button_5, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                      styles_5 = set_style(button_5, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                     },
                     [() => fmt(get(ev).start), () => duration(get(ev))]
                   );
-                  delegated("click", div_26, () => handleClick(get(ev)));
-                  event("pointerenter", div_26, () => get(oneventhover)?.(get(ev)));
-                  delegated("keydown", div_26, (e) => handleKeydown(e, get(ev)));
-                  append($$anchor5, div_26);
+                  delegated("click", button_5, () => handleClick(get(ev)));
+                  event("pointerenter", button_5, () => get(oneventhover)?.(get(ev)));
+                  append($$anchor5, button_5);
                 };
-                var alternate_3 = ($$anchor5) => {
-                  var div_27 = root_20$1();
+                var alternate_4 = ($$anchor5) => {
+                  var button_6 = root_21$2();
                   let classes_6;
                   let styles_6;
-                  var div_28 = child(div_27);
-                  var node_21 = child(div_28);
-                  EventContent(node_21, {
+                  var div_23 = child(button_6);
+                  var node_24 = child(div_23);
+                  EventContent(node_24, {
                     get event() {
                       return get(ev);
                     },
                     children: ($$anchor6, $$slotProps) => {
-                      var fragment_9 = root_19$2();
-                      var div_29 = first_child(fragment_9);
-                      var span_11 = child(div_29);
-                      var text_22 = child(span_11, true);
-                      reset(span_11);
-                      var span_12 = sibling(span_11, 2);
-                      var text_23 = child(span_12, true);
-                      reset(span_12);
-                      reset(div_29);
-                      var node_22 = sibling(div_29, 2);
+                      var fragment_11 = root_20$2();
+                      var div_24 = first_child(fragment_11);
+                      var span_15 = child(div_24);
+                      var text_26 = child(span_15, true);
+                      reset(span_15);
+                      var span_16 = sibling(span_15, 2);
+                      var text_27 = child(span_16, true);
+                      reset(span_16);
+                      reset(div_24);
+                      var node_25 = sibling(div_24, 2);
                       {
-                        var consequent_13 = ($$anchor7) => {
-                          var span_13 = root_16$2();
-                          var text_24 = child(span_13, true);
-                          reset(span_13);
-                          template_effect(() => set_text(text_24, get(ev).subtitle));
-                          append($$anchor7, span_13);
+                        var consequent_16 = ($$anchor7) => {
+                          var span_17 = root_17$2();
+                          var text_28 = child(span_17, true);
+                          reset(span_17);
+                          template_effect(() => set_text(text_28, get(ev).subtitle));
+                          append($$anchor7, span_17);
                         };
-                        if_block(node_22, ($$render) => {
-                          if (get(ev).subtitle) $$render(consequent_13);
+                        if_block(node_25, ($$render) => {
+                          if (get(ev).subtitle) $$render(consequent_16);
                         });
                       }
-                      var div_30 = sibling(node_22, 2);
-                      var text_25 = child(div_30);
-                      var span_14 = sibling(text_25);
-                      var text_26 = child(span_14, true);
-                      reset(span_14);
-                      reset(div_30);
-                      var node_23 = sibling(div_30, 2);
+                      var div_25 = sibling(node_25, 2);
+                      var text_29 = child(div_25);
+                      var span_18 = sibling(text_29);
+                      var text_30 = child(span_18, true);
+                      reset(span_18);
+                      reset(div_25);
+                      var node_26 = sibling(div_25, 2);
                       {
-                        var consequent_14 = ($$anchor7) => {
-                          var div_31 = root_18$2();
-                          each(div_31, 21, () => get(ev).tags, index, ($$anchor8, tag) => {
-                            var span_15 = root_17$2();
-                            var text_27 = child(span_15, true);
-                            reset(span_15);
-                            template_effect(() => set_text(text_27, get(tag)));
-                            append($$anchor8, span_15);
+                        var consequent_17 = ($$anchor7) => {
+                          var div_26 = root_19$2();
+                          each(div_26, 21, () => get(ev).tags, index, ($$anchor8, tag) => {
+                            var span_19 = root_18$2();
+                            var text_31 = child(span_19, true);
+                            reset(span_19);
+                            template_effect(() => set_text(text_31, get(tag)));
+                            append($$anchor8, span_19);
                           });
-                          reset(div_31);
-                          append($$anchor7, div_31);
+                          reset(div_26);
+                          append($$anchor7, div_26);
                         };
-                        if_block(node_23, ($$render) => {
-                          if (get(ev).tags?.length) $$render(consequent_14);
+                        if_block(node_26, ($$render) => {
+                          if (get(ev).tags?.length) $$render(consequent_17);
                         });
                       }
                       template_effect(
                         ($0, $1, $2, $3) => {
-                          set_text(text_22, get(ev).title);
-                          set_text(text_23, $0);
-                          set_text(text_25, `${$1 ?? ""} – ${$2 ?? ""} `);
-                          set_text(text_26, $3);
+                          set_text(text_26, get(ev).title);
+                          set_text(text_27, $0);
+                          set_text(text_29, `${$1 ?? ""} – ${$2 ?? ""} `);
+                          set_text(text_30, $3);
                         },
                         [
                           () => eta(get(ev).start.getTime()),
@@ -9478,90 +9482,105 @@
                           () => duration(get(ev))
                         ]
                       );
-                      append($$anchor6, fragment_9);
+                      append($$anchor6, fragment_11);
                     },
                     $$slots: { default: true }
                   });
-                  reset(div_28);
-                  reset(div_27);
+                  reset(div_23);
+                  reset(button_6);
                   template_effect(
                     ($0, $1) => {
-                      classes_6 = set_class(div_27, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_6, {
+                      classes_6 = set_class(button_6, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_6, {
                         "ag-card--hero": get(i) === 0,
                         "ag-card--selected": selectedEventId() === get(ev).id
                       });
-                      set_attribute(div_27, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                      styles_6 = set_style(div_27, "", styles_6, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                      set_attribute(button_6, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                      styles_6 = set_style(button_6, "", styles_6, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                     },
                     [() => fmt(get(ev).start), () => duration(get(ev))]
                   );
-                  delegated("click", div_27, () => handleClick(get(ev)));
-                  event("pointerenter", div_27, () => get(oneventhover)?.(get(ev)));
-                  delegated("keydown", div_27, (e) => handleKeydown(e, get(ev)));
-                  append($$anchor5, div_27);
+                  delegated("click", button_6, () => handleClick(get(ev)));
+                  event("pointerenter", button_6, () => get(oneventhover)?.(get(ev)));
+                  append($$anchor5, button_6);
                 };
-                if_block(node_18, ($$render) => {
-                  if (get(i) >= UPCOMING_CARDS) $$render(consequent_12);
-                  else $$render(alternate_3, -1);
+                if_block(node_21, ($$render) => {
+                  if (get(i) >= UPCOMING_CARDS) $$render(consequent_15);
+                  else $$render(alternate_4, -1);
                 });
               }
-              append($$anchor4, fragment_7);
+              append($$anchor4, fragment_9);
             });
-            append($$anchor3, fragment_6);
+            append($$anchor3, fragment_8);
           };
-          if_block(node_16, ($$render) => {
-            if (get(upcomingNext).length === 0) $$render(consequent_10);
-            else $$render(alternate_4, -1);
+          if_block(node_17, ($$render) => {
+            if (get(upcomingNext).length === 0) $$render(consequent_13);
+            else $$render(alternate_5, -1);
           });
         }
-        reset(div_23);
-        reset(div_9);
+        reset(div_20);
+        reset(div_8);
         template_effect(() => {
-          set_text(text_8, `${get(L).now ?? ""} `);
-          set_text(text_9, clock.hm);
-          set_text(text_17, get(L).upNext);
+          set_text(text_12, `${get(L).now ?? ""} `);
+          set_text(text_13, clock.hm);
+          set_text(text_21, get(L).upNext);
         });
-        append($$anchor2, div_9);
+        append($$anchor2, div_8);
       };
-      var consequent_17 = ($$anchor2) => {
-        var div_32 = root_23$1();
-        var node_24 = child(div_32);
+      var consequent_21 = ($$anchor2) => {
+        var div_27 = root_24$1();
+        var node_27 = child(div_27);
         {
-          var consequent_16 = ($$anchor3) => {
-            var div_33 = root_14$2();
-            var text_28 = child(div_33, true);
-            reset(div_33);
-            template_effect(() => set_text(text_28, get(L).nothingWasScheduled));
-            append($$anchor3, div_33);
+          var consequent_20 = ($$anchor3) => {
+            var div_28 = root_4$5();
+            var node_28 = child(div_28);
+            {
+              var consequent_19 = ($$anchor4) => {
+                var fragment_12 = comment();
+                var node_29 = first_child(fragment_12);
+                snippet(node_29, () => get(emptySnippet));
+                append($$anchor4, fragment_12);
+              };
+              var alternate_6 = ($$anchor4) => {
+                var text_32 = text();
+                template_effect(() => set_text(text_32, get(L).nothingWasScheduled));
+                append($$anchor4, text_32);
+              };
+              if_block(node_28, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_19);
+                else $$render(alternate_6, -1);
+              });
+            }
+            reset(div_28);
+            append($$anchor3, div_28);
           };
-          var alternate_5 = ($$anchor3) => {
-            var fragment_10 = comment();
-            var node_25 = first_child(fragment_10);
-            each(node_25, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
-              var div_34 = root_22$1();
+          var alternate_7 = ($$anchor3) => {
+            var fragment_14 = comment();
+            var node_30 = first_child(fragment_14);
+            each(node_30, 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev) => {
+              var button_7 = root_23$1();
               let classes_7;
               let styles_7;
-              var span_16 = sibling(child(div_34), 2);
-              var text_29 = child(span_16, true);
-              reset(span_16);
-              var span_17 = sibling(span_16, 2);
+              var span_20 = sibling(child(button_7), 2);
+              var text_33 = child(span_20, true);
+              reset(span_20);
+              var span_21 = sibling(span_20, 2);
               let styles_8;
-              var span_18 = sibling(span_17, 2);
-              var text_30 = child(span_18, true);
-              reset(span_18);
-              var span_19 = sibling(span_18, 2);
-              var text_31 = child(span_19, true);
-              reset(span_19);
-              reset(div_34);
+              var span_22 = sibling(span_21, 2);
+              var text_34 = child(span_22, true);
+              reset(span_22);
+              var span_23 = sibling(span_22, 2);
+              var text_35 = child(span_23, true);
+              reset(span_23);
+              reset(button_7);
               template_effect(
                 ($0, $1, $2, $3) => {
-                  classes_7 = set_class(div_34, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
-                  set_attribute(div_34, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""} to ${$1 ?? ""}`);
-                  styles_7 = set_style(div_34, "", styles_7, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_29, $2);
-                  styles_8 = set_style(span_17, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
-                  set_text(text_30, get(ev).title);
-                  set_text(text_31, $3);
+                  classes_7 = set_class(button_7, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
+                  set_attribute(button_7, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""} to ${$1 ?? ""}`);
+                  styles_7 = set_style(button_7, "", styles_7, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_text(text_33, $2);
+                  styles_8 = set_style(span_21, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
+                  set_text(text_34, get(ev).title);
+                  set_text(text_35, $3);
                 },
                 [
                   () => fmt(get(ev).start),
@@ -9570,127 +9589,126 @@
                   () => duration(get(ev))
                 ]
               );
-              delegated("click", div_34, () => handleClick(get(ev)));
-              event("pointerenter", div_34, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_34, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_34);
+              delegated("click", button_7, () => handleClick(get(ev)));
+              event("pointerenter", button_7, () => get(oneventhover)?.(get(ev)));
+              append($$anchor4, button_7);
             });
-            append($$anchor3, fragment_10);
+            append($$anchor3, fragment_14);
           };
-          if_block(node_24, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_16);
-            else $$render(alternate_5, -1);
+          if_block(node_27, ($$render) => {
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_20);
+            else $$render(alternate_7, -1);
           });
         }
-        reset(div_32);
-        append($$anchor2, div_32);
+        reset(div_27);
+        append($$anchor2, div_27);
       };
-      var alternate_8 = ($$anchor2) => {
-        var div_35 = root_26$1();
-        var node_26 = child(div_35);
+      var alternate_10 = ($$anchor2) => {
+        var div_29 = root_27$1();
+        var node_31 = child(div_29);
         {
-          var consequent_19 = ($$anchor3) => {
-            var div_36 = root_2$5();
-            var node_27 = child(div_36);
+          var consequent_23 = ($$anchor3) => {
+            var div_30 = root_4$5();
+            var node_32 = child(div_30);
             {
-              var consequent_18 = ($$anchor4) => {
-                var fragment_11 = comment();
-                var node_28 = first_child(fragment_11);
-                snippet(node_28, () => get(emptySnippet));
-                append($$anchor4, fragment_11);
+              var consequent_22 = ($$anchor4) => {
+                var fragment_15 = comment();
+                var node_33 = first_child(fragment_15);
+                snippet(node_33, () => get(emptySnippet));
+                append($$anchor4, fragment_15);
               };
-              var alternate_6 = ($$anchor4) => {
-                var text_32 = text();
-                template_effect(() => set_text(text_32, get(L).nothingScheduledYet));
-                append($$anchor4, text_32);
+              var alternate_8 = ($$anchor4) => {
+                var text_36 = text();
+                template_effect(() => set_text(text_36, get(L).nothingScheduledYet));
+                append($$anchor4, text_36);
               };
-              if_block(node_27, ($$render) => {
-                if (get(emptySnippet)) $$render(consequent_18);
-                else $$render(alternate_6, -1);
+              if_block(node_32, ($$render) => {
+                if (get(emptySnippet)) $$render(consequent_22);
+                else $$render(alternate_8, -1);
               });
             }
-            reset(div_36);
-            append($$anchor3, div_36);
+            reset(div_30);
+            append($$anchor3, div_30);
           };
-          var alternate_7 = ($$anchor3) => {
-            var fragment_13 = comment();
-            var node_29 = first_child(fragment_13);
-            each(node_29, 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev, i) => {
-              var div_37 = root_20$1();
+          var alternate_9 = ($$anchor3) => {
+            var fragment_17 = comment();
+            var node_34 = first_child(fragment_17);
+            each(node_34, 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor4, ev, i) => {
+              var button_8 = root_21$2();
               let classes_8;
               let styles_9;
-              var div_38 = child(div_37);
-              var node_30 = child(div_38);
-              EventContent(node_30, {
+              var div_31 = child(button_8);
+              var node_35 = child(div_31);
+              EventContent(node_35, {
                 get event() {
                   return get(ev);
                 },
                 children: ($$anchor5, $$slotProps) => {
-                  var fragment_14 = root_25$1();
-                  var div_39 = first_child(fragment_14);
-                  var span_20 = child(div_39);
-                  var text_33 = child(span_20, true);
-                  reset(span_20);
-                  var span_21 = sibling(span_20, 2);
-                  var text_34 = child(span_21, true);
-                  reset(span_21);
-                  reset(div_39);
-                  var node_31 = sibling(div_39, 2);
-                  {
-                    var consequent_20 = ($$anchor6) => {
-                      var span_22 = root_16$2();
-                      var text_35 = child(span_22, true);
-                      reset(span_22);
-                      template_effect(() => set_text(text_35, get(ev).subtitle));
-                      append($$anchor6, span_22);
-                    };
-                    if_block(node_31, ($$render) => {
-                      if (get(ev).subtitle) $$render(consequent_20);
-                    });
-                  }
-                  var node_32 = sibling(node_31, 2);
-                  {
-                    var consequent_21 = ($$anchor6) => {
-                      var span_23 = root_24$1();
-                      var text_36 = child(span_23, true);
-                      reset(span_23);
-                      template_effect(() => set_text(text_36, get(ev).location));
-                      append($$anchor6, span_23);
-                    };
-                    if_block(node_32, ($$render) => {
-                      if (get(ev).location) $$render(consequent_21);
-                    });
-                  }
-                  var div_40 = sibling(node_32, 2);
-                  var text_37 = child(div_40);
-                  var span_24 = sibling(text_37);
-                  var text_38 = child(span_24, true);
+                  var fragment_18 = root_26$1();
+                  var div_32 = first_child(fragment_18);
+                  var span_24 = child(div_32);
+                  var text_37 = child(span_24, true);
                   reset(span_24);
-                  reset(div_40);
-                  var node_33 = sibling(div_40, 2);
+                  var span_25 = sibling(span_24, 2);
+                  var text_38 = child(span_25, true);
+                  reset(span_25);
+                  reset(div_32);
+                  var node_36 = sibling(div_32, 2);
                   {
-                    var consequent_22 = ($$anchor6) => {
-                      var div_41 = root_18$2();
-                      each(div_41, 21, () => get(ev).tags, index, ($$anchor7, tag) => {
-                        var span_25 = root_17$2();
-                        var text_39 = child(span_25, true);
-                        reset(span_25);
-                        template_effect(() => set_text(text_39, get(tag)));
-                        append($$anchor7, span_25);
-                      });
-                      reset(div_41);
-                      append($$anchor6, div_41);
+                    var consequent_24 = ($$anchor6) => {
+                      var span_26 = root_17$2();
+                      var text_39 = child(span_26, true);
+                      reset(span_26);
+                      template_effect(() => set_text(text_39, get(ev).subtitle));
+                      append($$anchor6, span_26);
                     };
-                    if_block(node_33, ($$render) => {
-                      if (get(ev).tags?.length) $$render(consequent_22);
+                    if_block(node_36, ($$render) => {
+                      if (get(ev).subtitle) $$render(consequent_24);
+                    });
+                  }
+                  var node_37 = sibling(node_36, 2);
+                  {
+                    var consequent_25 = ($$anchor6) => {
+                      var span_27 = root_25$1();
+                      var text_40 = child(span_27, true);
+                      reset(span_27);
+                      template_effect(() => set_text(text_40, get(ev).location));
+                      append($$anchor6, span_27);
+                    };
+                    if_block(node_37, ($$render) => {
+                      if (get(ev).location) $$render(consequent_25);
+                    });
+                  }
+                  var div_33 = sibling(node_37, 2);
+                  var text_41 = child(div_33);
+                  var span_28 = sibling(text_41);
+                  var text_42 = child(span_28, true);
+                  reset(span_28);
+                  reset(div_33);
+                  var node_38 = sibling(div_33, 2);
+                  {
+                    var consequent_26 = ($$anchor6) => {
+                      var div_34 = root_19$2();
+                      each(div_34, 21, () => get(ev).tags, index, ($$anchor7, tag) => {
+                        var span_29 = root_18$2();
+                        var text_43 = child(span_29, true);
+                        reset(span_29);
+                        template_effect(() => set_text(text_43, get(tag)));
+                        append($$anchor7, span_29);
+                      });
+                      reset(div_34);
+                      append($$anchor6, div_34);
+                    };
+                    if_block(node_38, ($$render) => {
+                      if (get(ev).tags?.length) $$render(consequent_26);
                     });
                   }
                   template_effect(
                     ($0, $1, $2) => {
-                      set_text(text_33, get(i) + 1);
-                      set_text(text_34, get(ev).title);
-                      set_text(text_37, `${$0 ?? ""} – ${$1 ?? ""} `);
-                      set_text(text_38, $2);
+                      set_text(text_37, get(i) + 1);
+                      set_text(text_38, get(ev).title);
+                      set_text(text_41, `${$0 ?? ""} – ${$1 ?? ""} `);
+                      set_text(text_42, $2);
                     },
                     [
                       () => fmt(get(ev).start),
@@ -9698,15 +9716,15 @@
                       () => duration(get(ev))
                     ]
                   );
-                  append($$anchor5, fragment_14);
+                  append($$anchor5, fragment_18);
                 },
                 $$slots: { default: true }
               });
-              reset(div_38);
-              reset(div_37);
+              reset(div_31);
+              reset(button_8);
               template_effect(
                 ($0, $1, $2) => {
-                  classes_8 = set_class(div_37, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_8, {
+                  classes_8 = set_class(button_8, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_8, {
                     "ag-card--first": get(i) === 0,
                     "ag-card--selected": selectedEventId() === get(ev).id,
                     "ag-card--cancelled": get(ev).status === "cancelled",
@@ -9714,8 +9732,8 @@
                     "ag-card--full": get(ev).status === "full",
                     "ag-card--limited": get(ev).status === "limited"
                   });
-                  set_attribute(div_37, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? " (cancelled)" : ""}${get(ev).status === "tentative" ? " (tentative)" : ""}${get(ev).status === "full" ? " (full)" : ""}${get(ev).status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
-                  styles_9 = set_style(div_37, "", styles_9, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                  set_attribute(button_8, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? " (cancelled)" : ""}${get(ev).status === "tentative" ? " (tentative)" : ""}${get(ev).status === "full" ? " (full)" : ""}${get(ev).status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
+                  styles_9 = set_style(button_8, "", styles_9, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                 },
                 [
                   () => fmt(get(ev).start),
@@ -9723,50 +9741,55 @@
                   () => duration(get(ev))
                 ]
               );
-              delegated("click", div_37, () => handleClick(get(ev)));
-              event("pointerenter", div_37, () => get(oneventhover)?.(get(ev)));
-              delegated("keydown", div_37, (e) => handleKeydown(e, get(ev)));
-              append($$anchor4, div_37);
+              delegated("click", button_8, () => handleClick(get(ev)));
+              event("pointerenter", button_8, () => get(oneventhover)?.(get(ev)));
+              append($$anchor4, button_8);
             });
-            append($$anchor3, fragment_13);
+            append($$anchor3, fragment_17);
           };
-          if_block(node_26, ($$render) => {
-            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_19);
-            else $$render(alternate_7, -1);
+          if_block(node_31, ($$render) => {
+            if (get(timedDayEvents).length === 0 && get(allDayBanner).length === 0) $$render(consequent_23);
+            else $$render(alternate_9, -1);
           });
         }
-        reset(div_35);
-        append($$anchor2, div_35);
+        reset(div_29);
+        append($$anchor2, div_29);
       };
-      if_block(node_1, ($$render) => {
-        if (get(compact)) $$render(consequent_5);
-        else if (get(isToday)) $$render(consequent_15, 1);
-        else if (get(isPastDay)) $$render(consequent_17, 2);
-        else $$render(alternate_8, -1);
+      if_block(node_2, ($$render) => {
+        if (get(compact)) $$render(consequent_7);
+        else if (get(isToday)) $$render(consequent_18, 1);
+        else if (get(isPastDay)) $$render(consequent_21, 2);
+        else $$render(alternate_10, -1);
       });
     }
     reset(div_1);
     reset(div);
     template_effect(
-      ($0) => {
+      ($0, $1, $2, $3) => {
         classes = set_class(div, 1, "ag ag--day svelte-n8lbn1", null, classes, $0);
         styles = set_style(div, style() || void 0, styles, { height: $$props.height ? `${$$props.height}px` : void 0 });
         set_attribute(div_1, "aria-label", get(L).todaysLineup);
+        set_text(text_2, $1);
+        set_text(text_3, `${$2 ?? ""} ${$3 ?? ""}`);
       },
       [
         () => ({
           "ag--disabled": get(disabledSet).has(get(dayMs)),
           "ag--mobile": get(isMobile),
           "ag--auto": get(autoHeight)
-        })
+        }),
+        () => weekdayLong(get(dayMs), $$props.locale),
+        () => monthLong(get(dayMs), $$props.locale),
+        () => dayNum(get(dayMs))
       ]
     );
     delegated("pointerdown", div, onPointerDown);
     delegated("pointerup", div, onPointerUp);
+    event("pointercancel", div, onPointerCancel);
     append($$anchor, div);
     pop();
   }
-  delegate(["pointerdown", "pointerup", "click", "keydown"]);
+  delegate(["pointerdown", "pointerup", "click"]);
   var root$3 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
   var root_1$4 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
   var root_2$4 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
@@ -9774,39 +9797,41 @@
   var root_4$4 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-uhwfyj"></div>`);
   var root_5$4 = /* @__PURE__ */ from_html(`<span class="ag-card-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!>`, 1);
   var root_6$4 = /* @__PURE__ */ from_html(`<div class="ag-card-progress svelte-uhwfyj"><div class="ag-card-progress-fill svelte-uhwfyj"></div></div>`);
-  var root_7$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="ag-card-body svelte-uhwfyj"><!> <!></div></div>`);
-  var root_8$3 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
+  var root_7$4 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-uhwfyj"><!> <!></div></button>`);
+  var root_8$4 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
   var root_9$2 = /* @__PURE__ */ from_html(`<div class="ag-wday-custom-header svelte-uhwfyj"><!></div>`);
-  var root_10$2 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div></div>`);
-  var root_11$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
-  var root_12$2 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
-  var root_13$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span></div>`);
-  var root_14$1 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
-  var root_15$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-empty svelte-uhwfyj"> </div>`);
-  var root_16$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
-  var root_17$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
-  var root_18$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
-  var root_19$1 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
-  var root_20 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
-  var root_21 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
-  var root_22 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
-  var root_23 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
-  var root_24 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line svelte-uhwfyj"> </div>`);
-  var root_25 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
-  var root_26 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
-  var root_27 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
-  var root_28 = /* @__PURE__ */ from_html(`<div class="ag-compact-more svelte-uhwfyj"> </div>`);
-  var root_29 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
-  var root_30 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
-  var root_31 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
+  var root_10$2 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line ag-wday-past-line--summary svelte-uhwfyj"> </div>`);
+  var root_11$1 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!></div>`);
+  var root_12$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
+  var root_13$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
+  var root_14$1 = /* @__PURE__ */ from_html(`<span class="ag-allday-span svelte-uhwfyj"> </span>`);
+  var root_15$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span> <!></button>`);
+  var root_16$1 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
+  var root_17$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-empty svelte-uhwfyj"> </div>`);
+  var root_18$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
+  var root_19$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
+  var root_20$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
+  var root_21$1 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
+  var root_22 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
+  var root_23 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
+  var root_24 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
+  var root_25 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
+  var root_26 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line svelte-uhwfyj"> </div>`);
+  var root_27 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
+  var root_28 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
+  var root_29 = /* @__PURE__ */ from_html(`<span class="ag-compact-dot svelte-uhwfyj"></span> <span class="ag-compact-time svelte-uhwfyj"> </span> <span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
+  var root_30 = /* @__PURE__ */ from_html(`<button type="button" class="ag-compact-more svelte-uhwfyj"> </button>`);
+  var root_31 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
+  var root_32 = /* @__PURE__ */ from_html(`<div role="listitem"><div class="ag-wday-head svelte-uhwfyj"><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
+  var root_33 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
   function AgendaWeek($$anchor, $$props) {
     push($$props, true);
     const eventCard = ($$anchor2, ev = noop, isNow = noop, eta2 = noop) => {
-      var div = root_7$3();
+      var button = root_7$4();
       let classes;
       let styles;
-      var div_1 = child(div);
-      var node = child(div_1);
+      var div = child(button);
+      var node = child(div);
       EventContent(node, {
         get event() {
           return ev();
@@ -9880,16 +9905,16 @@
           var node_5 = sibling(span_3, 2);
           {
             var consequent_4 = ($$anchor4) => {
-              var div_2 = root_4$4();
-              each(div_2, 21, () => ev().tags, index, ($$anchor5, tag) => {
+              var div_1 = root_4$4();
+              each(div_1, 21, () => ev().tags, index, ($$anchor5, tag) => {
                 var span_6 = root_3$4();
                 var text_7 = child(span_6, true);
                 reset(span_6);
                 template_effect(() => set_text(text_7, get(tag)));
                 append($$anchor5, span_6);
               });
-              reset(div_2);
-              append($$anchor4, div_2);
+              reset(div_1);
+              append($$anchor4, div_1);
             };
             if_block(node_5, ($$render) => {
               if (ev().tags?.length) $$render(consequent_4);
@@ -9909,30 +9934,30 @@
       var node_6 = sibling(node, 2);
       {
         var consequent_5 = ($$anchor3) => {
-          var div_3 = root_6$4();
-          var div_4 = child(div_3);
+          var div_2 = root_6$4();
+          var div_3 = child(div_2);
           let styles_1;
-          reset(div_3);
-          template_effect(($0) => styles_1 = set_style(div_4, "", styles_1, $0), [() => ({ width: `${prog(ev()) * 100}%` })]);
-          append($$anchor3, div_3);
+          reset(div_2);
+          template_effect(($0) => styles_1 = set_style(div_3, "", styles_1, $0), [() => ({ transform: `scaleX(${prog(ev()) ?? ""})` })]);
+          append($$anchor3, div_2);
         };
         if_block(node_6, ($$render) => {
           if (isNow()) $$render(consequent_5);
         });
       }
-      reset(div_1);
       reset(div);
+      reset(button);
       template_effect(
         ($0, $1, $2) => {
-          classes = set_class(div, 1, "ag-card svelte-uhwfyj", null, classes, {
+          classes = set_class(button, 1, "ag-card svelte-uhwfyj", null, classes, {
             "ag-card--selected": selectedEventId() === ev().id,
             "ag-card--cancelled": ev().status === "cancelled",
             "ag-card--tentative": ev().status === "tentative",
             "ag-card--full": ev().status === "full",
             "ag-card--limited": ev().status === "limited"
           });
-          set_attribute(div, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
-          styles = set_style(div, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
+          set_attribute(button, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
+          styles = set_style(button, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
         },
         [
           () => fmt(ev().start),
@@ -9940,16 +9965,13 @@
           () => duration(ev())
         ]
       );
-      delegated("click", div, () => handleClick(ev()));
-      event("pointerenter", div, () => get(oneventhover)?.(ev()));
-      delegated("keydown", div, (e) => handleKeydown(e, ev()));
-      append($$anchor2, div);
+      delegated("click", button, () => handleClick(ev()));
+      event("pointerenter", button, () => get(oneventhover)?.(ev()));
+      append($$anchor2, button);
     };
-    const L = /* @__PURE__ */ user_derived(getLabels);
     const ctx = useCalendarContext();
-    let mondayStart = prop($$props, "mondayStart", 3, true);
-    prop($$props, "height", 3, 520);
-    let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
+    let mondayStart = prop($$props, "mondayStart", 3, true), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
     const clock = createClock(ctx.timezone);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const equalDays = /* @__PURE__ */ user_derived(() => ctx.equalDays);
@@ -9963,37 +9985,45 @@
     const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
     let swipeStartX = 0;
     let swipeStartY = 0;
-    const SWIPE_THRESHOLD = 50;
+    let swipeActive = false;
+    const SWIPE_THRESHOLD2 = 50;
     function onPointerDown(e) {
-      if (!get(isMobile)) return;
+      if (!get(isMobile) || e.pointerType !== "touch") return;
+      swipeActive = true;
       swipeStartX = e.clientX;
       swipeStartY = e.clientY;
     }
     function onPointerUp(e) {
-      if (!get(isMobile)) return;
+      if (!swipeActive || e.pointerType !== "touch") return;
+      swipeActive = false;
       const dx = e.clientX - swipeStartX;
       const dy = e.clientY - swipeStartY;
-      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      if (Math.abs(dx) > SWIPE_THRESHOLD2 && Math.abs(dx) > Math.abs(dy) * 1.4) {
         if (dx > 0) get(viewState)?.prev();
         else get(viewState)?.next();
       }
     }
+    function onPointerCancel() {
+      swipeActive = false;
+    }
+    let expandedDays = /* @__PURE__ */ state(proxy([]));
+    function toggleDayExpand(ms) {
+      set(
+        expandedDays,
+        get(expandedDays).includes(ms) ? get(expandedDays).filter((m) => m !== ms) : [...get(expandedDays), ms],
+        true
+      );
+    }
     const fmt = (d) => fmtTime(d, $$props.locale);
-    const eta = (ms) => timeUntilMs(ms, clock.tick);
+    const eta = (ms) => timeUntilMs(ms, clock.tick, get(L));
     const prog = (ev) => progress(ev, clock.tick);
     function handleClick(ev) {
       $$props.oneventclick?.(ev);
     }
-    function handleKeydown(e, ev) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        $$props.oneventclick?.(ev);
-      }
-    }
     const weekStartMs = /* @__PURE__ */ user_derived(() => $$props.focusDate ? get(viewState)?.dayCount === 7 ? startOfWeek(sod($$props.focusDate.getTime()), mondayStart()) : sod($$props.focusDate.getTime()) : get(viewState)?.dayCount === 7 ? startOfWeek(clock.today, mondayStart()) : clock.today);
     const customDays = /* @__PURE__ */ user_derived(() => get(viewState)?.dayCount ?? 7);
     const weekDays = /* @__PURE__ */ user_derived(() => {
-      const now2 = clock.tick;
+      const now = clock.tick;
       const todayMs = clock.today;
       const tomorrowMs = todayMs + DAY_MS;
       const out = [];
@@ -10015,8 +10045,8 @@
         const currentEvents = [];
         const upcomingEvents = [];
         for (const ev of timedEvts) {
-          if (ev.end.getTime() <= now2) pastEvents.push(ev);
-          else if (ev.start.getTime() <= now2 && ev.end.getTime() > now2) currentEvents.push(ev);
+          if (ev.end.getTime() <= now) pastEvents.push(ev);
+          else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
           else upcomingEvents.push(ev);
         }
         let tier;
@@ -10036,6 +10066,7 @@
           dayName: weekdayLong(ms, $$props.locale),
           dateLabel: `${monthLong(ms, $$props.locale)} ${dayNum(ms)}`,
           tier,
+          isToday: ms === todayMs,
           events: dayEvts,
           allDayEvents: allDayEvts,
           timedEvents: timedEvts,
@@ -10054,26 +10085,27 @@
       }
       return out;
     });
-    var div_5 = root_31();
+    var div_4 = root_33();
     let classes_1;
-    var div_6 = child(div_5);
-    each(div_6, 21, () => get(weekDays), (day) => day.ms, ($$anchor2, day) => {
+    let styles_2;
+    var div_5 = child(div_4);
+    each(div_5, 21, () => get(weekDays), (day) => day.ms, ($$anchor2, day) => {
       const expanded = /* @__PURE__ */ user_derived(() => get(day).tier === "today" || get(day).tier === "tomorrow");
       var fragment_3 = comment();
       var node_7 = first_child(fragment_3);
       {
-        var consequent_8 = ($$anchor3) => {
-          var div_7 = root_10$2();
+        var consequent_10 = ($$anchor3) => {
+          var div_6 = root_11$1();
           let classes_2;
+          var div_7 = child(div_6);
           var div_8 = child(div_7);
-          var div_9 = child(div_8);
-          var span_7 = child(div_9);
+          var span_7 = child(div_8);
           var text_8 = child(span_7, true);
           reset(span_7);
           var node_8 = sibling(span_7, 2);
           {
             var consequent_6 = ($$anchor4) => {
-              var span_8 = root_8$3();
+              var span_8 = root_8$4();
               var text_9 = child(span_8, true);
               reset(span_8);
               template_effect(() => set_text(text_9, get(day).dateLabel));
@@ -10083,197 +10115,237 @@
               if (get(showDates)) $$render(consequent_6);
             });
           }
-          reset(div_9);
-          var node_9 = sibling(div_9, 2);
+          reset(div_8);
+          var node_9 = sibling(div_8, 2);
           {
             var consequent_7 = ($$anchor4) => {
-              var div_10 = root_9$2();
-              var node_10 = child(div_10);
+              var div_9 = root_9$2();
+              var node_10 = child(div_9);
               snippet(node_10, () => get(dayHeaderSnippet), () => ({
                 date: new Date(get(day).ms),
                 isToday: false,
                 dayName: get(day).dayName
               }));
-              reset(div_10);
-              append($$anchor4, div_10);
+              reset(div_9);
+              append($$anchor4, div_9);
             };
             if_block(node_9, ($$render) => {
               if (get(dayHeaderSnippet)) $$render(consequent_7);
             });
           }
-          reset(div_8);
           reset(div_7);
+          var node_11 = sibling(div_7, 2);
+          {
+            var consequent_8 = ($$anchor4) => {
+              var div_10 = root_10$2();
+              var text_10 = child(div_10);
+              reset(div_10);
+              template_effect(($0) => set_text(text_10, `✓ ${$0 ?? ""}`), [() => get(L).nCompleted(get(day).timedEvents.length)]);
+              append($$anchor4, div_10);
+            };
+            var consequent_9 = ($$anchor4) => {
+              var div_11 = root_10$2();
+              var text_11 = child(div_11, true);
+              reset(div_11);
+              template_effect(() => set_text(text_11, get(L).noEvents));
+              append($$anchor4, div_11);
+            };
+            if_block(node_11, ($$render) => {
+              if (get(day).timedEvents.length > 0) $$render(consequent_8);
+              else if (get(day).events.length === 0) $$render(consequent_9, 1);
+            });
+          }
+          reset(div_6);
           template_effect(
             ($0) => {
-              classes_2 = set_class(div_7, 1, "ag-wday ag-wday--past svelte-uhwfyj", null, classes_2, $0);
+              classes_2 = set_class(div_6, 1, "ag-wday ag-wday--past svelte-uhwfyj", null, classes_2, $0);
               set_text(text_8, get(day).dayName);
             },
             [
               () => ({ "ag-wday--disabled": get(disabledSet).has(get(day).ms) })
             ]
           );
-          append($$anchor3, div_7);
+          append($$anchor3, div_6);
         };
         var alternate_2 = ($$anchor3) => {
-          var div_11 = root_30();
+          var div_12 = root_32();
           let classes_3;
-          var div_12 = child(div_11);
           var div_13 = child(div_12);
-          var node_11 = child(div_13);
-          {
-            var consequent_9 = ($$anchor4) => {
-              var span_9 = root_11$2();
-              var text_10 = child(span_9, true);
-              reset(span_9);
-              template_effect(() => set_text(text_10, get(L).today));
-              append($$anchor4, span_9);
-            };
-            var consequent_10 = ($$anchor4) => {
-              var span_10 = root_12$2();
-              var text_11 = child(span_10, true);
-              reset(span_10);
-              template_effect(() => set_text(text_11, get(L).tomorrow));
-              append($$anchor4, span_10);
-            };
-            if_block(node_11, ($$render) => {
-              if (get(day).tier === "today") $$render(consequent_9);
-              else if (get(day).tier === "tomorrow") $$render(consequent_10, 1);
-            });
-          }
-          var span_11 = sibling(node_11, 2);
-          var text_12 = child(span_11, true);
-          reset(span_11);
-          var node_12 = sibling(span_11, 2);
+          var div_14 = child(div_13);
+          var node_12 = child(div_14);
           {
             var consequent_11 = ($$anchor4) => {
-              var span_12 = root_8$3();
-              var text_13 = child(span_12, true);
-              reset(span_12);
-              template_effect(() => set_text(text_13, get(day).dateLabel));
-              append($$anchor4, span_12);
+              var span_9 = root_12$1();
+              var text_12 = child(span_9, true);
+              reset(span_9);
+              template_effect(() => set_text(text_12, get(L).today));
+              append($$anchor4, span_9);
+            };
+            var consequent_12 = ($$anchor4) => {
+              var span_10 = root_13$1();
+              var text_13 = child(span_10, true);
+              reset(span_10);
+              template_effect(() => set_text(text_13, get(L).tomorrow));
+              append($$anchor4, span_10);
             };
             if_block(node_12, ($$render) => {
-              if (get(showDates)) $$render(consequent_11);
+              if (get(day).isToday) $$render(consequent_11);
+              else if (get(day).tier === "tomorrow") $$render(consequent_12, 1);
             });
           }
-          reset(div_13);
-          var node_13 = sibling(div_13, 2);
+          var span_11 = sibling(node_12, 2);
+          var text_14 = child(span_11, true);
+          reset(span_11);
+          var node_13 = sibling(span_11, 2);
           {
-            var consequent_12 = ($$anchor4) => {
-              var div_14 = root_9$2();
-              var node_14 = child(div_14);
-              snippet(node_14, () => get(dayHeaderSnippet), () => ({
+            var consequent_13 = ($$anchor4) => {
+              var span_12 = root_8$4();
+              var text_15 = child(span_12, true);
+              reset(span_12);
+              template_effect(() => set_text(text_15, get(day).dateLabel));
+              append($$anchor4, span_12);
+            };
+            if_block(node_13, ($$render) => {
+              if (get(showDates)) $$render(consequent_13);
+            });
+          }
+          reset(div_14);
+          var node_14 = sibling(div_14, 2);
+          {
+            var consequent_14 = ($$anchor4) => {
+              var div_15 = root_9$2();
+              var node_15 = child(div_15);
+              snippet(node_15, () => get(dayHeaderSnippet), () => ({
                 date: new Date(get(day).ms),
                 isToday: get(day).tier === "today",
                 dayName: get(day).dayName
               }));
-              reset(div_14);
-              append($$anchor4, div_14);
-            };
-            if_block(node_13, ($$render) => {
-              if (get(dayHeaderSnippet)) $$render(consequent_12);
-            });
-          }
-          reset(div_12);
-          var node_15 = sibling(div_12, 2);
-          {
-            var consequent_13 = ($$anchor4) => {
-              var div_15 = root_14$1();
-              each(div_15, 21, () => get(day).allDayEvents, (ev) => ev.id, ($$anchor5, ev) => {
-                var div_16 = root_13$1();
-                let classes_4;
-                let styles_2;
-                var span_13 = sibling(child(div_16), 2);
-                var text_14 = child(span_13, true);
-                reset(span_13);
-                reset(div_16);
-                template_effect(() => {
-                  classes_4 = set_class(div_16, 1, "ag-allday-chip svelte-uhwfyj", null, classes_4, {
-                    "ag-allday-chip--selected": selectedEventId() === get(ev).id
-                  });
-                  set_attribute(div_16, "aria-label", `${get(ev).title ?? ""}, ${get(L).allDay ?? ""}`);
-                  styles_2 = set_style(div_16, "", styles_2, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  set_text(text_14, get(ev).title);
-                });
-                delegated("click", div_16, () => handleClick(get(ev)));
-                event("pointerenter", div_16, () => get(oneventhover)?.(get(ev)));
-                delegated("keydown", div_16, (e) => handleKeydown(e, get(ev)));
-                append($$anchor5, div_16);
-              });
               reset(div_15);
               append($$anchor4, div_15);
             };
-            if_block(node_15, ($$render) => {
-              if (get(day).allDayEvents.length > 0) $$render(consequent_13);
+            if_block(node_14, ($$render) => {
+              if (get(dayHeaderSnippet)) $$render(consequent_14);
             });
           }
-          var node_16 = sibling(node_15, 2);
+          reset(div_13);
+          var node_16 = sibling(div_13, 2);
           {
-            var consequent_14 = ($$anchor4) => {
-              var div_17 = root_15$1();
-              var text_15 = child(div_17, true);
+            var consequent_16 = ($$anchor4) => {
+              var div_16 = root_16$1();
+              each(div_16, 21, () => get(day).allDayEvents, (ev) => ev.id, ($$anchor5, ev) => {
+                const seg = /* @__PURE__ */ user_derived(() => segmentForDay(get(ev), get(day).ms));
+                const isCont = /* @__PURE__ */ user_derived(() => get(seg) !== null && get(seg).totalDays > 1);
+                var button_1 = root_15$1();
+                let classes_4;
+                let styles_3;
+                var span_13 = sibling(child(button_1), 2);
+                var text_16 = child(span_13, true);
+                reset(span_13);
+                var node_17 = sibling(span_13, 2);
+                {
+                  var consequent_15 = ($$anchor6) => {
+                    var span_14 = root_14$1();
+                    var text_17 = child(span_14);
+                    reset(span_14);
+                    template_effect(() => set_text(text_17, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
+                    append($$anchor6, span_14);
+                  };
+                  if_block(node_17, ($$render) => {
+                    if (get(isCont) && get(seg)) $$render(consequent_15);
+                  });
+                }
+                reset(button_1);
+                template_effect(
+                  ($0) => {
+                    classes_4 = set_class(button_1, 1, "ag-allday-chip svelte-uhwfyj", null, classes_4, {
+                      "ag-allday-chip--selected": selectedEventId() === get(ev).id
+                    });
+                    set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}`);
+                    styles_3 = set_style(button_1, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                    set_text(text_16, get(ev).title);
+                  },
+                  [
+                    () => get(isCont) && get(seg) ? get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays) : get(L).allDay
+                  ]
+                );
+                delegated("click", button_1, () => handleClick(get(ev)));
+                event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
+                append($$anchor5, button_1);
+              });
+              reset(div_16);
+              append($$anchor4, div_16);
+            };
+            if_block(node_16, ($$render) => {
+              if (get(day).allDayEvents.length > 0) $$render(consequent_16);
+            });
+          }
+          var node_18 = sibling(node_16, 2);
+          {
+            var consequent_17 = ($$anchor4) => {
+              var div_17 = root_17$1();
+              var text_18 = child(div_17, true);
               reset(div_17);
-              template_effect(() => set_text(text_15, get(L).noEvents));
+              template_effect(() => set_text(text_18, get(L).noEvents));
               append($$anchor4, div_17);
             };
-            var consequent_17 = ($$anchor4) => {
-              var div_18 = root_20();
+            var consequent_20 = ($$anchor4) => {
+              var div_18 = root_22();
               each(div_18, 21, () => get(day).timedEvents, (ev) => ev.id, ($$anchor5, ev) => {
-                var div_19 = root_19$1();
+                var button_2 = root_21$1();
                 let classes_5;
-                let styles_3;
-                var node_17 = child(div_19);
-                EventContent(node_17, {
+                let styles_4;
+                var node_19 = child(button_2);
+                EventContent(node_19, {
                   get event() {
                     return get(ev);
                   },
                   children: ($$anchor6, $$slotProps) => {
-                    var fragment_4 = root_18$1();
-                    var span_14 = sibling(first_child(fragment_4), 2);
-                    var text_16 = child(span_14, true);
-                    reset(span_14);
-                    var span_15 = sibling(span_14, 2);
-                    var text_17 = child(span_15, true);
+                    var fragment_4 = root_20$1();
+                    var span_15 = sibling(first_child(fragment_4), 2);
+                    var text_19 = child(span_15, true);
                     reset(span_15);
-                    var node_18 = sibling(span_15, 2);
+                    var span_16 = sibling(span_15, 2);
+                    var text_20 = child(span_16, true);
+                    reset(span_16);
+                    var node_20 = sibling(span_16, 2);
                     {
-                      var consequent_15 = ($$anchor7) => {
-                        var span_16 = root_16$1();
-                        var text_18 = child(span_16, true);
-                        reset(span_16);
-                        template_effect(() => set_text(text_18, get(ev).subtitle));
-                        append($$anchor7, span_16);
+                      var consequent_18 = ($$anchor7) => {
+                        var span_17 = root_18$1();
+                        var text_21 = child(span_17, true);
+                        reset(span_17);
+                        template_effect(() => set_text(text_21, get(ev).subtitle));
+                        append($$anchor7, span_17);
                       };
-                      if_block(node_18, ($$render) => {
-                        if (get(ev).subtitle) $$render(consequent_15);
+                      if_block(node_20, ($$render) => {
+                        if (get(ev).subtitle) $$render(consequent_18);
                       });
                     }
-                    var node_19 = sibling(node_18, 2);
+                    var node_21 = sibling(node_20, 2);
                     {
-                      var consequent_16 = ($$anchor7) => {
+                      var consequent_19 = ($$anchor7) => {
                         var fragment_5 = comment();
-                        var node_20 = first_child(fragment_5);
-                        each(node_20, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
-                          var span_17 = root_17$1();
-                          var text_19 = child(span_17, true);
-                          reset(span_17);
-                          template_effect(() => set_text(text_19, get(tag)));
-                          append($$anchor8, span_17);
+                        var node_22 = first_child(fragment_5);
+                        each(node_22, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
+                          var span_18 = root_19$1();
+                          var text_22 = child(span_18, true);
+                          reset(span_18);
+                          template_effect(() => set_text(text_22, get(tag)));
+                          append($$anchor8, span_18);
                         });
                         append($$anchor7, fragment_5);
                       };
-                      if_block(node_19, ($$render) => {
-                        if (get(ev).tags?.length) $$render(consequent_16);
+                      if_block(node_21, ($$render) => {
+                        if (get(ev).tags?.length) $$render(consequent_19);
                       });
                     }
-                    var span_18 = sibling(node_19, 2);
-                    var text_20 = child(span_18, true);
-                    reset(span_18);
+                    var span_19 = sibling(node_21, 2);
+                    var text_23 = child(span_19, true);
+                    reset(span_19);
                     template_effect(
                       ($0, $1) => {
-                        set_text(text_16, $0);
-                        set_text(text_17, get(ev).title);
-                        set_text(text_20, $1);
+                        set_text(text_19, $0);
+                        set_text(text_20, get(ev).title);
+                        set_text(text_23, $1);
                       },
                       [() => fmt(get(ev).start), () => duration(get(ev))]
                     );
@@ -10281,232 +10353,246 @@
                   },
                   $$slots: { default: true }
                 });
-                reset(div_19);
+                reset(button_2);
                 template_effect(
                   ($0, $1) => {
-                    classes_5 = set_class(div_19, 1, "ag-compact svelte-uhwfyj", null, classes_5, {
+                    classes_5 = set_class(button_2, 1, "ag-compact svelte-uhwfyj", null, classes_5, {
                       "ag-compact--selected": selectedEventId() === get(ev).id,
                       "ag-compact--cancelled": get(ev).status === "cancelled",
                       "ag-compact--tentative": get(ev).status === "tentative",
                       "ag-compact--full": get(ev).status === "full",
                       "ag-compact--limited": get(ev).status === "limited"
                     });
-                    set_attribute(div_19, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                    styles_3 = set_style(div_19, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                    set_attribute(button_2, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                    styles_4 = set_style(button_2, "", styles_4, { "--ev-color": get(ev).color || "var(--dt-accent)" });
                   },
                   [() => fmt(get(ev).start), () => duration(get(ev))]
                 );
-                delegated("click", div_19, () => handleClick(get(ev)));
-                event("pointerenter", div_19, () => get(oneventhover)?.(get(ev)));
-                delegated("keydown", div_19, (e) => handleKeydown(e, get(ev)));
-                append($$anchor5, div_19);
+                delegated("click", button_2, () => handleClick(get(ev)));
+                event("pointerenter", button_2, () => get(oneventhover)?.(get(ev)));
+                append($$anchor5, button_2);
               });
               reset(div_18);
               append($$anchor4, div_18);
             };
-            var consequent_18 = ($$anchor4) => {
-              var div_20 = root_22();
-              each(div_20, 21, () => groupIntoSlots(get(day).timedEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
-                var div_21 = root_21();
-                var div_22 = child(div_21);
+            var consequent_21 = ($$anchor4) => {
+              var div_19 = root_24();
+              each(div_19, 21, () => groupIntoSlots(get(day).timedEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
+                var div_20 = root_23();
+                var div_21 = child(div_20);
                 let classes_6;
-                each(div_22, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
+                each(div_21, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
                   eventCard($$anchor6, () => get(ev), () => false);
                 });
-                reset(div_22);
                 reset(div_21);
-                template_effect(() => classes_6 = set_class(div_22, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_6, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
-                append($$anchor5, div_21);
+                reset(div_20);
+                template_effect(() => classes_6 = set_class(div_21, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_6, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
+                append($$anchor5, div_20);
               });
-              reset(div_20);
-              append($$anchor4, div_20);
+              reset(div_19);
+              append($$anchor4, div_19);
             };
-            var consequent_21 = ($$anchor4) => {
-              var div_23 = root_25();
-              var node_21 = child(div_23);
+            var consequent_24 = ($$anchor4) => {
+              var div_22 = root_27();
+              var node_23 = child(div_22);
               {
-                var consequent_19 = ($$anchor5) => {
+                var consequent_22 = ($$anchor5) => {
                   var fragment_7 = comment();
-                  var node_22 = first_child(fragment_7);
-                  each(node_22, 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor6, ev) => {
-                    var div_24 = root_23();
-                    var div_25 = child(div_24);
-                    var span_19 = child(div_25);
-                    var text_21 = child(span_19, true);
-                    reset(span_19);
-                    reset(div_25);
-                    var node_23 = sibling(div_25, 2);
-                    eventCard(node_23, () => get(ev), () => true);
+                  var node_24 = first_child(fragment_7);
+                  each(node_24, 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor6, ev) => {
+                    var div_23 = root_25();
+                    var div_24 = child(div_23);
+                    var span_20 = child(div_24);
+                    var text_24 = child(span_20, true);
+                    reset(span_20);
                     reset(div_24);
-                    template_effect(() => set_text(text_21, get(L).now));
-                    append($$anchor6, div_24);
+                    var node_25 = sibling(div_24, 2);
+                    eventCard(node_25, () => get(ev), () => true);
+                    reset(div_23);
+                    template_effect(() => set_text(text_24, get(L).now));
+                    append($$anchor6, div_23);
                   });
                   append($$anchor5, fragment_7);
                 };
-                if_block(node_21, ($$render) => {
-                  if (get(day).currentEvents.length > 0) $$render(consequent_19);
+                if_block(node_23, ($$render) => {
+                  if (get(day).currentEvents.length > 0) $$render(consequent_22);
                 });
               }
-              var node_24 = sibling(node_21, 2);
-              each(node_24, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
-                var div_26 = root_21();
-                var div_27 = child(div_26);
+              var node_26 = sibling(node_23, 2);
+              each(node_26, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor5, slot) => {
+                var div_25 = root_23();
+                var div_26 = child(div_25);
                 let classes_7;
-                each(div_27, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
+                each(div_26, 21, () => get(slot).events, (ev) => ev.id, ($$anchor6, ev) => {
                   {
                     let $0 = /* @__PURE__ */ user_derived(() => get(day).tier === "today" ? eta(get(ev).start.getTime()) : void 0);
                     eventCard($$anchor6, () => get(ev), () => false, () => get($0));
                   }
                 });
-                reset(div_27);
                 reset(div_26);
-                template_effect(() => classes_7 = set_class(div_27, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_7, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
-                append($$anchor5, div_26);
+                reset(div_25);
+                template_effect(() => classes_7 = set_class(div_26, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_7, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
+                append($$anchor5, div_25);
               });
-              var node_25 = sibling(node_24, 2);
+              var node_27 = sibling(node_26, 2);
               {
-                var consequent_20 = ($$anchor5) => {
-                  var div_28 = root_24();
-                  var text_22 = child(div_28);
-                  reset(div_28);
-                  template_effect(($0) => set_text(text_22, `✓ ${$0 ?? ""}`), [() => get(L).nCompleted(get(day).pastEvents.length)]);
-                  append($$anchor5, div_28);
+                var consequent_23 = ($$anchor5) => {
+                  var div_27 = root_26();
+                  var text_25 = child(div_27);
+                  reset(div_27);
+                  template_effect(($0) => set_text(text_25, `✓ ${$0 ?? ""}`), [() => get(L).nCompleted(get(day).pastEvents.length)]);
+                  append($$anchor5, div_27);
                 };
-                if_block(node_25, ($$render) => {
-                  if (get(day).pastEvents.length > 0) $$render(consequent_20);
+                if_block(node_27, ($$render) => {
+                  if (get(day).pastEvents.length > 0) $$render(consequent_23);
                 });
               }
-              reset(div_23);
-              append($$anchor4, div_23);
+              reset(div_22);
+              append($$anchor4, div_22);
             };
             var alternate_1 = ($$anchor4) => {
-              var div_29 = root_29();
-              var node_26 = child(div_29);
-              each(node_26, 17, () => get(day).timedEvents.slice(0, 4), (ev) => ev.id, ($$anchor5, ev) => {
-                var div_30 = root_19$1();
-                let classes_8;
-                let styles_4;
-                var node_27 = child(div_30);
-                EventContent(node_27, {
-                  get event() {
-                    return get(ev);
-                  },
-                  children: ($$anchor6, $$slotProps) => {
-                    var fragment_9 = root_27();
-                    var span_20 = sibling(first_child(fragment_9), 2);
-                    var text_23 = child(span_20, true);
-                    reset(span_20);
-                    var span_21 = sibling(span_20, 2);
-                    var text_24 = child(span_21, true);
-                    reset(span_21);
-                    var node_28 = sibling(span_21, 2);
-                    {
-                      var consequent_22 = ($$anchor7) => {
-                        var span_22 = root_26();
-                        var text_25 = child(span_22, true);
-                        reset(span_22);
-                        template_effect(() => set_text(text_25, get(ev).location));
-                        append($$anchor7, span_22);
-                      };
-                      if_block(node_28, ($$render) => {
-                        if (get(ev).location) $$render(consequent_22);
-                      });
-                    }
-                    var node_29 = sibling(node_28, 2);
-                    {
-                      var consequent_23 = ($$anchor7) => {
-                        var span_23 = root_16$1();
-                        var text_26 = child(span_23, true);
-                        reset(span_23);
-                        template_effect(() => set_text(text_26, get(ev).subtitle));
-                        append($$anchor7, span_23);
-                      };
-                      if_block(node_29, ($$render) => {
-                        if (get(ev).subtitle) $$render(consequent_23);
-                      });
-                    }
-                    var node_30 = sibling(node_29, 2);
-                    {
-                      var consequent_24 = ($$anchor7) => {
-                        var fragment_10 = comment();
-                        var node_31 = first_child(fragment_10);
-                        each(node_31, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
-                          var span_24 = root_17$1();
-                          var text_27 = child(span_24, true);
-                          reset(span_24);
-                          template_effect(() => set_text(text_27, get(tag)));
-                          append($$anchor8, span_24);
+              const dayExpanded = /* @__PURE__ */ user_derived(() => get(expandedDays).includes(get(day).ms));
+              var div_28 = root_31();
+              var node_28 = child(div_28);
+              each(
+                node_28,
+                17,
+                () => get(dayExpanded) ? get(day).timedEvents : get(day).timedEvents.slice(0, 4),
+                (ev) => ev.id,
+                ($$anchor5, ev) => {
+                  var button_3 = root_21$1();
+                  let classes_8;
+                  let styles_5;
+                  var node_29 = child(button_3);
+                  EventContent(node_29, {
+                    get event() {
+                      return get(ev);
+                    },
+                    children: ($$anchor6, $$slotProps) => {
+                      var fragment_9 = root_29();
+                      var span_21 = sibling(first_child(fragment_9), 2);
+                      var text_26 = child(span_21, true);
+                      reset(span_21);
+                      var span_22 = sibling(span_21, 2);
+                      var text_27 = child(span_22, true);
+                      reset(span_22);
+                      var node_30 = sibling(span_22, 2);
+                      {
+                        var consequent_25 = ($$anchor7) => {
+                          var span_23 = root_28();
+                          var text_28 = child(span_23, true);
+                          reset(span_23);
+                          template_effect(() => set_text(text_28, get(ev).location));
+                          append($$anchor7, span_23);
+                        };
+                        if_block(node_30, ($$render) => {
+                          if (get(ev).location) $$render(consequent_25);
                         });
-                        append($$anchor7, fragment_10);
-                      };
-                      if_block(node_30, ($$render) => {
-                        if (get(ev).tags?.length) $$render(consequent_24);
+                      }
+                      var node_31 = sibling(node_30, 2);
+                      {
+                        var consequent_26 = ($$anchor7) => {
+                          var span_24 = root_18$1();
+                          var text_29 = child(span_24, true);
+                          reset(span_24);
+                          template_effect(() => set_text(text_29, get(ev).subtitle));
+                          append($$anchor7, span_24);
+                        };
+                        if_block(node_31, ($$render) => {
+                          if (get(ev).subtitle) $$render(consequent_26);
+                        });
+                      }
+                      var node_32 = sibling(node_31, 2);
+                      {
+                        var consequent_27 = ($$anchor7) => {
+                          var fragment_10 = comment();
+                          var node_33 = first_child(fragment_10);
+                          each(node_33, 17, () => get(ev).tags, index, ($$anchor8, tag) => {
+                            var span_25 = root_19$1();
+                            var text_30 = child(span_25, true);
+                            reset(span_25);
+                            template_effect(() => set_text(text_30, get(tag)));
+                            append($$anchor8, span_25);
+                          });
+                          append($$anchor7, fragment_10);
+                        };
+                        if_block(node_32, ($$render) => {
+                          if (get(ev).tags?.length) $$render(consequent_27);
+                        });
+                      }
+                      var span_26 = sibling(node_32, 2);
+                      var text_31 = child(span_26, true);
+                      reset(span_26);
+                      template_effect(
+                        ($0, $1) => {
+                          set_text(text_26, $0);
+                          set_text(text_27, get(ev).title);
+                          set_text(text_31, $1);
+                        },
+                        [() => fmt(get(ev).start), () => duration(get(ev))]
+                      );
+                      append($$anchor6, fragment_9);
+                    },
+                    $$slots: { default: true }
+                  });
+                  reset(button_3);
+                  template_effect(
+                    ($0, $1) => {
+                      classes_8 = set_class(button_3, 1, "ag-compact svelte-uhwfyj", null, classes_8, {
+                        "ag-compact--selected": selectedEventId() === get(ev).id,
+                        "ag-compact--cancelled": get(ev).status === "cancelled",
+                        "ag-compact--tentative": get(ev).status === "tentative",
+                        "ag-compact--full": get(ev).status === "full",
+                        "ag-compact--limited": get(ev).status === "limited"
                       });
-                    }
-                    var span_25 = sibling(node_30, 2);
-                    var text_28 = child(span_25, true);
-                    reset(span_25);
-                    template_effect(
-                      ($0, $1) => {
-                        set_text(text_23, $0);
-                        set_text(text_24, get(ev).title);
-                        set_text(text_28, $1);
-                      },
-                      [() => fmt(get(ev).start), () => duration(get(ev))]
-                    );
-                    append($$anchor6, fragment_9);
-                  },
-                  $$slots: { default: true }
-                });
-                reset(div_30);
-                template_effect(
-                  ($0, $1) => {
-                    classes_8 = set_class(div_30, 1, "ag-compact svelte-uhwfyj", null, classes_8, {
-                      "ag-compact--selected": selectedEventId() === get(ev).id,
-                      "ag-compact--cancelled": get(ev).status === "cancelled",
-                      "ag-compact--tentative": get(ev).status === "tentative",
-                      "ag-compact--full": get(ev).status === "full",
-                      "ag-compact--limited": get(ev).status === "limited"
-                    });
-                    set_attribute(div_30, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
-                    styles_4 = set_style(div_30, "", styles_4, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-                  },
-                  [() => fmt(get(ev).start), () => duration(get(ev))]
-                );
-                delegated("click", div_30, () => handleClick(get(ev)));
-                event("pointerenter", div_30, () => get(oneventhover)?.(get(ev)));
-                delegated("keydown", div_30, (e) => handleKeydown(e, get(ev)));
-                append($$anchor5, div_30);
-              });
-              var node_32 = sibling(node_26, 2);
+                      set_attribute(button_3, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+                      styles_5 = set_style(button_3, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
+                    },
+                    [() => fmt(get(ev).start), () => duration(get(ev))]
+                  );
+                  delegated("click", button_3, () => handleClick(get(ev)));
+                  event("pointerenter", button_3, () => get(oneventhover)?.(get(ev)));
+                  append($$anchor5, button_3);
+                }
+              );
+              var node_34 = sibling(node_28, 2);
               {
-                var consequent_25 = ($$anchor5) => {
-                  var div_31 = root_28();
-                  var text_29 = child(div_31, true);
-                  reset(div_31);
-                  template_effect(($0) => set_text(text_29, $0), [() => get(L).nMore(get(day).timedEvents.length - 4)]);
-                  append($$anchor5, div_31);
+                var consequent_28 = ($$anchor5) => {
+                  var button_4 = root_30();
+                  var text_32 = child(button_4, true);
+                  reset(button_4);
+                  template_effect(
+                    ($0) => {
+                      set_attribute(button_4, "aria-expanded", get(dayExpanded));
+                      set_text(text_32, $0);
+                    },
+                    [
+                      () => get(dayExpanded) ? get(L).showLess : get(L).nMore(get(day).timedEvents.length - 4)
+                    ]
+                  );
+                  delegated("click", button_4, () => toggleDayExpand(get(day).ms));
+                  append($$anchor5, button_4);
                 };
-                if_block(node_32, ($$render) => {
-                  if (get(day).timedEvents.length > 4) $$render(consequent_25);
+                if_block(node_34, ($$render) => {
+                  if (get(day).timedEvents.length > 4) $$render(consequent_28);
                 });
               }
-              reset(div_29);
-              append($$anchor4, div_29);
+              reset(div_28);
+              append($$anchor4, div_28);
             };
-            if_block(node_16, ($$render) => {
-              if (get(day).events.length === 0) $$render(consequent_14);
-              else if (get(compact)) $$render(consequent_17, 1);
-              else if (get(equalDays)) $$render(consequent_18, 2);
-              else if (get(expanded)) $$render(consequent_21, 3);
+            if_block(node_18, ($$render) => {
+              if (get(day).events.length === 0) $$render(consequent_17);
+              else if (get(compact)) $$render(consequent_20, 1);
+              else if (get(equalDays)) $$render(consequent_21, 2);
+              else if (get(expanded)) $$render(consequent_24, 3);
               else $$render(alternate_1, -1);
             });
           }
-          reset(div_11);
+          reset(div_12);
           template_effect(
             ($0) => {
-              classes_3 = set_class(div_11, 1, "ag-wday svelte-uhwfyj", null, classes_3, $0);
-              set_text(text_12, get(day).dayName);
+              classes_3 = set_class(div_12, 1, "ag-wday svelte-uhwfyj", null, classes_3, $0);
+              set_text(text_14, get(day).dayName);
             },
             [
               () => ({
@@ -10517,28 +10603,29 @@
               })
             ]
           );
-          append($$anchor3, div_11);
+          append($$anchor3, div_12);
         };
         if_block(node_7, ($$render) => {
-          if (get(day).tier === "past") $$render(consequent_8);
+          if (get(day).tier === "past") $$render(consequent_10);
           else $$render(alternate_2, -1);
         });
       }
       append($$anchor2, fragment_3);
     });
-    reset(div_6);
     reset(div_5);
+    reset(div_4);
     template_effect(() => {
-      classes_1 = set_class(div_5, 1, "ag ag--week svelte-uhwfyj", null, classes_1, { "ag--mobile": get(isMobile), "ag--auto": get(autoHeight) });
-      set_style(div_5, style() || void 0);
-      set_attribute(div_6, "aria-label", get(L).weekAhead);
+      classes_1 = set_class(div_4, 1, "ag ag--week svelte-uhwfyj", null, classes_1, { "ag--mobile": get(isMobile), "ag--auto": get(autoHeight) });
+      styles_2 = set_style(div_4, style() || void 0, styles_2, { height: $$props.height ? `${$$props.height}px` : void 0 });
+      set_attribute(div_5, "aria-label", get(L).weekAhead);
     });
-    delegated("pointerdown", div_5, onPointerDown);
-    delegated("pointerup", div_5, onPointerUp);
-    append($$anchor, div_5);
+    delegated("pointerdown", div_4, onPointerDown);
+    delegated("pointerup", div_4, onPointerUp);
+    event("pointercancel", div_4, onPointerCancel);
+    append($$anchor, div_4);
     pop();
   }
-  delegate(["click", "keydown", "pointerdown", "pointerup"]);
+  delegate(["click", "pointerdown", "pointerup"]);
   var rest_excludes$1 = /* @__PURE__ */ new Set(["$$slots", "$$events", "$$legacy", "mode"]);
   function Agenda($$anchor, $$props) {
     let mode = prop($$props, "mode", 3, "day"), rest = /* @__PURE__ */ rest_props($$props, rest_excludes$1);
@@ -10558,30 +10645,85 @@
     }
     append($$anchor, fragment);
   }
+  const SWIPE_THRESHOLD = 50;
+  function createSwipe(cb) {
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    let dx = 0;
+    function abandon() {
+      tracking = false;
+      if (dx !== 0) {
+        dx = 0;
+        cb.onmove(0);
+      }
+    }
+    return {
+      ontouchstart(e) {
+        if (cb.disabled?.()) {
+          tracking = false;
+          return;
+        }
+        const t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+        tracking = true;
+        dx = 0;
+      },
+      ontouchmove(e) {
+        if (!tracking) return;
+        if (cb.disabled?.()) {
+          abandon();
+          return;
+        }
+        const t = e.touches[0];
+        const mx = t.clientX - startX;
+        const my = t.clientY - startY;
+        if (Math.abs(my) > Math.abs(mx) * 0.8) {
+          abandon();
+          return;
+        }
+        dx = mx;
+        cb.onmove(dx);
+      },
+      ontouchend() {
+        if (!tracking) {
+          cb.onend(0);
+          return;
+        }
+        tracking = false;
+        const dir = Math.abs(dx) > SWIPE_THRESHOLD ? dx > 0 ? 1 : -1 : 0;
+        dx = 0;
+        cb.onend(dir);
+      }
+    };
+  }
   var root_1$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-span svelte-zbkzcp"> </span>`);
-  var root_2$3 = /* @__PURE__ */ from_html(`<button><span class="mb-allday-dot svelte-zbkzcp"></span> <span class="mb-allday-title svelte-zbkzcp"> </span> <!></button>`);
-  var root_3$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-more svelte-zbkzcp"> </span>`);
-  var root_4$3 = /* @__PURE__ */ from_html(`<div class="mb-allday svelte-zbkzcp"><!> <!></div>`);
+  var root_2$3 = /* @__PURE__ */ from_html(`<button type="button"><span class="mb-allday-dot svelte-zbkzcp"></span> <span class="mb-allday-title svelte-zbkzcp"> </span> <!></button>`);
+  var root_3$3 = /* @__PURE__ */ from_html(`<button type="button" class="mb-allday-more svelte-zbkzcp"> </button>`);
+  var root_4$3 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
   var root_5$3 = /* @__PURE__ */ from_html(`<span class="mb-blocked-label svelte-zbkzcp"> </span>`);
   var root_6$3 = /* @__PURE__ */ from_html(`<div><div class="mb-hour-label svelte-zbkzcp"> </div> <div class="mb-hour-line svelte-zbkzcp"></div> <!></div>`);
-  var root_7$2 = /* @__PURE__ */ from_html(`<div class="mb-now svelte-zbkzcp"><span class="mb-now-label svelte-zbkzcp"> </span> <div class="mb-now-line svelte-zbkzcp"></div></div>`);
-  var root_8$2 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
+  var root_7$3 = /* @__PURE__ */ from_html(`<div class="mb-now svelte-zbkzcp"><span class="mb-now-label svelte-zbkzcp"> </span> <div class="mb-now-line svelte-zbkzcp"></div></div>`);
+  var root_8$3 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
   var root_9$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-sub svelte-zbkzcp"> </span>`);
   var root_10$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-loc svelte-zbkzcp"> </span>`);
-  var root_11$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
-  var root_12$1 = /* @__PURE__ */ from_html(`<div class="mb-ev-tags svelte-zbkzcp"></div>`);
+  var root_11 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
+  var root_12 = /* @__PURE__ */ from_html(`<div class="mb-ev-tags svelte-zbkzcp"></div>`);
   var root_13 = /* @__PURE__ */ from_html(`<span class="mb-ev-title svelte-zbkzcp"> </span> <!> <!> <!> <!>`, 1);
   var root_14 = /* @__PURE__ */ from_html(`<span class="mb-ev-live svelte-zbkzcp"></span>`);
   var root_15 = /* @__PURE__ */ from_html(`<span class="mb-ev-next-badge svelte-zbkzcp"> </span>`);
   var root_16 = /* @__PURE__ */ from_html(`<span class="mb-ev-handle mb-ev-handle--start svelte-zbkzcp" aria-hidden="true"></span> <span class="mb-ev-handle mb-ev-handle--end svelte-zbkzcp" aria-hidden="true"></span>`, 1);
-  var root_17 = /* @__PURE__ */ from_html(`<button><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><!></div> <!> <!></button>`);
+  var root_17 = /* @__PURE__ */ from_html(`<button type="button"><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><!></div> <!> <!></button>`);
   var root_18 = /* @__PURE__ */ from_html(`<div class="mb-create-ghost svelte-zbkzcp" aria-hidden="true"><span class="mb-create-ghost-time svelte-zbkzcp"> </span></div>`);
-  var root_19 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="mb-grid svelte-zbkzcp" role="grid" tabindex="-1"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!> <!></div></div></div>`);
+  var root_19 = /* @__PURE__ */ from_html(`<span class="mb-empty-text svelte-zbkzcp"> </span>`);
+  var root_20 = /* @__PURE__ */ from_html(`<div class="mb-empty svelte-zbkzcp"><!></div>`);
+  var root_21 = /* @__PURE__ */ from_html(`<div role="region"><div><!>  <div class="mb-grid svelte-zbkzcp" role="region" tabindex="0"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!> <!></div></div> <!></div></div>`);
   function MobileDay($$anchor, $$props) {
     push($$props, true);
-    const L = /* @__PURE__ */ user_derived(getLabels);
     let height = prop($$props, "height", 3, null), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const autoHeight = /* @__PURE__ */ user_derived(() => ctx.autoHeight);
     const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
@@ -10620,15 +10762,19 @@
       }
       return segs;
     });
+    const isEmpty = /* @__PURE__ */ user_derived(() => get(timedEvents).length === 0 && get(allDayEvents).length === 0);
+    const ALLDAY_MAX = 3;
+    let allDayExpanded = /* @__PURE__ */ state(false);
+    const visibleAllDay = /* @__PURE__ */ user_derived(() => get(allDayExpanded) ? get(allDayEvents) : get(allDayEvents).slice(0, ALLDAY_MAX));
     const positionedEvents = /* @__PURE__ */ user_derived(() => {
-      const now2 = clock.tick;
+      const now = clock.tick;
       const sorted = [...get(timedEvents)];
       const rsP = get(drag)?.active && (get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
       let nextEventId = null;
       if (get(isToday)) {
         for (const ev of [...sorted].sort((a, b) => a.start.getTime() - b.start.getTime())) {
           const s = ev.start.getTime();
-          if (s > now2) {
+          if (s > now) {
             nextEventId = ev.id;
             break;
           }
@@ -10646,7 +10792,7 @@
           ev,
           top: topH * HOUR_HEIGHT,
           height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
-          isCurrent: ev.start.getTime() <= now2 && ev.end.getTime() > now2,
+          isCurrent: ev.start.getTime() <= now && ev.end.getTime() > now,
           isNext: ev.id === nextEventId,
           isResizing: resizing,
           startMs: sMs,
@@ -10720,44 +10866,33 @@
         return hour >= slot.start && hour < slot.end;
       });
     }
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let swiping = false;
+    function statusText(ev) {
+      if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+      if (ev.status === "tentative") return ` (${get(L).tentative})`;
+      if (ev.status === "full") return ` (${get(L).full})`;
+      if (ev.status === "limited") return ` (${get(L).limited})`;
+      return "";
+    }
     let swipeOffset = /* @__PURE__ */ state(0);
-    const SWIPE_THRESHOLD = 50;
-    function onTouchStart(e) {
-      const t = e.touches[0];
-      touchStartX = t.clientX;
-      touchStartY = t.clientY;
-      swiping = true;
-      set(swipeOffset, 0);
-    }
-    function onTouchMove(e) {
-      if (!swiping) return;
-      const t = e.touches[0];
-      const dx = t.clientX - touchStartX;
-      const dy = t.clientY - touchStartY;
-      if (Math.abs(dy) > Math.abs(dx) * 0.8) {
-        swiping = false;
-        return;
-      }
-      set(swipeOffset, dx);
-    }
-    function onTouchEnd() {
-      if (!swiping) {
-        set(swipeOffset, 0);
-        return;
-      }
-      if (Math.abs(get(swipeOffset)) > SWIPE_THRESHOLD) {
-        if (get(swipeOffset) > 0) {
-          get(viewState)?.prev();
+    let swipeAnimate = /* @__PURE__ */ state(false);
+    const swipe = createSwipe({
+      disabled: () => !!get(drag)?.active || mbCreateStarted || mbRsStarted || longPressTimer !== null,
+      onmove: (dx) => {
+        set(swipeAnimate, false);
+        set(swipeOffset, dx, true);
+      },
+      onend: (dir) => {
+        if (dir !== 0) {
+          set(swipeAnimate, false);
+          set(swipeOffset, 0);
+          if (dir > 0) get(viewState)?.prev();
+          else get(viewState)?.next();
         } else {
-          get(viewState)?.next();
+          set(swipeAnimate, true);
+          set(swipeOffset, 0);
         }
       }
-      set(swipeOffset, 0);
-      swiping = false;
-    }
+    });
     function handleGridClick(e) {
       if (suppressGridClick) {
         suppressGridClick = false;
@@ -10765,22 +10900,52 @@
       }
       if (!$$props.oneventcreate || readOnly() || get(isDisabled)) return;
       if (e.target.closest(".mb-event")) return;
-      const grid = e.currentTarget;
-      const rect = grid.getBoundingClientRect();
-      const y = e.clientY - rect.top + grid.scrollTop;
-      const hour = get(startHour) + y / HOUR_HEIGHT;
-      if (isBlockedAt(hour)) return;
-      const snapHour = Math.floor(hour);
-      const durMin = get(minDuration) ? Math.max(60, get(minDuration)) : 60;
-      const start = new Date(get(dayMs) + snapHour * HOUR_MS);
-      const end = new Date(start.getTime() + durMin * 6e4);
-      $$props.oneventcreate({ start, end });
+      const tMs = gridTimeMs(e.clientY);
+      if (isBlockedAt((tMs - get(dayMs)) / HOUR_MS)) return;
+      const startMs = clampToDay(Math.floor(tMs / get(SNAP_MS)) * get(SNAP_MS));
+      const durMin = get(minDuration) ?? 60;
+      $$props.oneventcreate({
+        start: new Date(startMs),
+        end: new Date(startMs + durMin * 6e4)
+      });
+    }
+    function onGridKeydown(e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      if (!$$props.oneventcreate || readOnly() || get(isDisabled)) return;
+      e.preventDefault();
+      const raw = get(isToday) ? clock.tick : get(dayMs) + get(startHour) * HOUR_MS;
+      const startMs = clampToDay(Math.ceil(raw / get(SNAP_MS)) * get(SNAP_MS));
+      if (isBlockedAt((startMs - get(dayMs)) / HOUR_MS)) return;
+      const durMin = get(minDuration) ?? 60;
+      $$props.oneventcreate({
+        start: new Date(startMs),
+        end: new Date(startMs + durMin * 6e4)
+      });
     }
     const CREATE_THRESHOLD = 4;
+    const LONG_PRESS_MS = 350;
+    const LONG_PRESS_TOLERANCE = 8;
     let suppressGridClick = false;
+    let mbCreateStartX = 0;
     let mbCreateStartY = 0;
     let mbCreateAnchorMs = 0;
     let mbCreateStarted = false;
+    let longPressTimer = null;
+    function blockTouchScroll(e) {
+      e.preventDefault();
+    }
+    function addTouchScrollBlock() {
+      window.addEventListener("touchmove", blockTouchScroll, { passive: false });
+    }
+    function removeTouchScrollBlock() {
+      window.removeEventListener("touchmove", blockTouchScroll);
+    }
+    function clearLongPress() {
+      if (longPressTimer !== null) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
     function gridTimeMs(clientY) {
       const rect = gridEl.getBoundingClientRect();
       const y = clientY - rect.top + gridEl.scrollTop;
@@ -10789,12 +10954,29 @@
     function clampToDay(ms) {
       return Math.max(get(dayMs) + get(startHour) * HOUR_MS, Math.min(get(dayMs) + get(endHour) * HOUR_MS, ms));
     }
+    function startGridCreate() {
+      if (!get(drag)) return;
+      mbCreateStarted = true;
+      mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / get(SNAP_MS)) * get(SNAP_MS));
+      get(drag).beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + get(SNAP_MS)));
+      addTouchScrollBlock();
+    }
     function onGridPointerDown(e) {
       if (e.button !== 0 || !get(drag) || !$$props.oneventcreate || readOnly() || get(isDisabled)) return;
       if (e.target.closest(".mb-event")) return;
+      mbCreateStartX = e.clientX;
       mbCreateStartY = e.clientY;
       mbCreateAnchorMs = gridTimeMs(e.clientY);
       mbCreateStarted = false;
+      if (e.pointerType === "touch") {
+        longPressTimer = setTimeout(
+          () => {
+            longPressTimer = null;
+            startGridCreate();
+          },
+          LONG_PRESS_MS
+        );
+      }
       window.addEventListener("pointermove", onGridCreateMove);
       window.addEventListener("pointerup", onGridCreateUp, { once: true });
       window.addEventListener("pointercancel", onGridCreateCancel, { once: true });
@@ -10802,15 +10984,21 @@
     function onGridCreateMove(e) {
       if (!get(drag)) return;
       if (!mbCreateStarted) {
+        if (longPressTimer !== null) {
+          const moved = Math.hypot(e.clientX - mbCreateStartX, e.clientY - mbCreateStartY);
+          if (moved > LONG_PRESS_TOLERANCE) cleanupGridCreate();
+          return;
+        }
+        if (e.pointerType === "touch") return;
         if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
-        mbCreateStarted = true;
-        mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / get(SNAP_MS)) * get(SNAP_MS));
-        get(drag).beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + get(SNAP_MS)));
+        startGridCreate();
       }
       const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
       get(drag).updatePointer(new Date(Math.min(mbCreateAnchorMs, snapped)), new Date(Math.max(mbCreateAnchorMs + get(SNAP_MS), snapped)));
     }
     function cleanupGridCreate() {
+      clearLongPress();
+      removeTouchScrollBlock();
       window.removeEventListener("pointermove", onGridCreateMove);
       window.removeEventListener("pointerup", onGridCreateUp);
       window.removeEventListener("pointercancel", onGridCreateCancel);
@@ -10832,6 +11020,9 @@
     function onGridCreateCancel() {
       if (get(drag) && mbCreateStarted) get(drag).cancel();
       cleanupGridCreate();
+    }
+    function onGridContextMenu(e) {
+      if (mbCreateStarted || longPressTimer !== null) e.preventDefault();
     }
     let suppressEventClick = false;
     let mbRsStartY = 0;
@@ -10856,6 +11047,7 @@
         if (Math.abs(e.clientY - mbRsStartY) < CREATE_THRESHOLD) return;
         mbRsStarted = true;
         get(drag).beginResize(ev.id, mbRsEdge, ev.start, ev.end);
+        addTouchScrollBlock();
       }
       const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
       if (mbRsEdge === "end") {
@@ -10867,6 +11059,7 @@
       }
     }
     function cleanupResize() {
+      removeTouchScrollBlock();
       window.removeEventListener("pointermove", onResizeMove);
       window.removeEventListener("pointerup", onResizeUp);
       window.removeEventListener("pointercancel", onResizeCancel);
@@ -10893,24 +11086,30 @@
       cleanupResize();
     }
     let gridEl;
-    onMount(() => {
-      if (get(nowOffset) > 0 && gridEl) {
-        const scrollTarget = Math.max(0, get(nowOffset) - 120);
-        gridEl.scrollTop = scrollTarget;
-      }
+    user_effect(() => {
+      void get(dayMs);
+      const el = gridEl;
+      if (!el) return;
+      untrack(() => {
+        if (get(nowOffset) >= 0) el.scrollTop = Math.max(0, get(nowOffset) - 120);
+      });
     });
-    var div = root_19();
+    var div = root_21();
     let classes;
     let styles;
-    var node = child(div);
+    var div_1 = child(div);
+    let classes_1;
+    let styles_1;
+    var node = child(div_1);
     {
       var consequent_2 = ($$anchor2) => {
-        var div_1 = root_4$3();
-        var node_1 = child(div_1);
-        each(node_1, 17, () => get(allDayEvents).slice(0, 3), (seg) => seg.ev.id, ($$anchor3, seg) => {
+        var div_2 = root_4$3();
+        let classes_2;
+        var node_1 = child(div_2);
+        each(node_1, 17, () => get(visibleAllDay), (seg) => seg.ev.id, ($$anchor3, seg) => {
           var button = root_2$3();
-          let classes_1;
-          let styles_1;
+          let classes_3;
+          let styles_2;
           var span = sibling(child(button), 2);
           var text2 = child(span, true);
           reset(span);
@@ -10929,10 +11128,10 @@
           }
           reset(button);
           template_effect(() => {
-            classes_1 = set_class(button, 1, "mb-allday-chip svelte-zbkzcp", null, classes_1, {
+            classes_3 = set_class(button, 1, "mb-allday-chip svelte-zbkzcp", null, classes_3, {
               "mb-allday-chip--selected": selectedEventId() === get(seg).ev.id
             });
-            styles_1 = set_style(button, "", styles_1, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+            styles_2 = set_style(button, "", styles_2, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
             set_text(text2, get(seg).ev.title);
           });
           delegated("click", button, () => $$props.oneventclick?.(get(seg).ev));
@@ -10941,37 +11140,49 @@
         var node_3 = sibling(node_1, 2);
         {
           var consequent_1 = ($$anchor3) => {
-            var span_2 = root_3$3();
-            var text_2 = child(span_2, true);
-            reset(span_2);
-            template_effect(($0) => set_text(text_2, $0), [() => get(L).nMore(get(allDayEvents).length - 3)]);
-            append($$anchor3, span_2);
+            var button_1 = root_3$3();
+            var text_2 = child(button_1, true);
+            reset(button_1);
+            template_effect(
+              ($0) => {
+                set_attribute(button_1, "aria-expanded", get(allDayExpanded));
+                set_text(text_2, $0);
+              },
+              [
+                () => get(allDayExpanded) ? get(L).showLess : get(L).nMore(get(allDayEvents).length - ALLDAY_MAX)
+              ]
+            );
+            delegated("click", button_1, () => {
+              set(allDayExpanded, !get(allDayExpanded));
+            });
+            append($$anchor3, button_1);
           };
           if_block(node_3, ($$render) => {
-            if (get(allDayEvents).length > 3) $$render(consequent_1);
+            if (get(allDayEvents).length > ALLDAY_MAX) $$render(consequent_1);
           });
         }
-        reset(div_1);
-        append($$anchor2, div_1);
+        reset(div_2);
+        template_effect(() => classes_2 = set_class(div_2, 1, "mb-allday svelte-zbkzcp", null, classes_2, { "mb-allday--expanded": get(allDayExpanded) }));
+        append($$anchor2, div_2);
       };
       if_block(node, ($$render) => {
         if (get(allDayEvents).length > 0) $$render(consequent_2);
       });
     }
-    var div_2 = sibling(node, 2);
-    var div_3 = child(div_2);
-    let styles_2;
-    var node_4 = child(div_3);
+    var div_3 = sibling(node, 2);
+    var div_4 = child(div_3);
+    let styles_3;
+    var node_4 = child(div_4);
     each(node_4, 17, () => ({ length: get(hourCount) }), index, ($$anchor2, _, h) => {
       const hour = /* @__PURE__ */ user_derived(() => get(startHour) + h);
       const blocked = /* @__PURE__ */ user_derived(() => isBlockedAt(get(hour)));
-      var div_4 = root_6$3();
-      let classes_2;
-      set_style(div_4, "", {}, { top: `${h * HOUR_HEIGHT}px`, height: "64px" });
-      var div_5 = child(div_4);
-      var text_3 = child(div_5, true);
-      reset(div_5);
-      var node_5 = sibling(div_5, 4);
+      var div_5 = root_6$3();
+      let classes_4;
+      set_style(div_5, "", {}, { top: `${h * HOUR_HEIGHT}px`, height: "64px" });
+      var div_6 = child(div_5);
+      var text_3 = child(div_6, true);
+      reset(div_6);
+      var node_5 = sibling(div_6, 4);
       {
         var consequent_4 = ($$anchor3) => {
           const slot = /* @__PURE__ */ user_derived(() => get(blockedSlots).find((s) => (!s.day || s.day === (new Date(get(dayMs)).getDay() === 0 ? 7 : new Date(get(dayMs)).getDay())) && get(hour) >= s.start && get(hour) < s.end));
@@ -10979,11 +11190,11 @@
           var node_6 = first_child(fragment);
           {
             var consequent_3 = ($$anchor4) => {
-              var span_3 = root_5$3();
-              var text_4 = child(span_3, true);
-              reset(span_3);
+              var span_2 = root_5$3();
+              var text_4 = child(span_2, true);
+              reset(span_2);
               template_effect(() => set_text(text_4, get(slot).label));
-              append($$anchor4, span_3);
+              append($$anchor4, span_2);
             };
             if_block(node_6, ($$render) => {
               if (get(slot)?.label) $$render(consequent_3);
@@ -10995,31 +11206,31 @@
           if (get(blocked) && get(blockedSlots)) $$render(consequent_4);
         });
       }
-      reset(div_4);
+      reset(div_5);
       template_effect(
         ($0) => {
-          classes_2 = set_class(div_4, 1, "mb-hour svelte-zbkzcp", null, classes_2, { "mb-hour--blocked": get(blocked) });
+          classes_4 = set_class(div_5, 1, "mb-hour svelte-zbkzcp", null, classes_4, { "mb-hour--blocked": get(blocked) });
           set_text(text_3, $0);
         },
         [() => fmtH(get(hour), $$props.locale)]
       );
-      append($$anchor2, div_4);
+      append($$anchor2, div_5);
     });
     var node_7 = sibling(node_4, 2);
     {
       var consequent_5 = ($$anchor2) => {
-        var div_6 = root_7$2();
-        let styles_3;
-        var span_4 = child(div_6);
-        var text_5 = child(span_4, true);
-        reset(span_4);
+        var div_7 = root_7$3();
+        let styles_4;
+        var span_3 = child(div_7);
+        var text_5 = child(span_3, true);
+        reset(span_3);
         next(2);
-        reset(div_6);
+        reset(div_7);
         template_effect(() => {
-          styles_3 = set_style(div_6, "", styles_3, { top: `${get(nowOffset) ?? ""}px` });
+          styles_4 = set_style(div_7, "", styles_4, { top: `${get(nowOffset) ?? ""}px` });
           set_text(text_5, clock.hm);
         });
-        append($$anchor2, div_6);
+        append($$anchor2, div_7);
       };
       if_block(node_7, ($$render) => {
         if (get(nowOffset) >= 0) $$render(consequent_5);
@@ -11027,31 +11238,31 @@
     }
     var node_8 = sibling(node_7, 2);
     each(node_8, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor2, p) => {
-      var button_1 = root_17();
-      let classes_3;
-      let styles_4;
-      var div_7 = sibling(child(button_1), 2);
-      var node_9 = child(div_7);
+      var button_2 = root_17();
+      let classes_5;
+      let styles_5;
+      var div_8 = sibling(child(button_2), 2);
+      var node_9 = child(div_8);
       EventContent(node_9, {
         get event() {
           return get(p).ev;
         },
         children: ($$anchor3, $$slotProps) => {
           var fragment_1 = root_13();
-          var span_5 = first_child(fragment_1);
-          var text_6 = child(span_5, true);
-          reset(span_5);
-          var node_10 = sibling(span_5, 2);
+          var span_4 = first_child(fragment_1);
+          var text_6 = child(span_4, true);
+          reset(span_4);
+          var node_10 = sibling(span_4, 2);
           {
             var consequent_6 = ($$anchor4) => {
-              var span_6 = root_8$2();
-              var text_7 = child(span_6);
-              reset(span_6);
+              var span_5 = root_8$3();
+              var text_7 = child(span_5);
+              reset(span_5);
               template_effect(($0, $1) => set_text(text_7, `${$0 ?? ""} – ${$1 ?? ""}`), [
                 () => fmtTime$1(get(p).ev.start, $$props.locale),
                 () => fmtTime$1(get(p).ev.end, $$props.locale)
               ]);
-              append($$anchor4, span_6);
+              append($$anchor4, span_5);
             };
             if_block(node_10, ($$render) => {
               if (get(p).height > 32) $$render(consequent_6);
@@ -11060,11 +11271,11 @@
           var node_11 = sibling(node_10, 2);
           {
             var consequent_7 = ($$anchor4) => {
-              var span_7 = root_9$1();
-              var text_8 = child(span_7, true);
-              reset(span_7);
+              var span_6 = root_9$1();
+              var text_8 = child(span_6, true);
+              reset(span_6);
               template_effect(() => set_text(text_8, get(p).ev.subtitle));
-              append($$anchor4, span_7);
+              append($$anchor4, span_6);
             };
             if_block(node_11, ($$render) => {
               if (get(p).ev.subtitle && get(p).height > 48) $$render(consequent_7);
@@ -11073,11 +11284,11 @@
           var node_12 = sibling(node_11, 2);
           {
             var consequent_8 = ($$anchor4) => {
-              var span_8 = root_10$1();
-              var text_9 = child(span_8, true);
-              reset(span_8);
+              var span_7 = root_10$1();
+              var text_9 = child(span_7, true);
+              reset(span_7);
               template_effect(() => set_text(text_9, get(p).ev.location));
-              append($$anchor4, span_8);
+              append($$anchor4, span_7);
             };
             if_block(node_12, ($$render) => {
               if (get(p).ev.location && get(p).height > 56) $$render(consequent_8);
@@ -11086,16 +11297,16 @@
           var node_13 = sibling(node_12, 2);
           {
             var consequent_9 = ($$anchor4) => {
-              var div_8 = root_12$1();
-              each(div_8, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
-                var span_9 = root_11$1();
-                var text_10 = child(span_9, true);
-                reset(span_9);
+              var div_9 = root_12();
+              each(div_9, 21, () => get(p).ev.tags, index, ($$anchor5, tag) => {
+                var span_8 = root_11();
+                var text_10 = child(span_8, true);
+                reset(span_8);
                 template_effect(() => set_text(text_10, get(tag)));
-                append($$anchor5, span_9);
+                append($$anchor5, span_8);
               });
-              reset(div_8);
-              append($$anchor4, div_8);
+              reset(div_9);
+              append($$anchor4, div_9);
             };
             if_block(node_13, ($$render) => {
               if (get(p).ev.tags?.length && get(p).height > 56) $$render(consequent_9);
@@ -11106,19 +11317,19 @@
         },
         $$slots: { default: true }
       });
-      reset(div_7);
-      var node_14 = sibling(div_7, 2);
+      reset(div_8);
+      var node_14 = sibling(div_8, 2);
       {
         var consequent_10 = ($$anchor3) => {
-          var span_10 = root_14();
-          append($$anchor3, span_10);
+          var span_9 = root_14();
+          append($$anchor3, span_9);
         };
         var consequent_11 = ($$anchor3) => {
-          var span_11 = root_15();
-          var text_11 = child(span_11, true);
-          reset(span_11);
+          var span_10 = root_15();
+          var text_11 = child(span_10, true);
+          reset(span_10);
           template_effect(() => set_text(text_11, get(L).upNext));
-          append($$anchor3, span_11);
+          append($$anchor3, span_10);
         };
         if_block(node_14, ($$render) => {
           if (get(p).isCurrent) $$render(consequent_10);
@@ -11129,38 +11340,46 @@
       {
         var consequent_12 = ($$anchor3) => {
           var fragment_2 = root_16();
-          var span_12 = first_child(fragment_2);
-          var span_13 = sibling(span_12, 2);
-          delegated("pointerdown", span_12, (e) => onResizePointerDown(e, get(p).ev, "start"));
-          delegated("pointerdown", span_13, (e) => onResizePointerDown(e, get(p).ev, "end"));
+          var span_11 = first_child(fragment_2);
+          var span_12 = sibling(span_11, 2);
+          delegated("pointerdown", span_11, (e) => onResizePointerDown(e, get(p).ev, "start"));
+          delegated("pointerdown", span_12, (e) => onResizePointerDown(e, get(p).ev, "end"));
           append($$anchor3, fragment_2);
         };
         if_block(node_15, ($$render) => {
           if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_12);
         });
       }
-      reset(button_1);
-      template_effect(() => {
-        classes_3 = set_class(button_1, 1, "mb-event svelte-zbkzcp", null, classes_3, {
-          "mb-event--selected": selectedEventId() === get(p).ev.id,
-          "mb-event--current": get(p).isCurrent,
-          "mb-event--next": get(p).isNext,
-          "mb-event--cancelled": get(p).ev.status === "cancelled",
-          "mb-event--tentative": get(p).ev.status === "tentative",
-          "mb-event--full": get(p).ev.status === "full",
-          "mb-event--limited": get(p).ev.status === "limited",
-          "mb-event--resizing": get(p).isResizing
-        });
-        set_attribute(button_1, "aria-label", `${get(p).ev.title ?? ""}${get(p).ev.status === "cancelled" ? " (cancelled)" : ""}${get(p).ev.status === "tentative" ? " (tentative)" : ""}${get(p).ev.status === "full" ? " (full)" : ""}${get(p).ev.status === "limited" ? " (limited)" : ""}${get(p).isCurrent ? `, ${get(L).inProgress}` : ""}${get(p).isNext ? `, ${get(L).upNext}` : ""}`);
-        styles_4 = set_style(button_1, "", styles_4, {
-          top: `${get(p).top ?? ""}px`,
-          height: `${get(p).height ?? ""}px`,
-          left: get(p).left,
-          width: get(p).width,
-          "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
-        });
-      });
-      delegated("click", button_1, (e) => {
+      reset(button_2);
+      template_effect(
+        ($0, $1, $2) => {
+          classes_5 = set_class(button_2, 1, "mb-event svelte-zbkzcp", null, classes_5, {
+            "mb-event--selected": selectedEventId() === get(p).ev.id,
+            "mb-event--current": get(p).isCurrent,
+            "mb-event--next": get(p).isNext,
+            "mb-event--cancelled": get(p).ev.status === "cancelled",
+            "mb-event--tentative": get(p).ev.status === "tentative",
+            "mb-event--full": get(p).ev.status === "full",
+            "mb-event--limited": get(p).ev.status === "limited",
+            "mb-event--resizing": get(p).isResizing,
+            "mb-event--short": get(p).height < 44
+          });
+          set_attribute(button_2, "aria-label", `${get(p).ev.title ?? ""}${$0 ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}${get(p).isCurrent ? `, ${get(L).inProgress}` : ""}${get(p).isNext ? `, ${get(L).upNext}` : ""}`);
+          styles_5 = set_style(button_2, "", styles_5, {
+            top: `${get(p).top ?? ""}px`,
+            height: `${get(p).height ?? ""}px`,
+            left: get(p).left,
+            width: get(p).width,
+            "--ev-color": get(p).ev.color ?? "var(--dt-accent)"
+          });
+        },
+        [
+          () => statusText(get(p).ev),
+          () => fmtTime$1(get(p).ev.start, $$props.locale),
+          () => fmtTime$1(get(p).ev.end, $$props.locale)
+        ]
+      );
+      delegated("click", button_2, (e) => {
         e.stopPropagation();
         if (suppressEventClick) {
           suppressEventClick = false;
@@ -11168,23 +11387,23 @@
         }
         $$props.oneventclick?.(get(p).ev);
       });
-      event("pointerenter", button_1, () => get(oneventhover)?.(get(p).ev));
-      append($$anchor2, button_1);
+      event("pointerenter", button_2, () => get(oneventhover)?.(get(p).ev));
+      append($$anchor2, button_2);
     });
     var node_16 = sibling(node_8, 2);
     {
       var consequent_13 = ($$anchor2) => {
         const gTop = /* @__PURE__ */ user_derived(() => ((get(drag).payload.start.getTime() - get(dayMs)) / HOUR_MS - get(startHour)) * HOUR_HEIGHT);
         const gH = /* @__PURE__ */ user_derived(() => Math.max(12, (get(drag).payload.end.getTime() - get(drag).payload.start.getTime()) / HOUR_MS * HOUR_HEIGHT));
-        var div_9 = root_18();
-        let styles_5;
-        var span_14 = child(div_9);
-        var text_12 = child(span_14);
-        reset(span_14);
-        reset(div_9);
+        var div_10 = root_18();
+        let styles_6;
+        var span_13 = child(div_10);
+        var text_12 = child(span_13);
+        reset(span_13);
+        reset(div_10);
         template_effect(
           ($0, $1) => {
-            styles_5 = set_style(div_9, "", styles_5, {
+            styles_6 = set_style(div_10, "", styles_6, {
               top: `${get(gTop) ?? ""}px`,
               height: `${get(gH) ?? ""}px`
             });
@@ -11195,15 +11414,47 @@
             () => fmtTime$1(get(drag).payload.end, $$props.locale)
           ]
         );
-        append($$anchor2, div_9);
+        append($$anchor2, div_10);
       };
       if_block(node_16, ($$render) => {
         if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_13);
       });
     }
+    reset(div_4);
     reset(div_3);
-    reset(div_2);
-    bind_this(div_2, ($$value) => gridEl = $$value, () => gridEl);
+    bind_this(div_3, ($$value) => gridEl = $$value, () => gridEl);
+    var node_17 = sibling(div_3, 2);
+    {
+      var consequent_15 = ($$anchor2) => {
+        var div_11 = root_20();
+        var node_18 = child(div_11);
+        {
+          var consequent_14 = ($$anchor3) => {
+            var fragment_3 = comment();
+            var node_19 = first_child(fragment_3);
+            snippet(node_19, () => ctx.emptySnippet);
+            append($$anchor3, fragment_3);
+          };
+          var alternate = ($$anchor3) => {
+            var span_14 = root_19();
+            var text_13 = child(span_14, true);
+            reset(span_14);
+            template_effect(() => set_text(text_13, get(L).nothingScheduled));
+            append($$anchor3, span_14);
+          };
+          if_block(node_18, ($$render) => {
+            if (ctx.emptySnippet) $$render(consequent_14);
+            else $$render(alternate, -1);
+          });
+        }
+        reset(div_11);
+        append($$anchor2, div_11);
+      };
+      if_block(node_17, ($$render) => {
+        if (get(isEmpty)) $$render(consequent_15);
+      });
+    }
+    reset(div_1);
     reset(div);
     template_effect(() => {
       classes = set_class(div, 1, "mb svelte-zbkzcp", null, classes, { "mb--auto": get(autoHeight) });
@@ -11211,16 +11462,34 @@
         height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%"
       });
       set_attribute(div, "aria-label", get(L).dayPlanner);
-      styles_2 = set_style(div_3, "", styles_2, { height: `${get(gridHeight) ?? ""}px` });
+      classes_1 = set_class(div_1, 1, "mb-swipe svelte-zbkzcp", null, classes_1, { "mb-swipe--animate": get(swipeAnimate) });
+      styles_1 = set_style(div_1, "", styles_1, {
+        transform: get(swipeOffset) !== 0 ? `translateX(${get(swipeOffset)}px)` : void 0
+      });
+      set_attribute(div_3, "aria-label", get(L).scrollableDayPlanner);
+      styles_3 = set_style(div_4, "", styles_3, { height: `${get(gridHeight) ?? ""}px` });
     });
-    delegated("touchstart", div, onTouchStart);
-    delegated("touchmove", div, onTouchMove);
-    delegated("touchend", div, onTouchEnd);
-    delegated("click", div_2, handleGridClick);
-    delegated("pointerdown", div_2, onGridPointerDown);
-    delegated("keydown", div_2, (e) => {
-      if (e.key === "Enter" || e.key === " ") handleGridClick(e);
+    delegated(
+      "touchstart",
+      div,
+      function(...$$args) {
+        swipe.ontouchstart?.apply(this, $$args);
+      }
+    );
+    delegated(
+      "touchmove",
+      div,
+      function(...$$args) {
+        swipe.ontouchmove?.apply(this, $$args);
+      }
+    );
+    delegated("touchend", div, function(...$$args) {
+      swipe.ontouchend?.apply(this, $$args);
     });
+    delegated("click", div_3, handleGridClick);
+    delegated("pointerdown", div_3, onGridPointerDown);
+    delegated("keydown", div_3, onGridKeydown);
+    delegated("contextmenu", div_3, onGridContextMenu);
     append($$anchor, div);
     pop();
   }
@@ -11230,23 +11499,23 @@
     "touchend",
     "click",
     "pointerdown",
-    "keydown"
+    "keydown",
+    "contextmenu"
   ]);
   var root$2 = /* @__PURE__ */ from_html(`<span> </span>`);
   var root_1$2 = /* @__PURE__ */ from_html(`<span class="mw-empty svelte-1d18hkf"> </span>`);
   var root_2$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-time svelte-1d18hkf"> </span>`);
   var root_3$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-title svelte-1d18hkf"> </span> <!>`, 1);
   var root_4$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="mw-ev-stripe svelte-1d18hkf"></span> <div class="mw-ev-body svelte-1d18hkf"><!></div></button>`);
-  var root_5$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-more svelte-1d18hkf"> </span>`);
+  var root_5$2 = /* @__PURE__ */ from_html(`<button type="button" class="mw-ev-more svelte-1d18hkf"> </button>`);
   var root_6$2 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-  var root_7$1 = /* @__PURE__ */ from_html(`<div role="listitem"><button class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
-  var root_8$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="mw-list svelte-1d18hkf" role="list"></div></div>`);
+  var root_7$2 = /* @__PURE__ */ from_html(`<div role="listitem"><button type="button" class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
+  var root_8$2 = /* @__PURE__ */ from_html(`<div role="region"><div role="list"></div></div>`);
   function MobileWeek($$anchor, $$props) {
     push($$props, true);
-    const L = /* @__PURE__ */ user_derived(getLabels);
     let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, null), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
-    prop($$props, "readOnly", 3, false);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const equalDays = /* @__PURE__ */ user_derived(() => ctx.equalDays);
     const showDates = /* @__PURE__ */ user_derived(() => ctx.showDates);
@@ -11299,82 +11568,83 @@
       }
       return result;
     });
+    let expandedDays = /* @__PURE__ */ state(proxy(/* @__PURE__ */ new Set()));
+    function toggleExpand(ms) {
+      const next2 = new Set(get(expandedDays));
+      if (next2.has(ms)) next2.delete(ms);
+      else next2.add(ms);
+      set(expandedDays, next2, true);
+    }
     function fmtTime2(d) {
       return fmtTime$1(d, $$props.locale);
     }
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let swiping = false;
+    function evTimeLabel(ev) {
+      if (isAllDay(ev) || isMultiDay(ev)) return get(L).allDay;
+      return `${fmtTime2(ev.start)} – ${fmtTime2(ev.end)}`;
+    }
+    function statusText(ev) {
+      if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+      if (ev.status === "tentative") return ` (${get(L).tentative})`;
+      if (ev.status === "full") return ` (${get(L).full})`;
+      if (ev.status === "limited") return ` (${get(L).limited})`;
+      return "";
+    }
     let swipeOffset = /* @__PURE__ */ state(0);
-    const SWIPE_THRESHOLD = 60;
-    function onTouchStart(e) {
-      const t = e.touches[0];
-      touchStartX = t.clientX;
-      touchStartY = t.clientY;
-      swiping = true;
-      set(swipeOffset, 0);
-    }
-    function onTouchMove(e) {
-      if (!swiping) return;
-      const t = e.touches[0];
-      const dx = t.clientX - touchStartX;
-      const dy = t.clientY - touchStartY;
-      if (Math.abs(dy) > Math.abs(dx) * 0.8) {
-        swiping = false;
-        return;
-      }
-      set(swipeOffset, dx);
-    }
-    function onTouchEnd() {
-      if (!swiping) {
-        set(swipeOffset, 0);
-        return;
-      }
-      if (Math.abs(get(swipeOffset)) > SWIPE_THRESHOLD) {
-        if (get(swipeOffset) > 0) {
-          get(viewState)?.prev();
+    let swipeAnimate = /* @__PURE__ */ state(false);
+    const swipe = createSwipe({
+      onmove: (dx) => {
+        set(swipeAnimate, false);
+        set(swipeOffset, dx, true);
+      },
+      onend: (dir) => {
+        if (dir !== 0) {
+          set(swipeAnimate, false);
+          set(swipeOffset, 0);
+          if (dir > 0) get(viewState)?.prev();
+          else get(viewState)?.next();
         } else {
-          get(viewState)?.next();
+          set(swipeAnimate, true);
+          set(swipeOffset, 0);
         }
       }
-      set(swipeOffset, 0);
-      swiping = false;
-    }
+    });
     function handleDayTap(dayMs) {
-      if (get(viewState)) {
-        get(viewState).setFocusDate(new Date(dayMs));
-        const currentView = get(viewState).view;
-        const dayView = currentView.replace("week", "day");
-        get(viewState).setView(dayView);
-      }
+      if (!get(viewState)) return;
+      get(viewState).setFocusDate(new Date(dayMs));
+      const currentView = get(viewState).view;
+      if (!currentView.split("-").includes("week")) return;
+      const dayView = currentView.split("-").map((seg) => seg === "week" ? "day" : seg).join("-");
+      if (dayView !== currentView) get(viewState).setView(dayView);
     }
     function handleDayKeydown(e, dayMs) {
       if (e.key !== "Enter" && e.key !== " ") return;
       e.preventDefault();
       handleDayTap(dayMs);
     }
-    var div = root_8$1();
+    var div = root_8$2();
     let classes;
     let styles;
     var div_1 = child(div);
+    let classes_1;
+    let styles_1;
     each(div_1, 21, () => get(dayCells), (cell) => cell.ms, ($$anchor2, cell) => {
-      var div_2 = root_7$1();
-      let classes_1;
+      var div_2 = root_7$2();
+      let classes_2;
       var button = child(div_2);
       var div_3 = sibling(button, 2);
       var span = child(div_3);
-      let classes_2;
+      let classes_3;
       var text2 = child(span, true);
       reset(span);
       var node = sibling(span, 2);
       {
         var consequent = ($$anchor3) => {
           var span_1 = root$2();
-          let classes_3;
+          let classes_4;
           var text_1 = child(span_1, true);
           reset(span_1);
           template_effect(() => {
-            classes_3 = set_class(span_1, 1, "mw-day-num svelte-1d18hkf", null, classes_3, { "mw-day-num--today": get(cell).isToday });
+            classes_4 = set_class(span_1, 1, "mw-day-num svelte-1d18hkf", null, classes_4, { "mw-day-num--today": get(cell).isToday });
             set_text(text_1, get(cell).dayNum);
           });
           append($$anchor3, span_1);
@@ -11397,89 +11667,108 @@
         var alternate_1 = ($$anchor3) => {
           var fragment = root_6$2();
           var node_2 = first_child(fragment);
-          each(node_2, 17, () => get(cell).events.slice(0, MAX_EVENTS), (ev) => ev.id, ($$anchor4, ev) => {
-            var button_1 = root_4$2();
-            let classes_4;
-            let styles_1;
-            var div_5 = sibling(child(button_1), 2);
-            var node_3 = child(div_5);
-            EventContent(node_3, {
-              get event() {
-                return get(ev);
-              },
-              children: ($$anchor5, $$slotProps) => {
-                var fragment_1 = root_3$2();
-                var span_3 = first_child(fragment_1);
-                var text_3 = child(span_3, true);
-                reset(span_3);
-                var node_4 = sibling(span_3, 2);
-                {
-                  var consequent_2 = ($$anchor6) => {
-                    var span_4 = root_2$2();
-                    var text_4 = child(span_4, true);
-                    reset(span_4);
-                    template_effect(() => set_text(text_4, get(L).allDay));
-                    append($$anchor6, span_4);
-                  };
-                  var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
-                  var alternate = ($$anchor6) => {
-                    var span_5 = root_2$2();
-                    var text_5 = child(span_5, true);
-                    reset(span_5);
-                    template_effect(($0) => set_text(text_5, $0), [() => fmtTime2(get(ev).start)]);
-                    append($$anchor6, span_5);
-                  };
-                  if_block(node_4, ($$render) => {
-                    if (get(d_1)) $$render(consequent_2);
-                    else $$render(alternate, -1);
-                  });
-                }
-                template_effect(() => set_text(text_3, get(ev).title));
-                append($$anchor5, fragment_1);
-              },
-              $$slots: { default: true }
-            });
-            reset(div_5);
-            reset(button_1);
-            template_effect(
-              ($0) => {
-                classes_4 = set_class(button_1, 1, "mw-ev svelte-1d18hkf", null, classes_4, $0);
-                styles_1 = set_style(button_1, "", styles_1, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
-              },
-              [
-                () => ({
-                  "mw-ev--selected": selectedEventId() === get(ev).id,
-                  "mw-ev--allday": isAllDay(get(ev)) || isMultiDay(get(ev)),
-                  "mw-ev--current": !isAllDay(get(ev)) && !isMultiDay(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
-                  "mw-ev--cancelled": get(ev).status === "cancelled",
-                  "mw-ev--tentative": get(ev).status === "tentative",
-                  "mw-ev--full": get(ev).status === "full",
-                  "mw-ev--limited": get(ev).status === "limited"
-                })
-              ]
-            );
-            delegated("click", button_1, (e) => {
-              e.stopPropagation();
-              $$props.oneventclick?.(get(ev));
-            });
-            delegated("keydown", button_1, (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
+          each(
+            node_2,
+            17,
+            () => get(expandedDays).has(get(cell).ms) ? get(cell).events : get(cell).events.slice(0, MAX_EVENTS),
+            (ev) => ev.id,
+            ($$anchor4, ev) => {
+              var button_1 = root_4$2();
+              let classes_5;
+              let styles_2;
+              var div_5 = sibling(child(button_1), 2);
+              var node_3 = child(div_5);
+              EventContent(node_3, {
+                get event() {
+                  return get(ev);
+                },
+                children: ($$anchor5, $$slotProps) => {
+                  var fragment_1 = root_3$2();
+                  var span_3 = first_child(fragment_1);
+                  var text_3 = child(span_3, true);
+                  reset(span_3);
+                  var node_4 = sibling(span_3, 2);
+                  {
+                    var consequent_2 = ($$anchor6) => {
+                      var span_4 = root_2$2();
+                      var text_4 = child(span_4, true);
+                      reset(span_4);
+                      template_effect(() => set_text(text_4, get(L).allDay));
+                      append($$anchor6, span_4);
+                    };
+                    var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
+                    var alternate = ($$anchor6) => {
+                      var span_5 = root_2$2();
+                      var text_5 = child(span_5, true);
+                      reset(span_5);
+                      template_effect(($0) => set_text(text_5, $0), [() => fmtTime2(get(ev).start)]);
+                      append($$anchor6, span_5);
+                    };
+                    if_block(node_4, ($$render) => {
+                      if (get(d_1)) $$render(consequent_2);
+                      else $$render(alternate, -1);
+                    });
+                  }
+                  template_effect(() => set_text(text_3, get(ev).title));
+                  append($$anchor5, fragment_1);
+                },
+                $$slots: { default: true }
+              });
+              reset(div_5);
+              reset(button_1);
+              template_effect(
+                ($0, $1, $2) => {
+                  classes_5 = set_class(button_1, 1, "mw-ev svelte-1d18hkf", null, classes_5, $0);
+                  set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}${$1 ?? ""}, ${$2 ?? ""}`);
+                  styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
+                },
+                [
+                  () => ({
+                    "mw-ev--selected": selectedEventId() === get(ev).id,
+                    "mw-ev--allday": isAllDay(get(ev)) || isMultiDay(get(ev)),
+                    "mw-ev--current": !isAllDay(get(ev)) && !isMultiDay(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
+                    "mw-ev--cancelled": get(ev).status === "cancelled",
+                    "mw-ev--tentative": get(ev).status === "tentative",
+                    "mw-ev--full": get(ev).status === "full",
+                    "mw-ev--limited": get(ev).status === "limited"
+                  }),
+                  () => statusText(get(ev)),
+                  () => evTimeLabel(get(ev))
+                ]
+              );
+              delegated("click", button_1, (e) => {
                 e.stopPropagation();
                 $$props.oneventclick?.(get(ev));
-              }
-            });
-            event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
-            append($$anchor4, button_1);
-          });
+              });
+              delegated("keydown", button_1, (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  $$props.oneventclick?.(get(ev));
+                }
+              });
+              event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
+              append($$anchor4, button_1);
+            }
+          );
           var node_5 = sibling(node_2, 2);
           {
             var consequent_3 = ($$anchor4) => {
-              var span_6 = root_5$2();
-              var text_6 = child(span_6, true);
-              reset(span_6);
-              template_effect(($0) => set_text(text_6, $0), [() => get(L).nMore(get(cell).totalCount - MAX_EVENTS)]);
-              append($$anchor4, span_6);
+              var button_2 = root_5$2();
+              var text_6 = child(button_2, true);
+              reset(button_2);
+              template_effect(
+                ($0, $1) => {
+                  set_attribute(button_2, "aria-expanded", $0);
+                  set_text(text_6, $1);
+                },
+                [
+                  () => get(expandedDays).has(get(cell).ms),
+                  () => get(expandedDays).has(get(cell).ms) ? get(L).showLess : get(L).nMore(get(cell).totalCount - MAX_EVENTS)
+                ]
+              );
+              delegated("click", button_2, () => toggleExpand(get(cell).ms));
+              append($$anchor4, button_2);
             };
             if_block(node_5, ($$render) => {
               if (get(cell).totalCount > MAX_EVENTS) $$render(consequent_3);
@@ -11496,15 +11785,16 @@
       next(2);
       reset(div_2);
       template_effect(() => {
-        classes_1 = set_class(div_2, 1, "mw-row svelte-1d18hkf", null, classes_1, {
+        classes_2 = set_class(div_2, 1, "mw-row svelte-1d18hkf", null, classes_2, {
           "mw-row--today": get(cell).isToday,
           "mw-row--past": get(cell).isPast,
           "mw-row--weekend": get(cell).isWeekend,
           "mw-row--disabled": get(cell).isDisabled
         });
+        set_attribute(div_2, "aria-current", get(cell).isToday ? "date" : void 0);
         button.disabled = get(cell).isDisabled;
-        set_attribute(button, "aria-label", `${get(cell).dayName ?? ""} ${get(cell).dayNum ?? ""}`);
-        classes_2 = set_class(span, 1, "mw-day-name svelte-1d18hkf", null, classes_2, { "mw-day-name--today": get(cell).isToday });
+        set_attribute(button, "aria-label", `${get(cell).dayName ?? ""} ${get(cell).dayNum ?? ""}${get(cell).isToday ? `, ${get(L).today}` : ""}`);
+        classes_3 = set_class(span, 1, "mw-day-name svelte-1d18hkf", null, classes_3, { "mw-day-name--today": get(cell).isToday });
         set_text(text2, get(cell).dayName);
       });
       delegated("click", button, () => handleDayTap(get(cell).ms));
@@ -11519,10 +11809,28 @@
         height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%"
       });
       set_attribute(div, "aria-label", get(L).weekAhead);
+      classes_1 = set_class(div_1, 1, "mw-list svelte-1d18hkf", null, classes_1, { "mw-list--animate": get(swipeAnimate) });
+      styles_1 = set_style(div_1, "", styles_1, {
+        transform: get(swipeOffset) !== 0 ? `translateX(${get(swipeOffset)}px)` : void 0
+      });
     });
-    delegated("touchstart", div, onTouchStart);
-    delegated("touchmove", div, onTouchMove);
-    delegated("touchend", div, onTouchEnd);
+    delegated(
+      "touchstart",
+      div,
+      function(...$$args) {
+        swipe.ontouchstart?.apply(this, $$args);
+      }
+    );
+    delegated(
+      "touchmove",
+      div,
+      function(...$$args) {
+        swipe.ontouchmove?.apply(this, $$args);
+      }
+    );
+    delegated("touchend", div, function(...$$args) {
+      swipe.ontouchend?.apply(this, $$args);
+    });
     append($$anchor, div);
     pop();
   }
@@ -11547,17 +11855,19 @@
     append($$anchor, fragment);
   }
   var root$1 = /* @__PURE__ */ from_html(`<div class="mg-head-cell svelte-pvjuld" role="columnheader"> </div>`);
-  var root_1$1 = /* @__PURE__ */ from_html(`<button><!></button>`);
+  var root_1$1 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
   var root_2$1 = /* @__PURE__ */ from_html(`<span class="mg-chip-time svelte-pvjuld"> </span>`);
-  var root_3$1 = /* @__PURE__ */ from_html(`<button><span class="mg-chip-dot svelte-pvjuld" aria-hidden="true"></span> <!> <span class="mg-chip-title svelte-pvjuld"> </span></button>`);
-  var root_4$1 = /* @__PURE__ */ from_html(`<span class="mg-more svelte-pvjuld"> </span>`);
-  var root_5$1 = /* @__PURE__ */ from_html(`<div role="gridcell"><span> </span> <div class="mg-chips svelte-pvjuld"><!> <!></div></div>`);
-  var root_6$1 = /* @__PURE__ */ from_html(`<div role="grid"><div class="mg-head svelte-pvjuld" role="row"></div> <div class="mg-body svelte-pvjuld"></div></div>`);
+  var root_3$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="mg-chip-dot svelte-pvjuld" aria-hidden="true"></span> <!> <span class="mg-chip-title svelte-pvjuld"> </span></button>`);
+  var root_4$1 = /* @__PURE__ */ from_html(`<button type="button" class="mg-more svelte-pvjuld"> </button>`);
+  var root_5$1 = /* @__PURE__ */ from_html(`<button type="button" class="mg-more svelte-pvjuld" aria-expanded="true"> </button>`);
+  var root_6$1 = /* @__PURE__ */ from_html(`<div role="gridcell"><span> </span> <div class="mg-chips svelte-pvjuld"><!> <!></div></div>`);
+  var root_7$1 = /* @__PURE__ */ from_html(`<div class="mg-row svelte-pvjuld" role="row"></div>`);
+  var root_8$1 = /* @__PURE__ */ from_html(`<div role="grid"><div class="mg-head svelte-pvjuld" role="row"></div> <div class="mg-body svelte-pvjuld" role="rowgroup"></div></div>`);
   function MonthGrid($$anchor, $$props) {
     push($$props, true);
-    const L = /* @__PURE__ */ user_derived(getLabels);
     let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), height = prop($$props, "height", 3, null), selectedEventId = prop($$props, "selectedEventId", 3, null);
     const ctx = useCalendarContext();
+    const L = /* @__PURE__ */ user_derived(() => ctx.labels);
     const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
     const autoHeight = /* @__PURE__ */ user_derived(() => ctx.autoHeight);
     const isMobile = /* @__PURE__ */ user_derived(() => ctx.isMobile);
@@ -11579,6 +11889,68 @@
       });
       return () => get(loadRangeCtx).set(null);
     });
+    let expandedMs = /* @__PURE__ */ state(null);
+    let focusMs = /* @__PURE__ */ state(null);
+    let bodyEl = /* @__PURE__ */ state(null);
+    const cellsInteractive = /* @__PURE__ */ user_derived(() => !!get(ondayclick));
+    const rovingMs = /* @__PURE__ */ user_derived(() => {
+      if (!get(range)) return null;
+      const start = sod(get(range).start.getTime());
+      const end = get(range).end.getTime();
+      if (get(focusMs) !== null && get(focusMs) >= start && get(focusMs) < end) return get(focusMs);
+      if (get(todayMs) >= start && get(todayMs) < end) return get(todayMs);
+      return start;
+    });
+    function moveFocus(fromMs, deltaDays) {
+      if (!get(range)) return;
+      const target = fromMs + deltaDays * DAY_MS;
+      if (target < sod(get(range).start.getTime()) || target >= get(range).end.getTime()) return;
+      set(focusMs, target);
+      const el = get(bodyEl)?.querySelector(`[data-ms="${target}"]`);
+      el?.focus();
+    }
+    function cellKeydown(e, cell) {
+      switch (e.key) {
+        case "ArrowRight":
+          e.preventDefault();
+          moveFocus(cell.ms, 1);
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          moveFocus(cell.ms, -1);
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          moveFocus(cell.ms, 7);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          moveFocus(cell.ms, -7);
+          break;
+        case "Escape":
+          if (get(expandedMs) !== null) {
+            e.preventDefault();
+            set(expandedMs, null);
+          }
+          break;
+        case "Enter":
+        case " ":
+          if (!cell.isDisabled) {
+            e.preventDefault();
+            get(ondayclick)?.(cell.date);
+          }
+          break;
+      }
+    }
+    function overflowClick(e, cell) {
+      e.stopPropagation();
+      if (get(ondayclick)) get(ondayclick)(cell.date);
+      else set(expandedMs, get(expandedMs) === cell.ms ? null : cell.ms, true);
+    }
+    function cellLabel(cell) {
+      const date = cell.date.toLocaleDateString($$props.locale, { weekday: "long", day: "numeric", month: "long" });
+      return `${date}, ${get(L).nEvents(cell.all.length)}`;
+    }
     function eventsForDay(ms) {
       const dayStart = ms;
       const dayEnd = ms + DAY_MS;
@@ -11607,6 +11979,7 @@
             isWeekend: jsDay === 0 || jsDay === 6,
             isDisabled: get(disabledSet).has(cellMs),
             chips: dayEvents.slice(0, get(MAX_CHIPS)),
+            all: dayEvents,
             overflow: Math.max(0, dayEvents.length - get(MAX_CHIPS))
           });
         }
@@ -11622,41 +11995,40 @@
     function chipTime(e) {
       return isAllDay(e) ? "" : fmtTime$1(e.start, $$props.locale);
     }
-    var div = root_6$1();
+    var div = root_8$1();
     let classes;
     let styles;
     var div_1 = child(div);
-    each(div_1, 20, () => get(weekdayLabels), (name) => name, ($$anchor2, name) => {
+    each(div_1, 21, () => get(weekdayLabels), index, ($$anchor2, name) => {
       var div_2 = root$1();
       var text2 = child(div_2, true);
       reset(div_2);
-      template_effect(() => set_text(text2, name));
+      template_effect(() => set_text(text2, get(name)));
       append($$anchor2, div_2);
     });
     reset(div_1);
     var div_3 = sibling(div_1, 2);
     let styles_1;
     each(div_3, 21, () => get(weeks), index, ($$anchor2, row) => {
-      var fragment = comment();
-      var node = first_child(fragment);
-      each(node, 17, () => get(row), (cell) => cell.ms, ($$anchor3, cell) => {
-        var div_4 = root_5$1();
+      var div_4 = root_7$1();
+      each(div_4, 21, () => get(row), (cell) => cell.ms, ($$anchor3, cell) => {
+        var div_5 = root_6$1();
         let classes_1;
-        var span = child(div_4);
+        var span = child(div_5);
         let classes_2;
         var text_1 = child(span, true);
         reset(span);
-        var div_5 = sibling(span, 2);
-        var node_1 = child(div_5);
-        each(node_1, 17, () => get(cell).chips, (ev) => ev.id + get(cell).ms, ($$anchor4, ev) => {
-          var fragment_1 = comment();
-          var node_2 = first_child(fragment_1);
+        var div_6 = sibling(span, 2);
+        var node = child(div_6);
+        each(node, 17, () => get(expandedMs) === get(cell).ms ? get(cell).all : get(cell).chips, (ev) => ev.id + get(cell).ms, ($$anchor4, ev) => {
+          var fragment = comment();
+          var node_1 = first_child(fragment);
           {
             var consequent = ($$anchor5) => {
               var button = root_1$1();
               let classes_3;
-              var node_3 = child(button);
-              snippet(node_3, () => get(eventSnippet), () => get(ev));
+              var node_2 = child(button);
+              snippet(node_2, () => get(eventSnippet), () => get(ev));
               reset(button);
               template_effect(() => classes_3 = set_class(button, 1, "mg-chip mg-chip--custom svelte-pvjuld", null, classes_3, { "mg-chip--selected": get(ev).id === selectedEventId() }));
               delegated("click", button, (e) => {
@@ -11670,7 +12042,7 @@
               var button_1 = root_3$1();
               let classes_4;
               let styles_2;
-              var node_4 = sibling(child(button_1), 2);
+              var node_3 = sibling(child(button_1), 2);
               {
                 var consequent_1 = ($$anchor6) => {
                   var span_1 = root_2$1();
@@ -11680,11 +12052,11 @@
                   append($$anchor6, span_1);
                 };
                 var d = /* @__PURE__ */ user_derived(() => chipTime(get(ev)));
-                if_block(node_4, ($$render) => {
+                if_block(node_3, ($$render) => {
                   if (get(d)) $$render(consequent_1);
                 });
               }
-              var span_2 = sibling(node_4, 2);
+              var span_2 = sibling(node_3, 2);
               var text_3 = child(span_2, true);
               reset(span_2);
               reset(button_1);
@@ -11704,54 +12076,78 @@
               event("mouseenter", button_1, () => get(oneventhover)?.(get(ev)));
               append($$anchor5, button_1);
             };
-            if_block(node_2, ($$render) => {
+            if_block(node_1, ($$render) => {
               if (get(eventSnippet)) $$render(consequent);
               else $$render(alternate, -1);
             });
           }
-          append($$anchor4, fragment_1);
+          append($$anchor4, fragment);
         });
-        var node_5 = sibling(node_1, 2);
+        var node_4 = sibling(node, 2);
         {
           var consequent_2 = ($$anchor4) => {
-            var span_3 = root_4$1();
-            var text_4 = child(span_3, true);
-            reset(span_3);
-            template_effect(($0) => set_text(text_4, $0), [() => get(L).nMore(get(cell).overflow)]);
-            append($$anchor4, span_3);
+            var button_2 = root_4$1();
+            var text_4 = child(button_2, true);
+            reset(button_2);
+            template_effect(
+              ($0) => {
+                set_attribute(button_2, "aria-expanded", get(ondayclick) ? void 0 : false);
+                set_text(text_4, $0);
+              },
+              [() => get(L).nMore(get(cell).overflow)]
+            );
+            delegated("click", button_2, (e) => overflowClick(e, get(cell)));
+            append($$anchor4, button_2);
           };
-          if_block(node_5, ($$render) => {
-            if (get(cell).overflow > 0) $$render(consequent_2);
+          var consequent_3 = ($$anchor4) => {
+            var button_3 = root_5$1();
+            var text_5 = child(button_3, true);
+            reset(button_3);
+            template_effect(() => set_text(text_5, get(L).showLess));
+            delegated("click", button_3, (e) => {
+              e.stopPropagation();
+              set(expandedMs, null);
+            });
+            append($$anchor4, button_3);
+          };
+          if_block(node_4, ($$render) => {
+            if (get(cell).overflow > 0 && get(expandedMs) !== get(cell).ms) $$render(consequent_2);
+            else if (get(expandedMs) === get(cell).ms) $$render(consequent_3, 1);
           });
         }
+        reset(div_6);
         reset(div_5);
-        reset(div_4);
-        template_effect(() => {
-          classes_1 = set_class(div_4, 1, "mg-cell svelte-pvjuld", null, classes_1, {
-            "mg-cell--out": !get(cell).inMonth,
-            "mg-cell--today": get(cell).isToday,
-            "mg-cell--weekend": get(cell).isWeekend,
-            "mg-cell--disabled": get(cell).isDisabled,
-            "mg-cell--clickable": !!get(ondayclick) && !get(cell).isDisabled
-          });
-          set_attribute(div_4, "tabindex", get(ondayclick) && !get(cell).isDisabled ? 0 : void 0);
-          classes_2 = set_class(span, 1, "mg-daynum svelte-pvjuld", null, classes_2, { "mg-daynum--today": get(cell).isToday });
-          set_text(text_1, get(cell).dayNum);
-        });
-        delegated("click", div_4, () => {
+        template_effect(
+          ($0) => {
+            classes_1 = set_class(div_5, 1, "mg-cell svelte-pvjuld", null, classes_1, {
+              "mg-cell--out": !get(cell).inMonth,
+              "mg-cell--today": get(cell).isToday,
+              "mg-cell--weekend": get(cell).isWeekend,
+              "mg-cell--disabled": get(cell).isDisabled,
+              "mg-cell--clickable": get(cellsInteractive) && !get(cell).isDisabled,
+              "mg-cell--expanded": get(expandedMs) === get(cell).ms
+            });
+            set_attribute(div_5, "aria-label", $0);
+            set_attribute(div_5, "aria-current", get(cell).isToday ? "date" : void 0);
+            set_attribute(div_5, "data-ms", get(cell).ms);
+            set_attribute(div_5, "tabindex", get(cell).isDisabled ? void 0 : get(cellsInteractive) || get(cell).overflow > 0 ? get(cell).ms === get(rovingMs) ? 0 : -1 : void 0);
+            classes_2 = set_class(span, 1, "mg-daynum svelte-pvjuld", null, classes_2, { "mg-daynum--today": get(cell).isToday });
+            set_text(text_1, get(cell).dayNum);
+          },
+          [() => cellLabel(get(cell))]
+        );
+        delegated("click", div_5, () => {
           if (!get(cell).isDisabled) get(ondayclick)?.(get(cell).date);
         });
-        delegated("keydown", div_4, (e) => {
-          if ((e.key === "Enter" || e.key === " ") && !get(cell).isDisabled) {
-            e.preventDefault();
-            get(ondayclick)?.(get(cell).date);
-          }
-        });
-        append($$anchor3, div_4);
+        delegated("focusin", div_5, () => set(focusMs, get(cell).ms, true));
+        delegated("keydown", div_5, (e) => cellKeydown(e, get(cell)));
+        append($$anchor3, div_5);
       });
-      append($$anchor2, fragment);
+      reset(div_4);
+      append($$anchor2, div_4);
     });
     reset(div_3);
+    bind_this(div_3, ($$value) => set(bodyEl, $$value), () => get(bodyEl));
     reset(div);
     template_effect(() => {
       classes = set_class(div, 1, "mg svelte-pvjuld", null, classes, { "mg--auto": get(autoHeight) });
@@ -11764,20 +12160,18 @@
     append($$anchor, div);
     pop();
   }
-  delegate(["click", "keydown"]);
-  var root = /* @__PURE__ */ from_html(`<button class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button>`);
-  var root_1 = /* @__PURE__ */ from_html(`<button> </button>`);
-  var root_2 = /* @__PURE__ */ from_html(`<div class="cal-m-pills svelte-1b53e7w" role="group"></div>`);
-  var root_3 = /* @__PURE__ */ from_html(`<button class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`);
-  var root_4 = /* @__PURE__ */ from_html(`<div class="cal-m-today-bar svelte-1b53e7w"><button class="cal-m-today svelte-1b53e7w"> </button></div>`);
-  var root_5 = /* @__PURE__ */ from_html(`<div class="cal-m-hd svelte-1b53e7w"><div class="cal-m-left svelte-1b53e7w"><!> <!></div> <span class="cal-m-title svelte-1b53e7w"> </span> <div class="cal-m-right svelte-1b53e7w"><!></div></div> <!>`, 1);
-  var root_6 = /* @__PURE__ */ from_html(`<button class="cal-hd-today svelte-1b53e7w"> </button>`);
-  var root_7 = /* @__PURE__ */ from_html(`<!> <button class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
-  var root_8 = /* @__PURE__ */ from_html(`<div class="cal-pills svelte-1b53e7w" role="group"></div>`);
-  var root_9 = /* @__PURE__ */ from_html(`<div class="cal-hd svelte-1b53e7w"><div class="cal-hd-side svelte-1b53e7w"><!></div> <span class="cal-hd-title svelte-1b53e7w"> </span> <div class="cal-hd-side cal-hd-side--end svelte-1b53e7w"><!></div></div>`);
-  var root_10 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w">No views registered.</div>`);
-  var root_11 = /* @__PURE__ */ from_html(`<div class="cal-loading svelte-1b53e7w"></div>`);
-  var root_12 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="cal-body svelte-1b53e7w"><!></div> <!></div>`);
+  delegate(["click", "focusin", "keydown"]);
+  var root = /* @__PURE__ */ from_html(`<button type="button" role="radio"> </button>`);
+  var root_1 = /* @__PURE__ */ from_html(`<div class="cal-m-pills svelte-1b53e7w" role="radiogroup"></div>`);
+  var root_2 = /* @__PURE__ */ from_html(`<button type="button" class="cal-m-today svelte-1b53e7w"> </button> <button type="button" class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button type="button" class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
+  var root_3 = /* @__PURE__ */ from_html(`<div class="cal-m-hd svelte-1b53e7w"><div class="cal-m-left svelte-1b53e7w"><!></div> <span class="cal-m-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span> <div class="cal-m-right svelte-1b53e7w"><!></div></div>`);
+  var root_4 = /* @__PURE__ */ from_html(`<button type="button" class="cal-hd-today svelte-1b53e7w"> </button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
+  var root_5 = /* @__PURE__ */ from_html(`<div class="cal-pills cal-pills--labels svelte-1b53e7w" role="radiogroup"></div>`);
+  var root_6 = /* @__PURE__ */ from_html(`<div class="cal-pills svelte-1b53e7w" role="radiogroup"></div>`);
+  var root_7 = /* @__PURE__ */ from_html(`<div class="cal-hd svelte-1b53e7w"><div class="cal-hd-side svelte-1b53e7w"><!></div> <span class="cal-hd-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span> <div class="cal-hd-side cal-hd-side--end svelte-1b53e7w"><!> <!></div></div>`);
+  var root_8 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w">No views registered.</div>`);
+  var root_9 = /* @__PURE__ */ from_html(`<div class="cal-loading svelte-1b53e7w"></div>`);
+  var root_10 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="cal-body svelte-1b53e7w"><!></div> <!></div>`);
   function Calendar($$anchor, $$props) {
     push($$props, true);
     const MOBILE_BREAKPOINT = 768;
@@ -11833,7 +12227,7 @@
       selection.select(ev.id);
       $$props.oneventclick?.(ev);
     }
-    let containerWidth = /* @__PURE__ */ state(0);
+    let containerWidth = /* @__PURE__ */ state(proxy(typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? MOBILE_BREAKPOINT - 1 : 0));
     const isMobileContainer = /* @__PURE__ */ user_derived(() => get(containerWidth) > 0 && get(containerWidth) < MOBILE_BREAKPOINT);
     const useMobile = /* @__PURE__ */ user_derived(() => mobileProp() === "auto" ? get(isMobileContainer) : Boolean(mobileProp()));
     let calEl = /* @__PURE__ */ state(void 0);
@@ -11971,7 +12365,7 @@
         return $$props.oneventhover;
       },
       get ondayclick() {
-        return $$props.ondayclick;
+        return $$props.ondayclick ?? get(defaultDayClick);
       },
       get timezone() {
         return $$props.timezone;
@@ -12024,6 +12418,9 @@
       },
       get compact() {
         return compact();
+      },
+      get labels() {
+        return get(mergedLabels);
       },
       // Load range (read/write)
       get loadRange() {
@@ -12079,25 +12476,84 @@
       if (viewState.mode === "day") {
         return viewState.focusDate.toLocaleDateString($$props.locale, { weekday: "long", month: "short", day: "numeric" });
       }
+      if (viewState.mode === "week") {
+        return fmtWeekRange(viewState.range.start.getTime(), $$props.locale, viewState.range.end.getTime() - 1);
+      }
       return viewState.focusDate.toLocaleDateString($$props.locale, { month: "long", year: "numeric" });
     });
     const modes = /* @__PURE__ */ user_derived(() => {
       const g = new Set(get(desktopViews).map((v) => v.mode));
       return ["day", "week", "month"].filter((key) => g.has(key));
     });
-    const L = /* @__PURE__ */ user_derived(getLabels);
+    const mergedLabels = /* @__PURE__ */ user_derived(() => $$props.labels ? { ...getLabels(), ...$$props.labels } : getLabels());
+    const L = /* @__PURE__ */ user_derived(() => get(mergedLabels));
+    let lastViewLabel = /* @__PURE__ */ state(void 0);
+    user_effect(() => {
+      const current = views().find((v) => v.id === viewState.view);
+      if (current && current.mode !== "month") set(lastViewLabel, current.label, true);
+    });
     function switchMode(g) {
-      const currentLabel = get(desktopViews).find((v) => v.id === viewState.view)?.label ?? get(activeView)?.label;
-      const match = get(desktopViews).find((v) => v.mode === g && v.label === currentLabel);
+      const currentView = get(desktopViews).find((v) => v.id === viewState.view) ?? get(activeView);
+      const preferredLabel = currentView?.mode === "month" ? get(lastViewLabel) ?? currentView?.label : currentView?.label;
+      const match = get(desktopViews).find((v) => v.mode === g && v.label === preferredLabel);
       const fallback = get(desktopViews).find((v) => v.mode === g);
       const target = match ?? fallback;
       if (target) viewState.setView(target.id);
     }
-    const viewIncludesToday = /* @__PURE__ */ user_derived(() => {
-      const now2 = Date.now();
-      const { start, end } = viewState.range;
-      return now2 >= start.getTime() && now2 < end.getTime();
+    const labelsForMode = /* @__PURE__ */ user_derived(() => {
+      const seen = [];
+      for (const v of get(desktopViews)) {
+        if (v.mode === viewState.mode && !seen.includes(v.label)) seen.push(v.label);
+      }
+      return seen;
     });
+    function switchLabel(label) {
+      const target = get(desktopViews).find((v) => v.mode === viewState.mode && v.label === label);
+      if (target) viewState.setView(target.id);
+    }
+    const defaultDayClick = /* @__PURE__ */ user_derived(() => {
+      const target = get(desktopViews).find((v) => v.mode === "day" && v.label === get(lastViewLabel)) ?? get(desktopViews).find((v) => v.mode === "day");
+      if (!target) return void 0;
+      return (date) => {
+        viewState.setFocusDate(date);
+        viewState.setView(target.id);
+      };
+    });
+    const viewIncludesToday = /* @__PURE__ */ user_derived(() => {
+      const now = /* @__PURE__ */ new Date();
+      if (viewState.mode === "month") {
+        const f = viewState.focusDate;
+        return f.getMonth() === now.getMonth() && f.getFullYear() === now.getFullYear();
+      }
+      const { start, end } = viewState.range;
+      return now.getTime() >= start.getTime() && now.getTime() < end.getTime();
+    });
+    const resolvedDir = /* @__PURE__ */ user_derived(() => {
+      if ($$props.dir) return $$props.dir;
+      if (!$$props.locale) return void 0;
+      try {
+        const info = new Intl.Locale($$props.locale);
+        const direction = info.textInfo?.direction ?? info.getTextInfo?.().direction;
+        return direction === "rtl" ? "rtl" : void 0;
+      } catch {
+        return void 0;
+      }
+    });
+    function handleShortcuts(e) {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.key === "t" || e.key === "T") {
+        e.preventDefault();
+        viewState.goToday();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        viewState.prev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        viewState.next();
+      }
+    }
     const headerCtx = /* @__PURE__ */ user_derived(() => ({
       dateLabel: get(dateLabel),
       mode: viewState.mode,
@@ -12117,7 +12573,7 @@
       focusDate: viewState.focusDate,
       mode: viewState.mode
     }));
-    var div = root_12();
+    var div = root_10();
     let classes;
     var node = child(div);
     {
@@ -12127,52 +12583,32 @@
         snippet(node_1, () => $$props.header, () => get(headerCtx));
         append($$anchor2, fragment);
       };
-      var consequent_6 = ($$anchor2) => {
-        var fragment_1 = root_5();
-        var div_1 = first_child(fragment_1);
+      var consequent_4 = ($$anchor2) => {
+        var div_1 = root_3();
         var div_2 = child(div_1);
         var node_2 = child(div_2);
         {
           var consequent_1 = ($$anchor3) => {
-            var fragment_2 = comment();
-            var node_3 = first_child(fragment_2);
-            snippet(node_3, () => $$props.navigation, () => get(navCtx));
-            append($$anchor3, fragment_2);
-          };
-          var consequent_2 = ($$anchor3) => {
-            var button = root();
-            template_effect(() => set_attribute(button, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek));
-            delegated("click", button, () => viewState.prev());
-            append($$anchor3, button);
-          };
-          if_block(node_2, ($$render) => {
-            if ($$props.navigation) $$render(consequent_1);
-            else if (showNavigation()) $$render(consequent_2, 1);
-          });
-        }
-        var node_4 = sibling(node_2, 2);
-        {
-          var consequent_3 = ($$anchor3) => {
-            var div_3 = root_2();
-            each(div_3, 21, () => get(modes), index, ($$anchor4, g) => {
-              var button_1 = root_1();
+            var div_3 = root_1();
+            each(div_3, 20, () => get(modes), (g) => g, ($$anchor4, g) => {
+              var button = root();
               let classes_1;
-              var text2 = child(button_1, true);
-              reset(button_1);
+              var text2 = child(button, true);
+              reset(button);
               template_effect(() => {
-                classes_1 = set_class(button_1, 1, "cal-m-pill svelte-1b53e7w", null, classes_1, { "cal-m-pill--active": viewState.mode === get(g) });
-                set_attribute(button_1, "aria-pressed", viewState.mode === get(g));
-                set_text(text2, get(g) === "day" ? get(L).day : get(g) === "week" ? get(L).week : get(L).month);
+                classes_1 = set_class(button, 1, "cal-m-pill svelte-1b53e7w", null, classes_1, { "cal-m-pill--active": viewState.mode === g });
+                set_attribute(button, "aria-checked", viewState.mode === g);
+                set_text(text2, g === "day" ? get(L).day : g === "week" ? get(L).week : get(L).month);
               });
-              delegated("click", button_1, () => switchMode(get(g)));
-              append($$anchor4, button_1);
+              delegated("click", button, () => switchMode(g));
+              append($$anchor4, button);
             });
             reset(div_3);
             template_effect(() => set_attribute(div_3, "aria-label", get(L).viewMode));
             append($$anchor3, div_3);
           };
-          if_block(node_4, ($$render) => {
-            if (showModePills() && get(modes).length > 1) $$render(consequent_3);
+          if_block(node_2, ($$render) => {
+            if (showModePills() && get(modes).length > 1) $$render(consequent_1);
           });
         }
         reset(div_2);
@@ -12180,133 +12616,152 @@
         var text_1 = child(span, true);
         reset(span);
         var div_4 = sibling(span, 2);
-        var node_5 = child(div_4);
+        var node_3 = child(div_4);
         {
-          var consequent_4 = ($$anchor3) => {
-            var button_2 = root_3();
-            template_effect(() => set_attribute(button_2, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek));
-            delegated("click", button_2, () => viewState.next());
-            append($$anchor3, button_2);
+          var consequent_2 = ($$anchor3) => {
+            var fragment_1 = comment();
+            var node_4 = first_child(fragment_1);
+            snippet(node_4, () => $$props.navigation, () => get(navCtx));
+            append($$anchor3, fragment_1);
           };
-          if_block(node_5, ($$render) => {
-            if (!$$props.navigation && showNavigation()) $$render(consequent_4);
+          var consequent_3 = ($$anchor3) => {
+            var fragment_2 = root_2();
+            var button_1 = first_child(fragment_2);
+            var text_2 = child(button_1, true);
+            reset(button_1);
+            var button_2 = sibling(button_1, 2);
+            var button_3 = sibling(button_2, 2);
+            template_effect(() => {
+              button_1.disabled = get(viewIncludesToday);
+              set_attribute(button_1, "title", get(L).goToToday);
+              set_text(text_2, get(L).today);
+              set_attribute(button_2, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
+              set_attribute(button_3, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
+            });
+            delegated("click", button_1, () => viewState.goToday());
+            delegated("click", button_2, () => viewState.prev());
+            delegated("click", button_3, () => viewState.next());
+            append($$anchor3, fragment_2);
+          };
+          if_block(node_3, ($$render) => {
+            if ($$props.navigation) $$render(consequent_2);
+            else if (showNavigation()) $$render(consequent_3, 1);
           });
         }
         reset(div_4);
         reset(div_1);
-        var node_6 = sibling(div_1, 2);
+        template_effect(() => set_text(text_1, get(dateLabel)));
+        append($$anchor2, div_1);
+      };
+      var consequent_9 = ($$anchor2) => {
+        var div_5 = root_7();
+        var div_6 = child(div_5);
+        var node_5 = child(div_6);
         {
           var consequent_5 = ($$anchor3) => {
-            var div_5 = root_4();
-            var button_3 = child(div_5);
-            var text_2 = child(button_3, true);
-            reset(button_3);
-            reset(div_5);
-            template_effect(() => set_text(text_2, get(L).today));
-            delegated("click", button_3, () => viewState.goToday());
-            append($$anchor3, div_5);
-          };
-          if_block(node_6, ($$render) => {
-            if (!$$props.navigation && showNavigation() && !get(viewIncludesToday)) $$render(consequent_5);
-          });
-        }
-        template_effect(() => set_text(text_1, get(dateLabel)));
-        append($$anchor2, fragment_1);
-      };
-      var consequent_11 = ($$anchor2) => {
-        var div_6 = root_9();
-        var div_7 = child(div_6);
-        var node_7 = child(div_7);
-        {
-          var consequent_7 = ($$anchor3) => {
             var fragment_3 = comment();
-            var node_8 = first_child(fragment_3);
-            snippet(node_8, () => $$props.navigation, () => get(navCtx));
+            var node_6 = first_child(fragment_3);
+            snippet(node_6, () => $$props.navigation, () => get(navCtx));
             append($$anchor3, fragment_3);
           };
-          var consequent_9 = ($$anchor3) => {
-            var fragment_4 = root_7();
-            var node_9 = first_child(fragment_4);
-            {
-              var consequent_8 = ($$anchor4) => {
-                var button_4 = root_6();
-                var text_3 = child(button_4, true);
-                reset(button_4);
-                template_effect(() => {
-                  set_attribute(button_4, "title", get(L).goToToday);
-                  set_text(text_3, get(L).today);
-                });
-                delegated("click", button_4, () => viewState.goToday());
-                append($$anchor4, button_4);
-              };
-              if_block(node_9, ($$render) => {
-                if (!get(viewIncludesToday)) $$render(consequent_8);
-              });
-            }
-            var button_5 = sibling(node_9, 2);
+          var consequent_6 = ($$anchor3) => {
+            var fragment_4 = root_4();
+            var button_4 = first_child(fragment_4);
+            var text_3 = child(button_4, true);
+            reset(button_4);
+            var button_5 = sibling(button_4, 2);
             var button_6 = sibling(button_5, 2);
             template_effect(() => {
+              button_4.disabled = get(viewIncludesToday);
+              set_attribute(button_4, "title", get(L).goToToday);
+              set_text(text_3, get(L).today);
               set_attribute(button_5, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
               set_attribute(button_6, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
             });
+            delegated("click", button_4, () => viewState.goToday());
             delegated("click", button_5, () => viewState.prev());
             delegated("click", button_6, () => viewState.next());
             append($$anchor3, fragment_4);
           };
-          if_block(node_7, ($$render) => {
-            if ($$props.navigation) $$render(consequent_7);
-            else if (showNavigation()) $$render(consequent_9, 1);
+          if_block(node_5, ($$render) => {
+            if ($$props.navigation) $$render(consequent_5);
+            else if (showNavigation()) $$render(consequent_6, 1);
           });
         }
-        reset(div_7);
-        var span_1 = sibling(div_7, 2);
+        reset(div_6);
+        var span_1 = sibling(div_6, 2);
         var text_4 = child(span_1, true);
         reset(span_1);
-        var div_8 = sibling(span_1, 2);
-        var node_10 = child(div_8);
+        var div_7 = sibling(span_1, 2);
+        var node_7 = child(div_7);
         {
-          var consequent_10 = ($$anchor3) => {
-            var div_9 = root_8();
-            each(div_9, 21, () => get(modes), index, ($$anchor4, g) => {
-              var button_7 = root_1();
+          var consequent_7 = ($$anchor3) => {
+            var div_8 = root_5();
+            each(div_8, 20, () => get(labelsForMode), (label) => label, ($$anchor4, label) => {
+              var button_7 = root();
               let classes_2;
               var text_5 = child(button_7, true);
               reset(button_7);
               template_effect(() => {
-                classes_2 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_2, { "cal-pill--active": viewState.mode === get(g) });
-                set_attribute(button_7, "aria-pressed", viewState.mode === get(g));
-                set_text(text_5, get(g) === "day" ? get(L).day : get(g) === "week" ? get(L).week : get(L).month);
+                classes_2 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_2, { "cal-pill--active": get(activeView)?.label === label });
+                set_attribute(button_7, "aria-checked", get(activeView)?.label === label);
+                set_text(text_5, label);
               });
-              delegated("click", button_7, () => switchMode(get(g)));
+              delegated("click", button_7, () => switchLabel(label));
               append($$anchor4, button_7);
+            });
+            reset(div_8);
+            template_effect(() => set_attribute(div_8, "aria-label", get(L).viewMode));
+            append($$anchor3, div_8);
+          };
+          if_block(node_7, ($$render) => {
+            if (showModePills() && get(labelsForMode).length > 1) $$render(consequent_7);
+          });
+        }
+        var node_8 = sibling(node_7, 2);
+        {
+          var consequent_8 = ($$anchor3) => {
+            var div_9 = root_6();
+            each(div_9, 20, () => get(modes), (g) => g, ($$anchor4, g) => {
+              var button_8 = root();
+              let classes_3;
+              var text_6 = child(button_8, true);
+              reset(button_8);
+              template_effect(() => {
+                classes_3 = set_class(button_8, 1, "cal-pill svelte-1b53e7w", null, classes_3, { "cal-pill--active": viewState.mode === g });
+                set_attribute(button_8, "aria-checked", viewState.mode === g);
+                set_text(text_6, g === "day" ? get(L).day : g === "week" ? get(L).week : get(L).month);
+              });
+              delegated("click", button_8, () => switchMode(g));
+              append($$anchor4, button_8);
             });
             reset(div_9);
             template_effect(() => set_attribute(div_9, "aria-label", get(L).viewMode));
             append($$anchor3, div_9);
           };
-          if_block(node_10, ($$render) => {
-            if (showModePills() && get(modes).length > 1) $$render(consequent_10);
+          if_block(node_8, ($$render) => {
+            if (showModePills() && get(modes).length > 1) $$render(consequent_8);
           });
         }
-        reset(div_8);
-        reset(div_6);
+        reset(div_7);
+        reset(div_5);
         template_effect(() => set_text(text_4, get(dateLabel)));
-        append($$anchor2, div_6);
+        append($$anchor2, div_5);
       };
       if_block(node, ($$render) => {
         if ($$props.header) $$render(consequent);
-        else if (get(useMobile) && (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel))) $$render(consequent_6, 1);
-        else if (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel)) $$render(consequent_11, 2);
+        else if (get(useMobile) && (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel))) $$render(consequent_4, 1);
+        else if (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel)) $$render(consequent_9, 2);
       });
     }
     var div_10 = sibling(node, 2);
-    var node_11 = child(div_10);
+    var node_9 = child(div_10);
     {
-      var consequent_12 = ($$anchor2) => {
+      var consequent_10 = ($$anchor2) => {
         const Comp = /* @__PURE__ */ user_derived(() => get(activeView).component);
         var fragment_5 = comment();
-        var node_12 = first_child(fragment_5);
-        component(node_12, () => get(Comp), ($$anchor3, Comp_1) => {
+        var node_10 = first_child(fragment_5);
+        component(node_10, () => get(Comp), ($$anchor3, Comp_1) => {
           Comp_1($$anchor3, spread_props(
             {
               get events() {
@@ -12348,23 +12803,23 @@
         append($$anchor2, fragment_5);
       };
       var alternate = ($$anchor2) => {
-        var div_11 = root_10();
+        var div_11 = root_8();
         append($$anchor2, div_11);
       };
-      if_block(node_11, ($$render) => {
-        if (get(activeView)) $$render(consequent_12);
+      if_block(node_9, ($$render) => {
+        if (get(activeView)) $$render(consequent_10);
         else $$render(alternate, -1);
       });
     }
     reset(div_10);
-    var node_13 = sibling(div_10, 2);
+    var node_11 = sibling(div_10, 2);
     {
-      var consequent_13 = ($$anchor2) => {
-        var div_12 = root_11();
+      var consequent_11 = ($$anchor2) => {
+        var div_12 = root_9();
         append($$anchor2, div_12);
       };
-      if_block(node_13, ($$render) => {
-        if (get(store).loading) $$render(consequent_13);
+      if_block(node_11, ($$render) => {
+        if (get(store).loading) $$render(consequent_11);
       });
     }
     reset(div);
@@ -12373,14 +12828,16 @@
       classes = set_class(div, 1, "cal svelte-1b53e7w", null, classes, { "cal--auto": heightProp() === "auto" });
       set_style(div, `${get(effectiveTheme) ?? ""}; ${heightProp() === "auto" ? "" : `--cal-h: ${heightProp()}px;`} --cal-r: ${borderRadius() ?? ""}px`);
       set_attribute(div, "aria-label", get(L).calendar);
-      set_attribute(div, "dir", $$props.dir);
+      set_attribute(div, "aria-busy", get(store).loading || void 0);
+      set_attribute(div, "dir", get(resolvedDir));
       set_attribute(div, "lang", $$props.locale);
       div.dir = div.dir;
     });
+    delegated("keydown", div, handleShortcuts);
     append($$anchor, div);
     pop();
   }
-  delegate(["click"]);
+  delegate(["keydown", "click"]);
   function createRestAdapter(options) {
     const { baseUrl, headers = {} } = options;
     const mapEvents = options.mapEvents ?? ((data) => data);
@@ -12498,11 +12955,23 @@
   }
   function CalendarWidget($$anchor, $$props) {
     push($$props, true);
-    let theme = prop($$props, "theme", 3, "neutral"), view = prop($$props, "view", 3, "week-planner"), height = prop($$props, "height", 3, "600"), mondaystart = prop($$props, "mondaystart", 3, "true");
-    const heightPx = /* @__PURE__ */ user_derived(() => parseInt(height(), 10) || 600);
+    let theme = prop($$props, "theme", 3, "auto"), view = prop($$props, "view", 3, "week-planner"), height = prop($$props, "height", 3, "600"), mondaystart = prop($$props, "mondaystart", 3, "true");
+    const heightValue = /* @__PURE__ */ user_derived(() => {
+      const trimmed = height().trim();
+      if (trimmed === "auto") return "auto";
+      if (/^\d+(px)?$/.test(trimmed)) return parseInt(trimmed, 10);
+      console.warn(`[day-calendar] Unsupported height "${height()}" — use pixels or "auto". Falling back to 600.`);
+      return 600;
+    });
     const isMondayStart = /* @__PURE__ */ user_derived(() => mondaystart() !== "false");
-    const themeStyle = /* @__PURE__ */ user_derived(() => presets[theme()] || presets.neutral);
+    const themeStyle = /* @__PURE__ */ user_derived(() => theme() in presets ? presets[theme()] : presets.neutral);
     const dirValue = /* @__PURE__ */ user_derived(() => $$props.dir === "rtl" || $$props.dir === "ltr" || $$props.dir === "auto" ? $$props.dir : void 0);
+    const mobileValue = /* @__PURE__ */ user_derived(() => $$props.mobile === "true" ? true : $$props.mobile === "false" ? false : "auto");
+    const daysValue = /* @__PURE__ */ user_derived(() => {
+      if (!$$props.days) return void 0;
+      const n = parseInt($$props.days, 10);
+      return Number.isNaN(n) || n < 1 || n > 7 ? void 0 : n;
+    });
     function parseHeaders(json) {
       if (!json) return void 0;
       try {
@@ -12559,41 +13028,113 @@
       }
       return createMemoryAdapter(parseEvents($$props.events));
     });
-    Calendar($$anchor, {
-      get adapter() {
-        return get(adapter);
-      },
-      get view() {
-        return view();
-      },
-      get theme() {
-        return get(themeStyle);
-      },
-      get height() {
-        return get(heightPx);
-      },
-      get mondayStart() {
-        return get(isMondayStart);
-      },
-      get dir() {
-        return get(dirValue);
-      },
-      get locale() {
-        return $$props.locale;
-      }
-    });
+    {
+      let $0 = /* @__PURE__ */ user_derived(() => $$props.readonly === "true");
+      let $1 = /* @__PURE__ */ user_derived(() => $$props.pills !== "false");
+      let $2 = /* @__PURE__ */ user_derived(() => $$props.nav !== "false");
+      let $3 = /* @__PURE__ */ user_derived(() => $$props.compact === "true");
+      let $4 = /* @__PURE__ */ user_derived(() => $$props.timezone || void 0);
+      Calendar($$anchor, {
+        get adapter() {
+          return get(adapter);
+        },
+        get view() {
+          return view();
+        },
+        get theme() {
+          return get(themeStyle);
+        },
+        get height() {
+          return get(heightValue);
+        },
+        get mondayStart() {
+          return get(isMondayStart);
+        },
+        get dir() {
+          return get(dirValue);
+        },
+        get locale() {
+          return $$props.locale;
+        },
+        get readOnly() {
+          return get($0);
+        },
+        get showModePills() {
+          return get($1);
+        },
+        get showNavigation() {
+          return get($2);
+        },
+        get mobile() {
+          return get(mobileValue);
+        },
+        get days() {
+          return get(daysValue);
+        },
+        get compact() {
+          return get($3);
+        },
+        get timezone() {
+          return get($4);
+        }
+      });
+    }
     pop();
   }
   const CalendarWidgetClass = asClassComponent(CalendarWidget);
+  let sharedSheet = null;
+  function injectStyles(root2) {
+    const css = globalThis.__DAY_CALENDAR_CSS__;
+    if (!css) return;
+    if ("adoptedStyleSheets" in root2 && typeof CSSStyleSheet !== "undefined") {
+      try {
+        if (!sharedSheet) {
+          sharedSheet = new CSSStyleSheet();
+          sharedSheet.replaceSync(css);
+        }
+        root2.adoptedStyleSheets = [...root2.adoptedStyleSheets, sharedSheet];
+        return;
+      } catch {
+      }
+    }
+    const style = document.createElement("style");
+    style.setAttribute("data-day-calendar", "");
+    style.textContent = css;
+    root2.appendChild(style);
+  }
+  const WIDGET_ATTRS = [
+    "api",
+    "events",
+    "theme",
+    "view",
+    "height",
+    "locale",
+    "dir",
+    "mondaystart",
+    "headers",
+    "readonly",
+    "pills",
+    "nav",
+    "mobile",
+    "days",
+    "compact",
+    "timezone"
+  ];
   class DayCalendarElement extends HTMLElement {
     instance = null;
+    stylesInjected = false;
     static get observedAttributes() {
-      return ["api", "events", "theme", "view", "height", "locale", "dir", "mondaystart", "headers"];
+      return [...WIDGET_ATTRS];
     }
     connectedCallback() {
       if (this.instance) return;
+      const root2 = this.shadowRoot ?? this.attachShadow({ mode: "open" });
+      if (!this.stylesInjected) {
+        injectStyles(root2);
+        this.stylesInjected = true;
+      }
       this.instance = new CalendarWidgetClass({
-        target: this,
+        target: root2,
         props: this.readProps()
       });
     }
@@ -12608,17 +13149,12 @@
       });
     }
     readProps() {
-      return {
-        api: this.getAttribute("api") ?? void 0,
-        events: this.getAttribute("events") ?? void 0,
-        theme: this.getAttribute("theme") ?? void 0,
-        view: this.getAttribute("view") ?? void 0,
-        height: this.getAttribute("height") ?? void 0,
-        locale: this.getAttribute("locale") ?? void 0,
-        dir: this.getAttribute("dir") ?? void 0,
-        mondaystart: this.getAttribute("mondaystart") ?? void 0,
-        headers: this.getAttribute("headers") ?? void 0
-      };
+      const props = {};
+      for (const attr of WIDGET_ATTRS) {
+        const value = this.getAttribute(attr);
+        if (value !== null) props[attr] = value;
+      }
+      return props;
     }
   }
   if (!customElements.get("day-calendar")) {
