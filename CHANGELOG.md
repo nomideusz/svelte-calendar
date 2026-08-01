@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.11.0 — 2026-08-01
+
+### Added
+- Week agenda: "✓ N completed" lines are now disclosure buttons — tap to reveal a past day's finished events as dimmed, struck-through rows (works for collapsed past days and today's done section).
+- Month grid: on mobile-width containers, events render as color dots with a compact "+N" overflow — text chips fit ~1 character in a phone-width cell and clipped vertically. The day cell stays the tap target (drill-down); dot chips keep full accessible labels.
+- Mobile header: on containers narrower than 520px the date label moves to its own centered row instead of being truncated to a single letter by the mode pills and navigation.
+
+### Fixed
+- Mobile week list could pan horizontally on iOS — rows were `width: 100%` plus padding (content-box), overflowing the list by 24px and letting the date column clip off the left edge. Rows are border-box and the list clips horizontal overflow.
+- Swipe navigation: when the browser took over a gesture mid-swipe (`touchcancel` — vertical scroll, edge swipe, system UI), mobile day/week views stayed stuck translated sideways.
+- Compact agenda rows no longer crush the event title to zero width. On mobile, a long title takes the whole first line and location/subtitle/tags wrap below it at full width, with the color dot pinned to the title line.
+- Mobile day view: 24-hour gutter labels no longer sit flush under event blocks (content-box sizing), and event blocks only render the detail lines their height can hold — a 1-hour block no longer clips text at both ends.
+- Week agenda sticky day headers get their own compositor layer, removing the flash of card content above them during fast scrolling.
+- Active mode pill stays readable on touch devices — the stuck `:hover` style out-ranked the active pill's text color (dark-on-accent).
+- Selected agenda rows no longer shift their content sideways on tap; plan-card location and time align with the subtitle's indent under the title.
+
 ## 0.10.0 — 2026-08-01
 
 ### Changed (breaking-ish)
