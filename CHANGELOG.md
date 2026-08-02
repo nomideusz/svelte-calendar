@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.0 — 2026-08-02
+
+### Added
+- `createRangeAgenda()` — third headless factory, between `createAgenda` (live single day) and `createCalendar` (full grid engine): a window of days (default 7) with events grouped per day, `prev()`/`next()`/`goToday()`/`setDate()` paging, `loading`/`error` state, and locale format helpers. No clock, no drag, no selection — built for read-only schedule surfaces (public timetables, listings, embeds). Exports `RangeAgendaOptions`, `RangeAgendaDay`, `HeadlessRangeAgenda`.
+
 ## 0.12.0 — 2026-08-01
 
 ### Changed (breaking)

@@ -102,7 +102,7 @@ export { wrapAdapterWithTimezone } from './core/timezone.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
 
 // ─── Headless API ───────────────────────────────────────
-export { createCalendar, createAgenda } from './headless/index.js';
+export { createCalendar, createAgenda, createRangeAgenda } from './headless/index.js';
 export type {
 	HeadlessCalendarOptions,
 	HeadlessCalendar,
@@ -113,4 +113,7 @@ export type {
 	NavigationContext,
 	AgendaOptions,
 	HeadlessAgenda,
+	RangeAgendaOptions,
+	RangeAgendaDay,
+	HeadlessRangeAgenda,
 } from './headless/index.js';

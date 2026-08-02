@@ -16,4 +16,4 @@ export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';
 export { wrapAdapterWithTimezone } from './core/timezone.js';
 // ─── Headless API ───────────────────────────────────────
-export { createCalendar, createAgenda } from './headless/index.js';
+export { createCalendar, createAgenda, createRangeAgenda } from './headless/index.js';

@@ -13,5 +13,5 @@ export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';
 export { wrapAdapterWithTimezone } from './core/timezone.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
-export { createCalendar, createAgenda } from './headless/index.js';
-export type { HeadlessCalendarOptions, HeadlessCalendar, HeadlessDay, HeadlessWeek, TodayQueue, HeaderContext, NavigationContext, AgendaOptions, HeadlessAgenda, } from './headless/index.js';
+export { createCalendar, createAgenda, createRangeAgenda } from './headless/index.js';
+export type { HeadlessCalendarOptions, HeadlessCalendar, HeadlessDay, HeadlessWeek, TodayQueue, HeaderContext, NavigationContext, AgendaOptions, HeadlessAgenda, RangeAgendaOptions, RangeAgendaDay, HeadlessRangeAgenda, } from './headless/index.js';
