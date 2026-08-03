@@ -1,6 +1,6 @@
 # @nomideusz/svelte-calendar
 
-[![npm](https://badgen.net/npm/v/@nomideusz/svelte-calendar)](https://www.npmjs.com/package/@nomideusz/svelte-calendar) [![license](https://badgen.net/badge/license/MIT/blue)](./LICENSE)
+[![npm](https://badgen.net/npm/v/@nomideusz/svelte-calendar)](https://www.npmjs.com/package/@nomideusz/svelte-calendar) [![license](https://badgen.net/badge/license/MIT/blue)](https://github.com/nomideusz/svelte-calendar/blob/main/LICENSE)
 
 A themeable **Svelte 5** calendar with **Day/Week Planner & Agenda** views, touch-first mobile views, and a smart auto-theme that adapts to any page.
 
