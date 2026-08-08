@@ -57,6 +57,7 @@ let {
   visibleHours,
   initialDate,
   snapInterval = 15,
+  minColumnWidth = 110,
   showModePills = true,
   showNavigation = true,
   equalDays = false,
@@ -132,7 +133,7 @@ const effectiveTheme = $derived(theme === auto && autoTheme !== false ? probedTh
 const effectiveAdapter = $derived(
   timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter
 );
-const store = $derived(createEventStore(effectiveAdapter));
+const store = createEventStore(() => effectiveAdapter);
 const viewState = createViewState(untrack(() => ({
   view: activeViewId ?? views[0]?.id,
   mondayStart,
@@ -255,6 +256,9 @@ setContext("calendar", {
   },
   get snapInterval() {
     return snapInterval;
+  },
+  get minColumnWidth() {
+    return minColumnWidth;
   },
   get eventSnippet() {
     return eventSnippet;

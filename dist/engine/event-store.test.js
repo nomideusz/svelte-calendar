@@ -38,6 +38,29 @@ describe('createEventStore', () => {
             expect(store.error).toBe('network error');
             expect(store.loading).toBe(false);
         });
+        it('drops in-range events the adapter no longer returns', async () => {
+            const adapter = createMemoryAdapter([makeEvent('1', 9, 10), makeEvent('2', 11, 12)]);
+            const store = createEventStore(adapter);
+            await store.load(MARCH_1_RANGE);
+            expect(store.events).toHaveLength(2);
+            await adapter.deleteEvent('2');
+            await store.load(MARCH_1_RANGE);
+            expect(store.events.map((e) => e.id)).toEqual(['1']);
+        });
+        it('keeps events loaded outside the reloaded range', async () => {
+            const store = createEventStore(createMemoryAdapter([makeEvent('1', 9, 10, 1), makeEvent('2', 9, 10, 5)]));
+            await store.load({ start: new Date(2025, 2, 1), end: new Date(2025, 2, 8) });
+            await store.load(MARCH_1_RANGE); // March 1 only — must not prune March 5
+            expect(store.events).toHaveLength(2);
+        });
+        it('follows a swapped adapter without losing state identity', async () => {
+            let current = createMemoryAdapter([makeEvent('1', 9, 10)]);
+            const store = createEventStore(() => current);
+            await store.load(MARCH_1_RANGE);
+            current = createMemoryAdapter([makeEvent('9', 14, 15)]);
+            await store.load(MARCH_1_RANGE);
+            expect(store.events.map((e) => e.id)).toEqual(['9']);
+        });
     });
     describe('add', () => {
         it('adds a new event to the store', async () => {
@@ -96,6 +119,27 @@ describe('createEventStore', () => {
             const ev = store.byId('1');
             expect(ev?.start).toEqual(newStart);
             expect(ev?.end).toEqual(newEnd);
+        });
+        it('reverts the optimistic position when the adapter rejects', async () => {
+            const base = createMemoryAdapter([makeEvent('1', 9, 10)]);
+            const store = createEventStore({
+                ...base,
+                updateEvent: async () => { throw new Error('boom'); },
+            });
+            await store.load(MARCH_1_RANGE);
+            await expect(store.move('1', new Date(2025, 2, 1, 14, 0), new Date(2025, 2, 1, 15, 0))).rejects.toThrow('boom');
+            expect(store.byId('1')?.start).toEqual(new Date(2025, 2, 1, 9, 0));
+        });
+        it('keeps the optimistic position when the adapter is read-only (host persists)', async () => {
+            const base = createMemoryAdapter([makeEvent('1', 9, 10)]);
+            const store = createEventStore({
+                ...base,
+                updateEvent: async () => { throw new Error('adapter is read-only'); },
+            });
+            await store.load(MARCH_1_RANGE);
+            const newStart = new Date(2025, 2, 1, 14, 0);
+            await expect(store.move('1', newStart, new Date(2025, 2, 1, 15, 0))).rejects.toThrow();
+            expect(store.byId('1')?.start).toEqual(newStart);
         });
     });
     describe('forDay / forRange', () => {

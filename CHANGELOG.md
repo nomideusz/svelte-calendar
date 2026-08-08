@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.14.0 — 2026-08-09
+
+### Fixed
+- **Drag no longer thrashes layout.** Pointer events fire far faster than the
+  screen repaints; each one wrote drag state, Svelte wrote inline styles, and
+  the next handler's `getBoundingClientRect()` forced a synchronous layout.
+  The planner grid now handles at most one pointer move per frame, off the
+  newest event, measuring the grid rect once inside that frame. `pointerup`
+  flushes the pending frame, so a drop still commits the newest position.
+- **The grid no longer blanks when the adapter identity changes.** `Calendar`
+  built its event store inside a `$derived`, so handing it a new adapter — the
+  common "rebuild the adapter to force a refetch" idiom — replaced the store
+  with an empty one and every event vanished until the refetch landed. The
+  store is now created once and reads the adapter through a getter; the load
+  effect still re-runs on adapter change.
+- **A dropped event no longer snaps back before the host's save lands.**
+  `store.move()` reverted its optimistic position on any adapter error,
+  including `read-only` — precisely the case where the host owns persistence
+  and `oneventmove` is about to run. Read-only rejections now keep the
+  optimistic position; every other failure still reverts.
+
+### Changed
+- `EventStore.load()` treats the adapter as authoritative inside the requested
+  range: events it no longer returns are dropped. Previously the store only
+  ever grew, so deleted or re-keyed events lingered until remount. Events
+  outside the loaded range are untouched, and a superseded in-flight load
+  never prunes a newer one's result.
+- `createEventStore()` also accepts a `() => CalendarAdapter` getter, for hosts
+  whose adapter identity changes.
+- While an event is being dragged, its original block stays in place, dimmed,
+  instead of disappearing — the ghost shows the destination, the faded block
+  the origin, and neither the drop target nor its neighbours re-lane under the
+  pointer mid-drag.
+
 ## 0.13.1 — 2026-08-02
 
 ### Changed

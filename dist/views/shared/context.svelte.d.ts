@@ -8,6 +8,7 @@ export interface CalendarContext {
     readonly drag: DragState | undefined;
     readonly commitDrag: (() => void) | undefined;
     readonly snapInterval: number;
+    readonly minColumnWidth: number;
     readonly equalDays: boolean;
     readonly showDates: boolean;
     readonly hideDays: number[] | undefined;

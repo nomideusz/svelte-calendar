@@ -57,6 +57,13 @@ interface Props {
     initialDate?: Date;
     /** Drag snap interval in minutes (default: 15) */
     snapInterval?: number;
+    /**
+     * Minimum width (px) of a day column in planner views (default: 110).
+     * Below the resulting total the grid scrolls horizontally. Lower it when
+     * the calendar shares its row with a sidebar and the whole week must stay
+     * visible without scrolling.
+     */
+    minColumnWidth?: number;
     /** Show the Day/Week mode pills (default: true) */
     showModePills?: boolean;
     /** Show prev/next/today navigation controls (default: true) */

@@ -80,7 +80,7 @@
 	// ── Config ─────────────────────────────────────────
 	const HOUR_H = 48;
 	const GUTTER_W = 48;
-	const MIN_COL_W = 110;
+	const MIN_COL_W = $derived(ctx.minColumnWidth);
 	const ALLDAY_MAX = 3;
 
 	const startHour = $derived(visibleHours?.[0] ?? 0);
@@ -174,8 +174,9 @@
 	let adExpanded = $state<Record<number, boolean>>({});
 
 	// ── Timed event layout (union-find lanes, vertical) ─
-	// The dragged (move-mode) event is excluded from lanes and rendered as a
-	// ghost instead; resize tracks the tentative payload in place.
+	// The dragged (move-mode) event keeps its lane at the original time, dimmed,
+	// while the ghost tracks the pointer; resize tracks the tentative payload
+	// in place.
 	const movingId = $derived(drag?.active && drag.mode === 'move' ? drag.payload?.eventId ?? null : null);
 	const movingEvent = $derived(movingId ? events.find((e) => e.id === movingId) ?? null : null);
 
@@ -186,6 +187,7 @@
 		col: number;
 		totalCols: number;
 		isResizing: boolean;
+		isMoving: boolean;
 	}
 
 	interface LaneInfo {
@@ -193,6 +195,7 @@
 		startMs: number;
 		endMs: number;
 		isResizing: boolean;
+		isMoving: boolean;
 		col: number;
 		totalCols: number;
 	}
@@ -211,7 +214,10 @@
 
 			for (const ev of events) {
 				if (isAllDay(ev) || isMultiDay(ev)) continue;
-				if (ev.id === movingId) continue;
+				// The event being moved stays laned at its ORIGINAL slot, dimmed:
+				// the ghost shows where it is going, the faded block where it came
+				// from, and neither the drop target nor its neighbours re-lane
+				// under the pointer mid-drag.
 				const isResizing = rsP?.eventId === ev.id;
 				const s0 = isResizing ? rsP!.start.getTime() : ev.start.getTime();
 				const e0 = isResizing ? rsP!.end.getTime() : ev.end.getTime();
@@ -220,7 +226,7 @@
 				const eMs = Math.min(e0, bandEnd);
 				// Entirely outside the visible hour band — skip, don't paint a sliver
 				if (eMs <= sMs) continue;
-				infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, col: 0, totalCols: 1 });
+				infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
 			}
 
 			infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
@@ -269,6 +275,7 @@
 					col: inf.col,
 					totalCols: inf.totalCols,
 					isResizing: inf.isResizing,
+					isMoving: inf.isMoving,
 				})),
 			);
 		}
@@ -316,9 +323,48 @@
 		});
 	});
 
+	// ── Pointer coalescing ─────────────────────────────
+	// Pointer events fire far faster than the screen repaints (120–1000 Hz on
+	// modern mice). Handling each one wrote drag state → Svelte wrote inline
+	// styles → the next handler's getBoundingClientRect() forced a synchronous
+	// layout: classic read-after-write thrash, and the reason a drag felt heavy
+	// on a busy grid. Running at most one handler per frame, off the newest
+	// event, with the grid rect measured once inside that frame, removes both.
+	let rafId = 0;
+	let rafRun: (() => void) | null = null;
+	let rectCache: DOMRect | null = null;
+
+	function perFrame(handler: (e: PointerEvent) => void): (e: PointerEvent) => void {
+		return (e: PointerEvent) => {
+			rafRun = () => {
+				rectCache = colsEl?.getBoundingClientRect() ?? null;
+				try {
+					handler(e);
+				} finally {
+					rectCache = null;
+				}
+			};
+			if (rafId) return;
+			rafId = requestAnimationFrame(flushFrame);
+		};
+	}
+
+	/** Run a pending move now — pointerup must not drop the last frame. */
+	function flushFrame() {
+		if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+		const run = rafRun;
+		rafRun = null;
+		run?.();
+	}
+
+	function cancelFrame() {
+		if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+		rafRun = null;
+	}
+
 	// ── Geometry helpers ───────────────────────────────
 	function colsRect(): DOMRect {
-		return colsEl.getBoundingClientRect();
+		return rectCache ?? colsEl.getBoundingClientRect();
 	}
 
 	/** Pointer X → index into dayCols (clamped) */
@@ -466,7 +512,7 @@
 		window.addEventListener('pointercancel', onColsCreateCancel, { once: true });
 	}
 
-	function onColsCreateMove(e: PointerEvent) {
+	const onColsCreateMove = perFrame((e: PointerEvent) => {
 		if (!drag) return;
 		if (!crStarted) {
 			if (longPressTimer !== null) {
@@ -485,9 +531,10 @@
 			new Date(Math.min(crAnchorMs, snapped)),
 			new Date(Math.max(crAnchorMs + SNAP_MS, snapped)),
 		);
-	}
+	});
 
 	function cleanupColsCreate() {
+		cancelFrame();
 		clearLongPress();
 		removeTouchScrollBlock();
 		window.removeEventListener('pointermove', onColsCreateMove);
@@ -497,6 +544,10 @@
 	}
 
 	function onColsCreateUp() {
+		// Commit the newest pointer position, not the last one that made it to a
+		// frame. Only once the gesture is live — flushing a pending frame before
+		// that could start (and instantly commit) a drag the user meant as a click.
+		if (crStarted) flushFrame();
 		if (drag && crStarted) {
 			// The click event (if any) fires synchronously after pointerup
 			suppressColsClick = true;
@@ -559,7 +610,7 @@
 		window.addEventListener('pointercancel', onEvCancel, { once: true });
 	}
 
-	function onEvMove(e: PointerEvent) {
+	const onEvMove = perFrame((e: PointerEvent) => {
 		const ev = evDragEvent;
 		if (!drag || !ev || !evDragMovable) return;
 		if (!evDragStarted) {
@@ -572,9 +623,10 @@
 		const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
 		const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
 		drag.updatePointer(new Date(snapped), new Date(snapped + duration));
-	}
+	});
 
 	function cleanupEvDrag() {
+		cancelFrame();
 		window.removeEventListener('pointermove', onEvMove);
 		window.removeEventListener('pointerup', onEvUp);
 		window.removeEventListener('pointercancel', onEvCancel);
@@ -584,6 +636,7 @@
 	}
 
 	function onEvUp() {
+		if (evDragStarted) flushFrame();
 		if (!evDragStarted && evDragEvent) {
 			oneventclick?.(evDragEvent);
 		} else if (evDragStarted && drag) {
@@ -619,7 +672,7 @@
 		window.addEventListener('pointercancel', onResizeCancel, { once: true });
 	}
 
-	function onResizeMove(e: PointerEvent) {
+	const onResizeMove = perFrame((e: PointerEvent) => {
 		const ev = rsEvent;
 		if (!drag || !ev) return;
 		if (!rsStarted) {
@@ -638,9 +691,10 @@
 			const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
 			drag.updatePointer(new Date(start), ev.end);
 		}
-	}
+	});
 
 	function cleanupResize() {
+		cancelFrame();
 		removeTouchScrollBlock();
 		window.removeEventListener('pointermove', onResizeMove);
 		window.removeEventListener('pointerup', onResizeUp);
@@ -650,6 +704,7 @@
 	}
 
 	function onResizeUp() {
+		if (rsStarted) flushFrame();
 		if (drag && rsStarted) {
 			// If the pointer ends off the block, the synthesized click lands on
 			// the grid — suppress the click-to-create it would trigger.
@@ -718,6 +773,7 @@
 	class="tw"
 	class:tw--auto={autoHeight}
 	style={style || undefined}
+	style:--tw-col-min="{MIN_COL_W}px"
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
 	aria-label={L.weekAhead}
@@ -853,6 +909,7 @@
 									class:tw-ev--selected={selectedEventId === p.ev.id}
 									class:tw-ev--current={isCurrent}
 									class:tw-ev--resizing={p.isResizing}
+									class:tw-ev--moving={p.isMoving}
 									class:tw-ev--readonly={p.ev.data?.readOnly}
 									class:tw-ev--cancelled={p.ev.status === 'cancelled'}
 									class:tw-ev--tentative={p.ev.status === 'tentative'}
@@ -1007,7 +1064,7 @@
 
 	.tw-hd {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1073,7 +1130,7 @@
 
 	.tw-ad-cell {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
@@ -1225,7 +1282,7 @@
 	/* ─── Day column ─────────────────────────────────── */
 	.tw-col {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		position: relative;
 		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		box-sizing: border-box;
@@ -1346,6 +1403,12 @@
 		z-index: 50;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 		cursor: ns-resize;
+	}
+	/* Origin of an in-flight move: still there, clearly no longer the subject. */
+	.tw-ev--moving {
+		opacity: 0.3;
+		pointer-events: none;
+		box-shadow: none;
 	}
 	/* Status treatments: token-level dims + a non-opacity signal
 	   (strikethrough / border style) — consistent with the other views. */

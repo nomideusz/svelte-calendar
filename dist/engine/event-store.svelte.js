@@ -19,11 +19,20 @@ import { SvelteMap } from 'svelte/reactivity';
 import { sod, DAY_MS } from '../core/time.js';
 /**
  * Create a reactive event store backed by a CalendarAdapter.
+ *
+ * Pass a getter instead of an adapter when the adapter identity can change
+ * (a `$derived` adapter, a host that rebuilds it to force a refetch): the
+ * store then stays alive across the swap and reloads, instead of being torn
+ * down and rebuilt with an empty event map — which reads as every event
+ * blinking out and reappearing.
  */
 export function createEventStore(adapter) {
+    const getAdapter = typeof adapter === 'function' ? adapter : () => adapter;
     let eventMap = new SvelteMap();
     let loading = $state(false);
     let error = $state(null);
+    /** Guards against an older in-flight load pruning a newer one's result */
+    let loadSeq = 0;
     // Derived array view of the map — consumers read this.
     const eventArray = $derived([...eventMap.values()]);
     // ── Internal helpers ──
@@ -48,11 +57,21 @@ export function createEventStore(adapter) {
             return error;
         },
         async load(range) {
+            const seq = ++loadSeq;
             loading = true;
             error = null;
             try {
-                const fetched = await adapter.fetchEvents(range);
-                // Merge: upsert fetched, don't blow away events outside this range
+                const fetched = await getAdapter().fetchEvents(range);
+                if (seq !== loadSeq)
+                    return; // superseded by a newer load
+                // Merge: upsert fetched, don't blow away events outside this range.
+                // Inside the range the adapter is authoritative — drop what it no
+                // longer returns, or deleted/moved events linger until remount.
+                const keep = new Set(fetched.map((ev) => ev.id));
+                for (const ev of [...eventMap.values()]) {
+                    if (!keep.has(ev.id) && overlaps(ev, range.start, range.end))
+                        removeEvent(ev.id);
+                }
                 for (const ev of fetched) {
                     upsertEvent(ev);
                 }
@@ -61,7 +80,8 @@ export function createEventStore(adapter) {
                 error = e instanceof Error ? e.message : String(e);
             }
             finally {
-                loading = false;
+                if (seq === loadSeq)
+                    loading = false;
             }
         },
         forRange(start, end) {
@@ -76,12 +96,12 @@ export function createEventStore(adapter) {
             return eventMap.get(id);
         },
         async add(eventData) {
-            if (!adapter.createEvent)
+            if (!getAdapter().createEvent)
                 throw new Error('Adapter is read-only: createEvent not implemented');
             loading = true;
             error = null;
             try {
-                const created = await adapter.createEvent(eventData);
+                const created = await getAdapter().createEvent(eventData);
                 upsertEvent(created);
                 return created;
             }
@@ -94,12 +114,12 @@ export function createEventStore(adapter) {
             }
         },
         async update(id, patch) {
-            if (!adapter.updateEvent)
+            if (!getAdapter().updateEvent)
                 throw new Error('Adapter is read-only: updateEvent not implemented');
             loading = true;
             error = null;
             try {
-                const updated = await adapter.updateEvent(id, patch);
+                const updated = await getAdapter().updateEvent(id, patch);
                 upsertEvent(updated);
             }
             catch (e) {
@@ -111,12 +131,12 @@ export function createEventStore(adapter) {
             }
         },
         async remove(id) {
-            if (!adapter.deleteEvent)
+            if (!getAdapter().deleteEvent)
                 throw new Error('Adapter is read-only: deleteEvent not implemented');
             loading = true;
             error = null;
             try {
-                await adapter.deleteEvent(id);
+                await getAdapter().deleteEvent(id);
                 removeEvent(id);
             }
             catch (e) {
@@ -138,8 +158,12 @@ export function createEventStore(adapter) {
                 await this.update(id, { start: newStart, end: newEnd });
             }
             catch (e) {
-                // Revert optimistic update on failure
-                if (existing)
+                // Revert optimistic update on failure — except for a read-only
+                // adapter, where the HOST owns persistence (Calendar forwards to
+                // oneventmove). Reverting there snaps the block back to its old
+                // slot for the length of the host's round-trip.
+                const msg = e instanceof Error ? e.message : '';
+                if (existing && !msg.includes('read-only'))
                     upsertEvent(existing);
                 throw e;
             }

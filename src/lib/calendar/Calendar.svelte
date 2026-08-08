@@ -94,6 +94,13 @@
 		initialDate?: Date;
 		/** Drag snap interval in minutes (default: 15) */
 		snapInterval?: number;
+		/**
+		 * Minimum width (px) of a day column in planner views (default: 110).
+		 * Below the resulting total the grid scrolls horizontally. Lower it when
+		 * the calendar shares its row with a sidebar and the whole week must stay
+		 * visible without scrolling.
+		 */
+		minColumnWidth?: number;
 		/** Show the Day/Week mode pills (default: true) */
 		showModePills?: boolean;
 		/** Show prev/next/today navigation controls (default: true) */
@@ -201,6 +208,7 @@
 		visibleHours,
 		initialDate,
 		snapInterval = 15,
+		minColumnWidth = 110,
 		showModePills = true,
 		showNavigation = true,
 		equalDays = false,
@@ -310,7 +318,12 @@
 	const effectiveAdapter = $derived(
 		timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter,
 	);
-	const store: EventStore = $derived(createEventStore(effectiveAdapter));
+	// The store is created ONCE and reads the adapter through a getter. A
+	// `$derived` store would be rebuilt — empty — whenever the host handed over a
+	// new adapter identity (a common "force a refetch" idiom), blanking the grid
+	// until the refetch landed. The load effect below re-runs on adapter change
+	// because store.load() reads effectiveAdapter inside it.
+	const store: EventStore = createEventStore(() => effectiveAdapter);
 	const viewState: ViewState = createViewState(untrack(() => ({
 		view: activeViewId ?? views[0]?.id,
 		mondayStart,
@@ -435,6 +448,7 @@
 		get readOnly() { return readOnly; },
 		get visibleHours() { return visibleHours; },
 		get snapInterval() { return snapInterval; },
+		get minColumnWidth() { return minColumnWidth; },
 		get eventSnippet() { return eventSnippet; },
 		get emptySnippet() { return emptySnippet; },
 		get equalDays() { return equalDays; },

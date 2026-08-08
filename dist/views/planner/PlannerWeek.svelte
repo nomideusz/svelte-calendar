@@ -53,7 +53,7 @@ const disabledSet = $derived(ctx.disabledSet);
 const SNAP_MS = $derived(ctx.snapInterval * 6e4);
 const HOUR_H = 48;
 const GUTTER_W = 48;
-const MIN_COL_W = 110;
+const MIN_COL_W = $derived(ctx.minColumnWidth);
 const ALLDAY_MAX = 3;
 const startHour = $derived(visibleHours?.[0] ?? 0);
 const endHour = $derived(visibleHours?.[1] ?? 24);
@@ -135,7 +135,6 @@ const layoutByDay = $derived.by(() => {
     const infos = [];
     for (const ev of events) {
       if (isAllDay(ev) || isMultiDay(ev)) continue;
-      if (ev.id === movingId) continue;
       const isResizing = rsP?.eventId === ev.id;
       const s0 = isResizing ? rsP.start.getTime() : ev.start.getTime();
       const e0 = isResizing ? rsP.end.getTime() : ev.end.getTime();
@@ -143,7 +142,7 @@ const layoutByDay = $derived.by(() => {
       const sMs = Math.max(s0, bandStart);
       const eMs = Math.min(e0, bandEnd);
       if (eMs <= sMs) continue;
-      infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, col: 0, totalCols: 1 });
+      infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
     }
     infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
     const par = infos.map((_, i) => i);
@@ -185,7 +184,8 @@ const layoutByDay = $derived.by(() => {
         height: Math.max(24, (inf.endMs - inf.startMs) / HOUR_MS * HOUR_H),
         col: inf.col,
         totalCols: inf.totalCols,
-        isResizing: inf.isResizing
+        isResizing: inf.isResizing,
+        isMoving: inf.isMoving
       }))
     );
   }
@@ -222,8 +222,41 @@ $effect(() => {
     el.scrollTop = (targetHour - startHour) * HOUR_H;
   });
 });
+let rafId = 0;
+let rafRun = null;
+let rectCache = null;
+function perFrame(handler) {
+  return (e) => {
+    rafRun = () => {
+      rectCache = colsEl?.getBoundingClientRect() ?? null;
+      try {
+        handler(e);
+      } finally {
+        rectCache = null;
+      }
+    };
+    if (rafId) return;
+    rafId = requestAnimationFrame(flushFrame);
+  };
+}
+function flushFrame() {
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  const run = rafRun;
+  rafRun = null;
+  run?.();
+}
+function cancelFrame() {
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  rafRun = null;
+}
 function colsRect() {
-  return colsEl.getBoundingClientRect();
+  return rectCache ?? colsEl.getBoundingClientRect();
 }
 function pointerDayIndex(clientX) {
   const r = colsRect();
@@ -339,7 +372,7 @@ function onColsPointerDown(e) {
   window.addEventListener("pointerup", onColsCreateUp, { once: true });
   window.addEventListener("pointercancel", onColsCreateCancel, { once: true });
 }
-function onColsCreateMove(e) {
+const onColsCreateMove = perFrame((e) => {
   if (!drag) return;
   if (!crStarted) {
     if (longPressTimer !== null) {
@@ -357,8 +390,9 @@ function onColsCreateMove(e) {
     new Date(Math.min(crAnchorMs, snapped)),
     new Date(Math.max(crAnchorMs + SNAP_MS, snapped))
   );
-}
+});
 function cleanupColsCreate() {
+  cancelFrame();
   clearLongPress();
   removeTouchScrollBlock();
   window.removeEventListener("pointermove", onColsCreateMove);
@@ -367,6 +401,7 @@ function cleanupColsCreate() {
   crStarted = false;
 }
 function onColsCreateUp() {
+  if (crStarted) flushFrame();
   if (drag && crStarted) {
     suppressColsClick = true;
     commitDragCtx?.();
@@ -421,7 +456,7 @@ function onEventPointerDown(e, ev) {
   window.addEventListener("pointerup", onEvUp, { once: true });
   window.addEventListener("pointercancel", onEvCancel, { once: true });
 }
-function onEvMove(e) {
+const onEvMove = perFrame((e) => {
   const ev = evDragEvent;
   if (!drag || !ev || !evDragMovable) return;
   if (!evDragStarted) {
@@ -434,8 +469,9 @@ function onEvMove(e) {
   const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
   const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
   drag.updatePointer(new Date(snapped), new Date(snapped + duration));
-}
+});
 function cleanupEvDrag() {
+  cancelFrame();
   window.removeEventListener("pointermove", onEvMove);
   window.removeEventListener("pointerup", onEvUp);
   window.removeEventListener("pointercancel", onEvCancel);
@@ -444,6 +480,7 @@ function cleanupEvDrag() {
   evDragEvent = null;
 }
 function onEvUp() {
+  if (evDragStarted) flushFrame();
   if (!evDragStarted && evDragEvent) {
     oneventclick?.(evDragEvent);
   } else if (evDragStarted && drag) {
@@ -474,7 +511,7 @@ function onResizePointerDown(e, ev, edge) {
   window.addEventListener("pointerup", onResizeUp, { once: true });
   window.addEventListener("pointercancel", onResizeCancel, { once: true });
 }
-function onResizeMove(e) {
+const onResizeMove = perFrame((e) => {
   const ev = rsEvent;
   if (!drag || !ev) return;
   if (!rsStarted) {
@@ -493,8 +530,9 @@ function onResizeMove(e) {
     const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
     drag.updatePointer(new Date(start), ev.end);
   }
-}
+});
 function cleanupResize() {
+  cancelFrame();
   removeTouchScrollBlock();
   window.removeEventListener("pointermove", onResizeMove);
   window.removeEventListener("pointerup", onResizeUp);
@@ -503,6 +541,7 @@ function cleanupResize() {
   rsEvent = null;
 }
 function onResizeUp() {
+  if (rsStarted) flushFrame();
   if (drag && rsStarted) {
     suppressColsClick = true;
     commitDragCtx?.();
@@ -568,6 +607,7 @@ function onWindowKeydown(e) {
 	class="tw"
 	class:tw--auto={autoHeight}
 	style={style || undefined}
+	style:--tw-col-min="{MIN_COL_W}px"
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
 	aria-label={L.weekAhead}
@@ -703,6 +743,7 @@ function onWindowKeydown(e) {
 									class:tw-ev--selected={selectedEventId === p.ev.id}
 									class:tw-ev--current={isCurrent}
 									class:tw-ev--resizing={p.isResizing}
+									class:tw-ev--moving={p.isMoving}
 									class:tw-ev--readonly={p.ev.data?.readOnly}
 									class:tw-ev--cancelled={p.ev.status === 'cancelled'}
 									class:tw-ev--tentative={p.ev.status === 'tentative'}
@@ -857,7 +898,7 @@ function onWindowKeydown(e) {
 
 	.tw-hd {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -923,7 +964,7 @@ function onWindowKeydown(e) {
 
 	.tw-ad-cell {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
@@ -1075,7 +1116,7 @@ function onWindowKeydown(e) {
 	/* ─── Day column ─────────────────────────────────── */
 	.tw-col {
 		flex: 1 1 0;
-		min-width: 110px;
+		min-width: var(--tw-col-min, 110px);
 		position: relative;
 		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		box-sizing: border-box;
@@ -1196,6 +1237,12 @@ function onWindowKeydown(e) {
 		z-index: 50;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 		cursor: ns-resize;
+	}
+	/* Origin of an in-flight move: still there, clearly no longer the subject. */
+	.tw-ev--moving {
+		opacity: 0.3;
+		pointer-events: none;
+		box-shadow: none;
 	}
 	/* Status treatments: token-level dims + a non-opacity signal
 	   (strikethrough / border style) — consistent with the other views. */

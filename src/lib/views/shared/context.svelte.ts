@@ -35,6 +35,8 @@ interface CalendarContextRaw {
 	readonly readOnly: boolean;
 	readonly visibleHours?: [number, number];
 	readonly snapInterval: number;
+	/** Minimum width (px) of one day column in the planner grid. */
+	readonly minColumnWidth: number;
 	readonly eventSnippet?: Snippet<[TimelineEvent]>;
 	readonly emptySnippet?: Snippet;
 	readonly equalDays: boolean;
@@ -61,6 +63,7 @@ export interface CalendarContext {
 	readonly drag: DragState | undefined;
 	readonly commitDrag: (() => void) | undefined;
 	readonly snapInterval: number;
+	readonly minColumnWidth: number;
 	readonly equalDays: boolean;
 	readonly showDates: boolean;
 	readonly hideDays: number[] | undefined;
@@ -108,6 +111,7 @@ export function useCalendarContext(): CalendarContext {
 		get drag() { return raw?.drag; },
 		get commitDrag() { return raw?.commitDrag; },
 		get snapInterval() { return raw?.snapInterval ?? 15; },
+		get minColumnWidth() { return raw?.minColumnWidth ?? 110; },
 		get equalDays() { return raw?.equalDays ?? false; },
 		get showDates() { return raw?.showDates ?? true; },
 		get hideDays() { return raw?.hideDays; },

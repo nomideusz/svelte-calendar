@@ -26,5 +26,11 @@ export interface EventStore {
 }
 /**
  * Create a reactive event store backed by a CalendarAdapter.
+ *
+ * Pass a getter instead of an adapter when the adapter identity can change
+ * (a `$derived` adapter, a host that rebuilds it to force a refetch): the
+ * store then stays alive across the swap and reloads, instead of being torn
+ * down and rebuilt with an empty event map — which reads as every event
+ * blinking out and reappearing.
  */
-export declare function createEventStore(adapter: CalendarAdapter): EventStore;
+export declare function createEventStore(adapter: CalendarAdapter | (() => CalendarAdapter)): EventStore;

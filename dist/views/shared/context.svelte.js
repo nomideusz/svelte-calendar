@@ -28,6 +28,7 @@ export function useCalendarContext() {
         get drag() { return raw?.drag; },
         get commitDrag() { return raw?.commitDrag; },
         get snapInterval() { return raw?.snapInterval ?? 15; },
+        get minColumnWidth() { return raw?.minColumnWidth ?? 110; },
         get equalDays() { return raw?.equalDays ?? false; },
         get showDates() { return raw?.showDates ?? true; },
         get hideDays() { return raw?.hideDays; },
