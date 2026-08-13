@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.14.1 — 2026-08-13
+
+### Fixed
+- **The `labels` prop reached the shell but never the views.** `setContext`
+  exposed the merged label set through a getter, but `mergedLabels` was
+  declared *below* the `setContext` call — so a view reading `ctx.labels`
+  during render got the binding before it was initialised, and
+  `useCalendarContext`'s `?? getLabels()` fallback quietly substituted the
+  English globals. Every localized calendar rendered its empty states
+  ("No events", "Nothing scheduled") in English while the header, which reads
+  the same set later, was translated. The declaration now sits above
+  `setContext`, and a test renders a localized calendar and asserts the
+  translated empty state.
+
 ## 0.14.0 — 2026-08-09
 
 ### Fixed

@@ -26,6 +26,10 @@ export interface CalendarContext {
     readonly minDuration: number | undefined;
     readonly maxDuration: number | undefined;
     readonly oneventhover: ((event: TimelineEvent) => void) | undefined;
+    /** Move callback (already readOnly-gated and timezone-unzoning at the
+     *  Calendar layer) — lets non-planner views offer coarser drags, e.g.
+     *  AgendaWeek's day-to-day card drop. */
+    readonly oneventmove: ((event: TimelineEvent, newStart: Date, newEnd: Date) => void) | undefined;
     readonly ondayclick: ((date: Date) => void) | undefined;
     readonly timezone: string | undefined;
     readonly disabledDates: Date[] | undefined;

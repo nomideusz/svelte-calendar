@@ -27,7 +27,36 @@ const compact = $derived(ctx.compact);
 const cols = $derived(ctx.columns && !isMobile);
 const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
 const oneventhover = $derived(ctx.oneventhover);
+const ondayclick = $derived(ctx.ondayclick);
 const disabledSet = $derived(ctx.disabledSet);
+function clickDay(ms) {
+  ondayclick?.(new Date(ms));
+}
+const oneventmove = $derived(ctx.oneventmove);
+let dragId = $state(null);
+let dropDay = $state(null);
+const canDrag = (ev) => cols && !!oneventmove && !ev.data?.readOnly && !isAllDay(ev) && !isMultiDay(ev);
+const isDropDay = (day) => dragId !== null && day.tier !== "past" && !disabledSet.has(day.ms);
+function onCardDragStart(e, ev) {
+  dragId = String(ev.id);
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(ev.id));
+  }
+}
+function onDayDrop(e, day) {
+  if (!isDropDay(day)) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const ev = events.find((x) => String(x.id) === dragId);
+  dragId = null;
+  dropDay = null;
+  if (!ev) return;
+  if (sod(ev.start.getTime()) === day.ms) return;
+  const start = new Date(day.ms + (ev.start.getTime() - sod(ev.start.getTime())));
+  const end = new Date(start.getTime() + (ev.end.getTime() - ev.start.getTime()));
+  oneventmove?.(ev, start, end);
+}
 let swipeStartX = 0;
 let swipeStartY = 0;
 let swipeActive = false;
@@ -143,6 +172,10 @@ const weekDays = $derived.by(() => {
 		class:ag-card--limited={ev.status === 'limited'}
 		style:--ev-color={ev.color || 'var(--dt-accent)'}
 		aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
+		class:ag-card--drag={dragId === String(ev.id)}
+		draggable={canDrag(ev)}
+		ondragstart={(e) => onCardDragStart(e, ev)}
+		ondragend={() => ((dragId = null), (dropDay = null))}
 		onclick={() => handleClick(ev)}
 		onpointerenter={() => oneventhover?.(ev)}
 	>
@@ -252,8 +285,13 @@ const weekDays = $derived.by(() => {
 			{@const expanded = day.tier === 'today' || day.tier === 'tomorrow'}
 			{#if day.tier === 'past'}
 				<!-- Past day: single collapsed line -->
-				<div class="ag-wday ag-wday--past" class:ag-wday--disabled={disabledSet.has(day.ms)} role="listitem">
-					<div class="ag-wday-head">
+				<div class="ag-wday ag-wday--past" class:ag-wday--disabled={disabledSet.has(day.ms)} data-day={day.ms} role="listitem">
+					<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+					<div
+						class="ag-wday-head"
+						class:ag-wday-head--click={!!ondayclick}
+						onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+					>
 						<div class="ag-wday-head-left">
 							<span class="ag-wday-name">{day.dayName}</span>
 							{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
@@ -278,16 +316,34 @@ const weekDays = $derived.by(() => {
 					{/if}
 				</div>
 			{:else}
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<div
 				class="ag-wday"
 				class:ag-wday--today={day.tier === 'today'}
 				class:ag-wday--tomorrow={day.tier === 'tomorrow'}
 				class:ag-wday--equal={equalDays}
 				class:ag-wday--disabled={disabledSet.has(day.ms)}
+				class:ag-wday--drop={dropDay === day.ms && isDropDay(day)}
+				data-day={day.ms}
 				role="listitem"
+				ondragover={(e) => {
+					if (!isDropDay(day)) return;
+					e.preventDefault();
+					dropDay = day.ms;
+					if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+				}}
+				ondragleave={() => {
+					if (dropDay === day.ms) dropDay = null;
+				}}
+				ondrop={(e) => onDayDrop(e, day)}
 			>
 				<!-- Day header -->
-				<div class="ag-wday-head">
+				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+				<div
+					class="ag-wday-head"
+					class:ag-wday-head--click={!!ondayclick}
+					onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+				>
 					<div class="ag-wday-head-left">
 						{#if day.isToday}
 						<span class="ag-wday-badge">{L.today}</span>
@@ -329,7 +385,12 @@ const weekDays = $derived.by(() => {
 				{/if}
 
 				{#if day.events.length === 0}
-					<div class="ag-wday-empty">{L.noEvents}</div>
+					<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+					<div
+						class="ag-wday-empty"
+						class:ag-wday-empty--click={!!ondayclick}
+						onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+					>{L.noEvents}</div>
 				{:else if compact && !cols}
 					<!-- Compact: minimal dot + time + title rows for all days.
 					     Ignored in columns mode — single-line rows truncate to
@@ -692,6 +753,10 @@ const weekDays = $derived.by(() => {
 		padding: 2px 0 4px;
 	}
 
+	.ag-wday-head--click,
+	.ag-wday-empty--click {
+		cursor: pointer;
+	}
 	.ag-wday-head {
 		display: flex;
 		justify-content: space-between;
@@ -982,6 +1047,15 @@ const weekDays = $derived.by(() => {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 		border-radius: 4px;
+	}
+
+	/* ═══ Day-drop drag ═══ */
+	.ag-card--drag {
+		opacity: 0.4;
+	}
+	.ag-wday--drop {
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);
+		box-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);
 	}
 
 	/* ═══ Timetable columns (desktop) ═══ */

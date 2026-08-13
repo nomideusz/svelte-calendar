@@ -219,6 +219,10 @@ async function commitDrag() {
   }
 }
 let viewLoadRange = $state(null);
+const mergedLabels = $derived(
+  labelsProp ? { ...getLabels(), ...labelsProp } : getLabels()
+);
+const L = $derived(mergedLabels);
 setContext("calendar", {
   // Engine objects (hold $state internally)
   get store() {
@@ -381,10 +385,6 @@ const modes = $derived.by(() => {
   const g = new Set(desktopViews.map((v) => v.mode));
   return ["day", "week", "month"].filter((key) => g.has(key));
 });
-const mergedLabels = $derived(
-  labelsProp ? { ...getLabels(), ...labelsProp } : getLabels()
-);
-const L = $derived(mergedLabels);
 let lastViewLabel = $state(void 0);
 $effect(() => {
   const current = views.find((v) => v.id === viewState.view);

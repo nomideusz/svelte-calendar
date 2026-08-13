@@ -42,6 +42,7 @@ export function useCalendarContext() {
         get minDuration() { return raw?.minDuration; },
         get maxDuration() { return raw?.maxDuration; },
         get oneventhover() { return raw?.oneventhover; },
+        get oneventmove() { return raw?.oneventmove; },
         get ondayclick() { return raw?.ondayclick; },
         get timezone() { return raw?.timezone; },
         get disabledDates() { return raw?.disabledDates; },

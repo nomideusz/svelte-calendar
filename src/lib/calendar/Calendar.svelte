@@ -425,6 +425,19 @@
 	// buffer needs without directly calling store.load().
 	let viewLoadRange = $state<{ start: Date; end: Date } | null>(null);
 
+	// Per-instance labels: prop overrides merged over the global set, memoized so
+	// views reading ctx.labels per-render don't allocate a fresh object each access.
+	//
+	// MUST stay above setContext: the context exposes this through a getter, and
+	// a view reading ctx.labels while the binding is still uninitialised got the
+	// English globals instead — silently, because the fallback in
+	// useCalendarContext is `?? getLabels()`. Every localized calendar rendered
+	// its empty states in English.
+	const mergedLabels = $derived(
+		labelsProp ? { ...getLabels(), ...labelsProp } : getLabels(),
+	);
+	const L = $derived(mergedLabels);
+
 	// ── Single context object ──
 	// All view state is exposed through one context key with reactive getters.
 	// Views read this via useCalendarContext() from views/shared/context.svelte.ts.
@@ -574,12 +587,6 @@
 		return (['day', 'week', 'month'] as const).filter((key) => g.has(key));
 	});
 
-	// Per-instance labels: prop overrides merged over the global set, memoized so
-	// views reading ctx.labels per-render don't allocate a fresh object each access.
-	const mergedLabels = $derived(
-		labelsProp ? { ...getLabels(), ...labelsProp } : getLabels(),
-	);
-	const L = $derived(mergedLabels);
 
 	// Remember the last non-month view label so Month → Week round-trips
 	// restore the user's chosen view type (Agenda used to downgrade to Planner).
