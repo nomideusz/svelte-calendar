@@ -1,4 +1,14 @@
-<script lang="ts">import { createClock } from "../../core/clock.svelte.js";
+<script lang="ts">/**
+* AgendaWeek — rolling N-day agenda view.
+*
+* "The Week Ahead":
+*   Today + tomorrow expanded with time slots/countdowns.
+*   Future days compact (dot + time + title).
+*   Past days dimmed.
+*
+* Answers: "What's coming up and when do I need to be ready?"
+*/
+import { createClock } from "../../core/clock.svelte.js";
 import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
 import { weekdayLong, monthLong } from "../../core/locale.js";
 import { useCalendarContext } from "../shared/context.svelte.js";
@@ -6,16 +16,7 @@ import EventContent from "../shared/EventContent.svelte";
 import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from "../shared/format.js";
 const ctx = useCalendarContext();
 const L = $derived(ctx.labels);
-let {
-  mondayStart = true,
-  locale,
-  height,
-  events = [],
-  style = "",
-  focusDate,
-  oneventclick,
-  selectedEventId = null
-} = $props();
+let { mondayStart = true, locale, height, events = [], style = "", focusDate, oneventclick, selectedEventId = null } = $props();
 const clock = createClock(ctx.timezone);
 const viewState = $derived(ctx.viewState);
 const equalDays = $derived(ctx.equalDays);
@@ -24,139 +25,153 @@ const hideDays = $derived(ctx.hideDays);
 const isMobile = $derived(ctx.isMobile);
 const autoHeight = $derived(ctx.autoHeight);
 const compact = $derived(ctx.compact);
+// Timetable layout is a desktop affordance — stacked list stays on mobile.
 const cols = $derived(ctx.columns && !isMobile);
 const dayHeaderSnippet = $derived(ctx.dayHeaderSnippet);
 const oneventhover = $derived(ctx.oneventhover);
 const ondayclick = $derived(ctx.ondayclick);
 const disabledSet = $derived(ctx.disabledSet);
 function clickDay(ms) {
-  ondayclick?.(new Date(ms));
+	ondayclick?.(new Date(ms));
 }
+// ── Day-to-day card drag (timetable columns) ────────
+// This view has no hour axis, so a drag can only choose a DAY: the card
+// keeps its time of day. Wired through the same oneventmove the planner
+// uses (readOnly-gated and timezone-unzoned at the Calendar layer);
+// per-event data.readOnly opts out — same convention as PlannerWeek.
 const oneventmove = $derived(ctx.oneventmove);
 let dragId = $state(null);
 let dropDay = $state(null);
 const canDrag = (ev) => cols && !!oneventmove && !ev.data?.readOnly && !isAllDay(ev) && !isMultiDay(ev);
+/** Valid drop day for the card in flight: not past, not closed. */
 const isDropDay = (day) => dragId !== null && day.tier !== "past" && !disabledSet.has(day.ms);
 function onCardDragStart(e, ev) {
-  dragId = String(ev.id);
-  if (e.dataTransfer) {
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", String(ev.id));
-  }
+	dragId = String(ev.id);
+	if (e.dataTransfer) {
+		e.dataTransfer.effectAllowed = "move";
+		e.dataTransfer.setData("text/plain", String(ev.id));
+	}
 }
 function onDayDrop(e, day) {
-  if (!isDropDay(day)) return;
-  e.preventDefault();
-  e.stopPropagation();
-  const ev = events.find((x) => String(x.id) === dragId);
-  dragId = null;
-  dropDay = null;
-  if (!ev) return;
-  if (sod(ev.start.getTime()) === day.ms) return;
-  const start = new Date(day.ms + (ev.start.getTime() - sod(ev.start.getTime())));
-  const end = new Date(start.getTime() + (ev.end.getTime() - ev.start.getTime()));
-  oneventmove?.(ev, start, end);
+	if (!isDropDay(day)) return;
+	e.preventDefault();
+	e.stopPropagation();
+	const ev = events.find((x) => String(x.id) === dragId);
+	dragId = null;
+	dropDay = null;
+	if (!ev) return;
+	// Same-day drop is a no-op, not a zero-minute "move" for the host to reject.
+	if (sod(ev.start.getTime()) === day.ms) return;
+	const start = new Date(day.ms + (ev.start.getTime() - sod(ev.start.getTime())));
+	const end = new Date(start.getTime() + (ev.end.getTime() - ev.start.getTime()));
+	oneventmove?.(ev, start, end);
 }
+// ── Swipe navigation (mobile, touch only) ──────────
 let swipeStartX = 0;
 let swipeStartY = 0;
 let swipeActive = false;
 const SWIPE_THRESHOLD = 50;
 function onPointerDown(e) {
-  if (!isMobile || e.pointerType !== "touch") return;
-  swipeActive = true;
-  swipeStartX = e.clientX;
-  swipeStartY = e.clientY;
+	if (!isMobile || e.pointerType !== "touch") return;
+	swipeActive = true;
+	swipeStartX = e.clientX;
+	swipeStartY = e.clientY;
 }
 function onPointerUp(e) {
-  if (!swipeActive || e.pointerType !== "touch") return;
-  swipeActive = false;
-  const dx = e.clientX - swipeStartX;
-  const dy = e.clientY - swipeStartY;
-  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-    if (dx > 0) viewState?.prev();
-    else viewState?.next();
-  }
+	if (!swipeActive || e.pointerType !== "touch") return;
+	swipeActive = false;
+	const dx = e.clientX - swipeStartX;
+	const dy = e.clientY - swipeStartY;
+	if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+		if (dx > 0) viewState?.prev();
+		else viewState?.next();
+	}
 }
 function onPointerCancel() {
-  swipeActive = false;
+	swipeActive = false;
 }
+// ── Compact-day disclosure ("+N more" → expand) ─────
 let expandedDays = $state([]);
 function toggleDayExpand(ms) {
-  expandedDays = expandedDays.includes(ms) ? expandedDays.filter((m) => m !== ms) : [...expandedDays, ms];
+	expandedDays = expandedDays.includes(ms) ? expandedDays.filter((m) => m !== ms) : [...expandedDays, ms];
 }
+// ── Completed-events disclosure ("✓ N completed" → expand) ─────
 let expandedPast = $state([]);
 function togglePastExpand(ms) {
-  expandedPast = expandedPast.includes(ms) ? expandedPast.filter((m) => m !== ms) : [...expandedPast, ms];
+	expandedPast = expandedPast.includes(ms) ? expandedPast.filter((m) => m !== ms) : [...expandedPast, ms];
 }
+// ── Format helpers (delegated to shared/format.ts) ──
+// fmtTime, duration, groupIntoSlots imported at top
+// Thin wrappers that bind locale / clock.tick:
 const fmt = (d) => fmtTime(d, locale);
 const eta = (ms) => timeUntilMs(ms, clock.tick, L);
 const prog = (ev) => progress(ev, clock.tick);
+// ── Event handlers ──────────────────────────────────
 function handleClick(ev) {
-  oneventclick?.(ev);
+	oneventclick?.(ev);
 }
-const weekStartMs = $derived(
-  focusDate ? viewState?.dayCount === 7 ? startOfWeek(sod(focusDate.getTime()), mondayStart) : sod(focusDate.getTime()) : viewState?.dayCount === 7 ? startOfWeek(clock.today, mondayStart) : clock.today
-);
+const weekStartMs = $derived(focusDate ? viewState?.dayCount === 7 ? startOfWeek(sod(focusDate.getTime()), mondayStart) : sod(focusDate.getTime()) : viewState?.dayCount === 7 ? startOfWeek(clock.today, mondayStart) : clock.today);
 const customDays = $derived(viewState?.dayCount ?? 7);
 const weekDays = $derived.by(() => {
-  const now = clock.tick;
-  const todayMs = clock.today;
-  const tomorrowMs = todayMs + DAY_MS;
-  const out = [];
-  for (let i = 0; i < customDays; i++) {
-    const ms = weekStartMs + i * DAY_MS;
-    const dEnd = ms + DAY_MS;
-    const dayEvts = events.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
-    const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
-    const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
-    const totalMinutes = timedEvts.reduce((sum, ev) => {
-      const s = Math.max(ev.start.getTime(), ms);
-      const e = Math.min(ev.end.getTime(), dEnd);
-      return sum + (e - s) / 6e4;
-    }, 0);
-    const pastEvents = [];
-    const currentEvents = [];
-    const upcomingEvents = [];
-    for (const ev of timedEvts) {
-      if (ev.end.getTime() <= now) pastEvents.push(ev);
-      else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
-      else upcomingEvents.push(ev);
-    }
-    let tier;
-    if (equalDays) {
-      tier = "upcoming";
-    } else if (ms === todayMs) {
-      tier = "today";
-    } else if (ms === tomorrowMs) {
-      tier = "tomorrow";
-    } else if (ms < todayMs) {
-      tier = "past";
-    } else {
-      tier = "upcoming";
-    }
-    out.push({
-      ms,
-      dayName: weekdayLong(ms, locale),
-      dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
-      tier,
-      isToday: ms === todayMs,
-      events: dayEvts,
-      allDayEvents: allDayEvts,
-      timedEvents: timedEvts,
-      pastEvents,
-      currentEvents,
-      upcomingEvents,
-      totalHours: Math.round(totalMinutes / 60 * 10) / 10
-    });
-  }
-  if (hideDays?.length) {
-    return out.filter((d) => {
-      const jsDay = new Date(d.ms).getDay();
-      const iso = jsDay === 0 ? 7 : jsDay;
-      return !hideDays.includes(iso);
-    });
-  }
-  return out;
+	const now = clock.tick;
+	const todayMs = clock.today;
+	const tomorrowMs = todayMs + DAY_MS;
+	const out = [];
+	for (let i = 0; i < customDays; i++) {
+		const ms = weekStartMs + i * DAY_MS;
+		const dEnd = ms + DAY_MS;
+		const dayEvts = events.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
+		const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
+		const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
+		const totalMinutes = timedEvts.reduce((sum, ev) => {
+			const s = Math.max(ev.start.getTime(), ms);
+			const e = Math.min(ev.end.getTime(), dEnd);
+			return sum + (e - s) / 6e4;
+		}, 0);
+		const pastEvents = [];
+		const currentEvents = [];
+		const upcomingEvents = [];
+		for (const ev of timedEvts) {
+			if (ev.end.getTime() <= now) pastEvents.push(ev);
+			else if (ev.start.getTime() <= now && ev.end.getTime() > now) currentEvents.push(ev);
+			else upcomingEvents.push(ev);
+		}
+		let tier;
+		if (equalDays) {
+			tier = "upcoming";
+		} else if (ms === todayMs) {
+			tier = "today";
+		} else if (ms === tomorrowMs) {
+			tier = "tomorrow";
+		} else if (ms < todayMs) {
+			tier = "past";
+		} else {
+			tier = "upcoming";
+		}
+		out.push({
+			ms,
+			dayName: weekdayLong(ms, locale),
+			dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
+			tier,
+			isToday: ms === todayMs,
+			events: dayEvts,
+			allDayEvents: allDayEvts,
+			timedEvents: timedEvts,
+			pastEvents,
+			currentEvents,
+			upcomingEvents,
+			totalHours: Math.round(totalMinutes / 60 * 10) / 10
+		});
+	}
+	// Filter hidden days if hideDays is set
+	if (hideDays?.length) {
+		return out.filter((d) => {
+			const jsDay = new Date(d.ms).getDay();
+			const iso = jsDay === 0 ? 7 : jsDay;
+			return !hideDays.includes(iso);
+		});
+	}
+	return out;
 });
 </script>
 

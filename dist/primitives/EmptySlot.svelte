@@ -7,18 +7,16 @@
 -->
 <script lang="ts">import { fmtTime, fmtDuration, getLabels } from "../core/locale.js";
 const L = $derived(getLabels());
-let {
-  start,
-  end,
-  onclick,
-  orientation = "vertical"
-} = $props();
+let { start, end, onclick, orientation = "vertical" } = $props();
 const dur = $derived(`${fmtDuration(start, end)} ${L.free}`);
 function handleKeydown(e) {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    onclick?.({ start, end });
-  }
+	if (e.key === "Enter" || e.key === " ") {
+		e.preventDefault();
+		onclick?.({
+			start,
+			end
+		});
+	}
 }
 </script>
 

@@ -8,7 +8,7 @@ interface Props {
     events?: TimelineEvent[];
     style?: string;
     focusDate?: Date;
-    oneventclick?: (event: TimelineEvent) => void;
+    oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     oneventcreate?: (range: {
         start: Date;
         end: Date;

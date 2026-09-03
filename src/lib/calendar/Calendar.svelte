@@ -160,7 +160,9 @@
 		navigation?: Snippet<[import('../headless/types.js').NavigationContext]>;
 
 		// ── Callbacks ──
-		oneventclick?: (event: TimelineEvent) => void;
+		/** `anchor` is the clicked block's viewport rect where a view has one (planner) — for positioning a FloatingPanel. */
+		oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
+
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
 		onviewchange?: (viewId: CalendarViewId) => void;
@@ -256,10 +258,11 @@
 
 	// Clicking an event selects it (highlight via selectedEventId) and then
 	// notifies the host — selection used to be created but never driven.
-	function handleEventClick(ev: TimelineEvent) {
+	function handleEventClick(ev: TimelineEvent, anchor?: DOMRect) {
 		selection.select(ev.id);
-		oneventclick?.(ev);
+		oneventclick?.(ev, anchor);
 	}
+
 
 	// ── Mobile detection (container-based, not viewport) ──
 	// Seeded from viewport width so the first client paint doesn't flash the

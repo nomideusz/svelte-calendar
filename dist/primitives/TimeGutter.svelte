@@ -7,13 +7,7 @@
 -->
 <script lang="ts">import { HOURS } from "../core/time.js";
 import { fmtH } from "../core/locale.js";
-let {
-  orientation = "horizontal",
-  hourSize = 120,
-  halfHour = true,
-  hours = HOURS,
-  formatHour = fmtH
-} = $props();
+let { orientation = "horizontal", hourSize = 120, halfHour = true, hours = HOURS, formatHour = fmtH } = $props();
 </script>
 
 {#if orientation === 'horizontal'}

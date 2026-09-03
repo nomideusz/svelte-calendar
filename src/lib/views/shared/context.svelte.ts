@@ -24,7 +24,7 @@ interface CalendarContextRaw {
 	readonly commitDrag: () => void;
 
 	// Callbacks
-	readonly oneventclick?: (event: TimelineEvent) => void;
+	readonly oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
 	readonly oneventcreate?: (range: { start: Date; end: Date }) => void;
 	readonly oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
 	readonly oneventhover?: (event: TimelineEvent) => void;

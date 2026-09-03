@@ -1,4 +1,4 @@
-export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, } from './primitives/index.js';
+export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, FloatingPanel, } from './primitives/index.js';
 export { Calendar } from './calendar/index.js';
 export { Planner, Agenda, Mobile } from './views/index.js';
 export { default as MonthGrid } from './views/month/MonthGrid.svelte';

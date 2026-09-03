@@ -8,7 +8,8 @@
   • Timed events are absolutely positioned by start/end; overlaps share the
     column via union-find lanes.
   • Drag-to-move (vertical = time, horizontal = day), top/bottom resize
-    handles, drag-to-create with ghost preview — all through ctx.drag /
+    grips (hit zone limited to the centered grip so short events stay
+    grab-to-move), drag-to-create with ghost preview — all through ctx.drag /
     ctx.commitDrag so Calendar's validation (min/max duration, blocked,
     disabled) applies on drop.
   • Now-line across today's column only; auto-scrolls to the current time.
@@ -34,7 +35,7 @@
 		events?: TimelineEvent[];
 		style?: string;
 		focusDate?: Date;
-		oneventclick?: (event: TimelineEvent) => void;
+		oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
 		selectedEventId?: string | null;
 		readOnly?: boolean;
@@ -593,10 +594,15 @@
 	let evDragStarted = false;
 	let evDragMovable = false;
 	let evDragEvent: TimelineEvent | null = null;
+	// The block's rect when the pointer went down — a click hands it to the
+	// host as the anchor for whatever it opens.
+	let evAnchor: DOMRect | undefined;
 
 	function onEventPointerDown(e: PointerEvent, ev: TimelineEvent) {
 		if (e.button !== 0) return;
 		e.stopPropagation();
+		evAnchor = (e.currentTarget as HTMLElement).getBoundingClientRect();
+
 		// Even non-movable events (readOnly view, per-event readOnly) go through
 		// the pointerup path so a plain click still opens them.
 		evDragMovable = !!drag && !readOnly && !ev.data?.readOnly;
@@ -638,7 +644,8 @@
 	function onEvUp() {
 		if (evDragStarted) flushFrame();
 		if (!evDragStarted && evDragEvent) {
-			oneventclick?.(evDragEvent);
+			oneventclick?.(evDragEvent, evAnchor);
+
 		} else if (evDragStarted && drag) {
 			// If the pointer ends off the block, the synthesized click lands on
 			// the grid — suppress the click-to-create it would trigger.
@@ -663,7 +670,9 @@
 	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end') {
 		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
 		e.stopPropagation();
+		evAnchor = (e.currentTarget as HTMLElement).parentElement?.getBoundingClientRect();
 		rsStartY = e.clientY;
+
 		rsStarted = false;
 		rsEdge = edge;
 		rsEvent = ev;
@@ -712,7 +721,8 @@
 			commitDragCtx?.();
 			setTimeout(() => { suppressColsClick = false; }, 0);
 		} else if (rsEvent && !rsStarted) {
-			oneventclick?.(rsEvent); // edge click = plain click
+			oneventclick?.(rsEvent, evAnchor); // edge click = plain click
+
 		}
 		cleanupResize();
 	}
@@ -928,7 +938,8 @@
 									aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{statusText(p.ev)}{isCurrent ? ` (${L.inProgress})` : ''}"
 									onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 									onpointerenter={() => oneventhover?.(p.ev)}
-									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev); } }}
+									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev, e.currentTarget.getBoundingClientRect()); } }}
+
 								>
 									<div class="tw-ev-stripe" aria-hidden="true"></div>
 									<div class="tw-ev-body">
@@ -1500,10 +1511,16 @@
 	}
 
 	/* ─── Resize handles ─────────────────────────────── */
+	/* Resizing lives only on the centered grip column. The old full-width
+	   edge bands (12–20px of inward slop each) covered short events
+	   entirely — min block height is 24px, so every grab meant to move
+	   started a resize instead. The grip is the visible affordance;
+	   everything else on the block drags to move. */
 	.tw-ev-handle {
 		position: absolute;
-		left: 0;
-		right: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 44px;
 		height: 8px;
 		z-index: 2;
 		cursor: ns-resize;
@@ -1543,6 +1560,8 @@
 	.tw-ev:focus-visible .tw-ev-handle::after,
 	.tw-ev--resizing .tw-ev-handle::after,
 	.tw-ev--selected .tw-ev-handle::after { opacity: 0.55; }
+	/* Pointer on the grip column itself: brighten so the hit zone reads */
+	.tw-ev-handle:hover::after { opacity: 0.9; }
 	/* Coarse pointers can't hover — show the grips persistently */
 	@media (hover: none) {
 		.tw-ev-handle::after { opacity: 0.55; }

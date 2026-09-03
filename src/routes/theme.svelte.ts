@@ -5,7 +5,7 @@
  * Demo themes here simulate different host pages / design systems so `auto` can
  * be tested against varied palettes. They are NOT the same as package presets.
  */
-import { neutral } from '$lib/theme/presets.js';
+import { neutral } from '#lib/theme/presets.js';
 
 // ── Demo-only theme CSS strings ───────────────────────────
 

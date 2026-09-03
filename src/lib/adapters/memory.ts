@@ -6,7 +6,7 @@
  * grouped by `category` or `title` so related events share a color.
  *
  * Usage:
- *   import { createMemoryAdapter } from '$lib/adapters';
+ *   import { createMemoryAdapter } from '#lib/adapters';
  *   const adapter = createMemoryAdapter(initialEvents);
  *   const adapter = createMemoryAdapter(initialEvents, { palette: myColors });
  */

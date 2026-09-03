@@ -1010,10 +1010,16 @@
 	}
 
 	/* ─── Resize handles ─────────────────────────────── */
+	/* Resizing lives only on the centered grip column. The old full-width
+	   edge bands (24px of inward slop each) covered short events entirely —
+	   min block height is 24px, so any tap near an edge risked starting a
+	   resize. The grip is persistently visible on touch (hover:none below),
+	   so the smaller target stays discoverable; taps elsewhere open. */
 	.mb-ev-handle {
 		position: absolute;
-		left: 0;
-		right: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 56px;
 		height: 10px;
 		z-index: 2;
 		cursor: ns-resize;
@@ -1050,6 +1056,8 @@
 	.mb-event:focus-within .mb-ev-handle::after,
 	.mb-event--resizing .mb-ev-handle::after,
 	.mb-event--selected .mb-ev-handle::after { opacity: 0.55; }
+	/* Finger on the grip column itself: brighten so the hit zone reads */
+	.mb-ev-handle:hover::after { opacity: 0.9; }
 	/* Touch devices have no hover — show the handles persistently. */
 	@media (hover: none) {
 		.mb-ev-handle::after { opacity: 0.55; }

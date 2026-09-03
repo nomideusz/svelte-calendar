@@ -14,8 +14,8 @@
  * Import and use:
  *   import { createDemoEvents, createDemoRecurring } from './demo-events';
  */
-import type { TimelineEvent } from '$lib/core/types.js';
-import type { RecurringEvent } from '$lib/adapters/recurring.js';
+import type { TimelineEvent } from '#lib/core/types.js';
+import type { RecurringEvent } from '#lib/adapters/recurring.js';
 
 // ── Helpers ─────────────────────────────────────────────
 

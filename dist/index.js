@@ -1,5 +1,5 @@
 // ─── Primitives ─────────────────────────────────────────
-export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, } from './primitives/index.js';
+export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, FloatingPanel, } from './primitives/index.js';
 // ─── Calendar shell ─────────────────────────────────────
 export { Calendar } from './calendar/index.js';
 // Raw view components — compose your own shell around the engine if needed

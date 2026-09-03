@@ -1,5 +1,5 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
+	"extends": "$app/tsconfig",
 	"compilerOptions": {
 		"rewriteRelativeImportExtensions": true,
 		"allowJs": true,
@@ -12,10 +12,13 @@
 		"strict": true,
 		"moduleResolution": "bundler",
 		"allowArbitraryExtensions": true
-	}
-	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
-	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
+	},
+	// `#lib` is a package.json `imports` entry, not a tsconfig path — kit 3
+	// removed files.lib and deprecated `alias`, so TypeScript resolves it the
+	// same way Node and Vite do.
 	//
-	// To make changes to top-level options such as include and exclude, we recommend extending
-	// the generated config; see https://svelte.dev/docs/kit/configuration#typescript
+	// kit 3's generated config no longer carries include/exclude, so each
+	// package states its own — dist/ is build output, not source.
+	"include": ["src/**/*", "vite.config.ts", ".svelte-kit/types/**/*"],
+	"exclude": ["dist/**", "node_modules/**"]
 }

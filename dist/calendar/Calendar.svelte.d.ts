@@ -123,7 +123,8 @@ interface Props {
      * Receives context: { prev, next, goToday, isViewOnToday, focusDate, mode }.
      */
     navigation?: Snippet<[import('../headless/types.js').NavigationContext]>;
-    oneventclick?: (event: TimelineEvent) => void;
+    /** `anchor` is the clicked block's viewport rect where a view has one (planner) — for positioning a FloatingPanel. */
+    oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     oneventcreate?: (range: {
         start: Date;
         end: Date;

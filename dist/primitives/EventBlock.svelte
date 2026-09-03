@@ -10,36 +10,26 @@
 -->
 <script lang="ts">import { fmtTime, fmtDuration, getLabels } from "../core/locale.js";
 const L = $derived(getLabels());
-let {
-  event,
-  variant = "chip",
-  active = false,
-  past = false,
-  showTime = false,
-  showDuration = false,
-  editable = false,
-  onclick,
-  children
-} = $props();
+let { event, variant = "chip", active = false, past = false, showTime = false, showDuration = false, editable = false, onclick, children } = $props();
 const accentColor = $derived(event.color || "var(--dt-accent, #2563eb)");
 const isCancelled = $derived(event.status === "cancelled");
 const isTentative = $derived(event.status === "tentative");
 const isFull = $derived(event.status === "full");
 const isLimited = $derived(event.status === "limited");
 const ariaLabel = $derived.by(() => {
-  const t = event.title;
-  const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
-  const dur = fmtDuration(event.start, event.end);
-  const loc = event.location ? `, ${event.location}` : "";
-  const statusStr = isCancelled ? ", cancelled" : isTentative ? ", tentative" : isFull ? ", full" : isLimited ? ", limited" : "";
-  const activeStr = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : "";
-  return `${t}${loc}, ${time}, ${dur}${statusStr}${activeStr}`;
+	const t = event.title;
+	const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
+	const dur = fmtDuration(event.start, event.end);
+	const loc = event.location ? `, ${event.location}` : "";
+	const statusStr = isCancelled ? ", cancelled" : isTentative ? ", tentative" : isFull ? ", full" : isLimited ? ", limited" : "";
+	const activeStr = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : "";
+	return `${t}${loc}, ${time}, ${dur}${statusStr}${activeStr}`;
 });
 function handleKeydown(e) {
-  if (e.key === "Enter" || e.key === " ") {
-    e.preventDefault();
-    onclick?.(event);
-  }
+	if (e.key === "Enter" || e.key === " ") {
+		e.preventDefault();
+		onclick?.(event);
+	}
 }
 </script>
 

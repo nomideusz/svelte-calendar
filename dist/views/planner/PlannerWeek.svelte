@@ -8,7 +8,8 @@
   • Timed events are absolutely positioned by start/end; overlaps share the
     column via union-find lanes.
   • Drag-to-move (vertical = time, horizontal = day), top/bottom resize
-    handles, drag-to-create with ghost preview — all through ctx.drag /
+    grips (hit zone limited to the centered grip so short events stay
+    grab-to-move), drag-to-create with ghost preview — all through ctx.drag /
     ctx.commitDrag so Calendar's validation (min/max duration, blocked,
     disabled) applies on drop.
   • Now-line across today's column only; auto-scrolls to the current time.
@@ -20,20 +21,8 @@ import { createClock } from "../../core/clock.svelte.js";
 import { DAY_MS, HOUR_MS, sod, addDaysMs } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
 import { fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong } from "../../core/locale.js";
-let {
-  mode = "week",
-  mondayStart = true,
-  locale,
-  height = 520,
-  events = [],
-  style = "",
-  focusDate,
-  oneventclick,
-  oneventcreate,
-  selectedEventId = null,
-  readOnly = false,
-  visibleHours
-} = $props();
+let { mode = "week", mondayStart = true, locale, height = 520, events = [], style = "", focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
+// ── Context ────────────────────────────────────────
 const ctx = useCalendarContext();
 const L = $derived(ctx.labels);
 const clock = createClock(ctx.timezone);
@@ -51,6 +40,7 @@ const autoHeight = $derived(ctx.autoHeight);
 const oneventhover = $derived(ctx.oneventhover);
 const disabledSet = $derived(ctx.disabledSet);
 const SNAP_MS = $derived(ctx.snapInterval * 6e4);
+// ── Config ─────────────────────────────────────────
 const HOUR_H = 48;
 const GUTTER_W = 48;
 const MIN_COL_W = $derived(ctx.minColumnWidth);
@@ -61,261 +51,313 @@ const hourCount = $derived(Math.max(1, endHour - startHour));
 const gridHeight = $derived(hourCount * HOUR_H);
 let scrollEl;
 let colsEl;
+// ── Week window ────────────────────────────────────
+// The engine (viewState.range) already computes the week window; fall back
+// to a local computation when running headless.
 const todayMs = $derived(clock.today);
+// Day mode is the same grid at one column (viewState.mode covers in-Calendar
+// use where the view id decides; the prop covers headless/direct use).
 const singleDay = $derived(mode === "day" || viewState?.mode === "day");
 const customDays = $derived(singleDay ? 1 : viewState?.dayCount ?? 7);
+// Calendar's chrome date label renders exactly when showDates is on, and in
+// day mode it already names the visible day — drop the column header so the
+// date never appears twice. Headless or showDates=false hosts keep it; a
+// custom dayHeader snippet always renders.
 const hideDayHead = $derived(singleDay && showDates && !!viewState && !dayHeaderSnippet);
 const weekStartMs = $derived.by(() => {
-  const r = viewState?.range;
-  if (r) return sod(r.start.getTime());
-  const f = focusDate?.getTime() ?? todayMs;
-  return customDays === 7 ? sowFn(f, mondayStart) : sod(f);
+	const r = viewState?.range;
+	if (r) return sod(r.start.getTime());
+	const f = focusDate?.getTime() ?? todayMs;
+	return customDays === 7 ? sowFn(f, mondayStart) : sod(f);
 });
 const weekEndMs = $derived(addDaysMs(weekStartMs, customDays));
 const weekHasToday = $derived(todayMs >= weekStartMs && todayMs < weekEndMs);
 const dayCols = $derived.by(() => {
-  const cols = [];
-  for (let d = 0; d < customDays; d++) {
-    const ms = addDaysMs(weekStartMs, d);
-    const date = new Date(ms);
-    const dow = date.getDay();
-    const isoDay = dow === 0 ? 7 : dow;
-    if (hideDays?.includes(isoDay)) continue;
-    cols.push({
-      ms,
-      isToday: ms === todayMs,
-      isPast: equalDays ? false : ms < todayMs,
-      isWeekend: dow === 0 || dow === 6,
-      isDisabled: disabledSet.has(ms),
-      isoDay,
-      dayNum: date.getDate()
-    });
-  }
-  return cols;
+	const cols = [];
+	for (let d = 0; d < customDays; d++) {
+		const ms = addDaysMs(weekStartMs, d);
+		const date = new Date(ms);
+		const dow = date.getDay();
+		const isoDay = dow === 0 ? 7 : dow;
+		if (hideDays?.includes(isoDay)) continue;
+		cols.push({
+			ms,
+			isToday: ms === todayMs,
+			isPast: equalDays ? false : ms < todayMs,
+			isWeekend: dow === 0 || dow === 6,
+			isDisabled: disabledSet.has(ms),
+			isoDay,
+			dayNum: date.getDate()
+		});
+	}
+	return cols;
 });
 const innerMinWidth = $derived(GUTTER_W + dayCols.length * MIN_COL_W);
+// ── Load range: visible week ±7 days ───────────────
 $effect(() => {
-  if (!loadRangeCtx) return;
-  const rangeStart = new Date(weekStartMs - 7 * DAY_MS);
-  const rangeEnd = new Date(weekEndMs + 7 * DAY_MS);
-  loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
-  return () => loadRangeCtx.set(null);
+	if (!loadRangeCtx) return;
+	const rangeStart = new Date(weekStartMs - 7 * DAY_MS);
+	const rangeEnd = new Date(weekEndMs + 7 * DAY_MS);
+	loadRangeCtx.set({
+		start: rangeStart,
+		end: rangeEnd
+	});
+	return () => loadRangeCtx.set(null);
 });
+// ── All-day / multi-day segments per day ───────────
 const allDayByDay = $derived.by(() => {
-  const map = /* @__PURE__ */ new Map();
-  for (const day of dayCols) {
-    const segs = [];
-    for (const ev of events) {
-      if (!isAllDay(ev) && !isMultiDay(ev)) continue;
-      const seg = segmentForDay(ev, day.ms);
-      if (seg) segs.push(seg);
-    }
-    if (segs.length) map.set(day.ms, segs);
-  }
-  return map;
+	const map = new Map();
+	for (const day of dayCols) {
+		const segs = [];
+		for (const ev of events) {
+			if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+			const seg = segmentForDay(ev, day.ms);
+			if (seg) segs.push(seg);
+		}
+		if (segs.length) map.set(day.ms, segs);
+	}
+	return map;
 });
 const hasAllDayRow = $derived(allDayByDay.size > 0);
 let adExpanded = $state({});
+// ── Timed event layout (union-find lanes, vertical) ─
+// The dragged (move-mode) event keeps its lane at the original time, dimmed,
+// while the ghost tracks the pointer; resize tracks the tentative payload
+// in place.
 const movingId = $derived(drag?.active && drag.mode === "move" ? drag.payload?.eventId ?? null : null);
 const movingEvent = $derived(movingId ? events.find((e) => e.id === movingId) ?? null : null);
 const layoutByDay = $derived.by(() => {
-  const rsP = drag?.active && (drag.mode === "resize-start" || drag.mode === "resize-end") ? drag.payload : null;
-  const map = /* @__PURE__ */ new Map();
-  for (const day of dayCols) {
-    let find = function(i) {
-      while (par[i] !== i) {
-        par[i] = par[par[i]];
-        i = par[i];
-      }
-      return i;
-    };
-    const dayEnd = day.ms + DAY_MS;
-    const bandStart = day.ms + startHour * HOUR_MS;
-    const bandEnd = day.ms + endHour * HOUR_MS;
-    const infos = [];
-    for (const ev of events) {
-      if (isAllDay(ev) || isMultiDay(ev)) continue;
-      const isResizing = rsP?.eventId === ev.id;
-      const s0 = isResizing ? rsP.start.getTime() : ev.start.getTime();
-      const e0 = isResizing ? rsP.end.getTime() : ev.end.getTime();
-      if (s0 >= dayEnd || e0 <= day.ms) continue;
-      const sMs = Math.max(s0, bandStart);
-      const eMs = Math.min(e0, bandEnd);
-      if (eMs <= sMs) continue;
-      infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
-    }
-    infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
-    const par = infos.map((_, i) => i);
-    for (let i = 0; i < infos.length; i++) {
-      for (let j = i + 1; j < infos.length; j++) {
-        if (infos[j].startMs < infos[i].endMs) par[find(i)] = find(j);
-        else break;
-      }
-    }
-    const groups = /* @__PURE__ */ new Map();
-    for (let i = 0; i < infos.length; i++) {
-      const root = find(i);
-      if (!groups.has(root)) groups.set(root, []);
-      groups.get(root).push(i);
-    }
-    for (const [, indices] of groups) {
-      const lanes = [];
-      for (const idx of indices) {
-        const inf = infos[idx];
-        let lane = 0;
-        for (let r = 0; r < lanes.length; r++) {
-          if (lanes[r] <= inf.startMs) {
-            lane = r;
-            lanes[r] = inf.endMs;
-            break;
-          }
-          lane = r + 1;
-        }
-        if (lane >= lanes.length) lanes.push(inf.endMs);
-        infos[idx].col = lane;
-      }
-      for (const idx of indices) infos[idx].totalCols = lanes.length;
-    }
-    map.set(
-      day.ms,
-      infos.map((inf) => ({
-        ev: inf.ev,
-        top: ((inf.startMs - day.ms) / HOUR_MS - startHour) * HOUR_H,
-        height: Math.max(24, (inf.endMs - inf.startMs) / HOUR_MS * HOUR_H),
-        col: inf.col,
-        totalCols: inf.totalCols,
-        isResizing: inf.isResizing,
-        isMoving: inf.isMoving
-      }))
-    );
-  }
-  return map;
+	const rsP = drag?.active && (drag.mode === "resize-start" || drag.mode === "resize-end") ? drag.payload : null;
+	const map = new Map();
+	for (const day of dayCols) {
+		const dayEnd = day.ms + DAY_MS;
+		const bandStart = day.ms + startHour * HOUR_MS;
+		const bandEnd = day.ms + endHour * HOUR_MS;
+		const infos = [];
+		for (const ev of events) {
+			if (isAllDay(ev) || isMultiDay(ev)) continue;
+			// The event being moved stays laned at its ORIGINAL slot, dimmed:
+			// the ghost shows where it is going, the faded block where it came
+			// from, and neither the drop target nor its neighbours re-lane
+			// under the pointer mid-drag.
+			const isResizing = rsP?.eventId === ev.id;
+			const s0 = isResizing ? rsP.start.getTime() : ev.start.getTime();
+			const e0 = isResizing ? rsP.end.getTime() : ev.end.getTime();
+			if (s0 >= dayEnd || e0 <= day.ms) continue;
+			const sMs = Math.max(s0, bandStart);
+			const eMs = Math.min(e0, bandEnd);
+			// Entirely outside the visible hour band — skip, don't paint a sliver
+			if (eMs <= sMs) continue;
+			infos.push({
+				ev,
+				startMs: sMs,
+				endMs: eMs,
+				isResizing,
+				isMoving: ev.id === movingId,
+				col: 0,
+				totalCols: 1
+			});
+		}
+		infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
+		// Union-find overlap groups (same algorithm as MobileDay)
+		const par = infos.map((_, i) => i);
+		function find(i) {
+			while (par[i] !== i) {
+				par[i] = par[par[i]];
+				i = par[i];
+			}
+			return i;
+		}
+		for (let i = 0; i < infos.length; i++) {
+			for (let j = i + 1; j < infos.length; j++) {
+				if (infos[j].startMs < infos[i].endMs) par[find(i)] = find(j);
+				else break;
+			}
+		}
+		const groups = new Map();
+		for (let i = 0; i < infos.length; i++) {
+			const root = find(i);
+			if (!groups.has(root)) groups.set(root, []);
+			groups.get(root).push(i);
+		}
+		for (const [, indices] of groups) {
+			const lanes = [];
+			for (const idx of indices) {
+				const inf = infos[idx];
+				let lane = 0;
+				for (let r = 0; r < lanes.length; r++) {
+					if (lanes[r] <= inf.startMs) {
+						lane = r;
+						lanes[r] = inf.endMs;
+						break;
+					}
+					lane = r + 1;
+				}
+				if (lane >= lanes.length) lanes.push(inf.endMs);
+				infos[idx].col = lane;
+			}
+			for (const idx of indices) infos[idx].totalCols = lanes.length;
+		}
+		map.set(day.ms, infos.map((inf) => ({
+			ev: inf.ev,
+			top: ((inf.startMs - day.ms) / HOUR_MS - startHour) * HOUR_H,
+			height: Math.max(24, (inf.endMs - inf.startMs) / HOUR_MS * HOUR_H),
+			col: inf.col,
+			totalCols: inf.totalCols,
+			isResizing: inf.isResizing,
+			isMoving: inf.isMoving
+		})));
+	}
+	return map;
 });
+// ── Now markers (separate from layout — 1Hz tick must not re-lane) ──
 const nowIds = $derived.by(() => {
-  const now = clock.tick;
-  const s = /* @__PURE__ */ new Set();
-  for (const ev of events) {
-    if (ev.start.getTime() <= now && ev.end.getTime() > now) s.add(ev.id);
-  }
-  return s;
+	const now = clock.tick;
+	const s = new Set();
+	for (const ev of events) {
+		if (ev.start.getTime() <= now && ev.end.getTime() > now) s.add(ev.id);
+	}
+	return s;
 });
 const nowFracHour = $derived((clock.tick - clock.today) / HOUR_MS);
+/** Y offset of the now-line, or null when outside visibleHours */
 const nowY = $derived.by(() => {
-  if (nowFracHour < startHour || nowFracHour > endHour) return null;
-  return (nowFracHour - startHour) * HOUR_H;
+	if (nowFracHour < startHour || nowFracHour > endHour) return null;
+	return (nowFracHour - startHour) * HOUR_H;
 });
-const weekIsEmpty = $derived(
-  !events.some((ev) => ev.start.getTime() < weekEndMs && ev.end.getTime() > weekStartMs)
-);
+// ── Empty week ─────────────────────────────────────
+const weekIsEmpty = $derived(!events.some((ev) => ev.start.getTime() < weekEndMs && ev.end.getTime() > weekStartMs));
+// ── Auto-scroll (mount + week change) ──────────────
+// Week with today → current time minus ~1h of context; otherwise the
+// visibleHours start or 08:00, whichever is later.
 $effect(() => {
-  void weekStartMs;
-  const el = scrollEl;
-  if (!el) return;
-  untrack(() => {
-    let targetHour;
-    if (weekHasToday) {
-      const clamped = Math.min(Math.max(nowFracHour, startHour), endHour);
-      targetHour = Math.max(startHour, clamped - 1);
-    } else {
-      targetHour = Math.max(startHour, Math.min(8, endHour - 1));
-    }
-    el.scrollTop = (targetHour - startHour) * HOUR_H;
-  });
+	void weekStartMs;
+	const el = scrollEl;
+	if (!el) return;
+	untrack(() => {
+		let targetHour;
+		if (weekHasToday) {
+			const clamped = Math.min(Math.max(nowFracHour, startHour), endHour);
+			targetHour = Math.max(startHour, clamped - 1);
+		} else {
+			targetHour = Math.max(startHour, Math.min(8, endHour - 1));
+		}
+		el.scrollTop = (targetHour - startHour) * HOUR_H;
+	});
 });
+// ── Pointer coalescing ─────────────────────────────
+// Pointer events fire far faster than the screen repaints (120–1000 Hz on
+// modern mice). Handling each one wrote drag state → Svelte wrote inline
+// styles → the next handler's getBoundingClientRect() forced a synchronous
+// layout: classic read-after-write thrash, and the reason a drag felt heavy
+// on a busy grid. Running at most one handler per frame, off the newest
+// event, with the grid rect measured once inside that frame, removes both.
 let rafId = 0;
 let rafRun = null;
 let rectCache = null;
 function perFrame(handler) {
-  return (e) => {
-    rafRun = () => {
-      rectCache = colsEl?.getBoundingClientRect() ?? null;
-      try {
-        handler(e);
-      } finally {
-        rectCache = null;
-      }
-    };
-    if (rafId) return;
-    rafId = requestAnimationFrame(flushFrame);
-  };
+	return (e) => {
+		rafRun = () => {
+			rectCache = colsEl?.getBoundingClientRect() ?? null;
+			try {
+				handler(e);
+			} finally {
+				rectCache = null;
+			}
+		};
+		if (rafId) return;
+		rafId = requestAnimationFrame(flushFrame);
+	};
 }
+/** Run a pending move now — pointerup must not drop the last frame. */
 function flushFrame() {
-  if (rafId) {
-    cancelAnimationFrame(rafId);
-    rafId = 0;
-  }
-  const run = rafRun;
-  rafRun = null;
-  run?.();
+	if (rafId) {
+		cancelAnimationFrame(rafId);
+		rafId = 0;
+	}
+	const run = rafRun;
+	rafRun = null;
+	run?.();
 }
 function cancelFrame() {
-  if (rafId) {
-    cancelAnimationFrame(rafId);
-    rafId = 0;
-  }
-  rafRun = null;
+	if (rafId) {
+		cancelAnimationFrame(rafId);
+		rafId = 0;
+	}
+	rafRun = null;
 }
+// ── Geometry helpers ───────────────────────────────
 function colsRect() {
-  return rectCache ?? colsEl.getBoundingClientRect();
+	return rectCache ?? colsEl.getBoundingClientRect();
 }
+/** Pointer X → index into dayCols (clamped) */
 function pointerDayIndex(clientX) {
-  const r = colsRect();
-  const n = dayCols.length;
-  if (n === 0) return 0;
-  const w = r.width / n;
-  return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+	const r = colsRect();
+	const n = dayCols.length;
+	if (n === 0) return 0;
+	const w = r.width / n;
+	return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
 }
+/** Pointer Y → fractional hour (unclamped) */
 function pointerHour(clientY) {
-  return startHour + (clientY - colsRect().top) / HOUR_H;
+	return startHour + (clientY - colsRect().top) / HOUR_H;
 }
+/** Pointer → epoch ms (day from X, time from Y, clamped into the band) */
 function pointerTimeMs(clientX, clientY) {
-  const dayMs = dayCols[pointerDayIndex(clientX)]?.ms ?? weekStartMs;
-  const hour = Math.min(Math.max(pointerHour(clientY), startHour), endHour);
-  return dayMs + hour * HOUR_MS;
+	const dayMs = dayCols[pointerDayIndex(clientX)]?.ms ?? weekStartMs;
+	const hour = Math.min(Math.max(pointerHour(clientY), startHour), endHour);
+	return dayMs + hour * HOUR_MS;
 }
+/** Clamp a timestamp into the visible band of a specific day */
 function clampToDayBand(ms, dayMs) {
-  return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
+	return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
 }
+// ── Blocked slot helpers ───────────────────────────
 function isBlockedAt(dayMs, hour) {
-  if (!blockedSlots?.length) return false;
-  const jsDay = new Date(dayMs).getDay();
-  const isoDay = jsDay === 0 ? 7 : jsDay;
-  return blockedSlots.some((slot) => {
-    if (slot.day && slot.day !== isoDay) return false;
-    return hour >= slot.start && hour < slot.end;
-  });
+	if (!blockedSlots?.length) return false;
+	const jsDay = new Date(dayMs).getDay();
+	const isoDay = jsDay === 0 ? 7 : jsDay;
+	return blockedSlots.some((slot) => {
+		if (slot.day && slot.day !== isoDay) return false;
+		return hour >= slot.start && hour < slot.end;
+	});
 }
 function blockedRangeLabel(dayMs, slotStart, slotEnd) {
-  return `${fmtTime(new Date(dayMs + slotStart * HOUR_MS), locale)} \u2013 ${fmtTime(new Date(dayMs + slotEnd * HOUR_MS), locale)}`;
+	return `${fmtTime(new Date(dayMs + slotStart * HOUR_MS), locale)} – ${fmtTime(new Date(dayMs + slotEnd * HOUR_MS), locale)}`;
 }
+// ── Status label (aria) ────────────────────────────
 function statusText(ev) {
-  if (ev.status === "cancelled") return ` (${L.cancelled})`;
-  if (ev.status === "tentative") return ` (${L.tentative})`;
-  if (ev.status === "full") return ` (${L.full})`;
-  if (ev.status === "limited") return ` (${L.limited})`;
-  return "";
+	if (ev.status === "cancelled") return ` (${L.cancelled})`;
+	if (ev.status === "tentative") return ` (${L.tentative})`;
+	if (ev.status === "full") return ` (${L.full})`;
+	if (ev.status === "limited") return ` (${L.limited})`;
+	return "";
 }
 function ghostForDay(dayMs) {
-  if (!drag?.active || !drag.payload) return null;
-  const mode2 = drag.mode;
-  if (mode2 !== "move" && mode2 !== "create") return null;
-  const s = drag.payload.start.getTime();
-  const e = drag.payload.end.getTime();
-  const bandS = dayMs + startHour * HOUR_MS;
-  const bandE = dayMs + endHour * HOUR_MS;
-  const cs = Math.max(s, bandS);
-  const ce = Math.min(e, bandE);
-  if (ce <= cs) return null;
-  return {
-    top: ((cs - dayMs) / HOUR_MS - startHour) * HOUR_H,
-    height: Math.max(12, (ce - cs) / HOUR_MS * HOUR_H),
-    start: drag.payload.start,
-    end: drag.payload.end,
-    create: mode2 === "create",
-    // Only the segment containing the start shows the readout
-    showTime: cs === Math.max(s, dayMs)
-  };
+	if (!drag?.active || !drag.payload) return null;
+	const mode = drag.mode;
+	if (mode !== "move" && mode !== "create") return null;
+	const s = drag.payload.start.getTime();
+	const e = drag.payload.end.getTime();
+	const bandS = dayMs + startHour * HOUR_MS;
+	const bandE = dayMs + endHour * HOUR_MS;
+	const cs = Math.max(s, bandS);
+	const ce = Math.min(e, bandE);
+	if (ce <= cs) return null;
+	return {
+		top: ((cs - dayMs) / HOUR_MS - startHour) * HOUR_H,
+		height: Math.max(12, (ce - cs) / HOUR_MS * HOUR_H),
+		start: drag.payload.start,
+		end: drag.payload.end,
+		create: mode === "create",
+		// Only the segment containing the start shows the readout
+		showTime: cs === Math.max(s, dayMs)
+	};
 }
+// ── Drag-to-create (mouse: sweep; touch: long-press) ──
+// Mouse movement below CREATE_THRESHOLD stays a plain click. On touch a
+// vertical drag must remain a scroll, so create only arms after a ~350ms
+// still hold (moving > 8px first cancels it).
 const CREATE_THRESHOLD = 4;
 const LONG_PRESS_MS = 350;
 const LONG_PRESS_TOLERANCE = 8;
@@ -326,116 +368,122 @@ let crAnchorMs = 0;
 let crDayMs = 0;
 let crStarted = false;
 let longPressTimer = null;
+// touch-action can't change mid-gesture, so once a touch drag-create/resize
+// is live we block native scrolling with a non-passive touchmove listener.
 function blockTouchScroll(e) {
-  e.preventDefault();
+	e.preventDefault();
 }
 function addTouchScrollBlock() {
-  window.addEventListener("touchmove", blockTouchScroll, { passive: false });
+	window.addEventListener("touchmove", blockTouchScroll, { passive: false });
 }
 function removeTouchScrollBlock() {
-  window.removeEventListener("touchmove", blockTouchScroll);
+	window.removeEventListener("touchmove", blockTouchScroll);
 }
 function clearLongPress() {
-  if (longPressTimer !== null) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
+	if (longPressTimer !== null) {
+		clearTimeout(longPressTimer);
+		longPressTimer = null;
+	}
 }
 function startColsCreate() {
-  if (!drag) return;
-  crStarted = true;
-  crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / SNAP_MS) * SNAP_MS, crDayMs);
-  drag.beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + SNAP_MS));
-  addTouchScrollBlock();
+	if (!drag) return;
+	crStarted = true;
+	crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / SNAP_MS) * SNAP_MS, crDayMs);
+	drag.beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + SNAP_MS));
+	addTouchScrollBlock();
 }
 function onColsPointerDown(e) {
-  if (e.button !== 0 || !drag || !oneventcreate || readOnly) return;
-  if (e.target.closest(".tw-ev, .tw-ghost")) return;
-  const day = dayCols[pointerDayIndex(e.clientX)];
-  if (!day || day.isDisabled) return;
-  if (isBlockedAt(day.ms, Math.min(Math.max(pointerHour(e.clientY), startHour), endHour))) return;
-  crStartX = e.clientX;
-  crStartY = e.clientY;
-  crDayMs = day.ms;
-  crAnchorMs = clampToDayBand(
-    day.ms + Math.max(pointerHour(e.clientY), startHour) * HOUR_MS,
-    day.ms
-  );
-  crStarted = false;
-  if (e.pointerType === "touch") {
-    longPressTimer = setTimeout(() => {
-      longPressTimer = null;
-      startColsCreate();
-    }, LONG_PRESS_MS);
-  }
-  window.addEventListener("pointermove", onColsCreateMove);
-  window.addEventListener("pointerup", onColsCreateUp, { once: true });
-  window.addEventListener("pointercancel", onColsCreateCancel, { once: true });
+	if (e.button !== 0 || !drag || !oneventcreate || readOnly) return;
+	if (e.target.closest(".tw-ev, .tw-ghost")) return;
+	const day = dayCols[pointerDayIndex(e.clientX)];
+	if (!day || day.isDisabled) return;
+	// Never arm a create on a blocked region (Calendar validates on commit too)
+	if (isBlockedAt(day.ms, Math.min(Math.max(pointerHour(e.clientY), startHour), endHour))) return;
+	crStartX = e.clientX;
+	crStartY = e.clientY;
+	crDayMs = day.ms;
+	crAnchorMs = clampToDayBand(day.ms + Math.max(pointerHour(e.clientY), startHour) * HOUR_MS, day.ms);
+	crStarted = false;
+	if (e.pointerType === "touch") {
+		longPressTimer = setTimeout(() => {
+			longPressTimer = null;
+			startColsCreate();
+		}, LONG_PRESS_MS);
+	}
+	window.addEventListener("pointermove", onColsCreateMove);
+	window.addEventListener("pointerup", onColsCreateUp, { once: true });
+	window.addEventListener("pointercancel", onColsCreateCancel, { once: true });
 }
 const onColsCreateMove = perFrame((e) => {
-  if (!drag) return;
-  if (!crStarted) {
-    if (longPressTimer !== null) {
-      const moved = Math.hypot(e.clientX - crStartX, e.clientY - crStartY);
-      if (moved > LONG_PRESS_TOLERANCE) cleanupColsCreate();
-      return;
-    }
-    if (e.pointerType === "touch") return;
-    if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
-    startColsCreate();
-  }
-  const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
-  const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, crDayMs);
-  drag.updatePointer(
-    new Date(Math.min(crAnchorMs, snapped)),
-    new Date(Math.max(crAnchorMs + SNAP_MS, snapped))
-  );
+	if (!drag) return;
+	if (!crStarted) {
+		if (longPressTimer !== null) {
+			// Finger moved before the hold completed → it's a scroll
+			const moved = Math.hypot(e.clientX - crStartX, e.clientY - crStartY);
+			if (moved > LONG_PRESS_TOLERANCE) cleanupColsCreate();
+			return;
+		}
+		if (e.pointerType === "touch") return;
+		if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
+		startColsCreate();
+	}
+	const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
+	const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, crDayMs);
+	drag.updatePointer(new Date(Math.min(crAnchorMs, snapped)), new Date(Math.max(crAnchorMs + SNAP_MS, snapped)));
 });
 function cleanupColsCreate() {
-  cancelFrame();
-  clearLongPress();
-  removeTouchScrollBlock();
-  window.removeEventListener("pointermove", onColsCreateMove);
-  window.removeEventListener("pointerup", onColsCreateUp);
-  window.removeEventListener("pointercancel", onColsCreateCancel);
-  crStarted = false;
+	cancelFrame();
+	clearLongPress();
+	removeTouchScrollBlock();
+	window.removeEventListener("pointermove", onColsCreateMove);
+	window.removeEventListener("pointerup", onColsCreateUp);
+	window.removeEventListener("pointercancel", onColsCreateCancel);
+	crStarted = false;
 }
 function onColsCreateUp() {
-  if (crStarted) flushFrame();
-  if (drag && crStarted) {
-    suppressColsClick = true;
-    commitDragCtx?.();
-    setTimeout(() => {
-      suppressColsClick = false;
-    }, 0);
-  }
-  cleanupColsCreate();
+	// Commit the newest pointer position, not the last one that made it to a
+	// frame. Only once the gesture is live — flushing a pending frame before
+	// that could start (and instantly commit) a drag the user meant as a click.
+	if (crStarted) flushFrame();
+	if (drag && crStarted) {
+		// The click event (if any) fires synchronously after pointerup
+		suppressColsClick = true;
+		commitDragCtx?.();
+		setTimeout(() => {
+			suppressColsClick = false;
+		}, 0);
+	}
+	cleanupColsCreate();
 }
 function onColsCreateCancel() {
-  if (drag && crStarted) drag.cancel();
-  cleanupColsCreate();
+	if (drag && crStarted) drag.cancel();
+	cleanupColsCreate();
 }
 function onColsContextMenu(e) {
-  if (crStarted || longPressTimer !== null) e.preventDefault();
+	// Long-press on touch fires contextmenu on some platforms — keep it
+	// from interrupting an armed or pending drag-create.
+	if (crStarted || longPressTimer !== null) e.preventDefault();
 }
+// ── Click-to-create (plain click → default slot) ───
 function handleColsClick(e) {
-  if (suppressColsClick) {
-    suppressColsClick = false;
-    return;
-  }
-  if (!oneventcreate || readOnly) return;
-  if (e.target.closest(".tw-ev, .tw-ghost")) return;
-  const day = dayCols[pointerDayIndex(e.clientX)];
-  if (!day || day.isDisabled) return;
-  const hour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
-  if (isBlockedAt(day.ms, hour)) return;
-  const startMs = clampToDayBand(
-    Math.floor((day.ms + hour * HOUR_MS) / SNAP_MS) * SNAP_MS,
-    day.ms
-  );
-  const durMin = minDuration ?? 60;
-  oneventcreate({ start: new Date(startMs), end: new Date(startMs + durMin * 6e4) });
+	if (suppressColsClick) {
+		suppressColsClick = false;
+		return;
+	}
+	if (!oneventcreate || readOnly) return;
+	if (e.target.closest(".tw-ev, .tw-ghost")) return;
+	const day = dayCols[pointerDayIndex(e.clientX)];
+	if (!day || day.isDisabled) return;
+	const hour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
+	if (isBlockedAt(day.ms, hour)) return;
+	const startMs = clampToDayBand(Math.floor((day.ms + hour * HOUR_MS) / SNAP_MS) * SNAP_MS, day.ms);
+	const durMin = minDuration ?? 60;
+	oneventcreate({
+		start: new Date(startMs),
+		end: new Date(startMs + durMin * 6e4)
+	});
 }
+// ── Drag-to-move (vertical = time, horizontal = day) ──
 const DRAG_THRESHOLD = 5;
 let evDragStartX = 0;
 let evDragStartY = 0;
@@ -443,134 +491,145 @@ let evGrabOffsetMs = 0;
 let evDragStarted = false;
 let evDragMovable = false;
 let evDragEvent = null;
+// The block's rect when the pointer went down — a click hands it to the
+// host as the anchor for whatever it opens.
+let evAnchor;
 function onEventPointerDown(e, ev) {
-  if (e.button !== 0) return;
-  e.stopPropagation();
-  evDragMovable = !!drag && !readOnly && !ev.data?.readOnly;
-  evDragStartX = e.clientX;
-  evDragStartY = e.clientY;
-  evGrabOffsetMs = pointerTimeMs(e.clientX, e.clientY) - ev.start.getTime();
-  evDragStarted = false;
-  evDragEvent = ev;
-  window.addEventListener("pointermove", onEvMove);
-  window.addEventListener("pointerup", onEvUp, { once: true });
-  window.addEventListener("pointercancel", onEvCancel, { once: true });
+	if (e.button !== 0) return;
+	e.stopPropagation();
+	evAnchor = e.currentTarget.getBoundingClientRect();
+	// Even non-movable events (readOnly view, per-event readOnly) go through
+	// the pointerup path so a plain click still opens them.
+	evDragMovable = !!drag && !readOnly && !ev.data?.readOnly;
+	evDragStartX = e.clientX;
+	evDragStartY = e.clientY;
+	evGrabOffsetMs = pointerTimeMs(e.clientX, e.clientY) - ev.start.getTime();
+	evDragStarted = false;
+	evDragEvent = ev;
+	window.addEventListener("pointermove", onEvMove);
+	window.addEventListener("pointerup", onEvUp, { once: true });
+	window.addEventListener("pointercancel", onEvCancel, { once: true });
 }
 const onEvMove = perFrame((e) => {
-  const ev = evDragEvent;
-  if (!drag || !ev || !evDragMovable) return;
-  if (!evDragStarted) {
-    const moved = Math.abs(e.clientX - evDragStartX) + Math.abs(e.clientY - evDragStartY);
-    if (moved < DRAG_THRESHOLD) return;
-    evDragStarted = true;
-    drag.beginMove(ev.id, ev.start, ev.end);
-  }
-  const duration = ev.end.getTime() - ev.start.getTime();
-  const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
-  const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
-  drag.updatePointer(new Date(snapped), new Date(snapped + duration));
+	const ev = evDragEvent;
+	if (!drag || !ev || !evDragMovable) return;
+	if (!evDragStarted) {
+		const moved = Math.abs(e.clientX - evDragStartX) + Math.abs(e.clientY - evDragStartY);
+		if (moved < DRAG_THRESHOLD) return;
+		evDragStarted = true;
+		drag.beginMove(ev.id, ev.start, ev.end);
+	}
+	const duration = ev.end.getTime() - ev.start.getTime();
+	const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
+	const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
+	drag.updatePointer(new Date(snapped), new Date(snapped + duration));
 });
 function cleanupEvDrag() {
-  cancelFrame();
-  window.removeEventListener("pointermove", onEvMove);
-  window.removeEventListener("pointerup", onEvUp);
-  window.removeEventListener("pointercancel", onEvCancel);
-  evDragStarted = false;
-  evDragMovable = false;
-  evDragEvent = null;
+	cancelFrame();
+	window.removeEventListener("pointermove", onEvMove);
+	window.removeEventListener("pointerup", onEvUp);
+	window.removeEventListener("pointercancel", onEvCancel);
+	evDragStarted = false;
+	evDragMovable = false;
+	evDragEvent = null;
 }
 function onEvUp() {
-  if (evDragStarted) flushFrame();
-  if (!evDragStarted && evDragEvent) {
-    oneventclick?.(evDragEvent);
-  } else if (evDragStarted && drag) {
-    suppressColsClick = true;
-    commitDragCtx?.();
-    setTimeout(() => {
-      suppressColsClick = false;
-    }, 0);
-  }
-  cleanupEvDrag();
+	if (evDragStarted) flushFrame();
+	if (!evDragStarted && evDragEvent) {
+		oneventclick?.(evDragEvent, evAnchor);
+	} else if (evDragStarted && drag) {
+		// If the pointer ends off the block, the synthesized click lands on
+		// the grid — suppress the click-to-create it would trigger.
+		suppressColsClick = true;
+		commitDragCtx?.();
+		setTimeout(() => {
+			suppressColsClick = false;
+		}, 0);
+	}
+	cleanupEvDrag();
 }
 function onEvCancel() {
-  if (drag && evDragStarted) drag.cancel();
-  cleanupEvDrag();
+	if (drag && evDragStarted) drag.cancel();
+	cleanupEvDrag();
 }
+// ── Resize (top/bottom edge handles) ───────────────
 let rsStartY = 0;
 let rsStarted = false;
 let rsEdge = "end";
 let rsEvent = null;
 function onResizePointerDown(e, ev, edge) {
-  if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
-  e.stopPropagation();
-  rsStartY = e.clientY;
-  rsStarted = false;
-  rsEdge = edge;
-  rsEvent = ev;
-  window.addEventListener("pointermove", onResizeMove);
-  window.addEventListener("pointerup", onResizeUp, { once: true });
-  window.addEventListener("pointercancel", onResizeCancel, { once: true });
+	if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
+	e.stopPropagation();
+	evAnchor = e.currentTarget.parentElement?.getBoundingClientRect();
+	rsStartY = e.clientY;
+	rsStarted = false;
+	rsEdge = edge;
+	rsEvent = ev;
+	window.addEventListener("pointermove", onResizeMove);
+	window.addEventListener("pointerup", onResizeUp, { once: true });
+	window.addEventListener("pointercancel", onResizeCancel, { once: true });
 }
 const onResizeMove = perFrame((e) => {
-  const ev = rsEvent;
-  if (!drag || !ev) return;
-  if (!rsStarted) {
-    if (Math.abs(e.clientY - rsStartY) < CREATE_THRESHOLD) return;
-    rsStarted = true;
-    drag.beginResize(ev.id, rsEdge, ev.start, ev.end);
-    addTouchScrollBlock();
-  }
-  const evDayMs = sod(ev.start.getTime());
-  const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
-  const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, evDayMs);
-  if (rsEdge === "end") {
-    const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
-    drag.updatePointer(ev.start, new Date(end));
-  } else {
-    const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
-    drag.updatePointer(new Date(start), ev.end);
-  }
+	const ev = rsEvent;
+	if (!drag || !ev) return;
+	if (!rsStarted) {
+		if (Math.abs(e.clientY - rsStartY) < CREATE_THRESHOLD) return;
+		rsStarted = true;
+		drag.beginResize(ev.id, rsEdge, ev.start, ev.end);
+		addTouchScrollBlock();
+	}
+	const evDayMs = sod(ev.start.getTime());
+	const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
+	const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, evDayMs);
+	if (rsEdge === "end") {
+		const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
+		drag.updatePointer(ev.start, new Date(end));
+	} else {
+		const start = Math.min(snapped, ev.end.getTime() - SNAP_MS);
+		drag.updatePointer(new Date(start), ev.end);
+	}
 });
 function cleanupResize() {
-  cancelFrame();
-  removeTouchScrollBlock();
-  window.removeEventListener("pointermove", onResizeMove);
-  window.removeEventListener("pointerup", onResizeUp);
-  window.removeEventListener("pointercancel", onResizeCancel);
-  rsStarted = false;
-  rsEvent = null;
+	cancelFrame();
+	removeTouchScrollBlock();
+	window.removeEventListener("pointermove", onResizeMove);
+	window.removeEventListener("pointerup", onResizeUp);
+	window.removeEventListener("pointercancel", onResizeCancel);
+	rsStarted = false;
+	rsEvent = null;
 }
 function onResizeUp() {
-  if (rsStarted) flushFrame();
-  if (drag && rsStarted) {
-    suppressColsClick = true;
-    commitDragCtx?.();
-    setTimeout(() => {
-      suppressColsClick = false;
-    }, 0);
-  } else if (rsEvent && !rsStarted) {
-    oneventclick?.(rsEvent);
-  }
-  cleanupResize();
+	if (rsStarted) flushFrame();
+	if (drag && rsStarted) {
+		// If the pointer ends off the block, the synthesized click lands on
+		// the grid — suppress the click-to-create it would trigger.
+		suppressColsClick = true;
+		commitDragCtx?.();
+		setTimeout(() => {
+			suppressColsClick = false;
+		}, 0);
+	} else if (rsEvent && !rsStarted) {
+		oneventclick?.(rsEvent, evAnchor);
+	}
+	cleanupResize();
 }
 function onResizeCancel() {
-  if (drag && rsStarted) drag.cancel();
-  cleanupResize();
+	if (drag && rsStarted) drag.cancel();
+	cleanupResize();
 }
+// ── Escape cancels any in-flight drag ──────────────
 function onWindowKeydown(e) {
-  if (e.key !== "Escape" || !drag?.active) return;
-  drag.cancel();
-  cleanupColsCreate();
-  cleanupEvDrag();
-  cleanupResize();
-  suppressColsClick = true;
-  window.addEventListener(
-    "pointerup",
-    () => setTimeout(() => {
-      suppressColsClick = false;
-    }, 0),
-    { once: true }
-  );
+	if (e.key !== "Escape" || !drag?.active) return;
+	drag.cancel();
+	cleanupColsCreate();
+	cleanupEvDrag();
+	cleanupResize();
+	// Suppress the click the trailing pointerup would synthesize on the
+	// grid (it would otherwise create an event).
+	suppressColsClick = true;
+	window.addEventListener("pointerup", () => setTimeout(() => {
+		suppressColsClick = false;
+	}, 0), { once: true });
 }
 </script>
 
@@ -762,7 +821,8 @@ function onWindowKeydown(e) {
 									aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{statusText(p.ev)}{isCurrent ? ` (${L.inProgress})` : ''}"
 									onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 									onpointerenter={() => oneventhover?.(p.ev)}
-									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev); } }}
+									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev, e.currentTarget.getBoundingClientRect()); } }}
+
 								>
 									<div class="tw-ev-stripe" aria-hidden="true"></div>
 									<div class="tw-ev-body">
@@ -1334,10 +1394,16 @@ function onWindowKeydown(e) {
 	}
 
 	/* ─── Resize handles ─────────────────────────────── */
+	/* Resizing lives only on the centered grip column. The old full-width
+	   edge bands (12–20px of inward slop each) covered short events
+	   entirely — min block height is 24px, so every grab meant to move
+	   started a resize instead. The grip is the visible affordance;
+	   everything else on the block drags to move. */
 	.tw-ev-handle {
 		position: absolute;
-		left: 0;
-		right: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 44px;
 		height: 8px;
 		z-index: 2;
 		cursor: ns-resize;
@@ -1377,6 +1443,8 @@ function onWindowKeydown(e) {
 	.tw-ev:focus-visible .tw-ev-handle::after,
 	.tw-ev--resizing .tw-ev-handle::after,
 	.tw-ev--selected .tw-ev-handle::after { opacity: 0.55; }
+	/* Pointer on the grip column itself: brighten so the hit zone reads */
+	.tw-ev-handle:hover::after { opacity: 0.9; }
 	/* Coarse pointers can't hover — show the grips persistently */
 	@media (hover: none) {
 		.tw-ev-handle::after { opacity: 0.55; }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '#lib/assets/favicon.svg';
 	import { themeStore, setTheme, demoThemes, demoThemeNames } from './theme.svelte.js';
 	import type { DemoThemeName } from './theme.svelte.js';
 

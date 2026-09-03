@@ -13,19 +13,8 @@
 -->
 <script lang="ts">import { getLabels } from "../core/locale.js";
 const L = $derived(getLabels());
-let {
-  mode = "line",
-  position = 0,
-  orientation = "vertical",
-  time = "",
-  seconds = "",
-  showLabel = true,
-  color,
-  children
-} = $props();
-const posStyle = $derived(
-  orientation === "vertical" ? `left: ${position}px` : `top: ${position}px`
-);
+let { mode = "line", position = 0, orientation = "vertical", time = "", seconds = "", showLabel = true, color, children } = $props();
+const posStyle = $derived(orientation === "vertical" ? `left: ${position}px` : `top: ${position}px`);
 const colorVar = $derived(color ? `--ni-color: ${color}` : "");
 </script>
 

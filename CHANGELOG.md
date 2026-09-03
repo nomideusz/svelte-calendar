@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.15.1
+
+### Patch Changes
+
+- Resize only on the centered grip. The old full-width top/bottom edge bands
+  carried 12–20px of inward hit-slop each, which on short events covered the
+  whole block (planner min block height is 24px; a 30-minute event is exactly
+  24px tall) — every drag meant to move the event started a resize instead.
+  The resize hit zone is now a 44px column centered on the event in the
+  planner (56px on the touch-first mobile day view), aligned with the visible
+  grip; everything else on the block drags to move. The grip brightens on
+  direct hover and the ns-resize cursor now appears only over the real hit
+  area. CSS-only — drag engine, snapping, and thresholds are unchanged.
+
+## 0.15.0
+
+### Minor Changes
+
+- **`FloatingPanel`** — a non-modal, draggable window that opens beside its
+  `anchor` (the clicked block's rect — right of it, left when the right edge is
+  near, clamped to the viewport; a bare point works too) and floats over the
+  calendar (bottom sheet below 640px). Escape, its own button, or a pointerdown
+  anywhere outside close it — and that outside tap is spent on closing, so the
+  block under it is not opened by the same tap (`closeOnOutside={false}` to
+  opt out). Takes the same `--dt-*` `theme` string a `Calendar` does.
+- **`oneventclick(event, anchor?)`** — the planner now passes the clicked
+  block's `DOMRect` as a second argument, so a host can open something beside
+  it. Additive; other views pass nothing.
+
+
 ## 0.14.1 — 2026-08-13
 
 ### Fixed

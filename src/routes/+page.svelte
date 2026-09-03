@@ -9,11 +9,11 @@
 		auto,
 		neutral,
 		presets,
-	} from "$lib/index.js";
-	import type { PresetName } from "$lib/index.js";
+	} from "#lib/index.js";
+	import type { PresetName } from "#lib/index.js";
 	import Settings from "./_components/Settings.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
-	import type { CalendarView, TimelineEvent } from "$lib/index.js";
+	import type { CalendarView, TimelineEvent } from "#lib/index.js";
 	import { themeStore, demoThemes } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 

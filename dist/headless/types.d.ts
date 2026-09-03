@@ -46,7 +46,7 @@ export interface HeadlessCalendarOptions {
     minDuration?: number;
     /** Maximum event duration in minutes */
     maxDuration?: number;
-    oneventclick?: (event: TimelineEvent) => void;
+    oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     oneventcreate?: (range: {
         start: Date;
         end: Date;

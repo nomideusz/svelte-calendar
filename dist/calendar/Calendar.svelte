@@ -31,445 +31,523 @@ import Agenda from "../views/agenda/Agenda.svelte";
 import Mobile from "../views/mobile/Mobile.svelte";
 import MonthGrid from "../views/month/MonthGrid.svelte";
 import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from "../core/timezone.js";
+/** Breakpoint (px) at which auto-mobile activates */
 const MOBILE_BREAKPOINT = 768;
+// ── Built-in views (used when no custom views are provided) ──
 const DEFAULT_VIEWS = [
-  { id: "day-planner", label: "Planner", mode: "day", component: Planner },
-  { id: "week-planner", label: "Planner", mode: "week", component: Planner },
-  { id: "day-agenda", label: "Agenda", mode: "day", component: Agenda },
-  { id: "week-agenda", label: "Agenda", mode: "week", component: Agenda },
-  { id: "day-mobile", label: "Mobile", mode: "day", component: Mobile },
-  { id: "week-mobile", label: "Mobile", mode: "week", component: Mobile },
-  { id: "month-grid", label: "Month", mode: "month", component: MonthGrid }
+	{
+		id: "day-planner",
+		label: "Planner",
+		mode: "day",
+		component: Planner
+	},
+	{
+		id: "week-planner",
+		label: "Planner",
+		mode: "week",
+		component: Planner
+	},
+	{
+		id: "day-agenda",
+		label: "Agenda",
+		mode: "day",
+		component: Agenda
+	},
+	{
+		id: "week-agenda",
+		label: "Agenda",
+		mode: "week",
+		component: Agenda
+	},
+	{
+		id: "day-mobile",
+		label: "Mobile",
+		mode: "day",
+		component: Mobile
+	},
+	{
+		id: "week-mobile",
+		label: "Mobile",
+		mode: "week",
+		component: Mobile
+	},
+	{
+		id: "month-grid",
+		label: "Month",
+		mode: "month",
+		component: MonthGrid
+	}
 ];
-let {
-  adapter,
-  views = DEFAULT_VIEWS,
-  view: activeViewId,
-  theme = auto,
-  autoTheme,
-  mondayStart = true,
-  height: heightProp = 600,
-  borderRadius = 12,
-  dir,
-  locale,
-  labels: labelsProp,
-  readOnly = false,
-  visibleHours,
-  initialDate,
-  snapInterval = 15,
-  minColumnWidth = 110,
-  showModePills = true,
-  showNavigation = true,
-  equalDays = false,
-  showDates = true,
-  hideDays,
-  currentDate,
-  blockedSlots,
-  days,
-  minDuration,
-  maxDuration,
-  disabledDates,
-  compact = false,
-  columns = false,
-  mobile: mobileProp = "auto",
-  event: eventSnippet,
-  empty: emptySnippet,
-  dayHeader: dayHeaderSnippet,
-  header: headerSnippet,
-  navigation: navigationSnippet,
-  oneventclick,
-  oneventcreate,
-  oneventmove,
-  onviewchange,
-  ondatechange,
-  oneventhover,
-  ondayclick,
-  onerror,
-  timezone
-} = $props();
+let { adapter, views = DEFAULT_VIEWS, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 12, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
+// In readOnly mode, suppress mutation callbacks. With a timezone, the
+// drag plane is zoned wall-clock — hosts always receive real instants.
 const unzone = (d) => timezone ? fromZonedTime(d, timezone) : d;
-const effectiveCreate = $derived(
-  readOnly || !oneventcreate ? void 0 : (range) => oneventcreate({ start: unzone(range.start), end: unzone(range.end) })
-);
-const effectiveMove = $derived(
-  readOnly || !oneventmove ? void 0 : (ev, start, end) => oneventmove(ev, unzone(start), unzone(end))
-);
-function handleEventClick(ev) {
-  selection.select(ev.id);
-  oneventclick?.(ev);
+const effectiveCreate = $derived(readOnly || !oneventcreate ? undefined : (range) => oneventcreate({
+	start: unzone(range.start),
+	end: unzone(range.end)
+}));
+const effectiveMove = $derived(readOnly || !oneventmove ? undefined : (ev, start, end) => oneventmove(ev, unzone(start), unzone(end)));
+// Clicking an event selects it (highlight via selectedEventId) and then
+// notifies the host — selection used to be created but never driven.
+function handleEventClick(ev, anchor) {
+	selection.select(ev.id);
+	oneventclick?.(ev, anchor);
 }
-let containerWidth = $state(
-  typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? window.innerWidth : 0
-);
+// ── Mobile detection (container-based, not viewport) ──
+// Seeded from viewport width so the first client paint doesn't flash the
+// desktop chrome on phones; the ResizeObserver measurement takes over on mount.
+let containerWidth = $state(typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? window.innerWidth : 0);
 const isMobileContainer = $derived(containerWidth > 0 && containerWidth < MOBILE_BREAKPOINT);
-const useMobile = $derived(
-  mobileProp === "auto" ? isMobileContainer : Boolean(mobileProp)
-);
+const useMobile = $derived(mobileProp === "auto" ? isMobileContainer : Boolean(mobileProp));
+// Below this container width the mobile header can't fit pills + nav + a
+// readable date label on one row, so the label moves to its own row.
 const HEADER_STACK_BREAKPOINT = 520;
-const stackHeader = $derived(
-  useMobile && containerWidth > 0 && containerWidth < HEADER_STACK_BREAKPOINT
-);
+const stackHeader = $derived(useMobile && containerWidth > 0 && containerWidth < HEADER_STACK_BREAKPOINT);
+// ── Smart auto-theme ──
+// When theme is empty (auto preset) and autoTheme is not false,
+// probe the host page on mount and reactively watch for host theme changes.
 let calEl = $state();
 let probedTheme = $state("");
+// Only delay rendering when auto-probe is actually needed
 const needsProbe = $derived(theme === auto && autoTheme !== false);
 onMount(() => {
-  if (!calEl) return;
-  containerWidth = calEl.clientWidth;
-  const ro = new ResizeObserver((entries) => {
-    containerWidth = Math.round(entries[0].contentRect.width);
-  });
-  ro.observe(calEl);
-  if (!needsProbe) return () => ro.disconnect();
-  const opts = typeof autoTheme === "object" ? autoTheme : {};
-  const stopTheme = observeHostTheme(calEl, (vars) => {
-    probedTheme = vars;
-  }, opts);
-  return () => {
-    ro.disconnect();
-    stopTheme?.();
-  };
+	if (!calEl) return;
+	// Measure container width for mobile detection
+	containerWidth = calEl.clientWidth;
+	const ro = new ResizeObserver((entries) => {
+		containerWidth = Math.round(entries[0].contentRect.width);
+	});
+	ro.observe(calEl);
+	// Only probe theme when using the auto preset
+	if (!needsProbe) return () => ro.disconnect();
+	const opts = typeof autoTheme === "object" ? autoTheme : {};
+	const stopTheme = observeHostTheme(calEl, (vars) => {
+		probedTheme = vars;
+	}, opts);
+	return () => {
+		ro.disconnect();
+		stopTheme?.();
+	};
 });
+/** Effective theme: user-provided takes priority, otherwise probed auto. */
 const effectiveTheme = $derived(theme === auto && autoTheme !== false ? probedTheme : theme);
-const effectiveAdapter = $derived(
-  timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter
-);
+// ── Create reactive state ──
+const effectiveAdapter = $derived(timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter);
+// The store is created ONCE and reads the adapter through a getter. A
+// `$derived` store would be rebuilt — empty — whenever the host handed over a
+// new adapter identity (a common "force a refetch" idiom), blanking the grid
+// until the refetch landed. The load effect below re-runs on adapter change
+// because store.load() reads effectiveAdapter inside it.
 const store = createEventStore(() => effectiveAdapter);
 const viewState = createViewState(untrack(() => ({
-  view: activeViewId ?? views[0]?.id,
-  mondayStart,
-  // Focus lives on the zoned plane too — day boundaries follow the zone.
-  initialDate: initialDate && timezone ? toZonedTime(initialDate, timezone) : initialDate,
-  dayCount: days,
-  timezone,
-  modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode
+	view: activeViewId ?? views[0]?.id,
+	mondayStart,
+	// Focus lives on the zoned plane too — day boundaries follow the zone.
+	initialDate: initialDate && timezone ? toZonedTime(initialDate, timezone) : initialDate,
+	dayCount: days,
+	timezone,
+	modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode
 })));
 const selection = createSelection();
 const drag = createDragState();
+// ── Drag commit handler ──
+// Views call this on pointer-up to process drag results.
 async function commitDrag() {
-  if (readOnly) {
-    drag.cancel();
-    return;
-  }
-  const mode = drag.mode;
-  const payload = drag.commit();
-  if (!payload) return;
-  let { start, end } = payload;
-  if (mode === "create" || mode === "resize-start" || mode === "resize-end") {
-    if (end.getTime() <= start.getTime()) {
-      const floorMs = Math.max(1, snapInterval) * 6e4;
-      if (mode === "resize-start") start = new Date(end.getTime() - floorMs);
-      else end = new Date(start.getTime() + floorMs);
-    }
-    const durationMs = end.getTime() - start.getTime();
-    const durationMin = durationMs / 6e4;
-    if (minDuration && durationMin < minDuration) {
-      if (mode === "resize-start") {
-        start = new Date(end.getTime() - minDuration * 6e4);
-      } else {
-        end = new Date(start.getTime() + minDuration * 6e4);
-      }
-    }
-    if (maxDuration && durationMin > maxDuration) {
-      if (mode === "resize-start") {
-        start = new Date(end.getTime() - maxDuration * 6e4);
-      } else {
-        end = new Date(start.getTime() + maxDuration * 6e4);
-      }
-    }
-  }
-  if (disabledDates?.length) {
-    const startDay = new Date(start);
-    startDay.setHours(0, 0, 0, 0);
-    const endDay = new Date(end.getTime() - 1);
-    endDay.setHours(0, 0, 0, 0);
-    for (const dd of disabledDates) {
-      const dt = new Date(dd);
-      dt.setHours(0, 0, 0, 0);
-      const ts = dt.getTime();
-      if (ts >= startDay.getTime() && ts <= endDay.getTime()) return;
-    }
-  }
-  if (blockedSlots?.length) {
-    const startH = start.getHours() + start.getMinutes() / 60;
-    const endH = end.getHours() + end.getMinutes() / 60 + (end.getDate() !== start.getDate() ? 24 : 0);
-    const jsDay = start.getDay();
-    const isoDay = jsDay === 0 ? 7 : jsDay;
-    for (const slot of blockedSlots) {
-      if (slot.day && slot.day !== isoDay) continue;
-      if (startH < slot.end && endH > slot.start) return;
-    }
-  }
-  if ((mode === "move" || mode === "resize-start" || mode === "resize-end") && payload.eventId) {
-    try {
-      await store.move(payload.eventId, start, end);
-      const ev = store.byId(payload.eventId);
-      if (ev) effectiveMove?.(ev, start, end);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      if (msg.includes("read-only")) {
-        const ev = store.byId(payload.eventId);
-        if (ev) effectiveMove?.(ev, start, end);
-      } else if (!msg.includes("not found")) {
-        if (onerror) onerror(e instanceof Error ? e : new Error(String(e)));
-        else console.warn("[calendar] drag commit failed:", e);
-      }
-    }
-  } else if (mode === "create") {
-    effectiveCreate?.({ start, end });
-  }
+	if (readOnly) {
+		drag.cancel();
+		return;
+	}
+	const mode = drag.mode;
+	const payload = drag.commit();
+	if (!payload) return;
+	let { start, end } = payload;
+	// Enforce min/max duration for create and resize
+	if (mode === "create" || mode === "resize-start" || mode === "resize-end") {
+		// Defensive floor: never accept a zero/negative duration, even when
+		// minDuration is unset (views clamp, but the engine must hold alone).
+		if (end.getTime() <= start.getTime()) {
+			const floorMs = Math.max(1, snapInterval) * 6e4;
+			if (mode === "resize-start") start = new Date(end.getTime() - floorMs);
+			else end = new Date(start.getTime() + floorMs);
+		}
+		const durationMs = end.getTime() - start.getTime();
+		const durationMin = durationMs / 6e4;
+		if (minDuration && durationMin < minDuration) {
+			if (mode === "resize-start") {
+				start = new Date(end.getTime() - minDuration * 6e4);
+			} else {
+				end = new Date(start.getTime() + minDuration * 6e4);
+			}
+		}
+		if (maxDuration && durationMin > maxDuration) {
+			if (mode === "resize-start") {
+				start = new Date(end.getTime() - maxDuration * 6e4);
+			} else {
+				end = new Date(start.getTime() + maxDuration * 6e4);
+			}
+		}
+	}
+	// Reject if target lands on a disabled date
+	if (disabledDates?.length) {
+		const startDay = new Date(start);
+		startDay.setHours(0, 0, 0, 0);
+		const endDay = new Date(end.getTime() - 1);
+		endDay.setHours(0, 0, 0, 0);
+		for (const dd of disabledDates) {
+			const dt = new Date(dd);
+			dt.setHours(0, 0, 0, 0);
+			const ts = dt.getTime();
+			if (ts >= startDay.getTime() && ts <= endDay.getTime()) return;
+		}
+	}
+	// Reject if target overlaps a blocked slot
+	if (blockedSlots?.length) {
+		const startH = start.getHours() + start.getMinutes() / 60;
+		const endH = end.getHours() + end.getMinutes() / 60 + (end.getDate() !== start.getDate() ? 24 : 0);
+		const jsDay = start.getDay();
+		const isoDay = jsDay === 0 ? 7 : jsDay;
+		for (const slot of blockedSlots) {
+			if (slot.day && slot.day !== isoDay) continue;
+			if (startH < slot.end && endH > slot.start) return;
+		}
+	}
+	if ((mode === "move" || mode === "resize-start" || mode === "resize-end") && payload.eventId) {
+		try {
+			await store.move(payload.eventId, start, end);
+			const ev = store.byId(payload.eventId);
+			if (ev) effectiveMove?.(ev, start, end);
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : "";
+			// Read-only adapter: the store can't persist, but the HOST still
+			// gets the callback — it owns persistence (e.g. scheduler RPC) and
+			// refetches. Missing event stays silent; real failures surface.
+			if (msg.includes("read-only")) {
+				const ev = store.byId(payload.eventId);
+				if (ev) effectiveMove?.(ev, start, end);
+			} else if (!msg.includes("not found")) {
+				if (onerror) onerror(e instanceof Error ? e : new Error(String(e)));
+				else console.warn("[calendar] drag commit failed:", e);
+			}
+		}
+	} else if (mode === "create") {
+		effectiveCreate?.({
+			start,
+			end
+		});
+	}
 }
+// ── Load range signal ──
+// Views can write a wider range here to override the default viewState.range.
+// This lets infinite-scroll views (PlannerWeek) declare their
+// buffer needs without directly calling store.load().
 let viewLoadRange = $state(null);
-const mergedLabels = $derived(
-  labelsProp ? { ...getLabels(), ...labelsProp } : getLabels()
-);
+// Per-instance labels: prop overrides merged over the global set, memoized so
+// views reading ctx.labels per-render don't allocate a fresh object each access.
+//
+// MUST stay above setContext: the context exposes this through a getter, and
+// a view reading ctx.labels while the binding is still uninitialised got the
+// English globals instead — silently, because the fallback in
+// useCalendarContext is `?? getLabels()`. Every localized calendar rendered
+// its empty states in English.
+const mergedLabels = $derived(labelsProp ? {
+	...getLabels(),
+	...labelsProp
+} : getLabels());
 const L = $derived(mergedLabels);
+// ── Single context object ──
+// All view state is exposed through one context key with reactive getters.
+// Views read this via useCalendarContext() from views/shared/context.svelte.ts.
 setContext("calendar", {
-  // Engine objects (hold $state internally)
-  get store() {
-    return store;
-  },
-  viewState,
-  selection,
-  drag,
-  commitDrag,
-  // Callbacks
-  get oneventclick() {
-    return handleEventClick;
-  },
-  get oneventcreate() {
-    return effectiveCreate;
-  },
-  get oneventmove() {
-    return effectiveMove;
-  },
-  get oneventhover() {
-    return oneventhover;
-  },
-  get ondayclick() {
-    return ondayclick ?? defaultDayClick;
-  },
-  get timezone() {
-    return timezone;
-  },
-  // Config (reactive via getters)
-  get readOnly() {
-    return readOnly;
-  },
-  get visibleHours() {
-    return visibleHours;
-  },
-  get snapInterval() {
-    return snapInterval;
-  },
-  get minColumnWidth() {
-    return minColumnWidth;
-  },
-  get eventSnippet() {
-    return eventSnippet;
-  },
-  get emptySnippet() {
-    return emptySnippet;
-  },
-  get equalDays() {
-    return equalDays;
-  },
-  get showDates() {
-    return showDates;
-  },
-  get hideDays() {
-    return hideDays;
-  },
-  get blockedSlots() {
-    return blockedSlots;
-  },
-  get dayHeaderSnippet() {
-    return dayHeaderSnippet;
-  },
-  get minDuration() {
-    return minDuration;
-  },
-  get maxDuration() {
-    return maxDuration;
-  },
-  get disabledDates() {
-    return disabledDates;
-  },
-  get mobile() {
-    return useMobile;
-  },
-  get autoHeight() {
-    return heightProp === "auto";
-  },
-  get compact() {
-    return compact;
-  },
-  get columns() {
-    return columns;
-  },
-  get labels() {
-    return mergedLabels;
-  },
-  // Load range (read/write)
-  get loadRange() {
-    return viewLoadRange;
-  },
-  setLoadRange(range) {
-    viewLoadRange = range;
-  }
+	// Engine objects (hold $state internally)
+	get store() {
+		return store;
+	},
+	viewState,
+	selection,
+	drag,
+	commitDrag,
+	// Callbacks
+	get oneventclick() {
+		return handleEventClick;
+	},
+	get oneventcreate() {
+		return effectiveCreate;
+	},
+	get oneventmove() {
+		return effectiveMove;
+	},
+	get oneventhover() {
+		return oneventhover;
+	},
+	get ondayclick() {
+		return ondayclick ?? defaultDayClick;
+	},
+	get timezone() {
+		return timezone;
+	},
+	// Config (reactive via getters)
+	get readOnly() {
+		return readOnly;
+	},
+	get visibleHours() {
+		return visibleHours;
+	},
+	get snapInterval() {
+		return snapInterval;
+	},
+	get minColumnWidth() {
+		return minColumnWidth;
+	},
+	get eventSnippet() {
+		return eventSnippet;
+	},
+	get emptySnippet() {
+		return emptySnippet;
+	},
+	get equalDays() {
+		return equalDays;
+	},
+	get showDates() {
+		return showDates;
+	},
+	get hideDays() {
+		return hideDays;
+	},
+	get blockedSlots() {
+		return blockedSlots;
+	},
+	get dayHeaderSnippet() {
+		return dayHeaderSnippet;
+	},
+	get minDuration() {
+		return minDuration;
+	},
+	get maxDuration() {
+		return maxDuration;
+	},
+	get disabledDates() {
+		return disabledDates;
+	},
+	get mobile() {
+		return useMobile;
+	},
+	get autoHeight() {
+		return heightProp === "auto";
+	},
+	get compact() {
+		return compact;
+	},
+	get columns() {
+		return columns;
+	},
+	get labels() {
+		return mergedLabels;
+	},
+	// Load range (read/write)
+	get loadRange() {
+		return viewLoadRange;
+	},
+	setLoadRange(range) {
+		viewLoadRange = range;
+	}
 });
+// ── Load events when effective range changes ──
 $effect(() => {
-  const range = viewLoadRange ?? viewState.range;
-  store.load({ start: range.start, end: range.end });
+	const range = viewLoadRange ?? viewState.range;
+	store.load({
+		start: range.start,
+		end: range.end
+	});
 });
-untrack(() => store.load({ start: viewState.range.start, end: viewState.range.end }));
+// Eager initial load — $effect runs after paint, but for sync adapters
+// (memory, recurring) this resolves in the same microtask.
+untrack(() => store.load({
+	start: viewState.range.start,
+	end: viewState.range.end
+}));
+// Keep active view in sync when external view prop changes after mount.
 $effect(() => {
-  if (activeViewId) viewState.setView(activeViewId);
+	if (activeViewId) viewState.setView(activeViewId);
 });
+// Sync controlled currentDate prop → viewState
 $effect(() => {
-  if (currentDate) viewState.setFocusDate(currentDate);
+	if (currentDate) viewState.setFocusDate(currentDate);
 });
+// Sync days prop → viewState.dayCount
 $effect(() => {
-  if (days !== void 0 && viewState.dayCount !== days) viewState.setDayCount(days);
+	if (days !== undefined && viewState.dayCount !== days) viewState.setDayCount(days);
 });
+// Notify host when focusDate changes
 $effect(() => {
-  const d = viewState.focusDate;
-  ondatechange?.(d);
+	const d = viewState.focusDate;
+	ondatechange?.(d);
 });
+// Keep view state's week-start rule in sync with incoming prop changes.
 $effect(() => {
-  if (viewState.mondayStart !== mondayStart) {
-    viewState.setMondayStart(mondayStart);
-  }
+	if (viewState.mondayStart !== mondayStart) {
+		viewState.setMondayStart(mondayStart);
+	}
 });
+// Notify host when active view changes (e.g. via mode toggles).
 $effect(() => {
-  onviewchange?.(viewState.view);
+	onviewchange?.(viewState.view);
 });
+// Surface adapter failures — store.error was previously write-only.
 $effect(() => {
-  if (store.error && onerror) onerror(new Error(store.error));
+	if (store.error && onerror) onerror(new Error(store.error));
 });
+// ── Resolve active view ──
+// When mobile is active, Planner views get remapped to Mobile variants.
+// Agenda views stay as Agenda — they're already list-based and will adapt
+// via the 'calendar:mobile' context flag.
 const resolvedView = $derived.by(() => {
-  const requested = views.find((v) => v.id === viewState.view) ?? views[0];
-  if (!useMobile || !requested) return requested;
-  if (requested.id.endsWith("-mobile")) return requested;
-  if (requested.label === "Agenda") return requested;
-  const mobileVariant = views.find(
-    (v) => v.id === `${requested.mode}-mobile`
-  );
-  return mobileVariant ?? requested;
+	const requested = views.find((v) => v.id === viewState.view) ?? views[0];
+	if (!useMobile || !requested) return requested;
+	// Already a mobile view? Keep it.
+	if (requested.id.endsWith("-mobile")) return requested;
+	// Agenda views: keep as-is (they adapt internally via mobile context).
+	if (requested.label === "Agenda") return requested;
+	// Planner / other views: remap to mobile variant with the same mode.
+	const mobileVariant = views.find((v) => v.id === `${requested.mode}-mobile`);
+	return mobileVariant ?? requested;
 });
+// Backward-compat alias used in the template.
 const activeView = $derived(resolvedView);
+// Non-mobile views for mode pills (exclude mobile entries).
 const desktopViews = $derived(views.filter((v) => !v.id.endsWith("-mobile")));
+// ── Date label (always visible, centered over views) ──
 const dateLabel = $derived.by(() => {
-  if (!showDates) {
-    return "";
-  }
-  if (viewState.mode === "day") {
-    return viewState.focusDate.toLocaleDateString(locale, {
-      weekday: "long",
-      month: "short",
-      day: "numeric"
-    });
-  }
-  if (viewState.mode === "week") {
-    return fmtWeekRange(
-      viewState.range.start.getTime(),
-      locale,
-      viewState.range.end.getTime() - 1
-    );
-  }
-  return viewState.focusDate.toLocaleDateString(locale, {
-    month: "long",
-    year: "numeric"
-  });
+	if (!showDates) {
+		return "";
+	}
+	if (viewState.mode === "day") {
+		return viewState.focusDate.toLocaleDateString(locale, {
+			weekday: "long",
+			month: "short",
+			day: "numeric"
+		});
+	}
+	if (viewState.mode === "week") {
+		// The actual visible span — respects custom day counts (3/5-day views).
+		return fmtWeekRange(viewState.range.start.getTime(), locale, viewState.range.end.getTime() - 1);
+	}
+	return viewState.focusDate.toLocaleDateString(locale, {
+		month: "long",
+		year: "numeric"
+	});
 });
+// Which modes are available?
 const modes = $derived.by(() => {
-  const g = new Set(desktopViews.map((v) => v.mode));
-  return ["day", "week", "month"].filter((key) => g.has(key));
+	const g = new Set(desktopViews.map((v) => v.mode));
+	return [
+		"day",
+		"week",
+		"month"
+	].filter((key) => g.has(key));
 });
-let lastViewLabel = $state(void 0);
+// Remember the last non-month view label so Month → Week round-trips
+// restore the user's chosen view type (Agenda used to downgrade to Planner).
+let lastViewLabel = $state(undefined);
 $effect(() => {
-  const current = views.find((v) => v.id === viewState.view);
-  if (current && current.mode !== "month") lastViewLabel = current.label;
+	const current = views.find((v) => v.id === viewState.view);
+	if (current && current.mode !== "month") lastViewLabel = current.label;
 });
+/** Switch to a different mode (day/week/month), preserving the current view label. */
 function switchMode(g) {
-  const currentView = desktopViews.find((v) => v.id === viewState.view) ?? activeView;
-  const preferredLabel = currentView?.mode === "month" ? lastViewLabel ?? currentView?.label : currentView?.label;
-  const match = desktopViews.find((v) => v.mode === g && v.label === preferredLabel);
-  const fallback = desktopViews.find((v) => v.mode === g);
-  const target = match ?? fallback;
-  if (target) viewState.setView(target.id);
+	const currentView = desktopViews.find((v) => v.id === viewState.view) ?? activeView;
+	const preferredLabel = currentView?.mode === "month" ? lastViewLabel ?? currentView?.label : currentView?.label;
+	const match = desktopViews.find((v) => v.mode === g && v.label === preferredLabel);
+	const fallback = desktopViews.find((v) => v.mode === g);
+	const target = match ?? fallback;
+	if (target) viewState.setView(target.id);
 }
+// ── View-type switcher (Planner ↔ Agenda) ──
+// Distinct labels registered for the current mode; when there's more than
+// one, the header shows a second pill group to switch between them.
 const labelsForMode = $derived.by(() => {
-  const seen = [];
-  for (const v of desktopViews) {
-    if (v.mode === viewState.mode && !seen.includes(v.label)) seen.push(v.label);
-  }
-  return seen;
+	const seen = [];
+	for (const v of desktopViews) {
+		if (v.mode === viewState.mode && !seen.includes(v.label)) seen.push(v.label);
+	}
+	return seen;
 });
 function switchLabel(label) {
-  const target = desktopViews.find((v) => v.mode === viewState.mode && v.label === label);
-  if (target) viewState.setView(target.id);
+	const target = desktopViews.find((v) => v.mode === viewState.mode && v.label === label);
+	if (target) viewState.setView(target.id);
 }
+// Default month → day drill-down: when the host doesn't wire ondayclick,
+// clicking a month cell (or its "+N more") focuses that date in a day view,
+// so the month grid is usable out of the box.
 const defaultDayClick = $derived.by(() => {
-  const target = desktopViews.find((v) => v.mode === "day" && v.label === lastViewLabel) ?? desktopViews.find((v) => v.mode === "day");
-  if (!target) return void 0;
-  return (date) => {
-    viewState.setFocusDate(date);
-    viewState.setView(target.id);
-  };
+	const target = desktopViews.find((v) => v.mode === "day" && v.label === lastViewLabel) ?? desktopViews.find((v) => v.mode === "day");
+	if (!target) return undefined;
+	return (date) => {
+		viewState.setFocusDate(date);
+		viewState.setView(target.id);
+	};
 });
+/** True when the current view range already includes today. */
 const viewIncludesToday = $derived.by(() => {
-  const now = /* @__PURE__ */ new Date();
-  if (viewState.mode === "month") {
-    const f = viewState.focusDate;
-    return f.getMonth() === now.getMonth() && f.getFullYear() === now.getFullYear();
-  }
-  const { start, end } = viewState.range;
-  return now.getTime() >= start.getTime() && now.getTime() < end.getTime();
+	const now = new Date();
+	if (viewState.mode === "month") {
+		// The month grid's range is week-aligned and includes adjacent-month
+		// spill days — compare against the focused month instead.
+		const f = viewState.focusDate;
+		return f.getMonth() === now.getMonth() && f.getFullYear() === now.getFullYear();
+	}
+	const { start, end } = viewState.range;
+	return now.getTime() >= start.getTime() && now.getTime() < end.getTime();
 });
+/** Text direction: explicit prop wins, otherwise derived from the locale. */
 const resolvedDir = $derived.by(() => {
-  if (dir) return dir;
-  if (!locale) return void 0;
-  try {
-    const info = new Intl.Locale(locale);
-    const direction = info.textInfo?.direction ?? info.getTextInfo?.().direction;
-    return direction === "rtl" ? "rtl" : void 0;
-  } catch {
-    return void 0;
-  }
+	if (dir) return dir;
+	if (!locale) return undefined;
+	try {
+		const info = new Intl.Locale(locale);
+		const direction = info.textInfo?.direction ?? info.getTextInfo?.().direction;
+		return direction === "rtl" ? "rtl" : undefined;
+	} catch {
+		return undefined;
+	}
 });
+// ── Keyboard shortcuts (scoped to focus-within-calendar, not global) ──
+// t → today, ←/→ → prev/next. Skips events already handled by views
+// (e.g. month-grid arrow navigation) and anything typed into a field.
 function handleShortcuts(e) {
-  if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
-  const t = e.target;
-  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-  if (e.key === "t" || e.key === "T") {
-    e.preventDefault();
-    viewState.goToday();
-  } else if (e.key === "ArrowLeft") {
-    e.preventDefault();
-    viewState.prev();
-  } else if (e.key === "ArrowRight") {
-    e.preventDefault();
-    viewState.next();
-  }
+	if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+	const t = e.target;
+	if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+	if (e.key === "t" || e.key === "T") {
+		e.preventDefault();
+		viewState.goToday();
+	} else if (e.key === "ArrowLeft") {
+		e.preventDefault();
+		viewState.prev();
+	} else if (e.key === "ArrowRight") {
+		e.preventDefault();
+		viewState.next();
+	}
 }
+/** Header context for custom header snippet */
 const headerCtx = $derived({
-  dateLabel,
-  mode: viewState.mode,
-  modes,
-  switchMode,
-  prev: () => viewState.prev(),
-  next: () => viewState.next(),
-  goToday: () => viewState.goToday(),
-  isViewOnToday: viewIncludesToday,
-  focusDate: viewState.focusDate
+	dateLabel,
+	mode: viewState.mode,
+	modes,
+	switchMode,
+	prev: () => viewState.prev(),
+	next: () => viewState.next(),
+	goToday: () => viewState.goToday(),
+	isViewOnToday: viewIncludesToday,
+	focusDate: viewState.focusDate
 });
+/** Navigation context for custom navigation snippet */
 const navCtx = $derived({
-  prev: () => viewState.prev(),
-  next: () => viewState.next(),
-  goToday: () => viewState.goToday(),
-  isViewOnToday: viewIncludesToday,
-  focusDate: viewState.focusDate,
-  mode: viewState.mode
+	prev: () => viewState.prev(),
+	next: () => viewState.next(),
+	goToday: () => viewState.goToday(),
+	isViewOnToday: viewIncludesToday,
+	focusDate: viewState.focusDate,
+	mode: viewState.mode
 });
 </script>
 

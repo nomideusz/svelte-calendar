@@ -5,7 +5,9 @@ export {
 	TimeGutter,
 	DayHeader,
 	EmptySlot,
+	FloatingPanel,
 } from './primitives/index.js';
+
 
 // ─── Calendar shell ─────────────────────────────────────
 export { Calendar } from './calendar/index.js';

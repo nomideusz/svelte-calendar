@@ -1,4 +1,17 @@
-<script lang="ts">import { createClock } from "../../core/clock.svelte.js";
+<script lang="ts">/**
+* AgendaDay — single-day agenda view.
+*
+* Today ("The Queue"):
+*   3-column layout: Done | Now | Up next (hero).
+*   Answers: "What's coming up next?"
+*
+* Past day ("The Log"):
+*   Quiet chronological record of completed events.
+*
+* Future day ("The Plan"):
+*   Clean numbered schedule list.
+*/
+import { createClock } from "../../core/clock.svelte.js";
 import { sod, DAY_MS, dayNum, isAllDay, isMultiDay } from "../../core/time.js";
 import { weekdayLong, monthLong } from "../../core/locale.js";
 import { useCalendarContext } from "../shared/context.svelte.js";
@@ -7,91 +20,101 @@ import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from "../sha
 const ctx = useCalendarContext();
 const L = $derived(ctx.labels);
 const emptySnippet = $derived(ctx.emptySnippet);
-let {
-  locale,
-  height,
-  events = [],
-  style = "",
-  focusDate,
-  oneventclick,
-  selectedEventId = null
-} = $props();
+let { locale, height, events = [], style = "", focusDate, oneventclick, selectedEventId = null } = $props();
 const clock = createClock(ctx.timezone);
 const viewState = $derived(ctx.viewState);
 const equalDays = $derived(ctx.equalDays);
 const showDates = $derived(ctx.showDates);
+// Calendar's chrome date label renders exactly when showDates is on and
+// already names this day — drop the in-view header so the date never
+// appears twice. Chromeless (showDates=false) hosts keep it as the only
+// label for swipe navigation.
 const hideDayHead = $derived(showDates && !!viewState);
 const isMobile = $derived(ctx.isMobile);
 const autoHeight = $derived(ctx.autoHeight);
 const compact = $derived(ctx.compact);
 const oneventhover = $derived(ctx.oneventhover);
 const disabledSet = $derived(ctx.disabledSet);
+// ── Swipe navigation (mobile, touch only) ──────────
 let swipeStartX = 0;
 let swipeStartY = 0;
 let swipeActive = false;
 const SWIPE_THRESHOLD = 50;
 function onPointerDown(e) {
-  if (!isMobile || e.pointerType !== "touch") return;
-  swipeActive = true;
-  swipeStartX = e.clientX;
-  swipeStartY = e.clientY;
+	if (!isMobile || e.pointerType !== "touch") return;
+	swipeActive = true;
+	swipeStartX = e.clientX;
+	swipeStartY = e.clientY;
 }
 function onPointerUp(e) {
-  if (!swipeActive || e.pointerType !== "touch") return;
-  swipeActive = false;
-  const dx = e.clientX - swipeStartX;
-  const dy = e.clientY - swipeStartY;
-  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-    if (dx > 0) viewState?.prev();
-    else viewState?.next();
-  }
+	if (!swipeActive || e.pointerType !== "touch") return;
+	swipeActive = false;
+	const dx = e.clientX - swipeStartX;
+	const dy = e.clientY - swipeStartY;
+	if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
+		if (dx > 0) viewState?.prev();
+		else viewState?.next();
+	}
 }
 function onPointerCancel() {
-  swipeActive = false;
+	swipeActive = false;
 }
+// ── Format helpers (delegated to shared/format.ts) ──
 const fmt = (d) => fmtTime(d, locale);
 const eta = (ms) => timeUntilMs(ms, clock.tick, L);
 const prog = (ev) => progress(ev, clock.tick);
+// ── Event handlers ──────────────────────────────────
 function handleClick(ev) {
-  oneventclick?.(ev);
+	oneventclick?.(ev);
 }
+// ── Day derivations ─────────────────────────────────
 const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
 const dayEnd = $derived(dayMs + DAY_MS);
 const isToday = $derived(dayMs === clock.today);
 const isTomorrow = $derived(dayMs === clock.today + DAY_MS);
 const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
+/** All events for this day, sorted chronologically */
 const dayEvents = $derived.by(() => {
-  return events.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs).sort((a, b) => a.start.getTime() - b.start.getTime());
+	return events.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs).sort((a, b) => a.start.getTime() - b.start.getTime());
 });
+/** All-day / multi-day events shown in a separate strip */
 const allDayBanner = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
+/** Timed events (non-all-day) for normal slot rendering */
 const timedDayEvents = $derived(dayEvents.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
 const dayCat = $derived.by(() => {
-  const now = clock.tick;
-  const past = [];
-  const current = [];
-  const upcoming = [];
-  for (const ev of timedDayEvents) {
-    const s = ev.start.getTime();
-    const e = ev.end.getTime();
-    if (e <= now) past.push(ev);
-    else if (s <= now && e > now) current.push(ev);
-    else upcoming.push(ev);
-  }
-  return { past, current, upcomingSlots: groupIntoSlots(upcoming), totalUp: upcoming.length };
+	const now = clock.tick;
+	const past = [];
+	const current = [];
+	const upcoming = [];
+	for (const ev of timedDayEvents) {
+		const s = ev.start.getTime();
+		const e = ev.end.getTime();
+		if (e <= now) past.push(ev);
+		else if (s <= now && e > now) current.push(ev);
+		else upcoming.push(ev);
+	}
+	return {
+		past,
+		current,
+		upcomingSlots: groupIntoSlots(upcoming),
+		totalUp: upcoming.length
+	};
 });
+/** Flat list of ALL upcoming events for the "Up next" column. The first
+*  few get card treatment; the rest render as compact rows — busy days
+*  (a city-wide feed) would otherwise drown the queue. */
 const upcomingNext = $derived.by(() => {
-  const all = [];
-  for (const slot of dayCat.upcomingSlots) {
-    for (const ev of slot.events) all.push(ev);
-  }
-  return all;
+	const all = [];
+	for (const slot of dayCat.upcomingSlots) {
+		for (const ev of slot.events) all.push(ev);
+	}
+	return all;
 });
 const UPCOMING_CARDS = 4;
+/** Done list collapses past this many items (most recent stay visible). */
 const DONE_VISIBLE = 3;
 let showAllDone = $state(false);
-const visibleDone = $derived(
-  showAllDone ? dayCat.past : dayCat.past.slice(-DONE_VISIBLE)
-);
+const visibleDone = $derived(showAllDone ? dayCat.past : dayCat.past.slice(-DONE_VISIBLE));
 const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.length - DONE_VISIBLE));
 </script>
 

@@ -10,15 +10,7 @@
 import { createClock } from "../../core/clock.svelte.js";
 import { DAY_MS, sod, isAllDay } from "../../core/time.js";
 import { fmtTime, weekdayShort } from "../../core/locale.js";
-let {
-  events = [],
-  style = "",
-  height = null,
-  locale,
-  focusDate,
-  oneventclick,
-  selectedEventId = null
-} = $props();
+let { events = [], style = "", height = null, locale, focusDate, oneventclick, selectedEventId = null } = $props();
 const ctx = useCalendarContext();
 const L = $derived(ctx.labels);
 const viewState = $derived(ctx.viewState);
@@ -31,127 +23,132 @@ const eventSnippet = $derived(ctx.eventSnippet);
 const loadRangeCtx = $derived(ctx.loadRange);
 const clock = createClock(ctx.timezone);
 const todayMs = $derived(clock.today);
+// Mobile cells are too narrow for text chips (a 55px cell fits ~1 character)
+// and too short for stacked rows — render color dots instead, and let the
+// cell tap (day drill-down) carry the interaction.
 const dotsMode = $derived(isMobile);
 const MAX_CHIPS = 3;
 const range = $derived(viewState?.range);
-const focusMonth = $derived((focusDate ?? /* @__PURE__ */ new Date()).getMonth());
+const focusMonth = $derived((focusDate ?? new Date()).getMonth());
 $effect(() => {
-  if (!loadRangeCtx || !range) return;
-  loadRangeCtx.set({
-    start: new Date(range.start.getTime() - 7 * DAY_MS),
-    end: new Date(range.end.getTime() + 7 * DAY_MS)
-  });
-  return () => loadRangeCtx.set(null);
+	if (!loadRangeCtx || !range) return;
+	loadRangeCtx.set({
+		start: new Date(range.start.getTime() - 7 * DAY_MS),
+		end: new Date(range.end.getTime() + 7 * DAY_MS)
+	});
+	return () => loadRangeCtx.set(null);
 });
+/** Day (ms) whose cell is inline-expanded to show all events (no-ondayclick fallback). */
 let expandedMs = $state(null);
+/** Roving-tabindex anchor: the one cell reachable via Tab. */
 let focusMs = $state(null);
 let bodyEl = $state(null);
 const cellsInteractive = $derived(!!ondayclick);
 const rovingMs = $derived.by(() => {
-  if (!range) return null;
-  const start = sod(range.start.getTime());
-  const end = range.end.getTime();
-  if (focusMs !== null && focusMs >= start && focusMs < end) return focusMs;
-  if (todayMs >= start && todayMs < end) return todayMs;
-  return start;
+	if (!range) return null;
+	const start = sod(range.start.getTime());
+	const end = range.end.getTime();
+	if (focusMs !== null && focusMs >= start && focusMs < end) return focusMs;
+	if (todayMs >= start && todayMs < end) return todayMs;
+	return start;
 });
 function moveFocus(fromMs, deltaDays) {
-  if (!range) return;
-  const target = fromMs + deltaDays * DAY_MS;
-  if (target < sod(range.start.getTime()) || target >= range.end.getTime()) return;
-  focusMs = target;
-  const el = bodyEl?.querySelector(`[data-ms="${target}"]`);
-  el?.focus();
+	if (!range) return;
+	const target = fromMs + deltaDays * DAY_MS;
+	if (target < sod(range.start.getTime()) || target >= range.end.getTime()) return;
+	focusMs = target;
+	const el = bodyEl?.querySelector(`[data-ms="${target}"]`);
+	el?.focus();
 }
 function cellKeydown(e, cell) {
-  switch (e.key) {
-    case "ArrowRight":
-      e.preventDefault();
-      moveFocus(cell.ms, 1);
-      break;
-    case "ArrowLeft":
-      e.preventDefault();
-      moveFocus(cell.ms, -1);
-      break;
-    case "ArrowDown":
-      e.preventDefault();
-      moveFocus(cell.ms, 7);
-      break;
-    case "ArrowUp":
-      e.preventDefault();
-      moveFocus(cell.ms, -7);
-      break;
-    case "Escape":
-      if (expandedMs !== null) {
-        e.preventDefault();
-        expandedMs = null;
-      }
-      break;
-    case "Enter":
-    case " ":
-      if (!cell.isDisabled) {
-        e.preventDefault();
-        ondayclick?.(cell.date);
-      }
-      break;
-  }
+	switch (e.key) {
+		case "ArrowRight":
+			e.preventDefault();
+			moveFocus(cell.ms, 1);
+			break;
+		case "ArrowLeft":
+			e.preventDefault();
+			moveFocus(cell.ms, -1);
+			break;
+		case "ArrowDown":
+			e.preventDefault();
+			moveFocus(cell.ms, 7);
+			break;
+		case "ArrowUp":
+			e.preventDefault();
+			moveFocus(cell.ms, -7);
+			break;
+		case "Escape":
+			if (expandedMs !== null) {
+				e.preventDefault();
+				expandedMs = null;
+			}
+			break;
+		case "Enter":
+		case " ":
+			if (!cell.isDisabled) {
+				e.preventDefault();
+				ondayclick?.(cell.date);
+			}
+			break;
+	}
 }
 function overflowClick(e, cell) {
-  e.stopPropagation();
-  if (ondayclick) ondayclick(cell.date);
-  else expandedMs = expandedMs === cell.ms ? null : cell.ms;
+	e.stopPropagation();
+	if (ondayclick) ondayclick(cell.date);
+	else expandedMs = expandedMs === cell.ms ? null : cell.ms;
 }
 function cellLabel(cell) {
-  const date = cell.date.toLocaleDateString(locale, {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  });
-  return `${date}, ${L.nEvents(cell.all.length)}`;
+	const date = cell.date.toLocaleDateString(locale, {
+		weekday: "long",
+		day: "numeric",
+		month: "long"
+	});
+	return `${date}, ${L.nEvents(cell.all.length)}`;
 }
 function eventsForDay(ms) {
-  const dayStart = ms;
-  const dayEnd = ms + DAY_MS;
-  return events.filter((e) => e.start.getTime() < dayEnd && e.end.getTime() > dayStart).sort((a, b) => {
-    const aAll = isAllDay(a) ? 0 : 1;
-    const bAll = isAllDay(b) ? 0 : 1;
-    return aAll - bAll || a.start.getTime() - b.start.getTime();
-  });
+	const dayStart = ms;
+	const dayEnd = ms + DAY_MS;
+	return events.filter((e) => e.start.getTime() < dayEnd && e.end.getTime() > dayStart).sort((a, b) => {
+		const aAll = isAllDay(a) ? 0 : 1;
+		const bAll = isAllDay(b) ? 0 : 1;
+		return aAll - bAll || a.start.getTime() - b.start.getTime();
+	});
 }
 const weeks = $derived.by(() => {
-  if (!range) return [];
-  const rows = [];
-  for (let ms = sod(range.start.getTime()); ms < range.end.getTime(); ms += 7 * DAY_MS) {
-    const row = [];
-    for (let i = 0; i < 7; i++) {
-      const cellMs = ms + i * DAY_MS;
-      const date = new Date(cellMs);
-      const jsDay = date.getDay();
-      const dayEvents = eventsForDay(cellMs);
-      row.push({
-        ms: cellMs,
-        date,
-        dayNum: date.getDate(),
-        inMonth: date.getMonth() === focusMonth,
-        isToday: cellMs === todayMs,
-        isWeekend: jsDay === 0 || jsDay === 6,
-        isDisabled: disabledSet.has(cellMs),
-        chips: dayEvents.slice(0, MAX_CHIPS),
-        all: dayEvents,
-        overflow: Math.max(0, dayEvents.length - MAX_CHIPS)
-      });
-    }
-    rows.push(row);
-  }
-  return rows;
+	if (!range) return [];
+	const rows = [];
+	for (let ms = sod(range.start.getTime()); ms < range.end.getTime(); ms += 7 * DAY_MS) {
+		const row = [];
+		for (let i = 0; i < 7; i++) {
+			const cellMs = ms + i * DAY_MS;
+			const date = new Date(cellMs);
+			const jsDay = date.getDay();
+			const dayEvents = eventsForDay(cellMs);
+			row.push({
+				ms: cellMs,
+				date,
+				dayNum: date.getDate(),
+				inMonth: date.getMonth() === focusMonth,
+				isToday: cellMs === todayMs,
+				isWeekend: jsDay === 0 || jsDay === 6,
+				isDisabled: disabledSet.has(cellMs),
+				chips: dayEvents.slice(0, MAX_CHIPS),
+				all: dayEvents,
+				overflow: Math.max(0, dayEvents.length - MAX_CHIPS)
+			});
+		}
+		rows.push(row);
+	}
+	return rows;
 });
 const weekdayLabels = $derived.by(() => {
-  const first = weeks[0];
-  if (!first) return [];
-  return first.map((c) => weekdayShort(c.ms, locale));
+	const first = weeks[0];
+	if (!first) return [];
+	return first.map((c) => weekdayShort(c.ms, locale));
 });
 function chipTime(e) {
-  return isAllDay(e) ? "" : fmtTime(e.start, locale);
+	return isAllDay(e) ? "" : fmtTime(e.start, locale);
 }
 </script>
 
