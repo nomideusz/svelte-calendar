@@ -1,4 +1,6 @@
 import { dev } from '$app/env';
-import { injectAnalytics } from '@vercel/analytics/sveltekit';
+// Core inject, not `@vercel/analytics/sveltekit` — that wrapper still imports
+// `$app/stores`, which kit 3 removed.
+import { inject } from '@vercel/analytics';
 
-injectAnalytics({ mode: dev ? 'development' : 'production' });
+inject({ mode: dev ? 'development' : 'production' });
