@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.16.0
+
+### Minor Changes
+
+- Adapters can answer synchronously: `CalendarAdapter.fetchEventsSync?(range)`
+  (return `undefined` to fall through to `fetchEvents`). `createMemoryAdapter`
+  and `createRecurringAdapter` implement it, and the event store prefers it —
+  a server render carries the events and the client hydrates the same rows
+  with no loading state.
+- `withInitialEvents(adapter, events)`: seed an async adapter's first load
+  with events the server computed; later loads go to the real adapter.
+- `createRangeAgenda(...).refresh()`: load the current window again.
+- Text fitting on `@chenglou/pretext` (new dependency): `fits`, `lineCount`,
+  `textHeight`, `pickFit`, `fontOf`, the `fitLabel(candidates)` attachment,
+  `breakLines(text, font, width)` (Knuth-Plass over spaces and soft hyphens,
+  TeX scoring) and the `typeset(text)` attachment that sets a paragraph as
+  justified block-span lines with an overflow guard. Browser-only.
+
 ## 0.15.2
 
 ### Patch Changes

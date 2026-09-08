@@ -5684,6 +5684,11 @@ createHTML: (html) => {
 		function upsertEvent(ev) {
 			eventMap.set(ev.id, ev);
 		}
+		function merge(fetched, range) {
+			const keep = new Set(fetched.map((ev) => ev.id));
+			for (const ev of [...eventMap.values()]) if (!keep.has(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
+			for (const ev of fetched) upsertEvent(ev);
+		}
 		return {
 			get events() {
 				return get(eventArray);
@@ -5696,14 +5701,19 @@ createHTML: (html) => {
 			},
 			async load(range) {
 				const seq = ++loadSeq;
+				const adapter = getAdapter();
+				const sync = adapter.fetchEventsSync?.(range);
+				if (sync) {
+					set(error, null);
+					untrack(() => merge(sync, range));
+					return;
+				}
 				set(loading, true);
 				set(error, null);
 				try {
-					const fetched = await getAdapter().fetchEvents(range);
+					const fetched = await adapter.fetchEvents(range);
 					if (seq !== loadSeq) return;
-					const keep = new Set(fetched.map((ev) => ev.id));
-					for (const ev of [...eventMap.values()]) if (!keep.has(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
-					for (const ev of fetched) upsertEvent(ev);
+					merge(fetched, range);
 				} catch (e) {
 					set(error, e instanceof Error ? e.message : String(e), true);
 				} finally {
@@ -12493,9 +12503,11 @@ createHTML: (html) => {
 		function overlaps(ev, range) {
 			return ev.start < range.end && ev.end > range.start;
 		}
+		const fetchEventsSync = (range) => events.filter((ev) => overlaps(ev, range)).map(withColor);
 		return {
+			fetchEventsSync,
 			async fetchEvents(range) {
-				return events.filter((ev) => overlaps(ev, range)).map(withColor);
+				return fetchEventsSync(range);
 			},
 			async createEvent(data) {
 				const ev = {

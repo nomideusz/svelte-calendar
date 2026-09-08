@@ -26,9 +26,11 @@ export function createMemoryAdapter(initial = [], options) {
     function overlaps(ev, range) {
         return ev.start < range.end && ev.end > range.start;
     }
+    const fetchEventsSync = (range) => events.filter((ev) => overlaps(ev, range)).map(withColor);
     return {
+        fetchEventsSync,
         async fetchEvents(range) {
-            return events.filter((ev) => overlaps(ev, range)).map(withColor);
+            return fetchEventsSync(range);
         },
         async createEvent(data) {
             const ev = { ...data, id: uid() };

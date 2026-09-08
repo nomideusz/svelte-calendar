@@ -8,6 +8,7 @@ export type { RecurringEvent, RecurringAdapterOptions } from './recurring.js';
 export { createMappedAdapter } from './mapped.js';
 export type { FieldMapping, MappedAdapterOptions, MutationHandler } from './mapped.js';
 export { createCompositeAdapter } from './composite.js';
+export { withInitialEvents } from './seeded.js';
 export type { CompositeAdapterOptions } from './composite.js';
 export { createJmapAdapter } from './jmap.js';
 export type { JmapClient, JmapCalendarAdapterOptions } from './jmap.js';

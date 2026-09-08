@@ -434,8 +434,7 @@ export function createRecurringAdapter(
 		return colorAssignments.get(key);
 	}
 
-	return {
-		async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
+	const fetchEventsSync = (range: DateRange): TimelineEvent[] => {
 			const events: TimelineEvent[] = [];
 
 			for (const rec of schedule) {
@@ -471,6 +470,12 @@ export function createRecurringAdapter(
 			}
 
 			return events;
+	};
+
+	return {
+		fetchEventsSync,
+		async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
+			return fetchEventsSync(range);
 		},
 
 		// Read-only adapter: CRUD methods intentionally omitted.

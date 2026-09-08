@@ -16,6 +16,7 @@
  *   // store.load()       — fetch from adapter for a range
  */
 import { SvelteMap } from 'svelte/reactivity';
+import { untrack } from 'svelte';
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
 import { sod, DAY_MS } from '../core/time.js';
@@ -80,6 +81,17 @@ export function createEventStore(adapter: CalendarAdapter | (() => CalendarAdapt
 		eventMap.set(ev.id, ev);
 	}
 
+	// Merge: upsert fetched, don't blow away events outside this range.
+	// Inside the range the adapter is authoritative — drop what it no
+	// longer returns, or deleted/moved events linger until remount.
+	function merge(fetched: TimelineEvent[], range: DateRange): void {
+		const keep = new Set(fetched.map((ev) => ev.id));
+		for (const ev of [...eventMap.values()]) {
+			if (!keep.has(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
+		}
+		for (const ev of fetched) upsertEvent(ev);
+	}
+
 	// ── Public API ──
 	return {
 		get events() {
@@ -94,21 +106,23 @@ export function createEventStore(adapter: CalendarAdapter | (() => CalendarAdapt
 
 		async load(range: DateRange) {
 			const seq = ++loadSeq;
+			const adapter = getAdapter();
+			// In-memory adapters answer at once: no loading state, and a server
+			// render already holds the events.
+			const sync = adapter.fetchEventsSync?.(range);
+			if (sync) {
+				error = null;
+				// Callers load from an effect; reading the map here would make that
+				// effect depend on what it writes.
+				untrack(() => merge(sync, range));
+				return;
+			}
 			loading = true;
 			error = null;
 			try {
-				const fetched = await getAdapter().fetchEvents(range);
+				const fetched = await adapter.fetchEvents(range);
 				if (seq !== loadSeq) return; // superseded by a newer load
-				// Merge: upsert fetched, don't blow away events outside this range.
-				// Inside the range the adapter is authoritative — drop what it no
-				// longer returns, or deleted/moved events linger until remount.
-				const keep = new Set(fetched.map((ev) => ev.id));
-				for (const ev of [...eventMap.values()]) {
-					if (!keep.has(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
-				}
-				for (const ev of fetched) {
-					upsertEvent(ev);
-				}
+				merge(fetched, range);
 			} catch (e) {
 				error = e instanceof Error ? e.message : String(e);
 			} finally {

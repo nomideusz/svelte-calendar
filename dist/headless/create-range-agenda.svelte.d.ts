@@ -52,6 +52,8 @@ export interface HeadlessRangeAgenda {
     goToday(): void;
     /** Set the window start to a specific date */
     setDate(date: Date): void;
+    /** Load the current window again — after a seeded first render, or a write elsewhere */
+    refresh(): void;
     /** Format a Date to locale time string (e.g. "14:30") */
     fmtTime(date: Date): string;
     /** Format event duration (e.g. "1h 30m") */

@@ -759,6 +759,8 @@ Small helpers used by the built-in views, exported for custom rendering:
 | `isAllDay(ev)` / `isMultiDay(ev)` | Event classification |
 | `segmentForDay(ev, dayMs)` | The slice of a multi-day event that falls on one day |
 | `createClock()` | Reactive clock (`tick`, `today`) driving now-lines and relative labels |
+| `typeset(text)` / `breakLines(text, font, width)` | Knuth-Plass paragraph breaking over the text's own spaces and soft hyphens, measured with pretext. `<p {@attach typeset(text)}>` sets justified block-span lines, re-done on resize; if the browser disagrees with the measure the plain text goes back. Progressive — SSR text stays. |
+| `fitLabel([long, short])` / `pickFit` / `fits` / `textHeight` | Text fitting via [pretext](https://github.com/chenglou/pretext) — measure before render, no layout thrash. `<span class="eb-title" {@attach fitLabel([ev.title, ev.short])}>` keeps the longest label that fits. Browser-only. |
 
 ## Embeddable Widget
 

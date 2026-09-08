@@ -58,9 +58,13 @@ export function createMemoryAdapter(
 		return ev.start < range.end && ev.end > range.start;
 	}
 
+	const fetchEventsSync = (range: DateRange): TimelineEvent[] =>
+		events.filter((ev) => overlaps(ev, range)).map(withColor);
+
 	return {
+		fetchEventsSync,
 		async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
-			return events.filter((ev) => overlaps(ev, range)).map(withColor);
+			return fetchEventsSync(range);
 		},
 
 		async createEvent(

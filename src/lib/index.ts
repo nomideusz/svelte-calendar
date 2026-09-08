@@ -38,7 +38,7 @@ export type {
 } from './engine/index.js';
 
 // ─── Adapters ───────────────────────────────────────────
-export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter } from './adapters/index.js';
+export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter, withInitialEvents } from './adapters/index.js';
 export type {
 	CalendarAdapter,
 	WritableCalendarAdapter,
@@ -119,3 +119,6 @@ export type {
 	RangeAgendaDay,
 	HeadlessRangeAgenda,
 } from './headless/index.js';
+
+// ─── Text fitting (pretext) ─────────────────────────────
+export { fits, lineCount, textHeight, pickFit, fontOf, fitLabel, breakLines, typeset } from './text-fit.js';

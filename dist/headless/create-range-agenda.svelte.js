@@ -103,6 +103,9 @@ export function createRangeAgenda(options) {
         setDate(date) {
             startMs = sod(date.getTime());
         },
+        refresh() {
+            void store.load({ start: new Date(startMs), end: new Date(endMs) });
+        },
         fmtTime: (d) => _fmtTime(d, locale),
         fmtDuration: (ev) => fmtDuration(ev.start, ev.end),
         fmtRange: (ev) => `${_fmtTime(ev.start, locale)} – ${_fmtTime(ev.end, locale)}`,

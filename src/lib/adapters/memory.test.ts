@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createMemoryAdapter } from './memory.js';
+import { withInitialEvents } from './seeded.js';
 import type { TimelineEvent } from '../core/types.js';
 import type { DateRange } from './types.js';
 
@@ -174,5 +175,23 @@ describe('createMemoryAdapter', () => {
 			events = await adapter.fetchEvents(MARCH_WEEK);
 			expect(events).toHaveLength(0);
 		});
+	});
+});
+
+describe('withInitialEvents', () => {
+	const range: DateRange = { start: new Date(2025, 0, 6), end: new Date(2025, 0, 13) };
+	const seed: TimelineEvent = { id: 's', title: 'Seed', start: new Date(2025, 0, 7, 9), end: new Date(2025, 0, 7, 10) };
+	const live: TimelineEvent = { id: 'l', title: 'Live', start: new Date(2025, 0, 7, 9), end: new Date(2025, 0, 7, 10) };
+
+	it('answers the first load with the seed, then defers to the real adapter', async () => {
+		const a = withInitialEvents(createMemoryAdapter([live]), [seed]);
+		expect(a.fetchEventsSync!(range)?.map((e) => e.id)).toEqual(['s']);
+		expect(a.fetchEventsSync!(range)?.map((e) => e.id)).toEqual(['l']);
+		expect((await a.fetchEvents(range)).map((e) => e.id)).toEqual(['l']);
+	});
+	it('sends later loads async when the real adapter has no sync path', () => {
+		const a = withInitialEvents({ async fetchEvents() { return [live]; } }, [seed]);
+		expect(a.fetchEventsSync!(range)).toEqual([seed]);
+		expect(a.fetchEventsSync!(range)).toBeUndefined();
 	});
 });

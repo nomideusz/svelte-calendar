@@ -145,4 +145,19 @@ describe('createRangeAgenda', () => {
 			expect(agenda.count).toBe(0);
 		});
 	});
+
+	it('renders memory-adapter events synchronously — no loading state, server-render safe', () => {
+		const start = new Date(2025, 0, 6);
+		const ev = { id: 'a', title: 'Hatha', start: new Date(2025, 0, 7, 9), end: new Date(2025, 0, 7, 10) };
+		let count = -1;
+		let loading = true;
+		const cleanup = $effect.root(() => {
+			const agenda = createRangeAgenda({ adapter: createMemoryAdapter([ev]), initialDate: start });
+			count = agenda.count;
+			loading = agenda.loading;
+		});
+		expect(count).toBe(1);
+		expect(loading).toBe(false);
+		cleanup();
+	});
 });

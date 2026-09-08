@@ -252,38 +252,42 @@ export function createRecurringAdapter(schedule, options = {}) {
         const key = rec.category ?? rec.title;
         return colorAssignments.get(key);
     }
-    return {
-        async fetchEvents(range) {
-            const events = [];
-            for (const rec of schedule) {
-                const colored = { ...rec, color: resolveColor(rec) };
-                const freq = rec.frequency ?? 'weekly';
-                // Parse bounds
-                const sd = rec.startDate ? parseDate(rec.startDate) : undefined;
-                const untilDate = rec.until ? parseDate(rec.until) : undefined;
-                const countUntil = sd
-                    ? computeUntilFromCount(rec, sd, mondayStart)
-                    : undefined;
-                // Effective until = tighter of the two bounds
-                let effectiveUntil = untilDate;
-                if (countUntil) {
-                    effectiveUntil = effectiveUntil
-                        ? countUntil < effectiveUntil ? countUntil : effectiveUntil
-                        : countUntil;
-                }
-                switch (freq) {
-                    case 'daily':
-                        projectDaily(colored, range, sd, effectiveUntil, events);
-                        break;
-                    case 'weekly':
-                        projectWeekly(colored, range, sd, effectiveUntil, mondayStart, events);
-                        break;
-                    case 'monthly':
-                        projectMonthly(colored, range, sd, effectiveUntil, events);
-                        break;
-                }
+    const fetchEventsSync = (range) => {
+        const events = [];
+        for (const rec of schedule) {
+            const colored = { ...rec, color: resolveColor(rec) };
+            const freq = rec.frequency ?? 'weekly';
+            // Parse bounds
+            const sd = rec.startDate ? parseDate(rec.startDate) : undefined;
+            const untilDate = rec.until ? parseDate(rec.until) : undefined;
+            const countUntil = sd
+                ? computeUntilFromCount(rec, sd, mondayStart)
+                : undefined;
+            // Effective until = tighter of the two bounds
+            let effectiveUntil = untilDate;
+            if (countUntil) {
+                effectiveUntil = effectiveUntil
+                    ? countUntil < effectiveUntil ? countUntil : effectiveUntil
+                    : countUntil;
             }
-            return events;
+            switch (freq) {
+                case 'daily':
+                    projectDaily(colored, range, sd, effectiveUntil, events);
+                    break;
+                case 'weekly':
+                    projectWeekly(colored, range, sd, effectiveUntil, mondayStart, events);
+                    break;
+                case 'monthly':
+                    projectMonthly(colored, range, sd, effectiveUntil, events);
+                    break;
+            }
+        }
+        return events;
+    };
+    return {
+        fetchEventsSync,
+        async fetchEvents(range) {
+            return fetchEventsSync(range);
         },
         // Read-only adapter: CRUD methods intentionally omitted.
         // Use createMemoryAdapter or createRestAdapter for mutations.

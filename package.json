@@ -1,6 +1,6 @@
 {
   "name": "@nomideusz/svelte-calendar",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "description": "A themeable Svelte 5 calendar with Day and Week views — Planner and Agenda.",
   "type": "module",
   "sideEffects": [
@@ -61,6 +61,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.9",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0"
   },

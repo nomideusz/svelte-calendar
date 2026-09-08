@@ -97,6 +97,8 @@ export interface HeadlessRangeAgenda {
 	goToday(): void;
 	/** Set the window start to a specific date */
 	setDate(date: Date): void;
+	/** Load the current window again — after a seeded first render, or a write elsewhere */
+	refresh(): void;
 
 	// ── Format helpers ──
 
@@ -186,6 +188,9 @@ export function createRangeAgenda(options: RangeAgendaOptions): HeadlessRangeAge
 		},
 		setDate(date: Date) {
 			startMs = sod(date.getTime());
+		},
+		refresh() {
+			void store.load({ start: new Date(startMs), end: new Date(endMs) });
 		},
 
 		fmtTime: (d: Date) => _fmtTime(d, locale),
