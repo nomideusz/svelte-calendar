@@ -64,7 +64,7 @@ export default defineConfig({
 			fileName: () => 'widget.js',
 		},
 		outDir: 'widget',
-		emptyOutDir: true,
+		emptyOutDir: false, // widget/widget.d.ts is tracked; only widget.js is emitted here
 		minify: false,
 		rollupOptions: {
 			output: {
