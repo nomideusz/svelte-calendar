@@ -35,6 +35,10 @@ describe('text-fit', () => {
 		// greedy would give "aaa bbb" / "ccc ddd" / "eee fff" too — an even case
 		expect(lines).toEqual(['aaa bbb', 'ccc ddd', 'eee fff']);
 	});
+	it('treats a stored line break as a space, and keeps a no-break space glued', () => {
+		expect(breakLines('aaa\nbbb ccc', 'f', 42)).toEqual(['aaa bbb', 'ccc']);
+		expect(breakLines('aaa\u00a0bbb ccc', 'f', 42)).toEqual(['aaa\u00a0bbb', 'ccc']);
+	});
 	it('breaks inside a word only at a soft hyphen, and shows the hyphen', () => {
 		const lines = breakLines('aaaa\u00ADbbbb cc', 'f', 30);
 		expect(lines).toEqual(['aaaa-', 'bbbb', 'cc']);

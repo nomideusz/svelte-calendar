@@ -53,7 +53,9 @@ export function breakLines(text, font, width) {
     const measure = (s) => measureNaturalWidth(prepareWithSegments(s, font));
     const boxes = [];
     const glue = []; // glue[i] sits between boxes[i] and boxes[i + 1]
-    const words = text.split(' ').filter(Boolean);
+    // Any whitespace run is one space to `white-space: normal` — a stored line
+    // break included. Only a no-break space keeps its neighbours in one box.
+    const words = text.split(/[^\S\u00a0]+/).filter(Boolean);
     words.forEach((w, wi) => {
         const frags = w.split(SHY);
         frags.forEach((f, fi) => {

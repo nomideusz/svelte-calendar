@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.1
+
+### Patch Changes
+
+- `breakLines`: any whitespace run is a break opportunity, not only a plain
+  space. A stored line break inside a paragraph was measured as one
+  unbreakable box, which `typeset` then set alone on a line and the browser
+  stretched across the column. No-break spaces still glue their neighbours.
+
 ## 0.16.0
 
 ### Minor Changes
