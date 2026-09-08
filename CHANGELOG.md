@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.2
+
+### Patch Changes
+
+- FloatingPanel: the body scrolls instead of overflowing. It is a flex child
+  and defaulted to `min-height: auto`, so a form taller than the panel's
+  max-height ran past it into the part of a fixed element nothing can scroll
+  to — the bottom of a long editor was simply cut off. `flex: 1 1 auto;
+  min-height: 0` lets the body take the leftover height and scroll.
+
 ## 0.15.1
 
 ### Patch Changes

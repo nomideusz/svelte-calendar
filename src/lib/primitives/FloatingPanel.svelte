@@ -193,6 +193,12 @@
 		color: var(--dt-text, #111);
 	}
 	.fp-body {
+		/* A flex child defaults to min-height:auto and never shrinks below its
+		   content — so a tall form ran past the panel's max-height, into the
+		   part of a fixed element nothing can scroll to. This is what lets the
+		   body scroll instead. */
+		flex: 1 1 auto;
+		min-height: 0;
 		overflow: auto;
 		overscroll-behavior: contain;
 	}
