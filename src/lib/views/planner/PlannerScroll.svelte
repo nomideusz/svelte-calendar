@@ -102,7 +102,7 @@
 	// mount re-centres once the events have landed.
 	const CHIP_H = 22;           // one chip — these stay uniform
 	const CHIP_GAP = 3;
-	const ROW_MIN = 170;         // a quiet week still reads as a week
+	const ROW_MIN = 120;         // a floor, not a default — a quiet week is short
 	const ROW_MARGIN = 12;       // vertical margin around a row (see .wg-week)
 	/** Distance between two rows' tops; only a fallback now. */
 	function rowPitch(): number {
@@ -471,10 +471,13 @@
 	}
 
 	// ─── Chip labels ────────────────────────────────
-	// A chip is one line and holds more than fits. It gives up the room first
-	// and the time second, rather than letting CSS cut the title mid-letter;
-	// createChipFit measures, fitParts decides. Before the first measurement
-	// (SSR, first paint) a chip is its title.
+	// A chip is one line and holds more than fits: it gives up the room, and
+	// only the room. The time stays whatever happens — this is a schedule, and
+	// "18:00 Hatha dla p…" answers more than an untruncated title does. (The
+	// time was briefly droppable, to buy the title room to fit whole. It
+	// usually bought nothing: a title long enough to push the time out was
+	// long enough to be cut anyway, so the chip lost its time for no gain.)
+	// createChipFit measures, fitParts decides.
 	const CHIP_PAD_X = 12; // .wg-ev horizontal padding
 	const CHIP_GAP_X = 5;  // .wg-ev column gap
 	const fit = createChipFit({
@@ -484,9 +487,9 @@
 	function chipParts(ev: TimelineEvent): Record<string, boolean> {
 		return fit.parts(
 			[
+				{ key: 'time', text: fmtAmPm(ev.start), font: fit.fonts.time, priority: 0, extra: CHIP_GAP_X },
 				{ key: 'title', text: ev.title, font: fit.fonts.title, priority: 0 },
-				{ key: 'time', text: fmtAmPm(ev.start), font: fit.fonts.time, priority: 1, extra: CHIP_GAP_X },
-				{ key: 'room', text: ev.location ?? '', font: fit.fonts.room, priority: 2, extra: CHIP_GAP_X },
+				{ key: 'room', text: ev.location ?? '', font: fit.fonts.room, priority: 1, extra: CHIP_GAP_X },
 			],
 			CHIP_PAD_X,
 		);

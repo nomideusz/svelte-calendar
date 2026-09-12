@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.20.1
+
+### Patch Changes
+
+- `week-scroll` chips keep their time. It was droppable, to buy a long title
+  the room to fit whole; on real data it usually bought nothing, because a
+  title long enough to push the time out was long enough to be cut anyway —
+  so the chip lost its time and stayed truncated. The room is the only part
+  given up now, and "18:00 Hatha dla p…" answers what a schedule is asked.
+- A quiet week no longer costs a screenful: the row floor is 120px, and it is
+  a floor rather than a default, so busy weeks are unchanged.
+
 ## 0.20.0
 
 ### Minor Changes

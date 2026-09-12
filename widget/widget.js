@@ -15528,7 +15528,7 @@ createHTML: (html) => {
 		const MAX_EVENTS_SHOWN = 5;
 		function rowPitch() {
 			const rows = el?.querySelectorAll("[data-week]");
-			return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 182;
+			return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 132;
 		}
 		const _initMs = untrack(() => sod($$props.focusDate?.getTime() ?? Date.now()));
 		let internalFocusMs = /* @__PURE__ */ state(proxy(_initMs));
@@ -15814,23 +15814,23 @@ createHTML: (html) => {
 		function chipParts(ev) {
 			return fit.parts([
 				{
+					key: "time",
+					text: fmtAmPm(ev.start),
+					font: fit.fonts.time,
+					priority: 0,
+					extra: CHIP_GAP_X
+				},
+				{
 					key: "title",
 					text: ev.title,
 					font: fit.fonts.title,
 					priority: 0
 				},
 				{
-					key: "time",
-					text: fmtAmPm(ev.start),
-					font: fit.fonts.time,
-					priority: 1,
-					extra: CHIP_GAP_X
-				},
-				{
 					key: "room",
 					text: ev.location ?? "",
 					font: fit.fonts.room,
-					priority: 2,
+					priority: 1,
 					extra: CHIP_GAP_X
 				}
 			], CHIP_PAD_X);
@@ -16254,7 +16254,7 @@ createHTML: (html) => {
 			classes = set_class(div, 1, "wg svelte-l8xuza", null, classes, { "wg--auto": get(autoHeight) });
 			styles = set_style(div, style() || void 0, styles, {
 				height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%",
-				"--wg-row-min": "170px",
+				"--wg-row-min": "120px",
 				"--wg-chip-h": "22px",
 				"--wg-chip-gap": "3px",
 				"--wg-row-margin": "12px"
