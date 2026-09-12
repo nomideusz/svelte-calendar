@@ -33,10 +33,13 @@ That's it — 6 views (Day/Week × Planner, Agenda, Mobile), auto-coloring, drag
 
 ## Views
 
-Switch between **Planner** (time grid), **Agenda** (list) and the **Month** grid:
+Switch between **Planner** (time grid), **Scroll** (weeks stacked in one
+vertical scroller — drag to move, drop onto a day, scrolls under a drag),
+**Agenda** (list) and the **Month** grid:
 
 ```svelte
 <Calendar {adapter} view="week-planner" />  <!-- default -->
+<Calendar {adapter} view="week-scroll" />
 <Calendar {adapter} view="day-planner" />
 <Calendar {adapter} view="week-agenda" />
 <Calendar {adapter} view="day-agenda" />
@@ -760,7 +763,9 @@ Small helpers used by the built-in views, exported for custom rendering:
 | `segmentForDay(ev, dayMs)` | The slice of a multi-day event that falls on one day |
 | `createClock()` | Reactive clock (`tick`, `today`) driving now-lines and relative labels |
 | `typeset(text)` / `breakLines(text, font, width)` | Knuth-Plass paragraph breaking over the text's own spaces and soft hyphens, measured with pretext. `<p {@attach typeset(text)}>` sets justified block-span lines, re-done on resize; if the browser disagrees with the measure the plain text goes back. Progressive — SSR text stays. |
-| `fitLabel([long, short])` / `pickFit` / `fits` / `textHeight` | Text fitting via [pretext](https://github.com/chenglou/pretext) — measure before render, no layout thrash. `<span class="eb-title" {@attach fitLabel([ev.title, ev.short])}>` keeps the longest label that fits. Browser-only. |
+| `fitLabel([long, short])` / `pickFit` / `fits` / `textHeight` / `textWidth` | Text fitting via [pretext](https://github.com/chenglou/pretext) — measure before render, no layout thrash. `<span class="eb-title" {@attach fitLabel([ev.title, ev.short])}>` keeps the longest label that fits. Browser-only. |
+| `createRecurringAdapter(schedule, { movable })` | Projects a repeating schedule. Occurrences are read-only unless `movable` is set — the adapter stores nothing, so a host that opts in must handle `oneventmove` itself: add the date to the rule's `excludeDates` and keep the moved occurrence wherever its one-off events live. |
+| `fitParts(parts, budget)` | Which parts of a dense chip fit, along either axis. Each part is `{ key, text, font }` to measure or `{ key, size }` to state its cost, plus `priority` (`0` never drops, higher goes first) and `extra` for a gap or icon. Anchors always show — they are what earns the ellipsis — and the first part that does not fit ends it, so a chip never keeps a later detail after dropping an earlier one. A budget of `0` (server-rendered, not yet measured) leaves the anchors. |
 
 ## Embeddable Widget
 

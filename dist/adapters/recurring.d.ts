@@ -44,6 +44,12 @@ export interface RecurringEvent {
      */
     until?: string;
     /**
+     * Dates this rule skips, `"YYYY-MM-DD"`. The occurrence is simply not
+     * projected — this is how a host takes one occurrence out of its rule
+     * (moved, cancelled, or replaced by a one-off it stores itself).
+     */
+    excludeDates?: string[];
+    /**
      * Maximum number of occurrences, counted from `startDate`.
      * Alternative to `until` — if both are set the stricter bound wins.
      * Requires `startDate`.
@@ -74,6 +80,16 @@ export interface RecurringAdapterOptions {
      * Defaults to the built-in vivid palette.
      */
     palette?: string[];
+    /**
+     * Let projected occurrences be dragged (default: `false`).
+     *
+     * Off, every occurrence carries `data.readOnly` and the views refuse to
+     * move it — correct, because this adapter projects and cannot store the
+     * result. Turn it on when YOU can: handle `oneventmove`, add that date to
+     * the rule's `excludeDates`, and keep the moved occurrence wherever your
+     * one-off events live. A read-only occurrence can always be clicked.
+     */
+    movable?: boolean;
 }
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete

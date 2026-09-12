@@ -32,6 +32,7 @@
 	import { probeHostTheme, observeHostTheme } from '../theme/auto.js';
 	import type { AutoThemeOptions } from '../theme/auto.js';
 	import Planner from '../views/planner/Planner.svelte';
+	import PlannerScroll from '../views/planner/PlannerScroll.svelte';
 	import Agenda from '../views/agenda/Agenda.svelte';
 	import Mobile from '../views/mobile/Mobile.svelte';
 	import MonthGrid from '../views/month/MonthGrid.svelte';
@@ -164,6 +165,10 @@
 		oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
 
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
+		/** An HTML5 drag from outside the calendar dropped on the planner grid
+		 *  (a class chip, a template): the pointer's time, snapped, as a real
+		 *  instant — plus the drag's dataTransfer for whatever the source put in. */
+		onexternaldrop?: (info: { start: Date; dataTransfer: DataTransfer }) => void;
 		oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
 		onviewchange?: (viewId: CalendarViewId) => void;
 		/** Called when the focused date changes (navigation, drag-scroll, etc.) */
@@ -187,6 +192,7 @@
 	const DEFAULT_VIEWS: CalendarView[] = [
 		{ id: 'day-planner',  label: 'Planner', mode: 'day',  component: Planner },
 		{ id: 'week-planner', label: 'Planner', mode: 'week', component: Planner },
+		{ id: 'week-scroll',  label: 'Scroll',  mode: 'week', component: PlannerScroll },
 		{ id: 'day-agenda',   label: 'Agenda',  mode: 'day',  component: Agenda },
 		{ id: 'week-agenda',  label: 'Agenda',  mode: 'week', component: Agenda },
 		{ id: 'day-mobile',   label: 'Mobile',  mode: 'day',  component: Mobile },
@@ -232,6 +238,7 @@
 		navigation: navigationSnippet,
 		oneventclick,
 		oneventcreate,
+		onexternaldrop,
 		oneventmove,
 		onviewchange,
 		ondatechange,
@@ -249,6 +256,12 @@
 			? undefined
 			: (range: { start: Date; end: Date }) =>
 					oneventcreate({ start: unzone(range.start), end: unzone(range.end) }),
+	);
+	const effectiveExternalDrop = $derived(
+		readOnly || !onexternaldrop
+			? undefined
+			: (info: { start: Date; dataTransfer: DataTransfer }) =>
+					onexternaldrop({ start: unzone(info.start), dataTransfer: info.dataTransfer }),
 	);
 	const effectiveMove = $derived(
 		readOnly || !oneventmove
@@ -862,6 +875,7 @@
 				focusDate={viewState.focusDate}
 				oneventclick={handleEventClick}
 				oneventcreate={effectiveCreate}
+				onexternaldrop={effectiveExternalDrop}
 				readOnly={readOnly}
 				visibleHours={visibleHours}
 				selectedEventId={selection.selectedId}

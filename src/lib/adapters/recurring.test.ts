@@ -155,11 +155,57 @@ describe('createRecurringAdapter — auto-coloring', () => {
 // ── Read-only ───────────────────────────────────────────
 
 describe('createRecurringAdapter — read-only', () => {
-	it('does not expose create/update/delete methods', () => {
+	it('stores nothing: no create, no delete', () => {
 		const adapter = createRecurringAdapter(schedule);
 		expect(adapter.createEvent).toBeUndefined();
-		expect(adapter.updateEvent).toBeUndefined();
 		expect(adapter.deleteEvent).toBeUndefined();
+	});
+
+	// It answers for its own occurrences so a composite can tell "not mine"
+	// apart from "mine, and unwritable" — only the second lets the host take
+	// the move (see the `movable` option and `excludeDates`).
+	it('refuses an occurrence it owns as read-only', async () => {
+		const adapter = createRecurringAdapter(schedule);
+		await expect(adapter.updateEvent!('yoga-mon--20260914', {})).rejects.toThrow(/read-only/);
+	});
+
+	it('reports an id from another adapter as not found', async () => {
+		const adapter = createRecurringAdapter(schedule);
+		await expect(adapter.updateEvent!('some-one-off-event', {})).rejects.toThrow(/not found/i);
+	});
+});
+
+// ── Excluded dates ──────────────────────────────────────
+
+describe('createRecurringAdapter — excludeDates', () => {
+	it('does not project a date the rule excludes', async () => {
+		const [mon] = await createRecurringAdapter([schedule[0]]).fetchEvents({
+			start: new Date(2026, 8, 14),
+			end: new Date(2026, 8, 15),
+		});
+		expect(mon.id).toBe('yoga-mon--20260914');
+
+		const none = await createRecurringAdapter([
+			{ ...schedule[0], excludeDates: ['2026-09-14'] },
+		]).fetchEvents({ start: new Date(2026, 8, 14), end: new Date(2026, 8, 15) });
+		expect(none).toHaveLength(0);
+	});
+});
+
+// ── Movable occurrences ─────────────────────────────────
+
+describe('createRecurringAdapter — movable', () => {
+	const range = { start: new Date(2026, 8, 14), end: new Date(2026, 8, 15) };
+
+	it('marks occurrences read-only by default', async () => {
+		const [ev] = await createRecurringAdapter([schedule[0]]).fetchEvents(range);
+		expect(ev.data?.readOnly).toBe(true);
+	});
+
+	it('leaves them movable when the host opts in', async () => {
+		const [ev] = await createRecurringAdapter([schedule[0]], { movable: true }).fetchEvents(range);
+		expect(ev.data?.readOnly).toBeUndefined();
+		expect(ev.data?.recurringId).toBe('yoga-mon');
 	});
 });
 

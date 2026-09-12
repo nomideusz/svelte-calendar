@@ -41,8 +41,13 @@ export function createCompositeAdapter(adapters, options = {}) {
                 try {
                     return await adapter.updateEvent(id, patch);
                 }
-                catch {
-                    // Event not in this adapter, try next
+                catch (e) {
+                    // A refusal is an answer: the adapter that owns this event
+                    // cannot write it, and asking the others would turn that
+                    // into a meaningless "not found" the host cannot act on.
+                    if (e instanceof Error && e.message.includes('read-only'))
+                        throw e;
+                    // Otherwise: not this adapter's event, try the next.
                 }
             }
             throw new Error(`Event not found in any adapter: ${id}`);

@@ -70,7 +70,7 @@ function createConcreteEvent(rec, date) {
         tags: rec.tags,
         location: rec.location,
         resourceId: rec.resourceId,
-        data: { ...rec.data, recurringId: rec.id, readOnly: true },
+        data: { ...rec.data, recurringId: rec.id },
     };
 }
 // ── Count → until resolution ────────────────────────────
@@ -232,7 +232,7 @@ const PALETTE = VIVID_PALETTE;
  * Read-only by default — create/update/delete throw.
  */
 export function createRecurringAdapter(schedule, options = {}) {
-    const { mondayStart = true, palette } = options;
+    const { mondayStart = true, palette, movable = false } = options;
     const colors = palette?.length ? palette : PALETTE;
     // Auto-color: assign from palette by category/title
     const colorAssignments = new Map();
@@ -282,14 +282,30 @@ export function createRecurringAdapter(schedule, options = {}) {
                     break;
             }
         }
-        return events;
+        // Dates a host has taken out of their rule (see `excludeDates`).
+        const skipped = new Set();
+        for (const rec of schedule) {
+            for (const d of rec.excludeDates ?? [])
+                skipped.add(`${rec.id}--${d.replace(/-/g, '')}`);
+        }
+        const kept = skipped.size ? events.filter((e) => !skipped.has(e.id)) : events;
+        return movable ? kept : kept.map((e) => ({ ...e, data: { ...e.data, readOnly: true } }));
     };
     return {
         fetchEventsSync,
         async fetchEvents(range) {
             return fetchEventsSync(range);
         },
-        // Read-only adapter: CRUD methods intentionally omitted.
-        // Use createMemoryAdapter or createRestAdapter for mutations.
+        // This adapter projects; it stores nothing. It still answers for the
+        // occurrences it owns, so a composite can tell "not my event" apart
+        // from "mine, and it cannot be written" — the second is what lets the
+        // HOST take the move (exclude the date, keep the result itself).
+        async updateEvent(id) {
+            const ruleId = id.split('--')[0];
+            if (!schedule.some((rec) => rec.id === ruleId)) {
+                throw new Error(`Event not found: ${id}`);
+            }
+            throw new Error(`read-only: ${id} is a projected occurrence. Add its date to the rule's excludeDates and store the change yourself.`);
+        },
     };
 }

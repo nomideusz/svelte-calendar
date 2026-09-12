@@ -15,4 +15,5 @@ export { wrapAdapterWithTimezone } from './core/timezone.js';
 export type { PresetName, AutoThemeOptions } from './theme/index.js';
 export { createCalendar, createAgenda, createRangeAgenda } from './headless/index.js';
 export type { HeadlessCalendarOptions, HeadlessCalendar, HeadlessDay, HeadlessWeek, TodayQueue, HeaderContext, NavigationContext, AgendaOptions, HeadlessAgenda, RangeAgendaOptions, RangeAgendaDay, HeadlessRangeAgenda, } from './headless/index.js';
-export { fits, lineCount, textHeight, pickFit, fontOf, fitLabel, breakLines, typeset } from './text-fit.js';
+export { fits, lineCount, textHeight, textWidth, pickFit, fontOf, fitLabel, fitParts, breakLines, typeset } from './text-fit.js';
+export type { ChipPart } from './text-fit.js';

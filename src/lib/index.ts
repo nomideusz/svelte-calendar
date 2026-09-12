@@ -121,4 +121,5 @@ export type {
 } from './headless/index.js';
 
 // ─── Text fitting (pretext) ─────────────────────────────
-export { fits, lineCount, textHeight, pickFit, fontOf, fitLabel, breakLines, typeset } from './text-fit.js';
+export { fits, lineCount, textHeight, textWidth, pickFit, fontOf, fitLabel, fitParts, breakLines, typeset } from './text-fit.js';
+export type { ChipPart } from './text-fit.js';

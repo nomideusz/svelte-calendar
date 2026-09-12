@@ -27,6 +27,7 @@ import { getLabels, fmtWeekRange } from "../core/locale.js";
 import { auto } from "../theme/presets.js";
 import { probeHostTheme, observeHostTheme } from "../theme/auto.js";
 import Planner from "../views/planner/Planner.svelte";
+import PlannerScroll from "../views/planner/PlannerScroll.svelte";
 import Agenda from "../views/agenda/Agenda.svelte";
 import Mobile from "../views/mobile/Mobile.svelte";
 import MonthGrid from "../views/month/MonthGrid.svelte";
@@ -46,6 +47,12 @@ const DEFAULT_VIEWS = [
 		label: "Planner",
 		mode: "week",
 		component: Planner
+	},
+	{
+		id: "week-scroll",
+		label: "Scroll",
+		mode: "week",
+		component: PlannerScroll
 	},
 	{
 		id: "day-agenda",
@@ -78,13 +85,17 @@ const DEFAULT_VIEWS = [
 		component: MonthGrid
 	}
 ];
-let { adapter, views = DEFAULT_VIEWS, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 12, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
+let { adapter, views = DEFAULT_VIEWS, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 12, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, onexternaldrop, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
 // In readOnly mode, suppress mutation callbacks. With a timezone, the
 // drag plane is zoned wall-clock — hosts always receive real instants.
 const unzone = (d) => timezone ? fromZonedTime(d, timezone) : d;
 const effectiveCreate = $derived(readOnly || !oneventcreate ? undefined : (range) => oneventcreate({
 	start: unzone(range.start),
 	end: unzone(range.end)
+}));
+const effectiveExternalDrop = $derived(readOnly || !onexternaldrop ? undefined : (info) => onexternaldrop({
+	start: unzone(info.start),
+	dataTransfer: info.dataTransfer
 }));
 const effectiveMove = $derived(readOnly || !oneventmove ? undefined : (ev, start, end) => oneventmove(ev, unzone(start), unzone(end)));
 // Clicking an event selects it (highlight via selectedEventId) and then
@@ -701,6 +712,7 @@ const navCtx = $derived({
 				focusDate={viewState.focusDate}
 				oneventclick={handleEventClick}
 				oneventcreate={effectiveCreate}
+				onexternaldrop={effectiveExternalDrop}
 				readOnly={readOnly}
 				visibleHours={visibleHours}
 				selectedEventId={selection.selectedId}

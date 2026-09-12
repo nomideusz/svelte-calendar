@@ -1,31 +1,28 @@
 import type { TimelineEvent } from '../../core/types.js';
 interface Props {
-    /** 'day' renders a single-day column; 'week' the multi-day grid. */
-    mode?: 'day' | 'week';
     mondayStart?: boolean;
     locale?: string;
     height?: number | null;
     events?: TimelineEvent[];
     style?: string;
     focusDate?: Date;
+    /** `anchor` is the chip's viewport rect — a host positions a panel beside it. */
     oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     oneventcreate?: (range: {
         start: Date;
         end: Date;
     }) => void;
-    /** Something dragged in from OUTSIDE the calendar (HTML5 drag and drop —
-     *  a class chip, a template) dropped on the grid: `start` is the pointer's
-     *  time snapped to the grid, `dataTransfer` whatever the source set. */
+    /** An HTML5 drag from outside the calendar dropped on a day. */
     onexternaldrop?: (info: {
         start: Date;
         dataTransfer: DataTransfer;
     }) => void;
     selectedEventId?: string | null;
     readOnly?: boolean;
-    /** Visible hour range [startHour, endHour) */
+    /** Visible hour range [startHour, endHour) — start hour seeds empty-cell creation */
     visibleHours?: [number, number];
     [key: string]: unknown;
 }
-declare const PlannerWeek: import("svelte").Component<Props, {}, "">;
-type PlannerWeek = ReturnType<typeof PlannerWeek>;
-export default PlannerWeek;
+declare const PlannerScroll: import("svelte").Component<Props, {}, "">;
+type PlannerScroll = ReturnType<typeof PlannerScroll>;
+export default PlannerScroll;

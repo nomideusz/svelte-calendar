@@ -20,6 +20,7 @@
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
+	import { fitParts } from '../../text-fit.js';
 	import { DAY_MS, HOUR_MS, sod, addDaysMs } from '../../core/time.js';
 	import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
@@ -37,6 +38,10 @@
 		focusDate?: Date;
 		oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
 		oneventcreate?: (range: { start: Date; end: Date }) => void;
+		/** Something dragged in from OUTSIDE the calendar (HTML5 drag and drop —
+		 *  a class chip, a template) dropped on the grid: `start` is the pointer's
+		 *  time snapped to the grid, `dataTransfer` whatever the source set. */
+		onexternaldrop?: (info: { start: Date; dataTransfer: DataTransfer }) => void;
 		selectedEventId?: string | null;
 		readOnly?: boolean;
 		/** Visible hour range [startHour, endHour) */
@@ -54,6 +59,7 @@
 		focusDate,
 		oneventclick,
 		oneventcreate,
+		onexternaldrop,
 		selectedEventId = null,
 		readOnly = false,
 		visibleHours,
@@ -410,6 +416,31 @@
 	}
 
 	// ── Status label (aria) ────────────────────────────
+	// ─── Block parts ────────────────────────────────
+	// A block stacks time, title and room, and a short one cannot hold all
+	// three. The same ladder the scroller runs on width runs here on height:
+	// time and title are anchors, the room is given up first. The line costs
+	// are .tw-ev-body's — 3px padding each side, 1px gaps, the parts' own
+	// line-heights — so the threshold is derived rather than picked. ROOM_AIR
+	// keeps the old breathing room: a block that fits the room to the pixel
+	// looked crammed, and the hand-set cutoff it replaces (56px) allowed for it.
+	const BODY_PAD_Y = 6;
+	const LINE_GAP = 1;
+	const TIME_LINE = 11 * 1.1;
+	const TITLE_LINE = 12 * 1.2;
+	const ROOM_LINE = 10 * 1.2;
+	const ROOM_AIR = 9;
+	function blockParts(ev: TimelineEvent, height: number): Record<string, boolean> {
+		return fitParts(
+			[
+				{ key: 'time', size: TIME_LINE, priority: 0 },
+				{ key: 'title', size: TITLE_LINE + LINE_GAP, priority: 0 },
+				{ key: 'room', text: ev.location ?? '', size: ROOM_LINE + LINE_GAP + ROOM_AIR, priority: 1 },
+			],
+			height - BODY_PAD_Y,
+		);
+	}
+
 	function statusText(ev: TimelineEvent): string {
 		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
 		if (ev.status === 'tentative') return ` (${L.tentative})`;
@@ -450,6 +481,14 @@
 		};
 	}
 
+	/** The drag as the time axis sees it: the segment holding its start. */
+	const axisGhost = $derived.by((): Ghost | null => {
+		if (!drag?.active || !drag.payload) return null;
+		const s = drag.payload.start.getTime();
+		const day = dayCols.find((d) => s >= d.ms && s < d.ms + 24 * HOUR_MS);
+		return day ? ghostForDay(day.ms) : null;
+	});
+
 	// ── Drag-to-create (mouse: sweep; touch: long-press) ──
 	// Mouse movement below CREATE_THRESHOLD stays a plain click. On touch a
 	// vertical drag must remain a scroll, so create only arms after a ~350ms
@@ -485,6 +524,24 @@
 		crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / SNAP_MS) * SNAP_MS, crDayMs);
 		drag.beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + SNAP_MS));
 		addTouchScrollBlock();
+	}
+
+	// ── External drop (HTML5 DnD) ──────────────────────
+	function onColsDragOver(e: DragEvent) {
+		if (!onexternaldrop || readOnly) return;
+		const day = dayCols[pointerDayIndex(e.clientX)];
+		if (!day || day.isDisabled) return;
+		e.preventDefault();
+		if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+	}
+	function onColsDrop(e: DragEvent) {
+		if (!onexternaldrop || readOnly || !e.dataTransfer) return;
+		const day = dayCols[pointerDayIndex(e.clientX)];
+		if (!day || day.isDisabled) return;
+		e.preventDefault();
+		const raw = clampToDayBand(day.ms + pointerHour(e.clientY) * HOUR_MS, day.ms);
+		const snapped = day.ms + Math.floor((raw - day.ms) / SNAP_MS) * SNAP_MS;
+		onexternaldrop({ start: new Date(snapped), dataTransfer: e.dataTransfer });
 	}
 
 	function onColsPointerDown(e: PointerEvent) {
@@ -853,8 +910,13 @@
 							<span class="tw-gutter-lb" style:top="{i * HOUR_H}px">{fmtH(startHour + i, locale)}</span>
 						{/if}
 					{/each}
+					{#if axisGhost}
+						<!-- The axis reads the drag to the minute, at both edges. -->
+						<span class="tw-gutter-drag" style:top="{axisGhost.top}px">{fmtTime(axisGhost.start, locale)}</span>
+						<span class="tw-gutter-drag" style:top="{axisGhost.top + axisGhost.height}px">{fmtTime(axisGhost.end, locale)}</span>
+					{/if}
 					{#if nowY !== null && weekHasToday}
-						<span class="tw-gutter-now" style:top="{nowY}px"></span>
+						<span class="tw-gutter-now" style:top="{nowY}px">{fmtTime(new Date(clock.tick), locale)}</span>
 					{/if}
 				</div>
 
@@ -865,6 +927,8 @@
 					bind:this={colsEl}
 					onclick={handleColsClick}
 					onpointerdown={onColsPointerDown}
+					ondragover={onColsDragOver}
+					ondrop={onColsDrop}
 					oncontextmenu={onColsContextMenu}
 					role="presentation"
 				>
@@ -925,6 +989,7 @@
 									class:tw-ev--tentative={p.ev.status === 'tentative'}
 									class:tw-ev--full={p.ev.status === 'full'}
 									class:tw-ev--limited={p.ev.status === 'limited'}
+									class:tw-ev--past={p.ev.end.getTime() < clock.tick}
 									class:tw-ev--short={p.height < 44}
 									class:tw-ev--compact={p.height < 34}
 									style:top="{p.top}px"
@@ -944,9 +1009,10 @@
 									<div class="tw-ev-stripe" aria-hidden="true"></div>
 									<div class="tw-ev-body">
 										<EventContent event={p.ev}>
+											{@const parts = blockParts(p.ev, p.height)}
 											<span class="tw-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
 											<span class="tw-ev-title">{p.ev.title}</span>
-											{#if p.ev.location && p.height > 56}
+											{#if parts.room}
 												<span class="tw-ev-loc">{p.ev.location}</span>
 											{/if}
 										</EventContent>
@@ -1254,13 +1320,23 @@
 		white-space: nowrap;
 	}
 
-	.tw-gutter-now {
+	/* The clock beside the now line, and the drag's edges while it lasts —
+	   both sit on the surface so they cover the hour label beneath. */
+	.tw-gutter-now,
+	.tw-gutter-drag {
 		position: absolute;
-		right: -3px;
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--dt-accent, #2563eb);
+		right: 3px;
+		transform: translateY(-50%);
+		padding: 1px 3px;
+		border-radius: 3px;
+		background: var(--dt-surface, var(--dt-bg, #fff));
+		font: 600 10px/1.2 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-accent, #2563eb);
+		white-space: nowrap;
+		z-index: 2;
+	}
+	.tw-gutter-now {
+		opacity: 0.75;
 		transform: translateY(-50%);
 		z-index: 2;
 	}
@@ -1304,7 +1380,11 @@
 	.tw-col--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
 	/* Dim past days with a wash, never a subtree opacity (event contrast) */
 	.tw-col--past {
-		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);
+		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);
+	}
+	/* What has already happened steps back; a cancelled block keeps its own look. */
+	.tw-ev--past:not(.tw-ev--cancelled) {
+		opacity: 0.6;
 	}
 	.tw-col--weekend:not(.tw-col--today):not(.tw-col--past) {
 		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
@@ -1352,9 +1432,9 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		height: 2px;
-		background: var(--dt-accent, #2563eb);
-		box-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));
+		height: 0;
+		border-top: 1px dotted var(--dt-accent, #2563eb);
+		opacity: 0.7;
 		z-index: 12;
 		pointer-events: none;
 		transform: translateY(-1px);

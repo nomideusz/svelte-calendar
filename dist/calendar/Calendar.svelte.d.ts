@@ -129,6 +129,13 @@ interface Props {
         start: Date;
         end: Date;
     }) => void;
+    /** An HTML5 drag from outside the calendar dropped on the planner grid
+     *  (a class chip, a template): the pointer's time, snapped, as a real
+     *  instant — plus the drag's dataTransfer for whatever the source put in. */
+    onexternaldrop?: (info: {
+        start: Date;
+        dataTransfer: DataTransfer;
+    }) => void;
     oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
     onviewchange?: (viewId: CalendarViewId) => void;
     /** Called when the focused date changes (navigation, drag-scroll, etc.) */

@@ -1,5 +1,106 @@
 # Changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- A recurring occurrence can be moved, when the host can take the move.
+  `createRecurringAdapter(schedule, { movable: true })` stops marking
+  projections `data.readOnly`, and `RecurringEvent.excludeDates` takes a date
+  out of a rule — together they are how a host lifts one class out of its
+  schedule and keeps the result as a one-off. Default is unchanged: an
+  adapter that stores nothing refuses the move.
+- A refusal now reaches the host. The recurring adapter answers for the
+  occurrences it owns, so a composite can tell "not my event" from "mine, and
+  unwritable", and re-throws the second instead of turning it into a
+  meaningless `not found`. Before this, a move of a projected occurrence in a
+  memory + recurring composite was swallowed in silence and `oneventmove`
+  never fired.
+
+### Patch Changes
+
+- `week-scroll` rows are as tall as their busiest day again. Fixing the row
+  height in 0.17.1 made the scroll arithmetic exact and clipped exactly the
+  days worth reading; nothing needed equal rows any more, because the prepend
+  is compensated by row identity, a drag now maps by hit-testing the row under
+  the pointer, and the mount re-centres once the events have landed (rows grow
+  when their events arrive, which moved the week we had just centred on an
+  empty grid). "+N more" grows the row again instead of scrolling inside a
+  fixed cell.
+- Demo: recurring occurrences are movable and dragging one detaches it from
+  its rule, which is the pattern a host follows.
+
+## 0.19.0
+
+### Minor Changes
+
+- `week-scroll` is editable like the grid is:
+  - **A chip that cannot move can still be opened.** The view used to refuse
+    the press outright for a read-only view or a read-only event, which in a
+    real schedule is most of them — 366 of 381 chips in the demo were dead to
+    the mouse. Only the *move* is refused now; the click always lands, as it
+    already did in `week-planner`.
+  - A click hands back the chip's viewport rect as `anchor`, so a host can
+    open a panel beside the chip instead of in the middle of the screen.
+  - `onexternaldrop` — an HTML5 drag from outside the calendar lands on a day.
+    A cell is a whole day here (there is no time axis), so a drop starts at the
+    first visible hour, through the same rule an empty-cell click uses; the
+    day under the pointer lights up, and a day that refuses a click refuses a
+    drop.
+  - Dragging near the top or bottom edge scrolls the view, so an event can be
+    moved to a week that was off-screen. The drag origin moves with the scroll,
+    or the event would slide back by exactly what was scrolled.
+- Demo: a draggable pill to try the drop with, and the click anchor shown in
+  the action line.
+
+## 0.18.0
+
+### Minor Changes
+
+- `fitParts(parts, budget)` — which parts of a dense chip fit, as package API
+  rather than a view's private rule. A part is measured (`text` + `font`) or
+  states its cost (`size`), carries a `priority` (`0` never drops) and an
+  `extra` for the gap or icon beside it; anchors always show and the first
+  part that does not fit ends it. It works on either axis, so a view declares
+  its ladder instead of hiding a threshold in a condition:
+  - `week-scroll` gives up the room first and the time second against the cell
+    width. The room is now measured in its own font, so roughly three times as
+    many chips keep it and no title is cut.
+  - `week-planner` gives up the room against the block height. The hand-set
+    `height > 56` cutoff is gone; the same threshold now falls out of the line
+    heights and padding it always stood for (identical output on the demo's
+    blocks).
+
+## 0.17.1
+
+### Patch Changes
+
+- `week-scroll` no longer jumps. Every week row is the same height whatever
+  it holds (at most five single-line chips per cell, the rest behind
+  "+N more", which now scrolls inside the cell instead of growing the row),
+  so the mount, an extension and a navigation all land exactly. The prepend
+  when scrolling into the past is compensated once, anchored on a row, with
+  the browser's own scroll anchoring off (the two together were the lurch).
+  A focus written back by the scroll no longer re-anchors the buffer around
+  itself (the occasional far jump). Cards flip only while a drag is live, the
+  buffer grows by 8 weeks instead of 26.
+- `week-scroll` chips are measured, not truncated: whether a chip shows its
+  room beside the title, and whether it keeps its time at all, is decided
+  per chip against the cell width with pretext (`textWidth`, new export) —
+  one ResizeObserver on the scroller, fonts read once. A title is cut only
+  when it does not fit on its own.
+
+## 0.17.0
+
+### Minor Changes
+
+- `week-scroll` — the multi-week vertical scroller is back as an optional
+  built-in view beside `week-planner` (Hey Calendar style: weeks stack,
+  scroll up is the past, the buffer grows as you scroll, the header follows
+  the week under the middle of the viewport). It is the PlannerWeek that
+  0.12.0's time grid replaced, restored as its own view; nothing about the
+  grid changes. The demo's View select and the header's mode pills list it.
+
 ## 0.16.1
 
 ### Patch Changes

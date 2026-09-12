@@ -9,7 +9,47 @@ vi.mock('@chenglou/pretext', () => ({
         return { lineCount, height: lineCount * lineHeight };
     },
 }));
-const { fits, pickFit, textHeight, breakLines } = await import('./text-fit.js');
+const { fits, pickFit, textHeight, breakLines, fitParts } = await import('./text-fit.js');
+describe('fitParts', () => {
+    // 6px per character (the mock above); `f` is any font.
+    const title = { key: 'title', text: 'Morning Flow', font: 'f', priority: 0 }; // 72px
+    const time = { key: 'time', text: '7:00a', font: 'f', priority: 1 }; // 30px
+    const room = { key: 'room', text: 'Studio B', font: 'f', priority: 2 }; // 48px
+    it('keeps everything when it all fits', () => {
+        expect(fitParts([title, time, room], 200)).toEqual({ title: true, time: true, room: true });
+    });
+    it('gives up the lowest priority first', () => {
+        expect(fitParts([title, time, room], 140)).toEqual({ title: true, time: true, room: false });
+    });
+    it('stops at the first part that does not fit, rather than skipping to a smaller one', () => {
+        const wide = { key: 'time', text: 'a'.repeat(20), font: 'f', priority: 1 }; // 120px
+        const narrow = { key: 'room', text: 'B', font: 'f', priority: 2 }; // 6px
+        expect(fitParts([title, wide, narrow], 100)).toEqual({ title: true, time: false, room: false });
+    });
+    it('keeps an anchor that overflows on its own — it is what gets the ellipsis', () => {
+        expect(fitParts([title, time, room], 10)).toEqual({ title: true, time: false, room: false });
+    });
+    it('leaves only the anchors before the first measurement', () => {
+        expect(fitParts([title, time, room], 0)).toEqual({ title: true, time: false, room: false });
+    });
+    it('never shows a part with no text', () => {
+        const empty = { ...room, text: '' };
+        expect(fitParts([title, time, empty], 500)).toEqual({ title: true, time: true, room: false });
+    });
+    it('charges `extra` beside the text', () => {
+        expect(fitParts([title, { ...time, extra: 0 }], 102)).toEqual({ title: true, time: true });
+        expect(fitParts([title, { ...time, extra: 1 }], 102)).toEqual({ title: true, time: false });
+    });
+    it('measures nothing when a part states its size — the height axis', () => {
+        const parts = [
+            { key: 'time', size: 12.1, priority: 0 },
+            { key: 'title', size: 15.4, priority: 0 },
+            { key: 'room', text: 'Studio B', size: 22, priority: 1 },
+        ];
+        expect(fitParts(parts, 50)).toEqual({ time: true, title: true, room: true });
+        expect(fitParts(parts, 49)).toEqual({ time: true, title: true, room: false });
+    });
+});
 describe('text-fit', () => {
     it('picks the longest candidate that fits, else the last', () => {
         const c = ['Vinyasa Flow z Kasią', 'Vinyasa', 'VF'];

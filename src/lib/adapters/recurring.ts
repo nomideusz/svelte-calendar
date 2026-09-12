@@ -95,6 +95,12 @@ export interface RecurringEvent {
 	 */
 	until?: string;
 	/**
+	 * Dates this rule skips, `"YYYY-MM-DD"`. The occurrence is simply not
+	 * projected — this is how a host takes one occurrence out of its rule
+	 * (moved, cancelled, or replaced by a one-off it stores itself).
+	 */
+	excludeDates?: string[];
+	/**
 	 * Maximum number of occurrences, counted from `startDate`.
 	 * Alternative to `until` — if both are set the stricter bound wins.
 	 * Requires `startDate`.
@@ -129,6 +135,16 @@ export interface RecurringAdapterOptions {
 	 * Defaults to the built-in vivid palette.
 	 */
 	palette?: string[];
+	/**
+	 * Let projected occurrences be dragged (default: `false`).
+	 *
+	 * Off, every occurrence carries `data.readOnly` and the views refuse to
+	 * move it — correct, because this adapter projects and cannot store the
+	 * result. Turn it on when YOU can: handle `oneventmove`, add that date to
+	 * the rule's `excludeDates`, and keep the moved occurrence wherever your
+	 * one-off events live. A read-only occurrence can always be clicked.
+	 */
+	movable?: boolean;
 }
 
 // ── Helpers ─────────────────────────────────────────────
@@ -208,7 +224,7 @@ function createConcreteEvent(
 		tags: rec.tags,
 		location: rec.location,
 		resourceId: rec.resourceId,
-		data: { ...rec.data, recurringId: rec.id, readOnly: true },
+		data: { ...rec.data, recurringId: rec.id },
 	};
 }
 
@@ -413,7 +429,7 @@ export function createRecurringAdapter(
 	schedule: RecurringEvent[],
 	options: RecurringAdapterOptions = {},
 ): CalendarAdapter {
-	const { mondayStart = true, palette } = options;
+	const { mondayStart = true, palette, movable = false } = options;
 	const colors = palette?.length ? palette : PALETTE;
 
 	// Auto-color: assign from palette by category/title
@@ -469,7 +485,13 @@ export function createRecurringAdapter(
 				}
 			}
 
-			return events;
+			// Dates a host has taken out of their rule (see `excludeDates`).
+			const skipped = new Set<string>();
+			for (const rec of schedule) {
+				for (const d of rec.excludeDates ?? []) skipped.add(`${rec.id}--${d.replace(/-/g, '')}`);
+			}
+			const kept = skipped.size ? events.filter((e) => !skipped.has(e.id)) : events;
+			return movable ? kept : kept.map((e) => ({ ...e, data: { ...e.data, readOnly: true } }));
 	};
 
 	return {
@@ -478,7 +500,18 @@ export function createRecurringAdapter(
 			return fetchEventsSync(range);
 		},
 
-		// Read-only adapter: CRUD methods intentionally omitted.
-		// Use createMemoryAdapter or createRestAdapter for mutations.
+		// This adapter projects; it stores nothing. It still answers for the
+		// occurrences it owns, so a composite can tell "not my event" apart
+		// from "mine, and it cannot be written" — the second is what lets the
+		// HOST take the move (exclude the date, keep the result itself).
+		async updateEvent(id: string): Promise<TimelineEvent> {
+			const ruleId = id.split('--')[0];
+			if (!schedule.some((rec) => rec.id === ruleId)) {
+				throw new Error(`Event not found: ${id}`);
+			}
+			throw new Error(
+				`read-only: ${id} is a projected occurrence. Add its date to the rule's excludeDates and store the change yourself.`,
+			);
+		},
 	};
 }

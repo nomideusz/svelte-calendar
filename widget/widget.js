@@ -1,5 +1,11 @@
-globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\toverscroll-behavior: contain;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tpadding: 8px 4px 6px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tmin-width: 26px;\n\t\theight: 26px;\n\t\tborder-radius: 50%;\n\t\tfont: 600 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-accent-fg, #ffffff);\n\t\tfont-weight: 700;\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 4px 6px 4px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 3px 3px 4px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 6px;\n\t\tmin-height: 18px;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: background 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\tborder-radius: 0 3px 3px 0;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 6px;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t}\n\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: -3px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\ttransform: translateY(-50%);\n\t\tz-index: 2;\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -3px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t.tw-ev--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.tw-ev--limited.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 5px 0 0 5px;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 6px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t.tw-ev-time.svelte-j4rvbp {\n\t\tfont: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\tfont: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 10px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-n8lbn1 {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: border-color 150ms, transform 100ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 999px;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 1px;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 1px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 6px;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t\tborder-radius: 6px;\n\t\tbox-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tflex-shrink: 0;\n\t\topacity: 0.6;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + subtitle + tags cluster. One line while it fits; on mobile the\n\t   metadata wraps to a second line under the title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 { opacity: 0.5; }\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { text-decoration: line-through; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 { opacity: 0.65; }\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 2px;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 2px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(\n\t\t\tin srgb,\n\t\t\tvar(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,\n\t\t\ttransparent\n\t\t);\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: dim + strike, single token layer */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-weight: 400;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t.ag-compact.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + location + subtitle + tags cluster. One line while it fits; on\n\t   mobile the metadata wraps to a second line instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-compact--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\ttext-align: right;\n\t\tpadding-right: 6px;\n\t\tfont: 700 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 8px;\n\t\tcursor: pointer;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--next.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the block. */\n\t.mb-event--cancelled.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--limited.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 600 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 4px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 8px 0 0 8px;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\twidth: 30px;\n\t\theight: 30px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 50%;\n\t\tfont-size: 15px;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the chip. */\n\t.mw-ev--cancelled.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--limited.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 6px 0 0 6px;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tcolor: var(--dt-text-2);\n\t\twidth: 22px;\n\t\theight: 22px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 999px;\n\t}\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tbackground: var(--dt-accent);\n\t\tcolor: var(--dt-btn-text);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 999px;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 10px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 12px);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 8px 12px;\n\t\tmin-height: 48px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding: 6px 10px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\ttransition: background 100ms, color 100ms;\n\t}\n\n\t/* :not(--active) — the hover rule otherwise outranks the active color,\n\t   and iOS keeps :hover stuck after a tap (dark text on the accent). */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),\n\t   so the controls row spreads pills and nav to the edges. */\n\t.cal-m-hd--stack.svelte-1b53e7w {\n\t\tjustify-content: space-between;\n\t}\n\t.cal-m-hd--titled.svelte-1b53e7w {\n\t\tborder-bottom: none;\n\t\tpadding-bottom: 2px;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tjustify-content: center;\n\t\tpadding: 0 8px 8px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w .cal-m-title:where(.svelte-1b53e7w) {\n\t\tflex: 0 1 auto;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 9px 12px;\n\t\tborder-radius: 6px;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover:not(.cal-m-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);\n\t\tborder: none;\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n/*$vite$:1*/";
+globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\toverscroll-behavior: contain;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tpadding: 8px 4px 6px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tmin-width: 26px;\n\t\theight: 26px;\n\t\tborder-radius: 50%;\n\t\tfont: 600 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-accent-fg, #ffffff);\n\t\tfont-weight: 700;\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 4px 6px 4px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 3px 3px 4px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 6px;\n\t\tmin-height: 18px;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: background 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\tborder-radius: 0 3px 3px 0;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 6px;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 1px 3px;\n\t\tborder-radius: 3px;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #fff));\n\t\tfont: 600 10px/1.2 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\topacity: 0.75;\n\t\ttransform: translateY(-50%);\n\t\tz-index: 2;\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.6;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 1px dotted var(--dt-accent, #2563eb);\n\t\topacity: 0.7;\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -3px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t.tw-ev--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.tw-ev--limited.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 5px 0 0 5px;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 6px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t.tw-ev-time.svelte-j4rvbp {\n\t\tfont: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\tfont: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 10px;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(37, 99, 235, 0.04));\n\t\t/* Border width stays constant (no layout shift); emphasis via box-shadow */\n\t\tborder-color: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 0 1.5px color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tmin-height: var(--wg-row-min, 170px);\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent); }\n\n\t/* Dim non-current weeks with a subtle wash + softer header text instead of\n\t   a subtree opacity, so event content keeps full contrast everywhere. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-cell:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-cell--past:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t.wg-blocked.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 3px;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t\tmargin-bottom: 2px;\n\t\tmin-height: 14px;\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: flex-end;\n\t\tgap: 4px;\n\t\tpadding: 4px 5px 2px 0;\n\t\tmargin-bottom: 2px;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-day-num--today.svelte-l8xuza {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 900;\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-bottom: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 26%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ad--start.svelte-l8xuza {\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t}\n\n\t.wg-ad--mid.svelte-l8xuza {\n\t\tborder-radius: 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--end.svelte-l8xuza:not(.wg-ad--start) {\n\t\tborder-radius: 0 3px 3px 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t\tline-height: 1;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tborder-radius: 4px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--cancelled.svelte-l8xuza {\n\t\topacity: 0.5;\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--full.svelte-l8xuza {\n\t\topacity: 0.55;\n\t}\n\t.wg-ev--limited.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 12px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t}\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\tmargin-top: 2px;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--ev-color, var(--dt-accent, #2563eb));\n\t\toutline-offset: 1px;\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbox-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 10px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-n8lbn1 {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: border-color 150ms, transform 100ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 999px;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 1px;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 1px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 6px;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t\tborder-radius: 6px;\n\t\tbox-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tflex-shrink: 0;\n\t\topacity: 0.6;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + subtitle + tags cluster. One line while it fits; on mobile the\n\t   metadata wraps to a second line under the title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 { opacity: 0.5; }\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { text-decoration: line-through; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 { opacity: 0.65; }\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 2px;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 2px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(\n\t\t\tin srgb,\n\t\t\tvar(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,\n\t\t\ttransparent\n\t\t);\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: dim + strike, single token layer */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-weight: 400;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t.ag-compact.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + location + subtitle + tags cluster. One line while it fits; on\n\t   mobile the metadata wraps to a second line instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-compact--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\ttext-align: right;\n\t\tpadding-right: 6px;\n\t\tfont: 700 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 8px;\n\t\tcursor: pointer;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--next.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the block. */\n\t.mb-event--cancelled.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--limited.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 600 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 4px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 8px 0 0 8px;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\twidth: 30px;\n\t\theight: 30px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 50%;\n\t\tfont-size: 15px;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the chip. */\n\t.mw-ev--cancelled.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--limited.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 6px 0 0 6px;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tcolor: var(--dt-text-2);\n\t\twidth: 22px;\n\t\theight: 22px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 999px;\n\t}\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tbackground: var(--dt-accent);\n\t\tcolor: var(--dt-btn-text);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 999px;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 10px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 12px);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 8px 12px;\n\t\tmin-height: 48px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding: 6px 10px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\ttransition: background 100ms, color 100ms;\n\t}\n\n\t/* :not(--active) — the hover rule otherwise outranks the active color,\n\t   and iOS keeps :hover stuck after a tap (dark text on the accent). */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),\n\t   so the controls row spreads pills and nav to the edges. */\n\t.cal-m-hd--stack.svelte-1b53e7w {\n\t\tjustify-content: space-between;\n\t}\n\t.cal-m-hd--titled.svelte-1b53e7w {\n\t\tborder-bottom: none;\n\t\tpadding-bottom: 2px;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tjustify-content: center;\n\t\tpadding: 0 8px 8px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w .cal-m-title:where(.svelte-1b53e7w) {\n\t\tflex: 0 1 auto;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 9px 12px;\n\t\tborder-radius: 6px;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover:not(.cal-m-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);\n\t\tborder: none;\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n/*$vite$:1*/";
 (function() {
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/constants.js
+	/**
+	* An effect that does not destroy its child effects when it reruns.
+	* Runs as part of render effects, i.e. not eagerly as part of tree traversal or effect flushing.
+	*/
+	var MANAGED_EFFECT = 1 << 24;
 	var CLEAN = 1024;
 	var DIRTY = 2048;
 	var MAYBE_DIRTY = 4096;
@@ -28,6 +34,8 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	var ASYNC = 1 << 22;
 	var ERROR_VALUE = 1 << 23;
 	var STATE_SYMBOL = Symbol("$state");
+	/** Marks component export objects, so that `proxy(...)` leaves them untouched */
+	var COMPONENT_SYMBOL = Symbol("component");
 	var LEGACY_PROPS = Symbol("legacy props");
 	var LOADING_ATTR_SYMBOL = Symbol("");
 	var ATTRIBUTES_CACHE = Symbol("attributes");
@@ -41,7 +49,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	}();
 	var IS_XHTML = !!globalThis.document?.contentType && /* @__PURE__ */ globalThis.document.contentType.includes("xml");
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
 	var is_array = Array.isArray;
 	var index_of = Array.prototype.indexOf;
 	var includes = Array.prototype.includes;
@@ -84,7 +92,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		};
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/equality.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/equality.js
 	/** @import { Equals } from '#client' */
 	/** @type {Equals} */
 	function equals(value) {
@@ -111,7 +119,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		throw new Error(`https://svelte.dev/e/lifecycle_outside_component`);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/errors.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/errors.js
 	/**
 	* Cannot create a `$derived(...)` with an `await` expression outside of an effect tree
 	* @returns {never}
@@ -210,18 +218,41 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		throw new Error(`https://svelte.dev/e/svelte_boundary_reset_onerror`);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/flags/index.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/flags/index.js
 	/** True if experimental.async=true */
 	var async_mode_flag = false;
 	/** True if we're not certain that we only have Svelte 5 code in the compilation */
 	var legacy_mode_flag = false;
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
 	var HYDRATION_ERROR = {};
 	var UNINITIALIZED = Symbol("uninitialized");
 	var NAMESPACE_HTML = "http://www.w3.org/1999/xhtml";
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/context.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/context.js
+	/**
+	* @typedef {{ p: Context | null, c: Map<unknown, unknown> | null }} Context
+	*/
+	/**
+	* @param {Context} context
+	* @returns {Map<unknown, unknown> | null}
+	*/
+	function get_parent_context(context) {
+		let parent = context.p;
+		while (parent !== null && parent.c === null) parent = parent.p;
+		return parent?.c ?? null;
+	}
+	/**
+	* @param {Context | null} context
+	* @param {string} name
+	* @returns {Map<unknown, unknown>}
+	*/
+	function get_or_init_context_map(context, name) {
+		if (context === null) lifecycle_outside_component(name);
+		return context.c ??= new Map(get_parent_context(context) || void 0);
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/context.js
 	/** @import { ComponentContext, DevStackEntry, Effect } from '#client' */
 	/** @type {ComponentContext | null} */
 	var component_context = null;
@@ -230,7 +261,9 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		component_context = context;
 	}
 	/**
-	* Retrieves the context that belongs to the closest parent component with the specified `key`.
+	* Retrieves the context set with the specified `key` in the current component or any of its
+	* ancestors. If multiple components set the same key, the value from the closest one is returned.
+	* A `setContext` call in the current component is only visible to `getContext` calls that run after it.
 	* Must be called during component initialisation.
 	*
 	* [`createContext`](https://svelte.dev/docs/svelte/svelte#createContext) is a type-safe alternative.
@@ -240,12 +273,12 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @returns {T}
 	*/
 	function getContext(key) {
-		return get_or_init_context_map("getContext").get(key);
+		return get_or_init_context_map(component_context, "getContext").get(key);
 	}
 	/**
 	* Associates an arbitrary `context` object with the current component and the specified `key`
-	* and returns that object. The context is then available to children of the component
-	* (including slotted content) with `getContext`.
+	* and returns that object. The context is then available to the component itself and all of its
+	* descendants (including slotted content) with `getContext`.
 	*
 	* Like lifecycle functions, this must be called during component initialisation.
 	*
@@ -257,7 +290,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @returns {T}
 	*/
 	function setContext(key, context) {
-		const context_map = get_or_init_context_map("setContext");
+		const context_map = get_or_init_context_map(component_context, "setContext");
 		if (async_mode_flag) {
 			var flags = active_effect.f;
 			if (!(!active_reaction && (flags & 32) !== 0 && !component_context.i)) set_context_after_init();
@@ -302,35 +335,22 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		if (component !== void 0) context.x = component;
 		context.i = true;
 		component_context = context.p;
-		return component ?? {};
+		return mark_as_component(component);
+	}
+	/**
+	* Add a symbol to the object (or create one if undefined) to mark it as a component so it isn't proxified.
+	* @param {any} component
+	*/
+	function mark_as_component(component = {}) {
+		define_property(component, COMPONENT_SYMBOL, { value: true });
+		return component;
 	}
 	/** @returns {boolean} */
 	function is_runes() {
 		return !legacy_mode_flag || component_context !== null && component_context.l === null;
 	}
-	/**
-	* @param {string} name
-	* @returns {Map<unknown, unknown>}
-	*/
-	function get_or_init_context_map(name) {
-		if (component_context === null) lifecycle_outside_component(name);
-		return component_context.c ??= new Map(get_parent_context(component_context) || void 0);
-	}
-	/**
-	* @param {ComponentContext} component_context
-	* @returns {Map<unknown, unknown> | null}
-	*/
-	function get_parent_context(component_context) {
-		let parent = component_context.p;
-		while (parent !== null) {
-			const context_map = parent.c;
-			if (context_map !== null) return context_map;
-			parent = parent.p;
-		}
-		return null;
-	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/task.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/task.js
 	/** @type {Array<() => void>} */
 	var micro_tasks = [];
 	function run_micro_tasks() {
@@ -376,7 +396,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		console.warn(`https://svelte.dev/e/svelte_boundary_reset_noop`);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
 	/** @import { TemplateNode } from '#client' */
 	/**
 	* Use this variable to guard everything related to hydration code so it can be treeshaken out
@@ -460,7 +480,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @returns {T}
 	*/
 	function proxy(value) {
-		if (typeof value !== "object" || value === null || STATE_SYMBOL in value) return value;
+		if (typeof value !== "object" || value === null || STATE_SYMBOL in value || COMPONENT_SYMBOL in value) return value;
 		const prototype = get_prototype_of(value);
 		if (prototype !== object_prototype && prototype !== array_prototype) return value;
 		/** @type {Map<any, Source<any>>} */
@@ -613,7 +633,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		});
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
 	/** @import { Effect, TemplateNode } from '#client' */
 	/** @type {Window} */
 	var $window;
@@ -713,6 +733,21 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		return hydrate_node;
 	}
 	/**
+	* `child`, for the very common case of an element with exactly one child. Resetting the
+	* hydration cursor is part of the same step, so the compiler doesn't have to emit a
+	* separate `reset` call for every `<p>{text}</p>` in an app.
+	* Don't mark this as side-effect-free, hydration needs to walk all nodes
+	* @param {TemplateNode} node
+	* @param {boolean} [is_text]
+	* @returns {TemplateNode | null}
+	*/
+	function only_child(node, is_text = false) {
+		if (!hydrating) return /* @__PURE__ */ get_first_child(node);
+		var first = child(node, is_text);
+		reset(node);
+		return first;
+	}
+	/**
 	* Don't mark this as side-effect-free, hydration needs to walk all nodes
 	* @param {TemplateNode} node
 	* @param {number} count
@@ -809,7 +844,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function invoke_error_boundary(error, effect) {
 		if (effect !== null && (effect.f & 16384) !== 0) return;
 		while (effect !== null) {
-			if ((effect.f & 128) !== 0) {
+			if ((effect.f & 128) !== 0 && (effect.f & 33570816) === 0) {
 				if ((effect.f & 32768) === 0) throw error;
 				try {
 					/** @type {Boundary} */ effect.b.error(error);
@@ -823,7 +858,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		throw error;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/status.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/status.js
 	/** @import { Derived, Signal } from '#client' */
 	var STATUS_MASK = ~(DIRTY | MAYBE_DIRTY | CLEAN);
 	/**
@@ -842,7 +877,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		else set_signal_status(derived, MAYBE_DIRTY);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/utils.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/utils.js
 	/** @import { Derived, Effect, Value } from '#client' */
 	/**
 	* @param {Value[] | null} deps
@@ -870,7 +905,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		set_signal_status(effect, CLEAN);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/store.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/store.js
 	/**
 	* We set this to `true` when updating a store so that we correctly
 	* schedule effects if the update takes place inside a `$:` effect
@@ -900,7 +935,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/shared.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/shared.js
 	/**
 	* @template T
 	* @param {() => T} fn
@@ -918,439 +953,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/create-subscriber.js
-	/**
-	* Returns a `subscribe` function that integrates external event-based systems with Svelte's reactivity.
-	* It's particularly useful for integrating with web APIs like `MediaQuery`, `IntersectionObserver`, or `WebSocket`.
-	*
-	* If `subscribe` is called inside an effect (including indirectly, for example inside a getter),
-	* the `start` callback will be called with an `update` function. Whenever `update` is called, the effect re-runs.
-	*
-	* If `start` returns a cleanup function, it will be called when the effect is destroyed.
-	*
-	* If `subscribe` is called in multiple effects, `start` will only be called once as long as the effects
-	* are active, and the returned teardown function will only be called when all effects are destroyed.
-	*
-	* It's best understood with an example. Here's an implementation of [`MediaQuery`](https://svelte.dev/docs/svelte/svelte-reactivity#MediaQuery):
-	*
-	* ```js
-	* import { createSubscriber } from 'svelte/reactivity';
-	* import { on } from 'svelte/events';
-	*
-	* export class MediaQuery {
-	* 	#query;
-	* 	#subscribe;
-	*
-	* 	constructor(query) {
-	* 		this.#query = window.matchMedia(`(${query})`);
-	*
-	* 		this.#subscribe = createSubscriber((update) => {
-	* 			// when the `change` event occurs, re-run any effects that read `this.current`
-	* 			const off = on(this.#query, 'change', update);
-	*
-	* 			// stop listening when all the effects are destroyed
-	* 			return () => off();
-	* 		});
-	* 	}
-	*
-	* 	get current() {
-	* 		// This makes the getter reactive, if read in an effect
-	* 		this.#subscribe();
-	*
-	* 		// Return the current state of the query, whether or not we're in an effect
-	* 		return this.#query.matches;
-	* 	}
-	* }
-	* ```
-	* @param {(update: () => void) => (() => void) | void} start
-	* @since 5.7.0
-	*/
-	function createSubscriber(start) {
-		let subscribers = 0;
-		let version = source(0);
-		/** @type {(() => void) | void} */
-		let stop;
-		return () => {
-			if (effect_tracking()) {
-				get(version);
-				render_effect(() => {
-					if (subscribers === 0) stop = untrack(() => start(() => increment(version)));
-					subscribers += 1;
-					return () => {
-						queue_micro_task(() => {
-							subscribers -= 1;
-							if (subscribers === 0) {
-								stop?.();
-								stop = void 0;
-								increment(version);
-							}
-						});
-					};
-				});
-			}
-		};
-	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/boundary.js
-	/** @import { Effect, Source, TemplateNode, } from '#client' */
-	/**
-	* @typedef {{
-	* 	 onerror?: ((error: unknown, reset: () => void) => void) | null;
-	*   failed?: ((anchor: Node, error: () => unknown, reset: () => () => void) => void) | null;
-	*   pending?: ((anchor: Node) => void) | null;
-	* }} BoundaryProps
-	*/
-	var flags = EFFECT_TRANSPARENT | EFFECT_PRESERVED;
-	/**
-	* @param {TemplateNode} node
-	* @param {BoundaryProps} props
-	* @param {((anchor: Node) => void)} children
-	* @param {((error: unknown) => unknown) | undefined} [transform_error]
-	* @returns {void}
-	*/
-	function boundary(node, props, children, transform_error) {
-		new Boundary(node, props, children, transform_error);
-	}
-	var Boundary = class {
-		/** @type {Boundary | null} */
-		parent;
-		is_pending = false;
-		/**
-		* API-level transformError transform function. Transforms errors before they reach the `failed` snippet.
-		* Inherited from parent boundary, or defaults to identity.
-		* @type {(error: unknown) => unknown}
-		*/
-		transform_error;
-		/** @type {TemplateNode} */
-		#anchor;
-		/** @type {TemplateNode | null} */
-		#hydrate_open = hydrating ? hydrate_node : null;
-		/** @type {BoundaryProps} */
-		#props;
-		/** @type {((anchor: Node) => void)} */
-		#children;
-		/** @type {Effect} */
-		#effect;
-		/** @type {Effect | null} */
-		#main_effect = null;
-		/** @type {Effect | null} */
-		#pending_effect = null;
-		/** @type {Effect | null} */
-		#failed_effect = null;
-		/** @type {DocumentFragment | null} */
-		#offscreen_fragment = null;
-		#local_pending_count = 0;
-		#pending_count = 0;
-		#pending_count_update_queued = false;
-		/** @type {Set<Effect>} */
-		#dirty_effects = /* @__PURE__ */ new Set();
-		/** @type {Set<Effect>} */
-		#maybe_dirty_effects = /* @__PURE__ */ new Set();
-		/**
-		* A source containing the number of pending async deriveds/expressions.
-		* Only created if `$effect.pending()` is used inside the boundary,
-		* otherwise updating the source results in needless `Batch.ensure()`
-		* calls followed by no-op flushes
-		* @type {Source<number> | null}
-		*/
-		#effect_pending = null;
-		#effect_pending_subscriber = createSubscriber(() => {
-			this.#effect_pending = source(this.#local_pending_count);
-			return () => {
-				this.#effect_pending = null;
-			};
-		});
-		/**
-		* @param {TemplateNode} node
-		* @param {BoundaryProps} props
-		* @param {((anchor: Node) => void)} children
-		* @param {((error: unknown) => unknown) | undefined} [transform_error]
-		*/
-		constructor(node, props, children, transform_error) {
-			this.#anchor = node;
-			this.#props = props;
-			this.#children = (anchor) => {
-				var effect = active_effect;
-				effect.b = this;
-				effect.f |= 128;
-				children(anchor);
-			};
-			this.parent = active_effect.b;
-			this.transform_error = transform_error ?? this.parent?.transform_error ?? ((e) => e);
-			this.#effect = block(() => {
-				if (hydrating) {
-					const comment = this.#hydrate_open;
-					hydrate_next();
-					const server_rendered_pending = comment.data === "[!";
-					if (comment.data.startsWith("[?")) {
-						const serialized_error = JSON.parse(comment.data.slice(2));
-						this.#hydrate_failed_content(serialized_error);
-					} else if (server_rendered_pending) this.#hydrate_pending_content();
-					else this.#hydrate_resolved_content();
-				} else this.#render();
-			}, flags);
-			if (hydrating) this.#anchor = hydrate_node;
-		}
-		#hydrate_resolved_content() {
-			try {
-				this.#main_effect = branch(() => this.#children(this.#anchor));
-			} catch (error) {
-				this.error(error);
-			}
-		}
-		/**
-		* @param {unknown} error The deserialized error from the server's hydration comment
-		*/
-		#hydrate_failed_content(error) {
-			const failed = this.#props.failed;
-			const { reset, invoke_onerror } = this.#create_reset(error);
-			queue_micro_task(invoke_onerror);
-			if (!failed) return;
-			this.#failed_effect = branch(() => {
-				failed(this.#anchor, () => error, () => reset);
-			});
-		}
-		/**
-		* Creates the `reset` function for a failed boundary, along with a function
-		* that invokes `onerror` with it (if provided)
-		* @param {unknown} error
-		* @returns {{ reset: () => void, invoke_onerror: () => void }}
-		*/
-		#create_reset(error) {
-			var did_reset = false;
-			var calling_on_error = false;
-			const reset = () => {
-				if (did_reset) {
-					svelte_boundary_reset_noop();
-					return;
-				}
-				did_reset = true;
-				if (calling_on_error) svelte_boundary_reset_onerror();
-				if (this.#failed_effect !== null) pause_effect(this.#failed_effect, () => {
-					this.#failed_effect = null;
-				});
-				this.#run(() => {
-					this.#render();
-				});
-			};
-			const invoke_onerror = () => {
-				try {
-					calling_on_error = true;
-					this.#props.onerror?.(error, reset);
-					calling_on_error = false;
-				} catch (err) {
-					invoke_error_boundary(err, this.#effect && this.#effect.parent);
-				}
-			};
-			return {
-				reset,
-				invoke_onerror
-			};
-		}
-		#hydrate_pending_content() {
-			const pending = this.#props.pending;
-			if (!pending) return;
-			this.is_pending = true;
-			this.#pending_effect = branch(() => pending(this.#anchor));
-			queue_micro_task(() => {
-				var fragment = this.#offscreen_fragment = document.createDocumentFragment();
-				var anchor = create_text();
-				fragment.append(anchor);
-				this.#main_effect = this.#run(() => {
-					return branch(() => this.#children(anchor));
-				});
-				if (this.#pending_count === 0) {
-					this.#anchor.before(fragment);
-					this.#offscreen_fragment = null;
-					pause_effect(this.#pending_effect, () => {
-						this.#pending_effect = null;
-					});
-					this.#resolve(current_batch);
-				}
-			});
-		}
-		#render() {
-			try {
-				this.is_pending = this.has_pending_snippet();
-				this.#pending_count = 0;
-				this.#local_pending_count = 0;
-				this.#main_effect = branch(() => {
-					this.#children(this.#anchor);
-				});
-				if (this.#pending_count > 0) {
-					var fragment = this.#offscreen_fragment = document.createDocumentFragment();
-					move_effect(this.#main_effect, fragment);
-					const pending = this.#props.pending;
-					this.#pending_effect = branch(() => pending(this.#anchor));
-				} else this.#resolve(current_batch);
-			} catch (error) {
-				this.error(error);
-			}
-		}
-		/**
-		* @param {Batch} batch
-		*/
-		#resolve(batch) {
-			this.is_pending = false;
-			batch.transfer_effects(this.#dirty_effects, this.#maybe_dirty_effects);
-		}
-		/**
-		* Defer an effect inside a pending boundary until the boundary resolves
-		* @param {Effect} effect
-		*/
-		defer_effect(effect) {
-			defer_effect(effect, this.#dirty_effects, this.#maybe_dirty_effects);
-		}
-		/**
-		* Returns `false` if the effect exists inside a boundary whose pending snippet is shown
-		* @returns {boolean}
-		*/
-		is_rendered() {
-			return !this.is_pending && (!this.parent || this.parent.is_rendered());
-		}
-		has_pending_snippet() {
-			return !!this.#props.pending;
-		}
-		/**
-		* @template T
-		* @param {() => T} fn
-		*/
-		#run(fn) {
-			var previous_effect = active_effect;
-			var previous_reaction = active_reaction;
-			var previous_ctx = component_context;
-			set_active_effect(this.#effect);
-			set_active_reaction(this.#effect);
-			set_component_context(this.#effect.ctx);
-			try {
-				Batch.ensure();
-				return fn();
-			} catch (e) {
-				handle_error(e);
-				return null;
-			} finally {
-				set_active_effect(previous_effect);
-				set_active_reaction(previous_reaction);
-				set_component_context(previous_ctx);
-			}
-		}
-		/**
-		* Updates the pending count associated with the currently visible pending snippet,
-		* if any, such that we can replace the snippet with content once work is done
-		* @param {1 | -1} d
-		* @param {Batch} batch
-		*/
-		#update_pending_count(d, batch) {
-			if (!this.has_pending_snippet()) {
-				if (this.parent) this.parent.#update_pending_count(d, batch);
-				return;
-			}
-			this.#pending_count += d;
-			if (this.#pending_count === 0) {
-				this.#resolve(batch);
-				if (this.#pending_effect) pause_effect(this.#pending_effect, () => {
-					this.#pending_effect = null;
-				});
-				if (this.#offscreen_fragment) {
-					this.#anchor.before(this.#offscreen_fragment);
-					this.#offscreen_fragment = null;
-				}
-			}
-		}
-		/**
-		* Update the source that powers `$effect.pending()` inside this boundary,
-		* and controls when the current `pending` snippet (if any) is removed.
-		* Do not call from inside the class
-		* @param {1 | -1} d
-		* @param {Batch} batch
-		*/
-		update_pending_count(d, batch) {
-			this.#update_pending_count(d, batch);
-			this.#local_pending_count += d;
-			if (!this.#effect_pending || this.#pending_count_update_queued) return;
-			this.#pending_count_update_queued = true;
-			queue_micro_task(() => {
-				this.#pending_count_update_queued = false;
-				if (this.#effect_pending) internal_set(this.#effect_pending, this.#local_pending_count);
-			});
-		}
-		get_effect_pending() {
-			this.#effect_pending_subscriber();
-			return get(this.#effect_pending);
-		}
-		/** @param {unknown} error */
-		error(error) {
-			if (!this.#props.onerror && !this.#props.failed) throw error;
-			if (current_batch?.is_fork) {
-				if (this.#main_effect) current_batch.skip_effect(this.#main_effect);
-				if (this.#pending_effect) current_batch.skip_effect(this.#pending_effect);
-				if (this.#failed_effect) current_batch.skip_effect(this.#failed_effect);
-				current_batch.oncommit(() => {
-					this.#handle_error(error);
-				});
-			} else this.#handle_error(error);
-		}
-		/**
-		* @param {unknown} error
-		*/
-		#handle_error(error) {
-			if (this.#main_effect) {
-				destroy_effect(this.#main_effect);
-				this.#main_effect = null;
-			}
-			if (this.#pending_effect) {
-				destroy_effect(this.#pending_effect);
-				this.#pending_effect = null;
-			}
-			if (this.#failed_effect) {
-				destroy_effect(this.#failed_effect);
-				this.#failed_effect = null;
-			}
-			if (hydrating) {
-				set_hydrate_node(this.#hydrate_open);
-				next();
-				set_hydrate_node(skip_nodes());
-			}
-			let failed = this.#props.failed;
-			/** @param {unknown} transformed_error */
-			const handle_error_result = (transformed_error) => {
-				const { reset, invoke_onerror } = this.#create_reset(transformed_error);
-				invoke_onerror();
-				if (failed) this.#failed_effect = this.#run(() => {
-					try {
-						return branch(() => {
-							var effect = active_effect;
-							effect.b = this;
-							effect.f |= 128;
-							failed(this.#anchor, () => transformed_error, () => reset);
-						});
-					} catch (error) {
-						invoke_error_boundary(error, this.#effect.parent);
-						return null;
-					}
-				});
-			};
-			queue_micro_task(() => {
-				/** @type {unknown} */
-				var result;
-				try {
-					result = this.transform_error(error);
-				} catch (e) {
-					invoke_error_boundary(e, this.#effect && this.#effect.parent);
-					return;
-				}
-				if (result !== null && typeof result === "object" && typeof result.then === "function")
- /** @type {any} */ result.then(
-					handle_error_result,
-					/** @param {unknown} e */
-					(e) => invoke_error_boundary(e, this.#effect && this.#effect.parent)
-				);
-				else handle_error_result(result);
-			});
-		}
-	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/async.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/async.js
 	/** @import { Blocker, Effect, Source, Value } from '#client' */
 	/**
 	* @param {Blocker[]} blockers
@@ -1639,7 +1242,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		for (const e of derived.effects) if (e.teardown && e.fn !== null) update_effect(e);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/batch.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/batch.js
 	/** @import { Fork } from 'svelte' */
 	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
 	/** @type {Batch | null} */
@@ -1901,7 +1504,10 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 					batch.#roots.push(...this.#roots.filter((r) => !batch.#roots.includes(r)));
 				} else next_batch = this;
 			}
-			if (next_batch !== null) next_batch.#process();
+			if (next_batch !== null) {
+				old_values.clear();
+				next_batch.#process();
+			}
 		}
 		/**
 		* Traverse the effect tree, executing effects or stashing
@@ -2376,7 +1982,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/sources.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/sources.js
 	/** @import { Derived, Effect, Source, Value } from '#client' */
 	/** @type {Set<Effect>} */
 	var eager_effects = /* @__PURE__ */ new Set();
@@ -2443,7 +2049,8 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	*/
 	function internal_set(source, value, updated_during_traversal = null) {
 		if (!source.equals(value)) {
-			old_values.set(source, is_destroying_effect ? value : source.v);
+			if (is_destroying_effect) old_values.set(source, value);
+			else if (!old_values.has(source)) old_values.set(source, source.v);
 			var batch = Batch.ensure();
 			batch.capture(source, value);
 			if ((source.f & 2) !== 0) {
@@ -2516,14 +2123,14 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
 	/**
 	* @type {Set<Value> | null}
 	* @deprecated
 	*/
 	var captured_signals = null;
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
 	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
 	/**
 	* True if updating in an effect context that is reactive (i.e. not branch/root effects)
@@ -2580,7 +2187,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* Version starts from 1 so that unowned deriveds differentiate between a created effect and a run one for tracing
 	**/
 	var write_version = 1;
-	/** @type {number} Used to version each read of a source of derived to avoid duplicating depedencies inside a reaction */
+	/** @type {number} Used to version each read of a source of derived to avoid duplicating dependencies inside a reaction */
 	var read_version = 0;
 	var update_version = read_version;
 	/** @param {number} value */
@@ -2661,21 +2268,8 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			var fn = reaction.fn;
 			var result = fn();
 			reaction.f |= REACTION_RAN;
-			var deps = reaction.deps;
-			var is_fork = current_batch?.is_fork;
-			if (new_deps !== null) {
-				var i;
-				if (!is_fork) remove_reactions(reaction, skipped_deps);
-				if (deps !== null && skipped_deps > 0) {
-					deps.length = skipped_deps + new_deps.length;
-					for (i = 0; i < new_deps.length; i++) deps[skipped_deps + i] = new_deps[i];
-				} else reaction.deps = deps = new_deps;
-				if (effect_tracking() && (reaction.f & 512) !== 0) for (i = skipped_deps; i < deps.length; i++) (deps[i].reactions ??= []).push(reaction);
-			} else if (!is_fork && deps !== null && skipped_deps < deps.length) {
-				remove_reactions(reaction, skipped_deps);
-				deps.length = skipped_deps;
-			}
-			if (is_runes() && untracked_writes !== null && !untracking && deps !== null && (reaction.f & 6146) === 0) for (i = 0; i < untracked_writes.length; i++) schedule_possible_effect_self_invalidation(untracked_writes[i], reaction);
+			var deps = update_dependencies(reaction);
+			if (is_runes() && untracked_writes !== null && !untracking && deps !== null && (reaction.f & 6146) === 0) for (var i = 0; i < untracked_writes.length; i++) schedule_possible_effect_self_invalidation(untracked_writes[i], reaction);
 			if (previous_reaction !== null && previous_reaction !== reaction) {
 				read_version++;
 				if (previous_reaction.deps !== null) for (let i = 0; i < previous_skipped_deps; i += 1) previous_reaction.deps[i].rv = read_version;
@@ -2688,6 +2282,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			if ((reaction.f & 8388608) !== 0) reaction.f ^= ERROR_VALUE;
 			return result;
 		} catch (error) {
+			update_dependencies(reaction);
 			return handle_error(error);
 		} finally {
 			reaction.f ^= REACTION_IS_UPDATING;
@@ -2700,6 +2295,26 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			untracking = previous_untracking;
 			update_version = previous_update_version;
 		}
+	}
+	/**
+	* @param {Reaction} reaction
+	*/
+	function update_dependencies(reaction) {
+		var deps = reaction.deps;
+		var is_fork = current_batch?.is_fork;
+		if (new_deps !== null) {
+			var i;
+			if (!is_fork) remove_reactions(reaction, skipped_deps);
+			if (deps !== null && skipped_deps > 0) {
+				deps.length = skipped_deps + new_deps.length;
+				for (i = 0; i < new_deps.length; i++) deps[skipped_deps + i] = new_deps[i];
+			} else reaction.deps = deps = new_deps;
+			if (effect_tracking() && (reaction.f & 512) !== 0) for (i = skipped_deps; i < deps.length; i++) (deps[i].reactions ??= []).push(reaction);
+		} else if (!is_fork && deps !== null && skipped_deps < deps.length) {
+			remove_reactions(reaction, skipped_deps);
+			deps.length = skipped_deps;
+		}
+		return deps;
 	}
 	/**
 	* @template V
@@ -2769,6 +2384,18 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			is_updating_effect = was_updating_effect;
 			active_effect = previous_effect;
 		}
+	}
+	/**
+	* Returns a promise that resolves once any pending state changes have been applied.
+	* @returns {Promise<void>}
+	*/
+	async function tick() {
+		if (async_mode_flag) return new Promise((f) => {
+			requestAnimationFrame(() => f());
+			setTimeout(() => f());
+		});
+		await Promise.resolve();
+		flushSync();
 	}
 	/**
 	* @template V
@@ -2873,7 +2500,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/effects.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/effects.js
 	/** @import { Blocker, ComponentContext, ComponentContextLegacy, Derived, Effect, TemplateNode, TransitionManager } from '#client' */
 	/**
 	* @param {'$effect' | '$effect.pre' | '$inspect'} rune
@@ -3049,6 +2676,13 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	}
 	/**
 	* @param {(() => void)} fn
+	* @param {number} flags
+	*/
+	function managed(fn, flags = 0) {
+		return create_effect(MANAGED_EFFECT | flags, fn);
+	}
+	/**
+	* @param {(() => void)} fn
 	*/
 	function branch(fn) {
 		return create_effect(32 | EFFECT_PRESERVED, fn);
@@ -3065,6 +2699,8 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			set_active_reaction(null);
 			try {
 				teardown.call(null);
+			} catch (error) {
+				invoke_error_boundary(error, effect.parent);
 			} finally {
 				set_is_destroying_effect(previously_destroying_effect);
 				set_active_reaction(previous_reaction);
@@ -3167,6 +2803,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function pause_effect(effect, callback, destroy = true) {
 		/** @type {TransitionManager[]} */
 		var transitions = [];
+		effect.f |= 256;
 		pause_children(effect, transitions, true);
 		var fn = () => {
 			if (destroy) destroy_effect(effect);
@@ -3206,6 +2843,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @param {Effect} effect
 	*/
 	function resume_effect(effect) {
+		effect.f &= -257;
 		resume_children(effect, true);
 	}
 	/**
@@ -3213,6 +2851,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @param {boolean} local
 	*/
 	function resume_children(effect, local) {
+		if ((effect.f & 256) !== 0) return;
 		if ((effect.f & 8192) === 0) return;
 		effect.f ^= INERT;
 		if ((effect.f & 1024) === 0) {
@@ -3248,7 +2887,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/events.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/events.js
 	/**
 	* Used on elements, as a map of event type -> event handler,
 	* and on events themselves to track which element handled an event
@@ -3279,6 +2918,22 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		});
 		else dom.addEventListener(event_name, target_handler, options);
 		return target_handler;
+	}
+	/**
+	* Attaches an event handler to an element and returns a function that removes the handler. Using this
+	* rather than `addEventListener` will preserve the correct order relative to handlers added declaratively
+	* (with attributes like `onclick`), which use event delegation for performance reasons
+	*
+	* @param {EventTarget} element
+	* @param {string} type
+	* @param {EventListener} handler
+	* @param {AddEventListenerOptions} [options]
+	*/
+	function on(element, type, handler, options = {}) {
+		var target_handler = create_event(type, element, handler, options);
+		return () => {
+			element.removeEventListener(type, target_handler, options);
+		};
 	}
 	/**
 	* @param {string} event_name
@@ -3316,6 +2971,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		for (var fn of root_event_handles) fn(events);
 	}
 	var last_propagated_event = null;
+	var last_propagated_event_clear_scheduled = false;
 	/**
 	* @this {EventTarget}
 	* @param {Event} event
@@ -3328,6 +2984,13 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		var path = event.composedPath?.() || [];
 		var current_target = path[0] || event.target;
 		last_propagated_event = event;
+		if (!last_propagated_event_clear_scheduled) {
+			last_propagated_event_clear_scheduled = true;
+			setTimeout(() => {
+				last_propagated_event_clear_scheduled = false;
+				last_propagated_event = null;
+			});
+		}
 		var path_idx = 0;
 		var handled_at = last_propagated_event === event && event[event_symbol];
 		if (handled_at) {
@@ -3388,7 +3051,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/reconciler.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/reconciler.js
 	var policy = globalThis?.window?.trustedTypes && /* @__PURE__ */ globalThis.window.trustedTypes.createPolicy("svelte-trusted-html", { 
 	/** @param {string} html */
 createHTML: (html) => {
@@ -3407,7 +3070,7 @@ createHTML: (html) => {
 		return elem.content;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/template.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/template.js
 	/** @import { Effect, EffectNodes, TemplateNode } from '#client' */
 	/** @import { TemplateStructure } from './types' */
 	/**
@@ -3523,6 +3186,461 @@ createHTML: (html) => {
 	function is_passive_event(name) {
 		return PASSIVE_EVENTS.includes(name);
 	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/create-subscriber.js
+	/**
+	* Returns a `subscribe` function that integrates external event-based systems with Svelte's reactivity.
+	* It's particularly useful for integrating with web APIs like `MediaQuery`, `IntersectionObserver`, or `WebSocket`.
+	*
+	* If `subscribe` is called inside an effect (including indirectly, for example inside a getter),
+	* the `start` callback will be called with an `update` function. Whenever `update` is called, the effect re-runs.
+	*
+	* If `start` returns a cleanup function, it will be called when the effect is destroyed.
+	*
+	* If `subscribe` is called in multiple effects, `start` will only be called once as long as the effects
+	* are active, and the returned teardown function will only be called when all effects are destroyed.
+	*
+	* It's best understood with an example. Here's an implementation of [`MediaQuery`](https://svelte.dev/docs/svelte/svelte-reactivity#MediaQuery):
+	*
+	* ```js
+	* import { createSubscriber } from 'svelte/reactivity';
+	* import { on } from 'svelte/events';
+	*
+	* export class MediaQuery {
+	* 	#query;
+	* 	#subscribe;
+	*
+	* 	constructor(query) {
+	* 		this.#query = window.matchMedia(`(${query})`);
+	*
+	* 		this.#subscribe = createSubscriber((update) => {
+	* 			// when the `change` event occurs, re-run any effects that read `this.current`
+	* 			const off = on(this.#query, 'change', update);
+	*
+	* 			// stop listening when all the effects are destroyed
+	* 			return () => off();
+	* 		});
+	* 	}
+	*
+	* 	get current() {
+	* 		// This makes the getter reactive, if read in an effect
+	* 		this.#subscribe();
+	*
+	* 		// Return the current state of the query, whether or not we're in an effect
+	* 		return this.#query.matches;
+	* 	}
+	* }
+	* ```
+	* @param {(update: () => void) => (() => void) | void} start
+	* @since 5.7.0
+	*/
+	function createSubscriber(start) {
+		let subscribers = 0;
+		let version = source(0);
+		/** @type {(() => void) | void} */
+		let stop;
+		return () => {
+			if (effect_tracking()) {
+				get(version);
+				render_effect(() => {
+					if (subscribers === 0) stop = untrack(() => start(() => increment(version)));
+					subscribers += 1;
+					return () => {
+						queue_micro_task(() => {
+							subscribers -= 1;
+							if (subscribers === 0) {
+								stop?.();
+								stop = void 0;
+								increment(version);
+							}
+						});
+					};
+				});
+			}
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/boundary.js
+	/** @import { Effect, Source, TemplateNode, } from '#client' */
+	/**
+	* @typedef {{
+	* 	 onerror?: ((error: unknown, reset: () => void) => void) | null;
+	*   failed?: ((anchor: Node, error: () => unknown, reset: () => () => void) => void) | null;
+	*   pending?: ((anchor: Node) => void) | null;
+	* }} BoundaryProps
+	*/
+	var flags = EFFECT_TRANSPARENT | EFFECT_PRESERVED;
+	/**
+	* @param {TemplateNode} node
+	* @param {BoundaryProps} props
+	* @param {((anchor: Node) => void)} children
+	* @param {((error: unknown) => unknown) | undefined} [transform_error]
+	* @returns {void}
+	*/
+	function boundary(node, props, children, transform_error) {
+		new Boundary(node, props, children, transform_error);
+	}
+	var Boundary = class {
+		/** @type {Boundary | null} */
+		parent;
+		is_pending = false;
+		/**
+		* API-level transformError transform function. Transforms errors before they reach the `failed` snippet.
+		* Inherited from parent boundary, or defaults to identity.
+		* @type {(error: unknown) => unknown}
+		*/
+		transform_error;
+		/** @type {TemplateNode} */
+		#anchor;
+		/** @type {TemplateNode | null} */
+		#hydrate_open = hydrating ? hydrate_node : null;
+		/** @type {BoundaryProps} */
+		#props;
+		/** @type {((anchor: Node) => void)} */
+		#children;
+		/** @type {Effect} */
+		#effect;
+		/** @type {Effect | null} */
+		#main_effect = null;
+		/** @type {Effect | null} */
+		#pending_effect = null;
+		/** @type {Effect | null} */
+		#failed_effect = null;
+		/** @type {DocumentFragment | null} */
+		#offscreen_fragment = null;
+		#local_pending_count = 0;
+		#pending_count = 0;
+		#pending_count_update_queued = false;
+		/** @type {Set<Effect>} */
+		#dirty_effects = /* @__PURE__ */ new Set();
+		/** @type {Set<Effect>} */
+		#maybe_dirty_effects = /* @__PURE__ */ new Set();
+		/**
+		* A source containing the number of pending async deriveds/expressions.
+		* Only created if `$effect.pending()` is used inside the boundary,
+		* otherwise updating the source results in needless `Batch.ensure()`
+		* calls followed by no-op flushes
+		* @type {Source<number> | null}
+		*/
+		#effect_pending = null;
+		#effect_pending_subscriber = createSubscriber(() => {
+			this.#effect_pending = source(this.#local_pending_count);
+			return () => {
+				this.#effect_pending = null;
+			};
+		});
+		/**
+		* @param {TemplateNode} node
+		* @param {BoundaryProps} props
+		* @param {((anchor: Node) => void)} children
+		* @param {((error: unknown) => unknown) | undefined} [transform_error]
+		*/
+		constructor(node, props, children, transform_error) {
+			this.#anchor = node;
+			this.#props = props;
+			this.#children = (anchor) => {
+				var effect = active_effect;
+				effect.b = this;
+				effect.f |= 128;
+				children(anchor);
+			};
+			this.parent = active_effect.b;
+			this.transform_error = transform_error ?? this.parent?.transform_error ?? ((e) => e);
+			this.#effect = block(() => {
+				if (hydrating) {
+					const comment = this.#hydrate_open;
+					hydrate_next();
+					const server_rendered_pending = comment.data === "[!";
+					if (comment.data.startsWith("[?")) {
+						const serialized_error = JSON.parse(comment.data.slice(2));
+						this.#hydrate_failed_content(serialized_error);
+					} else if (server_rendered_pending) this.#hydrate_pending_content();
+					else this.#hydrate_resolved_content();
+				} else this.#render();
+			}, flags);
+			if (hydrating) this.#anchor = hydrate_node;
+		}
+		#hydrate_resolved_content() {
+			try {
+				this.#main_effect = branch(() => this.#children(this.#anchor));
+			} catch (error) {
+				this.error(error);
+			}
+		}
+		/**
+		* @param {unknown} error The deserialized error from the server's hydration comment
+		*/
+		#hydrate_failed_content(error) {
+			const failed = this.#props.failed;
+			const { reset, invoke_onerror } = this.#create_reset(error);
+			queue_micro_task(invoke_onerror);
+			if (!failed) return;
+			this.#failed_effect = branch(() => {
+				failed(this.#anchor, () => error, () => reset);
+			});
+		}
+		/**
+		* Creates the `reset` function for a failed boundary, along with a function
+		* that invokes `onerror` with it (if provided)
+		* @param {unknown} error
+		* @returns {{ reset: () => void, invoke_onerror: () => void }}
+		*/
+		#create_reset(error) {
+			var did_reset = false;
+			var calling_on_error = false;
+			const reset = () => {
+				if (did_reset) {
+					svelte_boundary_reset_noop();
+					return;
+				}
+				did_reset = true;
+				if (calling_on_error) svelte_boundary_reset_onerror();
+				if (this.#failed_effect !== null) pause_effect(this.#failed_effect, () => {
+					this.#failed_effect = null;
+				});
+				this.#run(() => {
+					this.#render();
+				});
+			};
+			const invoke_onerror = () => {
+				try {
+					calling_on_error = true;
+					this.#props.onerror?.(error, reset);
+					calling_on_error = false;
+				} catch (err) {
+					invoke_error_boundary(err, this.#effect && this.#effect.parent);
+				}
+			};
+			return {
+				reset,
+				invoke_onerror
+			};
+		}
+		#hydrate_pending_content() {
+			const pending = this.#props.pending;
+			if (!pending) return;
+			this.is_pending = true;
+			this.#pending_effect = branch(() => pending(this.#anchor));
+			queue_micro_task(() => {
+				var fragment = this.#offscreen_fragment = document.createDocumentFragment();
+				var anchor = create_text();
+				var handled = false;
+				fragment.append(anchor);
+				this.#main_effect = this.#run(() => {
+					try {
+						return branch(() => this.#children(anchor));
+					} catch (error) {
+						try {
+							this.error(error);
+							handled = true;
+						} catch (error) {
+							invoke_error_boundary(error, this.#effect.parent);
+						}
+						return null;
+					}
+				});
+				if (this.#main_effect === null) {
+					this.#offscreen_fragment = null;
+					if (handled) this.#resolve(current_batch);
+					return;
+				}
+				if (this.#pending_count === 0) {
+					this.#anchor.before(fragment);
+					this.#offscreen_fragment = null;
+					pause_effect(this.#pending_effect, () => {
+						this.#pending_effect = null;
+					});
+					this.#resolve(current_batch);
+				}
+			});
+		}
+		#render() {
+			try {
+				this.is_pending = this.has_pending_snippet();
+				this.#pending_count = 0;
+				this.#local_pending_count = 0;
+				this.#main_effect = branch(() => {
+					this.#children(this.#anchor);
+				});
+				if (this.#pending_count > 0) {
+					var fragment = this.#offscreen_fragment = document.createDocumentFragment();
+					move_effect(this.#main_effect, fragment);
+					const pending = this.#props.pending;
+					this.#pending_effect = branch(() => pending(this.#anchor));
+				} else this.#resolve(current_batch);
+			} catch (error) {
+				this.error(error);
+			}
+		}
+		/**
+		* @param {Batch} batch
+		*/
+		#resolve(batch) {
+			this.is_pending = false;
+			batch.transfer_effects(this.#dirty_effects, this.#maybe_dirty_effects);
+		}
+		/**
+		* Defer an effect inside a pending boundary until the boundary resolves
+		* @param {Effect} effect
+		*/
+		defer_effect(effect) {
+			defer_effect(effect, this.#dirty_effects, this.#maybe_dirty_effects);
+		}
+		/**
+		* Returns `false` if the effect exists inside a boundary whose pending snippet is shown
+		* @returns {boolean}
+		*/
+		is_rendered() {
+			return !this.is_pending && (!this.parent || this.parent.is_rendered());
+		}
+		has_pending_snippet() {
+			return !!this.#props.pending;
+		}
+		/**
+		* @template T
+		* @param {() => T} fn
+		*/
+		#run(fn) {
+			var previous_effect = active_effect;
+			var previous_reaction = active_reaction;
+			var previous_ctx = component_context;
+			set_active_effect(this.#effect);
+			set_active_reaction(this.#effect);
+			set_component_context(this.#effect.ctx);
+			try {
+				Batch.ensure();
+				return fn();
+			} finally {
+				set_active_effect(previous_effect);
+				set_active_reaction(previous_reaction);
+				set_component_context(previous_ctx);
+			}
+		}
+		/**
+		* Updates the pending count associated with the currently visible pending snippet,
+		* if any, such that we can replace the snippet with content once work is done
+		* @param {1 | -1} d
+		* @param {Batch} batch
+		*/
+		#update_pending_count(d, batch) {
+			if (!this.has_pending_snippet()) {
+				if (this.parent) this.parent.#update_pending_count(d, batch);
+				return;
+			}
+			this.#pending_count += d;
+			if (this.#pending_count === 0) {
+				this.#resolve(batch);
+				if (this.#pending_effect) pause_effect(this.#pending_effect, () => {
+					this.#pending_effect = null;
+				});
+				if (this.#offscreen_fragment) {
+					this.#anchor.before(this.#offscreen_fragment);
+					this.#offscreen_fragment = null;
+				}
+			}
+		}
+		/**
+		* Update the source that powers `$effect.pending()` inside this boundary,
+		* and controls when the current `pending` snippet (if any) is removed.
+		* Do not call from inside the class
+		* @param {1 | -1} d
+		* @param {Batch} batch
+		*/
+		update_pending_count(d, batch) {
+			this.#update_pending_count(d, batch);
+			this.#local_pending_count += d;
+			if (!this.#effect_pending || this.#pending_count_update_queued) return;
+			this.#pending_count_update_queued = true;
+			queue_micro_task(() => {
+				this.#pending_count_update_queued = false;
+				if (this.#effect_pending) internal_set(this.#effect_pending, this.#local_pending_count);
+			});
+		}
+		get_effect_pending() {
+			this.#effect_pending_subscriber();
+			return get(this.#effect_pending);
+		}
+		/** @param {unknown} error */
+		error(error) {
+			if (!this.#props.onerror && !this.#props.failed) throw error;
+			if (current_batch?.is_fork) {
+				if (this.#main_effect) current_batch.skip_effect(this.#main_effect);
+				if (this.#pending_effect) current_batch.skip_effect(this.#pending_effect);
+				if (this.#failed_effect) current_batch.skip_effect(this.#failed_effect);
+				current_batch.oncommit(() => {
+					this.#handle_error(error);
+				});
+			} else this.#handle_error(error);
+		}
+		/**
+		* @param {unknown} error
+		*/
+		#handle_error(error) {
+			if (this.#main_effect) {
+				destroy_effect(this.#main_effect);
+				this.#main_effect = null;
+			}
+			if (this.#pending_effect) {
+				destroy_effect(this.#pending_effect);
+				this.#pending_effect = null;
+			}
+			if (this.#failed_effect) {
+				destroy_effect(this.#failed_effect);
+				this.#failed_effect = null;
+			}
+			if (hydrating) {
+				set_hydrate_node(this.#hydrate_open);
+				next();
+				set_hydrate_node(skip_nodes());
+			}
+			let failed = this.#props.failed;
+			/** @param {unknown} transformed_error */
+			const handle_error_result = (transformed_error) => {
+				const { reset, invoke_onerror } = this.#create_reset(transformed_error);
+				invoke_onerror();
+				if (failed) this.#failed_effect = this.#run(() => {
+					try {
+						return branch(() => {
+							var effect = active_effect;
+							effect.b = this;
+							effect.f |= 128;
+							failed(this.#anchor, () => transformed_error, () => reset);
+						});
+					} catch (error) {
+						invoke_error_boundary(error, this.#effect.parent);
+						return null;
+					}
+				});
+			};
+			queue_micro_task(() => {
+				/** @type {unknown} */
+				var result;
+				try {
+					result = this.transform_error(error);
+				} catch (e) {
+					invoke_error_boundary(e, this.#effect && this.#effect.parent);
+					return;
+				}
+				if (result !== null && typeof result === "object" && typeof result.then === "function")
+ /** @type {any} */ result.then(
+					handle_error_result,
+					/** @param {unknown} e */
+					(e) => invoke_error_boundary(e, this.#effect && this.#effect.parent)
+				);
+				else handle_error_result(result);
+			});
+		}
+	};
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/render.js
+	/** @import { ComponentContext, Effect, EffectNodes, TemplateNode } from '#client' */
+	/** @import { Component, ComponentType, SvelteComponent, MountOptions } from '../../index.js' */
+	/**
+	* This is normally true — block effects should run their intro transitions —
+	* but is false during hydration (unless `options.intro` is `true`) and
+	* when creating the children of a `<svelte:element>` that just changed tag
+	*/
+	var should_intro = true;
 	/**
 	* @param {Element} text
 	* @param {string} value
@@ -3625,7 +3743,9 @@ createHTML: (html) => {
 				if (events)
  /** @type {any} */ props.$$events = events;
 				if (hydrating) assign_nodes(anchor_node, null);
-				component = Component(anchor_node, props) || {};
+				should_intro = intro;
+				component = Component(anchor_node, props) || mark_as_component();
+				should_intro = true;
 				if (hydrating) {
 					/** @type {Effect & { nodes: EffectNodes }} */ active_effect.nodes.end = hydrate_node;
 					if (hydrate_node === null || hydrate_node.nodeType !== 8 || hydrate_node.data !== "]") {
@@ -3833,10 +3953,10 @@ createHTML: (html) => {
 		}
 	};
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
 	if (typeof window !== "undefined") ((window.__svelte ??= {}).v ??= /* @__PURE__ */ new Set()).add("5");
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/branches.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/branches.js
 	/** @import { Effect, TemplateNode } from '#client' */
 	/**
 	* @typedef {{ effect: Effect, fragment: DocumentFragment }} Branch
@@ -3984,7 +4104,7 @@ createHTML: (html) => {
 		}
 	};
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
 	/** @import { Snippet } from 'svelte' */
 	/** @import { TemplateNode } from '#client' */
 	/** @import { Getters } from '#shared' */
@@ -4037,7 +4157,7 @@ createHTML: (html) => {
 		};
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/if.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/if.js
 	/** @import { TemplateNode } from '#client' */
 	/**
 	* @param {TemplateNode} node
@@ -4083,7 +4203,7 @@ createHTML: (html) => {
 		}, flags);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/each.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/each.js
 	/** @import { EachItem, EachOutroGroup, EachState, Effect, EffectNodes, MaybeSource, Source, TemplateNode, TransitionManager, Value } from '#client' */
 	/** @import { Batch } from '../../reactivity/batch.js'; */
 	/**
@@ -4500,7 +4620,7 @@ createHTML: (html) => {
 		else next.prev = prev;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/svelte-component.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/svelte-component.js
 	/** @import { TemplateNode, Dom } from '#client' */
 	/**
 	* @template P
@@ -4535,7 +4655,412 @@ createHTML: (html) => {
 		}, EFFECT_TRANSPARENT);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/attributes.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/timing.js
+	/** @import { Raf } from '#client' */
+	var now = () => performance.now();
+	/** @type {Raf} */
+	var raf = {
+		tick: /** @param {any} _ */ (_) => requestAnimationFrame(_),
+		now: () => now(),
+		tasks: /* @__PURE__ */ new Set()
+	};
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/loop.js
+	/** @import { TaskCallback, Task, TaskEntry } from '#client' */
+	/**
+	* @returns {void}
+	*/
+	function run_tasks() {
+		const now = raf.now();
+		raf.tasks.forEach((task) => {
+			if (!task.c(now)) {
+				raf.tasks.delete(task);
+				task.f();
+			}
+		});
+		if (raf.tasks.size !== 0) raf.tick(run_tasks);
+	}
+	/**
+	* Creates a new task that runs on each raf frame
+	* until it returns a falsy value or is aborted
+	* @param {TaskCallback} callback
+	* @returns {Task}
+	*/
+	function loop(callback) {
+		/** @type {TaskEntry} */
+		let task;
+		if (raf.tasks.size === 0) raf.tick(run_tasks);
+		return {
+			promise: new Promise((fulfill) => {
+				raf.tasks.add(task = {
+					c: callback,
+					f: fulfill
+				});
+			}),
+			abort() {
+				raf.tasks.delete(task);
+			}
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/transitions.js
+	/** @import { AnimateFn, Animation, AnimationConfig, EachItem, Effect, EffectNodes, TransitionFn, TransitionManager } from '#client' */
+	/**
+	* @param {Element} element
+	* @param {'introstart' | 'introend' | 'outrostart' | 'outroend'} type
+	* @returns {void}
+	*/
+	function dispatch_event(element, type) {
+		without_reactive_context(() => {
+			element.dispatchEvent(new CustomEvent(type));
+		});
+	}
+	/**
+	* Converts a property to the camel-case format expected by Element.animate(), KeyframeEffect(), and KeyframeEffect.setKeyframes().
+	* @param {string} style
+	* @returns {string}
+	*/
+	function css_property_to_camelcase(style) {
+		if (style === "float") return "cssFloat";
+		if (style === "offset") return "cssOffset";
+		if (style.startsWith("--")) return style;
+		const parts = style.split("-");
+		if (parts.length === 1) return parts[0];
+		return parts[0] + parts.slice(1).map(
+			/** @param {any} word */
+			(word) => word[0].toUpperCase() + word.slice(1)
+		).join("");
+	}
+	/**
+	* @param {string} css
+	* @returns {Keyframe}
+	*/
+	function css_to_keyframe(css) {
+		/** @type {Keyframe} */
+		const keyframe = {};
+		const parts = css.split(";");
+		for (const part of parts) {
+			const [property, value] = part.split(":");
+			if (!property || value === void 0) break;
+			const formatted_property = css_property_to_camelcase(property.trim());
+			keyframe[formatted_property] = value.trim();
+		}
+		return keyframe;
+	}
+	/** @param {number} t */
+	var linear = (t) => t;
+	/** @type {Effect | null} */
+	var animation_effect_override = null;
+	/**
+	* Called inside keyed `{#each ...}` blocks (as `$.animation(...)`). This creates an animation manager
+	* and attaches it to the block, so that moves can be animated following reconciliation.
+	* @template P
+	* @param {Element} element
+	* @param {() => AnimateFn<P | undefined>} get_fn
+	* @param {(() => P) | null} get_params
+	*/
+	function animation(element, get_fn, get_params) {
+		var nodes = (animation_effect_override ?? active_effect).nodes;
+		/** @type {DOMRect} */
+		var from;
+		/** @type {DOMRect} */
+		var to;
+		/** @type {Animation | undefined} */
+		var animation;
+		/** @type {null | { position: string, width: string, height: string, transform: string }} */
+		var original_styles = null;
+		nodes.a ??= {
+			element,
+			measure() {
+				from = this.element.getBoundingClientRect();
+			},
+			apply() {
+				animation?.abort();
+				to = this.element.getBoundingClientRect();
+				if (from.left !== to.left || from.right !== to.right || from.top !== to.top || from.bottom !== to.bottom) {
+					const options = get_fn()(this.element, {
+						from,
+						to
+					}, get_params?.());
+					animation = animate(this.element, options, void 0, 1, () => {}, () => {
+						animation?.abort();
+						animation = void 0;
+					});
+				}
+			},
+			fix() {
+				if (element.getAnimations().length) return;
+				var { position, width, height } = getComputedStyle(element);
+				if (position !== "absolute" && position !== "fixed") {
+					var style = element.style;
+					original_styles = {
+						position: style.position,
+						width: style.width,
+						height: style.height,
+						transform: style.transform
+					};
+					style.position = "absolute";
+					style.width = width;
+					style.height = height;
+					var to = element.getBoundingClientRect();
+					if (from.left !== to.left || from.top !== to.top) {
+						var transform = `translate(${from.left - to.left}px, ${from.top - to.top}px)`;
+						style.transform = style.transform ? `${style.transform} ${transform}` : transform;
+					}
+				}
+			},
+			unfix() {
+				if (original_styles) {
+					var style = element.style;
+					style.position = original_styles.position;
+					style.width = original_styles.width;
+					style.height = original_styles.height;
+					style.transform = original_styles.transform;
+				}
+			}
+		};
+		nodes.a.element = element;
+	}
+	/**
+	* Called inside block effects as `$.transition(...)`. This creates a transition manager and
+	* attaches it to the current effect — later, inside `pause_effect` and `resume_effect`, we
+	* use this to create `intro` and `outro` transitions.
+	* @template P
+	* @param {number} flags
+	* @param {HTMLElement} element
+	* @param {() => TransitionFn<P | undefined>} get_fn
+	* @param {(() => P) | null} get_params
+	* @returns {void}
+	*/
+	function transition(flags, element, get_fn, get_params) {
+		var is_intro = (flags & 1) !== 0;
+		var is_outro = (flags & 2) !== 0;
+		var is_both = is_intro && is_outro;
+		var is_global = (flags & 4) !== 0;
+		/** @type {'in' | 'out' | 'both'} */
+		var direction = is_both ? "both" : is_intro ? "in" : "out";
+		/** @type {AnimationConfig | ((opts: { direction: 'in' | 'out' }) => AnimationConfig) | undefined} */
+		var current_options;
+		var inert = element.inert;
+		/**
+		* The default overflow style, stashed so we can revert changes during the transition
+		* that are necessary to work around a Safari <18 bug
+		* TODO 6.0 remove this, if older versions of Safari have died out enough
+		*/
+		var overflow = element.style.overflow;
+		/** @type {Animation | undefined} */
+		var intro;
+		/** @type {Animation | undefined} */
+		var outro;
+		function get_options() {
+			return without_reactive_context(() => {
+				return current_options ??= get_fn()(element, get_params?.() ?? {}, { direction });
+			});
+		}
+		/** @type {TransitionManager} */
+		var transition = {
+			is_global,
+			in() {
+				element.inert = inert;
+				if (!is_intro) {
+					outro?.abort();
+					outro?.reset?.();
+					return;
+				}
+				if (!is_outro) intro?.abort();
+				intro = animate(element, get_options(), outro, 1, () => {
+					dispatch_event(element, "introstart");
+				}, () => {
+					dispatch_event(element, "introend");
+					intro?.abort();
+					intro = current_options = void 0;
+					element.style.overflow = overflow;
+				});
+			},
+			out(fn) {
+				if (!is_outro) {
+					fn?.();
+					current_options = void 0;
+					return;
+				}
+				element.inert = true;
+				outro = animate(element, get_options(), intro, 0, () => {
+					dispatch_event(element, "outrostart");
+				}, () => {
+					dispatch_event(element, "outroend");
+					fn?.();
+				});
+			},
+			stop: () => {
+				intro?.abort();
+				outro?.abort();
+			}
+		};
+		var e = active_effect;
+		(e.nodes.t ??= []).push(transition);
+		if (is_intro && should_intro) {
+			var run = is_global;
+			if (!run) {
+				var block = e.parent;
+				while (block && (block.f & 65536) !== 0) while (block = block.parent) if ((block.f & 16) !== 0) break;
+				run = !block || (block.f & 32768) !== 0;
+			}
+			if (run) effect(() => {
+				untrack(() => transition.in());
+			});
+		}
+	}
+	/**
+	* Animates an element, according to the provided configuration
+	* @param {Element} element
+	* @param {AnimationConfig | ((opts: { direction: 'in' | 'out' }) => AnimationConfig)} options
+	* @param {Animation | undefined} counterpart The corresponding intro/outro to this outro/intro
+	* @param {number} t2 The target `t` value — `1` for intro, `0` for outro
+	* @param {(() => void)} on_begin Called just before beginning the animation
+	* @param {(() => void)} on_finish Called after successfully completing the animation
+	* @returns {Animation}
+	*/
+	function animate(element, options, counterpart, t2, on_begin, on_finish) {
+		var is_intro = t2 === 1;
+		var aborted = false;
+		if (is_function(options)) {
+			/** @type {Animation} */
+			var a;
+			queue_micro_task(() => {
+				if (aborted) return;
+				a = animate(element, options({ direction: is_intro ? "in" : "out" }), counterpart, t2, on_begin, on_finish);
+			});
+			return {
+				abort: () => {
+					aborted = true;
+					a?.abort();
+				},
+				deactivate: () => a.deactivate(),
+				reset: () => a.reset(),
+				t: () => a.t()
+			};
+		}
+		counterpart?.deactivate();
+		if (!options?.duration && !options?.delay) {
+			on_begin();
+			on_finish();
+			return {
+				abort: noop,
+				deactivate: noop,
+				reset: noop,
+				t: () => t2
+			};
+		}
+		const { delay = 0, css, tick, easing = linear } = options;
+		/** @type {globalThis.Animation} */
+		var animation;
+		var get_t = () => 1 - t2;
+		queue_micro_task(() => {
+			if (aborted) return;
+			var keyframes = [];
+			if (is_intro && counterpart === void 0) {
+				if (tick) tick(0, 1);
+				if (css) {
+					var styles = css_to_keyframe(css(0, 1));
+					keyframes.push(styles, styles);
+				}
+			}
+			animation = element.animate(keyframes, {
+				duration: delay,
+				fill: "forwards"
+			});
+			animation.onfinish = () => {
+				animation.cancel();
+				on_begin();
+				var t1 = counterpart?.t() ?? 1 - t2;
+				counterpart?.abort();
+				var delta = t2 - t1;
+				var duration = options.duration * Math.abs(delta);
+				var keyframes = [];
+				if (duration > 0) {
+					/**
+					* Whether or not the CSS includes `overflow: hidden`, in which case we need to
+					* add it as an inline style to work around a Safari <18 bug
+					* TODO 6.0 remove this, if possible
+					*/
+					var needs_overflow_hidden = false;
+					if (css) {
+						var n = Math.ceil(duration / (1e3 / 60));
+						for (var i = 0; i <= n; i += 1) {
+							var t = t1 + delta * easing(i / n);
+							var styles = css_to_keyframe(css(t, 1 - t));
+							keyframes.push(styles);
+							needs_overflow_hidden ||= styles.overflow === "hidden";
+						}
+					}
+					if (needs_overflow_hidden)
+ /** @type {HTMLElement} */ element.style.overflow = "hidden";
+					get_t = () => {
+						var time = animation.currentTime;
+						return t1 + delta * easing(time / duration);
+					};
+					if (tick) loop(() => {
+						if (animation.playState !== "running") return false;
+						var t = get_t();
+						tick(t, 1 - t);
+						return true;
+					});
+				}
+				animation = element.animate(keyframes, {
+					duration,
+					fill: "forwards"
+				});
+				animation.onfinish = () => {
+					get_t = () => t2;
+					tick?.(t2, 1 - t2);
+					on_finish();
+				};
+			};
+		});
+		return {
+			abort: () => {
+				aborted = true;
+				if (animation) {
+					animation.cancel();
+					animation.effect = null;
+					animation.onfinish = noop;
+				}
+			},
+			deactivate: () => {
+				on_finish = noop;
+			},
+			reset: () => {
+				if (t2 === 0) tick?.(1, 0);
+			},
+			t: () => get_t()
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attachments.js
+	/** @import { Effect } from '#client' */
+	/**
+	* @param {Element} node
+	* @param {() => (node: Element) => void} get_fn
+	*/
+	function attach(node, get_fn) {
+		/** @type {false | undefined | ((node: Element) => void)} */
+		var fn = void 0;
+		/** @type {Effect | null} */
+		var e;
+		managed(() => {
+			if (fn !== (fn = get_fn())) {
+				if (e) {
+					destroy_effect(e);
+					e = null;
+				}
+				if (fn) e = branch(() => {
+					effect(() => fn(node));
+				});
+			}
+		});
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/attributes.js
 	var whitespace = [..." 	\n\r\f\xA0\v﻿"];
 	/**
 	* @param {any} value
@@ -4599,7 +5124,7 @@ createHTML: (html) => {
 				important_styles = styles[1];
 			} else normal_styles = styles;
 			if (value) {
-				value = String(value).replaceAll(/\s*\/\*.*?\*\/\s*/g, "").trim();
+				value = String(value).replaceAll(/\/\*.*?\*\//g, "").trim();
 				/** @type {boolean | '"' | "'"} */
 				var in_str = false;
 				var in_apo = 0;
@@ -4645,7 +5170,7 @@ createHTML: (html) => {
 		return value == null ? null : String(value);
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/class.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/class.js
 	/**
 	* @param {Element} dom
 	* @param {boolean | number} is_html
@@ -4672,7 +5197,7 @@ createHTML: (html) => {
 		return next_classes;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/style.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/style.js
 	/**
 	* @param {Element & ElementCSSInlineStyle} dom
 	* @param {Record<string, any>} prev
@@ -4712,7 +5237,7 @@ createHTML: (html) => {
 		return next_styles;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attributes.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attributes.js
 	/** @import { Blocker, Effect } from '#client' */
 	var IS_CUSTOM_ELEMENT = Symbol("is custom element");
 	var IS_HTML = Symbol("is html");
@@ -4735,7 +5260,7 @@ createHTML: (html) => {
 		if (attributes[attribute] === (attributes[attribute] = value)) return;
 		if (attribute === "loading") element[LOADING_ATTR_SYMBOL] = value;
 		if (value == null) element.removeAttribute(attribute);
-		else if (typeof value !== "string" && get_setters(element).includes(attribute)) element[attribute] = value;
+		else if (typeof value !== "string" && get_setters(element).has(attribute)) element[attribute] = value;
 		else element.setAttribute(attribute, value);
 	}
 	/**
@@ -4748,26 +5273,26 @@ createHTML: (html) => {
 			[IS_HTML]: element.namespaceURI === NAMESPACE_HTML
 		};
 	}
-	/** @type {Map<string, string[]>} */
+	/** @type {Map<string, Set<string>>} */
 	var setters_cache = /* @__PURE__ */ new Map();
 	/** @param {Element} element */
 	function get_setters(element) {
 		var cache_key = element.getAttribute("is") || element.nodeName;
 		var setters = setters_cache.get(cache_key);
 		if (setters) return setters;
-		setters_cache.set(cache_key, setters = []);
+		setters_cache.set(cache_key, setters = /* @__PURE__ */ new Set());
 		var descriptors;
 		var proto = element;
 		var element_proto = Element.prototype;
 		while (element_proto !== proto) {
 			descriptors = get_descriptors(proto);
-			for (var key in descriptors) if (descriptors[key].set && key !== "innerHTML" && key !== "textContent" && key !== "innerText") setters.push(key);
+			for (var key in descriptors) if (descriptors[key].set && key !== "innerHTML" && key !== "textContent" && key !== "innerText") setters.add(key);
 			proto = get_prototype_of(proto);
 		}
 		return setters;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/this.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/this.js
 	/** @import { ComponentContext, Effect } from '#client' */
 	/**
 	* @param {any} bound_value
@@ -4785,7 +5310,7 @@ createHTML: (html) => {
 	* 										returns all the parts of the each block context that are used in the expression
 	* @returns {void}
 	*/
-	function bind_this(element_or_component = {}, update, get_value, get_parts) {
+	function bind_this(element_or_component = mark_as_component(), update, get_value, get_parts) {
 		var component_effect = component_context.r;
 		var parent = active_effect;
 		effect(() => {
@@ -4819,7 +5344,7 @@ createHTML: (html) => {
 		return element_or_component;
 	}
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/props.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/props.js
 	/** @import { Derived, Effect, Source } from './types.js' */
 	/**
 	* The proxy handler for rest props (i.e. `const { x, ...rest } = $props()`).
@@ -5022,7 +5547,7 @@ createHTML: (html) => {
 	}
 	if (typeof HTMLElement === "function");
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.56.9_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/map.js
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/map.js
 	/** @import { Source } from '#client' */
 	/**
 	* A reactive version of the built-in [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object.
@@ -5142,6 +5667,22 @@ createHTML: (html) => {
 		* @param {K} key
 		* @param {V} value
 		* */
+		getOrInsert(key, value) {
+			if (!super.has(key)) this.set(key, value);
+			return this.get(key);
+		}
+		/**
+		* @param {K} key
+		* @param {(key: K) => V} callbackFn
+		*/
+		getOrInsertComputed(key, callbackFn) {
+			if (!super.has(key)) this.set(key, callbackFn(key));
+			return this.get(key);
+		}
+		/**
+		* @param {K} key
+		* @param {V} value
+		* */
 		set(key, value) {
 			var sources = this.#sources;
 			var s = sources.get(key);
@@ -5213,6 +5754,69 @@ createHTML: (html) => {
 		get size() {
 			get(this.#size);
 			return super.size;
+		}
+	};
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/reactive-value.js
+	/**
+	* @template T
+	*/
+	var ReactiveValue = class {
+		#fn;
+		#subscribe;
+		/**
+		*
+		* @param {() => T} fn
+		* @param {(update: () => void) => void} onsubscribe
+		*/
+		constructor(fn, onsubscribe) {
+			this.#fn = fn;
+			this.#subscribe = createSubscriber(onsubscribe);
+		}
+		get current() {
+			this.#subscribe();
+			return this.#fn();
+		}
+	};
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/media-query.js
+	var parenthesis_regex = /\(.+\)/;
+	var non_parenthesized_keywords = /* @__PURE__ */ new Set([
+		"all",
+		"print",
+		"screen",
+		"and",
+		"or",
+		"not",
+		"only"
+	]);
+	/**
+	* Creates a media query and provides a `current` property that reflects whether or not it matches.
+	*
+	* Use it carefully — during server-side rendering, there is no way to know what the correct value should be, potentially causing content to change upon hydration.
+	* If you can use the media query in CSS to achieve the same effect, do that.
+	*
+	* ```svelte
+	* <script>
+	* 	import { MediaQuery } from 'svelte/reactivity';
+	*
+	* 	const large = new MediaQuery('min-width: 800px');
+	* <\/script>
+	*
+	* <h1>{large.current ? 'large screen' : 'small screen'}</h1>
+	* ```
+	* @extends {ReactiveValue<boolean>}
+	* @since 5.7.0
+	*/
+	var MediaQuery = class extends ReactiveValue {
+		/**
+		* @param {string} query A media query string
+		* @param {boolean} [fallback] Fallback value for the server
+		*/
+		constructor(query, fallback) {
+			let final_query = parenthesis_regex.test(query) || query.split(/[\s,]+/).some((keyword) => non_parenthesized_keywords.has(keyword.trim())) ? query : `(${query})`;
+			const q = window.matchMedia(final_query);
+			super(() => q.matches, (update) => on(q, "change", update));
 		}
 	};
 	//#endregion
@@ -7544,57 +8148,5983 @@ createHTML: (html) => {
 		};
 	}
 	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/generated/bidi-data.js
+	var latin1BidiTypes = [
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"S",
+		"B",
+		"S",
+		"WS",
+		"B",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"B",
+		"B",
+		"B",
+		"S",
+		"WS",
+		"ON",
+		"ON",
+		"ET",
+		"ET",
+		"ET",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ES",
+		"CS",
+		"ES",
+		"CS",
+		"CS",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"EN",
+		"CS",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"B",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"BN",
+		"CS",
+		"ON",
+		"ET",
+		"ET",
+		"ET",
+		"ET",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"L",
+		"ON",
+		"ON",
+		"BN",
+		"ON",
+		"ON",
+		"ET",
+		"ET",
+		"EN",
+		"EN",
+		"ON",
+		"L",
+		"ON",
+		"ON",
+		"ON",
+		"EN",
+		"L",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"ON",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"ON",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"ON",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L",
+		"L"
+	];
+	var nonLatin1BidiRanges = [
+		[
+			697,
+			698,
+			"ON"
+		],
+		[
+			706,
+			719,
+			"ON"
+		],
+		[
+			722,
+			735,
+			"ON"
+		],
+		[
+			741,
+			749,
+			"ON"
+		],
+		[
+			751,
+			767,
+			"ON"
+		],
+		[
+			768,
+			879,
+			"NSM"
+		],
+		[
+			884,
+			885,
+			"ON"
+		],
+		[
+			894,
+			894,
+			"ON"
+		],
+		[
+			900,
+			901,
+			"ON"
+		],
+		[
+			903,
+			903,
+			"ON"
+		],
+		[
+			1014,
+			1014,
+			"ON"
+		],
+		[
+			1155,
+			1161,
+			"NSM"
+		],
+		[
+			1418,
+			1418,
+			"ON"
+		],
+		[
+			1421,
+			1422,
+			"ON"
+		],
+		[
+			1423,
+			1423,
+			"ET"
+		],
+		[
+			1424,
+			1424,
+			"R"
+		],
+		[
+			1425,
+			1469,
+			"NSM"
+		],
+		[
+			1470,
+			1470,
+			"R"
+		],
+		[
+			1471,
+			1471,
+			"NSM"
+		],
+		[
+			1472,
+			1472,
+			"R"
+		],
+		[
+			1473,
+			1474,
+			"NSM"
+		],
+		[
+			1475,
+			1475,
+			"R"
+		],
+		[
+			1476,
+			1477,
+			"NSM"
+		],
+		[
+			1478,
+			1478,
+			"R"
+		],
+		[
+			1479,
+			1479,
+			"NSM"
+		],
+		[
+			1480,
+			1535,
+			"R"
+		],
+		[
+			1536,
+			1541,
+			"AN"
+		],
+		[
+			1542,
+			1543,
+			"ON"
+		],
+		[
+			1544,
+			1544,
+			"AL"
+		],
+		[
+			1545,
+			1546,
+			"ET"
+		],
+		[
+			1547,
+			1547,
+			"AL"
+		],
+		[
+			1548,
+			1548,
+			"CS"
+		],
+		[
+			1549,
+			1549,
+			"AL"
+		],
+		[
+			1550,
+			1551,
+			"ON"
+		],
+		[
+			1552,
+			1562,
+			"NSM"
+		],
+		[
+			1563,
+			1610,
+			"AL"
+		],
+		[
+			1611,
+			1631,
+			"NSM"
+		],
+		[
+			1632,
+			1641,
+			"AN"
+		],
+		[
+			1642,
+			1642,
+			"ET"
+		],
+		[
+			1643,
+			1644,
+			"AN"
+		],
+		[
+			1645,
+			1647,
+			"AL"
+		],
+		[
+			1648,
+			1648,
+			"NSM"
+		],
+		[
+			1649,
+			1749,
+			"AL"
+		],
+		[
+			1750,
+			1756,
+			"NSM"
+		],
+		[
+			1757,
+			1757,
+			"AN"
+		],
+		[
+			1758,
+			1758,
+			"ON"
+		],
+		[
+			1759,
+			1764,
+			"NSM"
+		],
+		[
+			1765,
+			1766,
+			"AL"
+		],
+		[
+			1767,
+			1768,
+			"NSM"
+		],
+		[
+			1769,
+			1769,
+			"ON"
+		],
+		[
+			1770,
+			1773,
+			"NSM"
+		],
+		[
+			1774,
+			1775,
+			"AL"
+		],
+		[
+			1776,
+			1785,
+			"EN"
+		],
+		[
+			1786,
+			1808,
+			"AL"
+		],
+		[
+			1809,
+			1809,
+			"NSM"
+		],
+		[
+			1810,
+			1839,
+			"AL"
+		],
+		[
+			1840,
+			1866,
+			"NSM"
+		],
+		[
+			1867,
+			1957,
+			"AL"
+		],
+		[
+			1958,
+			1968,
+			"NSM"
+		],
+		[
+			1969,
+			1983,
+			"AL"
+		],
+		[
+			1984,
+			2026,
+			"R"
+		],
+		[
+			2027,
+			2035,
+			"NSM"
+		],
+		[
+			2036,
+			2037,
+			"R"
+		],
+		[
+			2038,
+			2041,
+			"ON"
+		],
+		[
+			2042,
+			2044,
+			"R"
+		],
+		[
+			2045,
+			2045,
+			"NSM"
+		],
+		[
+			2046,
+			2069,
+			"R"
+		],
+		[
+			2070,
+			2073,
+			"NSM"
+		],
+		[
+			2074,
+			2074,
+			"R"
+		],
+		[
+			2075,
+			2083,
+			"NSM"
+		],
+		[
+			2084,
+			2084,
+			"R"
+		],
+		[
+			2085,
+			2087,
+			"NSM"
+		],
+		[
+			2088,
+			2088,
+			"R"
+		],
+		[
+			2089,
+			2093,
+			"NSM"
+		],
+		[
+			2094,
+			2136,
+			"R"
+		],
+		[
+			2137,
+			2139,
+			"NSM"
+		],
+		[
+			2140,
+			2143,
+			"R"
+		],
+		[
+			2144,
+			2191,
+			"AL"
+		],
+		[
+			2192,
+			2193,
+			"AN"
+		],
+		[
+			2194,
+			2198,
+			"AL"
+		],
+		[
+			2199,
+			2207,
+			"NSM"
+		],
+		[
+			2208,
+			2249,
+			"AL"
+		],
+		[
+			2250,
+			2273,
+			"NSM"
+		],
+		[
+			2274,
+			2274,
+			"AN"
+		],
+		[
+			2275,
+			2306,
+			"NSM"
+		],
+		[
+			2362,
+			2362,
+			"NSM"
+		],
+		[
+			2364,
+			2364,
+			"NSM"
+		],
+		[
+			2369,
+			2376,
+			"NSM"
+		],
+		[
+			2381,
+			2381,
+			"NSM"
+		],
+		[
+			2385,
+			2391,
+			"NSM"
+		],
+		[
+			2402,
+			2403,
+			"NSM"
+		],
+		[
+			2433,
+			2433,
+			"NSM"
+		],
+		[
+			2492,
+			2492,
+			"NSM"
+		],
+		[
+			2497,
+			2500,
+			"NSM"
+		],
+		[
+			2509,
+			2509,
+			"NSM"
+		],
+		[
+			2530,
+			2531,
+			"NSM"
+		],
+		[
+			2546,
+			2547,
+			"ET"
+		],
+		[
+			2555,
+			2555,
+			"ET"
+		],
+		[
+			2558,
+			2558,
+			"NSM"
+		],
+		[
+			2561,
+			2562,
+			"NSM"
+		],
+		[
+			2620,
+			2620,
+			"NSM"
+		],
+		[
+			2625,
+			2626,
+			"NSM"
+		],
+		[
+			2631,
+			2632,
+			"NSM"
+		],
+		[
+			2635,
+			2637,
+			"NSM"
+		],
+		[
+			2641,
+			2641,
+			"NSM"
+		],
+		[
+			2672,
+			2673,
+			"NSM"
+		],
+		[
+			2677,
+			2677,
+			"NSM"
+		],
+		[
+			2689,
+			2690,
+			"NSM"
+		],
+		[
+			2748,
+			2748,
+			"NSM"
+		],
+		[
+			2753,
+			2757,
+			"NSM"
+		],
+		[
+			2759,
+			2760,
+			"NSM"
+		],
+		[
+			2765,
+			2765,
+			"NSM"
+		],
+		[
+			2786,
+			2787,
+			"NSM"
+		],
+		[
+			2801,
+			2801,
+			"ET"
+		],
+		[
+			2810,
+			2815,
+			"NSM"
+		],
+		[
+			2817,
+			2817,
+			"NSM"
+		],
+		[
+			2876,
+			2876,
+			"NSM"
+		],
+		[
+			2879,
+			2879,
+			"NSM"
+		],
+		[
+			2881,
+			2884,
+			"NSM"
+		],
+		[
+			2893,
+			2893,
+			"NSM"
+		],
+		[
+			2901,
+			2902,
+			"NSM"
+		],
+		[
+			2914,
+			2915,
+			"NSM"
+		],
+		[
+			2946,
+			2946,
+			"NSM"
+		],
+		[
+			3008,
+			3008,
+			"NSM"
+		],
+		[
+			3021,
+			3021,
+			"NSM"
+		],
+		[
+			3059,
+			3064,
+			"ON"
+		],
+		[
+			3065,
+			3065,
+			"ET"
+		],
+		[
+			3066,
+			3066,
+			"ON"
+		],
+		[
+			3072,
+			3072,
+			"NSM"
+		],
+		[
+			3076,
+			3076,
+			"NSM"
+		],
+		[
+			3132,
+			3132,
+			"NSM"
+		],
+		[
+			3134,
+			3136,
+			"NSM"
+		],
+		[
+			3142,
+			3144,
+			"NSM"
+		],
+		[
+			3146,
+			3149,
+			"NSM"
+		],
+		[
+			3157,
+			3158,
+			"NSM"
+		],
+		[
+			3170,
+			3171,
+			"NSM"
+		],
+		[
+			3192,
+			3198,
+			"ON"
+		],
+		[
+			3201,
+			3201,
+			"NSM"
+		],
+		[
+			3260,
+			3260,
+			"NSM"
+		],
+		[
+			3276,
+			3277,
+			"NSM"
+		],
+		[
+			3298,
+			3299,
+			"NSM"
+		],
+		[
+			3328,
+			3329,
+			"NSM"
+		],
+		[
+			3387,
+			3388,
+			"NSM"
+		],
+		[
+			3393,
+			3396,
+			"NSM"
+		],
+		[
+			3405,
+			3405,
+			"NSM"
+		],
+		[
+			3426,
+			3427,
+			"NSM"
+		],
+		[
+			3457,
+			3457,
+			"NSM"
+		],
+		[
+			3530,
+			3530,
+			"NSM"
+		],
+		[
+			3538,
+			3540,
+			"NSM"
+		],
+		[
+			3542,
+			3542,
+			"NSM"
+		],
+		[
+			3633,
+			3633,
+			"NSM"
+		],
+		[
+			3636,
+			3642,
+			"NSM"
+		],
+		[
+			3647,
+			3647,
+			"ET"
+		],
+		[
+			3655,
+			3662,
+			"NSM"
+		],
+		[
+			3761,
+			3761,
+			"NSM"
+		],
+		[
+			3764,
+			3772,
+			"NSM"
+		],
+		[
+			3784,
+			3790,
+			"NSM"
+		],
+		[
+			3864,
+			3865,
+			"NSM"
+		],
+		[
+			3893,
+			3893,
+			"NSM"
+		],
+		[
+			3895,
+			3895,
+			"NSM"
+		],
+		[
+			3897,
+			3897,
+			"NSM"
+		],
+		[
+			3898,
+			3901,
+			"ON"
+		],
+		[
+			3953,
+			3966,
+			"NSM"
+		],
+		[
+			3968,
+			3972,
+			"NSM"
+		],
+		[
+			3974,
+			3975,
+			"NSM"
+		],
+		[
+			3981,
+			3991,
+			"NSM"
+		],
+		[
+			3993,
+			4028,
+			"NSM"
+		],
+		[
+			4038,
+			4038,
+			"NSM"
+		],
+		[
+			4141,
+			4144,
+			"NSM"
+		],
+		[
+			4146,
+			4151,
+			"NSM"
+		],
+		[
+			4153,
+			4154,
+			"NSM"
+		],
+		[
+			4157,
+			4158,
+			"NSM"
+		],
+		[
+			4184,
+			4185,
+			"NSM"
+		],
+		[
+			4190,
+			4192,
+			"NSM"
+		],
+		[
+			4209,
+			4212,
+			"NSM"
+		],
+		[
+			4226,
+			4226,
+			"NSM"
+		],
+		[
+			4229,
+			4230,
+			"NSM"
+		],
+		[
+			4237,
+			4237,
+			"NSM"
+		],
+		[
+			4253,
+			4253,
+			"NSM"
+		],
+		[
+			4957,
+			4959,
+			"NSM"
+		],
+		[
+			5008,
+			5017,
+			"ON"
+		],
+		[
+			5120,
+			5120,
+			"ON"
+		],
+		[
+			5760,
+			5760,
+			"WS"
+		],
+		[
+			5787,
+			5788,
+			"ON"
+		],
+		[
+			5906,
+			5908,
+			"NSM"
+		],
+		[
+			5938,
+			5939,
+			"NSM"
+		],
+		[
+			5970,
+			5971,
+			"NSM"
+		],
+		[
+			6002,
+			6003,
+			"NSM"
+		],
+		[
+			6068,
+			6069,
+			"NSM"
+		],
+		[
+			6071,
+			6077,
+			"NSM"
+		],
+		[
+			6086,
+			6086,
+			"NSM"
+		],
+		[
+			6089,
+			6099,
+			"NSM"
+		],
+		[
+			6107,
+			6107,
+			"ET"
+		],
+		[
+			6109,
+			6109,
+			"NSM"
+		],
+		[
+			6128,
+			6137,
+			"ON"
+		],
+		[
+			6144,
+			6154,
+			"ON"
+		],
+		[
+			6155,
+			6157,
+			"NSM"
+		],
+		[
+			6158,
+			6158,
+			"BN"
+		],
+		[
+			6159,
+			6159,
+			"NSM"
+		],
+		[
+			6277,
+			6278,
+			"NSM"
+		],
+		[
+			6313,
+			6313,
+			"NSM"
+		],
+		[
+			6432,
+			6434,
+			"NSM"
+		],
+		[
+			6439,
+			6440,
+			"NSM"
+		],
+		[
+			6450,
+			6450,
+			"NSM"
+		],
+		[
+			6457,
+			6459,
+			"NSM"
+		],
+		[
+			6464,
+			6464,
+			"ON"
+		],
+		[
+			6468,
+			6469,
+			"ON"
+		],
+		[
+			6622,
+			6655,
+			"ON"
+		],
+		[
+			6679,
+			6680,
+			"NSM"
+		],
+		[
+			6683,
+			6683,
+			"NSM"
+		],
+		[
+			6742,
+			6742,
+			"NSM"
+		],
+		[
+			6744,
+			6750,
+			"NSM"
+		],
+		[
+			6752,
+			6752,
+			"NSM"
+		],
+		[
+			6754,
+			6754,
+			"NSM"
+		],
+		[
+			6757,
+			6764,
+			"NSM"
+		],
+		[
+			6771,
+			6780,
+			"NSM"
+		],
+		[
+			6783,
+			6783,
+			"NSM"
+		],
+		[
+			6832,
+			6877,
+			"NSM"
+		],
+		[
+			6880,
+			6891,
+			"NSM"
+		],
+		[
+			6912,
+			6915,
+			"NSM"
+		],
+		[
+			6964,
+			6964,
+			"NSM"
+		],
+		[
+			6966,
+			6970,
+			"NSM"
+		],
+		[
+			6972,
+			6972,
+			"NSM"
+		],
+		[
+			6978,
+			6978,
+			"NSM"
+		],
+		[
+			7019,
+			7027,
+			"NSM"
+		],
+		[
+			7040,
+			7041,
+			"NSM"
+		],
+		[
+			7074,
+			7077,
+			"NSM"
+		],
+		[
+			7080,
+			7081,
+			"NSM"
+		],
+		[
+			7083,
+			7085,
+			"NSM"
+		],
+		[
+			7142,
+			7142,
+			"NSM"
+		],
+		[
+			7144,
+			7145,
+			"NSM"
+		],
+		[
+			7149,
+			7149,
+			"NSM"
+		],
+		[
+			7151,
+			7153,
+			"NSM"
+		],
+		[
+			7212,
+			7219,
+			"NSM"
+		],
+		[
+			7222,
+			7223,
+			"NSM"
+		],
+		[
+			7376,
+			7378,
+			"NSM"
+		],
+		[
+			7380,
+			7392,
+			"NSM"
+		],
+		[
+			7394,
+			7400,
+			"NSM"
+		],
+		[
+			7405,
+			7405,
+			"NSM"
+		],
+		[
+			7412,
+			7412,
+			"NSM"
+		],
+		[
+			7416,
+			7417,
+			"NSM"
+		],
+		[
+			7616,
+			7679,
+			"NSM"
+		],
+		[
+			8125,
+			8125,
+			"ON"
+		],
+		[
+			8127,
+			8129,
+			"ON"
+		],
+		[
+			8141,
+			8143,
+			"ON"
+		],
+		[
+			8157,
+			8159,
+			"ON"
+		],
+		[
+			8173,
+			8175,
+			"ON"
+		],
+		[
+			8189,
+			8190,
+			"ON"
+		],
+		[
+			8192,
+			8202,
+			"WS"
+		],
+		[
+			8203,
+			8205,
+			"BN"
+		],
+		[
+			8207,
+			8207,
+			"R"
+		],
+		[
+			8208,
+			8231,
+			"ON"
+		],
+		[
+			8232,
+			8232,
+			"WS"
+		],
+		[
+			8233,
+			8233,
+			"B"
+		],
+		[
+			8234,
+			8238,
+			"BN"
+		],
+		[
+			8239,
+			8239,
+			"CS"
+		],
+		[
+			8240,
+			8244,
+			"ET"
+		],
+		[
+			8245,
+			8259,
+			"ON"
+		],
+		[
+			8260,
+			8260,
+			"CS"
+		],
+		[
+			8261,
+			8286,
+			"ON"
+		],
+		[
+			8287,
+			8287,
+			"WS"
+		],
+		[
+			8288,
+			8303,
+			"BN"
+		],
+		[
+			8304,
+			8304,
+			"EN"
+		],
+		[
+			8308,
+			8313,
+			"EN"
+		],
+		[
+			8314,
+			8315,
+			"ES"
+		],
+		[
+			8316,
+			8318,
+			"ON"
+		],
+		[
+			8320,
+			8329,
+			"EN"
+		],
+		[
+			8330,
+			8331,
+			"ES"
+		],
+		[
+			8332,
+			8334,
+			"ON"
+		],
+		[
+			8352,
+			8399,
+			"ET"
+		],
+		[
+			8400,
+			8432,
+			"NSM"
+		],
+		[
+			8448,
+			8449,
+			"ON"
+		],
+		[
+			8451,
+			8454,
+			"ON"
+		],
+		[
+			8456,
+			8457,
+			"ON"
+		],
+		[
+			8468,
+			8468,
+			"ON"
+		],
+		[
+			8470,
+			8472,
+			"ON"
+		],
+		[
+			8478,
+			8483,
+			"ON"
+		],
+		[
+			8485,
+			8485,
+			"ON"
+		],
+		[
+			8487,
+			8487,
+			"ON"
+		],
+		[
+			8489,
+			8489,
+			"ON"
+		],
+		[
+			8494,
+			8494,
+			"ET"
+		],
+		[
+			8506,
+			8507,
+			"ON"
+		],
+		[
+			8512,
+			8516,
+			"ON"
+		],
+		[
+			8522,
+			8525,
+			"ON"
+		],
+		[
+			8528,
+			8543,
+			"ON"
+		],
+		[
+			8585,
+			8587,
+			"ON"
+		],
+		[
+			8592,
+			8721,
+			"ON"
+		],
+		[
+			8722,
+			8722,
+			"ES"
+		],
+		[
+			8723,
+			8723,
+			"ET"
+		],
+		[
+			8724,
+			9013,
+			"ON"
+		],
+		[
+			9083,
+			9108,
+			"ON"
+		],
+		[
+			9110,
+			9257,
+			"ON"
+		],
+		[
+			9280,
+			9290,
+			"ON"
+		],
+		[
+			9312,
+			9351,
+			"ON"
+		],
+		[
+			9352,
+			9371,
+			"EN"
+		],
+		[
+			9450,
+			9899,
+			"ON"
+		],
+		[
+			9901,
+			10239,
+			"ON"
+		],
+		[
+			10496,
+			11123,
+			"ON"
+		],
+		[
+			11126,
+			11263,
+			"ON"
+		],
+		[
+			11493,
+			11498,
+			"ON"
+		],
+		[
+			11503,
+			11505,
+			"NSM"
+		],
+		[
+			11513,
+			11519,
+			"ON"
+		],
+		[
+			11647,
+			11647,
+			"NSM"
+		],
+		[
+			11744,
+			11775,
+			"NSM"
+		],
+		[
+			11776,
+			11869,
+			"ON"
+		],
+		[
+			11904,
+			11929,
+			"ON"
+		],
+		[
+			11931,
+			12019,
+			"ON"
+		],
+		[
+			12032,
+			12245,
+			"ON"
+		],
+		[
+			12272,
+			12287,
+			"ON"
+		],
+		[
+			12288,
+			12288,
+			"WS"
+		],
+		[
+			12289,
+			12292,
+			"ON"
+		],
+		[
+			12296,
+			12320,
+			"ON"
+		],
+		[
+			12330,
+			12333,
+			"NSM"
+		],
+		[
+			12336,
+			12336,
+			"ON"
+		],
+		[
+			12342,
+			12343,
+			"ON"
+		],
+		[
+			12349,
+			12351,
+			"ON"
+		],
+		[
+			12441,
+			12442,
+			"NSM"
+		],
+		[
+			12443,
+			12444,
+			"ON"
+		],
+		[
+			12448,
+			12448,
+			"ON"
+		],
+		[
+			12539,
+			12539,
+			"ON"
+		],
+		[
+			12736,
+			12773,
+			"ON"
+		],
+		[
+			12783,
+			12783,
+			"ON"
+		],
+		[
+			12829,
+			12830,
+			"ON"
+		],
+		[
+			12880,
+			12895,
+			"ON"
+		],
+		[
+			12924,
+			12926,
+			"ON"
+		],
+		[
+			12977,
+			12991,
+			"ON"
+		],
+		[
+			13004,
+			13007,
+			"ON"
+		],
+		[
+			13175,
+			13178,
+			"ON"
+		],
+		[
+			13278,
+			13279,
+			"ON"
+		],
+		[
+			13311,
+			13311,
+			"ON"
+		],
+		[
+			19904,
+			19967,
+			"ON"
+		],
+		[
+			42128,
+			42182,
+			"ON"
+		],
+		[
+			42509,
+			42511,
+			"ON"
+		],
+		[
+			42607,
+			42610,
+			"NSM"
+		],
+		[
+			42611,
+			42611,
+			"ON"
+		],
+		[
+			42612,
+			42621,
+			"NSM"
+		],
+		[
+			42622,
+			42623,
+			"ON"
+		],
+		[
+			42654,
+			42655,
+			"NSM"
+		],
+		[
+			42736,
+			42737,
+			"NSM"
+		],
+		[
+			42752,
+			42785,
+			"ON"
+		],
+		[
+			42888,
+			42888,
+			"ON"
+		],
+		[
+			43010,
+			43010,
+			"NSM"
+		],
+		[
+			43014,
+			43014,
+			"NSM"
+		],
+		[
+			43019,
+			43019,
+			"NSM"
+		],
+		[
+			43045,
+			43046,
+			"NSM"
+		],
+		[
+			43048,
+			43051,
+			"ON"
+		],
+		[
+			43052,
+			43052,
+			"NSM"
+		],
+		[
+			43064,
+			43065,
+			"ET"
+		],
+		[
+			43124,
+			43127,
+			"ON"
+		],
+		[
+			43204,
+			43205,
+			"NSM"
+		],
+		[
+			43232,
+			43249,
+			"NSM"
+		],
+		[
+			43263,
+			43263,
+			"NSM"
+		],
+		[
+			43302,
+			43309,
+			"NSM"
+		],
+		[
+			43335,
+			43345,
+			"NSM"
+		],
+		[
+			43392,
+			43394,
+			"NSM"
+		],
+		[
+			43443,
+			43443,
+			"NSM"
+		],
+		[
+			43446,
+			43449,
+			"NSM"
+		],
+		[
+			43452,
+			43453,
+			"NSM"
+		],
+		[
+			43493,
+			43493,
+			"NSM"
+		],
+		[
+			43561,
+			43566,
+			"NSM"
+		],
+		[
+			43569,
+			43570,
+			"NSM"
+		],
+		[
+			43573,
+			43574,
+			"NSM"
+		],
+		[
+			43587,
+			43587,
+			"NSM"
+		],
+		[
+			43596,
+			43596,
+			"NSM"
+		],
+		[
+			43644,
+			43644,
+			"NSM"
+		],
+		[
+			43696,
+			43696,
+			"NSM"
+		],
+		[
+			43698,
+			43700,
+			"NSM"
+		],
+		[
+			43703,
+			43704,
+			"NSM"
+		],
+		[
+			43710,
+			43711,
+			"NSM"
+		],
+		[
+			43713,
+			43713,
+			"NSM"
+		],
+		[
+			43756,
+			43757,
+			"NSM"
+		],
+		[
+			43766,
+			43766,
+			"NSM"
+		],
+		[
+			43882,
+			43883,
+			"ON"
+		],
+		[
+			44005,
+			44005,
+			"NSM"
+		],
+		[
+			44008,
+			44008,
+			"NSM"
+		],
+		[
+			44013,
+			44013,
+			"NSM"
+		],
+		[
+			64285,
+			64285,
+			"R"
+		],
+		[
+			64286,
+			64286,
+			"NSM"
+		],
+		[
+			64287,
+			64296,
+			"R"
+		],
+		[
+			64297,
+			64297,
+			"ES"
+		],
+		[
+			64298,
+			64335,
+			"R"
+		],
+		[
+			64336,
+			64450,
+			"AL"
+		],
+		[
+			64451,
+			64466,
+			"ON"
+		],
+		[
+			64467,
+			64829,
+			"AL"
+		],
+		[
+			64830,
+			64847,
+			"ON"
+		],
+		[
+			64848,
+			64911,
+			"AL"
+		],
+		[
+			64912,
+			64913,
+			"ON"
+		],
+		[
+			64914,
+			64967,
+			"AL"
+		],
+		[
+			64968,
+			64975,
+			"ON"
+		],
+		[
+			64976,
+			65007,
+			"BN"
+		],
+		[
+			65008,
+			65020,
+			"AL"
+		],
+		[
+			65021,
+			65023,
+			"ON"
+		],
+		[
+			65024,
+			65039,
+			"NSM"
+		],
+		[
+			65040,
+			65049,
+			"ON"
+		],
+		[
+			65056,
+			65071,
+			"NSM"
+		],
+		[
+			65072,
+			65103,
+			"ON"
+		],
+		[
+			65104,
+			65104,
+			"CS"
+		],
+		[
+			65105,
+			65105,
+			"ON"
+		],
+		[
+			65106,
+			65106,
+			"CS"
+		],
+		[
+			65108,
+			65108,
+			"ON"
+		],
+		[
+			65109,
+			65109,
+			"CS"
+		],
+		[
+			65110,
+			65118,
+			"ON"
+		],
+		[
+			65119,
+			65119,
+			"ET"
+		],
+		[
+			65120,
+			65121,
+			"ON"
+		],
+		[
+			65122,
+			65123,
+			"ES"
+		],
+		[
+			65124,
+			65126,
+			"ON"
+		],
+		[
+			65128,
+			65128,
+			"ON"
+		],
+		[
+			65129,
+			65130,
+			"ET"
+		],
+		[
+			65131,
+			65131,
+			"ON"
+		],
+		[
+			65136,
+			65278,
+			"AL"
+		],
+		[
+			65279,
+			65279,
+			"BN"
+		],
+		[
+			65281,
+			65282,
+			"ON"
+		],
+		[
+			65283,
+			65285,
+			"ET"
+		],
+		[
+			65286,
+			65290,
+			"ON"
+		],
+		[
+			65291,
+			65291,
+			"ES"
+		],
+		[
+			65292,
+			65292,
+			"CS"
+		],
+		[
+			65293,
+			65293,
+			"ES"
+		],
+		[
+			65294,
+			65295,
+			"CS"
+		],
+		[
+			65296,
+			65305,
+			"EN"
+		],
+		[
+			65306,
+			65306,
+			"CS"
+		],
+		[
+			65307,
+			65312,
+			"ON"
+		],
+		[
+			65339,
+			65344,
+			"ON"
+		],
+		[
+			65371,
+			65381,
+			"ON"
+		],
+		[
+			65504,
+			65505,
+			"ET"
+		],
+		[
+			65506,
+			65508,
+			"ON"
+		],
+		[
+			65509,
+			65510,
+			"ET"
+		],
+		[
+			65512,
+			65518,
+			"ON"
+		],
+		[
+			65520,
+			65528,
+			"BN"
+		],
+		[
+			65529,
+			65533,
+			"ON"
+		],
+		[
+			65534,
+			65535,
+			"BN"
+		],
+		[
+			65793,
+			65793,
+			"ON"
+		],
+		[
+			65856,
+			65932,
+			"ON"
+		],
+		[
+			65936,
+			65948,
+			"ON"
+		],
+		[
+			65952,
+			65952,
+			"ON"
+		],
+		[
+			66045,
+			66045,
+			"NSM"
+		],
+		[
+			66272,
+			66272,
+			"NSM"
+		],
+		[
+			66273,
+			66299,
+			"EN"
+		],
+		[
+			66422,
+			66426,
+			"NSM"
+		],
+		[
+			67584,
+			67870,
+			"R"
+		],
+		[
+			67871,
+			67871,
+			"ON"
+		],
+		[
+			67872,
+			68096,
+			"R"
+		],
+		[
+			68097,
+			68099,
+			"NSM"
+		],
+		[
+			68100,
+			68100,
+			"R"
+		],
+		[
+			68101,
+			68102,
+			"NSM"
+		],
+		[
+			68103,
+			68107,
+			"R"
+		],
+		[
+			68108,
+			68111,
+			"NSM"
+		],
+		[
+			68112,
+			68151,
+			"R"
+		],
+		[
+			68152,
+			68154,
+			"NSM"
+		],
+		[
+			68155,
+			68158,
+			"R"
+		],
+		[
+			68159,
+			68159,
+			"NSM"
+		],
+		[
+			68160,
+			68324,
+			"R"
+		],
+		[
+			68325,
+			68326,
+			"NSM"
+		],
+		[
+			68327,
+			68408,
+			"R"
+		],
+		[
+			68409,
+			68415,
+			"ON"
+		],
+		[
+			68416,
+			68863,
+			"R"
+		],
+		[
+			68864,
+			68899,
+			"AL"
+		],
+		[
+			68900,
+			68903,
+			"NSM"
+		],
+		[
+			68904,
+			68911,
+			"AL"
+		],
+		[
+			68912,
+			68921,
+			"AN"
+		],
+		[
+			68922,
+			68927,
+			"AL"
+		],
+		[
+			68928,
+			68937,
+			"AN"
+		],
+		[
+			68938,
+			68968,
+			"R"
+		],
+		[
+			68969,
+			68973,
+			"NSM"
+		],
+		[
+			68974,
+			68974,
+			"ON"
+		],
+		[
+			68975,
+			69215,
+			"R"
+		],
+		[
+			69216,
+			69246,
+			"AN"
+		],
+		[
+			69247,
+			69290,
+			"R"
+		],
+		[
+			69291,
+			69292,
+			"NSM"
+		],
+		[
+			69293,
+			69311,
+			"R"
+		],
+		[
+			69312,
+			69327,
+			"AL"
+		],
+		[
+			69328,
+			69336,
+			"ON"
+		],
+		[
+			69337,
+			69369,
+			"AL"
+		],
+		[
+			69370,
+			69375,
+			"NSM"
+		],
+		[
+			69376,
+			69423,
+			"R"
+		],
+		[
+			69424,
+			69445,
+			"AL"
+		],
+		[
+			69446,
+			69456,
+			"NSM"
+		],
+		[
+			69457,
+			69487,
+			"AL"
+		],
+		[
+			69488,
+			69505,
+			"R"
+		],
+		[
+			69506,
+			69509,
+			"NSM"
+		],
+		[
+			69510,
+			69631,
+			"R"
+		],
+		[
+			69633,
+			69633,
+			"NSM"
+		],
+		[
+			69688,
+			69702,
+			"NSM"
+		],
+		[
+			69714,
+			69733,
+			"ON"
+		],
+		[
+			69744,
+			69744,
+			"NSM"
+		],
+		[
+			69747,
+			69748,
+			"NSM"
+		],
+		[
+			69759,
+			69761,
+			"NSM"
+		],
+		[
+			69811,
+			69814,
+			"NSM"
+		],
+		[
+			69817,
+			69818,
+			"NSM"
+		],
+		[
+			69826,
+			69826,
+			"NSM"
+		],
+		[
+			69888,
+			69890,
+			"NSM"
+		],
+		[
+			69927,
+			69931,
+			"NSM"
+		],
+		[
+			69933,
+			69940,
+			"NSM"
+		],
+		[
+			70003,
+			70003,
+			"NSM"
+		],
+		[
+			70016,
+			70017,
+			"NSM"
+		],
+		[
+			70070,
+			70078,
+			"NSM"
+		],
+		[
+			70089,
+			70092,
+			"NSM"
+		],
+		[
+			70095,
+			70095,
+			"NSM"
+		],
+		[
+			70191,
+			70193,
+			"NSM"
+		],
+		[
+			70196,
+			70196,
+			"NSM"
+		],
+		[
+			70198,
+			70199,
+			"NSM"
+		],
+		[
+			70206,
+			70206,
+			"NSM"
+		],
+		[
+			70209,
+			70209,
+			"NSM"
+		],
+		[
+			70367,
+			70367,
+			"NSM"
+		],
+		[
+			70371,
+			70378,
+			"NSM"
+		],
+		[
+			70400,
+			70401,
+			"NSM"
+		],
+		[
+			70459,
+			70460,
+			"NSM"
+		],
+		[
+			70464,
+			70464,
+			"NSM"
+		],
+		[
+			70502,
+			70508,
+			"NSM"
+		],
+		[
+			70512,
+			70516,
+			"NSM"
+		],
+		[
+			70587,
+			70592,
+			"NSM"
+		],
+		[
+			70606,
+			70606,
+			"NSM"
+		],
+		[
+			70608,
+			70608,
+			"NSM"
+		],
+		[
+			70610,
+			70610,
+			"NSM"
+		],
+		[
+			70625,
+			70626,
+			"NSM"
+		],
+		[
+			70712,
+			70719,
+			"NSM"
+		],
+		[
+			70722,
+			70724,
+			"NSM"
+		],
+		[
+			70726,
+			70726,
+			"NSM"
+		],
+		[
+			70750,
+			70750,
+			"NSM"
+		],
+		[
+			70835,
+			70840,
+			"NSM"
+		],
+		[
+			70842,
+			70842,
+			"NSM"
+		],
+		[
+			70847,
+			70848,
+			"NSM"
+		],
+		[
+			70850,
+			70851,
+			"NSM"
+		],
+		[
+			71090,
+			71093,
+			"NSM"
+		],
+		[
+			71100,
+			71101,
+			"NSM"
+		],
+		[
+			71103,
+			71104,
+			"NSM"
+		],
+		[
+			71132,
+			71133,
+			"NSM"
+		],
+		[
+			71219,
+			71226,
+			"NSM"
+		],
+		[
+			71229,
+			71229,
+			"NSM"
+		],
+		[
+			71231,
+			71232,
+			"NSM"
+		],
+		[
+			71264,
+			71276,
+			"ON"
+		],
+		[
+			71339,
+			71339,
+			"NSM"
+		],
+		[
+			71341,
+			71341,
+			"NSM"
+		],
+		[
+			71344,
+			71349,
+			"NSM"
+		],
+		[
+			71351,
+			71351,
+			"NSM"
+		],
+		[
+			71453,
+			71453,
+			"NSM"
+		],
+		[
+			71455,
+			71455,
+			"NSM"
+		],
+		[
+			71458,
+			71461,
+			"NSM"
+		],
+		[
+			71463,
+			71467,
+			"NSM"
+		],
+		[
+			71727,
+			71735,
+			"NSM"
+		],
+		[
+			71737,
+			71738,
+			"NSM"
+		],
+		[
+			71995,
+			71996,
+			"NSM"
+		],
+		[
+			71998,
+			71998,
+			"NSM"
+		],
+		[
+			72003,
+			72003,
+			"NSM"
+		],
+		[
+			72148,
+			72151,
+			"NSM"
+		],
+		[
+			72154,
+			72155,
+			"NSM"
+		],
+		[
+			72160,
+			72160,
+			"NSM"
+		],
+		[
+			72193,
+			72198,
+			"NSM"
+		],
+		[
+			72201,
+			72202,
+			"NSM"
+		],
+		[
+			72243,
+			72248,
+			"NSM"
+		],
+		[
+			72251,
+			72254,
+			"NSM"
+		],
+		[
+			72263,
+			72263,
+			"NSM"
+		],
+		[
+			72273,
+			72278,
+			"NSM"
+		],
+		[
+			72281,
+			72283,
+			"NSM"
+		],
+		[
+			72330,
+			72342,
+			"NSM"
+		],
+		[
+			72344,
+			72345,
+			"NSM"
+		],
+		[
+			72544,
+			72544,
+			"NSM"
+		],
+		[
+			72546,
+			72548,
+			"NSM"
+		],
+		[
+			72550,
+			72550,
+			"NSM"
+		],
+		[
+			72752,
+			72758,
+			"NSM"
+		],
+		[
+			72760,
+			72765,
+			"NSM"
+		],
+		[
+			72850,
+			72871,
+			"NSM"
+		],
+		[
+			72874,
+			72880,
+			"NSM"
+		],
+		[
+			72882,
+			72883,
+			"NSM"
+		],
+		[
+			72885,
+			72886,
+			"NSM"
+		],
+		[
+			73009,
+			73014,
+			"NSM"
+		],
+		[
+			73018,
+			73018,
+			"NSM"
+		],
+		[
+			73020,
+			73021,
+			"NSM"
+		],
+		[
+			73023,
+			73029,
+			"NSM"
+		],
+		[
+			73031,
+			73031,
+			"NSM"
+		],
+		[
+			73104,
+			73105,
+			"NSM"
+		],
+		[
+			73109,
+			73109,
+			"NSM"
+		],
+		[
+			73111,
+			73111,
+			"NSM"
+		],
+		[
+			73459,
+			73460,
+			"NSM"
+		],
+		[
+			73472,
+			73473,
+			"NSM"
+		],
+		[
+			73526,
+			73530,
+			"NSM"
+		],
+		[
+			73536,
+			73536,
+			"NSM"
+		],
+		[
+			73538,
+			73538,
+			"NSM"
+		],
+		[
+			73562,
+			73562,
+			"NSM"
+		],
+		[
+			73685,
+			73692,
+			"ON"
+		],
+		[
+			73693,
+			73696,
+			"ET"
+		],
+		[
+			73697,
+			73713,
+			"ON"
+		],
+		[
+			78912,
+			78912,
+			"NSM"
+		],
+		[
+			78919,
+			78933,
+			"NSM"
+		],
+		[
+			90398,
+			90409,
+			"NSM"
+		],
+		[
+			90413,
+			90415,
+			"NSM"
+		],
+		[
+			92912,
+			92916,
+			"NSM"
+		],
+		[
+			92976,
+			92982,
+			"NSM"
+		],
+		[
+			94031,
+			94031,
+			"NSM"
+		],
+		[
+			94095,
+			94098,
+			"NSM"
+		],
+		[
+			94178,
+			94178,
+			"ON"
+		],
+		[
+			94180,
+			94180,
+			"NSM"
+		],
+		[
+			113821,
+			113822,
+			"NSM"
+		],
+		[
+			113824,
+			113827,
+			"BN"
+		],
+		[
+			117760,
+			117973,
+			"ON"
+		],
+		[
+			118e3,
+			118009,
+			"EN"
+		],
+		[
+			118010,
+			118012,
+			"ON"
+		],
+		[
+			118016,
+			118451,
+			"ON"
+		],
+		[
+			118458,
+			118480,
+			"ON"
+		],
+		[
+			118496,
+			118512,
+			"ON"
+		],
+		[
+			118528,
+			118573,
+			"NSM"
+		],
+		[
+			118576,
+			118598,
+			"NSM"
+		],
+		[
+			119143,
+			119145,
+			"NSM"
+		],
+		[
+			119155,
+			119162,
+			"BN"
+		],
+		[
+			119163,
+			119170,
+			"NSM"
+		],
+		[
+			119173,
+			119179,
+			"NSM"
+		],
+		[
+			119210,
+			119213,
+			"NSM"
+		],
+		[
+			119273,
+			119274,
+			"ON"
+		],
+		[
+			119296,
+			119361,
+			"ON"
+		],
+		[
+			119362,
+			119364,
+			"NSM"
+		],
+		[
+			119365,
+			119365,
+			"ON"
+		],
+		[
+			119552,
+			119638,
+			"ON"
+		],
+		[
+			120513,
+			120513,
+			"ON"
+		],
+		[
+			120539,
+			120539,
+			"ON"
+		],
+		[
+			120571,
+			120571,
+			"ON"
+		],
+		[
+			120597,
+			120597,
+			"ON"
+		],
+		[
+			120629,
+			120629,
+			"ON"
+		],
+		[
+			120655,
+			120655,
+			"ON"
+		],
+		[
+			120687,
+			120687,
+			"ON"
+		],
+		[
+			120713,
+			120713,
+			"ON"
+		],
+		[
+			120745,
+			120745,
+			"ON"
+		],
+		[
+			120771,
+			120771,
+			"ON"
+		],
+		[
+			120782,
+			120831,
+			"EN"
+		],
+		[
+			121344,
+			121398,
+			"NSM"
+		],
+		[
+			121403,
+			121452,
+			"NSM"
+		],
+		[
+			121461,
+			121461,
+			"NSM"
+		],
+		[
+			121476,
+			121476,
+			"NSM"
+		],
+		[
+			121499,
+			121503,
+			"NSM"
+		],
+		[
+			121505,
+			121519,
+			"NSM"
+		],
+		[
+			122880,
+			122886,
+			"NSM"
+		],
+		[
+			122888,
+			122904,
+			"NSM"
+		],
+		[
+			122907,
+			122913,
+			"NSM"
+		],
+		[
+			122915,
+			122916,
+			"NSM"
+		],
+		[
+			122918,
+			122922,
+			"NSM"
+		],
+		[
+			123023,
+			123023,
+			"NSM"
+		],
+		[
+			123184,
+			123190,
+			"NSM"
+		],
+		[
+			123566,
+			123566,
+			"NSM"
+		],
+		[
+			123628,
+			123631,
+			"NSM"
+		],
+		[
+			123647,
+			123647,
+			"ET"
+		],
+		[
+			124140,
+			124143,
+			"NSM"
+		],
+		[
+			124398,
+			124399,
+			"NSM"
+		],
+		[
+			124643,
+			124643,
+			"NSM"
+		],
+		[
+			124646,
+			124646,
+			"NSM"
+		],
+		[
+			124654,
+			124655,
+			"NSM"
+		],
+		[
+			124661,
+			124661,
+			"NSM"
+		],
+		[
+			124928,
+			125135,
+			"R"
+		],
+		[
+			125136,
+			125142,
+			"NSM"
+		],
+		[
+			125143,
+			125251,
+			"R"
+		],
+		[
+			125252,
+			125258,
+			"NSM"
+		],
+		[
+			125259,
+			126063,
+			"R"
+		],
+		[
+			126064,
+			126143,
+			"AL"
+		],
+		[
+			126144,
+			126207,
+			"R"
+		],
+		[
+			126208,
+			126287,
+			"AL"
+		],
+		[
+			126288,
+			126463,
+			"R"
+		],
+		[
+			126464,
+			126703,
+			"AL"
+		],
+		[
+			126704,
+			126705,
+			"ON"
+		],
+		[
+			126706,
+			126719,
+			"AL"
+		],
+		[
+			126720,
+			126975,
+			"R"
+		],
+		[
+			126976,
+			127019,
+			"ON"
+		],
+		[
+			127024,
+			127123,
+			"ON"
+		],
+		[
+			127136,
+			127150,
+			"ON"
+		],
+		[
+			127153,
+			127167,
+			"ON"
+		],
+		[
+			127169,
+			127183,
+			"ON"
+		],
+		[
+			127185,
+			127221,
+			"ON"
+		],
+		[
+			127232,
+			127242,
+			"EN"
+		],
+		[
+			127243,
+			127247,
+			"ON"
+		],
+		[
+			127279,
+			127279,
+			"ON"
+		],
+		[
+			127338,
+			127343,
+			"ON"
+		],
+		[
+			127405,
+			127405,
+			"ON"
+		],
+		[
+			127584,
+			127589,
+			"ON"
+		],
+		[
+			127744,
+			128728,
+			"ON"
+		],
+		[
+			128732,
+			128748,
+			"ON"
+		],
+		[
+			128752,
+			128764,
+			"ON"
+		],
+		[
+			128768,
+			128985,
+			"ON"
+		],
+		[
+			128992,
+			129003,
+			"ON"
+		],
+		[
+			129008,
+			129008,
+			"ON"
+		],
+		[
+			129024,
+			129035,
+			"ON"
+		],
+		[
+			129040,
+			129095,
+			"ON"
+		],
+		[
+			129104,
+			129113,
+			"ON"
+		],
+		[
+			129120,
+			129159,
+			"ON"
+		],
+		[
+			129168,
+			129197,
+			"ON"
+		],
+		[
+			129200,
+			129211,
+			"ON"
+		],
+		[
+			129216,
+			129217,
+			"ON"
+		],
+		[
+			129232,
+			129240,
+			"ON"
+		],
+		[
+			129280,
+			129623,
+			"ON"
+		],
+		[
+			129632,
+			129645,
+			"ON"
+		],
+		[
+			129648,
+			129660,
+			"ON"
+		],
+		[
+			129664,
+			129674,
+			"ON"
+		],
+		[
+			129678,
+			129734,
+			"ON"
+		],
+		[
+			129736,
+			129736,
+			"ON"
+		],
+		[
+			129741,
+			129756,
+			"ON"
+		],
+		[
+			129759,
+			129770,
+			"ON"
+		],
+		[
+			129775,
+			129784,
+			"ON"
+		],
+		[
+			129792,
+			129938,
+			"ON"
+		],
+		[
+			129940,
+			130031,
+			"ON"
+		],
+		[
+			130032,
+			130041,
+			"EN"
+		],
+		[
+			130042,
+			130042,
+			"ON"
+		],
+		[
+			131070,
+			131071,
+			"BN"
+		],
+		[
+			196606,
+			196607,
+			"BN"
+		],
+		[
+			262142,
+			262143,
+			"BN"
+		],
+		[
+			327678,
+			327679,
+			"BN"
+		],
+		[
+			393214,
+			393215,
+			"BN"
+		],
+		[
+			458750,
+			458751,
+			"BN"
+		],
+		[
+			524286,
+			524287,
+			"BN"
+		],
+		[
+			589822,
+			589823,
+			"BN"
+		],
+		[
+			655358,
+			655359,
+			"BN"
+		],
+		[
+			720894,
+			720895,
+			"BN"
+		],
+		[
+			786430,
+			786431,
+			"BN"
+		],
+		[
+			851966,
+			851967,
+			"BN"
+		],
+		[
+			917502,
+			917759,
+			"BN"
+		],
+		[
+			917760,
+			917999,
+			"NSM"
+		],
+		[
+			918e3,
+			921599,
+			"BN"
+		],
+		[
+			983038,
+			983039,
+			"BN"
+		],
+		[
+			1048574,
+			1048575,
+			"BN"
+		],
+		[
+			1114110,
+			1114111,
+			"BN"
+		]
+	];
+	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/bidi.js
+	function classifyCodePoint(codePoint) {
+		if (codePoint <= 255) return latin1BidiTypes[codePoint];
+		let lo = 0;
+		let hi = nonLatin1BidiRanges.length - 1;
+		while (lo <= hi) {
+			const mid = lo + hi >> 1;
+			const range = nonLatin1BidiRanges[mid];
+			if (codePoint < range[0]) {
+				hi = mid - 1;
+				continue;
+			}
+			if (codePoint > range[1]) {
+				lo = mid + 1;
+				continue;
+			}
+			return range[2];
+		}
+		return "L";
+	}
+	function computeBidiLevels(str) {
+		const len = str.length;
+		if (len === 0) return null;
+		const types = new Array(len);
+		let paragraphHasBidi = false;
+		let paragraphStart = 0;
+		let levels = null;
+		for (let i = 0; i < len;) {
+			const first = str.charCodeAt(i);
+			let codePoint = first;
+			let codeUnitLength = 1;
+			if (first >= 55296 && first <= 56319 && i + 1 < len) {
+				const second = str.charCodeAt(i + 1);
+				if (second >= 56320 && second <= 57343) {
+					codePoint = (first - 55296 << 10) + (second - 56320) + 65536;
+					codeUnitLength = 2;
+				}
+			}
+			const t = classifyCodePoint(codePoint);
+			if (t === "R" || t === "AL" || t === "AN") paragraphHasBidi = true;
+			for (let j = 0; j < codeUnitLength; j++) types[i + j] = t;
+			if (t === "B") {
+				if (paragraphHasBidi) {
+					levels ??= new Int8Array(len);
+					levels[i] = resolveParagraphLevels(types, levels, paragraphStart, i);
+				}
+				paragraphStart = i + codeUnitLength;
+				paragraphHasBidi = false;
+			}
+			i += codeUnitLength;
+		}
+		if (paragraphHasBidi) {
+			levels ??= new Int8Array(len);
+			resolveParagraphLevels(types, levels, paragraphStart, len);
+		}
+		return levels;
+	}
+	function resolveParagraphLevels(types, levels, start, end) {
+		let startLevel = 0;
+		for (let i = start; i < end; i++) {
+			const t = types[i];
+			if (t === "L") {
+				startLevel = 0;
+				break;
+			}
+			if (t === "R" || t === "AL") {
+				startLevel = 1;
+				break;
+			}
+		}
+		const e = startLevel & 1 ? "R" : "L";
+		const sor = e;
+		let lastType = sor;
+		for (let i = start; i < end; i++) if (types[i] === "NSM") types[i] = lastType;
+		else lastType = types[i];
+		lastType = sor;
+		for (let i = start; i < end; i++) {
+			const t = types[i];
+			if (t === "EN") types[i] = lastType === "AL" ? "AN" : "EN";
+			else if (t === "R" || t === "L" || t === "AL") lastType = t;
+		}
+		for (let i = start; i < end; i++) if (types[i] === "AL") types[i] = "R";
+		for (let i = start + 1; i < end - 1; i++) {
+			if (types[i] === "ES" && types[i - 1] === "EN" && types[i + 1] === "EN") types[i] = "EN";
+			if (types[i] === "CS" && (types[i - 1] === "EN" || types[i - 1] === "AN") && types[i + 1] === types[i - 1]) types[i] = types[i - 1];
+		}
+		for (let i = start; i < end; i++) {
+			if (types[i] !== "EN") continue;
+			let j;
+			for (j = i - 1; j >= start && types[j] === "ET"; j--) types[j] = "EN";
+			for (j = i + 1; j < end && types[j] === "ET"; j++) types[j] = "EN";
+		}
+		for (let i = start; i < end; i++) {
+			const t = types[i];
+			if (t === "WS" || t === "ES" || t === "ET" || t === "CS") types[i] = "ON";
+		}
+		lastType = sor;
+		for (let i = start; i < end; i++) {
+			const t = types[i];
+			if (t === "EN") types[i] = lastType === "L" ? "L" : "EN";
+			else if (t === "R" || t === "L") lastType = t;
+		}
+		for (let i = start; i < end; i++) {
+			if (types[i] !== "ON") continue;
+			let runEnd = i + 1;
+			while (runEnd < end && types[runEnd] === "ON") runEnd++;
+			const before = i > start ? types[i - 1] : sor;
+			const after = runEnd < end ? types[runEnd] : sor;
+			const bDir = before !== "L" ? "R" : "L";
+			if (bDir === (after !== "L" ? "R" : "L")) for (let j = i; j < runEnd; j++) types[j] = bDir;
+			i = runEnd - 1;
+		}
+		for (let i = start; i < end; i++) if (types[i] === "ON") types[i] = e;
+		for (let i = start; i < end; i++) {
+			const t = types[i];
+			let level = startLevel;
+			if ((startLevel & 1) === 0) {
+				if (t === "R") level++;
+				else if (t === "AN" || t === "EN") level += 2;
+			} else if (t === "L" || t === "AN" || t === "EN") level++;
+			levels[i] = level;
+		}
+		return startLevel;
+	}
+	function computeSegmentLevels(normalized, segStarts) {
+		const bidiLevels = computeBidiLevels(normalized);
+		if (bidiLevels === null) return null;
+		const segLevels = new Int8Array(segStarts.length);
+		for (let i = 0; i < segStarts.length; i++) segLevels[i] = bidiLevels[segStarts[i]];
+		return segLevels;
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/analysis.js
+	var collapsibleWhitespaceRunRe = /[ \t\n\r\f]+/g;
+	var needsWhitespaceNormalizationRe = /[\t\n\r\f]| {2,}|^ | $/;
+	function normalizeWhitespaceNormal(text) {
+		if (!needsWhitespaceNormalizationRe.test(text)) return text;
+		let normalized = text.replace(collapsibleWhitespaceRunRe, " ");
+		if (normalized.charCodeAt(0) === 32) normalized = normalized.slice(1);
+		if (normalized.length > 0 && normalized.charCodeAt(normalized.length - 1) === 32) normalized = normalized.slice(0, -1);
+		return normalized;
+	}
+	function normalizeWhitespacePreWrap(text) {
+		if (!/[\r\f]/.test(text)) return text;
+		return text.replace(/\r\n/g, "\n").replace(/[\r\f]/g, "\n");
+	}
+	var sharedGraphemeSegmenter = null;
+	function getSharedGraphemeSegmenter() {
+		if (sharedGraphemeSegmenter === null) sharedGraphemeSegmenter = new Intl.Segmenter(void 0, { granularity: "grapheme" });
+		return sharedGraphemeSegmenter;
+	}
+	var sharedWordSegmenter = null;
+	var segmenterLocale;
+	function getSharedWordSegmenter() {
+		if (sharedWordSegmenter === null) sharedWordSegmenter = new Intl.Segmenter(segmenterLocale, { granularity: "word" });
+		return sharedWordSegmenter;
+	}
+	var arabicScriptRe = /\p{Script=Arabic}/u;
+	var combiningMarkRe = /\p{M}/u;
+	var decimalDigitRe = /\p{Nd}/u;
+	function containsArabicScript(text) {
+		return arabicScriptRe.test(text);
+	}
+	var cjkRe = /[\u3000-\u30FF\u3130-\u318F\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\uFF00-\uFFEF\u{20000}-\u{2A6DF}\u{2A700}-\u{2EE5D}\u{2F800}-\u{2FA1F}\u{30000}-\u{33479}]/u;
+	function isCJK(s) {
+		return cjkRe.test(s);
+	}
+	function endsWithLineStartProhibitedText(text) {
+		const last = getLastCodePoint(text);
+		return last !== null && (kinsokuStart.has(last) || leftStickyPunctuation.has(last));
+	}
+	var keepAllGlueChars = /* @__PURE__ */ new Set([
+		"\xA0",
+		" ",
+		"⁠",
+		"﻿"
+	]);
+	var keepAllDashBreakChars = /* @__PURE__ */ new Set([
+		"-",
+		"‐",
+		"–",
+		"—"
+	]);
+	function endsWithKeepAllGlueText(text) {
+		const last = getLastCodePoint(text);
+		return last !== null && keepAllGlueChars.has(last);
+	}
+	function endsWithKeepAllDashBreakText(text) {
+		const last = getLastCodePoint(text);
+		return last !== null && keepAllDashBreakChars.has(last);
+	}
+	function canContinueKeepAllTextRun(previousText, breakAfterPunctuation) {
+		if (endsWithKeepAllGlueText(previousText)) return false;
+		if (!breakAfterPunctuation) return true;
+		if (endsWithLineStartProhibitedText(previousText)) return false;
+		if (endsWithKeepAllDashBreakText(previousText)) return false;
+		return true;
+	}
+	var kinsokuStart = /* @__PURE__ */ new Set([
+		"，",
+		"．",
+		"！",
+		"：",
+		"；",
+		"？",
+		"、",
+		"。",
+		"・",
+		"）",
+		"〕",
+		"〉",
+		"》",
+		"」",
+		"』",
+		"】",
+		"〗",
+		"〙",
+		"〛",
+		"ー",
+		"々",
+		"〻",
+		"ゝ",
+		"ゞ",
+		"ヽ",
+		"ヾ"
+	]);
+	var kinsokuEnd = /* @__PURE__ */ new Set([
+		"\"",
+		"(",
+		"[",
+		"{",
+		"¡",
+		"¿",
+		"“",
+		"‘",
+		"‚",
+		"„",
+		"«",
+		"‹",
+		"⸘",
+		"（",
+		"〔",
+		"〈",
+		"《",
+		"「",
+		"『",
+		"【",
+		"〖",
+		"〘",
+		"〚"
+	]);
+	var forwardStickyGlue = /* @__PURE__ */ new Set(["'", "’"]);
+	var leftStickyPunctuation = /* @__PURE__ */ new Set([
+		".",
+		",",
+		"!",
+		"?",
+		":",
+		";",
+		"،",
+		"؛",
+		"؟",
+		"।",
+		"॥",
+		"၊",
+		"။",
+		"၌",
+		"၍",
+		"၏",
+		")",
+		"]",
+		"}",
+		"%",
+		"\"",
+		"”",
+		"’",
+		"»",
+		"›",
+		"…"
+	]);
+	var arabicNoSpaceTrailingPunctuation = /* @__PURE__ */ new Set([
+		":",
+		".",
+		"،",
+		"؛"
+	]);
+	var myanmarMedialGlue = /* @__PURE__ */ new Set(["၏"]);
+	var closingQuoteChars = /* @__PURE__ */ new Set([
+		"”",
+		"’",
+		"»",
+		"›",
+		"」",
+		"』",
+		"】",
+		"》",
+		"〉",
+		"〕",
+		"）"
+	]);
+	function isLeftStickyPunctuationSegment(segment) {
+		if (isPunctuationGlueCluster(segment)) return true;
+		let sawPunctuation = false;
+		for (const ch of segment) {
+			if (leftStickyPunctuation.has(ch) || isLineBreakNumericAffix(ch)) {
+				sawPunctuation = true;
+				continue;
+			}
+			if (sawPunctuation && combiningMarkRe.test(ch)) continue;
+			return false;
+		}
+		return sawPunctuation;
+	}
+	function isCJKLineStartProhibitedSegment(segment) {
+		for (const ch of segment) if (!kinsokuStart.has(ch) && !leftStickyPunctuation.has(ch)) return false;
+		return segment.length > 0;
+	}
+	function isForwardStickyClusterSegment(segment) {
+		if (isPunctuationGlueCluster(segment)) return true;
+		for (const ch of segment) if (!kinsokuEnd.has(ch) && !forwardStickyGlue.has(ch) && !combiningMarkRe.test(ch) && !isLineBreakNumericAffix(ch)) return false;
+		return segment.length > 0;
+	}
+	function isPunctuationGlueCluster(segment) {
+		let sawPunctuation = false;
+		for (const ch of segment) {
+			if (ch === "\\" || combiningMarkRe.test(ch)) continue;
+			if (kinsokuEnd.has(ch) || leftStickyPunctuation.has(ch) || forwardStickyGlue.has(ch)) {
+				sawPunctuation = true;
+				continue;
+			}
+			return false;
+		}
+		return sawPunctuation;
+	}
+	function previousCodePointStart(text, end) {
+		const last = end - 1;
+		if (last <= 0) return Math.max(last, 0);
+		const lastCodeUnit = text.charCodeAt(last);
+		if (lastCodeUnit < 56320 || lastCodeUnit > 57343) return last;
+		const maybeHigh = last - 1;
+		if (maybeHigh < 0) return last;
+		const highCodeUnit = text.charCodeAt(maybeHigh);
+		return highCodeUnit >= 55296 && highCodeUnit <= 56319 ? maybeHigh : last;
+	}
+	function getLastCodePoint(text) {
+		if (text.length === 0) return null;
+		const start = previousCodePointStart(text, text.length);
+		return text.slice(start);
+	}
+	function getFirstSignificantCodePoint(text) {
+		for (const ch of text) if (!combiningMarkRe.test(ch)) return ch;
+		return null;
+	}
+	function getLastSignificantCodePoint(text, end = text.length) {
+		for (; end > 0;) {
+			const start = previousCodePointStart(text, end);
+			const ch = text.slice(start, end);
+			if (!combiningMarkRe.test(ch)) return ch;
+			end = start;
+		}
+		return null;
+	}
+	var lineBreakNumericAffixRanges = [
+		36,
+		37,
+		43,
+		43,
+		92,
+		92,
+		162,
+		165,
+		176,
+		177,
+		1423,
+		1423,
+		1545,
+		1547,
+		1642,
+		1642,
+		2046,
+		2047,
+		2546,
+		2547,
+		2553,
+		2555,
+		2801,
+		2801,
+		3065,
+		3065,
+		3449,
+		3449,
+		3647,
+		3647,
+		6107,
+		6107,
+		8240,
+		8247,
+		8279,
+		8279,
+		8352,
+		8399,
+		8451,
+		8451,
+		8457,
+		8457,
+		8470,
+		8470,
+		8722,
+		8723,
+		43064,
+		43064,
+		65020,
+		65020,
+		65129,
+		65130,
+		65284,
+		65285,
+		65504,
+		65505,
+		65509,
+		65510,
+		73693,
+		73696,
+		123647,
+		123647,
+		126124,
+		126124,
+		126128,
+		126128
+	];
+	function isCodePointInRanges(codePoint, ranges) {
+		for (let i = 0; i < ranges.length; i += 2) if (codePoint >= ranges[i] && codePoint <= ranges[i + 1]) return true;
+		return false;
+	}
+	function isLineBreakNumericAffix(ch) {
+		const codePoint = ch.codePointAt(0);
+		return codePoint !== void 0 && isCodePointInRanges(codePoint, lineBreakNumericAffixRanges);
+	}
+	function endsWithLineBreakNumericAffix(text) {
+		const last = getLastSignificantCodePoint(text);
+		return last !== null && isLineBreakNumericAffix(last);
+	}
+	function startsWithDecimalDigit(text) {
+		const first = getFirstSignificantCodePoint(text);
+		return first !== null && decimalDigitRe.test(first);
+	}
+	function splitTrailingForwardStickyCluster(text) {
+		let splitIndex = text.length;
+		while (splitIndex > 0) {
+			const start = previousCodePointStart(text, splitIndex);
+			const ch = text.slice(start, splitIndex);
+			if (combiningMarkRe.test(ch) || kinsokuEnd.has(ch) || forwardStickyGlue.has(ch)) {
+				splitIndex = start;
+				continue;
+			}
+			break;
+		}
+		if (splitIndex <= 0 || splitIndex === text.length) return null;
+		return {
+			head: text.slice(0, splitIndex),
+			tail: text.slice(splitIndex)
+		};
+	}
+	function getRepeatableSingleCharRunChar(text, isWordLike, kind) {
+		return kind === "text" && !isWordLike && text.length === 1 && text !== "-" && text !== "—" ? text : null;
+	}
+	function hasArabicNoSpacePunctuation(containsArabic, lastCodePoint) {
+		return containsArabic && lastCodePoint !== null && arabicNoSpaceTrailingPunctuation.has(lastCodePoint);
+	}
+	function endsWithMyanmarMedialGlue(segment) {
+		const lastCodePoint = getLastCodePoint(segment);
+		return lastCodePoint !== null && myanmarMedialGlue.has(lastCodePoint);
+	}
+	function splitLeadingSpaceAndMarks(segment) {
+		if (segment.length < 2 || segment[0] !== " ") return null;
+		const marks = segment.slice(1);
+		if (/^\p{M}+$/u.test(marks)) return {
+			space: " ",
+			marks
+		};
+		return null;
+	}
+	function endsWithClosingQuote(text) {
+		let end = text.length;
+		while (end > 0) {
+			const start = previousCodePointStart(text, end);
+			const ch = text.slice(start, end);
+			if (closingQuoteChars.has(ch)) return true;
+			if (!leftStickyPunctuation.has(ch)) return false;
+			end = start;
+		}
+		return false;
+	}
+	function classifySegmentBreakChar(ch, whiteSpace) {
+		if (whiteSpace === "pre-wrap") {
+			if (ch === " ") return "preserved-space";
+			if (ch === "	") return "tab";
+			if (ch === "\n") return "hard-break";
+		}
+		if (ch === " ") return "space";
+		if (ch === "\xA0" || ch === " " || ch === "⁠" || ch === "﻿") return "glue";
+		if (ch === "​") return "zero-width-break";
+		if (ch === "­") return "soft-hyphen";
+		return "text";
+	}
+	var breakCharRe = /[\x20\t\n\xA0\xAD\u200B\u202F\u2060\uFEFF]/;
+	function joinTextParts(parts) {
+		return parts.length === 1 ? parts[0] : parts.join("");
+	}
+	function joinReversedPrefixParts(prefixParts, tail) {
+		const parts = [];
+		for (let i = prefixParts.length - 1; i >= 0; i--) parts.push(prefixParts[i]);
+		parts.push(tail);
+		return joinTextParts(parts);
+	}
+	function splitSegmentByBreakKind(segment, isWordLike, start, whiteSpace) {
+		if (!breakCharRe.test(segment)) return [{
+			text: segment,
+			isWordLike,
+			kind: "text",
+			start
+		}];
+		const pieces = [];
+		let currentKind = null;
+		let currentStart = 0;
+		let currentWordLike = false;
+		let offset = 0;
+		for (const ch of segment) {
+			const kind = classifySegmentBreakChar(ch, whiteSpace);
+			const wordLike = kind === "text" && isWordLike;
+			if (currentKind !== null && kind === currentKind && wordLike === currentWordLike) {
+				offset += ch.length;
+				continue;
+			}
+			if (currentKind !== null) pieces.push({
+				text: segment.slice(currentStart, offset),
+				isWordLike: currentWordLike,
+				kind: currentKind,
+				start: start + currentStart
+			});
+			currentKind = kind;
+			currentStart = offset;
+			currentWordLike = wordLike;
+			offset += ch.length;
+		}
+		if (currentKind !== null) pieces.push({
+			text: segment.slice(currentStart),
+			isWordLike: currentWordLike,
+			kind: currentKind,
+			start: start + currentStart
+		});
+		return pieces;
+	}
+	function isTextRunBoundary(kind) {
+		return kind === "space" || kind === "preserved-space" || kind === "zero-width-break" || kind === "hard-break";
+	}
+	var urlSchemeSegmentRe = /^[A-Za-z][A-Za-z0-9+.-]*:$/;
+	function isUrlLikeRunStart(segmentation, index) {
+		const text = segmentation.texts[index];
+		if (text.startsWith("www.")) return true;
+		return urlSchemeSegmentRe.test(text) && index + 1 < segmentation.len && segmentation.kinds[index + 1] === "text" && segmentation.texts[index + 1] === "//";
+	}
+	function isUrlQueryBoundarySegment(text) {
+		return text.includes("?") && (text.includes("://") || text.startsWith("www."));
+	}
+	function mergeUrlRuns(segmentation, normalized, profile) {
+		const texts = [];
+		const isWordLike = [];
+		const kinds = [];
+		const starts = [];
+		for (let i = 0; i < segmentation.len; i++) {
+			const start = segmentation.starts[i];
+			let text = segmentation.texts[i];
+			let wordLike = segmentation.isWordLike[i];
+			const kind = segmentation.kinds[i];
+			let queryStartOverride = -1;
+			if (kind === "text" && isUrlLikeRunStart(segmentation, i)) {
+				const urlParts = [text];
+				let j = i + 1;
+				while (j < segmentation.len && !isTextRunBoundary(segmentation.kinds[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
+					if (queryStartOverride < 0 && isUrlLikeRunStart(segmentation, j)) queryStartOverride = segmentation.starts[j];
+					const nextText = segmentation.texts[j];
+					urlParts.push(nextText);
+					wordLike = true;
+					j++;
+					if (nextText.includes("?")) break;
+				}
+				text = joinTextParts(urlParts);
+				i = j - 1;
+			}
+			texts.push(text);
+			isWordLike.push(wordLike);
+			kinds.push(kind);
+			starts.push(start);
+			if (!isUrlQueryBoundarySegment(text)) continue;
+			const nextIndex = i + 1;
+			if (nextIndex >= segmentation.len || isTextRunBoundary(segmentation.kinds[nextIndex])) continue;
+			const queryParts = [];
+			const queryStart = queryStartOverride < 0 ? segmentation.starts[nextIndex] : queryStartOverride;
+			let j = nextIndex;
+			while (j < segmentation.len && !isTextRunBoundary(segmentation.kinds[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
+				queryParts.push(segmentation.texts[j]);
+				j++;
+			}
+			if (queryParts.length > 0) {
+				texts.push(joinTextParts(queryParts));
+				isWordLike.push(true);
+				kinds.push("text");
+				starts.push(queryStart);
+				i = j - 1;
+			}
+		}
+		return {
+			len: texts.length,
+			texts,
+			isWordLike,
+			kinds,
+			starts
+		};
+	}
+	var numericJoinerChars = /* @__PURE__ */ new Set([
+		":",
+		"-",
+		"/",
+		"×",
+		",",
+		".",
+		"+",
+		"–",
+		"—"
+	]);
+	var wordInternalSymbolRe = /[\p{P}\p{S}\p{Co}]/u;
+	var emojiPresentationRe$1 = /\p{Emoji_Presentation}/u;
+	var noSpaceWordBreakAfterChars = /* @__PURE__ */ new Set([
+		"?",
+		"֊",
+		"-",
+		"‐",
+		"‒",
+		"–",
+		"—",
+		"…",
+		"‼",
+		"‽",
+		"⁉"
+	]);
+	function isAsciiWordInternalSymbolCode(code) {
+		return code >= 33 && code <= 47 && code !== 45 || code >= 58 && code <= 64 && code !== 63 || code >= 91 && code <= 96 || code >= 123 && code <= 126;
+	}
+	function isNoSpaceWordInternalSymbol(ch) {
+		const code = ch.charCodeAt(0);
+		if (code < 128) return isAsciiWordInternalSymbolCode(code);
+		return !noSpaceWordBreakAfterChars.has(ch) && !emojiPresentationRe$1.test(ch) && wordInternalSymbolRe.test(ch);
+	}
+	function isNoSpaceWordInternalSymbolSegment(text) {
+		let sawSymbol = false;
+		for (const ch of text) {
+			if (combiningMarkRe.test(ch)) continue;
+			if (!isNoSpaceWordInternalSymbol(ch)) return false;
+			sawSymbol = true;
+		}
+		return sawSymbol;
+	}
+	function endsWithNoSpaceWordJoiner(text) {
+		for (let end = text.length; end > 0;) {
+			const start = previousCodePointStart(text, end);
+			const ch = text.slice(start, end);
+			if (combiningMarkRe.test(ch)) {
+				end = start;
+				continue;
+			}
+			return isNoSpaceWordInternalSymbol(ch) || isLineBreakNumericAffix(ch);
+		}
+		return false;
+	}
+	var asciiAlphabeticBoundaryRe = /[A-Za-z#&*<=>@^_`~]/;
+	function isAsciiBoundary(left, right) {
+		return left.charCodeAt(0) < 128 && right.charCodeAt(0) < 128;
+	}
+	function numericAffixBoundary(source, boundary, profile) {
+		if (!profile.geckoAsciiLineBreaks || boundary <= 0 || boundary >= source.length) return null;
+		const left = getLastSignificantCodePoint(source, boundary);
+		const right = String.fromCodePoint(source.codePointAt(boundary));
+		if (left === null || !isAsciiBoundary(left, right)) return null;
+		const leftAffix = isLineBreakNumericAffix(left);
+		const rightAffix = isLineBreakNumericAffix(right);
+		if (!leftAffix && !rightAffix) return null;
+		if (right === ")" || right === "]" || right === "}" || "!,.:;?/".includes(right)) return true;
+		if ("([{".includes(left) || left === "\"" || left === "'" || right === "\"" || right === "'") return true;
+		if (right === "|" || right === "-") return true;
+		if (leftAffix && asciiAlphabeticBoundaryRe.test(right) || asciiAlphabeticBoundaryRe.test(left) && rightAffix) return true;
+		if (rightAffix && (")]}".includes(left) || /[0-9]/.test(left))) return true;
+		if (leftAffix && ("([{".includes(right) || /[0-9]/.test(right))) return true;
+		return false;
+	}
+	function openingPunctuationJoinsPrevious(left, right, profile, leftEnd = left.length) {
+		const first = right[0];
+		if (first === void 0 || !"([{".includes(first)) return null;
+		const last = getLastSignificantCodePoint(left, leftEnd);
+		if (last === null) return null;
+		if (profile.geckoAsciiLineBreaks && isAsciiBoundary(last, first)) return asciiAlphabeticBoundaryRe.test(last) || decimalDigitRe.test(last) || "\"'([{".includes(last) || isLineBreakNumericAffix(last);
+		if (last.charCodeAt(0) >= 128) return !isCJK(last) && /[\p{L}\p{N}]/u.test(last) ? true : null;
+		return /[A-Za-z0-9]/.test(last) || "$'(/<@[^_`{".includes(last);
+	}
+	function canJoinNoSpaceWordBoundary(leftText, leftWordLike, rightText, rightWordLike, profile) {
+		if (rightText[0] === "-" && isCJK(leftText)) return true;
+		if (isCJK(leftText) || isCJK(rightText)) return false;
+		const openingJoin = openingPunctuationJoinsPrevious(leftText, rightText, profile);
+		if (openingJoin !== null) return openingJoin;
+		const leftSymbol = !leftWordLike && isNoSpaceWordInternalSymbolSegment(leftText);
+		const rightSymbol = !rightWordLike && isNoSpaceWordInternalSymbolSegment(rightText);
+		const leftAffix = endsWithLineBreakNumericAffix(leftText);
+		const leftEndsJoiner = (leftWordLike || leftAffix) && endsWithNoSpaceWordJoiner(leftText);
+		if (!leftSymbol && !rightSymbol && !leftEndsJoiner) return false;
+		return (leftWordLike || leftSymbol || leftAffix) && (rightWordLike || rightSymbol);
+	}
+	function segmentContainsDecimalDigit(text) {
+		for (const ch of text) if (decimalDigitRe.test(ch)) return true;
+		return false;
+	}
+	function isNumericRunSegment(text) {
+		if (text.length === 0) return false;
+		for (const ch of text) {
+			if (decimalDigitRe.test(ch) || numericJoinerChars.has(ch)) continue;
+			return false;
+		}
+		return true;
+	}
+	function mergeNumericRuns(segmentation, normalized, profile) {
+		const texts = [];
+		const isWordLike = [];
+		const kinds = [];
+		const starts = [];
+		function pushNumericRun(text, start) {
+			if (text.includes("-")) {
+				const parts = text.split("-");
+				let shouldSplit = parts.length > 1;
+				for (let i = 0; i < parts.length; i++) {
+					const part = parts[i];
+					if (!shouldSplit) break;
+					if (part.length === 0 || !segmentContainsDecimalDigit(part) || !isNumericRunSegment(part)) shouldSplit = false;
+				}
+				if (shouldSplit) {
+					let offset = 0;
+					for (let i = 0; i < parts.length; i++) {
+						const part = parts[i];
+						const splitText = i < parts.length - 1 ? `${part}-` : part;
+						texts.push(splitText);
+						isWordLike.push(true);
+						kinds.push("text");
+						starts.push(start + offset);
+						offset += splitText.length;
+					}
+					return;
+				}
+			}
+			texts.push(text);
+			isWordLike.push(true);
+			kinds.push("text");
+			starts.push(start);
+		}
+		for (let i = 0; i < segmentation.len; i++) {
+			const text = segmentation.texts[i];
+			const kind = segmentation.kinds[i];
+			if (kind === "text" && isNumericRunSegment(text) && segmentContainsDecimalDigit(text)) {
+				const mergedParts = [text];
+				let j = i + 1;
+				while (j < segmentation.len && segmentation.kinds[j] === "text" && isNumericRunSegment(segmentation.texts[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
+					mergedParts.push(segmentation.texts[j]);
+					j++;
+				}
+				pushNumericRun(joinTextParts(mergedParts), segmentation.starts[i]);
+				i = j - 1;
+				continue;
+			}
+			texts.push(text);
+			isWordLike.push(segmentation.isWordLike[i]);
+			kinds.push(kind);
+			starts.push(segmentation.starts[i]);
+		}
+		return {
+			len: texts.length,
+			texts,
+			isWordLike,
+			kinds,
+			starts
+		};
+	}
+	function mergeNoSpaceWordChains(segmentation, normalized, profile) {
+		const texts = [];
+		const isWordLike = [];
+		const kinds = [];
+		const starts = [];
+		let i = 0;
+		while (i < segmentation.len) {
+			const text = segmentation.texts[i];
+			const kind = segmentation.kinds[i];
+			const wordLike = segmentation.isWordLike[i];
+			if (kind === "text") {
+				const mergedParts = [text];
+				let j = i + 1;
+				let mergedWordLike = wordLike;
+				while (j < segmentation.len && segmentation.kinds[j] === "text" && (numericAffixBoundary(normalized, segmentation.starts[j], profile) ?? canJoinNoSpaceWordBoundary(segmentation.texts[j - 1], segmentation.isWordLike[j - 1], segmentation.texts[j], segmentation.isWordLike[j], profile))) {
+					const nextText = segmentation.texts[j];
+					mergedParts.push(nextText);
+					mergedWordLike = mergedWordLike || segmentation.isWordLike[j];
+					j++;
+				}
+				if (j > i + 1) {
+					texts.push(joinTextParts(mergedParts));
+					isWordLike.push(mergedWordLike);
+					kinds.push("text");
+					starts.push(segmentation.starts[i]);
+					i = j;
+					continue;
+				}
+			}
+			texts.push(text);
+			isWordLike.push(wordLike);
+			kinds.push(kind);
+			starts.push(segmentation.starts[i]);
+			i++;
+		}
+		return {
+			len: texts.length,
+			texts,
+			isWordLike,
+			kinds,
+			starts
+		};
+	}
+	function mergeGlueConnectedTextRuns(segmentation) {
+		const texts = [];
+		const isWordLike = [];
+		const kinds = [];
+		const starts = [];
+		let read = 0;
+		while (read < segmentation.len) {
+			const textParts = [segmentation.texts[read]];
+			let wordLike = segmentation.isWordLike[read];
+			let kind = segmentation.kinds[read];
+			let start = segmentation.starts[read];
+			if (kind === "glue") {
+				const glueParts = [textParts[0]];
+				const glueStart = start;
+				read++;
+				while (read < segmentation.len && segmentation.kinds[read] === "glue") {
+					glueParts.push(segmentation.texts[read]);
+					read++;
+				}
+				const glueText = joinTextParts(glueParts);
+				if (read < segmentation.len && segmentation.kinds[read] === "text") {
+					textParts[0] = glueText;
+					textParts.push(segmentation.texts[read]);
+					wordLike = segmentation.isWordLike[read];
+					kind = "text";
+					start = glueStart;
+					read++;
+				} else {
+					texts.push(glueText);
+					isWordLike.push(false);
+					kinds.push("glue");
+					starts.push(glueStart);
+					continue;
+				}
+			} else read++;
+			if (kind === "text") while (read < segmentation.len && segmentation.kinds[read] === "glue") {
+				const glueParts = [];
+				while (read < segmentation.len && segmentation.kinds[read] === "glue") {
+					glueParts.push(segmentation.texts[read]);
+					read++;
+				}
+				const glueText = joinTextParts(glueParts);
+				if (read < segmentation.len && segmentation.kinds[read] === "text") {
+					textParts.push(glueText, segmentation.texts[read]);
+					wordLike = wordLike || segmentation.isWordLike[read];
+					read++;
+					continue;
+				}
+				textParts.push(glueText);
+			}
+			texts.push(joinTextParts(textParts));
+			isWordLike.push(wordLike);
+			kinds.push(kind);
+			starts.push(start);
+		}
+		return {
+			len: texts.length,
+			texts,
+			isWordLike,
+			kinds,
+			starts
+		};
+	}
+	function carryTrailingForwardStickyAcrossCJKBoundary(segmentation) {
+		const { texts, kinds, starts } = segmentation;
+		for (let i = 0; i < texts.length - 1; i++) {
+			if (kinds[i] !== "text" || kinds[i + 1] !== "text") continue;
+			if (!isCJK(texts[i]) || !isCJK(texts[i + 1])) continue;
+			const split = splitTrailingForwardStickyCluster(texts[i]);
+			if (split === null) continue;
+			texts[i] = split.head;
+			texts[i + 1] = split.tail + texts[i + 1];
+			starts[i + 1] = starts[i] + split.head.length;
+		}
+	}
+	function buildMergedSegmentation(normalized, profile, whiteSpace) {
+		const wordSegmenter = getSharedWordSegmenter();
+		let mergedLen = 0;
+		const mergedTexts = [];
+		const mergedWordLike = [];
+		const mergedKinds = [];
+		const mergedStarts = [];
+		let hasTail = false;
+		let tailStart = 0;
+		let tailEnd = 0;
+		let tailWordLike = false;
+		let tailKind = "text";
+		let tailSingleCharRunChar = null;
+		let tailContainsCJK = false;
+		let tailContainsArabicScript = false;
+		let tailEndsWithClosingQuote = false;
+		let tailEndsWithMyanmarMedialGlue = false;
+		let tailHasArabicNoSpacePunctuation = false;
+		for (const s of wordSegmenter.segment(normalized)) for (const piece of splitSegmentByBreakKind(s.segment, s.isWordLike ?? false, s.index, whiteSpace)) {
+			const isText = piece.kind === "text";
+			const repeatableSingleCharRunChar = getRepeatableSingleCharRunChar(piece.text, piece.isWordLike, piece.kind);
+			const pieceContainsCJK = isCJK(piece.text);
+			const pieceContainsArabicScript = containsArabicScript(piece.text);
+			const pieceLastCodePoint = getLastCodePoint(piece.text);
+			const pieceEndsWithClosingQuote = endsWithClosingQuote(piece.text);
+			const pieceEndsWithMyanmarMedialGlue = endsWithMyanmarMedialGlue(piece.text);
+			const pieceEnd = piece.start + piece.text.length;
+			const boundaryJoin = numericAffixBoundary(normalized, piece.start, profile) ?? (tailContainsCJK || pieceContainsCJK ? null : openingPunctuationJoinsPrevious(normalized, piece.text, profile, piece.start));
+			let appendToTail = false;
+			if (profile.carryCJKAfterClosingQuote && isText && hasTail && tailKind === "text" && pieceContainsCJK && tailContainsCJK && tailEndsWithClosingQuote) appendToTail = true;
+			else if (isText && hasTail && tailKind === "text" && isCJKLineStartProhibitedSegment(piece.text) && tailContainsCJK) appendToTail = true;
+			else if (isText && hasTail && tailKind === "text" && tailEndsWithMyanmarMedialGlue) appendToTail = true;
+			else if (isText && hasTail && tailKind === "text" && piece.isWordLike && pieceContainsArabicScript && tailHasArabicNoSpacePunctuation) appendToTail = true;
+			else if (repeatableSingleCharRunChar !== null && hasTail && tailKind === "text" && tailSingleCharRunChar === repeatableSingleCharRunChar && boundaryJoin !== false) {
+				tailEnd = pieceEnd;
+				continue;
+			} else if (isText && !piece.isWordLike && hasTail && tailKind === "text" && !tailContainsCJK && (isLeftStickyPunctuationSegment(piece.text) || piece.text === "-" && tailWordLike)) appendToTail = true;
+			if (isText && hasTail && tailKind === "text" && boundaryJoin !== null) appendToTail = boundaryJoin;
+			if (appendToTail) {
+				tailEnd = pieceEnd;
+				tailWordLike = tailWordLike || piece.isWordLike;
+				tailSingleCharRunChar = null;
+				tailContainsCJK = tailContainsCJK || pieceContainsCJK;
+				tailContainsArabicScript = tailContainsArabicScript || pieceContainsArabicScript;
+				tailEndsWithClosingQuote = pieceEndsWithClosingQuote;
+				tailEndsWithMyanmarMedialGlue = pieceEndsWithMyanmarMedialGlue;
+				tailHasArabicNoSpacePunctuation = hasArabicNoSpacePunctuation(tailContainsArabicScript, pieceLastCodePoint);
+			} else {
+				if (hasTail) {
+					mergedTexts[mergedLen] = normalized.slice(tailStart, tailEnd);
+					mergedWordLike[mergedLen] = tailWordLike;
+					mergedKinds[mergedLen] = tailKind;
+					mergedStarts[mergedLen] = tailStart;
+					mergedLen++;
+				}
+				hasTail = true;
+				tailStart = piece.start;
+				tailEnd = pieceEnd;
+				tailWordLike = piece.isWordLike;
+				tailKind = piece.kind;
+				tailSingleCharRunChar = repeatableSingleCharRunChar;
+				tailContainsCJK = pieceContainsCJK;
+				tailContainsArabicScript = pieceContainsArabicScript;
+				tailEndsWithClosingQuote = pieceEndsWithClosingQuote;
+				tailEndsWithMyanmarMedialGlue = pieceEndsWithMyanmarMedialGlue;
+				tailHasArabicNoSpacePunctuation = hasArabicNoSpacePunctuation(pieceContainsArabicScript, pieceLastCodePoint);
+			}
+		}
+		if (hasTail) {
+			mergedTexts[mergedLen] = normalized.slice(tailStart, tailEnd);
+			mergedWordLike[mergedLen] = tailWordLike;
+			mergedKinds[mergedLen] = tailKind;
+			mergedStarts[mergedLen] = tailStart;
+			mergedLen++;
+		}
+		for (let i = 1; i < mergedLen; i++) if (mergedKinds[i] === "text" && !mergedWordLike[i] && isPunctuationGlueCluster(mergedTexts[i]) && mergedKinds[i - 1] === "text" && !isCJK(mergedTexts[i - 1]) && (numericAffixBoundary(normalized, mergedStarts[i], profile) ?? openingPunctuationJoinsPrevious(normalized, mergedTexts[i], profile, mergedStarts[i])) !== false) {
+			mergedTexts[i - 1] += mergedTexts[i];
+			mergedWordLike[i - 1] = mergedWordLike[i - 1] || mergedWordLike[i];
+			mergedTexts[i] = "";
+		}
+		let nextLiveIndex = -1;
+		let forwardStickyPrefixParts = null;
+		for (let i = mergedLen - 1; i >= 0; i--) {
+			const text = mergedTexts[i];
+			if (text.length === 0) continue;
+			const nextText = forwardStickyPrefixParts?.at(-1) ?? (nextLiveIndex >= 0 ? mergedTexts[nextLiveIndex] : null);
+			if (mergedKinds[i] === "text" && !mergedWordLike[i] && nextText !== null && mergedKinds[nextLiveIndex] === "text" && ((numericAffixBoundary(normalized, mergedStarts[i] + text.length, profile) ?? (isForwardStickyClusterSegment(text) && openingPunctuationJoinsPrevious(text, nextText, profile) !== false)) || text === "-" && startsWithDecimalDigit(nextText))) {
+				if (forwardStickyPrefixParts === null) forwardStickyPrefixParts = [];
+				forwardStickyPrefixParts.push(text);
+				mergedStarts[nextLiveIndex] = mergedStarts[i];
+				mergedTexts[i] = "";
+				continue;
+			}
+			if (forwardStickyPrefixParts !== null) {
+				mergedTexts[nextLiveIndex] = joinReversedPrefixParts(forwardStickyPrefixParts, mergedTexts[nextLiveIndex]);
+				forwardStickyPrefixParts = null;
+			}
+			nextLiveIndex = i;
+		}
+		if (forwardStickyPrefixParts !== null) mergedTexts[nextLiveIndex] = joinReversedPrefixParts(forwardStickyPrefixParts, mergedTexts[nextLiveIndex]);
+		let compactLen = 0;
+		for (let read = 0; read < mergedLen; read++) {
+			const text = mergedTexts[read];
+			if (text.length === 0) continue;
+			if (compactLen !== read) {
+				mergedTexts[compactLen] = text;
+				mergedWordLike[compactLen] = mergedWordLike[read];
+				mergedKinds[compactLen] = mergedKinds[read];
+				mergedStarts[compactLen] = mergedStarts[read];
+			}
+			compactLen++;
+		}
+		mergedTexts.length = compactLen;
+		mergedWordLike.length = compactLen;
+		mergedKinds.length = compactLen;
+		mergedStarts.length = compactLen;
+		const mergedRuns = mergeNoSpaceWordChains(mergeNumericRuns(mergeUrlRuns(mergeGlueConnectedTextRuns({
+			len: compactLen,
+			texts: mergedTexts,
+			isWordLike: mergedWordLike,
+			kinds: mergedKinds,
+			starts: mergedStarts
+		}), normalized, profile), normalized, profile), normalized, profile);
+		carryTrailingForwardStickyAcrossCJKBoundary(mergedRuns);
+		for (let i = 0; i < mergedRuns.len - 1; i++) {
+			const split = splitLeadingSpaceAndMarks(mergedRuns.texts[i]);
+			if (split === null) continue;
+			if (mergedRuns.kinds[i] !== "space" && mergedRuns.kinds[i] !== "preserved-space" || mergedRuns.kinds[i + 1] !== "text" || !containsArabicScript(mergedRuns.texts[i + 1])) continue;
+			mergedRuns.texts[i] = split.space;
+			mergedRuns.isWordLike[i] = false;
+			mergedRuns.kinds[i] = mergedRuns.kinds[i] === "preserved-space" ? "preserved-space" : "space";
+			mergedRuns.texts[i + 1] = split.marks + mergedRuns.texts[i + 1];
+			mergedRuns.starts[i + 1] = mergedRuns.starts[i] + split.space.length;
+		}
+		return mergedRuns;
+	}
+	function mergeKeepAllTextSegments(normalized, segmentation, profile) {
+		if (segmentation.len <= 1) return segmentation;
+		const texts = [];
+		const isWordLike = [];
+		const kinds = [];
+		const starts = [];
+		let groupStart = -1;
+		let groupContainsCJK = false;
+		function pushOriginalText(index) {
+			texts.push(segmentation.texts[index]);
+			isWordLike.push(segmentation.isWordLike[index]);
+			kinds.push("text");
+			starts.push(segmentation.starts[index]);
+		}
+		function pushMergedText(start, end) {
+			let wordLike = false;
+			for (let i = start; i < end; i++) wordLike = wordLike || segmentation.isWordLike[i];
+			const sourceStart = segmentation.starts[start];
+			const sourceEnd = end < segmentation.len ? segmentation.starts[end] : normalized.length;
+			texts.push(normalized.slice(sourceStart, sourceEnd));
+			isWordLike.push(wordLike);
+			kinds.push("text");
+			starts.push(sourceStart);
+		}
+		function flushGroup(end) {
+			if (groupStart < 0) return;
+			if (groupContainsCJK) {
+				if (groupStart + 1 === end) pushOriginalText(groupStart);
+				else pushMergedText(groupStart, end);
+			} else for (let i = groupStart; i < end; i++) pushOriginalText(i);
+			groupStart = -1;
+			groupContainsCJK = false;
+		}
+		for (let i = 0; i < segmentation.len; i++) {
+			const text = segmentation.texts[i];
+			const kind = segmentation.kinds[i];
+			if (kind === "text") {
+				if (groupStart >= 0 && (!canContinueKeepAllTextRun(segmentation.texts[i - 1], profile.breakKeepAllAfterPunctuation) || numericAffixBoundary(normalized, segmentation.starts[i], profile) === false)) flushGroup(i);
+				if (groupStart < 0) groupStart = i;
+				groupContainsCJK = groupContainsCJK || isCJK(text);
+				continue;
+			}
+			flushGroup(i);
+			texts.push(text);
+			isWordLike.push(segmentation.isWordLike[i]);
+			kinds.push(kind);
+			starts.push(segmentation.starts[i]);
+		}
+		flushGroup(segmentation.len);
+		return {
+			len: texts.length,
+			texts,
+			isWordLike,
+			kinds,
+			starts
+		};
+	}
+	function isNumericHyphen(text, index) {
+		const next = text.charCodeAt(index + 1);
+		if (next < 128) {
+			if (next < 48 || next > 57) return false;
+		} else {
+			const codePoint = text.codePointAt(index + 1);
+			if (codePoint === void 0 || !decimalDigitRe.test(String.fromCodePoint(codePoint))) return false;
+		}
+		for (let end = index; end > 0;) {
+			const start = previousCodePointStart(text, end);
+			const previous = text.slice(start, end);
+			if (!combiningMarkRe.test(previous)) return isCJK(previous) || !/[\p{L}\p{N}]/u.test(previous);
+			end = start;
+		}
+		return true;
+	}
+	function buildBaseCjkUnits(segText, profile) {
+		const units = [];
+		let unitStart = 0;
+		let unitEnd = 0;
+		let unitContainsCJK = false;
+		let unitEndsWithClosingQuote = false;
+		let unitIsSingleKinsokuEnd = false;
+		let unitHasHyphen = false;
+		let unitHasNumericHyphen = false;
+		function pushUnit() {
+			if (unitEnd === unitStart) return;
+			units.push({
+				text: segText.slice(unitStart, unitEnd),
+				start: unitStart,
+				overflow: unitContainsCJK ? unitHasHyphen ? "grapheme" : "none" : "word-like"
+			});
+			unitStart = unitEnd;
+			unitContainsCJK = false;
+			unitEndsWithClosingQuote = false;
+			unitIsSingleKinsokuEnd = false;
+			unitHasHyphen = false;
+			unitHasNumericHyphen = false;
+		}
+		function startUnit(grapheme, start, graphemeContainsCJK) {
+			unitStart = start;
+			unitEnd = start + grapheme.length;
+			unitContainsCJK = graphemeContainsCJK;
+			unitHasHyphen = grapheme === "-";
+			unitEndsWithClosingQuote = endsWithClosingQuote(grapheme);
+			unitIsSingleKinsokuEnd = kinsokuEnd.has(grapheme);
+		}
+		function appendToUnit(grapheme, graphemeContainsCJK) {
+			unitEnd += grapheme.length;
+			unitContainsCJK = unitContainsCJK || graphemeContainsCJK;
+			unitHasHyphen = unitHasHyphen || grapheme === "-";
+			const graphemeEndsWithClosingQuote = endsWithClosingQuote(grapheme);
+			if (grapheme.length === 1 && leftStickyPunctuation.has(grapheme)) unitEndsWithClosingQuote = unitEndsWithClosingQuote || graphemeEndsWithClosingQuote;
+			else unitEndsWithClosingQuote = graphemeEndsWithClosingQuote;
+			unitIsSingleKinsokuEnd = false;
+		}
+		for (const gs of getSharedGraphemeSegmenter().segment(segText)) {
+			const grapheme = gs.segment;
+			const graphemeContainsCJK = isCJK(grapheme);
+			if (unitEnd === unitStart) {
+				startUnit(grapheme, gs.index, graphemeContainsCJK);
+				continue;
+			}
+			const attachHyphen = grapheme === "-" && unitContainsCJK;
+			if (attachHyphen && isNumericHyphen(segText, gs.index)) unitHasNumericHyphen = true;
+			if (unitIsSingleKinsokuEnd || kinsokuStart.has(grapheme) || leftStickyPunctuation.has(grapheme) || attachHyphen || unitHasNumericHyphen && !graphemeContainsCJK || profile.carryCJKAfterClosingQuote && graphemeContainsCJK && unitEndsWithClosingQuote) {
+				appendToUnit(grapheme, graphemeContainsCJK);
+				continue;
+			}
+			if (!unitContainsCJK && !graphemeContainsCJK) {
+				appendToUnit(grapheme, graphemeContainsCJK);
+				continue;
+			}
+			pushUnit();
+			startUnit(grapheme, gs.index, graphemeContainsCJK);
+		}
+		pushUnit();
+		return units;
+	}
+	function mergeKeepAllTextUnits(segText, units, profile) {
+		if (units.length <= 1) return units;
+		const merged = [];
+		let groupStart = -1;
+		let groupContainsCJK = false;
+		function pushMergedUnit(start, end) {
+			const sourceStart = units[start].start;
+			const sourceEnd = end < units.length ? units[end].start : segText.length;
+			merged.push({
+				text: segText.slice(sourceStart, sourceEnd),
+				start: sourceStart,
+				overflow: "word-like"
+			});
+		}
+		function flushGroup(end) {
+			if (groupStart < 0) return;
+			if (groupContainsCJK) {
+				if (groupStart + 1 === end) merged.push(units[groupStart]);
+				else pushMergedUnit(groupStart, end);
+			} else for (let i = groupStart; i < end; i++) merged.push(units[i]);
+			groupStart = -1;
+			groupContainsCJK = false;
+		}
+		for (let i = 0; i < units.length; i++) {
+			const unit = units[i];
+			if (groupStart >= 0 && (!canContinueKeepAllTextRun(units[i - 1].text, profile.breakKeepAllAfterPunctuation) || numericAffixBoundary(segText, unit.start, profile) === false)) flushGroup(i);
+			if (groupStart < 0) groupStart = i;
+			groupContainsCJK = groupContainsCJK || isCJK(unit.text);
+		}
+		flushGroup(units.length);
+		return merged;
+	}
+	function getCjkTextUnits(text, profile, wordBreak) {
+		const units = buildBaseCjkUnits(text, profile);
+		return wordBreak === "keep-all" ? mergeKeepAllTextUnits(text, units, profile) : units;
+	}
+	function isPreferredBreakGrapheme(grapheme) {
+		return grapheme === "-" || grapheme === "֊" || grapheme === "‐" || grapheme === "‒" || grapheme === "–" || grapheme === "—";
+	}
+	function isIndependentSymbolRun(text) {
+		if (text.length === 0 || /\p{Cf}/u.test(text)) return false;
+		for (const { segment } of getSharedGraphemeSegmenter().segment(text)) {
+			const base = String.fromCodePoint(segment.codePointAt(0));
+			if (!/[\p{P}\p{S}]/u.test(base) || emojiPresentationRe$1.test(base) || segment.includes("️") || /\p{Emoji_Modifier}/u.test(base)) return false;
+		}
+		return true;
+	}
+	function getBreakablePreferredBreaks(text) {
+		if (!/[-\u058A\u2010\u2012\u2013\u2014]/u.test(text)) return null;
+		const breaks = [];
+		let graphemeIndex = 0;
+		for (const gs of getSharedGraphemeSegmenter().segment(text)) {
+			graphemeIndex++;
+			const numericSign = gs.segment === "-" && isNumericHyphen(text, gs.index);
+			if (isPreferredBreakGrapheme(gs.segment) && !numericSign) breaks.push(graphemeIndex);
+		}
+		return breaks.length === 0 ? null : breaks;
+	}
+	function analyzeText(text, profile, whiteSpace = "normal", wordBreak = "normal") {
+		const normalized = whiteSpace === "pre-wrap" ? normalizeWhitespacePreWrap(text) : normalizeWhitespaceNormal(text);
+		if (normalized.length === 0) return {
+			normalized,
+			len: 0,
+			texts: [],
+			isWordLike: [],
+			kinds: [],
+			starts: []
+		};
+		const mergedSegmentation = buildMergedSegmentation(normalized, profile, whiteSpace);
+		return {
+			normalized,
+			...wordBreak === "keep-all" ? mergeKeepAllTextSegments(normalized, mergedSegmentation, profile) : mergedSegmentation
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/measurement.js
+	var measureContext = null;
+	var segmentMetricCaches = /* @__PURE__ */ new Map();
+	var cachedEngineProfile = null;
+	var MAX_PREFIX_FIT_GRAPHEMES = 96;
+	var emojiPresentationRe = /\p{Emoji_Presentation}/u;
+	var maybeEmojiRe = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u20E3]/u;
+	var emojiCorrectionCache = /* @__PURE__ */ new Map();
+	function getMeasureContext() {
+		if (measureContext !== null) return measureContext;
+		if (typeof OffscreenCanvas !== "undefined") {
+			measureContext = new OffscreenCanvas(1, 1).getContext("2d");
+			return measureContext;
+		}
+		if (typeof document !== "undefined") {
+			measureContext = document.createElement("canvas").getContext("2d");
+			return measureContext;
+		}
+		throw new Error("Text measurement requires OffscreenCanvas or a DOM canvas context.");
+	}
+	function getSegmentMetricCache(font) {
+		let cache = segmentMetricCaches.get(font);
+		if (!cache) {
+			cache = /* @__PURE__ */ new Map();
+			segmentMetricCaches.set(font, cache);
+		}
+		return cache;
+	}
+	function getSegmentMetrics(seg, cache) {
+		let metrics = cache.get(seg);
+		if (metrics === void 0) {
+			metrics = { width: getMeasureContext().measureText(seg).width };
+			cache.set(seg, metrics);
+		}
+		return metrics;
+	}
+	function getEngineProfile() {
+		if (cachedEngineProfile !== null) return cachedEngineProfile;
+		if (typeof navigator === "undefined") {
+			cachedEngineProfile = {
+				geckoAsciiLineBreaks: false,
+				lineFitEpsilon: .005,
+				carryCJKAfterClosingQuote: false,
+				breakKeepAllAfterPunctuation: true,
+				preferPrefixWidthsForBreakableRuns: false
+			};
+			return cachedEngineProfile;
+		}
+		const ua = navigator.userAgent;
+		const isSafari = navigator.vendor === "Apple Computer, Inc." && ua.includes("Safari/") && !ua.includes("Chrome/") && !ua.includes("Chromium/") && !ua.includes("CriOS/") && !ua.includes("FxiOS/") && !ua.includes("EdgiOS/");
+		const isChromium = ua.includes("Chrome/") || ua.includes("Chromium/") || ua.includes("CriOS/") || ua.includes("Edg/");
+		cachedEngineProfile = {
+			geckoAsciiLineBreaks: ua.includes("Firefox/") && !ua.includes("FxiOS/"),
+			lineFitEpsilon: isSafari ? 1 / 64 : .005,
+			carryCJKAfterClosingQuote: isChromium,
+			breakKeepAllAfterPunctuation: !isSafari,
+			preferPrefixWidthsForBreakableRuns: isSafari
+		};
+		return cachedEngineProfile;
+	}
+	function parseFontSize(font) {
+		const m = font.match(/(?:^|\D)(\d+(?:\.\d+)?)\s*px/);
+		return m ? parseFloat(m[1]) : 16;
+	}
+	function isEmojiGrapheme(g) {
+		return emojiPresentationRe.test(g) || g.includes("️");
+	}
+	function textMayContainEmoji(text) {
+		return maybeEmojiRe.test(text);
+	}
+	function getEmojiCorrection(font) {
+		let correction = emojiCorrectionCache.get(font);
+		if (correction !== void 0) return correction;
+		const fontSize = parseFontSize(font);
+		const ctx = getMeasureContext();
+		ctx.font = font;
+		const canvasW = ctx.measureText("😀").width;
+		correction = 0;
+		if (canvasW > fontSize + .5 && typeof document !== "undefined" && document.body !== null) {
+			const span = document.createElement("span");
+			span.style.font = font;
+			span.style.display = "inline-block";
+			span.style.visibility = "hidden";
+			span.style.position = "absolute";
+			span.textContent = "😀";
+			document.body.appendChild(span);
+			const domW = span.getBoundingClientRect().width;
+			document.body.removeChild(span);
+			if (canvasW - domW > .5) correction = canvasW - domW;
+		}
+		emojiCorrectionCache.set(font, correction);
+		return correction;
+	}
+	function countEmojiGraphemes(text) {
+		let count = 0;
+		const graphemeSegmenter = getSharedGraphemeSegmenter();
+		for (const g of graphemeSegmenter.segment(text)) if (isEmojiGrapheme(g.segment)) count++;
+		return count;
+	}
+	function getEmojiCount(seg, metrics) {
+		if (metrics.emojiCount === void 0) metrics.emojiCount = countEmojiGraphemes(seg);
+		return metrics.emojiCount;
+	}
+	function getCorrectedSegmentWidth(seg, metrics, emojiCorrection) {
+		if (emojiCorrection === 0) return metrics.width;
+		return metrics.width - getEmojiCount(seg, metrics) * emojiCorrection;
+	}
+	function getSegmentBreakableFitAdvances(seg, metrics, cache, emojiCorrection, mode) {
+		if (metrics.breakableFitAdvances !== void 0 && metrics.breakableFitMode === mode) return metrics.breakableFitAdvances;
+		metrics.breakableFitMode = mode;
+		const graphemeSegmenter = getSharedGraphemeSegmenter();
+		const graphemes = [];
+		for (const gs of graphemeSegmenter.segment(seg)) graphemes.push(gs.segment);
+		if (graphemes.length <= 1) {
+			metrics.breakableFitAdvances = null;
+			return metrics.breakableFitAdvances;
+		}
+		if (mode === "sum-graphemes") {
+			const advances = [];
+			for (const grapheme of graphemes) {
+				const graphemeMetrics = getSegmentMetrics(grapheme, cache);
+				advances.push(getCorrectedSegmentWidth(grapheme, graphemeMetrics, emojiCorrection));
+			}
+			metrics.breakableFitAdvances = advances;
+			return metrics.breakableFitAdvances;
+		}
+		if (mode === "pair-context" || graphemes.length > MAX_PREFIX_FIT_GRAPHEMES) {
+			const advances = [];
+			let previousGrapheme = null;
+			let previousWidth = 0;
+			for (const grapheme of graphemes) {
+				const currentWidth = getCorrectedSegmentWidth(grapheme, getSegmentMetrics(grapheme, cache), emojiCorrection);
+				if (previousGrapheme === null) advances.push(currentWidth);
+				else {
+					const pair = previousGrapheme + grapheme;
+					const pairMetrics = getSegmentMetrics(pair, cache);
+					advances.push(getCorrectedSegmentWidth(pair, pairMetrics, emojiCorrection) - previousWidth);
+				}
+				previousGrapheme = grapheme;
+				previousWidth = currentWidth;
+			}
+			metrics.breakableFitAdvances = advances;
+			return metrics.breakableFitAdvances;
+		}
+		const advances = [];
+		let prefix = "";
+		let prefixWidth = 0;
+		for (const grapheme of graphemes) {
+			prefix += grapheme;
+			const prefixMetrics = getSegmentMetrics(prefix, cache);
+			const nextPrefixWidth = getCorrectedSegmentWidth(prefix, prefixMetrics, emojiCorrection);
+			advances.push(nextPrefixWidth - prefixWidth);
+			prefixWidth = nextPrefixWidth;
+		}
+		metrics.breakableFitAdvances = advances;
+		return metrics.breakableFitAdvances;
+	}
+	function getFontMeasurementState(font, needsEmojiCorrection) {
+		const ctx = getMeasureContext();
+		ctx.font = font;
+		return {
+			cache: getSegmentMetricCache(font),
+			emojiCorrection: needsEmojiCorrection ? getEmojiCorrection(font) : 0
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/line-break.js
+	function isDiscretionaryLineEnd(kinds, endSegmentIndex, endGraphemeIndex) {
+		return endGraphemeIndex === 0 && endSegmentIndex > 0 && endSegmentIndex < kinds.length && kinds[endSegmentIndex - 1] === "soft-hyphen";
+	}
+	function consumesAtLineStart(kind) {
+		return kind === "space" || kind === "zero-width-break" || kind === "soft-hyphen";
+	}
+	function breaksAfter(kind) {
+		return kind === "space" || kind === "preserved-space" || kind === "tab" || kind === "zero-width-break" || kind === "soft-hyphen";
+	}
+	function normalizeLineStartSegmentIndex(prepared, segmentIndex, endSegmentIndex = prepared.widths.length) {
+		while (segmentIndex < endSegmentIndex) {
+			const kind = prepared.kinds[segmentIndex];
+			if (!consumesAtLineStart(kind)) break;
+			segmentIndex++;
+		}
+		return segmentIndex;
+	}
+	function getTabAdvance(lineWidth, tabStopAdvance) {
+		if (tabStopAdvance <= 0) return 0;
+		const remainder = lineWidth % tabStopAdvance;
+		if (Math.abs(remainder) <= 1e-6) return tabStopAdvance;
+		return tabStopAdvance - remainder;
+	}
+	function getLeadingLetterSpacing(prepared, hasContent, segmentIndex) {
+		return prepared.letterSpacing !== 0 && hasContent && prepared.spacingGraphemeCounts[segmentIndex] > 0 ? prepared.letterSpacing : 0;
+	}
+	function getLineEndContribution(leadingSpacing, segmentContribution) {
+		return segmentContribution === 0 ? 0 : leadingSpacing + segmentContribution;
+	}
+	function getTabTrailingLetterSpacing(prepared, segmentIndex) {
+		return prepared.letterSpacing !== 0 && prepared.spacingGraphemeCounts[segmentIndex] > 0 ? prepared.letterSpacing : 0;
+	}
+	function getWholeSegmentFitContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth) {
+		return getLineEndContribution(leadingSpacing, kind === "tab" ? segmentWidth + getTabTrailingLetterSpacing(prepared, segmentIndex) : prepared.lineEndFitAdvances[segmentIndex]);
+	}
+	function getBreakOpportunityFitContribution(prepared, kind, segmentIndex, leadingSpacing) {
+		return getLineEndContribution(leadingSpacing, kind === "tab" ? 0 : prepared.lineEndFitAdvances[segmentIndex]);
+	}
+	function getLineEndPaintContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth) {
+		return getLineEndContribution(leadingSpacing, kind === "tab" ? segmentWidth : prepared.lineEndPaintAdvances[segmentIndex]);
+	}
+	function getBreakableGraphemeAdvance(prepared, hasContent, baseAdvance) {
+		return prepared.letterSpacing !== 0 && hasContent ? baseAdvance + prepared.letterSpacing : baseAdvance;
+	}
+	function getBreakableCandidateFitWidth(prepared, candidatePaintWidth) {
+		return prepared.letterSpacing === 0 ? candidatePaintWidth : candidatePaintWidth + prepared.letterSpacing;
+	}
+	function getNextPreferredBreakIndex(preferredBreaks, preferredBreakIndex, graphemeEnd) {
+		let lo = preferredBreakIndex;
+		if (lo >= preferredBreaks.length || preferredBreaks[lo] >= graphemeEnd) return lo;
+		let hi = preferredBreaks.length;
+		lo++;
+		while (lo < hi) {
+			const mid = Math.floor((lo + hi) / 2);
+			if (preferredBreaks[mid] < graphemeEnd) lo = mid + 1;
+			else hi = mid;
+		}
+		return lo;
+	}
+	function getTerminalLetterSpacing(prepared, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
+		if (prepared.letterSpacing === 0) return 0;
+		if (endGraphemeIndex > 0) return prepared.spacingGraphemeCounts[endSegmentIndex] > 0 ? prepared.letterSpacing : 0;
+		if (isDiscretionaryLineEnd(prepared.kinds, endSegmentIndex, endGraphemeIndex)) return 0;
+		for (let i = endSegmentIndex - 1; i >= startSegmentIndex; i--) {
+			const kind = prepared.kinds[i];
+			if (kind === "space" || kind === "zero-width-break" || kind === "hard-break" || kind === "soft-hyphen") continue;
+			if (i === startSegmentIndex && startGraphemeIndex > 0) return prepared.letterSpacing;
+			return prepared.spacingGraphemeCounts[i] > 0 ? prepared.letterSpacing : 0;
+		}
+		return 0;
+	}
+	function finalizeLinePaintWidth(prepared, width, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
+		return width + getTerminalLetterSpacing(prepared, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex);
+	}
+	function findChunkIndexForStart(prepared, segmentIndex) {
+		let lo = 0;
+		let hi = prepared.chunks.length;
+		while (lo < hi) {
+			const mid = Math.floor((lo + hi) / 2);
+			if (segmentIndex < prepared.chunks[mid].consumedEndSegmentIndex) hi = mid;
+			else lo = mid + 1;
+		}
+		return lo < prepared.chunks.length ? lo : -1;
+	}
+	function normalizeLineStartInChunk(prepared, chunkIndex, cursor) {
+		let segmentIndex = cursor.segmentIndex;
+		if (cursor.graphemeIndex > 0) return chunkIndex;
+		for (let currentChunkIndex = chunkIndex; currentChunkIndex < prepared.chunks.length; currentChunkIndex++) {
+			const chunk = prepared.chunks[currentChunkIndex];
+			if (chunk.startSegmentIndex === chunk.endSegmentIndex && segmentIndex === chunk.startSegmentIndex) {
+				cursor.segmentIndex = segmentIndex;
+				cursor.graphemeIndex = 0;
+				return currentChunkIndex;
+			}
+			if (segmentIndex < chunk.startSegmentIndex) segmentIndex = chunk.startSegmentIndex;
+			segmentIndex = normalizeLineStartSegmentIndex(prepared, segmentIndex, chunk.endSegmentIndex);
+			if (segmentIndex < chunk.endSegmentIndex) {
+				cursor.segmentIndex = segmentIndex;
+				cursor.graphemeIndex = 0;
+				return currentChunkIndex;
+			}
+			if (chunk.consumedEndSegmentIndex >= prepared.widths.length) return -1;
+			segmentIndex = chunk.consumedEndSegmentIndex;
+			cursor.segmentIndex = segmentIndex;
+			cursor.graphemeIndex = 0;
+		}
+		return -1;
+	}
+	function normalizePreparedLineStart(prepared, cursor) {
+		if (cursor.segmentIndex >= prepared.widths.length) return -1;
+		const chunkIndex = findChunkIndexForStart(prepared, cursor.segmentIndex);
+		if (chunkIndex < 0) return -1;
+		return normalizeLineStartInChunk(prepared, chunkIndex, cursor);
+	}
+	function normalizeLineStartChunkIndexFromHint(prepared, chunkIndex, cursor) {
+		if (cursor.segmentIndex >= prepared.widths.length) return -1;
+		let nextChunkIndex = chunkIndex;
+		while (nextChunkIndex < prepared.chunks.length && cursor.segmentIndex >= prepared.chunks[nextChunkIndex].consumedEndSegmentIndex) nextChunkIndex++;
+		if (nextChunkIndex >= prepared.chunks.length) return -1;
+		return normalizeLineStartInChunk(prepared, nextChunkIndex, cursor);
+	}
+	function walkPreparedLinesSimple(prepared, maxWidth, onLine) {
+		const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks } = prepared;
+		if (widths.length === 0) return 0;
+		const fitLimit = maxWidth + getEngineProfile().lineFitEpsilon;
+		let lineCount = 0;
+		let lineW = 0;
+		let hasContent = false;
+		let lineStartSegmentIndex = 0;
+		let lineStartGraphemeIndex = 0;
+		let lineEndSegmentIndex = 0;
+		let lineEndGraphemeIndex = 0;
+		let pendingBreakSegmentIndex = -1;
+		let pendingBreakPaintWidth = 0;
+		function clearPendingBreak() {
+			pendingBreakSegmentIndex = -1;
+			pendingBreakPaintWidth = 0;
+		}
+		function emitCurrentLine(endSegmentIndex = lineEndSegmentIndex, endGraphemeIndex = lineEndGraphemeIndex, width = lineW) {
+			lineCount++;
+			onLine?.(width, lineStartSegmentIndex, lineStartGraphemeIndex, endSegmentIndex, endGraphemeIndex);
+			lineW = 0;
+			hasContent = false;
+			clearPendingBreak();
+		}
+		function startLineAtSegment(segmentIndex, width) {
+			hasContent = true;
+			lineStartSegmentIndex = segmentIndex;
+			lineStartGraphemeIndex = 0;
+			lineEndSegmentIndex = segmentIndex + 1;
+			lineEndGraphemeIndex = 0;
+			lineW = width;
+		}
+		function startLineAtGrapheme(segmentIndex, graphemeIndex, width) {
+			hasContent = true;
+			lineStartSegmentIndex = segmentIndex;
+			lineStartGraphemeIndex = graphemeIndex;
+			lineEndSegmentIndex = segmentIndex;
+			lineEndGraphemeIndex = graphemeIndex + 1;
+			lineW = width;
+		}
+		function appendWholeSegment(segmentIndex, width) {
+			if (!hasContent) {
+				startLineAtSegment(segmentIndex, width);
+				return;
+			}
+			lineW += width;
+			lineEndSegmentIndex = segmentIndex + 1;
+			lineEndGraphemeIndex = 0;
+		}
+		function appendBreakableSegmentFrom(segmentIndex, startGraphemeIndex) {
+			const fitAdvances = breakableFitAdvances[segmentIndex];
+			const preferredBreaks = breakablePreferredBreaks[segmentIndex] ?? null;
+			let preferredBreakIndex = preferredBreaks === null ? -1 : getNextPreferredBreakIndex(preferredBreaks, 0, startGraphemeIndex + 1);
+			let lastPreferredBreakEnd = -1;
+			let lastPreferredBreakWidth = 0;
+			let g = startGraphemeIndex;
+			while (g < fitAdvances.length) {
+				const gw = fitAdvances[g];
+				if (!hasContent) startLineAtGrapheme(segmentIndex, g, gw);
+				else if (lineW + gw > fitLimit) {
+					if (preferredBreaks !== null && lastPreferredBreakEnd > startGraphemeIndex) {
+						emitCurrentLine(segmentIndex, lastPreferredBreakEnd, lastPreferredBreakWidth);
+						g = lastPreferredBreakEnd;
+						preferredBreakIndex = getNextPreferredBreakIndex(preferredBreaks, preferredBreakIndex, g + 1);
+						lastPreferredBreakEnd = -1;
+						lastPreferredBreakWidth = 0;
+						continue;
+					}
+					emitCurrentLine();
+					startLineAtGrapheme(segmentIndex, g, gw);
+				} else {
+					lineW += gw;
+					lineEndSegmentIndex = segmentIndex;
+					lineEndGraphemeIndex = g + 1;
+				}
+				const graphemeEnd = g + 1;
+				if (preferredBreaks !== null && preferredBreaks[preferredBreakIndex] === graphemeEnd) {
+					lastPreferredBreakEnd = graphemeEnd;
+					lastPreferredBreakWidth = lineW;
+					preferredBreakIndex++;
+				}
+				g++;
+			}
+			if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
+				lineEndSegmentIndex = segmentIndex + 1;
+				lineEndGraphemeIndex = 0;
+			}
+		}
+		let i = 0;
+		while (i < widths.length) {
+			if (!hasContent) {
+				i = normalizeLineStartSegmentIndex(prepared, i);
+				if (i >= widths.length) break;
+			}
+			const w = widths[i];
+			const kind = kinds[i];
+			const breakAfter = breaksAfter(kind);
+			if (!hasContent) {
+				if (w > fitLimit && breakableFitAdvances[i] !== null) appendBreakableSegmentFrom(i, 0);
+				else startLineAtSegment(i, w);
+				if (breakAfter) {
+					pendingBreakSegmentIndex = i + 1;
+					pendingBreakPaintWidth = lineW - w;
+				}
+				i++;
+				continue;
+			}
+			if (lineW + w > fitLimit) {
+				if (breakAfter) {
+					appendWholeSegment(i, w);
+					emitCurrentLine(i + 1, 0, lineW - w);
+					i++;
+					continue;
+				}
+				if (pendingBreakSegmentIndex >= 0) {
+					if (lineEndSegmentIndex > pendingBreakSegmentIndex || lineEndSegmentIndex === pendingBreakSegmentIndex && lineEndGraphemeIndex > 0) {
+						emitCurrentLine();
+						continue;
+					}
+					emitCurrentLine(pendingBreakSegmentIndex, 0, pendingBreakPaintWidth);
+					continue;
+				}
+				if (w > fitLimit && breakableFitAdvances[i] !== null) {
+					emitCurrentLine();
+					appendBreakableSegmentFrom(i, 0);
+					i++;
+					continue;
+				}
+				emitCurrentLine();
+				continue;
+			}
+			appendWholeSegment(i, w);
+			if (breakAfter) {
+				pendingBreakSegmentIndex = i + 1;
+				pendingBreakPaintWidth = lineW - w;
+			}
+			i++;
+		}
+		if (hasContent) emitCurrentLine();
+		return lineCount;
+	}
+	function walkPreparedLinesRaw(prepared, maxWidth, onLine) {
+		if (prepared.simpleLineWalkFastPath) return walkPreparedLinesSimple(prepared, maxWidth, onLine);
+		const cursor = {
+			segmentIndex: 0,
+			graphemeIndex: 0
+		};
+		return walkPreparedComplexLines(prepared, cursor, normalizePreparedLineStart(prepared, cursor), maxWidth, onLine).lineCount;
+	}
+	function walkPreparedComplexLines(prepared, cursor, chunkIndex, maxWidth, onLine, lineLimit = Number.POSITIVE_INFINITY) {
+		const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks, discretionaryHyphenWidth } = prepared;
+		const fitLimit = maxWidth + getEngineProfile().lineFitEpsilon;
+		let lineStartSegmentIndex;
+		let lineStartGraphemeIndex;
+		let lineW;
+		let hasContent;
+		let lineEndSegmentIndex;
+		let lineEndGraphemeIndex;
+		let pendingBreakSegmentIndex;
+		let pendingBreakFitWidth;
+		let pendingBreakPaintWidth;
+		let pendingBreakKind;
+		function getCurrentLinePaintWidth() {
+			return pendingBreakKind === "soft-hyphen" && pendingBreakSegmentIndex === lineEndSegmentIndex && lineEndGraphemeIndex === 0 ? pendingBreakPaintWidth : lineW;
+		}
+		function finishLine(endSegmentIndex = lineEndSegmentIndex, endGraphemeIndex = lineEndGraphemeIndex, width = getCurrentLinePaintWidth()) {
+			if (!hasContent) return null;
+			cursor.segmentIndex = endSegmentIndex;
+			cursor.graphemeIndex = endGraphemeIndex;
+			return finalizeLinePaintWidth(prepared, width, lineStartSegmentIndex, lineStartGraphemeIndex, endSegmentIndex, endGraphemeIndex);
+		}
+		function startLineAtSegment(segmentIndex, width) {
+			hasContent = true;
+			lineEndSegmentIndex = segmentIndex + 1;
+			lineEndGraphemeIndex = 0;
+			lineW = width;
+		}
+		function startLineAtGrapheme(segmentIndex, graphemeIndex, width) {
+			hasContent = true;
+			lineEndSegmentIndex = segmentIndex;
+			lineEndGraphemeIndex = graphemeIndex + 1;
+			lineW = width;
+		}
+		function appendWholeSegment(segmentIndex, advance) {
+			if (!hasContent) {
+				startLineAtSegment(segmentIndex, advance);
+				return;
+			}
+			lineW += advance;
+			lineEndSegmentIndex = segmentIndex + 1;
+			lineEndGraphemeIndex = 0;
+		}
+		function updatePendingBreakForWholeSegment(kind, breakAfter, segmentIndex, segmentWidth, leadingSpacing, advance) {
+			if (!breakAfter) return;
+			const fitAdvance = getBreakOpportunityFitContribution(prepared, kind, segmentIndex, leadingSpacing);
+			const paintAdvance = getLineEndPaintContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth);
+			pendingBreakSegmentIndex = segmentIndex + 1;
+			pendingBreakFitWidth = lineW - advance + fitAdvance;
+			pendingBreakPaintWidth = lineW - advance + paintAdvance;
+			pendingBreakKind = kind;
+		}
+		function appendBreakableSegmentFrom(segmentIndex, startGraphemeIndex) {
+			const fitAdvances = breakableFitAdvances[segmentIndex];
+			const preferredBreaks = breakablePreferredBreaks[segmentIndex] ?? null;
+			let preferredBreakIndex = preferredBreaks === null ? -1 : getNextPreferredBreakIndex(preferredBreaks, 0, startGraphemeIndex + 1);
+			let lastPreferredBreakEnd = -1;
+			let lastPreferredBreakWidth = 0;
+			for (let g = startGraphemeIndex; g < fitAdvances.length; g++) {
+				const baseGw = fitAdvances[g];
+				if (!hasContent) startLineAtGrapheme(segmentIndex, g, baseGw);
+				else {
+					const gw = getBreakableGraphemeAdvance(prepared, true, baseGw);
+					const candidatePaintWidth = lineW + gw;
+					if (getBreakableCandidateFitWidth(prepared, candidatePaintWidth) > fitLimit) {
+						if (preferredBreaks !== null && lastPreferredBreakEnd > startGraphemeIndex) return finishLine(segmentIndex, lastPreferredBreakEnd, lastPreferredBreakWidth);
+						return finishLine();
+					}
+					lineW = candidatePaintWidth;
+					lineEndSegmentIndex = segmentIndex;
+					lineEndGraphemeIndex = g + 1;
+				}
+				const graphemeEnd = g + 1;
+				if (preferredBreaks !== null && preferredBreaks[preferredBreakIndex] === graphemeEnd) {
+					lastPreferredBreakEnd = graphemeEnd;
+					lastPreferredBreakWidth = lineW;
+					preferredBreakIndex++;
+				}
+			}
+			if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
+				lineEndSegmentIndex = segmentIndex + 1;
+				lineEndGraphemeIndex = 0;
+			}
+			return null;
+		}
+		let lineCount = 0;
+		let lastLineWidth = null;
+		while (chunkIndex >= 0 && lineCount < lineLimit) {
+			lineStartSegmentIndex = cursor.segmentIndex;
+			lineStartGraphemeIndex = cursor.graphemeIndex;
+			lineW = 0;
+			hasContent = false;
+			lineEndSegmentIndex = cursor.segmentIndex;
+			lineEndGraphemeIndex = cursor.graphemeIndex;
+			pendingBreakSegmentIndex = -1;
+			pendingBreakFitWidth = 0;
+			pendingBreakPaintWidth = 0;
+			pendingBreakKind = null;
+			const chunk = prepared.chunks[chunkIndex];
+			let lineWidth = null;
+			if (chunk.startSegmentIndex === chunk.endSegmentIndex) {
+				cursor.segmentIndex = chunk.consumedEndSegmentIndex;
+				cursor.graphemeIndex = 0;
+				lineWidth = 0;
+			} else {
+				lineLoop: for (let i = cursor.segmentIndex; i < chunk.endSegmentIndex; i++) {
+					const kind = kinds[i];
+					const breakAfter = breaksAfter(kind);
+					const startGraphemeIndex = i === cursor.segmentIndex ? cursor.graphemeIndex : 0;
+					const leadingSpacing = getLeadingLetterSpacing(prepared, hasContent, i);
+					const w = kind === "tab" ? getTabAdvance(lineW + leadingSpacing, prepared.tabStopAdvance) : widths[i];
+					const advance = leadingSpacing + w;
+					const fitAdvance = getWholeSegmentFitContribution(prepared, kind, i, leadingSpacing, w);
+					if (kind === "soft-hyphen" && startGraphemeIndex === 0) {
+						if (hasContent) {
+							lineEndSegmentIndex = i + 1;
+							lineEndGraphemeIndex = 0;
+							if (i + 1 < chunk.endSegmentIndex) {
+								pendingBreakSegmentIndex = i + 1;
+								pendingBreakFitWidth = lineW + discretionaryHyphenWidth;
+								pendingBreakPaintWidth = lineW + discretionaryHyphenWidth;
+								pendingBreakKind = kind;
+							}
+						}
+						continue;
+					}
+					if (!hasContent) {
+						if (startGraphemeIndex > 0) {
+							const line = appendBreakableSegmentFrom(i, startGraphemeIndex);
+							if (line !== null) {
+								lineWidth = line;
+								break lineLoop;
+							}
+						} else if (fitAdvance > fitLimit && breakableFitAdvances[i] !== null) {
+							const line = appendBreakableSegmentFrom(i, 0);
+							if (line !== null) {
+								lineWidth = line;
+								break lineLoop;
+							}
+						} else startLineAtSegment(i, w);
+						updatePendingBreakForWholeSegment(kind, breakAfter, i, w, leadingSpacing, advance);
+						continue;
+					}
+					if (lineW + fitAdvance > fitLimit) {
+						const currentBreakFitWidth = lineW + getBreakOpportunityFitContribution(prepared, kind, i, leadingSpacing);
+						const currentBreakPaintWidth = lineW + getLineEndPaintContribution(prepared, kind, i, leadingSpacing, w);
+						if (breakAfter && currentBreakFitWidth <= fitLimit) {
+							appendWholeSegment(i, advance);
+							lineWidth = finishLine(i + 1, 0, currentBreakPaintWidth);
+							break lineLoop;
+						}
+						if (pendingBreakSegmentIndex >= 0 && pendingBreakFitWidth <= fitLimit) {
+							if (lineEndSegmentIndex > pendingBreakSegmentIndex || lineEndSegmentIndex === pendingBreakSegmentIndex && lineEndGraphemeIndex > 0) {
+								lineWidth = finishLine();
+								break lineLoop;
+							}
+							lineWidth = finishLine(pendingBreakSegmentIndex, 0, pendingBreakPaintWidth);
+							break lineLoop;
+						}
+						lineWidth = finishLine();
+						break lineLoop;
+					}
+					appendWholeSegment(i, advance);
+					updatePendingBreakForWholeSegment(kind, breakAfter, i, w, leadingSpacing, advance);
+				}
+				if (lineWidth === null) lineWidth = pendingBreakSegmentIndex === chunk.consumedEndSegmentIndex && lineEndGraphemeIndex === 0 ? finishLine(chunk.consumedEndSegmentIndex, 0, pendingBreakPaintWidth) : finishLine(chunk.consumedEndSegmentIndex, 0, lineW);
+			}
+			if (lineWidth === null) break;
+			lastLineWidth = lineWidth;
+			lineCount++;
+			onLine?.(lineWidth, lineStartSegmentIndex, lineStartGraphemeIndex, cursor.segmentIndex, cursor.graphemeIndex);
+			if (lineCount < lineLimit) chunkIndex = normalizeLineStartChunkIndexFromHint(prepared, chunkIndex, cursor);
+		}
+		return {
+			lineCount,
+			lastLineWidth
+		};
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/layout.js
+	function createEmptyPrepared(includeSegments) {
+		if (includeSegments) return {
+			widths: [],
+			lineEndFitAdvances: [],
+			lineEndPaintAdvances: [],
+			kinds: [],
+			simpleLineWalkFastPath: true,
+			segLevels: null,
+			breakableFitAdvances: [],
+			breakablePreferredBreaks: [],
+			letterSpacing: 0,
+			spacingGraphemeCounts: [],
+			discretionaryHyphenWidth: 0,
+			tabStopAdvance: 0,
+			chunks: [],
+			segments: []
+		};
+		return {
+			widths: [],
+			lineEndFitAdvances: [],
+			lineEndPaintAdvances: [],
+			kinds: [],
+			simpleLineWalkFastPath: true,
+			segLevels: null,
+			breakableFitAdvances: [],
+			breakablePreferredBreaks: [],
+			letterSpacing: 0,
+			spacingGraphemeCounts: [],
+			discretionaryHyphenWidth: 0,
+			tabStopAdvance: 0,
+			chunks: []
+		};
+	}
+	function countRenderedSpacingGraphemes(text, kind) {
+		if (kind === "zero-width-break" || kind === "soft-hyphen" || kind === "hard-break") return 0;
+		if (kind === "tab") return 1;
+		let count = 0;
+		const graphemeSegmenter = getSharedGraphemeSegmenter();
+		for (const _ of graphemeSegmenter.segment(text)) count++;
+		return count;
+	}
+	function addInternalLetterSpacing(width, graphemeCount, letterSpacing) {
+		return graphemeCount > 1 ? width + (graphemeCount - 1) * letterSpacing : width;
+	}
+	function measureAnalysis(analysis, font, includeSegments, wordBreak, letterSpacing) {
+		const engineProfile = getEngineProfile();
+		const { cache, emojiCorrection } = getFontMeasurementState(font, textMayContainEmoji(analysis.normalized));
+		const discretionaryHyphenWidth = getCorrectedSegmentWidth("-", getSegmentMetrics("-", cache), emojiCorrection) + (letterSpacing === 0 ? 0 : letterSpacing * 2);
+		const tabStopAdvance = getCorrectedSegmentWidth(" ", getSegmentMetrics(" ", cache), emojiCorrection) * 8;
+		const hasLetterSpacing = letterSpacing !== 0;
+		if (analysis.len === 0) return createEmptyPrepared(includeSegments);
+		const widths = [];
+		const lineEndFitAdvances = [];
+		const lineEndPaintAdvances = [];
+		const kinds = [];
+		let simpleLineWalkFastPath = !hasLetterSpacing;
+		const segStarts = includeSegments ? [] : null;
+		const breakableFitAdvances = [];
+		const breakablePreferredBreaks = [];
+		const spacingGraphemeCounts = [];
+		const segments = includeSegments ? [] : null;
+		const chunks = [];
+		let chunkStartSegmentIndex = 0;
+		function pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, breakableFitAdvance, breakablePreferredBreak, spacingGraphemeCount) {
+			if (kind !== "text" && kind !== "space" && kind !== "zero-width-break") simpleLineWalkFastPath = false;
+			widths.push(width);
+			lineEndFitAdvances.push(lineEndFitAdvance);
+			lineEndPaintAdvances.push(lineEndPaintAdvance);
+			kinds.push(kind);
+			segStarts?.push(start);
+			breakableFitAdvances.push(breakableFitAdvance);
+			breakablePreferredBreaks.push(breakablePreferredBreak);
+			if (hasLetterSpacing) spacingGraphemeCounts.push(spacingGraphemeCount);
+			if (segments !== null) segments.push(text);
+		}
+		function pushMeasuredTextSegment(text, textMetrics, kind, start, allowOverflowBreaks) {
+			const spacingGraphemeCount = hasLetterSpacing ? countRenderedSpacingGraphemes(text, kind) : 0;
+			const width = addInternalLetterSpacing(getCorrectedSegmentWidth(text, textMetrics, emojiCorrection), spacingGraphemeCount, letterSpacing);
+			const baseLineEndFitAdvance = kind === "space" || kind === "preserved-space" || kind === "zero-width-break" ? 0 : width;
+			const lineEndFitAdvance = baseLineEndFitAdvance === 0 ? 0 : baseLineEndFitAdvance + (spacingGraphemeCount > 0 ? letterSpacing : 0);
+			const lineEndPaintAdvance = kind === "space" || kind === "zero-width-break" ? 0 : width;
+			if (allowOverflowBreaks && text.length > 1) {
+				let fitMode = "sum-graphemes";
+				if (letterSpacing !== 0) fitMode = "segment-prefixes";
+				else if (isNumericRunSegment(text)) fitMode = "pair-context";
+				else if (engineProfile.preferPrefixWidthsForBreakableRuns) fitMode = "segment-prefixes";
+				const fitAdvances = getSegmentBreakableFitAdvances(text, textMetrics, cache, emojiCorrection, fitMode);
+				pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, fitAdvances, fitAdvances === null || wordBreak === "keep-all" ? null : getBreakablePreferredBreaks(text), spacingGraphemeCount);
+				return;
+			}
+			pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, null, null, spacingGraphemeCount);
+		}
+		for (let mi = 0; mi < analysis.len; mi++) {
+			const segText = analysis.texts[mi];
+			const segKind = analysis.kinds[mi];
+			const segStart = analysis.starts[mi];
+			if (segKind === "soft-hyphen") {
+				pushMeasuredSegment(segText, 0, discretionaryHyphenWidth, discretionaryHyphenWidth, segKind, segStart, null, null, 0);
+				continue;
+			}
+			if (segKind === "hard-break") {
+				const endSegmentIndex = widths.length;
+				pushMeasuredSegment(segText, 0, 0, 0, segKind, segStart, null, null, 0);
+				chunks.push({
+					startSegmentIndex: chunkStartSegmentIndex,
+					endSegmentIndex,
+					consumedEndSegmentIndex: widths.length
+				});
+				chunkStartSegmentIndex = widths.length;
+				continue;
+			}
+			if (segKind === "tab") {
+				pushMeasuredSegment(segText, 0, 0, 0, segKind, segStart, null, null, hasLetterSpacing ? countRenderedSpacingGraphemes(segText, segKind) : 0);
+				continue;
+			}
+			if (segKind === "text" && isCJK(segText)) {
+				const measuredUnits = getCjkTextUnits(segText, engineProfile, wordBreak);
+				for (let i = 0; i < measuredUnits.length; i++) {
+					const unit = measuredUnits[i];
+					const unitMetrics = getSegmentMetrics(unit.text, cache);
+					pushMeasuredTextSegment(unit.text, unitMetrics, "text", segStart + unit.start, unit.overflow === "grapheme" || analysis.isWordLike[mi] && (wordBreak === "keep-all" || unit.overflow === "word-like"));
+				}
+				continue;
+			}
+			pushMeasuredTextSegment(segText, getSegmentMetrics(segText, cache), segKind, segStart, segKind === "text" && (analysis.isWordLike[mi] || isIndependentSymbolRun(segText)));
+		}
+		if (chunkStartSegmentIndex < widths.length) chunks.push({
+			startSegmentIndex: chunkStartSegmentIndex,
+			endSegmentIndex: widths.length,
+			consumedEndSegmentIndex: widths.length
+		});
+		const segLevels = segStarts === null ? null : computeSegmentLevels(analysis.normalized, segStarts);
+		if (segments !== null) return {
+			widths,
+			lineEndFitAdvances,
+			lineEndPaintAdvances,
+			kinds,
+			simpleLineWalkFastPath,
+			segLevels,
+			breakableFitAdvances,
+			breakablePreferredBreaks,
+			letterSpacing,
+			spacingGraphemeCounts,
+			discretionaryHyphenWidth,
+			tabStopAdvance,
+			chunks,
+			segments
+		};
+		return {
+			widths,
+			lineEndFitAdvances,
+			lineEndPaintAdvances,
+			kinds,
+			simpleLineWalkFastPath,
+			segLevels,
+			breakableFitAdvances,
+			breakablePreferredBreaks,
+			letterSpacing,
+			spacingGraphemeCounts,
+			discretionaryHyphenWidth,
+			tabStopAdvance,
+			chunks
+		};
+	}
+	function prepareInternal(text, font, includeSegments, options) {
+		const wordBreak = options?.wordBreak ?? "normal";
+		const letterSpacing = options?.letterSpacing ?? 0;
+		return measureAnalysis(analyzeText(text, getEngineProfile(), options?.whiteSpace, wordBreak), font, includeSegments, wordBreak, letterSpacing);
+	}
+	function prepareWithSegments(text, font, options) {
+		return prepareInternal(text, font, true, options);
+	}
+	function getInternalPrepared(prepared) {
+		return prepared;
+	}
+	function measureNaturalWidth(prepared) {
+		let maxWidth = 0;
+		walkPreparedLinesRaw(getInternalPrepared(prepared), Number.POSITIVE_INFINITY, (width) => {
+			if (width > maxWidth) maxWidth = width;
+		});
+		return maxWidth;
+	}
+	//#endregion
+	//#region src/lib/text-fit.ts
+	/** Natural (unwrapped) width of `text` in `font`, px. */
+	function textWidth(text, font) {
+		return measureNaturalWidth(prepareWithSegments(text, font));
+	}
+	/**
+	* Which parts of a chip fit in `budget` px along one axis — width for a row
+	* of parts, height for a stack of them.
+	*
+	* Anchors (`priority: 0`) always show; they are what earns an ellipsis when
+	* even they overflow. The rest are added in priority order and the first one
+	* that does not fit ends it: a chip reads in one direction, so keeping a later
+	* part after dropping an earlier one reads as arbitrary.
+	*
+	* A budget of 0 — server-rendered, or before the first measurement — leaves
+	* the anchors, so the first paint is the important part and nothing else.
+	*/
+	function fitParts(parts, budget, measure = textWidth) {
+		const shown = {};
+		for (const p of parts) shown[p.key] = false;
+		const present = parts.filter((p) => p.size !== void 0 || !!p.text);
+		const anchors = present.filter((p) => (p.priority ?? 1) === 0);
+		for (const p of anchors) shown[p.key] = true;
+		if (!(budget > 0)) return shown;
+		const cost = (p) => (p.size ?? measure(p.text, p.font ?? "")) + (p.extra ?? 0);
+		let used = 0;
+		for (const p of anchors) used += cost(p);
+		const optional = present.filter((p) => (p.priority ?? 1) !== 0).sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1));
+		for (const p of optional) {
+			const c = cost(p);
+			if (used + c > budget) break;
+			used += c;
+			shown[p.key] = true;
+		}
+		return shown;
+	}
+	/** The element's computed font as a canvas font string. */
+	function fontOf(el) {
+		const s = getComputedStyle(el);
+		return `${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
+	}
+	//#endregion
 	//#region src/lib/views/planner/PlannerWeek.svelte
-	var root_1$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span>`);
-	var root_2$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-span svelte-j4rvbp" aria-hidden="true"> </span>`);
-	var root_3$6 = /* @__PURE__ */ from_html(`<span class="tw-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
-	var root_4$6 = /* @__PURE__ */ from_html(`<button type="button"><!> <span class="tw-ad-title svelte-j4rvbp"> </span> <!> <!></button>`);
-	var root_5$6 = /* @__PURE__ */ from_html(`<span> </span>`);
-	var root_6$6 = /* @__PURE__ */ from_html(`<div class="tw-hd-custom svelte-j4rvbp"><!></div>`);
-	var root_7$6 = /* @__PURE__ */ from_html(`<div><span class="tw-hd-wd svelte-j4rvbp"> </span> <!> <!></div>`);
-	var root_8$6 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
-	var root_9$4 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
-	var root_10$4 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
-	var root_11$4 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
-	var root_12$4 = /* @__PURE__ */ from_html(`<div class="tw-top svelte-j4rvbp"><!> <!></div>`);
-	var root_13$3 = /* @__PURE__ */ from_html(`<span class="tw-gutter-lb svelte-j4rvbp"> </span>`);
-	var root_14$3 = /* @__PURE__ */ from_html(`<span class="tw-gutter-now svelte-j4rvbp"></span>`);
-	var root_15$3 = /* @__PURE__ */ from_html(`<div class="tw-line svelte-j4rvbp"></div> <div class="tw-line tw-line--half svelte-j4rvbp"></div>`, 1);
-	var root_16$3 = /* @__PURE__ */ from_html(`<span class="tw-blocked-lb svelte-j4rvbp"> </span>`);
-	var root_17$3 = /* @__PURE__ */ from_html(`<div class="tw-blocked svelte-j4rvbp"><!></div>`);
-	var root_18$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-loc svelte-j4rvbp"> </span>`);
-	var root_19$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-time svelte-j4rvbp"> </span> <span class="tw-ev-title svelte-j4rvbp"> </span> <!>`, 1);
-	var root_20$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-live svelte-j4rvbp" aria-hidden="true"></span>`);
-	var root_21$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--start svelte-j4rvbp" aria-hidden="true"></span> <span class="tw-ev-handle tw-ev-handle--end svelte-j4rvbp" aria-hidden="true"></span>`, 1);
-	var root_22$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="tw-ev-stripe svelte-j4rvbp" aria-hidden="true"></div> <div class="tw-ev-body svelte-j4rvbp"><!></div> <!> <!></div>`);
-	var root_23$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
-	var root_24$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
-	var root_25$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
-	var root_26$2 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
-	var root_27$2 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
-	var root_28$2 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
-	var root_29$2 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><!> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"></div> <!></div></div></div></div> <!></div>`);
+	var root_1$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-cont svelte-j4rvbp" aria-hidden="true">◂</span>`);
+	var root_2$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-span svelte-j4rvbp" aria-hidden="true"> </span>`);
+	var root_3$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-arrow svelte-j4rvbp" aria-hidden="true">▸</span>`);
+	var root_4$7 = /* @__PURE__ */ from_html(`<button type="button"><!> <span class="tw-ad-title svelte-j4rvbp"> </span> <!> <!></button>`);
+	var root_5$7 = /* @__PURE__ */ from_html(`<span> </span>`);
+	var root_6$7 = /* @__PURE__ */ from_html(`<div class="tw-hd-custom svelte-j4rvbp"><!></div>`);
+	var root_7$7 = /* @__PURE__ */ from_html(`<div><span class="tw-hd-wd svelte-j4rvbp"> </span> <!> <!></div>`);
+	var root_8$7 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
+	var root_9$5 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
+	var root_10$5 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
+	var root_11$5 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
+	var root_12$5 = /* @__PURE__ */ from_html(`<div class="tw-top svelte-j4rvbp"><!> <!></div>`);
+	var root_13$4 = /* @__PURE__ */ from_html(`<span class="tw-gutter-lb svelte-j4rvbp"> </span>`);
+	var root_14$4 = /* @__PURE__ */ from_html(`<span class="tw-gutter-drag svelte-j4rvbp"> </span> <span class="tw-gutter-drag svelte-j4rvbp"> </span>`, 1);
+	var root_15$4 = /* @__PURE__ */ from_html(`<span class="tw-gutter-now svelte-j4rvbp"> </span>`);
+	var root_16$4 = /* @__PURE__ */ from_html(`<div class="tw-line svelte-j4rvbp"></div> <div class="tw-line tw-line--half svelte-j4rvbp"></div>`, 1);
+	var root_17$4 = /* @__PURE__ */ from_html(`<span class="tw-blocked-lb svelte-j4rvbp"> </span>`);
+	var root_18$4 = /* @__PURE__ */ from_html(`<div class="tw-blocked svelte-j4rvbp"><!></div>`);
+	var root_19$4 = /* @__PURE__ */ from_html(`<span class="tw-ev-loc svelte-j4rvbp"> </span>`);
+	var root_20$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-time svelte-j4rvbp"> </span> <span class="tw-ev-title svelte-j4rvbp"> </span> <!>`, 1);
+	var root_21$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-live svelte-j4rvbp" aria-hidden="true"></span>`);
+	var root_22$2 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--start svelte-j4rvbp" aria-hidden="true"></span> <span class="tw-ev-handle tw-ev-handle--end svelte-j4rvbp" aria-hidden="true"></span>`, 1);
+	var root_23$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="tw-ev-stripe svelte-j4rvbp" aria-hidden="true"></div> <div class="tw-ev-body svelte-j4rvbp"><!></div> <!> <!></div>`);
+	var root_24$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
+	var root_25$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
+	var root_26$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
+	var root_27$2 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
+	var root_28$2 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
+	var root_29$2 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
+	var root_30$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><!> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"></div> <!></div></div></div></div> <!></div>`);
 	function PlannerWeek($$anchor, $$props) {
 		push($$props, true);
 		const allDayChip = ($$anchor, seg = noop) => {
-			var button = root_4$6();
+			var button = root_4$7();
 			let classes;
 			let styles;
 			var node = child(button);
 			var consequent = ($$anchor) => {
-				append($$anchor, root_1$6());
+				append($$anchor, root_1$7());
 			};
 			if_block(node, ($$render) => {
 				if (!seg().isStart) $$render(consequent);
 			});
 			var span_1 = sibling(node, 2);
-			var text = child(span_1, true);
-			reset(span_1);
+			var text = only_child(span_1, true);
 			var node_1 = sibling(span_1, 2);
 			var consequent_1 = ($$anchor) => {
-				var span_2 = root_2$6();
-				var text_1 = child(span_2);
-				reset(span_2);
+				var span_2 = root_2$7();
+				var text_1 = only_child(span_2);
 				template_effect(() => set_text(text_1, `${seg().dayIndex ?? ""}/${seg().totalDays ?? ""}`));
 				append($$anchor, span_2);
 			};
@@ -7603,7 +14133,7 @@ createHTML: (html) => {
 			});
 			var node_2 = sibling(node_1, 2);
 			var consequent_2 = ($$anchor) => {
-				append($$anchor, root_3$6());
+				append($$anchor, root_3$7());
 			};
 			if_block(node_2, ($$render) => {
 				if (!seg().isEnd && seg().totalDays > 1) $$render(consequent_2);
@@ -7882,6 +14412,28 @@ createHTML: (html) => {
 		function blockedRangeLabel(dayMs, slotStart, slotEnd) {
 			return `${fmtTime$1(new Date(dayMs + slotStart * HOUR_MS), $$props.locale)} – ${fmtTime$1(new Date(dayMs + slotEnd * HOUR_MS), $$props.locale)}`;
 		}
+		const BODY_PAD_Y = 6;
+		const TIME_LINE = 11 * 1.1;
+		function blockParts(ev, height) {
+			return fitParts([
+				{
+					key: "time",
+					size: TIME_LINE,
+					priority: 0
+				},
+				{
+					key: "title",
+					size: 15.399999999999999,
+					priority: 0
+				},
+				{
+					key: "room",
+					text: ev.location ?? "",
+					size: 22,
+					priority: 1
+				}
+			], height - BODY_PAD_Y);
+		}
 		function statusText(ev) {
 			if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
 			if (ev.status === "tentative") return ` (${get(L).tentative})`;
@@ -7909,6 +14461,13 @@ createHTML: (html) => {
 				showTime: cs === Math.max(s, dayMs)
 			};
 		}
+		/** The drag as the time axis sees it: the segment holding its start. */
+		const axisGhost = /* @__PURE__ */ user_derived(() => {
+			if (!get(drag)?.active || !get(drag).payload) return null;
+			const s = get(drag).payload.start.getTime();
+			const day = get(dayCols).find((d) => s >= d.ms && s < d.ms + 864e5);
+			return day ? ghostForDay(day.ms) : null;
+		});
 		const CREATE_THRESHOLD = 4;
 		const LONG_PRESS_MS = 350;
 		const LONG_PRESS_TOLERANCE = 8;
@@ -7940,6 +14499,25 @@ createHTML: (html) => {
 			crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / get(SNAP_MS)) * get(SNAP_MS), crDayMs);
 			get(drag).beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + get(SNAP_MS)));
 			addTouchScrollBlock();
+		}
+		function onColsDragOver(e) {
+			if (!$$props.onexternaldrop || readOnly()) return;
+			const day = get(dayCols)[pointerDayIndex(e.clientX)];
+			if (!day || day.isDisabled) return;
+			e.preventDefault();
+			if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+		}
+		function onColsDrop(e) {
+			if (!$$props.onexternaldrop || readOnly() || !e.dataTransfer) return;
+			const day = get(dayCols)[pointerDayIndex(e.clientX)];
+			if (!day || day.isDisabled) return;
+			e.preventDefault();
+			const raw = clampToDayBand(day.ms + pointerHour(e.clientY) * HOUR_MS, day.ms);
+			const snapped = day.ms + Math.floor((raw - day.ms) / get(SNAP_MS)) * get(SNAP_MS);
+			$$props.onexternaldrop({
+				start: new Date(snapped),
+				dataTransfer: e.dataTransfer
+			});
 		}
 		function onColsPointerDown(e) {
 			if (e.button !== 0 || !get(drag) || !$$props.oneventcreate || readOnly()) return;
@@ -8151,7 +14729,7 @@ createHTML: (html) => {
 				suppressColsClick = false;
 			}, 0), { once: true });
 		}
-		var div = root_29$2();
+		var div = root_30$1();
 		event("keydown", $window, onWindowKeydown);
 		let classes_1;
 		let styles_1;
@@ -8160,24 +14738,22 @@ createHTML: (html) => {
 		let styles_2;
 		var node_3 = child(div_2);
 		var consequent_8 = ($$anchor) => {
-			var div_3 = root_12$4();
+			var div_3 = root_12$5();
 			var node_4 = child(div_3);
 			var consequent_5 = ($$anchor) => {
-				var div_4 = root_8$6();
+				var div_4 = root_8$7();
 				var div_5 = child(div_4);
 				set_style(div_5, "", {}, { width: "48px" });
 				each(sibling(div_5, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
-					var div_6 = root_7$6();
+					var div_6 = root_7$7();
 					let classes_2;
 					var span_4 = child(div_6);
-					var text_2 = child(span_4, true);
-					reset(span_4);
+					var text_2 = only_child(span_4, true);
 					var node_6 = sibling(span_4, 2);
 					var consequent_3 = ($$anchor) => {
-						var span_5 = root_5$6();
+						var span_5 = root_5$7();
 						let classes_3;
-						var text_3 = child(span_5, true);
-						reset(span_5);
+						var text_3 = only_child(span_5, true);
 						template_effect(() => {
 							classes_3 = set_class(span_5, 1, "tw-hd-num svelte-j4rvbp", null, classes_3, { "tw-hd-num--today": get(day).isToday });
 							set_text(text_3, get(day).dayNum);
@@ -8189,7 +14765,7 @@ createHTML: (html) => {
 					});
 					var node_7 = sibling(node_6, 2);
 					var consequent_4 = ($$anchor) => {
-						var div_7 = root_6$6();
+						var div_7 = root_6$7();
 						var node_8 = child(div_7);
 						{
 							let $0 = /* @__PURE__ */ user_derived(() => ({
@@ -8221,18 +14797,16 @@ createHTML: (html) => {
 			});
 			var node_9 = sibling(node_4, 2);
 			var consequent_7 = ($$anchor) => {
-				var div_8 = root_11$4();
+				var div_8 = root_11$5();
 				var div_9 = child(div_8);
 				set_style(div_9, "", {}, { width: "48px" });
-				var span_6 = child(div_9);
-				var text_4 = child(span_6, true);
-				reset(span_6);
+				var text_4 = only_child(child(div_9), true);
 				reset(div_9);
 				each(sibling(div_9, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
 					const segs = /* @__PURE__ */ user_derived(() => get(allDayByDay).get(get(day).ms) ?? []);
 					const isExpanded = /* @__PURE__ */ user_derived(() => adExpanded[get(day).ms] ?? false);
 					const shown = /* @__PURE__ */ user_derived(() => get(isExpanded) ? get(segs) : get(segs).slice(0, ALLDAY_MAX));
-					var div_10 = root_10$4();
+					var div_10 = root_10$5();
 					let classes_4;
 					var node_11 = child(div_10);
 					each(node_11, 17, () => get(shown), (seg) => seg.ev.id, ($$anchor, seg) => {
@@ -8240,9 +14814,8 @@ createHTML: (html) => {
 					});
 					var node_12 = sibling(node_11, 2);
 					var consequent_6 = ($$anchor) => {
-						var button_1 = root_9$4();
-						var text_5 = child(button_1, true);
-						reset(button_1);
+						var button_1 = root_9$5();
+						var text_5 = only_child(button_1, true);
 						template_effect(($0) => {
 							set_attribute(button_1, "aria-expanded", get(isExpanded));
 							set_text(text_5, $0);
@@ -8281,10 +14854,9 @@ createHTML: (html) => {
 			var fragment_1 = comment();
 			var node_14 = first_child(fragment_1);
 			var consequent_9 = ($$anchor) => {
-				var span_7 = root_13$3();
+				var span_7 = root_13$4();
 				set_style(span_7, "", {}, { top: `${i * HOUR_H}px` });
-				var text_6 = child(span_7, true);
-				reset(span_7);
+				var text_6 = only_child(span_7, true);
 				template_effect(($0) => set_text(text_6, $0), [() => fmtH(get(startHour) + i, $$props.locale)]);
 				append($$anchor, span_7);
 			};
@@ -8295,142 +14867,163 @@ createHTML: (html) => {
 		});
 		var node_15 = sibling(node_13, 2);
 		var consequent_10 = ($$anchor) => {
-			var span_8 = root_14$3();
+			var fragment_2 = root_14$4();
+			var span_8 = first_child(fragment_2);
 			let styles_4;
-			template_effect(() => styles_4 = set_style(span_8, "", styles_4, { top: `${get(nowY) ?? ""}px` }));
-			append($$anchor, span_8);
+			var text_7 = only_child(span_8, true);
+			var span_9 = sibling(span_8, 2);
+			let styles_5;
+			var text_8 = only_child(span_9, true);
+			template_effect(($0, $1) => {
+				styles_4 = set_style(span_8, "", styles_4, { top: `${get(axisGhost).top ?? ""}px` });
+				set_text(text_7, $0);
+				styles_5 = set_style(span_9, "", styles_5, { top: `${get(axisGhost).top + get(axisGhost).height}px` });
+				set_text(text_8, $1);
+			}, [() => fmtTime$1(get(axisGhost).start, $$props.locale), () => fmtTime$1(get(axisGhost).end, $$props.locale)]);
+			append($$anchor, fragment_2);
 		};
 		if_block(node_15, ($$render) => {
-			if (get(nowY) !== null && get(weekHasToday)) $$render(consequent_10);
+			if (get(axisGhost)) $$render(consequent_10);
+		});
+		var node_16 = sibling(node_15, 2);
+		var consequent_11 = ($$anchor) => {
+			var span_10 = root_15$4();
+			let styles_6;
+			var text_9 = only_child(span_10, true);
+			template_effect(($0) => {
+				styles_6 = set_style(span_10, "", styles_6, { top: `${get(nowY) ?? ""}px` });
+				set_text(text_9, $0);
+			}, [() => fmtTime$1(new Date(clock.tick), $$props.locale)]);
+			append($$anchor, span_10);
+		};
+		if_block(node_16, ($$render) => {
+			if (get(nowY) !== null && get(weekHasToday)) $$render(consequent_11);
 		});
 		reset(div_12);
 		var div_13 = sibling(div_12, 2);
 		var div_14 = child(div_13);
 		each(div_14, 21, () => ({ length: get(hourCount) }), index, ($$anchor, _, i) => {
-			var fragment_2 = root_15$3();
-			var div_15 = first_child(fragment_2);
+			var fragment_3 = root_16$4();
+			var div_15 = first_child(fragment_3);
 			set_style(div_15, "", {}, { top: `${i * HOUR_H}px` });
 			set_style(sibling(div_15, 2), "", {}, { top: `${i * HOUR_H + HOUR_H / 2}px` });
-			append($$anchor, fragment_2);
+			append($$anchor, fragment_3);
 		});
 		reset(div_14);
 		each(sibling(div_14, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
 			const positioned = /* @__PURE__ */ user_derived(() => get(layoutByDay).get(get(day).ms) ?? []);
 			const ghost = /* @__PURE__ */ user_derived(() => ghostForDay(get(day).ms));
-			var div_17 = root_27$2();
+			var div_17 = root_28$2();
 			let classes_5;
-			var node_17 = child(div_17);
-			var consequent_14 = ($$anchor) => {
-				var fragment_3 = comment();
-				each(first_child(fragment_3), 17, () => get(blockedSlots), index, ($$anchor, slot) => {
-					var fragment_4 = comment();
-					var node_19 = first_child(fragment_4);
-					var consequent_13 = ($$anchor) => {
+			var node_18 = child(div_17);
+			var consequent_15 = ($$anchor) => {
+				var fragment_4 = comment();
+				each(first_child(fragment_4), 17, () => get(blockedSlots), index, ($$anchor, slot) => {
+					var fragment_5 = comment();
+					var node_20 = first_child(fragment_5);
+					var consequent_14 = ($$anchor) => {
 						const s = /* @__PURE__ */ user_derived(() => Math.max(get(slot).start, get(startHour)));
 						const e = /* @__PURE__ */ user_derived(() => Math.min(get(slot).end, get(endHour)));
-						var fragment_5 = comment();
-						var node_20 = first_child(fragment_5);
-						var consequent_12 = ($$anchor) => {
+						var fragment_6 = comment();
+						var node_21 = first_child(fragment_6);
+						var consequent_13 = ($$anchor) => {
 							const range = /* @__PURE__ */ user_derived(() => blockedRangeLabel(get(day).ms, get(slot).start, get(slot).end));
-							var div_18 = root_17$3();
-							let styles_5;
-							var node_21 = child(div_18);
-							var consequent_11 = ($$anchor) => {
-								var span_9 = root_16$3();
-								var text_7 = child(span_9, true);
-								reset(span_9);
-								template_effect(() => set_text(text_7, get(slot).label));
-								append($$anchor, span_9);
+							var div_18 = root_18$4();
+							let styles_7;
+							var node_22 = child(div_18);
+							var consequent_12 = ($$anchor) => {
+								var span_11 = root_17$4();
+								var text_10 = only_child(span_11, true);
+								template_effect(() => set_text(text_10, get(slot).label));
+								append($$anchor, span_11);
 							};
-							if_block(node_21, ($$render) => {
-								if (get(slot).label) $$render(consequent_11);
+							if_block(node_22, ($$render) => {
+								if (get(slot).label) $$render(consequent_12);
 							});
 							reset(div_18);
 							template_effect(() => {
 								set_attribute(div_18, "title", `${get(slot).label ? `${get(slot).label}, ` : ""}${get(range) ?? ""}`);
 								set_attribute(div_18, "aria-label", `${(get(slot).label || "Unavailable") ?? ""}, ${get(range) ?? ""}`);
-								styles_5 = set_style(div_18, "", styles_5, {
+								styles_7 = set_style(div_18, "", styles_7, {
 									top: `${(get(s) - get(startHour)) * HOUR_H}px`,
 									height: `${(get(e) - get(s)) * HOUR_H}px`
 								});
 							});
 							append($$anchor, div_18);
 						};
-						if_block(node_20, ($$render) => {
-							if (get(e) > get(s)) $$render(consequent_12);
+						if_block(node_21, ($$render) => {
+							if (get(e) > get(s)) $$render(consequent_13);
 						});
-						append($$anchor, fragment_5);
+						append($$anchor, fragment_6);
 					};
-					if_block(node_19, ($$render) => {
-						if (!get(slot).day || get(slot).day === get(day).isoDay) $$render(consequent_13);
+					if_block(node_20, ($$render) => {
+						if (!get(slot).day || get(slot).day === get(day).isoDay) $$render(consequent_14);
 					});
-					append($$anchor, fragment_4);
+					append($$anchor, fragment_5);
 				});
-				append($$anchor, fragment_3);
+				append($$anchor, fragment_4);
 			};
-			if_block(node_17, ($$render) => {
-				if (get(blockedSlots)?.length) $$render(consequent_14);
+			if_block(node_18, ($$render) => {
+				if (get(blockedSlots)?.length) $$render(consequent_15);
 			});
-			var node_22 = sibling(node_17, 2);
-			each(node_22, 17, () => get(positioned), (p) => p.ev.id, ($$anchor, p) => {
+			var node_23 = sibling(node_18, 2);
+			each(node_23, 17, () => get(positioned), (p) => p.ev.id, ($$anchor, p) => {
 				const isCurrent = /* @__PURE__ */ user_derived(() => get(nowIds).has(get(p).ev.id));
-				var div_19 = root_22$2();
+				var div_19 = root_23$2();
 				let classes_6;
-				let styles_6;
+				let styles_8;
 				var div_20 = sibling(child(div_19), 2);
 				EventContent(child(div_20), {
 					get event() {
 						return get(p).ev;
 					},
 					children: ($$anchor, $$slotProps) => {
-						var fragment_6 = root_19$3();
-						var span_10 = first_child(fragment_6);
-						var text_8 = child(span_10);
-						reset(span_10);
-						var span_11 = sibling(span_10, 2);
-						var text_9 = child(span_11, true);
-						reset(span_11);
-						var node_24 = sibling(span_11, 2);
-						var consequent_15 = ($$anchor) => {
-							var span_12 = root_18$3();
-							var text_10 = child(span_12, true);
-							reset(span_12);
-							template_effect(() => set_text(text_10, get(p).ev.location));
-							append($$anchor, span_12);
+						const parts = /* @__PURE__ */ user_derived(() => blockParts(get(p).ev, get(p).height));
+						var fragment_7 = root_20$3();
+						var span_12 = first_child(fragment_7);
+						var text_11 = only_child(span_12);
+						var span_13 = sibling(span_12, 2);
+						var text_12 = only_child(span_13, true);
+						var node_25 = sibling(span_13, 2);
+						var consequent_16 = ($$anchor) => {
+							var span_14 = root_19$4();
+							var text_13 = only_child(span_14, true);
+							template_effect(() => set_text(text_13, get(p).ev.location));
+							append($$anchor, span_14);
 						};
-						if_block(node_24, ($$render) => {
-							if (get(p).ev.location && get(p).height > 56) $$render(consequent_15);
+						if_block(node_25, ($$render) => {
+							if (get(parts).room) $$render(consequent_16);
 						});
 						template_effect(($0, $1) => {
-							set_text(text_8, `${$0 ?? ""} – ${$1 ?? ""}`);
-							set_text(text_9, get(p).ev.title);
+							set_text(text_11, `${$0 ?? ""} – ${$1 ?? ""}`);
+							set_text(text_12, get(p).ev.title);
 						}, [() => fmtTime$1(get(p).ev.start, $$props.locale), () => fmtTime$1(get(p).ev.end, $$props.locale)]);
-						append($$anchor, fragment_6);
+						append($$anchor, fragment_7);
 					},
 					$$slots: { default: true }
 				});
 				reset(div_20);
-				var node_25 = sibling(div_20, 2);
-				var consequent_16 = ($$anchor) => {
-					append($$anchor, root_20$3());
-				};
-				if_block(node_25, ($$render) => {
-					if (get(isCurrent)) $$render(consequent_16);
-				});
-				var node_26 = sibling(node_25, 2);
+				var node_26 = sibling(div_20, 2);
 				var consequent_17 = ($$anchor) => {
-					var fragment_7 = root_21$3();
-					var span_14 = first_child(fragment_7);
-					var span_15 = sibling(span_14, 2);
-					delegated("pointerdown", span_14, (e) => onResizePointerDown(e, get(p).ev, "start"));
-					delegated("pointerdown", span_15, (e) => onResizePointerDown(e, get(p).ev, "end"));
-					append($$anchor, fragment_7);
+					append($$anchor, root_21$3());
 				};
 				if_block(node_26, ($$render) => {
-					if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_17);
+					if (get(isCurrent)) $$render(consequent_17);
+				});
+				var node_27 = sibling(node_26, 2);
+				var consequent_18 = ($$anchor) => {
+					var fragment_8 = root_22$2();
+					var span_16 = first_child(fragment_8);
+					var span_17 = sibling(span_16, 2);
+					delegated("pointerdown", span_16, (e) => onResizePointerDown(e, get(p).ev, "start"));
+					delegated("pointerdown", span_17, (e) => onResizePointerDown(e, get(p).ev, "end"));
+					append($$anchor, fragment_8);
+				};
+				if_block(node_27, ($$render) => {
+					if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_18);
 				});
 				reset(div_19);
-				template_effect(($0, $1, $2, $3) => {
+				template_effect(($0, $1, $2, $3, $4) => {
 					classes_6 = set_class(div_19, 1, "tw-ev svelte-j4rvbp", null, classes_6, {
 						"tw-ev--selected": selectedEventId() === get(p).ev.id,
 						"tw-ev--current": get(isCurrent),
@@ -8441,12 +15034,13 @@ createHTML: (html) => {
 						"tw-ev--tentative": get(p).ev.status === "tentative",
 						"tw-ev--full": get(p).ev.status === "full",
 						"tw-ev--limited": get(p).ev.status === "limited",
+						"tw-ev--past": $0,
 						"tw-ev--short": get(p).height < 44,
 						"tw-ev--compact": get(p).height < 34
 					});
 					set_attribute(div_19, "title", get(p).ev.title);
-					set_attribute(div_19, "aria-label", `${get(p).ev.title ?? ""}, ${$0 ?? ""} – ${$1 ?? ""}, ${$2 ?? ""}${$3 ?? ""}${get(isCurrent) ? ` (${get(L).inProgress})` : ""}`);
-					styles_6 = set_style(div_19, "", styles_6, {
+					set_attribute(div_19, "aria-label", `${get(p).ev.title ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}, ${$3 ?? ""}${$4 ?? ""}${get(isCurrent) ? ` (${get(L).inProgress})` : ""}`);
+					styles_8 = set_style(div_19, "", styles_8, {
 						top: `${get(p).top ?? ""}px`,
 						height: `${get(p).height ?? ""}px`,
 						left: `calc(${get(p).col / get(p).totalCols * 100}% + 1px)`,
@@ -8454,6 +15048,7 @@ createHTML: (html) => {
 						"--ev-color": get(p).ev.color ?? "var(--dt-accent)"
 					});
 				}, [
+					() => get(p).ev.end.getTime() < clock.tick,
 					() => fmtTime$1(get(p).ev.start, $$props.locale),
 					() => fmtTime$1(get(p).ev.end, $$props.locale),
 					() => fmtDuration(get(p).ev.start, get(p).ev.end),
@@ -8470,38 +15065,36 @@ createHTML: (html) => {
 				});
 				append($$anchor, div_19);
 			});
-			var node_27 = sibling(node_22, 2);
-			var consequent_20 = ($$anchor) => {
-				var div_21 = root_25$2();
+			var node_28 = sibling(node_23, 2);
+			var consequent_21 = ($$anchor) => {
+				var div_21 = root_26$2();
 				let classes_7;
-				let styles_7;
-				var node_28 = child(div_21);
-				var consequent_19 = ($$anchor) => {
-					var fragment_8 = root_24$2();
-					var span_16 = first_child(fragment_8);
-					var text_11 = child(span_16);
-					reset(span_16);
-					var node_29 = sibling(span_16, 2);
-					var consequent_18 = ($$anchor) => {
-						var span_17 = root_23$2();
-						var text_12 = child(span_17, true);
-						reset(span_17);
-						template_effect(() => set_text(text_12, get(movingEvent).title));
-						append($$anchor, span_17);
+				let styles_9;
+				var node_29 = child(div_21);
+				var consequent_20 = ($$anchor) => {
+					var fragment_9 = root_25$2();
+					var span_18 = first_child(fragment_9);
+					var text_14 = only_child(span_18);
+					var node_30 = sibling(span_18, 2);
+					var consequent_19 = ($$anchor) => {
+						var span_19 = root_24$2();
+						var text_15 = only_child(span_19, true);
+						template_effect(() => set_text(text_15, get(movingEvent).title));
+						append($$anchor, span_19);
 					};
-					if_block(node_29, ($$render) => {
-						if (!get(ghost).create && get(movingEvent)) $$render(consequent_18);
+					if_block(node_30, ($$render) => {
+						if (!get(ghost).create && get(movingEvent)) $$render(consequent_19);
 					});
-					template_effect(($0, $1) => set_text(text_11, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(ghost).start, $$props.locale), () => fmtTime$1(get(ghost).end, $$props.locale)]);
-					append($$anchor, fragment_8);
+					template_effect(($0, $1) => set_text(text_14, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(ghost).start, $$props.locale), () => fmtTime$1(get(ghost).end, $$props.locale)]);
+					append($$anchor, fragment_9);
 				};
-				if_block(node_28, ($$render) => {
-					if (get(ghost).showTime) $$render(consequent_19);
+				if_block(node_29, ($$render) => {
+					if (get(ghost).showTime) $$render(consequent_20);
 				});
 				reset(div_21);
 				template_effect(() => {
 					classes_7 = set_class(div_21, 1, "tw-ghost svelte-j4rvbp", null, classes_7, { "tw-ghost--create": get(ghost).create });
-					styles_7 = set_style(div_21, "", styles_7, {
+					styles_9 = set_style(div_21, "", styles_9, {
 						top: `${get(ghost).top ?? ""}px`,
 						height: `${get(ghost).height ?? ""}px`,
 						"--ev-color": get(ghost).create ? "var(--dt-accent, #2563eb)" : get(movingEvent)?.color ?? "var(--dt-accent, #2563eb)"
@@ -8509,21 +15102,21 @@ createHTML: (html) => {
 				});
 				append($$anchor, div_21);
 			};
-			if_block(node_27, ($$render) => {
-				if (get(ghost)) $$render(consequent_20);
+			if_block(node_28, ($$render) => {
+				if (get(ghost)) $$render(consequent_21);
 			});
-			var node_30 = sibling(node_27, 2);
-			var consequent_21 = ($$anchor) => {
-				var div_22 = root_26$2();
-				let styles_8;
+			var node_31 = sibling(node_28, 2);
+			var consequent_22 = ($$anchor) => {
+				var div_22 = root_27$2();
+				let styles_10;
 				template_effect(() => {
 					set_attribute(div_22, "aria-label", get(L).currentTime);
-					styles_8 = set_style(div_22, "", styles_8, { top: `${get(nowY) ?? ""}px` });
+					styles_10 = set_style(div_22, "", styles_10, { top: `${get(nowY) ?? ""}px` });
 				});
 				append($$anchor, div_22);
 			};
-			if_block(node_30, ($$render) => {
-				if (get(day).isToday && get(nowY) !== null) $$render(consequent_21);
+			if_block(node_31, ($$render) => {
+				if (get(day).isToday && get(nowY) !== null) $$render(consequent_22);
 			});
 			reset(div_17);
 			template_effect(() => {
@@ -8543,15 +15136,15 @@ createHTML: (html) => {
 		reset(div_2);
 		reset(div_1);
 		bind_this(div_1, ($$value) => scrollEl = $$value, () => scrollEl);
-		var node_31 = sibling(div_1, 2);
-		var consequent_22 = ($$anchor) => {
-			var div_23 = root_28$2();
+		var node_32 = sibling(div_1, 2);
+		var consequent_23 = ($$anchor) => {
+			var div_23 = root_29$2();
 			snippet(child(div_23), () => ctx.emptySnippet);
 			reset(div_23);
 			append($$anchor, div_23);
 		};
-		if_block(node_31, ($$render) => {
-			if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_22);
+		if_block(node_32, ($$render) => {
+			if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_23);
 		});
 		reset(div);
 		template_effect(() => {
@@ -8566,6 +15159,8 @@ createHTML: (html) => {
 		});
 		delegated("click", div_13, handleColsClick);
 		delegated("pointerdown", div_13, onColsPointerDown);
+		event("dragover", div_13, onColsDragOver);
+		event("drop", div_13, onColsDrop);
 		delegated("contextmenu", div_13, onColsContextMenu);
 		append($$anchor, div);
 		pop();
@@ -8590,6 +15185,1091 @@ createHTML: (html) => {
 			return mode();
 		} }, () => rest));
 	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/easing/index.js
+	/**
+	* Cubic scaling, decelerate towards end.
+	*
+	* @param {number} t
+	* @returns {number}
+	*/
+	function cubicOut(t) {
+		const f = t - 1;
+		return f * f * f + 1;
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/animate/index.js
+	/** @import { FlipParams, AnimationConfig } from './public.js' */
+	/**
+	* The flip function calculates the start and end position of an element and animates between them, translating the x and y values.
+	* `flip` stands for [First, Last, Invert, Play](https://aerotwist.com/blog/flip-your-animations/).
+	*
+	* @param {Element} node
+	* @param {{ from: DOMRect; to: DOMRect }} fromTo
+	* @param {FlipParams} params
+	* @returns {AnimationConfig}
+	*/
+	function flip(node, { from, to }, params = {}) {
+		var { delay = 0, duration = (d) => Math.sqrt(d) * 120, easing = cubicOut } = params;
+		var style = getComputedStyle(node);
+		var transform = style.transform === "none" ? "" : style.transform;
+		var [ox, oy] = style.transformOrigin.split(" ").map(parseFloat);
+		ox /= node.clientWidth;
+		oy /= node.clientHeight;
+		var zoom = get_zoom(node);
+		var sx = node.clientWidth / to.width / zoom;
+		var sy = node.clientHeight / to.height / zoom;
+		var fx = from.left + from.width * ox;
+		var fy = from.top + from.height * oy;
+		var tx = to.left + to.width * ox;
+		var ty = to.top + to.height * oy;
+		var dx = (fx - tx) * sx;
+		var dy = (fy - ty) * sy;
+		var dsx = from.width / to.width;
+		var dsy = from.height / to.height;
+		return {
+			delay,
+			duration: typeof duration === "function" ? duration(Math.sqrt(dx * dx + dy * dy)) : duration,
+			easing,
+			css: (t, u) => {
+				return `transform: ${transform} translate(${u * dx}px, ${u * dy}px) scale(${t + u * dsx}, ${t + u * dsy});`;
+			}
+		};
+	}
+	/**
+	* @param {Element} element
+	*/
+	function get_zoom(element) {
+		if ("currentCSSZoom" in element) return element.currentCSSZoom;
+		/** @type {Element | null} */
+		var current = element;
+		var zoom = 1;
+		while (current !== null) {
+			zoom *= +getComputedStyle(current).zoom;
+			current = current.parentElement;
+		}
+		return zoom;
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/transition/index.js
+	/** @param {number} t */
+	function cubic_out(t) {
+		const f = t - 1;
+		return f * f * f + 1;
+	}
+	/**
+	* @template T
+	* @template S
+	* @param {T} tar
+	* @param {S} src
+	* @returns {T & S}
+	*/
+	function assign(tar, src) {
+		for (const k in src) tar[k] = src[k];
+		return tar;
+	}
+	/**
+	* The `crossfade` function creates a pair of [transitions](https://svelte.dev/docs/svelte/transition) called `send` and `receive`. When an element is 'sent', it looks for a corresponding element being 'received', and generates a transition that transforms the element to its counterpart's position and fades it out. When an element is 'received', the reverse happens. If there is no counterpart, the `fallback` transition is used.
+	*
+	* @param {CrossfadeParams & {
+	* 	fallback?: (node: Element, params: CrossfadeParams, intro: boolean) => TransitionConfig;
+	* }} params
+	* @returns {[(node: any, params: CrossfadeParams & { key: any; }) => () => TransitionConfig, (node: any, params: CrossfadeParams & { key: any; }) => () => TransitionConfig]}
+	*/
+	function crossfade({ fallback, ...defaults }) {
+		/** @type {Map<any, Element>} */
+		const to_receive = /* @__PURE__ */ new Map();
+		/** @type {Map<any, Element>} */
+		const to_send = /* @__PURE__ */ new Map();
+		/**
+		* @param {Element} from_node
+		* @param {Element} node
+		* @param {CrossfadeParams} params
+		* @returns {TransitionConfig}
+		*/
+		function crossfade(from_node, node, params) {
+			const { delay = 0, duration = (d) => Math.sqrt(d) * 30, easing = cubic_out } = assign(assign({}, defaults), params);
+			const from = from_node.getBoundingClientRect();
+			const to = node.getBoundingClientRect();
+			const dx = from.left - to.left;
+			const dy = from.top - to.top;
+			const dw = from.width / to.width;
+			const dh = from.height / to.height;
+			const d = Math.sqrt(dx * dx + dy * dy);
+			const style = getComputedStyle(node);
+			const transform = style.transform === "none" ? "" : style.transform;
+			const opacity = +style.opacity;
+			return {
+				delay,
+				duration: typeof duration === "function" ? duration(d) : duration,
+				easing,
+				css: (t, u) => `
+			   opacity: ${t * opacity};
+			   transform-origin: top left;
+			   transform: ${transform} translate(${u * dx}px,${u * dy}px) scale(${t + (1 - t) * dw}, ${t + (1 - t) * dh});
+		   `
+			};
+		}
+		/**
+		* @param {Map<any, Element>} items
+		* @param {Map<any, Element>} counterparts
+		* @param {boolean} intro
+		* @returns {(node: any, params: CrossfadeParams & { key: any; }) => () => TransitionConfig}
+		*/
+		function transition(items, counterparts, intro) {
+			return (node, params) => {
+				items.set(params.key, node);
+				return () => {
+					if (counterparts.has(params.key)) {
+						const other_node = counterparts.get(params.key);
+						counterparts.delete(params.key);
+						return crossfade(other_node, node, params);
+					}
+					items.delete(params.key);
+					return fallback && fallback(node, params, intro);
+				};
+			};
+		}
+		return [transition(to_send, to_receive, false), transition(to_receive, to_send, true)];
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/motion/index.js
+	/**
+	* A [media query](https://svelte.dev/docs/svelte/svelte-reactivity#MediaQuery) that matches if the user [prefers reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
+	*
+	* ```svelte
+	* <script>
+	* 	import { prefersReducedMotion } from 'svelte/motion';
+	* 	import { fly } from 'svelte/transition';
+	*
+	* 	let visible = $state(false);
+	* <\/script>
+	*
+	* <button onclick={() => visible = !visible}>
+	* 	toggle
+	* </button>
+	*
+	* {#if visible}
+	* 	<p transition:fly={{ y: prefersReducedMotion.current ? 0 : 200 }}>
+	* 		flies in, unless the user prefers reduced motion
+	* 	</p>
+	* {/if}
+	* ```
+	* @type {MediaQuery}
+	* @since 5.7.0
+	*/
+	var prefersReducedMotion = /*@__PURE__*/ new MediaQuery("(prefers-reduced-motion: reduce)");
+	//#endregion
+	//#region src/lib/views/shared/chip-fit.svelte.ts
+	function createChipFit(options) {
+		let width = /* @__PURE__ */ state(0);
+		let fonts = /* @__PURE__ */ state(proxy({}));
+		const widths = /* @__PURE__ */ new Map();
+		const measure = (text, font) => {
+			const key = `${font} ${text}`;
+			let w = widths.get(key);
+			if (w === void 0) widths.set(key, w = textWidth(text, font));
+			return w;
+		};
+		function read(root) {
+			const slot = root.querySelector(options.slot);
+			if (slot) {
+				const cs = getComputedStyle(slot);
+				set(width, slot.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+			}
+			const next = {};
+			let changed = false;
+			for (const [key, selector] of Object.entries(options.fonts)) {
+				const el = root.querySelector(selector);
+				next[key] = el ? fontOf(el) : get(fonts)[key] ?? "";
+				if (next[key] !== get(fonts)[key]) changed = true;
+			}
+			if (changed) {
+				widths.clear();
+				set(fonts, next, true);
+			}
+		}
+		return {
+			get width() {
+				return get(width);
+			},
+			get fonts() {
+				return get(fonts);
+			},
+			watch(root) {
+				const ro = new ResizeObserver(() => read(root));
+				ro.observe(root);
+				const raf = requestAnimationFrame(() => read(root));
+				document.fonts?.ready.then(() => {
+					widths.clear();
+					read(root);
+				});
+				return () => {
+					cancelAnimationFrame(raf);
+					ro.disconnect();
+				};
+			},
+			parts(list, reserve = 0) {
+				return fitParts(list, get(width) - reserve, measure);
+			}
+		};
+	}
+	//#endregion
+	//#region src/lib/views/planner/PlannerScroll.svelte
+	var allDaySegmentContent = ($$anchor, seg = noop) => {
+		var fragment = root_4$6();
+		var node = first_child(fragment);
+		var consequent = ($$anchor) => {
+			var span = root_1$6();
+			var text = only_child(span, true);
+			template_effect(() => set_text(text, seg().ev.title));
+			append($$anchor, span);
+		};
+		var alternate = ($$anchor) => {
+			var fragment_1 = root_2$6();
+			var text_1 = only_child(sibling(first_child(fragment_1), 2), true);
+			template_effect(() => set_text(text_1, seg().ev.title));
+			append($$anchor, fragment_1);
+		};
+		if_block(node, ($$render) => {
+			if (seg().isStart) $$render(consequent);
+			else $$render(alternate, -1);
+		});
+		var node_1 = sibling(node, 2);
+		var consequent_1 = ($$anchor) => {
+			append($$anchor, root_3$6());
+		};
+		if_block(node_1, ($$render) => {
+			if (!seg().isEnd && seg().totalDays > 1) $$render(consequent_1);
+		});
+		append($$anchor, fragment);
+	};
+	var root_1$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-title svelte-l8xuza"> </span>`);
+	var root_2$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-cont svelte-l8xuza" aria-hidden="true">◂</span> <span class="wg-ad-title svelte-l8xuza"> </span>`, 1);
+	var root_3$6 = /* @__PURE__ */ from_html(`<span class="wg-ad-arrow svelte-l8xuza" aria-hidden="true">▸</span>`);
+	var root_4$6 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+	var root_5$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-l8xuza"> </span>`);
+	var root_6$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-l8xuza"> </span>`);
+	var root_7$6 = /* @__PURE__ */ from_html(`<!> <span class="wg-ev-title svelte-l8xuza"> </span> <!>`, 1);
+	var root_8$6 = /* @__PURE__ */ from_html(`<span> </span>`);
+	var root_9$4 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-l8xuza"><!></div>`);
+	var root_10$4 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-l8xuza"> </span>`);
+	var root_11$4 = /* @__PURE__ */ from_html(`<div class="wg-blocked svelte-l8xuza"><!></div>`);
+	var root_12$4 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
+	var root_13$3 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
+	var root_14$3 = /* @__PURE__ */ from_html(`<div class="wg-allday svelte-l8xuza"><!> <!></div>`);
+	var root_15$3 = /* @__PURE__ */ from_html(`<div class="wg-ev wg-ev--drag-preview svelte-l8xuza" aria-hidden="true"><!></div>`);
+	var root_16$3 = /* @__PURE__ */ from_html(`<button type="button" class="wg-ev-more svelte-l8xuza"> </button>`);
+	var root_17$3 = /* @__PURE__ */ from_html(`<div role="gridcell"><div><!> <span class="wg-day-wd svelte-l8xuza"> </span></div> <!> <!> <!> <div class="wg-cell-events svelte-l8xuza"><!> <!></div> <!></div>`);
+	var root_18$3 = /* @__PURE__ */ from_html(`<div role="presentation"><div class="wg-week-body svelte-l8xuza" role="presentation"><div class="wg-days svelte-l8xuza" role="row"></div></div></div>`);
+	var root_19$3 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-l8xuza" role="grid"><div class="wg-probe svelte-l8xuza" aria-hidden="true"><span class="wg-ev-time svelte-l8xuza"></span><span class="wg-ev-title svelte-l8xuza"></span><span class="wg-ev-loc svelte-l8xuza"></span></div> <!></div></div>`);
+	function PlannerScroll($$anchor, $$props) {
+		push($$props, true);
+		const timedEventContent = ($$anchor, ev = noop) => {
+			const parts = /* @__PURE__ */ user_derived(() => chipParts(ev()));
+			EventContent($$anchor, {
+				get event() {
+					return ev();
+				},
+				children: ($$anchor, $$slotProps) => {
+					var fragment_3 = root_7$6();
+					var node_2 = first_child(fragment_3);
+					var consequent_2 = ($$anchor) => {
+						var span_3 = root_5$6();
+						var text_2 = only_child(span_3, true);
+						template_effect(($0) => set_text(text_2, $0), [() => fmtAmPm(ev().start)]);
+						append($$anchor, span_3);
+					};
+					if_block(node_2, ($$render) => {
+						if (get(parts).time) $$render(consequent_2);
+					});
+					var span_4 = sibling(node_2, 2);
+					var text_3 = only_child(span_4, true);
+					var node_3 = sibling(span_4, 2);
+					var consequent_3 = ($$anchor) => {
+						var span_5 = root_6$6();
+						var text_4 = only_child(span_5, true);
+						template_effect(() => set_text(text_4, ev().location));
+						append($$anchor, span_5);
+					};
+					if_block(node_3, ($$render) => {
+						if (get(parts).room) $$render(consequent_3);
+					});
+					template_effect(() => set_text(text_3, ev().title));
+					append($$anchor, fragment_3);
+				},
+				$$slots: { default: true }
+			});
+		};
+		const L = /* @__PURE__ */ user_derived(getLabels);
+		let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
+		const ctx = useCalendarContext();
+		const clock = createClock(ctx.timezone);
+		const [previewSend, previewReceive] = crossfade({ duration: () => prefersReducedMotion.current ? 0 : 160 });
+		const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
+		const ANIM = /* @__PURE__ */ user_derived(() => prefersReducedMotion.current || !get(drag)?.active ? 0 : 180);
+		const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
+		const viewState = /* @__PURE__ */ user_derived(() => ctx.viewState);
+		const loadRangeCtx = /* @__PURE__ */ user_derived(() => ctx.loadRange);
+		const equalDays = /* @__PURE__ */ user_derived(() => ctx.equalDays);
+		const showDates = /* @__PURE__ */ user_derived(() => ctx.showDates);
+		const hideDays = /* @__PURE__ */ user_derived(() => ctx.hideDays);
+		const blockedSlots = /* @__PURE__ */ user_derived(() => ctx.blockedSlots);
+		const dayHeaderSnippet = /* @__PURE__ */ user_derived(() => ctx.dayHeaderSnippet);
+		const minDuration = /* @__PURE__ */ user_derived(() => ctx.minDuration);
+		const autoHeight = /* @__PURE__ */ user_derived(() => ctx.autoHeight);
+		const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
+		const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
+		const INITIAL_BUFFER = 8;
+		const EXTEND_BY = 8;
+		const EDGE_PX = 200;
+		let bufferBefore = /* @__PURE__ */ state(INITIAL_BUFFER);
+		let bufferAfter = /* @__PURE__ */ state(INITIAL_BUFFER);
+		const MAX_EVENTS_SHOWN = 5;
+		function rowPitch() {
+			const rows = el?.querySelectorAll("[data-week]");
+			return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 182;
+		}
+		const _initMs = untrack(() => sod($$props.focusDate?.getTime() ?? Date.now()));
+		let internalFocusMs = /* @__PURE__ */ state(proxy(_initMs));
+		let lastExternalMs = _initMs;
+		let el;
+		function scrollWeekIntoContainer(targetMs, behavior = "auto") {
+			if (!el) return;
+			let target = null;
+			if (targetMs !== void 0) {
+				const rows = el.querySelectorAll("[data-week]");
+				for (const row of rows) {
+					const weekMs = Number(row.dataset.week);
+					if (weekMs <= targetMs && targetMs < weekMs + get(customDays) * 864e5) {
+						target = row;
+						break;
+					}
+				}
+			}
+			if (!target) target = el.querySelector(".wg-week--current");
+			if (!target) return;
+			const targetTop = target.offsetTop - (el.clientHeight - target.offsetHeight) / 2;
+			el.scrollTo({
+				top: Math.max(0, targetTop),
+				behavior
+			});
+		}
+		const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
+		const customDays = /* @__PURE__ */ user_derived(() => get(viewState)?.dayCount ?? 7);
+		const anchorPeriodStart = /* @__PURE__ */ user_derived(() => get(customDays) === 7 ? startOfWeek(get(internalFocusMs), mondayStart()) : sod(get(internalFocusMs)));
+		user_effect(() => {
+			if (!get(loadRangeCtx)) return;
+			const rangeStart = new Date(get(anchorPeriodStart) - get(bufferBefore) * get(customDays) * DAY_MS);
+			const rangeEnd = new Date(get(anchorPeriodStart) + (get(bufferAfter) + 1) * get(customDays) * DAY_MS);
+			get(loadRangeCtx).set({
+				start: rangeStart,
+				end: rangeEnd
+			});
+			return () => get(loadRangeCtx).set(null);
+		});
+		/** All-day or multi-day event segments for this day */
+		const weeks = /* @__PURE__ */ user_derived(() => {
+			const result = [];
+			for (let w = -get(bufferBefore); w <= get(bufferAfter); w++) {
+				const periodStart = get(anchorPeriodStart) + w * get(customDays) * DAY_MS;
+				const isCurrent = get(todayMs) >= periodStart && get(todayMs) < periodStart + get(customDays) * 864e5;
+				const days = [];
+				for (let d = 0; d < get(customDays); d++) {
+					const ms = periodStart + d * DAY_MS;
+					const date = new Date(ms);
+					const dayNum = date.getDate();
+					const dow = date.getDay();
+					const isWeekend = dow === 0 || dow === 6;
+					const isToday = ms === get(todayMs);
+					const isPast = get(equalDays) ? false : ms < get(todayMs);
+					const isFirstOfMonth = dayNum === 1;
+					const monthLabel = d === 0 || isFirstOfMonth ? monthLong(ms, $$props.locale).toUpperCase() : null;
+					const dayEnd = ms + DAY_MS;
+					const dayEventsAll = events().filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
+					const timedEvents = [];
+					const allDaySegments = [];
+					for (const ev of dayEventsAll) if (isAllDay(ev) || isMultiDay(ev)) {
+						const seg = segmentForDay(ev, ms);
+						if (seg) allDaySegments.push(seg);
+					} else timedEvents.push(ev);
+					days.push({
+						ms,
+						dayNum,
+						isToday,
+						isPast,
+						isWeekend,
+						isFirstOfMonth,
+						monthLabel,
+						events: timedEvents,
+						allDaySegments
+					});
+				}
+				const startDate = new Date(periodStart);
+				const monthLabel = (get(customDays) === 7 ? startDate.getDate() <= 7 : startDate.getDate() <= get(customDays)) ? monthLong(periodStart, $$props.locale).toUpperCase() : null;
+				result.push({
+					weekStart: periodStart,
+					isCurrent,
+					monthLabel,
+					days
+				});
+			}
+			if (get(hideDays)?.length) for (const row of result) row.days = row.days.filter((d) => {
+				const isoDay = new Date(d.ms).getDay();
+				const iso = isoDay === 0 ? 7 : isoDay;
+				return !get(hideDays).includes(iso);
+			});
+			return result;
+		});
+		function fmtAmPm(d) {
+			return fmtTime$1(d, $$props.locale);
+		}
+		onMount(() => {
+			tick().then(() => scrollWeekIntoContainer());
+			return () => cancelAnimationFrame(syncRaf);
+		});
+		let settled = /* @__PURE__ */ state(false);
+		user_effect(() => {
+			if (get(settled) || !events().length) return;
+			set(settled, true);
+			tick().then(() => {
+				if (!touched) scrollWeekIntoContainer(get(internalFocusMs));
+			});
+		});
+		/** A real reader gesture (wheel or press), as opposed to a scroll we caused
+		*  ourselves. Keyboard is not watched: the re-centre happens milliseconds
+		*  after mount, before anyone has reached for a key, and a keydown handler
+		*  on the grid element would need a tabindex it should not have. */
+		let touched = false;
+		/** Attached, not bound in markup: a handler on the `role="grid"` element
+		*  would demand a tabindex the scroller should not carry. */
+		function watchTouch(root) {
+			const on = () => {
+				touched = true;
+			};
+			root.addEventListener("wheel", on, { passive: true });
+			root.addEventListener("pointerdown", on);
+			return () => {
+				root.removeEventListener("wheel", on);
+				root.removeEventListener("pointerdown", on);
+			};
+		}
+		const periodOf = (ms) => get(customDays) === 7 ? startOfWeek(ms, mondayStart()) : sod(ms);
+		user_effect(() => {
+			const ext = $$props.focusDate ? sod($$props.focusDate.getTime()) : clock.today;
+			if (periodOf(ext) !== periodOf(lastExternalMs)) {
+				lastExternalMs = ext;
+				set(internalFocusMs, ext, true);
+				set(bufferBefore, INITIAL_BUFFER);
+				set(bufferAfter, INITIAL_BUFFER);
+				tick().then(() => scrollWeekIntoContainer(ext));
+			}
+		});
+		/** Push the week at the viewport centre to viewState (drives the header label + Today button). */
+		function syncFocusFromScroll() {
+			if (!el || !get(viewState)) return;
+			const centerY = el.scrollTop + el.clientHeight / 2;
+			const rows = el.querySelectorAll("[data-week]");
+			for (const row of rows) if (row.offsetTop + row.offsetHeight >= centerY) {
+				const ms = Number(row.dataset.week);
+				if (Number.isFinite(ms) && ms !== lastExternalMs) {
+					lastExternalMs = ms;
+					get(viewState).setFocusDate(new Date(ms));
+				}
+				return;
+			}
+		}
+		let extending = false;
+		let syncRaf = 0;
+		function handleUserScroll() {
+			if (!syncRaf) syncRaf = requestAnimationFrame(() => {
+				syncRaf = 0;
+				if (!extending) syncFocusFromScroll();
+			});
+			if (!el || extending) return;
+			if (el.scrollTop < EDGE_PX) {
+				extending = true;
+				const first = el.querySelector("[data-week]");
+				const key = first?.dataset.week;
+				const offset = first ? first.offsetTop - el.scrollTop : 0;
+				set(bufferBefore, get(bufferBefore) + EXTEND_BY);
+				tick().then(() => {
+					const row = key ? el.querySelector(`[data-week="${key}"]`) : null;
+					el.scrollTop = row ? row.offsetTop - offset : el.scrollTop + EXTEND_BY * rowPitch();
+					extending = false;
+				});
+			} else if (el.scrollHeight - el.clientHeight - el.scrollTop < EDGE_PX) set(bufferAfter, get(bufferAfter) + EXTEND_BY);
+		}
+		/** Where a new thing lands on this day, or null when the day refuses it.
+		*  A cell is a whole day here — there is no time axis to drop onto — so
+		*  everything starts at the first visible hour. One rule, so an empty-cell
+		*  click and a drop from outside can never disagree about a day. */
+		function dayDropStart(ms) {
+			if (get(disabledSet).has(ms)) return null;
+			const startHour = $$props.visibleHours?.[0] ?? 9;
+			if (get(blockedSlots)?.length) {
+				const jsDay = new Date(ms).getDay();
+				const isoDay = jsDay === 0 ? 7 : jsDay;
+				if (get(blockedSlots).some((slot) => {
+					if (slot.day && slot.day !== isoDay) return false;
+					return startHour >= slot.start && startHour < slot.end;
+				})) return null;
+			}
+			return new Date(ms + startHour * HOUR_MS);
+		}
+		function handleDayCellClick(ms, e) {
+			if (e.target.closest(".wg-ev, .wg-ad, .wg-ev-more")) return;
+			if (readOnly() || !$$props.oneventcreate) return;
+			const start = dayDropStart(ms);
+			if (!start) return;
+			const durMin = get(minDuration) ? Math.max(60, get(minDuration)) : 60;
+			$$props.oneventcreate({
+				start,
+				end: new Date(start.getTime() + durMin * 6e4)
+			});
+		}
+		let dropDayMs = /* @__PURE__ */ state(null);
+		function onCellDragOver(e, ms) {
+			if (!$$props.onexternaldrop || readOnly() || !dayDropStart(ms)) return;
+			e.preventDefault();
+			if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+			set(dropDayMs, ms, true);
+		}
+		function onCellDragLeave(ms) {
+			if (get(dropDayMs) === ms) set(dropDayMs, null);
+		}
+		function onCellDrop(e, ms) {
+			set(dropDayMs, null);
+			if (!$$props.onexternaldrop || readOnly() || !e.dataTransfer) return;
+			const start = dayDropStart(ms);
+			if (!start) return;
+			e.preventDefault();
+			$$props.onexternaldrop({
+				start,
+				dataTransfer: e.dataTransfer
+			});
+		}
+		const DRAG_THRESHOLD = 8;
+		let evDragStartX = 0;
+		let evDragStartY = 0;
+		let evDragStarted = false;
+		let evDragging = /* @__PURE__ */ state(false);
+		let evDragId = /* @__PURE__ */ state(null);
+		let evDragEvent = null;
+		/** The pressed chip's rect, caught before any re-render can move it. */
+		let evAnchor;
+		/** Whether THIS press may become a move (see onEventPointerDown). */
+		let evDragMovable = false;
+		let evLastX = 0;
+		let evLastY = 0;
+		let evCellW = 100;
+		/** The week the press started in — rows differ in height, so the vertical
+		*  step is the row under the pointer, found by hit-test, not by division.
+		*  Held as a timestamp: an extension can renumber rows mid-drag. */
+		let evStartWeekMs = 0;
+		const dragPreviewEvent = /* @__PURE__ */ user_derived(() => {
+			const payload = get(drag)?.active && get(drag).mode === "move" ? get(drag).payload : null;
+			if (!payload?.eventId) return null;
+			const ev = events().find((event) => event.id === payload.eventId);
+			if (!ev) return null;
+			return {
+				...ev,
+				start: payload.start,
+				end: payload.end
+			};
+		});
+		function isDraggedEvent(eventId) {
+			return get(dragPreviewEvent)?.id === eventId;
+		}
+		function timedEventsForDay(day) {
+			if (!get(dragPreviewEvent)) return day.events;
+			return day.events.filter((ev) => ev.id !== get(dragPreviewEvent).id);
+		}
+		const previewKeySnapshot = /* @__PURE__ */ new Map();
+		function dragPreviewTimedForDay(dayMs) {
+			const ev = get(dragPreviewEvent);
+			if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
+			const dayEnd = dayMs + DAY_MS;
+			const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
+			if (hit) previewKeySnapshot.set("timed", ev.id);
+			return hit ? ev : null;
+		}
+		function dragPreviewSegmentForDay(dayMs) {
+			const ev = get(dragPreviewEvent);
+			if (!ev || !isAllDay(ev) && !isMultiDay(ev)) return null;
+			const seg = segmentForDay(ev, dayMs);
+			if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
+			return seg;
+		}
+		const CHIP_PAD_X = 12;
+		const CHIP_GAP_X = 5;
+		const fit = createChipFit({
+			slot: ".wg-cell",
+			fonts: {
+				title: ".wg-probe .wg-ev-title",
+				time: ".wg-probe .wg-ev-time",
+				room: ".wg-probe .wg-ev-loc"
+			}
+		});
+		function chipParts(ev) {
+			return fit.parts([
+				{
+					key: "title",
+					text: ev.title,
+					font: fit.fonts.title,
+					priority: 0
+				},
+				{
+					key: "time",
+					text: fmtAmPm(ev.start),
+					font: fit.fonts.time,
+					priority: 1,
+					extra: CHIP_GAP_X
+				},
+				{
+					key: "room",
+					text: ev.location ?? "",
+					font: fit.fonts.room,
+					priority: 2,
+					extra: CHIP_GAP_X
+				}
+			], CHIP_PAD_X);
+		}
+		function getCellWidth() {
+			const cell = el?.querySelector(".wg-cell");
+			return cell ? cell.getBoundingClientRect().width : 100;
+		}
+		/** The week row under this viewport Y, as its start timestamp. */
+		function weekMsAtY(clientY) {
+			const rows = el?.querySelectorAll("[data-week]");
+			if (!rows?.length) return 0;
+			for (const row of rows) if (clientY < row.getBoundingClientRect().bottom) return Number(row.dataset.week);
+			return Number(rows[rows.length - 1].dataset.week);
+		}
+		function onEventPointerDown(e, ev) {
+			if (e.button !== 0) return;
+			e.stopPropagation();
+			evAnchor = e.currentTarget.getBoundingClientRect();
+			evDragMovable = !!get(drag) && !readOnly() && !ev.data?.readOnly;
+			evDragStartX = e.clientX;
+			evDragStartY = e.clientY;
+			evLastX = e.clientX;
+			evLastY = e.clientY;
+			evDragStarted = false;
+			set(evDragId, ev.id, true);
+			evDragEvent = ev;
+			window.addEventListener("pointermove", onEvWindowPointerMove);
+			window.addEventListener("pointerup", onEvWindowPointerUp, { once: true });
+			window.addEventListener("pointercancel", onEvWindowPointerCancel, { once: true });
+		}
+		/** Where the dragged event sits for the pointer's current offset. */
+		function updateDragFromPointer() {
+			const ev = evDragEvent;
+			if (!get(drag) || !ev) return;
+			const dayOffset = Math.round((evLastX - evDragStartX) / evCellW);
+			const nowWeekMs = weekMsAtY(evLastY);
+			const deltaMs = (dayOffset + (evStartWeekMs && nowWeekMs ? Math.round((nowWeekMs - evStartWeekMs) / (get(customDays) * DAY_MS)) : 0) * get(customDays)) * DAY_MS;
+			get(drag).updatePointer(new Date(ev.start.getTime() + deltaMs), new Date(ev.end.getTime() + deltaMs));
+		}
+		const AUTO_EDGE = 56;
+		const AUTO_STEP = 14;
+		let autoDir = 0;
+		let autoRaf = 0;
+		function autoScrollTick() {
+			autoRaf = 0;
+			if (!autoDir || !el) return;
+			const before = el.scrollTop;
+			el.scrollTop += autoDir * AUTO_STEP;
+			if (el.scrollTop !== before) updateDragFromPointer();
+			autoRaf = requestAnimationFrame(autoScrollTick);
+		}
+		function setAutoScroll(clientY) {
+			if (!el) return;
+			const r = el.getBoundingClientRect();
+			const dir = clientY < r.top + AUTO_EDGE ? -1 : clientY > r.bottom - AUTO_EDGE ? 1 : 0;
+			if (dir === autoDir) return;
+			autoDir = dir;
+			if (dir && !autoRaf) autoRaf = requestAnimationFrame(autoScrollTick);
+		}
+		function stopAutoScroll() {
+			autoDir = 0;
+			if (autoRaf) cancelAnimationFrame(autoRaf);
+			autoRaf = 0;
+		}
+		function onEvWindowPointerMove(e) {
+			const ev = evDragEvent;
+			if (!evDragMovable || !get(drag) || !ev || get(evDragId) !== ev.id) return;
+			evLastX = e.clientX;
+			evLastY = e.clientY;
+			const dx = e.clientX - evDragStartX;
+			const dy = e.clientY - evDragStartY;
+			if (!evDragStarted && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return;
+			if (!evDragStarted) {
+				evDragStarted = true;
+				set(evDragging, true);
+				evCellW = getCellWidth();
+				evStartWeekMs = weekMsAtY(evDragStartY);
+				get(drag).beginMove(ev.id, ev.start, ev.end);
+			}
+			setAutoScroll(e.clientY);
+			updateDragFromPointer();
+		}
+		function cleanupEvDrag() {
+			window.removeEventListener("pointermove", onEvWindowPointerMove);
+			window.removeEventListener("pointerup", onEvWindowPointerUp);
+			window.removeEventListener("pointercancel", onEvWindowPointerCancel);
+			stopAutoScroll();
+			evDragStarted = false;
+			set(evDragging, false);
+			set(evDragId, null);
+			evDragEvent = null;
+			evAnchor = void 0;
+			evDragMovable = false;
+			evStartWeekMs = 0;
+		}
+		function onEvWindowPointerUp() {
+			if (!evDragStarted) {
+				if (evDragEvent) $$props.oneventclick?.(evDragEvent, evAnchor);
+			} else if (get(drag)) get(commitDragCtx)?.();
+			cleanupEvDrag();
+		}
+		function onEvWindowPointerCancel() {
+			if (get(drag) && evDragStarted) get(drag).cancel();
+			cleanupEvDrag();
+		}
+		function onWindowKeydown(e) {
+			if (e.key !== "Escape" || !get(drag)?.active) return;
+			get(drag).cancel();
+			cleanupEvDrag();
+		}
+		let expandedCells = proxy({});
+		let focusedCellMs = /* @__PURE__ */ state(null);
+		const tabbableCellMs = /* @__PURE__ */ user_derived(() => get(focusedCellMs) ?? get(todayMs));
+		function onCellKeydown(e, ms) {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				handleDayCellClick(ms, e);
+				return;
+			}
+			let step = 0;
+			if (e.key === "ArrowRight") step = DAY_MS;
+			else if (e.key === "ArrowLeft") step = -DAY_MS;
+			else if (e.key === "ArrowDown") step = get(customDays) * DAY_MS;
+			else if (e.key === "ArrowUp") step = -get(customDays) * DAY_MS;
+			if (step === 0) return;
+			e.preventDefault();
+			let target = ms + step;
+			for (let i = 0; i < 7; i++) {
+				const cell = el?.querySelector(`[data-day="${target}"]`);
+				if (cell) {
+					set(focusedCellMs, target, true);
+					cell.focus();
+					cell.scrollIntoView({ block: "nearest" });
+					return;
+				}
+				target += step < 0 ? -DAY_MS : DAY_MS;
+			}
+		}
+		var div = root_19$3();
+		event("keydown", $window, onWindowKeydown);
+		let classes;
+		let styles;
+		var div_1 = child(div);
+		each(sibling(child(div_1), 2), 17, () => get(weeks), (week) => week.weekStart, ($$anchor, week) => {
+			var div_2 = root_18$3();
+			let classes_1;
+			var div_3 = child(div_2);
+			var div_4 = child(div_3);
+			each(div_4, 21, () => get(week).days, (day) => day.ms, ($$anchor, day) => {
+				const visibleAllDaySegments = /* @__PURE__ */ user_derived(() => get(day).allDaySegments.filter((seg) => !isDraggedEvent(seg.ev.id)));
+				const visibleTimedEvents = /* @__PURE__ */ user_derived(() => timedEventsForDay(get(day)));
+				const isExpanded = /* @__PURE__ */ user_derived(() => expandedCells[get(day).ms] ?? false);
+				const timedCap = /* @__PURE__ */ user_derived(() => Math.max(0, MAX_EVENTS_SHOWN - get(visibleAllDaySegments).length));
+				const hiddenCount = /* @__PURE__ */ user_derived(() => Math.max(0, get(visibleTimedEvents).length - get(timedCap)));
+				const previewTimedEvent = /* @__PURE__ */ user_derived(() => dragPreviewTimedForDay(get(day).ms));
+				const previewSegment = /* @__PURE__ */ user_derived(() => dragPreviewSegmentForDay(get(day).ms));
+				var div_5 = root_17$3();
+				let classes_2;
+				var div_6 = child(div_5);
+				let classes_3;
+				var node_5 = child(div_6);
+				var consequent_4 = ($$anchor) => {
+					var span_6 = root_8$6();
+					let classes_4;
+					var text_5 = only_child(span_6, true);
+					template_effect(() => {
+						classes_4 = set_class(span_6, 1, "wg-day-num svelte-l8xuza", null, classes_4, { "wg-day-num--today": get(day).isToday });
+						set_text(text_5, get(day).dayNum);
+					});
+					append($$anchor, span_6);
+				};
+				if_block(node_5, ($$render) => {
+					if (get(showDates)) $$render(consequent_4);
+				});
+				var text_6 = only_child(sibling(node_5, 2), true);
+				reset(div_6);
+				var node_6 = sibling(div_6, 2);
+				var consequent_5 = ($$anchor) => {
+					var div_7 = root_9$4();
+					var node_7 = child(div_7);
+					{
+						let $0 = /* @__PURE__ */ user_derived(() => ({
+							date: new Date(get(day).ms),
+							isToday: get(day).isToday,
+							dayName: weekdayShort(get(day).ms, $$props.locale)
+						}));
+						snippet(node_7, () => get(dayHeaderSnippet), () => get($0));
+					}
+					reset(div_7);
+					append($$anchor, div_7);
+				};
+				if_block(node_6, ($$render) => {
+					if (get(dayHeaderSnippet)) $$render(consequent_5);
+				});
+				var node_8 = sibling(node_6, 2);
+				var consequent_8 = ($$anchor) => {
+					const jsDay = /* @__PURE__ */ user_derived(() => new Date(get(day).ms).getDay());
+					const isoDay = /* @__PURE__ */ user_derived(() => get(jsDay) === 0 ? 7 : get(jsDay));
+					var fragment_4 = comment();
+					each(first_child(fragment_4), 17, () => get(blockedSlots), index, ($$anchor, slot) => {
+						var fragment_5 = comment();
+						var node_10 = first_child(fragment_5);
+						var consequent_7 = ($$anchor) => {
+							const slotRange = /* @__PURE__ */ user_derived(() => `${fmtTime$1(new Date(get(day).ms + get(slot).start * HOUR_MS), $$props.locale)} – ${fmtTime$1(new Date(get(day).ms + get(slot).end * HOUR_MS), $$props.locale)}`);
+							var div_8 = root_11$4();
+							var node_11 = child(div_8);
+							var consequent_6 = ($$anchor) => {
+								var span_8 = root_10$4();
+								var text_7 = only_child(span_8, true);
+								template_effect(() => set_text(text_7, get(slot).label));
+								append($$anchor, span_8);
+							};
+							if_block(node_11, ($$render) => {
+								if (get(slot).label) $$render(consequent_6);
+							});
+							reset(div_8);
+							template_effect(() => {
+								set_attribute(div_8, "title", `${get(slot).label ? `${get(slot).label}, ` : ""}${get(slotRange) ?? ""}`);
+								set_attribute(div_8, "aria-label", `${(get(slot).label || "Unavailable") ?? ""}, ${get(slotRange) ?? ""}`);
+							});
+							append($$anchor, div_8);
+						};
+						if_block(node_10, ($$render) => {
+							if (!get(slot).day || get(slot).day === get(isoDay)) $$render(consequent_7);
+						});
+						append($$anchor, fragment_5);
+					});
+					append($$anchor, fragment_4);
+				};
+				if_block(node_8, ($$render) => {
+					if (get(blockedSlots)?.length) $$render(consequent_8);
+				});
+				var node_12 = sibling(node_8, 2);
+				var consequent_10 = ($$anchor) => {
+					var div_9 = root_14$3();
+					var node_13 = child(div_9);
+					each(node_13, 25, () => get(visibleAllDaySegments), (seg) => seg.ev.id, ($$anchor, seg) => {
+						var div_10 = root_12$4();
+						let classes_5;
+						let styles_1;
+						allDaySegmentContent(child(div_10), () => get(seg));
+						reset(div_10);
+						template_effect(($0) => {
+							classes_5 = set_class(div_10, 1, "wg-ad svelte-l8xuza", null, classes_5, {
+								"wg-ad--start": get(seg).isStart,
+								"wg-ad--end": get(seg).isEnd,
+								"wg-ad--mid": !get(seg).isStart && !get(seg).isEnd,
+								"wg-ad--selected": selectedEventId() === get(seg).ev.id
+							});
+							set_attribute(div_10, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
+							styles_1 = set_style(div_10, "", styles_1, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+						}, [() => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`]);
+						delegated("pointerdown", div_10, (e) => onEventPointerDown(e, get(seg).ev));
+						delegated("keydown", div_10, (e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								e.stopPropagation();
+								$$props.oneventclick?.(get(seg).ev, e.currentTarget.getBoundingClientRect());
+							}
+						});
+						animation(div_10, () => flip, () => ({ duration: get(ANIM) }));
+						transition(1, div_10, () => previewReceive, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
+						transition(2, div_10, () => previewSend, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
+						append($$anchor, div_10);
+					});
+					var node_15 = sibling(node_13, 2);
+					var consequent_9 = ($$anchor) => {
+						var div_11 = root_13$3();
+						let classes_6;
+						let styles_2;
+						allDaySegmentContent(child(div_11), () => get(previewSegment));
+						reset(div_11);
+						template_effect(() => {
+							classes_6 = set_class(div_11, 1, "wg-ad wg-ad--drag-preview svelte-l8xuza", null, classes_6, {
+								"wg-ad--start": get(previewSegment).isStart,
+								"wg-ad--end": get(previewSegment).isEnd,
+								"wg-ad--mid": !get(previewSegment).isStart && !get(previewSegment).isEnd
+							});
+							styles_2 = set_style(div_11, "", styles_2, { "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)" });
+						});
+						transition(1, div_11, () => previewReceive, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
+						transition(2, div_11, () => previewSend, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
+						append($$anchor, div_11);
+					};
+					if_block(node_15, ($$render) => {
+						if (get(previewSegment)) $$render(consequent_9);
+					});
+					reset(div_9);
+					append($$anchor, div_9);
+				};
+				if_block(node_12, ($$render) => {
+					if (get(visibleAllDaySegments).length > 0 || get(previewSegment)) $$render(consequent_10);
+				});
+				var div_12 = sibling(node_12, 2);
+				var node_17 = child(div_12);
+				each(node_17, 25, () => get(visibleTimedEvents).slice(0, get(isExpanded) ? get(visibleTimedEvents).length : get(timedCap)), (ev) => ev.id, ($$anchor, ev) => {
+					var div_13 = root_12$4();
+					let classes_7;
+					let styles_3;
+					var node_18 = child(div_13);
+					timedEventContent(node_18, () => get(ev));
+					reset(div_13);
+					template_effect(($0, $1, $2, $3) => {
+						classes_7 = set_class(div_13, 1, "wg-ev svelte-l8xuza", null, classes_7, {
+							"wg-ev--selected": selectedEventId() === get(ev).id,
+							"wg-ev--current": $0,
+							"wg-ev--dragging": get(evDragging) && get(evDragId) === get(ev).id,
+							"wg-ev--readonly": get(ev).data?.readOnly,
+							"wg-ev--cancelled": get(ev).status === "cancelled",
+							"wg-ev--tentative": get(ev).status === "tentative",
+							"wg-ev--full": get(ev).status === "full",
+							"wg-ev--limited": get(ev).status === "limited"
+						});
+						set_attribute(div_13, "aria-label", `${get(ev).title ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}${get(ev).status === "cancelled" ? ` (cancelled)` : ""}${get(ev).status === "tentative" ? ` (tentative)` : ""}${get(ev).status === "full" ? ` (full)` : ""}${get(ev).status === "limited" ? ` (limited)` : ""}${$3 ?? ""}`);
+						styles_3 = set_style(div_13, "", styles_3, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
+					}, [
+						() => get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
+						() => fmtAmPm(get(ev).start),
+						() => fmtAmPm(get(ev).end),
+						() => get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick ? ` (${get(L).inProgress})` : ""
+					]);
+					delegated("pointerdown", div_13, (e) => onEventPointerDown(e, get(ev)));
+					event("pointerenter", div_13, () => get(oneventhover)?.(get(ev)));
+					delegated("keydown", div_13, (e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							e.stopPropagation();
+							$$props.oneventclick?.(get(ev), e.currentTarget.getBoundingClientRect());
+						}
+					});
+					animation(div_13, () => flip, () => ({ duration: get(ANIM) }));
+					transition(1, div_13, () => previewReceive, () => ({ key: get(ev).id }));
+					transition(2, div_13, () => previewSend, () => ({ key: get(ev).id }));
+					append($$anchor, div_13);
+				});
+				var node_19 = sibling(node_17, 2);
+				var consequent_11 = ($$anchor) => {
+					var div_14 = root_15$3();
+					let styles_4;
+					var node_20 = child(div_14);
+					timedEventContent(node_20, () => get(previewTimedEvent));
+					reset(div_14);
+					template_effect(() => styles_4 = set_style(div_14, "", styles_4, { "--ev-color": get(previewTimedEvent).color ?? "var(--dt-accent)" }));
+					transition(1, div_14, () => previewReceive, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
+					transition(2, div_14, () => previewSend, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
+					append($$anchor, div_14);
+				};
+				if_block(node_19, ($$render) => {
+					if (get(previewTimedEvent)) $$render(consequent_11);
+				});
+				reset(div_12);
+				var node_21 = sibling(div_12, 2);
+				var consequent_12 = ($$anchor) => {
+					var button = root_16$3();
+					var text_8 = only_child(button, true);
+					template_effect(($0) => {
+						set_attribute(button, "aria-expanded", get(isExpanded));
+						set_text(text_8, $0);
+					}, [() => get(isExpanded) ? get(L).showLess : get(L).nMore(get(hiddenCount))]);
+					delegated("click", button, (e) => {
+						e.stopPropagation();
+						expandedCells[get(day).ms] = !get(isExpanded);
+					});
+					append($$anchor, button);
+				};
+				if_block(node_21, ($$render) => {
+					if (get(hiddenCount) > 0) $$render(consequent_12);
+				});
+				reset(div_5);
+				template_effect(($0, $1, $2, $3, $4) => {
+					classes_2 = set_class(div_5, 1, "wg-cell svelte-l8xuza", null, classes_2, {
+						"wg-cell--today": get(day).isToday,
+						"wg-cell--past": get(day).isPast,
+						"wg-cell--weekend": get(day).isWeekend,
+						"wg-cell--disabled": $0,
+						"wg-cell--expanded": get(isExpanded),
+						"wg-cell--drop": get(dropDayMs) === get(day).ms
+					});
+					set_attribute(div_5, "data-day", get(day).ms);
+					set_attribute(div_5, "tabindex", get(day).ms === get(tabbableCellMs) ? 0 : -1);
+					set_attribute(div_5, "aria-label", `${$1 ?? ""}${$2 ?? ""}, ${$3 ?? ""}`);
+					classes_3 = set_class(div_6, 1, "wg-cell-hd svelte-l8xuza", null, classes_3, { "wg-cell-hd--today": get(day).isToday });
+					set_text(text_6, $4);
+				}, [
+					() => get(disabledSet).has(get(day).ms),
+					() => new Date(get(day).ms).toLocaleDateString($$props.locale ?? "en-US", {
+						weekday: "long",
+						month: "short",
+						day: "numeric"
+					}),
+					() => get(day).isToday ? ` (${get(L).today.toLowerCase()})` : "",
+					() => get(L).nEvents(get(day).events.length + get(day).allDaySegments.length),
+					() => weekdayShort(get(day).ms, $$props.locale)
+				]);
+				delegated("click", div_5, (e) => handleDayCellClick(get(day).ms, e));
+				event("dragover", div_5, (e) => onCellDragOver(e, get(day).ms));
+				event("dragleave", div_5, () => onCellDragLeave(get(day).ms));
+				event("drop", div_5, (e) => onCellDrop(e, get(day).ms));
+				event("focus", div_5, () => {
+					set(focusedCellMs, get(day).ms, true);
+				});
+				delegated("keydown", div_5, (e) => onCellKeydown(e, get(day).ms));
+				append($$anchor, div_5);
+			});
+			reset(div_4);
+			reset(div_3);
+			reset(div_2);
+			template_effect(() => {
+				classes_1 = set_class(div_2, 1, "wg-week svelte-l8xuza", null, classes_1, { "wg-week--current": get(week).isCurrent });
+				set_attribute(div_2, "data-week", get(week).weekStart);
+			});
+			append($$anchor, div_2);
+		});
+		reset(div_1);
+		bind_this(div_1, ($$value) => el = $$value, () => el);
+		attach(div_1, () => fit.watch);
+		attach(div_1, () => watchTouch);
+		reset(div);
+		template_effect(() => {
+			classes = set_class(div, 1, "wg svelte-l8xuza", null, classes, { "wg--auto": get(autoHeight) });
+			styles = set_style(div, style() || void 0, styles, {
+				height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%",
+				"--wg-row-min": "170px",
+				"--wg-chip-h": "22px",
+				"--wg-chip-gap": "3px",
+				"--wg-row-margin": "12px"
+			});
+			set_attribute(div_1, "aria-label", get(L).multiWeekGrid);
+		});
+		event("scroll", div_1, handleUserScroll);
+		append($$anchor, div);
+		pop();
+	}
+	delegate([
+		"click",
+		"keydown",
+		"pointerdown"
+	]);
 	//#endregion
 	//#region src/lib/views/shared/format.ts
 	function fmtTime(d, locale) {
@@ -8778,15 +16458,13 @@ createHTML: (html) => {
 			var node_1 = child(div_2);
 			var consequent = ($$anchor) => {
 				var span = root$4();
-				var text = child(span, true);
-				reset(span);
+				var text = only_child(span, true);
 				template_effect(() => set_text(text, get(L).today));
 				append($$anchor, span);
 			};
 			var consequent_1 = ($$anchor) => {
 				var span_1 = root_1$5();
-				var text_1 = child(span_1, true);
-				reset(span_1);
+				var text_1 = only_child(span_1, true);
 				template_effect(() => set_text(text_1, get(L).tomorrow));
 				append($$anchor, span_1);
 			};
@@ -8795,11 +16473,8 @@ createHTML: (html) => {
 				else if (!get(equalDays) && get(isTomorrow)) $$render(consequent_1, 1);
 			});
 			var span_2 = sibling(node_1, 2);
-			var text_2 = child(span_2, true);
-			reset(span_2);
-			var span_3 = sibling(span_2, 2);
-			var text_3 = child(span_3);
-			reset(span_3);
+			var text_2 = only_child(span_2, true);
+			var text_3 = only_child(sibling(span_2, 2));
 			reset(div_2);
 			template_effect(($0, $1, $2) => {
 				set_text(text_2, $0);
@@ -8818,16 +16493,13 @@ createHTML: (html) => {
 		var consequent_3 = ($$anchor) => {
 			var div_3 = root_4$5();
 			var div_4 = child(div_3);
-			var text_4 = child(div_4, true);
-			reset(div_4);
+			var text_4 = only_child(div_4, true);
 			var div_5 = sibling(div_4, 2);
 			each(div_5, 21, () => get(allDayBanner), (ev) => ev.id, ($$anchor, ev) => {
 				var button = root_3$5();
 				let classes_1;
 				let styles_1;
-				var span_4 = sibling(child(button), 2);
-				var text_5 = child(span_4, true);
-				reset(span_4);
+				var text_5 = only_child(sibling(child(button), 2), true);
 				reset(button);
 				template_effect(() => {
 					classes_1 = set_class(button, 1, "ag-allday-chip svelte-n8lbn1", null, classes_1, { "ag-allday-chip--selected": selectedEventId() === get(ev).id });
@@ -8884,17 +16556,14 @@ createHTML: (html) => {
 						children: ($$anchor, $$slotProps) => {
 							var fragment_3 = root_8$5();
 							var span_5 = first_child(fragment_3);
-							var text_7 = child(span_5, true);
-							reset(span_5);
+							var text_7 = only_child(span_5, true);
 							var div_8 = sibling(span_5, 2);
 							var span_6 = child(div_8);
-							var text_8 = child(span_6, true);
-							reset(span_6);
+							var text_8 = only_child(span_6, true);
 							var node_9 = sibling(span_6, 2);
 							var consequent_6 = ($$anchor) => {
 								var span_7 = root_6$5();
-								var text_9 = child(span_7, true);
-								reset(span_7);
+								var text_9 = only_child(span_7, true);
 								template_effect(() => set_text(text_9, get(ev).subtitle));
 								append($$anchor, span_7);
 							};
@@ -8906,8 +16575,7 @@ createHTML: (html) => {
 								var fragment_4 = comment();
 								each(first_child(fragment_4), 17, () => get(ev).tags, index, ($$anchor, tag) => {
 									var span_8 = root_7$5();
-									var text_10 = child(span_8, true);
-									reset(span_8);
+									var text_10 = only_child(span_8, true);
 									template_effect(() => set_text(text_10, get(tag)));
 									append($$anchor, span_8);
 								});
@@ -8917,9 +16585,7 @@ createHTML: (html) => {
 								if (get(ev).tags?.length) $$render(consequent_7);
 							});
 							reset(div_8);
-							var span_9 = sibling(div_8, 2);
-							var text_11 = child(span_9, true);
-							reset(span_9);
+							var text_11 = only_child(sibling(div_8, 2), true);
 							template_effect(($0, $1) => {
 								set_text(text_7, $0);
 								set_text(text_8, get(ev).title);
@@ -8957,9 +16623,7 @@ createHTML: (html) => {
 			var div_10 = child(div_9);
 			var div_11 = child(div_10);
 			var text_12 = child(div_11);
-			var span_10 = sibling(text_12);
-			var text_13 = child(span_10, true);
-			reset(span_10);
+			var text_13 = only_child(sibling(text_12), true);
 			reset(div_11);
 			var node_12 = sibling(div_11, 2);
 			var consequent_10 = ($$anchor) => {
@@ -8969,13 +16633,11 @@ createHTML: (html) => {
 					let classes_3;
 					let styles_3;
 					var div_12 = sibling(child(button_2), 2);
-					var text_14 = child(div_12, true);
-					reset(div_12);
+					var text_14 = only_child(div_12, true);
 					var node_14 = sibling(div_12, 2);
 					var consequent_9 = ($$anchor) => {
 						var div_13 = root_11$3();
-						var text_15 = child(div_13, true);
-						reset(div_13);
+						var text_15 = only_child(div_13, true);
 						template_effect(() => set_text(text_15, get(ev).subtitle));
 						append($$anchor, div_13);
 					};
@@ -8983,8 +16645,7 @@ createHTML: (html) => {
 						if (get(ev).subtitle) $$render(consequent_9);
 					});
 					var div_14 = sibling(node_14, 2);
-					var text_16 = child(div_14);
-					reset(div_14);
+					var text_16 = only_child(div_14);
 					var div_15 = sibling(div_14, 2);
 					var div_16 = child(div_15);
 					let styles_4;
@@ -8996,11 +16657,11 @@ createHTML: (html) => {
 						styles_3 = set_style(button_2, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
 						set_text(text_14, get(ev).title);
 						set_text(text_16, `${get(L).until ?? ""} ${$1 ?? ""}`);
-						styles_4 = set_style(div_16, "", styles_4, $2);
+						styles_4 = set_style(div_16, "", styles_4, { transform: $2 });
 					}, [
 						() => get(L).percentComplete(Math.round(prog(get(ev)) * 100)),
 						() => fmt(get(ev).end),
-						() => ({ transform: `scaleX(${prog(get(ev)) ?? ""})` })
+						() => `scaleX(${prog(get(ev)) ?? ""})`
 					]);
 					delegated("click", button_2, () => handleClick(get(ev)));
 					event("pointerenter", button_2, () => get(oneventhover)?.(get(ev)));
@@ -9010,9 +16671,7 @@ createHTML: (html) => {
 			};
 			var alternate_2 = ($$anchor) => {
 				var div_17 = root_13$2();
-				var div_18 = child(div_17);
-				var text_17 = child(div_18, true);
-				reset(div_18);
+				var text_17 = only_child(child(div_17), true);
 				reset(div_17);
 				template_effect(() => set_text(text_17, get(L).free));
 				append($$anchor, div_17);
@@ -9025,15 +16684,12 @@ createHTML: (html) => {
 			var consequent_12 = ($$anchor) => {
 				var div_19 = root_16$2();
 				var div_20 = child(div_19);
-				var text_18 = child(div_20, true);
-				reset(div_20);
+				var text_18 = only_child(div_20, true);
 				var node_16 = sibling(div_20, 2);
 				each(node_16, 17, () => get(visibleDone), (ev) => ev.id, ($$anchor, ev) => {
 					var button_3 = root_14$2();
 					let classes_4;
-					var span_11 = sibling(child(button_3), 2);
-					var text_19 = child(span_11, true);
-					reset(span_11);
+					var text_19 = only_child(sibling(child(button_3), 2), true);
 					reset(button_3);
 					template_effect(($0) => {
 						classes_4 = set_class(button_3, 1, "ag-q-done-item svelte-n8lbn1", null, classes_4, { "ag-q-done-item--selected": selectedEventId() === get(ev).id });
@@ -9046,8 +16702,7 @@ createHTML: (html) => {
 				var node_17 = sibling(node_16, 2);
 				var consequent_11 = ($$anchor) => {
 					var button_4 = root_15$2();
-					var text_20 = child(button_4, true);
-					reset(button_4);
+					var text_20 = only_child(button_4, true);
 					template_effect(($0) => set_text(text_20, $0), [() => get(showAllDone) ? get(L).showLess : get(L).nCompleted(get(hiddenDoneCount))]);
 					delegated("click", button_4, () => set(showAllDone, !get(showAllDone)));
 					append($$anchor, button_4);
@@ -9065,8 +16720,7 @@ createHTML: (html) => {
 			reset(div_10);
 			var div_21 = sibling(div_10, 2);
 			var div_22 = child(div_21);
-			var text_21 = child(div_22, true);
-			reset(div_22);
+			var text_21 = only_child(div_22, true);
 			var node_18 = sibling(div_22, 2);
 			var consequent_14 = ($$anchor) => {
 				var div_23 = root_5$5();
@@ -9104,17 +16758,14 @@ createHTML: (html) => {
 							children: ($$anchor, $$slotProps) => {
 								var fragment_10 = root_17$2();
 								var span_12 = first_child(fragment_10);
-								var text_23 = child(span_12, true);
-								reset(span_12);
+								var text_23 = only_child(span_12, true);
 								var div_24 = sibling(span_12, 2);
 								var span_13 = child(div_24);
-								var text_24 = child(span_13, true);
-								reset(span_13);
+								var text_24 = only_child(span_13, true);
 								var node_24 = sibling(span_13, 2);
 								var consequent_15 = ($$anchor) => {
 									var span_14 = root_6$5();
-									var text_25 = child(span_14, true);
-									reset(span_14);
+									var text_25 = only_child(span_14, true);
 									template_effect(() => set_text(text_25, get(ev).subtitle));
 									append($$anchor, span_14);
 								};
@@ -9153,17 +16804,13 @@ createHTML: (html) => {
 								var fragment_11 = root_21$2();
 								var div_26 = first_child(fragment_11);
 								var span_15 = child(div_26);
-								var text_26 = child(span_15, true);
-								reset(span_15);
-								var span_16 = sibling(span_15, 2);
-								var text_27 = child(span_16, true);
-								reset(span_16);
+								var text_26 = only_child(span_15, true);
+								var text_27 = only_child(sibling(span_15, 2), true);
 								reset(div_26);
 								var node_26 = sibling(div_26, 2);
 								var consequent_17 = ($$anchor) => {
 									var span_17 = root_18$2();
-									var text_28 = child(span_17, true);
-									reset(span_17);
+									var text_28 = only_child(span_17, true);
 									template_effect(() => set_text(text_28, get(ev).subtitle));
 									append($$anchor, span_17);
 								};
@@ -9172,17 +16819,14 @@ createHTML: (html) => {
 								});
 								var div_27 = sibling(node_26, 2);
 								var text_29 = child(div_27);
-								var span_18 = sibling(text_29);
-								var text_30 = child(span_18, true);
-								reset(span_18);
+								var text_30 = only_child(sibling(text_29), true);
 								reset(div_27);
 								var node_27 = sibling(div_27, 2);
 								var consequent_18 = ($$anchor) => {
 									var div_28 = root_20$2();
 									each(div_28, 21, () => get(ev).tags, index, ($$anchor, tag) => {
 										var span_19 = root_19$2();
-										var text_31 = child(span_19, true);
-										reset(span_19);
+										var text_31 = only_child(span_19, true);
 										template_effect(() => set_text(text_31, get(tag)));
 										append($$anchor, span_19);
 									});
@@ -9272,16 +16916,12 @@ createHTML: (html) => {
 					let classes_7;
 					let styles_7;
 					var span_20 = sibling(child(button_7), 2);
-					var text_33 = child(span_20, true);
-					reset(span_20);
+					var text_33 = only_child(span_20, true);
 					var span_21 = sibling(span_20, 2);
 					let styles_8;
 					var span_22 = sibling(span_21, 2);
-					var text_34 = child(span_22, true);
-					reset(span_22);
-					var span_23 = sibling(span_22, 2);
-					var text_35 = child(span_23, true);
-					reset(span_23);
+					var text_34 = only_child(span_22, true);
+					var text_35 = only_child(sibling(span_22, 2), true);
 					reset(button_7);
 					template_effect(($0, $1, $2, $3) => {
 						classes_7 = set_class(button_7, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
@@ -9348,17 +16988,13 @@ createHTML: (html) => {
 							var fragment_18 = root_27$1();
 							var div_34 = first_child(fragment_18);
 							var span_24 = child(div_34);
-							var text_37 = child(span_24, true);
-							reset(span_24);
-							var span_25 = sibling(span_24, 2);
-							var text_38 = child(span_25, true);
-							reset(span_25);
+							var text_37 = only_child(span_24, true);
+							var text_38 = only_child(sibling(span_24, 2), true);
 							reset(div_34);
 							var node_37 = sibling(div_34, 2);
 							var consequent_25 = ($$anchor) => {
 								var span_26 = root_18$2();
-								var text_39 = child(span_26, true);
-								reset(span_26);
+								var text_39 = only_child(span_26, true);
 								template_effect(() => set_text(text_39, get(ev).subtitle));
 								append($$anchor, span_26);
 							};
@@ -9368,8 +17004,7 @@ createHTML: (html) => {
 							var node_38 = sibling(node_37, 2);
 							var consequent_26 = ($$anchor) => {
 								var span_27 = root_26$1();
-								var text_40 = child(span_27, true);
-								reset(span_27);
+								var text_40 = only_child(span_27, true);
 								template_effect(() => set_text(text_40, get(ev).location));
 								append($$anchor, span_27);
 							};
@@ -9378,17 +17013,14 @@ createHTML: (html) => {
 							});
 							var div_35 = sibling(node_38, 2);
 							var text_41 = child(div_35);
-							var span_28 = sibling(text_41);
-							var text_42 = child(span_28, true);
-							reset(span_28);
+							var text_42 = only_child(sibling(text_41), true);
 							reset(div_35);
 							var node_39 = sibling(div_35, 2);
 							var consequent_27 = ($$anchor) => {
 								var div_36 = root_20$2();
 								each(div_36, 21, () => get(ev).tags, index, ($$anchor, tag) => {
 									var span_29 = root_19$2();
-									var text_43 = child(span_29, true);
-									reset(span_29);
+									var text_43 = only_child(span_29, true);
 									template_effect(() => set_text(text_43, get(tag)));
 									append($$anchor, span_29);
 								});
@@ -9452,14 +17084,14 @@ createHTML: (html) => {
 		reset(div_1);
 		reset(div);
 		template_effect(($0) => {
-			classes = set_class(div, 1, "ag ag--day svelte-n8lbn1", null, classes, $0);
+			classes = set_class(div, 1, "ag ag--day svelte-n8lbn1", null, classes, {
+				"ag--disabled": $0,
+				"ag--mobile": get(isMobile),
+				"ag--auto": get(autoHeight)
+			});
 			styles = set_style(div, style() || void 0, styles, { height: $$props.height ? `${$$props.height}px` : void 0 });
 			set_attribute(div_1, "aria-label", get(L).todaysLineup);
-		}, [() => ({
-			"ag--disabled": get(disabledSet).has(get(dayMs)),
-			"ag--mobile": get(isMobile),
-			"ag--auto": get(autoHeight)
-		})]);
+		}, [() => get(disabledSet).has(get(dayMs))]);
 		delegated("pointerdown", div, onPointerDown);
 		delegated("pointerup", div, onPointerUp);
 		event("pointercancel", div, onPointerCancel);
@@ -9522,13 +17154,11 @@ createHTML: (html) => {
 				children: ($$anchor, $$slotProps) => {
 					var fragment = root_5$4();
 					var span = first_child(fragment);
-					var text$1 = child(span, true);
-					reset(span);
+					var text$1 = only_child(span, true);
 					var node_1 = sibling(span, 2);
 					var consequent = ($$anchor) => {
 						var span_1 = root$3();
-						var text_1 = child(span_1, true);
-						reset(span_1);
+						var text_1 = only_child(span_1, true);
 						template_effect(() => set_text(text_1, ev().subtitle));
 						append($$anchor, span_1);
 					};
@@ -9538,8 +17168,7 @@ createHTML: (html) => {
 					var node_2 = sibling(node_1, 2);
 					var consequent_1 = ($$anchor) => {
 						var span_2 = root_1$4();
-						var text_2 = child(span_2, true);
-						reset(span_2);
+						var text_2 = only_child(span_2, true);
 						template_effect(() => set_text(text_2, ev().location));
 						append($$anchor, span_2);
 					};
@@ -9563,13 +17192,11 @@ createHTML: (html) => {
 						else $$render(alternate, -1);
 					});
 					var span_4 = sibling(node_3, 2);
-					var text_5 = child(span_4, true);
-					reset(span_4);
+					var text_5 = only_child(span_4, true);
 					var node_4 = sibling(span_4, 2);
 					var consequent_3 = ($$anchor) => {
 						var span_5 = root_2$4();
-						var text_6 = child(span_5, true);
-						reset(span_5);
+						var text_6 = only_child(span_5, true);
 						template_effect(() => set_text(text_6, eta()));
 						append($$anchor, span_5);
 					};
@@ -9582,8 +17209,7 @@ createHTML: (html) => {
 						var div_1 = root_4$4();
 						each(div_1, 21, () => ev().tags, index, ($$anchor, tag) => {
 							var span_6 = root_3$4();
-							var text_7 = child(span_6, true);
-							reset(span_6);
+							var text_7 = only_child(span_6, true);
 							template_effect(() => set_text(text_7, get(tag)));
 							append($$anchor, span_6);
 						});
@@ -9607,7 +17233,7 @@ createHTML: (html) => {
 				var div_3 = child(div_2);
 				let styles_1;
 				reset(div_2);
-				template_effect(($0) => styles_1 = set_style(div_3, "", styles_1, $0), [() => ({ transform: `scaleX(${prog(ev()) ?? ""})` })]);
+				template_effect(($0) => styles_1 = set_style(div_3, "", styles_1, { transform: $0 }), [() => `scaleX(${prog(ev()) ?? ""})`]);
 				append($$anchor, div_2);
 			};
 			if_block(node_6, ($$render) => {
@@ -9616,19 +17242,19 @@ createHTML: (html) => {
 			reset(div);
 			reset(button);
 			template_effect(($0, $1, $2, $3, $4) => {
-				classes = set_class(button, 1, "ag-card svelte-uhwfyj", null, classes, $0);
-				set_attribute(button, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$1 ?? ""} to ${$2 ?? ""}, ${$3 ?? ""}`);
-				set_attribute(button, "draggable", $4);
-				styles = set_style(button, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
-			}, [
-				() => ({
+				classes = set_class(button, 1, "ag-card svelte-uhwfyj", null, classes, {
 					"ag-card--selected": selectedEventId() === ev().id,
 					"ag-card--cancelled": ev().status === "cancelled",
 					"ag-card--tentative": ev().status === "tentative",
 					"ag-card--full": ev().status === "full",
 					"ag-card--limited": ev().status === "limited",
-					"ag-card--drag": get(dragId) === String(ev().id)
-				}),
+					"ag-card--drag": $0
+				});
+				set_attribute(button, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$1 ?? ""} to ${$2 ?? ""}, ${$3 ?? ""}`);
+				set_attribute(button, "draggable", $4);
+				styles = set_style(button, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
+			}, [
+				() => get(dragId) === String(ev().id),
 				() => fmt(ev().start),
 				() => fmt(ev().end),
 				() => duration(ev()),
@@ -9651,17 +17277,14 @@ createHTML: (html) => {
 				children: ($$anchor, $$slotProps) => {
 					var fragment_3 = root_11$2();
 					var span_7 = first_child(fragment_3);
-					var text_8 = child(span_7, true);
-					reset(span_7);
+					var text_8 = only_child(span_7, true);
 					var div_4 = sibling(span_7, 2);
 					var span_8 = child(div_4);
-					var text_9 = child(span_8, true);
-					reset(span_8);
+					var text_9 = only_child(span_8, true);
 					var node_8 = sibling(span_8, 2);
 					var consequent_6 = ($$anchor) => {
 						var span_9 = root_8$4();
-						var text_10 = child(span_9, true);
-						reset(span_9);
+						var text_10 = only_child(span_9, true);
 						template_effect(() => set_text(text_10, ev().location));
 						append($$anchor, span_9);
 					};
@@ -9671,8 +17294,7 @@ createHTML: (html) => {
 					var node_9 = sibling(node_8, 2);
 					var consequent_7 = ($$anchor) => {
 						var span_10 = root_9$2();
-						var text_11 = child(span_10, true);
-						reset(span_10);
+						var text_11 = only_child(span_10, true);
 						template_effect(() => set_text(text_11, ev().subtitle));
 						append($$anchor, span_10);
 					};
@@ -9684,8 +17306,7 @@ createHTML: (html) => {
 						var fragment_4 = comment();
 						each(first_child(fragment_4), 17, () => ev().tags, index, ($$anchor, tag) => {
 							var span_11 = root_10$2();
-							var text_12 = child(span_11, true);
-							reset(span_11);
+							var text_12 = only_child(span_11, true);
 							template_effect(() => set_text(text_12, get(tag)));
 							append($$anchor, span_11);
 						});
@@ -9695,9 +17316,7 @@ createHTML: (html) => {
 						if (ev().tags?.length) $$render(consequent_8);
 					});
 					reset(div_4);
-					var span_12 = sibling(div_4, 2);
-					var text_13 = child(span_12, true);
-					reset(span_12);
+					var text_13 = only_child(sibling(div_4, 2), true);
 					template_effect(($0, $1) => {
 						set_text(text_8, $0);
 						set_text(text_9, ev().title);
@@ -9891,13 +17510,11 @@ createHTML: (html) => {
 				let classes_6;
 				var div_9 = child(div_8);
 				var span_13 = child(div_9);
-				var text_15 = child(span_13, true);
-				reset(span_13);
+				var text_15 = only_child(span_13, true);
 				var node_13 = sibling(span_13, 2);
 				var consequent_9 = ($$anchor) => {
 					var span_14 = root_14$1();
-					var text_16 = child(span_14, true);
-					reset(span_14);
+					var text_16 = only_child(span_14, true);
 					template_effect(() => set_text(text_16, get(day).dateLabel));
 					append($$anchor, span_14);
 				};
@@ -9942,8 +17559,7 @@ createHTML: (html) => {
 				};
 				var consequent_13 = ($$anchor) => {
 					var div_12 = root_18$1();
-					var text_17 = child(div_12, true);
-					reset(div_12);
+					var text_17 = only_child(div_12, true);
 					template_effect(() => set_text(text_17, get(L).noEvents));
 					append($$anchor, div_12);
 				};
@@ -9953,11 +17569,11 @@ createHTML: (html) => {
 				});
 				reset(div_7);
 				template_effect(($0) => {
-					classes_5 = set_class(div_7, 1, "ag-wday ag-wday--past svelte-uhwfyj", null, classes_5, $0);
+					classes_5 = set_class(div_7, 1, "ag-wday ag-wday--past svelte-uhwfyj", null, classes_5, { "ag-wday--disabled": $0 });
 					set_attribute(div_7, "data-day", get(day).ms);
 					classes_6 = set_class(div_8, 1, "ag-wday-head svelte-uhwfyj", null, classes_6, { "ag-wday-head--click": !!get(ondayclick) });
 					set_text(text_15, get(day).dayName);
-				}, [() => ({ "ag-wday--disabled": get(disabledSet).has(get(day).ms) })]);
+				}, [() => get(disabledSet).has(get(day).ms)]);
 				delegated("click", div_8, function(...$$args) {
 					(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
 				});
@@ -9972,15 +17588,13 @@ createHTML: (html) => {
 				var node_19 = child(div_15);
 				var consequent_15 = ($$anchor) => {
 					var span_15 = root_20$1();
-					var text_18 = child(span_15, true);
-					reset(span_15);
+					var text_18 = only_child(span_15, true);
 					template_effect(() => set_text(text_18, get(L).today));
 					append($$anchor, span_15);
 				};
 				var consequent_16 = ($$anchor) => {
 					var span_16 = root_21$1();
-					var text_19 = child(span_16, true);
-					reset(span_16);
+					var text_19 = only_child(span_16, true);
 					template_effect(() => set_text(text_19, get(L).tomorrow));
 					append($$anchor, span_16);
 				};
@@ -9989,13 +17603,11 @@ createHTML: (html) => {
 					else if (get(day).tier === "tomorrow") $$render(consequent_16, 1);
 				});
 				var span_17 = sibling(node_19, 2);
-				var text_20 = child(span_17, true);
-				reset(span_17);
+				var text_20 = only_child(span_17, true);
 				var node_20 = sibling(span_17, 2);
 				var consequent_17 = ($$anchor) => {
 					var span_18 = root_14$1();
-					var text_21 = child(span_18, true);
-					reset(span_18);
+					var text_21 = only_child(span_18, true);
 					template_effect(() => set_text(text_21, get(day).dateLabel));
 					append($$anchor, span_18);
 				};
@@ -10028,13 +17640,11 @@ createHTML: (html) => {
 						let classes_9;
 						let styles_5;
 						var span_19 = sibling(child(button_3), 2);
-						var text_22 = child(span_19, true);
-						reset(span_19);
+						var text_22 = only_child(span_19, true);
 						var node_24 = sibling(span_19, 2);
 						var consequent_19 = ($$anchor) => {
 							var span_20 = root_22();
-							var text_23 = child(span_20);
-							reset(span_20);
+							var text_23 = only_child(span_20);
 							template_effect(() => set_text(text_23, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
 							append($$anchor, span_20);
 						};
@@ -10062,8 +17672,7 @@ createHTML: (html) => {
 				var consequent_21 = ($$anchor) => {
 					var div_18 = root_25();
 					let classes_10;
-					var text_24 = child(div_18, true);
-					reset(div_18);
+					var text_24 = only_child(div_18, true);
 					template_effect(() => {
 						classes_10 = set_class(div_18, 1, "ag-wday-empty svelte-uhwfyj", null, classes_10, { "ag-wday-empty--click": !!get(ondayclick) });
 						set_text(text_24, get(L).noEvents);
@@ -10106,9 +17715,7 @@ createHTML: (html) => {
 						each(first_child(fragment_10), 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor, ev) => {
 							var div_24 = root_28();
 							var div_25 = child(div_24);
-							var span_21 = child(div_25);
-							var text_25 = child(span_21, true);
-							reset(span_21);
+							var text_25 = only_child(child(div_25), true);
 							reset(div_25);
 							var node_28 = sibling(div_25, 2);
 							eventCard(node_28, () => get(ev), () => true);
@@ -10172,8 +17779,7 @@ createHTML: (html) => {
 					var node_35 = sibling(node_34, 2);
 					var consequent_28 = ($$anchor) => {
 						var button_4 = root_30();
-						var text_26 = child(button_4, true);
-						reset(button_4);
+						var text_26 = only_child(button_4, true);
 						template_effect(($0) => {
 							set_attribute(button_4, "aria-expanded", get(dayExpanded));
 							set_text(text_26, $0);
@@ -10195,18 +17801,18 @@ createHTML: (html) => {
 					else $$render(alternate_1, -1);
 				});
 				reset(div_13);
-				template_effect(($0) => {
-					classes_7 = set_class(div_13, 1, "ag-wday svelte-uhwfyj", null, classes_7, $0);
+				template_effect(($0, $1) => {
+					classes_7 = set_class(div_13, 1, "ag-wday svelte-uhwfyj", null, classes_7, {
+						"ag-wday--today": get(day).tier === "today",
+						"ag-wday--tomorrow": get(day).tier === "tomorrow",
+						"ag-wday--equal": get(equalDays),
+						"ag-wday--disabled": $0,
+						"ag-wday--drop": $1
+					});
 					set_attribute(div_13, "data-day", get(day).ms);
 					classes_8 = set_class(div_14, 1, "ag-wday-head svelte-uhwfyj", null, classes_8, { "ag-wday-head--click": !!get(ondayclick) });
 					set_text(text_20, get(day).dayName);
-				}, [() => ({
-					"ag-wday--today": get(day).tier === "today",
-					"ag-wday--tomorrow": get(day).tier === "tomorrow",
-					"ag-wday--equal": get(equalDays),
-					"ag-wday--disabled": get(disabledSet).has(get(day).ms),
-					"ag-wday--drop": get(dropDay) === get(day).ms && isDropDay(get(day))
-				})]);
+				}, [() => get(disabledSet).has(get(day).ms), () => get(dropDay) === get(day).ms && isDropDay(get(day))]);
 				event("dragover", div_13, (e) => {
 					if (!isDropDay(get(day))) return;
 					e.preventDefault();
@@ -10732,13 +18338,11 @@ createHTML: (html) => {
 				let classes_3;
 				let styles_2;
 				var span = sibling(child(button), 2);
-				var text = child(span, true);
-				reset(span);
+				var text = only_child(span, true);
 				var node_2 = sibling(span, 2);
 				var consequent = ($$anchor) => {
 					var span_1 = root_1$3();
-					var text_1 = child(span_1);
-					reset(span_1);
+					var text_1 = only_child(span_1);
 					template_effect(() => set_text(text_1, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
 					append($$anchor, span_1);
 				};
@@ -10757,8 +18361,7 @@ createHTML: (html) => {
 			var node_3 = sibling(node_1, 2);
 			var consequent_1 = ($$anchor) => {
 				var button_1 = root_3$3();
-				var text_2 = child(button_1, true);
-				reset(button_1);
+				var text_2 = only_child(button_1, true);
 				template_effect(($0) => {
 					set_attribute(button_1, "aria-expanded", get(allDayExpanded));
 					set_text(text_2, $0);
@@ -10792,8 +18395,7 @@ createHTML: (html) => {
 				height: "64px"
 			});
 			var div_6 = child(div_5);
-			var text_3 = child(div_6, true);
-			reset(div_6);
+			var text_3 = only_child(div_6, true);
 			var node_5 = sibling(div_6, 4);
 			var consequent_4 = ($$anchor) => {
 				const slot = /* @__PURE__ */ user_derived(() => get(blockedSlots).find((s) => (!s.day || s.day === (new Date(get(dayMs)).getDay() === 0 ? 7 : new Date(get(dayMs)).getDay())) && get(hour) >= s.start && get(hour) < s.end));
@@ -10801,8 +18403,7 @@ createHTML: (html) => {
 				var node_6 = first_child(fragment);
 				var consequent_3 = ($$anchor) => {
 					var span_2 = root_5$3();
-					var text_4 = child(span_2, true);
-					reset(span_2);
+					var text_4 = only_child(span_2, true);
 					template_effect(() => set_text(text_4, get(slot).label));
 					append($$anchor, span_2);
 				};
@@ -10825,9 +18426,7 @@ createHTML: (html) => {
 		var consequent_5 = ($$anchor) => {
 			var div_7 = root_7$3();
 			let styles_4;
-			var span_3 = child(div_7);
-			var text_5 = child(span_3, true);
-			reset(span_3);
+			var text_5 = only_child(child(div_7), true);
 			next(2);
 			reset(div_7);
 			template_effect(() => {
@@ -10852,13 +18451,11 @@ createHTML: (html) => {
 				children: ($$anchor, $$slotProps) => {
 					var fragment_1 = root_13();
 					var span_4 = first_child(fragment_1);
-					var text_6 = child(span_4, true);
-					reset(span_4);
+					var text_6 = only_child(span_4, true);
 					var node_10 = sibling(span_4, 2);
 					var consequent_6 = ($$anchor) => {
 						var span_5 = root_8$3();
-						var text_7 = child(span_5);
-						reset(span_5);
+						var text_7 = only_child(span_5);
 						template_effect(($0, $1) => set_text(text_7, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(p).ev.start, $$props.locale), () => fmtTime$1(get(p).ev.end, $$props.locale)]);
 						append($$anchor, span_5);
 					};
@@ -10868,8 +18465,7 @@ createHTML: (html) => {
 					var node_11 = sibling(node_10, 2);
 					var consequent_7 = ($$anchor) => {
 						var span_6 = root_9$1();
-						var text_8 = child(span_6, true);
-						reset(span_6);
+						var text_8 = only_child(span_6, true);
 						template_effect(() => set_text(text_8, get(p).ev.subtitle));
 						append($$anchor, span_6);
 					};
@@ -10879,8 +18475,7 @@ createHTML: (html) => {
 					var node_12 = sibling(node_11, 2);
 					var consequent_8 = ($$anchor) => {
 						var span_7 = root_10$1();
-						var text_9 = child(span_7, true);
-						reset(span_7);
+						var text_9 = only_child(span_7, true);
 						template_effect(() => set_text(text_9, get(p).ev.location));
 						append($$anchor, span_7);
 					};
@@ -10892,8 +18487,7 @@ createHTML: (html) => {
 						var div_9 = root_12$1();
 						each(div_9, 21, () => get(p).ev.tags, index, ($$anchor, tag) => {
 							var span_8 = root_11$1();
-							var text_10 = child(span_8, true);
-							reset(span_8);
+							var text_10 = only_child(span_8, true);
 							template_effect(() => set_text(text_10, get(tag)));
 							append($$anchor, span_8);
 						});
@@ -10915,8 +18509,7 @@ createHTML: (html) => {
 			};
 			var consequent_11 = ($$anchor) => {
 				var span_10 = root_15();
-				var text_11 = child(span_10, true);
-				reset(span_10);
+				var text_11 = only_child(span_10, true);
 				template_effect(() => set_text(text_11, get(L).upNext));
 				append($$anchor, span_10);
 			};
@@ -10979,9 +18572,7 @@ createHTML: (html) => {
 			const gH = /* @__PURE__ */ user_derived(() => Math.max(12, (get(drag).payload.end.getTime() - get(drag).payload.start.getTime()) / HOUR_MS * HOUR_HEIGHT));
 			var div_10 = root_18();
 			let styles_6;
-			var span_13 = child(div_10);
-			var text_12 = child(span_13);
-			reset(span_13);
+			var text_12 = only_child(child(div_10));
 			reset(div_10);
 			template_effect(($0, $1) => {
 				styles_6 = set_style(div_10, "", styles_6, {
@@ -11009,8 +18600,7 @@ createHTML: (html) => {
 			};
 			var alternate = ($$anchor) => {
 				var span_14 = root_19();
-				var text_13 = child(span_14, true);
-				reset(span_14);
+				var text_13 = only_child(span_14, true);
 				template_effect(() => set_text(text_13, get(L).nothingScheduled));
 				append($$anchor, span_14);
 			};
@@ -11200,14 +18790,12 @@ createHTML: (html) => {
 			var div_3 = sibling(button, 2);
 			var span = child(div_3);
 			let classes_3;
-			var text = child(span, true);
-			reset(span);
+			var text = only_child(span, true);
 			var node = sibling(span, 2);
 			var consequent = ($$anchor) => {
 				var span_1 = root$2();
 				let classes_4;
-				var text_1 = child(span_1, true);
-				reset(span_1);
+				var text_1 = only_child(span_1, true);
 				template_effect(() => {
 					classes_4 = set_class(span_1, 1, "mw-day-num svelte-1d18hkf", null, classes_4, { "mw-day-num--today": get(cell).isToday });
 					set_text(text_1, get(cell).dayNum);
@@ -11222,8 +18810,7 @@ createHTML: (html) => {
 			var node_1 = child(div_4);
 			var consequent_1 = ($$anchor) => {
 				var span_2 = root_1$2();
-				var text_2 = child(span_2, true);
-				reset(span_2);
+				var text_2 = only_child(span_2, true);
 				template_effect(() => set_text(text_2, get(L).noEvents));
 				append($$anchor, span_2);
 			};
@@ -11242,21 +18829,18 @@ createHTML: (html) => {
 						children: ($$anchor, $$slotProps) => {
 							var fragment_1 = root_3$2();
 							var span_3 = first_child(fragment_1);
-							var text_3 = child(span_3, true);
-							reset(span_3);
+							var text_3 = only_child(span_3, true);
 							var node_4 = sibling(span_3, 2);
 							var consequent_2 = ($$anchor) => {
 								var span_4 = root_2$2();
-								var text_4 = child(span_4, true);
-								reset(span_4);
+								var text_4 = only_child(span_4, true);
 								template_effect(() => set_text(text_4, get(L).allDay));
 								append($$anchor, span_4);
 							};
 							var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
 							var alternate = ($$anchor) => {
 								var span_5 = root_2$2();
-								var text_5 = child(span_5, true);
-								reset(span_5);
+								var text_5 = only_child(span_5, true);
 								template_effect(($0) => set_text(text_5, $0), [() => fmtTime(get(ev).start)]);
 								append($$anchor, span_5);
 							};
@@ -11271,20 +18855,21 @@ createHTML: (html) => {
 					});
 					reset(div_5);
 					reset(button_1);
-					template_effect(($0, $1, $2) => {
-						classes_5 = set_class(button_1, 1, "mw-ev svelte-1d18hkf", null, classes_5, $0);
-						set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}${$1 ?? ""}, ${$2 ?? ""}`);
-						styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
-					}, [
-						() => ({
+					template_effect(($0, $1, $2, $3) => {
+						classes_5 = set_class(button_1, 1, "mw-ev svelte-1d18hkf", null, classes_5, {
 							"mw-ev--selected": selectedEventId() === get(ev).id,
-							"mw-ev--allday": isAllDay(get(ev)) || isMultiDay(get(ev)),
-							"mw-ev--current": !isAllDay(get(ev)) && !isMultiDay(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
+							"mw-ev--allday": $0,
+							"mw-ev--current": $1,
 							"mw-ev--cancelled": get(ev).status === "cancelled",
 							"mw-ev--tentative": get(ev).status === "tentative",
 							"mw-ev--full": get(ev).status === "full",
 							"mw-ev--limited": get(ev).status === "limited"
-						}),
+						});
+						set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}${$2 ?? ""}, ${$3 ?? ""}`);
+						styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
+					}, [
+						() => isAllDay(get(ev)) || isMultiDay(get(ev)),
+						() => !isAllDay(get(ev)) && !isMultiDay(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
 						() => statusText(get(ev)),
 						() => evTimeLabel(get(ev))
 					]);
@@ -11305,8 +18890,7 @@ createHTML: (html) => {
 				var node_5 = sibling(node_2, 2);
 				var consequent_3 = ($$anchor) => {
 					var button_2 = root_5$2();
-					var text_6 = child(button_2, true);
-					reset(button_2);
+					var text_6 = only_child(button_2, true);
 					template_effect(($0, $1) => {
 						set_attribute(button_2, "aria-expanded", $0);
 						set_text(text_6, $1);
@@ -11548,8 +19132,7 @@ createHTML: (html) => {
 		var div_1 = child(div);
 		each(div_1, 21, () => get(weekdayLabels), index, ($$anchor, name) => {
 			var div_2 = root$1();
-			var text = child(div_2, true);
-			reset(div_2);
+			var text = only_child(div_2, true);
 			template_effect(() => set_text(text, get(name)));
 			append($$anchor, div_2);
 		});
@@ -11563,8 +19146,7 @@ createHTML: (html) => {
 				let classes_1;
 				var span = child(div_5);
 				let classes_2;
-				var text_1 = child(span, true);
-				reset(span);
+				var text_1 = only_child(span, true);
 				var div_6 = sibling(span, 2);
 				var node = child(div_6);
 				each(node, 17, () => get(expandedMs) === get(cell).ms ? get(cell).all : get(cell).chips, (ev) => ev.id + get(cell).ms, ($$anchor, ev) => {
@@ -11590,8 +19172,7 @@ createHTML: (html) => {
 						var node_3 = sibling(child(button_1), 2);
 						var consequent_1 = ($$anchor) => {
 							var span_1 = root_2$1();
-							var text_2 = child(span_1, true);
-							reset(span_1);
+							var text_2 = only_child(span_1, true);
 							template_effect(($0) => set_text(text_2, $0), [() => chipTime(get(ev))]);
 							append($$anchor, span_1);
 						};
@@ -11599,9 +19180,7 @@ createHTML: (html) => {
 						if_block(node_3, ($$render) => {
 							if (get(d)) $$render(consequent_1);
 						});
-						var span_2 = sibling(node_3, 2);
-						var text_3 = child(span_2, true);
-						reset(span_2);
+						var text_3 = only_child(sibling(node_3, 2), true);
 						reset(button_1);
 						template_effect(($0) => {
 							classes_4 = set_class(button_1, 1, "mg-chip svelte-pvjuld", null, classes_4, {
@@ -11629,8 +19208,7 @@ createHTML: (html) => {
 				var node_4 = sibling(node, 2);
 				var consequent_2 = ($$anchor) => {
 					var button_2 = root_4$1();
-					var text_4 = child(button_2, true);
-					reset(button_2);
+					var text_4 = only_child(button_2, true);
 					template_effect(($0, $1) => {
 						set_attribute(button_2, "aria-expanded", get(ondayclick) ? void 0 : false);
 						set_attribute(button_2, "aria-label", $0);
@@ -11641,8 +19219,7 @@ createHTML: (html) => {
 				};
 				var consequent_3 = ($$anchor) => {
 					var button_3 = root_5$1();
-					var text_5 = child(button_3, true);
-					reset(button_3);
+					var text_5 = only_child(button_3, true);
 					template_effect(() => set_text(text_5, get(L).showLess));
 					delegated("click", button_3, (e) => {
 						e.stopPropagation();
@@ -11735,6 +19312,12 @@ createHTML: (html) => {
 				component: Planner
 			},
 			{
+				id: "week-scroll",
+				label: "Scroll",
+				mode: "week",
+				component: PlannerScroll
+			},
+			{
 				id: "day-agenda",
 				label: "Agenda",
 				mode: "day",
@@ -11769,6 +19352,10 @@ createHTML: (html) => {
 		const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventcreate ? void 0 : (range) => $$props.oneventcreate({
 			start: unzone(range.start),
 			end: unzone(range.end)
+		}));
+		const effectiveExternalDrop = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.onexternaldrop ? void 0 : (info) => $$props.onexternaldrop({
+			start: unzone(info.start),
+			dataTransfer: info.dataTransfer
 		}));
 		const effectiveMove = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventmove ? void 0 : (ev, start, end) => $$props.oneventmove(ev, unzone(start), unzone(end)));
 		function handleEventClick(ev, anchor) {
@@ -12147,8 +19734,7 @@ createHTML: (html) => {
 				each(div_3, 20, () => get(modes), (g) => g, ($$anchor, g) => {
 					var button = root();
 					let classes_2;
-					var text = child(button, true);
-					reset(button);
+					var text = only_child(button, true);
 					template_effect(() => {
 						classes_2 = set_class(button, 1, "cal-m-pill svelte-1b53e7w", null, classes_2, { "cal-m-pill--active": viewState.mode === g });
 						set_attribute(button, "aria-checked", viewState.mode === g);
@@ -12168,8 +19754,7 @@ createHTML: (html) => {
 			var node_3 = sibling(div_2, 2);
 			var consequent_2 = ($$anchor) => {
 				var span = root_2();
-				var text_1 = child(span, true);
-				reset(span);
+				var text_1 = only_child(span, true);
 				template_effect(() => set_text(text_1, get(dateLabel)));
 				append($$anchor, span);
 			};
@@ -12186,8 +19771,7 @@ createHTML: (html) => {
 			var consequent_4 = ($$anchor) => {
 				var fragment_3 = root_3();
 				var button_1 = first_child(fragment_3);
-				var text_2 = child(button_1, true);
-				reset(button_1);
+				var text_2 = only_child(button_1, true);
 				var button_2 = sibling(button_1, 2);
 				var button_3 = sibling(button_2, 2);
 				template_effect(() => {
@@ -12211,9 +19795,7 @@ createHTML: (html) => {
 			var node_6 = sibling(div_1, 2);
 			var consequent_5 = ($$anchor) => {
 				var div_5 = root_4();
-				var span_1 = child(div_5);
-				var text_3 = child(span_1, true);
-				reset(span_1);
+				var text_3 = only_child(child(div_5), true);
 				reset(div_5);
 				template_effect(() => set_text(text_3, get(dateLabel)));
 				append($$anchor, div_5);
@@ -12239,8 +19821,7 @@ createHTML: (html) => {
 			var consequent_8 = ($$anchor) => {
 				var fragment_5 = root_6();
 				var button_4 = first_child(fragment_5);
-				var text_4 = child(button_4, true);
-				reset(button_4);
+				var text_4 = only_child(button_4, true);
 				var button_5 = sibling(button_4, 2);
 				var button_6 = sibling(button_5, 2);
 				template_effect(() => {
@@ -12261,8 +19842,7 @@ createHTML: (html) => {
 			});
 			reset(div_7);
 			var span_2 = sibling(div_7, 2);
-			var text_5 = child(span_2, true);
-			reset(span_2);
+			var text_5 = only_child(span_2, true);
 			var div_8 = sibling(span_2, 2);
 			var node_9 = child(div_8);
 			var consequent_9 = ($$anchor) => {
@@ -12270,8 +19850,7 @@ createHTML: (html) => {
 				each(div_9, 20, () => get(labelsForMode), (label) => label, ($$anchor, label) => {
 					var button_7 = root();
 					let classes_3;
-					var text_6 = child(button_7, true);
-					reset(button_7);
+					var text_6 = only_child(button_7, true);
 					template_effect(() => {
 						classes_3 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_3, { "cal-pill--active": get(activeView)?.label === label });
 						set_attribute(button_7, "aria-checked", get(activeView)?.label === label);
@@ -12293,8 +19872,7 @@ createHTML: (html) => {
 				each(div_10, 20, () => get(modes), (g) => g, ($$anchor, g) => {
 					var button_8 = root();
 					let classes_4;
-					var text_7 = child(button_8, true);
-					reset(button_8);
+					var text_7 = only_child(button_8, true);
 					template_effect(() => {
 						classes_4 = set_class(button_8, 1, "cal-pill svelte-1b53e7w", null, classes_4, { "cal-pill--active": viewState.mode === g });
 						set_attribute(button_8, "aria-checked", viewState.mode === g);
@@ -12349,6 +19927,9 @@ createHTML: (html) => {
 					oneventclick: handleEventClick,
 					get oneventcreate() {
 						return get(effectiveCreate);
+					},
+					get onexternaldrop() {
+						return get(effectiveExternalDrop);
 					},
 					get readOnly() {
 						return readOnly();

@@ -18,4 +18,4 @@ export { wrapAdapterWithTimezone } from './core/timezone.js';
 // ─── Headless API ───────────────────────────────────────
 export { createCalendar, createAgenda, createRangeAgenda } from './headless/index.js';
 // ─── Text fitting (pretext) ─────────────────────────────
-export { fits, lineCount, textHeight, pickFit, fontOf, fitLabel, breakLines, typeset } from './text-fit.js';
+export { fits, lineCount, textHeight, textWidth, pickFit, fontOf, fitLabel, fitParts, breakLines, typeset } from './text-fit.js';

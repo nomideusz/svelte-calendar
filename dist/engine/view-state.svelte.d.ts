@@ -3,7 +3,7 @@ export type { DateRange };
 /**
  * Built-in view IDs. Custom view IDs are also supported — see CalendarViewId.
  */
-export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'day-mobile' | 'week-planner' | 'week-agenda' | 'week-mobile' | 'month-grid';
+export type BuiltInViewId = 'day-planner' | 'day-agenda' | 'day-mobile' | 'week-planner' | 'week-scroll' | 'week-agenda' | 'week-mobile' | 'month-grid';
 /**
  * Any view identifier. Use built-in strings like 'day-planner' or your own
  * custom IDs like 'day-kanban', 'week-resource', etc.

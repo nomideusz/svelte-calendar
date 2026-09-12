@@ -177,7 +177,7 @@
 		(v: Record<string, SettingValue>) => !views.includes(String(v.activeView)) && reason;
 	const PLANNERS = ["week-planner", "day-planner"];
 	const AGENDAS = ["week-agenda", "day-agenda"];
-	const WEEKS = ["week-planner", "week-agenda"];
+	const WEEKS = ["week-planner", "week-scroll", "week-agenda"];
 
 	const settingsFields: SettingsField[] = [
 		{
@@ -188,6 +188,7 @@
 			type: "select",
 			options: [
 				{ value: "week-planner", label: "Week Planner" },
+				{ value: "week-scroll", label: "Week Scroll" },
 				{ value: "day-planner", label: "Day Planner" },
 				{ value: "week-agenda", label: "Week Agenda" },
 				{ value: "day-agenda", label: "Day Agenda" },
@@ -243,7 +244,7 @@
 		},
 		{ key: "readOnly",
 			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle",
-			disabledWhen: inViews(PLANNERS, "No drag editing in this view") },
+			disabledWhen: inViews([...PLANNERS, "week-scroll"], "No drag editing in this view") },
 		{
 			key: "showModePills",
 			hint: "Day/Week switch in the header (prop: showModePills)",
@@ -338,8 +339,10 @@
 	];
 
 	// ── Seed data (auto-generated relative to today) ──────
-	const seed: TimelineEvent[] = createDemoEvents(today);
-	const recurring = createDemoRecurring();
+	// Both are state: moving a recurring occurrence takes that date out of its
+	// rule and files the result as a one-off, which is what a real host does.
+	let seed = $state<TimelineEvent[]>(createDemoEvents(today));
+	let recurring = $state(createDemoRecurring());
 
 	// ── Adapter (palette adapts to demo theme accent) ─────────
 	// Composite: one-off events (memory) + recurring schedule
@@ -348,7 +351,8 @@
 	const adapter = $derived(
 		createCompositeAdapter([
 			createMemoryAdapter(seed, { palette }),
-			createRecurringAdapter(recurring, { palette }),
+			// movable: the demo handles the move itself (see handleMove)
+			createRecurringAdapter(recurring, { palette, movable: true }),
 		]),
 	);
 
@@ -365,13 +369,39 @@
 
 	// ── Callbacks ──────────────────────────────────────────
 	let lastAction = $state("");
-	function handleClick(ev: TimelineEvent) {
-		lastAction = `Clicked: ${ev.title}`;
+	function handleClick(ev: TimelineEvent, anchor?: DOMRect) {
+		lastAction = anchor
+			? `Clicked: ${ev.title} (at ${Math.round(anchor.left)}, ${Math.round(anchor.top)})`
+			: `Clicked: ${ev.title}`;
+	}
+
+	// Drag the pill above the calendar onto a day: the view hands back the
+	// dropped time and whatever the source put on the dataTransfer.
+	function handleExternalDrop(info: { start: Date; dataTransfer: DataTransfer }) {
+		const title = info.dataTransfer.getData('text/plain') || 'Dropped class';
+		lastAction = `Dropped ${title} on ${info.start.toLocaleString()}`;
 	}
 	function handleCreate(range: { start: Date; end: Date }) {
 		lastAction = `Create: ${range.start.toLocaleTimeString()} – ${range.end.toLocaleTimeString()}`;
 	}
 	function handleMove(event: TimelineEvent, start: Date, end: Date) {
+		const ruleId = event.data?.recurringId as string | undefined;
+		if (ruleId) {
+			// A projected occurrence has no row of its own. Take this date out
+			// of the rule and keep the moved copy as a one-off — the pattern a
+			// host follows when someone drags one class out of its schedule.
+			const key = event.id.split('--')[1] ?? '';
+			const date = `${key.slice(0, 4)}-${key.slice(4, 6)}-${key.slice(6, 8)}`;
+			recurring = recurring.map((r) =>
+				r.id === ruleId ? { ...r, excludeDates: [...(r.excludeDates ?? []), date] } : r,
+			);
+			seed = [
+				...seed,
+				{ ...event, id: `${event.id}--moved`, start, end, data: { ...event.data, recurringId: undefined } },
+			];
+			lastAction = `Moved ${event.title} out of its schedule → ${start.toLocaleString()}`;
+			return;
+		}
 		lastAction = `Moved: ${event.title} → ${start.toLocaleTimeString()} – ${end.toLocaleTimeString()}`;
 	}
 	function handleViewChange(viewId: CalendarView["id"]) {
@@ -479,6 +509,13 @@
 	<Settings fields={settingsFields} bind:values={settingsValues} />
 
 	<div class="toolbar">
+		<div
+			class="drag-source"
+			draggable="true"
+			ondragstart={(e) => e.dataTransfer?.setData('text/plain', 'Vinyasa Flow')}
+			role="button"
+			tabindex="0"
+		>Vinyasa Flow — drag onto a day</div>
 		<div class="action-area">
 			{#if lastAction}
 				<div class="action">
@@ -516,6 +553,7 @@
 				disabledDates={disabledDates}
 				onviewchange={handleViewChange}
 				oneventclick={handleClick}
+				onexternaldrop={handleExternalDrop}
 				oneventcreate={handleCreate}
 				oneventmove={handleMove}
 				ondayclick={handleDayClick}
@@ -530,6 +568,18 @@
 </main>
 
 <style>
+	.drag-source {
+		flex: none;
+		padding: 4px 10px;
+		border: 1px dashed currentColor;
+		border-radius: 999px;
+		font-size: 12px;
+		opacity: 0.75;
+		cursor: grab;
+		user-select: none;
+	}
+	.drag-source:active { cursor: grabbing; }
+
 	main {
 		max-width: 1100px;
 		margin: 0 auto;

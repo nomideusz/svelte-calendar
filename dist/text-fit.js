@@ -13,9 +13,51 @@ export function fits(text, font, width, lines = 1) {
 export function textHeight(text, font, width, lineHeight) {
     return layout(prepare(text, font), width, lineHeight).height;
 }
+/** Natural (unwrapped) width of `text` in `font`, px. */
+export function textWidth(text, font) {
+    return measureNaturalWidth(prepareWithSegments(text, font));
+}
 /** Longest candidate (in given order) that fits in `lines`; the last one if none does. */
 export function pickFit(candidates, font, width, lines = 1) {
     return candidates.find((c) => fits(c, font, width, lines)) ?? candidates.at(-1) ?? '';
+}
+/**
+ * Which parts of a chip fit in `budget` px along one axis — width for a row
+ * of parts, height for a stack of them.
+ *
+ * Anchors (`priority: 0`) always show; they are what earns an ellipsis when
+ * even they overflow. The rest are added in priority order and the first one
+ * that does not fit ends it: a chip reads in one direction, so keeping a later
+ * part after dropping an earlier one reads as arbitrary.
+ *
+ * A budget of 0 — server-rendered, or before the first measurement — leaves
+ * the anchors, so the first paint is the important part and nothing else.
+ */
+export function fitParts(parts, budget, measure = textWidth) {
+    const shown = {};
+    for (const p of parts)
+        shown[p.key] = false;
+    const present = parts.filter((p) => p.size !== undefined || !!p.text);
+    const anchors = present.filter((p) => (p.priority ?? 1) === 0);
+    for (const p of anchors)
+        shown[p.key] = true;
+    if (!(budget > 0))
+        return shown;
+    const cost = (p) => (p.size ?? measure(p.text, p.font ?? '')) + (p.extra ?? 0);
+    let used = 0;
+    for (const p of anchors)
+        used += cost(p);
+    const optional = present
+        .filter((p) => (p.priority ?? 1) !== 0)
+        .sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1));
+    for (const p of optional) {
+        const c = cost(p);
+        if (used + c > budget)
+            break;
+        used += c;
+        shown[p.key] = true;
+    }
+    return shown;
 }
 /** The element's computed font as a canvas font string. */
 export function fontOf(el) {
@@ -141,23 +183,36 @@ export function typeset(text) {
             return;
         const font = fontOf(el);
         let width = 0;
-        const apply = () => {
-            if (!width)
-                return;
-            const lines = breakLines(text, font, width);
+        // A line span never wraps: canvas and layout disagree by a pixel now and
+        // then, and a line that wrapped inside its span — the browser hyphenating
+        // the last word with its own dictionary, "małżeń-" / "stwo" — read as a
+        // hole in the paragraph. Set as nowrap, a misfit is plain overflow, which
+        // is measurable: re-break a touch narrower, and only then hand the text
+        // back to the browser.
+        const set = (w) => {
+            const lines = breakLines(text, font, w);
             el.replaceChildren(...lines.map((l, i) => {
                 const s = document.createElement('span');
                 s.style.display = 'block';
+                s.style.whiteSpace = 'nowrap';
+                s.style.hyphens = 'manual';
                 s.style.textAlign = 'justify';
                 s.style.textAlignLast = i === lines.length - 1 ? 'auto' : 'justify';
                 s.textContent = l;
                 return s;
             }));
             for (const s of el.children)
-                if (s.scrollWidth > s.clientWidth + 1) {
-                    el.textContent = text;
+                if (s.scrollWidth > s.clientWidth + 1)
+                    return false;
+            return true;
+        };
+        const apply = () => {
+            if (!width)
+                return;
+            for (const w of [width, width - 2, width * 0.985, width * 0.97])
+                if (set(w))
                     return;
-                }
+            el.textContent = text;
         };
         const ro = new ResizeObserver(([e]) => {
             if (e.contentRect.width === width)

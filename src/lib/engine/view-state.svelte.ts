@@ -23,6 +23,7 @@ export type BuiltInViewId =
 	| 'day-agenda'
 	| 'day-mobile'
 	| 'week-planner'
+	| 'week-scroll'
 	| 'week-agenda'
 	| 'week-mobile'
 	| 'month-grid';
