@@ -11,7 +11,7 @@
 	 */
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, DAY_MS, startOfWeek, dayNum, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import { sod, addDaysMs, startOfWeek, dayNum, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import { weekdayLong, monthLong } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
@@ -191,11 +191,11 @@
 	const weekDays = $derived.by((): DayGroup[] => {
 		const now = clock.tick;
 		const todayMs = clock.today;
-		const tomorrowMs = todayMs + DAY_MS;
+		const tomorrowMs = addDaysMs(todayMs, 1);
 		const out: DayGroup[] = [];
 		for (let i = 0; i < customDays; i++) {
-			const ms = weekStartMs + i * DAY_MS;
-			const dEnd = ms + DAY_MS;
+			const ms = addDaysMs(weekStartMs, i);
+			const dEnd = addDaysMs(ms, 1);
 			const dayEvts = events
 				.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms)
 				.sort((a, b) => a.start.getTime() - b.start.getTime());

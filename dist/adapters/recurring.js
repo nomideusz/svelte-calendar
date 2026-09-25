@@ -1,4 +1,4 @@
-import { startOfWeek, DAY_MS } from '../core/time.js';
+import { startOfWeek, addDaysMs, diffDays, DAY_MS } from '../core/time.js';
 import { VIVID_PALETTE } from '../core/palette.js';
 // ── Helpers ─────────────────────────────────────────────
 /** Parse "HH:MM" into [hours, minutes] */
@@ -100,14 +100,14 @@ function computeUntilFromCount(rec, startDateObj, mondayStart) {
             const maxCycles = Math.ceil(count / days.length) + 2;
             for (let c = 0; c < maxCycles; c++) {
                 for (const day of days) {
-                    const dayMs = weekMs + isoWeekdayToOffset(day) * DAY_MS;
+                    const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day));
                     if (dayMs >= startMs) {
                         remaining--;
                         if (remaining === 0)
                             return new Date(dayMs);
                     }
                 }
-                weekMs += interval * 7 * DAY_MS;
+                weekMs = addDaysMs(weekMs, interval * 7);
             }
             return undefined;
         }
@@ -165,16 +165,16 @@ function projectWeekly(rec, range, startDate, effectiveUntil, mondayStart, out) 
         weekMs = anchorWeekMs;
     }
     else {
-        const weeksBetween = Math.floor((rangeStartMs - anchorWeekMs) / (7 * DAY_MS));
+        const weeksBetween = Math.floor(diffDays(rangeStartMs, anchorWeekMs) / 7);
         const skip = Math.floor(weeksBetween / interval);
-        weekMs = anchorWeekMs + skip * interval * 7 * DAY_MS;
-        if (weekMs + 7 * DAY_MS <= rangeStartMs) {
-            weekMs += interval * 7 * DAY_MS;
+        weekMs = addDaysMs(anchorWeekMs, skip * interval * 7);
+        if (addDaysMs(weekMs, 7) <= rangeStartMs) {
+            weekMs = addDaysMs(weekMs, interval * 7);
         }
     }
     while (weekMs < rangeEndMs) {
         for (const day of days) {
-            const dayMs = weekMs + isoWeekdayToOffset(day) * DAY_MS;
+            const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day));
             if (startDateMs != null && dayMs < startDateMs)
                 continue;
             if (dayMs >= rangeEndMs)
@@ -187,7 +187,7 @@ function projectWeekly(rec, range, startDate, effectiveUntil, mondayStart, out) 
                 out.push(ev);
             }
         }
-        weekMs += interval * 7 * DAY_MS;
+        weekMs = addDaysMs(weekMs, interval * 7);
     }
 }
 function projectMonthly(rec, range, startDate, effectiveUntil, out) {

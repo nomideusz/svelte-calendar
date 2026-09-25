@@ -9,7 +9,7 @@
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
-import { DAY_MS, HOUR_MS, sod, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
+import { DAY_MS, HOUR_MS, sod, addDaysMs, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
 import { fmtH, fmtTime } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
 let { height = null, events = [], style = "", locale, focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
@@ -36,7 +36,7 @@ const hourCount = $derived(Math.max(1, endHour - startHour));
 const gridHeight = $derived(hourCount * HOUR_HEIGHT);
 // ── Day state ──────────────────────────────────────
 const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
-const dayEnd = $derived(dayMs + DAY_MS);
+const dayEnd = $derived(addDaysMs(dayMs, 1));
 const isToday = $derived(dayMs === clock.today);
 const isDisabled = $derived(disabledSet.has(dayMs));
 // ── Load range ─────────────────────────────────────

@@ -17,7 +17,7 @@
  */
 import { SvelteMap } from 'svelte/reactivity';
 import { untrack } from 'svelte';
-import { sod, DAY_MS } from '../core/time.js';
+import { sod, addDaysMs } from '../core/time.js';
 /**
  * Create a reactive event store backed by a CalendarAdapter.
  *
@@ -103,7 +103,7 @@ export function createEventStore(adapter) {
         },
         forDay(date) {
             const dayStart = new Date(sod(date.getTime()));
-            const dayEnd = new Date(dayStart.getTime() + DAY_MS);
+            const dayEnd = new Date(addDaysMs(dayStart.getTime(), 1));
             return eventArray.filter((ev) => overlaps(ev, dayStart, dayEnd));
         },
         byId(id) {

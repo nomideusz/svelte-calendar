@@ -214,7 +214,7 @@
 		const map = new Map<number, PosEvent[]>();
 
 		for (const day of dayCols) {
-			const dayEnd = day.ms + DAY_MS;
+			const dayEnd = addDaysMs(day.ms, 1);
 			const bandStart = day.ms + startHour * HOUR_MS;
 			const bandEnd = day.ms + endHour * HOUR_MS;
 			const infos: LaneInfo[] = [];
@@ -485,7 +485,7 @@
 	const axisGhost = $derived.by((): Ghost | null => {
 		if (!drag?.active || !drag.payload) return null;
 		const s = drag.payload.start.getTime();
-		const day = dayCols.find((d) => s >= d.ms && s < d.ms + 24 * HOUR_MS);
+		const day = dayCols.find((d) => s >= d.ms && s < addDaysMs(d.ms, 1));
 		return day ? ghostForDay(day.ms) : null;
 	});
 

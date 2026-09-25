@@ -7,7 +7,7 @@
  * For date-fns locale integration later, this module can import from
  * `date-fns/locale/*` and pass to `format()`.
  */
-import { DAY_MS } from './time.js';
+import { addDaysMs } from './time.js';
 /** English defaults — used unless overridden via `setLabels()`. */
 export const defaultLabels = {
     today: 'Today',
@@ -155,9 +155,9 @@ export function fmtDay(ms, todayMs, opts, locale) {
     const L = _labels;
     if (ms === todayMs)
         return opts?.short ? L.today : `${L.today} · ${short}`;
-    if (ms === todayMs - DAY_MS)
+    if (ms === addDaysMs(todayMs, -1))
         return opts?.short ? L.yesterday : `${L.yesterday} · ${short}`;
-    if (ms === todayMs + DAY_MS)
+    if (ms === addDaysMs(todayMs, 1))
         return opts?.short ? L.tomorrow : `${L.tomorrow} · ${short}`;
     if (opts?.short) {
         return new Date(ms).toLocaleDateString(loc, { weekday: 'short', day: 'numeric' });
@@ -170,7 +170,7 @@ export function fmtDay(ms, todayMs, opts, locale) {
 export function fmtWeekRange(weekStartMs, locale, weekEndMs) {
     const loc = locale ?? defaultLocale;
     const s = new Date(weekStartMs);
-    const e = new Date(weekEndMs ?? weekStartMs + 6 * DAY_MS);
+    const e = new Date(weekEndMs ?? addDaysMs(weekStartMs, 6));
     const sm = s.toLocaleDateString(loc, { month: 'short' });
     const em = e.toLocaleDateString(loc, { month: 'short' });
     const sy = s.getFullYear();

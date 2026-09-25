@@ -46,7 +46,7 @@ import { toZonedTime, fromZonedTime, wrapAdapterWithTimezone } from '../core/tim
 import { createSelection } from '../engine/selection.svelte.js';
 import { createDragState } from '../engine/drag.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
-import { sod, DAY_MS, HOUR_MS, startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay, } from '../core/time.js';
+import { sod, addDaysMs, HOUR_MS, startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay, } from '../core/time.js';
 import { monthLong, weekdayLong, weekdayShort } from '../core/locale.js';
 export function createCalendar(options) {
     const { adapter, mondayStart: initialMondayStart = true, initialDate: rawInitialDate, locale, visibleHours, snapInterval = 15, equalDays = false, hideDays, blockedSlots, disabledDates, days: initialDayCount = 7, readOnly = false, minDuration, maxDuration, oneventclick, oneventcreate, oneventmove, } = options;
@@ -85,14 +85,14 @@ export function createCalendar(options) {
         const events = store.events;
         const todayMs = clock.today;
         const result = [];
-        for (let ms = startMs; ms < endMs; ms += DAY_MS) {
+        for (let ms = startMs; ms < endMs; ms = addDaysMs(ms, 1)) {
             const date = new Date(ms);
             const jsDay = date.getDay();
             const isoDay = jsDay === 0 ? 7 : jsDay;
             // Skip hidden days
             if (hideDays?.includes(isoDay))
                 continue;
-            const dayEnd = ms + DAY_MS;
+            const dayEnd = addDaysMs(ms, 1);
             const dayEventsAll = events
                 .filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
                 .sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -134,7 +134,7 @@ export function createCalendar(options) {
             if (chunk.length === 0)
                 continue;
             const periodStart = chunk[0].ms;
-            const periodEnd = periodStart + dayCount * DAY_MS;
+            const periodEnd = addDaysMs(periodStart, dayCount);
             result.push({
                 periodStart,
                 isCurrent: todayMs >= periodStart && todayMs < periodEnd,

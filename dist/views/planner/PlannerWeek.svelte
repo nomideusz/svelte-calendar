@@ -131,7 +131,7 @@ const layoutByDay = $derived.by(() => {
 	const rsP = drag?.active && (drag.mode === "resize-start" || drag.mode === "resize-end") ? drag.payload : null;
 	const map = new Map();
 	for (const day of dayCols) {
-		const dayEnd = day.ms + DAY_MS;
+		const dayEnd = addDaysMs(day.ms, 1);
 		const bandStart = day.ms + startHour * HOUR_MS;
 		const bandEnd = day.ms + endHour * HOUR_MS;
 		const infos = [];
@@ -393,7 +393,7 @@ function ghostForDay(dayMs) {
 const axisGhost = $derived.by(() => {
 	if (!drag?.active || !drag.payload) return null;
 	const s = drag.payload.start.getTime();
-	const day = dayCols.find((d) => s >= d.ms && s < d.ms + 24 * HOUR_MS);
+	const day = dayCols.find((d) => s >= d.ms && s < addDaysMs(d.ms, 1));
 	return day ? ghostForDay(day.ms) : null;
 });
 // ── Drag-to-create (mouse: sweep; touch: long-press) ──

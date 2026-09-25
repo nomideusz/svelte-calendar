@@ -48,7 +48,7 @@ import { createSelection } from '../engine/selection.svelte.js';
 import { createDragState } from '../engine/drag.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
 import {
-	sod, DAY_MS, HOUR_MS,
+	sod, addDaysMs, HOUR_MS,
 	startOfWeek as sowFn,
 	isAllDay, isMultiDay, segmentForDay,
 } from '../core/time.js';
@@ -128,7 +128,7 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 		const todayMs = clock.today;
 		const result: HeadlessDay[] = [];
 
-		for (let ms = startMs; ms < endMs; ms += DAY_MS) {
+		for (let ms = startMs; ms < endMs; ms = addDaysMs(ms, 1)) {
 			const date = new Date(ms);
 			const jsDay = date.getDay();
 			const isoDay = jsDay === 0 ? 7 : jsDay;
@@ -136,7 +136,7 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 			// Skip hidden days
 			if (hideDays?.includes(isoDay)) continue;
 
-			const dayEnd = ms + DAY_MS;
+			const dayEnd = addDaysMs(ms, 1);
 			const dayEventsAll = events
 				.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
 				.sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -180,7 +180,7 @@ export function createCalendar(options: HeadlessCalendarOptions): HeadlessCalend
 			const chunk = days.slice(i, i + dayCount);
 			if (chunk.length === 0) continue;
 			const periodStart = chunk[0].ms;
-			const periodEnd = periodStart + dayCount * DAY_MS;
+			const periodEnd = addDaysMs(periodStart, dayCount);
 			result.push({
 				periodStart,
 				isCurrent: todayMs >= periodStart && todayMs < periodEnd,

@@ -12,7 +12,7 @@
 *   Clean numbered schedule list.
 */
 import { createClock } from "../../core/clock.svelte.js";
-import { sod, DAY_MS, dayNum, isAllDay, isMultiDay } from "../../core/time.js";
+import { sod, addDaysMs, dayNum, isAllDay, isMultiDay } from "../../core/time.js";
 import { weekdayLong, monthLong } from "../../core/locale.js";
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
@@ -69,9 +69,9 @@ function handleClick(ev) {
 }
 // ── Day derivations ─────────────────────────────────
 const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
-const dayEnd = $derived(dayMs + DAY_MS);
+const dayEnd = $derived(addDaysMs(dayMs, 1));
 const isToday = $derived(dayMs === clock.today);
-const isTomorrow = $derived(dayMs === clock.today + DAY_MS);
+const isTomorrow = $derived(dayMs === addDaysMs(clock.today, 1));
 const isPastDay = $derived(equalDays ? false : dayMs < clock.today);
 /** All events for this day, sorted chronologically */
 const dayEvents = $derived.by(() => {

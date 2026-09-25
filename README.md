@@ -34,7 +34,9 @@ That's it — 6 views (Day/Week × Planner, Agenda, Mobile), auto-coloring, drag
 ## Views
 
 Switch between **Planner** (time grid), **Scroll** (weeks stacked in one
-vertical scroller — drag to move, drop onto a day, scrolls under a drag),
+vertical scroller, Hey-Calendar style — each class at the height of its
+start time, month names down the side; drag to move, drop onto a day,
+scrolls under a drag),
 **Agenda** (list) and the **Month** grid:
 
 ```svelte

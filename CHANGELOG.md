@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.21.0
+
+### Minor Changes
+
+- `week-scroll` takes after Hey Calendar. Each week row names its month down
+  the left side, bottom-to-top — in ink for the current week, quiet for the
+  rest — and a month that begins mid-week is named, with its year, in the
+  column where it begins ("OCTOBER 2026" beside Thu 1). Day headers read
+  "MON 23"; today is a pill in the accent colour, and a dashed now-line with
+  the time runs across today's cell.
+- Chips sit at the height of their start time. A day cell is a time axis —
+  `visibleHours`, or, without it, the hours the loaded events start in — and
+  a chip is placed where its hour falls, pushed just under the chip before it
+  when that one is in the way, so the order is time and nothing overlaps.
+  Blocked slots are bands on the same axis (their label steps aside when a
+  chip covers it), and all-day bars moved under the day, where they line up
+  across the row.
+
+### Patch Changes
+
+- Days are counted as calendar days everywhere, not as 24-hour steps. Past a
+  DST change (Europe: 2026-10-25) a sum of 24 h lands at 23:00 the day before:
+  `week-scroll` rows after it began on Sunday and showed every date a day off,
+  `createRangeAgenda().next()` paged into a Sunday-to-Saturday "week",
+  MonthGrid's October repeated the 25th, and a weekly `createRecurringAdapter`
+  rule with a summer `startDate` projected its November Mondays onto Sundays.
+  All now step with `addDaysMs`; a 23-hour spring day also counts as all-day.
+
 ## 0.20.1
 
 ### Patch Changes

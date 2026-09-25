@@ -8,7 +8,7 @@
 <script lang="ts">import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
-import { DAY_MS, sod, isAllDay, isMultiDay } from "../../core/time.js";
+import { DAY_MS, sod, addDaysMs, isAllDay, isMultiDay } from "../../core/time.js";
 import { startOfWeek as sowFn } from "../../core/time.js";
 import { fmtTime as _fmtTime, weekdayShort } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
@@ -47,7 +47,7 @@ const dayCells = $derived.by(() => {
 	const result = [];
 	const hideSet = new Set(hideDays ?? []);
 	for (let i = 0; i < customDays; i++) {
-		const ms = weekStart + i * DAY_MS;
+		const ms = addDaysMs(weekStart, i);
 		const d = new Date(ms);
 		const jsDay = d.getDay();
 		const isoDay = jsDay === 0 ? 7 : jsDay;
@@ -56,7 +56,7 @@ const dayCells = $derived.by(() => {
 		const isPast = equalDays ? false : ms < todayMs;
 		const isWeekend = jsDay === 0 || jsDay === 6;
 		const isDisabled = disabledSet.has(ms);
-		const dayEnd = ms + DAY_MS;
+		const dayEnd = addDaysMs(ms, 1);
 		const dayEvents = events.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
 		const allDayCount = dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)).length;
 		result.push({

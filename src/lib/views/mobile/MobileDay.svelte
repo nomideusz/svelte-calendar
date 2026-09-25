@@ -11,7 +11,7 @@
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { DAY_MS, HOUR_MS, sod, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import { DAY_MS, HOUR_MS, sod, addDaysMs, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
 	import { fmtH, fmtTime } from '../../core/locale.js';
 	import { createSwipe } from './swipe.js';
@@ -70,7 +70,7 @@
 
 	// ── Day state ──────────────────────────────────────
 	const dayMs = $derived(focusDate ? sod(focusDate.getTime()) : clock.today);
-	const dayEnd = $derived(dayMs + DAY_MS);
+	const dayEnd = $derived(addDaysMs(dayMs, 1));
 	const isToday = $derived(dayMs === clock.today);
 	const isDisabled = $derived(disabledSet.has(dayMs));
 

@@ -11,7 +11,7 @@
  *   vs.prev()      — go back one period
  *   vs.goToday()   — jump to today
  */
-import { startOfWeek as calcStartOfWeek, addDaysMs, DAY_MS } from '../core/time.js';
+import { startOfWeek as calcStartOfWeek, addDaysMs } from '../core/time.js';
 function inferMode(view) {
     if (view.startsWith('day'))
         return 'day';
@@ -23,7 +23,7 @@ function computeRange(focus, mode, mondayStart, dayCount = 7) {
     if (mode === 'day') {
         const start = new Date(focus);
         start.setHours(0, 0, 0, 0);
-        const end = new Date(start.getTime() + DAY_MS);
+        const end = new Date(addDaysMs(start.getTime(), 1));
         return { start, end };
     }
     if (mode === 'month') {
@@ -48,7 +48,7 @@ function computeRange(focus, mode, mondayStart, dayCount = 7) {
     start.setHours(0, 0, 0, 0);
     return {
         start,
-        end: new Date(start.getTime() + dayCount * DAY_MS),
+        end: new Date(addDaysMs(start.getTime(), dayCount)),
     };
 }
 export function createViewState(options = {}) {

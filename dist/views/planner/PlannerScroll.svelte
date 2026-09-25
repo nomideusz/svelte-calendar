@@ -7,8 +7,10 @@
   Modelled after Hey Calendar's week view:
   • Weeks stack vertically. Scroll up = past, down = future.
   • Day headers in each week row: "MON 23", "TUE 24", with accent pill for today.
-  • Month label in left gutter, vertical bottom-to-top.
-  • Events are clean horizontal bars with colour fill, "9AM- 10AM Title" inline.
+  • Month label in left gutter, vertical bottom-to-top; a month that begins
+    mid-week is labelled, with its year, in the column where it begins.
+  • Events are clean horizontal bars with colour fill, "9AM- 10AM Title" inline,
+    each at the height of its start time in the day.
   • Generous whitespace, thin dividers, minimal chrome.
 -->
 <script lang="ts">import { onMount, tick, untrack } from "svelte";
@@ -18,7 +20,7 @@ import { prefersReducedMotion } from "svelte/motion";
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
-import { DAY_MS, HOUR_MS, sod } from "../../core/time.js";
+import { DAY_MS, HOUR_MS, sod, addDaysMs } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
 import { weekdayShort, monthLong, fmtTime as _fmtTime, getLabels } from "../../core/locale.js";
 import { createChipFit } from "../shared/chip-fit.svelte.js";
@@ -61,12 +63,58 @@ const MAX_EVENTS_SHOWN = 5;
 // mount re-centres once the events have landed.
 const CHIP_H = 22;
 const CHIP_GAP = 3;
-const ROW_MIN = 120;
+/** The day's hours at their floor height — a quiet week is short, a busy
+*  day grows its row. Chips sit on this axis by start time. */
+const TIME_H = 120;
 const ROW_MARGIN = 12;
 /** Distance between two rows' tops; only a fallback now. */
 function rowPitch() {
 	const rows = el?.querySelectorAll("[data-week]");
-	return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : ROW_MIN + ROW_MARGIN;
+	return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : TIME_H + ROW_MARGIN;
+}
+// ─── Time axis ──────────────────────────────────
+// Without visibleHours the axis spans the hours the loaded events start in:
+// a timetable of 7:00–21:00 classes spread over 24 hours bunches them up.
+const eventHours = $derived.by(() => {
+	let lo = 24;
+	let hi = -1;
+	for (const ev of events) {
+		if (isAllDay(ev) || isMultiDay(ev)) continue;
+		const h = ev.start.getHours() + ev.start.getMinutes() / 60;
+		lo = Math.min(lo, h);
+		hi = Math.max(hi, h);
+	}
+	return hi < 0 ? [0, 24] : [Math.floor(lo), Math.min(24, Math.floor(hi) + 1)];
+});
+const startHour = $derived(visibleHours?.[0] ?? eventHours[0]);
+const endHour = $derived(visibleHours?.[1] ?? eventHours[1]);
+/** Where a chip starting this far into the day sits, px from the axis top.
+*  A chip at the last hour still ends inside the floor height. */
+function timeTop(msIntoDay) {
+	const f = (msIntoDay / HOUR_MS - startHour) / Math.max(1, endHour - startHour);
+	return Math.min(Math.max(f, 0), 1) * (TIME_H - CHIP_H);
+}
+/** Each chip at its start time, or just under the chip before it when that
+*  one is in the way: the order is time, the height is time, nothing overlaps. */
+function chipTops(list, dayMs) {
+	const tops = [];
+	let min = 0;
+	for (const ev of list) {
+		const top = Math.max(timeTop(ev.start.getTime() - dayMs), min);
+		tops.push(top);
+		min = top + CHIP_H + CHIP_GAP;
+	}
+	return tops;
+}
+/** The now-line: at the clock's height (pinned to the axis ends outside
+*  it), but never above a chip that has already started — pushed-down
+*  chips would read as still to come. */
+function nowTop(list, tops, dayMs) {
+	let y = timeTop(clock.tick - dayMs);
+	list.forEach((ev, i) => {
+		if (ev.start.getTime() <= clock.tick) y = Math.max(y, tops[i] + CHIP_H + CHIP_GAP / 2);
+	});
+	return y;
 }
 const _initMs = untrack(() => sod(focusDate?.getTime() ?? Date.now()));
 let internalFocusMs = $state(_initMs);
@@ -80,7 +128,7 @@ function scrollWeekIntoContainer(targetMs, behavior = "auto") {
 		const rows = el.querySelectorAll("[data-week]");
 		for (const row of rows) {
 			const weekMs = Number(row.dataset.week);
-			if (weekMs <= targetMs && targetMs < weekMs + customDays * DAY_MS) {
+			if (weekMs <= targetMs && targetMs < addDaysMs(weekMs, customDays)) {
 				target = row;
 				break;
 			}
@@ -104,8 +152,8 @@ const anchorPeriodStart = $derived(customDays === 7 ? sowFn(internalFocusMs, mon
 // what range we need. Calendar's single $effect handles loading.
 $effect(() => {
 	if (!loadRangeCtx) return;
-	const rangeStart = new Date(anchorPeriodStart - bufferBefore * customDays * DAY_MS);
-	const rangeEnd = new Date(anchorPeriodStart + (bufferAfter + 1) * customDays * DAY_MS);
+	const rangeStart = new Date(addDaysMs(anchorPeriodStart, -bufferBefore * customDays));
+	const rangeEnd = new Date(addDaysMs(anchorPeriodStart, (bufferAfter + 1) * customDays));
 	loadRangeCtx.set({
 		start: rangeStart,
 		end: rangeEnd
@@ -115,20 +163,20 @@ $effect(() => {
 const weeks = $derived.by(() => {
 	const result = [];
 	for (let w = -bufferBefore; w <= bufferAfter; w++) {
-		const periodStart = anchorPeriodStart + w * customDays * DAY_MS;
-		const isCurrent = todayMs >= periodStart && todayMs < periodStart + customDays * DAY_MS;
+		// Calendar days, not 24 h steps: past a DST change a sum of DAY_MS
+		// lands at 23:00 the day before, and every later row shifts a day.
+		const periodStart = addDaysMs(anchorPeriodStart, w * customDays);
+		const isCurrent = todayMs >= periodStart && todayMs < addDaysMs(periodStart, customDays);
 		const days = [];
 		for (let d = 0; d < customDays; d++) {
-			const ms = periodStart + d * DAY_MS;
+			const ms = addDaysMs(periodStart, d);
 			const date = new Date(ms);
 			const dayNum = date.getDate();
 			const dow = date.getDay();
 			const isWeekend = dow === 0 || dow === 6;
 			const isToday = ms === todayMs;
 			const isPast = equalDays ? false : ms < todayMs;
-			const isFirstOfMonth = dayNum === 1;
-			const monthLabel = d === 0 || isFirstOfMonth ? monthLong(ms, locale).toUpperCase() : null;
-			const dayEnd = ms + DAY_MS;
+			const dayEnd = addDaysMs(ms, 1);
 			const dayEventsAll = events.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
 			// Separate all-day / multi-day from timed events
 			const timedEvents = [];
@@ -147,20 +195,16 @@ const weeks = $derived.by(() => {
 				isToday,
 				isPast,
 				isWeekend,
-				isFirstOfMonth,
-				monthLabel,
+				monthLabel: null,
 				events: timedEvents,
 				allDaySegments
 			});
 		}
-		// Month label: show when first day of period is day 1-7 (for 7-day), or first day of period (for custom)
-		const startDate = new Date(periodStart);
-		const showMonth = customDays === 7 ? startDate.getDate() <= 7 : startDate.getDate() <= customDays;
-		const monthLabel = showMonth ? monthLong(periodStart, locale).toUpperCase() : null;
 		result.push({
 			weekStart: periodStart,
 			isCurrent,
-			monthLabel,
+			monthLabel: "",
+			monthStart: false,
 			days
 		});
 	}
@@ -174,6 +218,24 @@ const weeks = $derived.by(() => {
 				return !hideDays.includes(iso);
 			});
 		}
+	}
+	// Month labels, from the days actually shown — a hidden 1st hands its
+	// label to the next shown day. The gutter names the row's month; a month
+	// that begins after the row's first day is named where it begins.
+	for (const row of result) {
+		let prev = new Date(addDaysMs(row.weekStart, -1)).getMonth();
+		row.days.forEach((day, i) => {
+			const date = new Date(day.ms);
+			const starts = date.getMonth() !== prev;
+			prev = date.getMonth();
+			const label = monthLong(day.ms, locale).toUpperCase() + (starts ? ` ${date.getFullYear()}` : "");
+			if (i === 0) {
+				row.monthLabel = label;
+				row.monthStart = starts;
+			} else if (starts) {
+				day.monthLabel = label;
+			}
+		});
 	}
 	return result;
 });
@@ -385,7 +447,7 @@ const previewKeySnapshot = new Map();
 function dragPreviewTimedForDay(dayMs) {
 	const ev = dragPreviewEvent;
 	if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
-	const dayEnd = dayMs + DAY_MS;
+	const dayEnd = addDaysMs(dayMs, 1);
 	const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
 	if (hit) previewKeySnapshot.set("timed", ev.id);
 	return hit ? ev : null;
@@ -415,7 +477,9 @@ const fit = createChipFit({
 		room: ".wg-probe .wg-ev-loc"
 	}
 });
-function chipParts(ev) {
+/** A cell that carries a month label is this much narrower (.wg-cell--month). */
+const MONTH_INSET = 22;
+function chipParts(ev, inset = 0) {
 	return fit.parts([
 		{
 			key: "time",
@@ -437,7 +501,7 @@ function chipParts(ev) {
 			priority: 1,
 			extra: CHIP_GAP_X
 		}
-	], CHIP_PAD_X);
+	], CHIP_PAD_X + inset);
 }
 function getCellWidth() {
 	const cell = el?.querySelector(".wg-cell");
@@ -480,8 +544,8 @@ function updateDragFromPointer() {
 	const nowWeekMs = weekMsAtY(evLastY);
 	// A vertical row step spans one period (customDays), not always 7 days
 	const weekOffset = evStartWeekMs && nowWeekMs ? Math.round((nowWeekMs - evStartWeekMs) / (customDays * DAY_MS)) : 0;
-	const deltaMs = (dayOffset + weekOffset * customDays) * DAY_MS;
-	drag.updatePointer(new Date(ev.start.getTime() + deltaMs), new Date(ev.end.getTime() + deltaMs));
+	const deltaDays = dayOffset + weekOffset * customDays;
+	drag.updatePointer(new Date(addDaysMs(ev.start.getTime(), deltaDays)), new Date(addDaysMs(ev.end.getTime(), deltaDays)));
 }
 // ─── Auto-scroll under a drag ───────────────────────
 // Weeks the target is in may be off-screen — without this, moving an event
@@ -577,15 +641,15 @@ function onCellKeydown(e, ms) {
 		return;
 	}
 	let step = 0;
-	if (e.key === "ArrowRight") step = DAY_MS;
-	else if (e.key === "ArrowLeft") step = -DAY_MS;
-	else if (e.key === "ArrowDown") step = customDays * DAY_MS;
-	else if (e.key === "ArrowUp") step = -customDays * DAY_MS;
+	if (e.key === "ArrowRight") step = 1;
+	else if (e.key === "ArrowLeft") step = -1;
+	else if (e.key === "ArrowDown") step = customDays;
+	else if (e.key === "ArrowUp") step = -customDays;
 	if (step === 0) return;
 	e.preventDefault();
 	// Walk in the step direction until a rendered cell is found
 	// (skips hidden days; bails at the buffer edge).
-	let target = ms + step;
+	let target = addDaysMs(ms, step);
 	for (let i = 0; i < 7; i++) {
 		const cell = el?.querySelector(`[data-day="${target}"]`);
 		if (cell) {
@@ -594,7 +658,7 @@ function onCellKeydown(e, ms) {
 			cell.scrollIntoView({ block: "nearest" });
 			return;
 		}
-		target += step < 0 ? -DAY_MS : DAY_MS;
+		target = addDaysMs(target, step < 0 ? -1 : 1);
 	}
 }
 </script>
@@ -611,8 +675,8 @@ function onCellKeydown(e, ms) {
 	{/if}
 {/snippet}
 
-{#snippet timedEventContent(ev: TimelineEvent)}
-	{@const parts = chipParts(ev)}
+{#snippet timedEventContent(ev: TimelineEvent, inset: number)}
+	{@const parts = chipParts(ev, inset)}
 	<EventContent event={ev}>
 		{#if parts.time}<span class="wg-ev-time">{fmtAmPm(ev.start)}</span>{/if}
 		<span class="wg-ev-title">{ev.title}</span>
@@ -624,7 +688,7 @@ function onCellKeydown(e, ms) {
 
 <svelte:window onkeydown={onWindowKeydown} />
 
-<div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')} style:--wg-row-min="{ROW_MIN}px" style:--wg-chip-h="{CHIP_H}px" style:--wg-chip-gap="{CHIP_GAP}px" style:--wg-row-margin="{ROW_MARGIN}px">
+<div class="wg" class:wg--auto={autoHeight} style={style || undefined} style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')} style:--wg-time-h="{TIME_H}px" style:--wg-month-inset="{MONTH_INSET}px" style:--wg-chip-h="{CHIP_H}px" style:--wg-chip-gap="{CHIP_GAP}px" style:--wg-row-margin="{ROW_MARGIN}px">
 	<div
 		class="wg-body"
 		bind:this={el}
@@ -641,6 +705,8 @@ function onCellKeydown(e, ms) {
 		</div>
 		{#each weeks as week (week.weekStart)}
 			<div class="wg-week" class:wg-week--current={week.isCurrent} data-week={week.weekStart} role="presentation">
+				<!-- Each cell's aria-label already names its date -->
+				<div class="wg-month" class:wg-month--start={week.monthStart} aria-hidden="true">{week.monthLabel}</div>
 				<div class="wg-week-body" role="presentation">
 					<!-- Day columns (header inside each cell) -->
 					<div class="wg-days" role="row">
@@ -652,8 +718,13 @@ function onCellKeydown(e, ms) {
 							{@const hiddenCount = Math.max(0, visibleTimedEvents.length - timedCap)}
 							{@const previewTimedEvent = dragPreviewTimedForDay(day.ms)}
 							{@const previewSegment = dragPreviewSegmentForDay(day.ms)}
+							{@const shownTimed = visibleTimedEvents.slice(0, isExpanded ? visibleTimedEvents.length : timedCap)}
+							{@const tops = chipTops(shownTimed, day.ms)}
+							{@const nowY = day.isToday ? nowTop(shownTimed, tops, day.ms) : null}
+							{@const inset = day.monthLabel ? MONTH_INSET : 0}
 							<div
 								class="wg-cell"
+								class:wg-cell--month={!!day.monthLabel}
 								class:wg-cell--today={day.isToday}
 								class:wg-cell--past={day.isPast}
 								class:wg-cell--weekend={day.isWeekend}
@@ -671,14 +742,15 @@ function onCellKeydown(e, ms) {
 								onfocus={() => { focusedCellMs = day.ms; }}
 								onkeydown={(e) => onCellKeydown(e, day.ms)}
 							>
-								<!-- Day label in top-right corner -->
+								{#if day.monthLabel}
+									<div class="wg-month wg-month--start wg-month--inset" aria-hidden="true">{day.monthLabel}</div>
+								{/if}
+								<!-- Day label in top-right corner: "MON 23", a pill today -->
 								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
-									{#if showDates}
-										<span class="wg-day-num" class:wg-day-num--today={day.isToday}>
-											{day.dayNum}
-										</span>
-									{/if}
 									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
+									{#if showDates}
+										<span class="wg-day-num">{day.dayNum}</span>
+									{/if}
 								</div>
 
 								<!-- Custom day header snippet -->
@@ -688,27 +760,89 @@ function onCellKeydown(e, ms) {
 									</div>
 								{/if}
 
-								<!-- Blocked slots indicator -->
-								{#if blockedSlots?.length}
-									{@const jsDay = new Date(day.ms).getDay()}
-									{@const isoDay = jsDay === 0 ? 7 : jsDay}
-									{#each blockedSlots as slot, i (i)}
-										{#if !slot.day || slot.day === isoDay}
-											{@const slotRange = `${_fmtTime(new Date(day.ms + slot.start * HOUR_MS), locale)} – ${_fmtTime(new Date(day.ms + slot.end * HOUR_MS), locale)}`}
-											<div
-												class="wg-blocked"
-												title="{slot.label ? `${slot.label}, ` : ''}{slotRange}"
-												aria-label="{slot.label || 'Unavailable'}, {slotRange}"
-											>
-												{#if slot.label}
-													<span class="wg-blocked-label">{slot.label}</span>
-												{/if}
-											</div>
-										{/if}
+								<!-- Timed events, on the day's time axis -->
+								<div class="wg-cell-events">
+									{#if blockedSlots?.length}
+										{@const jsDay = new Date(day.ms).getDay()}
+										{@const isoDay = jsDay === 0 ? 7 : jsDay}
+										{#each blockedSlots as slot, i (i)}
+											{#if (!slot.day || slot.day === isoDay) && slot.end > startHour && slot.start < endHour}
+												{@const slotRange = `${_fmtTime(new Date(day.ms + slot.start * HOUR_MS), locale)} – ${_fmtTime(new Date(day.ms + slot.end * HOUR_MS), locale)}`}
+												{@const bandTop = timeTop(slot.start * HOUR_MS)}
+												{@const bandH = Math.max(14, timeTop(slot.end * HOUR_MS) - bandTop)}
+												<!-- A chip over the band would cut its label in half: the title keeps it -->
+												{@const covered = tops.some((t) => t < bandTop + bandH && t + CHIP_H > bandTop)}
+												<div
+													class="wg-blocked"
+													style:top="{bandTop}px"
+													style:height="{bandH}px"
+													title="{slot.label ? `${slot.label}, ` : ''}{slotRange}"
+													aria-label="{slot.label || 'Unavailable'}, {slotRange}"
+												>
+													{#if slot.label && !covered}
+														<span class="wg-blocked-label">{slot.label}</span>
+													{/if}
+												</div>
+											{/if}
+										{/each}
+									{/if}
+									{#each shownTimed as ev, i (ev.id)}
+										<!-- send/receive keyed by event id pair the card with the drag ghost:
+										     drag start morphs card → ghost, drop morphs ghost → placed card -->
+										<div
+											animate:flip={{ duration: ANIM }}
+											in:previewReceive={{ key: ev.id }}
+											out:previewSend={{ key: ev.id }}
+											class="wg-ev"
+											class:wg-ev--selected={selectedEventId === ev.id}
+											class:wg-ev--current={ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
+											class:wg-ev--dragging={evDragging && evDragId === ev.id}
+											class:wg-ev--readonly={ev.data?.readOnly}
+											class:wg-ev--cancelled={ev.status === 'cancelled'}
+											class:wg-ev--tentative={ev.status === 'tentative'}
+											class:wg-ev--full={ev.status === 'full'}
+											class:wg-ev--limited={ev.status === 'limited'}
+											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
+											style:margin-top="{tops[i] - (i ? tops[i - 1] + CHIP_H : 0)}px"
+											role="button"
+											tabindex="0"
+											aria-label="{ev.title}, {fmtAmPm(ev.start)} – {fmtAmPm(ev.end)}{ev.status === 'cancelled' ? ` (cancelled)` : ''}{ev.status === 'tentative' ? ` (tentative)` : ''}{ev.status === 'full' ? ` (full)` : ''}{ev.status === 'limited' ? ` (limited)` : ''}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
+											onpointerdown={(e) => onEventPointerDown(e, ev)}
+											onpointerenter={() => oneventhover?.(ev)}
+											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev, e.currentTarget.getBoundingClientRect()); } }}
+										>
+											{@render timedEventContent(ev, inset)}
+										</div>
 									{/each}
-								{/if}
+									{#if hiddenCount > 0}
+										<button
+											type="button"
+											class="wg-ev-more"
+											aria-expanded={isExpanded}
+											onclick={(e) => { e.stopPropagation(); expandedCells[day.ms] = !isExpanded; }}
+										>{isExpanded ? L.showLess : L.nMore(hiddenCount)}</button>
+									{/if}
+									{#if previewTimedEvent}
+										<!-- The ghost floats at its own time; it pushes nothing aside -->
+										<div
+											class="wg-ev wg-ev--drag-preview"
+											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
+											style:top="{timeTop(previewTimedEvent.start.getTime() - day.ms)}px"
+											aria-hidden="true"
+											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
+											out:previewSend={{ key: previewKeySnapshot.get('timed') ?? '' }}
+										>
+											{@render timedEventContent(previewTimedEvent, inset)}
+										</div>
+									{/if}
+									{#if nowY !== null}
+										<div class="wg-now" style:top="{nowY}px" aria-hidden="true">
+											<span class="wg-now-time">{fmtAmPm(new Date(clock.tick))}</span>
+										</div>
+									{/if}
+								</div>
 
-								<!-- All-day / multi-day events -->
+								<!-- All-day / multi-day events, under the day (as Hey) -->
 								{#if visibleAllDaySegments.length > 0 || previewSegment}
 									<div class="wg-allday">
 										{#each visibleAllDaySegments as seg (seg.ev.id)}
@@ -748,56 +882,6 @@ function onCellKeydown(e, ms) {
 											</div>
 										{/if}
 									</div>
-								{/if}
-
-								<!-- Timed events -->
-								<div class="wg-cell-events">
-									{#each visibleTimedEvents.slice(0, isExpanded ? visibleTimedEvents.length : timedCap) as ev (ev.id)}
-										<!-- send/receive keyed by event id pair the card with the drag ghost:
-										     drag start morphs card → ghost, drop morphs ghost → placed card -->
-										<div
-											animate:flip={{ duration: ANIM }}
-											in:previewReceive={{ key: ev.id }}
-											out:previewSend={{ key: ev.id }}
-											class="wg-ev"
-											class:wg-ev--selected={selectedEventId === ev.id}
-											class:wg-ev--current={ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
-											class:wg-ev--dragging={evDragging && evDragId === ev.id}
-											class:wg-ev--readonly={ev.data?.readOnly}
-											class:wg-ev--cancelled={ev.status === 'cancelled'}
-											class:wg-ev--tentative={ev.status === 'tentative'}
-											class:wg-ev--full={ev.status === 'full'}
-											class:wg-ev--limited={ev.status === 'limited'}
-											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
-											role="button"
-											tabindex="0"
-											aria-label="{ev.title}, {fmtAmPm(ev.start)} – {fmtAmPm(ev.end)}{ev.status === 'cancelled' ? ` (cancelled)` : ''}{ev.status === 'tentative' ? ` (tentative)` : ''}{ev.status === 'full' ? ` (full)` : ''}{ev.status === 'limited' ? ` (limited)` : ''}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
-											onpointerdown={(e) => onEventPointerDown(e, ev)}
-											onpointerenter={() => oneventhover?.(ev)}
-											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev, e.currentTarget.getBoundingClientRect()); } }}
-										>
-											{@render timedEventContent(ev)}
-										</div>
-									{/each}
-									{#if previewTimedEvent}
-										<div
-											class="wg-ev wg-ev--drag-preview"
-											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
-											aria-hidden="true"
-											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
-											out:previewSend={{ key: previewKeySnapshot.get('timed') ?? '' }}
-										>
-											{@render timedEventContent(previewTimedEvent)}
-										</div>
-									{/if}
-								</div>
-								{#if hiddenCount > 0}
-									<button
-										type="button"
-										class="wg-ev-more"
-										aria-expanded={isExpanded}
-										onclick={(e) => { e.stopPropagation(); expandedCells[day.ms] = !isExpanded; }}
-									>{isExpanded ? L.showLess : L.nMore(hiddenCount)}</button>
 								{/if}
 							</div>
 						{/each}
@@ -887,7 +971,6 @@ function onCellKeydown(e, ms) {
 		display: flex;
 		flex-direction: column;
 		min-width: 90px;
-		min-height: var(--wg-row-min, 170px);
 		box-sizing: border-box;
 		padding: 4px 4px 8px;
 		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
@@ -896,6 +979,34 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-cell:last-child { border-right: none; }
+	/* The inset is on the contents, not the cell's padding: flex adds padding
+	   to a basis-0 cell, and that one column would come out wider. */
+	.wg-cell--month .wg-cell-events,
+	.wg-cell--month .wg-allday { margin-left: var(--wg-month-inset, 22px); }
+
+	/* ─── Month labels (vertical, read bottom-to-top) ─── */
+	.wg-month {
+		flex: 0 0 22px;
+		writing-mode: vertical-rl;
+		transform: rotate(180deg);
+		text-align: end; /* the rotation puts the end at the top */
+		padding: 6px 0;
+		font: 700 11px / 22px var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
+		white-space: nowrap;
+		overflow: hidden;
+		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+	}
+	.wg-week--current .wg-month,
+	.wg-month--start {
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+	}
+	.wg-month--inset {
+		position: absolute;
+		top: 0;
+		left: 2px;
+		pointer-events: none;
+	}
 	.wg-cell:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }
 
 	.wg-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
@@ -933,9 +1044,15 @@ function onCellKeydown(e, ms) {
 	}
 
 	/* ─── Blocked slot indicator ─────────────────────── */
+	/* A band on the time axis, behind the chips */
 	.wg-blocked {
+		position: absolute;
+		left: 0;
+		right: 0;
+		box-sizing: border-box;
+		overflow: hidden;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 3px;
 		padding: 2px 4px;
 		border-radius: 3px;
@@ -946,8 +1063,6 @@ function onCellKeydown(e, ms) {
 			transparent 3px,
 			transparent 6px
 		);
-		margin-bottom: 2px;
-		min-height: 14px;
 	}
 
 	.wg-blocked-label {
@@ -965,12 +1080,13 @@ function onCellKeydown(e, ms) {
 
 	/* ─── Cell header (day label top-right) ──────────── */
 	.wg-cell-hd {
+		align-self: flex-end;
 		display: flex;
-		align-items: center;
-		justify-content: flex-end;
+		align-items: baseline;
 		gap: 4px;
-		padding: 4px 5px 2px 0;
-		margin-bottom: 2px;
+		padding: 3px 7px;
+		margin: 1px 0 2px;
+		border-radius: 999px;
 	}
 
 	.wg-day-wd {
@@ -984,11 +1100,6 @@ function onCellKeydown(e, ms) {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
-	.wg-cell-hd--today .wg-day-wd {
-		color: var(--dt-accent, #2563eb);
-		font-weight: 600;
-	}
-
 	.wg-day-num {
 		font: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
@@ -998,9 +1109,13 @@ function onCellKeydown(e, ms) {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
-	.wg-day-num--today {
-		color: var(--dt-accent, #2563eb);
-		font-weight: 900;
+	/* Today's pill — after the week rules above, which it must beat */
+	.wg-cell-hd--today {
+		background: var(--dt-accent, #2563eb);
+	}
+	.wg-cell-hd--today .wg-day-wd,
+	.wg-cell-hd--today .wg-day-num {
+		color: var(--dt-btn-text, #fff);
 	}
 
 	/* ─── All-day / multi-day events ─────────────────── */
@@ -1008,7 +1123,7 @@ function onCellKeydown(e, ms) {
 		display: flex;
 		flex-direction: column;
 		gap: var(--wg-chip-gap, 3px);
-		margin-bottom: var(--wg-chip-gap, 3px);
+		margin-top: var(--wg-chip-gap, 3px);
 		flex-shrink: 0;
 	}
 
@@ -1085,14 +1200,39 @@ function onCellKeydown(e, ms) {
 	}
 
 	/* ─── Events ─────────────────────────────────────── */
+	/* The day's time axis: chips carry their own margin-top (chipTops), and
+	   the area fills the cell, so the all-day bars line up at the bottom. */
 	.wg-cell-events {
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		gap: var(--wg-chip-gap, 3px);
+		flex: 1 0 auto;
+		min-height: var(--wg-time-h, 100px);
+	}
+
+	.wg-now {
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		transform: translateY(-50%);
+		pointer-events: none;
+	}
+	.wg-now::after {
+		content: '';
+		flex: 1;
+		border-top: 1px dashed var(--dt-accent, #2563eb);
+	}
+	.wg-now-time {
+		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-accent, #2563eb);
 	}
 
 	.wg-ev {
+		position: relative; /* above the blocked bands */
 		display: flex;
 		align-items: center;
 		flex-wrap: nowrap;
@@ -1113,7 +1253,9 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ev--drag-preview {
-		position: relative;
+		position: absolute;
+		left: 0;
+		right: 0;
 		z-index: 8;
 		opacity: 0.95;
 		pointer-events: none;

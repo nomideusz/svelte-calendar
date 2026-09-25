@@ -8,7 +8,7 @@
  * `date-fns/locale/*` and pass to `format()`.
  */
 
-import { DAY_MS } from './time.js';
+import { addDaysMs } from './time.js';
 
 // ─── Labels / i18n ──────────────────────────────────────
 
@@ -267,8 +267,8 @@ export function fmtDay(
 	const L = _labels;
 
 	if (ms === todayMs) return opts?.short ? L.today : `${L.today} · ${short}`;
-	if (ms === todayMs - DAY_MS) return opts?.short ? L.yesterday : `${L.yesterday} · ${short}`;
-	if (ms === todayMs + DAY_MS) return opts?.short ? L.tomorrow : `${L.tomorrow} · ${short}`;
+	if (ms === addDaysMs(todayMs, -1)) return opts?.short ? L.yesterday : `${L.yesterday} · ${short}`;
+	if (ms === addDaysMs(todayMs, 1)) return opts?.short ? L.tomorrow : `${L.tomorrow} · ${short}`;
 
 	if (opts?.short) {
 		return new Date(ms).toLocaleDateString(loc, { weekday: 'short', day: 'numeric' });
@@ -282,7 +282,7 @@ export function fmtDay(
 export function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: number): string {
 	const loc = locale ?? defaultLocale;
 	const s = new Date(weekStartMs);
-	const e = new Date(weekEndMs ?? weekStartMs + 6 * DAY_MS);
+	const e = new Date(weekEndMs ?? addDaysMs(weekStartMs, 6));
 	const sm = s.toLocaleDateString(loc, { month: 'short' });
 	const em = e.toLocaleDateString(loc, { month: 'short' });
 	const sy = s.getFullYear();

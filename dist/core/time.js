@@ -74,8 +74,7 @@ export function isMultiDay(ev) {
 export function isAllDay(ev) {
     if (ev.allDay)
         return true;
-    const duration = ev.end.getTime() - ev.start.getTime();
-    if (duration < DAY_MS)
+    if (ev.end.getTime() < addDaysMs(ev.start.getTime(), 1))
         return false;
     const s = ev.start;
     return s.getHours() === 0 && s.getMinutes() === 0 && s.getSeconds() === 0;
@@ -86,7 +85,7 @@ export function isAllDay(ev) {
  */
 export function segmentForDay(ev, dayMs) {
     const dayStart = sod(dayMs);
-    const dayEnd = dayStart + DAY_MS;
+    const dayEnd = addDaysMs(dayStart, 1);
     const evStart = ev.start.getTime();
     const evEnd = ev.end.getTime();
     // No overlap
@@ -95,8 +94,8 @@ export function segmentForDay(ev, dayMs) {
     const firstDayMs = sod(evStart);
     // For end time: if event ends exactly at midnight, last day is the day before
     const lastDayMs = sod(evEnd - 1);
-    const totalDays = Math.floor((lastDayMs - firstDayMs) / DAY_MS) + 1;
-    const dayIndex = Math.floor((dayStart - firstDayMs) / DAY_MS) + 1;
+    const totalDays = diffDays(lastDayMs, firstDayMs) + 1;
+    const dayIndex = diffDays(dayStart, firstDayMs) + 1;
     return {
         ev,
         start: new Date(Math.max(evStart, dayStart)),

@@ -10,7 +10,7 @@
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { DAY_MS, sod, isAllDay } from '../../core/time.js';
+	import { DAY_MS, sod, addDaysMs, isAllDay } from '../../core/time.js';
 	import { fmtTime, weekdayShort } from '../../core/locale.js';
 
 
@@ -100,7 +100,7 @@
 
 	function moveFocus(fromMs: number, deltaDays: number) {
 		if (!range) return;
-		const target = fromMs + deltaDays * DAY_MS;
+		const target = addDaysMs(fromMs, deltaDays);
 		if (target < sod(range.start.getTime()) || target >= range.end.getTime()) return;
 		focusMs = target;
 		const el = bodyEl?.querySelector<HTMLElement>(`[data-ms="${target}"]`);
@@ -143,7 +143,7 @@
 
 	function eventsForDay(ms: number): TimelineEvent[] {
 		const dayStart = ms;
-		const dayEnd = ms + DAY_MS;
+		const dayEnd = addDaysMs(ms, 1);
 		return events
 			.filter((e) => e.start.getTime() < dayEnd && e.end.getTime() > dayStart)
 			.sort((a, b) => {
@@ -156,10 +156,10 @@
 	const weeks = $derived.by(() => {
 		if (!range) return [];
 		const rows: MonthCell[][] = [];
-		for (let ms = sod(range.start.getTime()); ms < range.end.getTime(); ms += 7 * DAY_MS) {
+		for (let ms = sod(range.start.getTime()); ms < range.end.getTime(); ms = addDaysMs(ms, 7)) {
 			const row: MonthCell[] = [];
 			for (let i = 0; i < 7; i++) {
-				const cellMs = ms + i * DAY_MS;
+				const cellMs = addDaysMs(ms, i);
 				const date = new Date(cellMs);
 				const jsDay = date.getDay();
 				const dayEvents = eventsForDay(cellMs);

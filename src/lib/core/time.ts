@@ -103,8 +103,7 @@ export function isMultiDay(ev: TimelineEvent): boolean {
 /** Is an event effectively all-day? (allDay flag, or spans ≥24h with midnight boundaries) */
 export function isAllDay(ev: TimelineEvent): boolean {
 	if (ev.allDay) return true;
-	const duration = ev.end.getTime() - ev.start.getTime();
-	if (duration < DAY_MS) return false;
+	if (ev.end.getTime() < addDaysMs(ev.start.getTime(), 1)) return false;
 	const s = ev.start;
 	return s.getHours() === 0 && s.getMinutes() === 0 && s.getSeconds() === 0;
 }
@@ -136,7 +135,7 @@ export interface DaySegment {
  */
 export function segmentForDay(ev: TimelineEvent, dayMs: number): DaySegment | null {
 	const dayStart = sod(dayMs);
-	const dayEnd = dayStart + DAY_MS;
+	const dayEnd = addDaysMs(dayStart, 1);
 	const evStart = ev.start.getTime();
 	const evEnd = ev.end.getTime();
 
@@ -146,8 +145,8 @@ export function segmentForDay(ev: TimelineEvent, dayMs: number): DaySegment | nu
 	const firstDayMs = sod(evStart);
 	// For end time: if event ends exactly at midnight, last day is the day before
 	const lastDayMs = sod(evEnd - 1);
-	const totalDays = Math.floor((lastDayMs - firstDayMs) / DAY_MS) + 1;
-	const dayIndex = Math.floor((dayStart - firstDayMs) / DAY_MS) + 1;
+	const totalDays = diffDays(lastDayMs, firstDayMs) + 1;
+	const dayIndex = diffDays(dayStart, firstDayMs) + 1;
 
 	return {
 		ev,

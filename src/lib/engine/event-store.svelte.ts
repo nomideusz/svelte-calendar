@@ -19,7 +19,7 @@ import { SvelteMap } from 'svelte/reactivity';
 import { untrack } from 'svelte';
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
-import { sod, DAY_MS } from '../core/time.js';
+import { sod, addDaysMs } from '../core/time.js';
 
 export interface EventStore {
 	/** All currently loaded events (reactive) */
@@ -136,7 +136,7 @@ export function createEventStore(adapter: CalendarAdapter | (() => CalendarAdapt
 
 		forDay(date: Date): TimelineEvent[] {
 			const dayStart = new Date(sod(date.getTime()));
-			const dayEnd = new Date(dayStart.getTime() + DAY_MS);
+			const dayEnd = new Date(addDaysMs(dayStart.getTime(), 1));
 			return eventArray.filter((ev) => overlaps(ev, dayStart, dayEnd));
 		},
 

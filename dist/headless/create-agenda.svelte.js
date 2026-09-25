@@ -33,7 +33,7 @@
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
-import { sod, DAY_MS, isAllDay, isMultiDay } from '../core/time.js';
+import { sod, addDaysMs, isAllDay, isMultiDay } from '../core/time.js';
 import { fmtTime as _fmtTime, fmtDuration } from '../core/locale.js';
 import { timeUntilMs, progress as _progress, groupIntoSlots } from '../views/shared/format.js';
 // ─── Implementation ─────────────────────────────────────
@@ -49,17 +49,17 @@ export function createAgenda(options) {
     // ── Load events for focus date range ──
     $effect(() => {
         const start = new Date(focusDayMs);
-        const end = new Date(focusDayMs + lookahead * DAY_MS);
+        const end = new Date(addDaysMs(focusDayMs, lookahead));
         store.load({ start, end });
     });
     // Eager initial load
     untrack(() => {
         const start = new Date(focusDayMs);
-        const end = new Date(focusDayMs + lookahead * DAY_MS);
+        const end = new Date(addDaysMs(focusDayMs, lookahead));
         store.load({ start, end });
     });
     // ── Day derivations ──
-    const dayEnd = $derived(focusDayMs + DAY_MS);
+    const dayEnd = $derived(addDaysMs(focusDayMs, 1));
     const isToday = $derived(focusDayMs === clock.today);
     const isPast = $derived(focusDayMs < clock.today);
     const isFuture = $derived(focusDayMs > clock.today);
@@ -93,8 +93,8 @@ export function createAgenda(options) {
         return { past, current, upcoming, upcomingSlots: groupIntoSlots(upcoming) };
     });
     // ── Navigation ──
-    function prev() { focusDayMs = focusDayMs - DAY_MS; }
-    function next() { focusDayMs = focusDayMs + DAY_MS; }
+    function prev() { focusDayMs = addDaysMs(focusDayMs, -1); }
+    function next() { focusDayMs = addDaysMs(focusDayMs, 1); }
     function goToday() { focusDayMs = clock.today; }
     function setDate(date) { focusDayMs = sod(date.getTime()); }
     // ── Format helpers ──
