@@ -2,10 +2,6 @@
 	let { data } = $props();
 </script>
 
-<svelte:head>
-	<title>svelte-calendar – Docs</title>
-</svelte:head>
-
 <div class="doc-layout">
 	{#if data.toc.length > 0}
 		<aside class="doc-toc">

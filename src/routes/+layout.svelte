@@ -8,6 +8,32 @@
 
 	const path = $derived(page.url.pathname);
 
+	// One place for every page's search/social metadata — there are two pages.
+	const SITE = 'https://svelte-calendar.xyz';
+	const DESCRIPTION =
+		'A themeable Svelte 5 calendar component: week and day planners, a scrolling week, agenda and month views, drag-and-drop, recurring events and a drop-in web component.';
+	const META: Record<string, { title: string; description: string }> = {
+		'/': { title: 'svelte-calendar — Svelte 5 calendar component, live demo', description: DESCRIPTION },
+		'/docs': {
+			title: 'svelte-calendar docs — install, props, adapters, theming',
+			description:
+				'Reference for @nomideusz/svelte-calendar: installation, views, props, data adapters, recurring events, theming and the web-component widget.',
+		},
+	};
+	const meta = $derived(META[path]);
+	const jsonLd = JSON.stringify({
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareSourceCode',
+		name: 'svelte-calendar',
+		description: DESCRIPTION,
+		url: `${SITE}/`,
+		codeRepository: 'https://github.com/nomideusz/svelte-calendar',
+		programmingLanguage: ['Svelte', 'TypeScript'],
+		runtimePlatform: 'Svelte 5',
+		license: 'https://opensource.org/licenses/MIT',
+	});
+	const jsonLdTag = `<script type="application/ld+json">${jsonLd}<\/script>`;
+
 	// Properties we set on <html> last time, so a theme switch can remove
 	// tokens the new theme doesn't define without clobbering unrelated
 	// inline styles (which the old cssText assignment did).
@@ -44,6 +70,23 @@
 </script>
 
 <svelte:head>
+	{#if meta}
+		<title>{meta.title}</title>
+		<meta name="description" content={meta.description} />
+		<link rel="canonical" href={SITE + path} />
+		<meta property="og:title" content={meta.title} />
+		<meta property="og:description" content={meta.description} />
+		<meta property="og:url" content={SITE + path} />
+	{/if}
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="svelte-calendar" />
+	<meta property="og:image" content="{SITE}/og.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	{#if path === '/'}
+		{@html jsonLdTag}
+	{/if}
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

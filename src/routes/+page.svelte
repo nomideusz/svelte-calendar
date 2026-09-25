@@ -178,6 +178,8 @@
 	const PLANNERS = ["week-planner", "day-planner"];
 	const AGENDAS = ["week-agenda", "day-agenda"];
 	const WEEKS = ["week-planner", "week-scroll", "week-agenda"];
+	// Views with a time axis: the planners' grid, week-scroll's chip heights.
+	const TIMED = [...PLANNERS, "week-scroll"];
 
 	const settingsFields: SettingsField[] = [
 		{
@@ -244,7 +246,7 @@
 		},
 		{ key: "readOnly",
 			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle",
-			disabledWhen: inViews([...PLANNERS, "week-scroll"], "No drag editing in this view") },
+			disabledWhen: inViews(TIMED, "No drag editing in this view") },
 		{
 			key: "showModePills",
 			hint: "Day/Week switch in the header (prop: showModePills)",
@@ -261,10 +263,10 @@
 		},
 		{ key: "equalDays",
 			hint: "No past-day dimming — for template schedules", label: "Equal Days", group: "", type: "toggle",
-			disabledWhen: inViews([...PLANNERS, ...AGENDAS], "Not used by Month Grid") },
+			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by Month Grid") },
 		{ key: "showDates",
 			hint: "Off: headers show day names only (Mon, Tue, …)", label: "Show Dates", group: "", type: "toggle",
-			disabledWhen: inViews([...PLANNERS, ...AGENDAS], "Not used by Month Grid") },
+			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by Month Grid") },
 		{ key: "rtl",
 			hint: "Right-to-left text direction (prop: dir='rtl')", label: "RTL", group: "", type: "toggle" },
 		{ key: "compact",
@@ -284,7 +286,7 @@
 			label: "Blocked Slots",
 			group: "Availability",
 			type: "toggle",
-			disabledWhen: inViews(PLANNERS, "Planner views only"),
+			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
 		},
 		{
 			key: "disabledDatesEnabled",
@@ -299,7 +301,7 @@
 			label: "Visible Hours",
 			group: "Planner",
 			type: "toggle",
-			disabledWhen: inViews(PLANNERS, "Planner views only"),
+			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
 		},
 		{
 			key: "startHour",
@@ -311,7 +313,7 @@
 			max: 22,
 			step: 1,
 			enabledWhen: "visibleHoursEnabled",
-			disabledWhen: inViews(PLANNERS, "Planner views only"),
+			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
 		},
 		{
 			key: "endHour",
@@ -323,7 +325,7 @@
 			max: 24,
 			step: 1,
 			enabledWhen: "visibleHoursEnabled",
-			disabledWhen: inViews(PLANNERS, "Planner views only"),
+			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
 		},
 		{
 			key: "days",
@@ -334,7 +336,7 @@
 			min: 1,
 			max: 14,
 			step: 1,
-			disabledWhen: inViews(WEEKS, "Week views only"),
+			disabledWhen: inViews(["week-planner", "week-agenda"], "Week Planner and Agenda only"),
 		},
 	];
 
@@ -481,10 +483,6 @@
 		return `<script>\n${script.join("\n")}\n</` + `script>\n\n<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n/>`;
 	});
 </script>
-
-<svelte:head>
-	<title>svelte-calendar – Demo</title>
-</svelte:head>
 
 <main>
 	<h1 class="page-title">
