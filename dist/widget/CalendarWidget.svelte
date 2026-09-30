@@ -14,7 +14,6 @@
     ></day-calendar>
 -->
 <script lang="ts">import Calendar from "../calendar/Calendar.svelte";
-import { createRestAdapter } from "../adapters/rest.js";
 import { createMemoryAdapter } from "../adapters/memory.js";
 import { presets } from "../theme/presets.js";
 let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone } = $props();
@@ -62,7 +61,10 @@ function toEvent(raw, fallbackId) {
 		title: String(raw.title ?? "Untitled"),
 		start,
 		end,
-		color: raw.color ? String(raw.color) : undefined
+		color: raw.color ? String(raw.color) : undefined,
+		allDay: raw.allDay === true ? true : undefined,
+		subtitle: typeof raw.subtitle === "string" ? raw.subtitle : undefined,
+		location: typeof raw.location === "string" ? raw.location : undefined
 	};
 }
 function parseEvents(json) {
@@ -79,19 +81,32 @@ function parseEvents(json) {
 		return [];
 	}
 }
+/**
+* The documented widget contract: `GET {api}?start=…&end=…`, answered by
+* an array of events or `{ events: [...] }` with ISO date strings. Read
+* only — there is no write endpoint to call. No Content-Type on the GET,
+* so a cross-origin embed stays a simple request (no CORS preflight)
+* unless the page adds its own `headers`.
+*/
+function createApiAdapter(url, extraHeaders) {
+	return { async fetchEvents(range) {
+		const params = new URLSearchParams({
+			start: range.start.toISOString(),
+			end: range.end.toISOString()
+		});
+		const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}${params}`, { headers: {
+			Accept: "application/json",
+			...extraHeaders
+		} });
+		if (!res.ok) throw new Error(`[day-calendar] ${url} answered ${res.status} ${res.statusText}`);
+		const data = await res.json();
+		const arr = Array.isArray(data) ? data : data && typeof data === "object" && Array.isArray(data.events) ? data.events : [];
+		return arr.map((e, idx) => e && typeof e === "object" ? toEvent(e, `api-${idx}`) : null).filter((ev) => ev !== null);
+	} };
+}
 // ── Create adapter ──
 const adapter = $derived.by(() => {
-	if (api) {
-		const parsedHeaders = parseHeaders(headers);
-		return createRestAdapter({
-			baseUrl: api,
-			headers: parsedHeaders,
-			mapEvents: (data) => {
-				const arr = Array.isArray(data) ? data : data.events ?? [];
-				return arr.map((e, idx) => toEvent(e, `api-${idx}`)).filter((ev) => ev !== null);
-			}
-		});
-	}
+	if (api) return createApiAdapter(api, parseHeaders(headers));
 	return createMemoryAdapter(parseEvents(events));
 });
 </script>
@@ -104,7 +119,7 @@ const adapter = $derived.by(() => {
 	mondayStart={isMondayStart}
 	dir={dirValue}
 	{locale}
-	readOnly={readonly === 'true'}
+	readOnly={readonly !== 'false'}
 	showModePills={pills !== 'false'}
 	showNavigation={nav !== 'false'}
 	mobile={mobileValue}

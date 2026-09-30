@@ -1,16 +1,19 @@
 // ─── Primitives ─────────────────────────────────────────
 export { NowIndicator, EventBlock, TimeGutter, DayHeader, EmptySlot, FloatingPanel, } from './primitives/index.js';
 // ─── Calendar shell ─────────────────────────────────────
-export { Calendar } from './calendar/index.js';
-// Raw view components — compose your own shell around the engine if needed
-export { Planner, Agenda, Mobile } from './views/index.js';
-export { default as MonthGrid } from './views/month/MonthGrid.svelte';
+export { Calendar, defaultViews } from './calendar/index.js';
+// Raw view components — register them under your own ids, or compose your
+// own shell around the engine. They read the Calendar's context.
+export { Planner, PlannerScroll, Agenda, Mobile, MonthGrid } from './views/index.js';
+// For custom views: the running Calendar's engines, config and labels.
+export { useCalendarContext } from './views/shared/context.svelte.js';
 // ─── Engine (reactive state) ────────────────────────────
 export { createEventStore, createViewState, createSelection, createDragState, } from './engine/index.js';
 // ─── Adapters ───────────────────────────────────────────
 export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter, withInitialEvents } from './adapters/index.js';
+export { CalendarReadOnlyError, EventNotFoundError, isReadOnlyError, isNotFoundError } from './adapters/index.js';
 // ─── Core: clock, time, locale, types ───────────────────
-export { createClock, startOfWeek, fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong, monthShort, monthLong, dateShort, dateWithWeekday, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, is24HourLocale, defaultLabels, setLabels, resetLabels, getLabels, toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, generatePalette, extractAccent, VIVID_PALETTE, isMultiDay, isAllDay, segmentForDay, } from './core/index.js';
+export { createClock, sod, startOfWeek, addDaysMs, diffDays, fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong, monthShort, monthLong, dateShort, dateWithWeekday, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, is24HourLocale, defaultLabels, setLabels, resetLabels, getLabels, toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, generatePalette, extractAccent, VIVID_PALETTE, isMultiDay, isAllDay, segmentForDay, } from './core/index.js';
 // ─── Themes ─────────────────────────────────────────────
 export { auto, neutral, midnight, presets } from './theme/index.js';
 export { probeHostTheme, observeHostTheme } from './theme/index.js';

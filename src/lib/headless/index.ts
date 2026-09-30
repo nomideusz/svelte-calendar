@@ -16,3 +16,4 @@ export type {
 	HeaderContext,
 	NavigationContext,
 } from './types.js';
+export type { TimeSlot } from '../views/shared/format.js';

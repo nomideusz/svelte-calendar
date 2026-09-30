@@ -7,14 +7,18 @@ export {
 	EmptySlot,
 	FloatingPanel,
 } from './primitives/index.js';
+export type { FloatingPanelAnchor, FloatingPanelProps } from './primitives/index.js';
 
 
 // ─── Calendar shell ─────────────────────────────────────
-export { Calendar } from './calendar/index.js';
-// Raw view components — compose your own shell around the engine if needed
-export { Planner, Agenda, Mobile } from './views/index.js';
-export { default as MonthGrid } from './views/month/MonthGrid.svelte';
-export type { CalendarView } from './calendar/index.js';
+export { Calendar, defaultViews } from './calendar/index.js';
+export type { CalendarView, CalendarViewProps, CalendarProps } from './calendar/index.js';
+// Raw view components — register them under your own ids, or compose your
+// own shell around the engine. They read the Calendar's context.
+export { Planner, PlannerScroll, Agenda, Mobile, MonthGrid } from './views/index.js';
+// For custom views: the running Calendar's engines, config and labels.
+export { useCalendarContext } from './views/shared/context.svelte.js';
+export type { CalendarContext } from './views/shared/context.svelte.js';
 
 // ─── Engine (reactive state) ────────────────────────────
 export {
@@ -39,6 +43,7 @@ export type {
 
 // ─── Adapters ───────────────────────────────────────────
 export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter, withInitialEvents } from './adapters/index.js';
+export { CalendarReadOnlyError, EventNotFoundError, isReadOnlyError, isNotFoundError } from './adapters/index.js';
 export type {
 	CalendarAdapter,
 	WritableCalendarAdapter,
@@ -58,7 +63,10 @@ export type {
 // ─── Core: clock, time, locale, types ───────────────────
 export {
 	createClock,
+	sod,
 	startOfWeek,
+	addDaysMs,
+	diffDays,
 	fmtH,
 	fmtTime,
 	fmtDuration,
@@ -118,8 +126,9 @@ export type {
 	RangeAgendaOptions,
 	RangeAgendaDay,
 	HeadlessRangeAgenda,
+	TimeSlot,
 } from './headless/index.js';
 
 // ─── Text fitting (pretext) ─────────────────────────────
 export { fits, lineCount, textHeight, textWidth, pickFit, fontOf, fitLabel, fitParts, breakLines, typeset } from './text-fit.js';
-export type { ChipPart } from './text-fit.js';
+export type { ChipPart, TextLayoutOptions } from './text-fit.js';

@@ -12,6 +12,7 @@ import { describe, it, expect } from 'vitest';
 import { flushSync } from 'svelte';
 import { createRangeAgenda } from './create-range-agenda.svelte.js';
 import { createMemoryAdapter } from '../adapters/memory.js';
+import { addDaysMs } from '../core/time.js';
 import type { HeadlessRangeAgenda, RangeAgendaOptions } from './create-range-agenda.svelte.js';
 import type { TimelineEvent } from '../core/types.js';
 
@@ -52,7 +53,7 @@ describe('createRangeAgenda', () => {
 			expect(agenda.days[6].weekday).toBe(7); // Sunday
 			expect(agenda.days[0].ms).toBe(MON.getTime());
 			expect(agenda.range.start.getTime()).toBe(MON.getTime());
-			expect(agenda.range.end.getTime()).toBe(MON.getTime() + 7 * 24 * 60 * 60 * 1000);
+			expect(agenda.range.end.getTime()).toBe(addDaysMs(MON.getTime(), 7));
 		});
 	});
 
@@ -93,7 +94,7 @@ describe('createRangeAgenda', () => {
 			agenda.next();
 			flushSync();
 			await new Promise((r) => setTimeout(r, 0));
-			expect(agenda.range.start.getTime()).toBe(MON.getTime() + 7 * 24 * 60 * 60 * 1000);
+			expect(agenda.range.start.getTime()).toBe(addDaysMs(MON.getTime(), 7));
 			expect(agenda.days[0].events.map((e) => e.id)).toEqual(['next-week']);
 
 			agenda.prev();
@@ -108,7 +109,7 @@ describe('createRangeAgenda', () => {
 			expect(agenda.days).toHaveLength(3);
 			agenda.next();
 			flushSync();
-			expect(agenda.range.start.getTime()).toBe(MON.getTime() + 3 * 24 * 60 * 60 * 1000);
+			expect(agenda.range.start.getTime()).toBe(addDaysMs(MON.getTime(), 3));
 		});
 	});
 

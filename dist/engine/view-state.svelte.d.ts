@@ -15,7 +15,11 @@ export type ViewMode = 'day' | 'week' | 'month';
 export interface ViewStateOptions {
     view?: CalendarViewId;
     mondayStart?: boolean;
-    /** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
+    /**
+     * IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone.
+     * "Today" (the default focus, `goToday()`) is today in this zone, as a
+     * wall-clock Date on the zoned plane the Calendar's `timezone` prop uses.
+     */
     timezone?: string;
     /** Initial date to focus on (defaults to today). */
     initialDate?: Date;

@@ -6,7 +6,7 @@ import type { ViewState } from '../../engine/view-state.svelte.js';
 export interface CalendarContext {
     readonly viewState: ViewState | undefined;
     readonly drag: DragState | undefined;
-    readonly commitDrag: (() => void) | undefined;
+    readonly commitDrag: (() => Promise<void>) | undefined;
     readonly snapInterval: number;
     readonly minColumnWidth: number;
     readonly equalDays: boolean;

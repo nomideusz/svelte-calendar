@@ -18,6 +18,6 @@ export interface MemoryAdapterOptions {
      * Defaults to VIVID_PALETTE. Pass `generatePalette(accent)` to
      * make event colors adapt to your theme.
      */
-    palette?: string[];
+    palette?: readonly string[];
 }
 export declare function createMemoryAdapter(initial?: TimelineEvent[], options?: MemoryAdapterOptions): CalendarAdapter;

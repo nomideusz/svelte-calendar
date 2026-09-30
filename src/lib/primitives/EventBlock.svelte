@@ -11,9 +11,13 @@
 <script lang="ts">
 	import type { TimelineEvent } from '../core/types.js';
 	import { fmtTime, fmtDuration, getLabels } from '../core/locale.js';
+	import type { CalendarLabels } from '../core/locale.js';
+	import { getContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 
-	const L = $derived(getLabels());
+	// Inside a Calendar: its per-instance labels; standalone: the global ones.
+	const calendarCtx = getContext<{ labels?: CalendarLabels } | undefined>('calendar');
+	const L = $derived(calendarCtx?.labels ?? getLabels());
 
 	interface Props {
 		event: TimelineEvent;
@@ -55,10 +59,11 @@
 
 	const ariaLabel = $derived.by(() => {
 		const t = event.title;
-		const time = `${fmtTime(event.start)} to ${fmtTime(event.end)}`;
+		const time = `${fmtTime(event.start)} – ${fmtTime(event.end)}`;
 		const dur = fmtDuration(event.start, event.end);
 		const loc = event.location ? `, ${event.location}` : '';
-		const statusStr = isCancelled ? ', cancelled' : isTentative ? ', tentative' : isFull ? ', full' : isLimited ? ', limited' : '';
+		const status = isCancelled ? L.cancelled : isTentative ? L.tentative : isFull ? L.full : isLimited ? L.limited : '';
+		const statusStr = status ? `, ${status}` : '';
 		const activeStr = active ? `, ${L.happeningNow}` : past ? `, ${L.past}` : '';
 		return `${t}${loc}, ${time}, ${dur}${statusStr}${activeStr}`;
 	});
@@ -101,11 +106,7 @@
 					{/each}
 				</div>
 			{/if}
-			{#if isCancelled}<span class="eb-status-badge eb-cancelled-badge">Cancelled</span>{/if}
-			{#if isTentative}<span class="eb-status-badge eb-tentative-badge">Tentative</span>{/if}
-			{#if isFull}<span class="eb-status-badge eb-full-badge">Full</span>{/if}
-			{#if isLimited}<span class="eb-status-badge eb-limited-badge">Limited</span>{/if}
-			{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
+			{@render badges()}
 		</div>
 	{:else}
 		<!-- row -->
@@ -128,11 +129,18 @@
 				{/each}
 			</span>
 		{/if}
-		{#if isCancelled}<span class="eb-status-badge eb-cancelled-badge">Cancelled</span>{/if}
-		{#if isFull}<span class="eb-status-badge eb-full-badge">Full</span>{/if}
-		{#if isLimited}<span class="eb-status-badge eb-limited-badge">Limited</span>{/if}
-		{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
+		{@render badges()}
 	{/if}
+{/snippet}
+
+<!-- Status badges: the same set in card and row. The badge CSS uppercases
+     the (lower-case) status labels. -->
+{#snippet badges()}
+	{#if isCancelled}<span class="eb-status-badge eb-cancelled-badge">{L.cancelled}</span>{/if}
+	{#if isTentative}<span class="eb-status-badge eb-tentative-badge">{L.tentative}</span>{/if}
+	{#if isFull}<span class="eb-status-badge eb-full-badge">{L.full}</span>{/if}
+	{#if isLimited}<span class="eb-status-badge eb-limited-badge">{L.limited}</span>{/if}
+	{#if active}<span class="eb-live-badge">{L.now}</span>{/if}
 {/snippet}
 
 {#if onclick}
@@ -369,8 +377,8 @@
 		background: color-mix(in srgb, var(--_color) 12%, transparent);
 	}
 	.eb-full-badge {
-		color: #2563eb;
-		background: color-mix(in srgb, #2563eb 15%, transparent);
+		color: var(--dt-accent, #2563eb);
+		background: color-mix(in srgb, var(--dt-accent, #2563eb) 15%, transparent);
 	}
 	.eb-limited-badge {
 		color: var(--_color);

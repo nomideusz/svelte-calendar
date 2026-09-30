@@ -16,6 +16,15 @@ export declare function startOfWeek(ms: number, mondayStart?: boolean): number;
 export declare function addDaysMs(ms: number, n: number): number;
 /** Calendar-day difference between two timestamps */
 export declare function diffDays(a: number, b: number): number;
+/**
+ * Whether an event overlaps [start, end). A zero-length event (a deadline,
+ * a marker) has no extent to overlap with, so it counts where it sits —
+ * including exactly at `start`, which the plain interval test drops.
+ */
+export declare function overlapsRange(ev: {
+    start: Date;
+    end: Date;
+}, start: Date, end: Date): boolean;
 /** Zero-pad a number to 2 digits */
 export declare function pad(n: number): string;
 /**

@@ -106,7 +106,7 @@ export interface MappedAdapterOptions<T = Record<string, unknown>> {
      * Color palette used for auto-coloring.
      * Defaults to VIVID_PALETTE.
      */
-    palette?: string[];
+    palette?: readonly string[];
     /**
      * When true (default), create/update/delete throw an error.
      * Set to false and provide `onMutate` to enable writes.
@@ -167,4 +167,4 @@ export interface MutationHandler<T = Record<string, unknown>> {
  * });
  * ```
  */
-export declare function createMappedAdapter<T extends Record<string, unknown> = Record<string, unknown>>(sourceData: T[], options?: MappedAdapterOptions<T>): CalendarAdapter;
+export declare function createMappedAdapter<T extends object = Record<string, unknown>>(sourceData: T[], options?: MappedAdapterOptions<T>): CalendarAdapter;

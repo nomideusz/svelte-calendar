@@ -23,6 +23,8 @@
 import type { TimelineEvent, EventStatus } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
 import { VIVID_PALETTE } from '../core/palette.js';
+import { overlapsRange } from '../core/time.js';
+import { CalendarReadOnlyError, EventNotFoundError } from './errors.js';
 
 // ── Public types ────────────────────────────────────────
 
@@ -122,7 +124,7 @@ export interface MappedAdapterOptions<T = Record<string, unknown>> {
 	 * Color palette used for auto-coloring.
 	 * Defaults to VIVID_PALETTE.
 	 */
-	palette?: string[];
+	palette?: readonly string[];
 
 	/**
 	 * When true (default), create/update/delete throw an error.
@@ -168,7 +170,10 @@ function toDate(value: unknown): Date {
 function combineDateAndTime(dateStr: string, timeStr: string): Date {
 	// Handle various date formats
 	const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
-	const d = new Date(`${datePart}T${timeStr}:00`);
+	// "7:00", "07:00" and "07:00:00" all mean the same wall-clock time.
+	const t = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(timeStr.trim());
+	const time = t ? `${t[1].padStart(2, '0')}:${t[2]}:${t[3] ?? '00'}` : timeStr;
+	const d = new Date(`${datePart}T${time}`);
 	if (isNaN(d.getTime())) {
 		throw new Error(`Cannot combine date "${dateStr}" and time "${timeStr}"`);
 	}
@@ -279,7 +284,7 @@ function collectData(
  * });
  * ```
  */
-export function createMappedAdapter<T extends Record<string, unknown> = Record<string, unknown>>(
+export function createMappedAdapter<T extends object = Record<string, unknown>>(
 	sourceData: T[],
 	options: MappedAdapterOptions<T> = {},
 ): CalendarAdapter {
@@ -317,12 +322,12 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 	 * Map a single raw record using the declarative field mapping.
 	 */
 	function mapWithFields(raw: T, index: number): TimelineEvent {
-		const f = fields!;
+		const f = fields ?? {};
 		const r = raw as Record<string, unknown>;
 
 		// ── ID ──
-		const id = f.id
-			? String(r[f.id] ?? '')
+		const id = f.id && r[f.id] != null
+			? String(r[f.id])
 			: String(r['id'] ?? r['reference_id'] ?? r['externalId'] ?? r['_id'] ?? uid());
 
 		// ── Title ──
@@ -436,17 +441,21 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 	// ── Adapter interface ──
 
 	function overlaps(ev: TimelineEvent, range: DateRange): boolean {
-		return ev.start < range.end && ev.end > range.start;
+		return overlapsRange(ev, range.start, range.end);
 	}
 
 	return {
+		// The records are in memory: answer at once, so a server render holds them.
+		fetchEventsSync(range: DateRange): TimelineEvent[] {
+			return events.filter((ev) => overlaps(ev, range));
+		},
 		async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
 			return events.filter((ev) => overlaps(ev, range));
 		},
 
 		async createEvent(data: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent> {
 			if (readOnly) {
-				throw new Error('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
+				throw new CalendarReadOnlyError('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
 			}
 			const handler = options.onMutate?.onCreate;
 			if (handler) {
@@ -464,10 +473,10 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 
 		async updateEvent(id: string, patch: Partial<TimelineEvent>): Promise<TimelineEvent> {
 			if (readOnly) {
-				throw new Error('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
+				throw new CalendarReadOnlyError('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
 			}
 			const idx = events.findIndex((e) => e.id === id);
-			if (idx < 0) throw new Error(`Event not found: ${id}`);
+			if (idx < 0) throw new EventNotFoundError(id);
 
 			const handler = options.onMutate?.onUpdate;
 			if (handler) {
@@ -483,7 +492,7 @@ export function createMappedAdapter<T extends Record<string, unknown> = Record<s
 
 		async deleteEvent(id: string): Promise<void> {
 			if (readOnly) {
-				throw new Error('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
+				throw new CalendarReadOnlyError('Mapped adapter is read-only. Set readOnly: false and provide onMutate to enable writes.');
 			}
 			const handler = options.onMutate?.onDelete;
 			if (handler) await handler(id);

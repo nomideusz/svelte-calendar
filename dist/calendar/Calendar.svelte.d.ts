@@ -1,25 +1,57 @@
-import { type Component, type Snippet } from 'svelte';
+import type { Component, Snippet } from 'svelte';
 import type { CalendarAdapter } from '../adapters/types.js';
 import type { CalendarViewId } from '../engine/view-state.svelte.js';
 import type { TimelineEvent, BlockedSlot } from '../core/types.js';
-import { type CalendarLabels } from '../core/locale.js';
+import type { CalendarLabels } from '../core/locale.js';
 import type { AutoThemeOptions } from '../theme/auto.js';
+import type { HeaderContext, NavigationContext } from '../headless/types.js';
+/**
+ * What the Calendar passes to the active view's component. Engines (store,
+ * view state, drag, labels…) are read from context — `useCalendarContext()`.
+ */
+export interface CalendarViewProps {
+    events: TimelineEvent[];
+    /** The active `--dt-*` theme string */
+    style: string;
+    height: number | null;
+    mode: 'day' | 'week' | 'month';
+    mondayStart: boolean;
+    locale: string | undefined;
+    focusDate: Date;
+    oneventclick: (event: TimelineEvent, anchor?: DOMRect) => void;
+    /** Already gated by `readOnly` and validated; undefined when creating is off */
+    oneventcreate: ((range: {
+        start: Date;
+        end: Date;
+    }) => void) | undefined;
+    onexternaldrop: ((info: {
+        start: Date;
+        dataTransfer: DataTransfer;
+    }) => void) | undefined;
+    readOnly: boolean;
+    visibleHours: [number, number] | undefined;
+    selectedEventId: string | null;
+}
 /** One view registration */
 export interface CalendarView {
     id: CalendarViewId;
+    /** The view-type name shown in the header pills when a mode has several views */
     label: string;
     /** day, week or month */
     mode: 'day' | 'week' | 'month';
-    /** The Svelte component to render */
-    component: Component<Record<string, unknown>>;
-    /** Extra props to pass through (e.g. hourHeight, specialized settings) */
+    /**
+     * The Svelte component to render. It receives `CalendarViewProps` plus
+     * `props`; declare only the ones it uses.
+     */
+    component: Component<any>;
+    /** Extra props passed through to the component */
     props?: Record<string, unknown>;
 }
-interface Props {
+export interface CalendarProps {
     /** Data adapter (required) */
     adapter: CalendarAdapter;
-    /** Registered views */
-    views?: CalendarView[];
+    /** Registered views (default: `defaultViews`) */
+    views?: readonly CalendarView[];
     /** Active view ID (defaults to first registered view) */
     view?: CalendarViewId;
     /** CSS theme string (--dt-* inline style) */
@@ -74,7 +106,10 @@ interface Props {
     showDates?: boolean;
     /** ISO weekdays to hide (1=Mon … 7=Sun). E.g. [6, 7] hides weekends. */
     hideDays?: number[];
-    /** Controlled current date — drives which date the calendar focuses on. */
+    /**
+     * Controlled current date — drives which date the calendar focuses on.
+     * An instant, like `initialDate`: with `timezone` it is read in that zone.
+     */
     currentDate?: Date;
     /** Blocked/unavailable time slots — rendered as hatched regions, prevent event creation. */
     blockedSlots?: BlockedSlot[];
@@ -117,12 +152,12 @@ interface Props {
      * Replace the entire header chrome (date label + mode pills + nav arrows).
      * Receives context: { dateLabel, mode, modes, switchMode, prev, next, goToday, isViewOnToday, focusDate }.
      */
-    header?: Snippet<[import('../headless/types.js').HeaderContext]>;
+    header?: Snippet<[HeaderContext]>;
     /**
      * Replace just the navigation controls (arrows + today button).
      * Receives context: { prev, next, goToday, isViewOnToday, focusDate, mode }.
      */
-    navigation?: Snippet<[import('../headless/types.js').NavigationContext]>;
+    navigation?: Snippet<[NavigationContext]>;
     /** `anchor` is the clicked block's viewport rect where a view has one (planner) — for positioning a FloatingPanel. */
     oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     oneventcreate?: (range: {
@@ -136,13 +171,25 @@ interface Props {
         start: Date;
         dataTransfer: DataTransfer;
     }) => void;
+    /**
+     * An event was dragged or resized. `newStart`/`newEnd` are real instants.
+     * Fires after the adapter stored the move, or — when the adapter refuses
+     * with a `read-only` error — so the host can store it itself.
+     */
     oneventmove?: (event: TimelineEvent, newStart: Date, newEnd: Date) => void;
+    /** Called with the active view id — once on mount, then on every change. */
     onviewchange?: (viewId: CalendarViewId) => void;
-    /** Called when the focused date changes (navigation, drag-scroll, etc.) */
+    /**
+     * Called with the focused date — once on mount, then whenever it changes
+     * (navigation, scrolling, a tapped day). An instant on the focused day,
+     * like `currentDate` takes, so feeding it back is stable. With `timezone`
+     * read its date in that zone — `formatInTimeZone(d, timezone, …)` or
+     * `toZonedTime(d, timezone)`.
+     */
     ondatechange?: (date: Date) => void;
     /** Called when the pointer enters an event (hover). */
     oneventhover?: (event: TimelineEvent) => void;
-    /** Called when a day cell is clicked (month grid; more views over time). */
+    /** Called when a day cell is clicked (month grid, agenda day heads). An instant, like `ondatechange`. Default: open that day in a day view. */
     ondayclick?: (date: Date) => void;
     /** Surfaced instead of silent console output when loading or mutations fail. */
     onerror?: (error: Error) => void;
@@ -154,6 +201,14 @@ interface Props {
      */
     timezone?: string;
 }
-declare const Calendar: Component<Props, {}, "">;
+/**
+ * The built-in views — the registry a Calendar uses without a `views` prop.
+ * Spread it to add your own view and keep these:
+ * `views={[...defaultViews, { id: 'day-kanban', ... }]}`.
+ * On phones (`mobile: 'auto'`), every view except `*-agenda` and `*-mobile`
+ * swaps to the registered `{mode}-mobile` view, when there is one.
+ */
+export declare const defaultViews: readonly CalendarView[];
+declare const Calendar: Component<CalendarProps, {}, "">;
 type Calendar = ReturnType<typeof Calendar>;
 export default Calendar;

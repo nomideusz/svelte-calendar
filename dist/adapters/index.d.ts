@@ -12,3 +12,4 @@ export { withInitialEvents } from './seeded.js';
 export type { CompositeAdapterOptions } from './composite.js';
 export { createJmapAdapter } from './jmap.js';
 export type { JmapClient, JmapCalendarAdapterOptions } from './jmap.js';
+export { CalendarReadOnlyError, EventNotFoundError, isReadOnlyError, isNotFoundError } from './errors.js';

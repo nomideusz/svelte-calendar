@@ -6,7 +6,8 @@
     - Short/long weekday + date number for week views
 -->
 <script lang="ts">import { weekdayShort, weekdayLong, monthShort, fmtDay } from "../core/locale.js";
-let { dayMs, todayMs = Date.now(), format = "short", isToday = false, isPast = false } = $props();
+import { sod } from "../core/time.js";
+let { dayMs, todayMs = sod(Date.now()), format = "short", isToday = false, isPast = false } = $props();
 const dayNum = $derived(new Date(dayMs).getDate());
 </script>
 
@@ -16,7 +17,7 @@ const dayNum = $derived(new Date(dayMs).getDate());
 	class:dh-past={isPast}
 >
 	{#if format === 'relative'}
-		<span class="dh-rel">{fmtDay(dayMs, todayMs)}</span>
+		<span class="dh-rel">{fmtDay(sod(dayMs), sod(todayMs))}</span>
 	{:else if format === 'long'}
 		<span class="dh-name dh-name-long">{weekdayLong(dayMs)}</span>
 		<span class="dh-date">{monthShort(dayMs)} {dayNum}</span>

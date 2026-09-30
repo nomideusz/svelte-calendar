@@ -13,6 +13,7 @@
  */
 import { startOfWeek as calcStartOfWeek, addDaysMs } from '../core/time.js';
 import type { DateRange } from '../adapters/types.js';
+import { nowInZone } from '../core/timezone.js';
 export type { DateRange };
 
 /**
@@ -41,7 +42,11 @@ export type ViewMode = 'day' | 'week' | 'month';
 export interface ViewStateOptions {
 	view?: CalendarViewId;
 	mondayStart?: boolean;
-	/** IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone. */
+	/**
+	 * IANA timezone string (e.g. 'America/New_York'). Defaults to local timezone.
+	 * "Today" (the default focus, `goToday()`) is today in this zone, as a
+	 * wall-clock Date on the zoned plane the Calendar's `timezone` prop uses.
+	 */
 	timezone?: string;
 	/** Initial date to focus on (defaults to today). */
 	initialDate?: Date;
@@ -120,11 +125,12 @@ function computeRange(
 }
 
 export function createViewState(options: ViewStateOptions = {}): ViewState {
+	const timezone = options.timezone;
+	const today = () => (timezone ? nowInZone(timezone) : new Date());
 	let view = $state<CalendarViewId>(options.view ?? 'week-planner');
-	let focusDate = $state<Date>(options.initialDate ?? new Date());
+	let focusDate = $state<Date>(options.initialDate ?? today());
 	let mondayStart = $state(options.mondayStart ?? true);
 	let dayCount = $state(options.dayCount ?? 7);
-	const timezone = options.timezone;
 	const modeResolver = options.modeForView;
 
 	const mode = $derived(modeResolver?.(view) ?? inferMode(view));
@@ -189,7 +195,7 @@ export function createViewState(options: ViewStateOptions = {}): ViewState {
 		},
 
 		goToday() {
-			focusDate = new Date();
+			focusDate = today();
 		},
 	};
 }

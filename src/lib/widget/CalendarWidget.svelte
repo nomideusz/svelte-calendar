@@ -15,14 +15,14 @@
 -->
 <script lang="ts">
 	import Calendar from '../calendar/Calendar.svelte';
-	import { createRestAdapter } from '../adapters/rest.js';
 	import { createMemoryAdapter } from '../adapters/memory.js';
+	import type { CalendarAdapter, DateRange } from '../adapters/types.js';
 	import { presets } from '../theme/presets.js';
 	import type { PresetName } from '../theme/presets.js';
 	import type { TimelineEvent } from '../core/types.js';
 
 	interface Props {
-		/** REST API base URL — if provided, fetches events from this endpoint */
+		/** Events endpoint — fetched as `GET {api}?start=…&end=…` (ISO instants); answers an array of events or `{ events: [...] }` */
 		api?: string;
 		/** JSON string of events for static/inline data (alternative to api) */
 		events?: string;
@@ -40,7 +40,7 @@
 		mondaystart?: string;
 		/** Custom HTTP headers as JSON string for REST adapter */
 		headers?: string;
-		/** Read-only mode: "true" disables drag/resize/create */
+		/** Read-only unless explicitly "false" — an anonymous embed has nowhere to store an edit */
 		readonly?: string;
 		/** Show the Day/Week/Month pills (default: true) */
 		pills?: string;
@@ -128,6 +128,9 @@
 			start,
 			end,
 			color: raw.color ? String(raw.color) : undefined,
+			allDay: raw.allDay === true ? true : undefined,
+			subtitle: typeof raw.subtitle === 'string' ? raw.subtitle : undefined,
+			location: typeof raw.location === 'string' ? raw.location : undefined,
 		};
 	}
 
@@ -148,21 +151,40 @@
 		}
 	}
 
+	/**
+	 * The documented widget contract: `GET {api}?start=…&end=…`, answered by
+	 * an array of events or `{ events: [...] }` with ISO date strings. Read
+	 * only — there is no write endpoint to call. No Content-Type on the GET,
+	 * so a cross-origin embed stays a simple request (no CORS preflight)
+	 * unless the page adds its own `headers`.
+	 */
+	function createApiAdapter(url: string, extraHeaders?: Record<string, string>): CalendarAdapter {
+		return {
+			async fetchEvents(range: DateRange): Promise<TimelineEvent[]> {
+				const params = new URLSearchParams({
+					start: range.start.toISOString(),
+					end: range.end.toISOString(),
+				});
+				const res = await fetch(`${url}${url.includes('?') ? '&' : '?'}${params}`, {
+					headers: { Accept: 'application/json', ...extraHeaders },
+				});
+				if (!res.ok) throw new Error(`[day-calendar] ${url} answered ${res.status} ${res.statusText}`);
+				const data: unknown = await res.json();
+				const arr: unknown[] = Array.isArray(data)
+					? data
+					: data && typeof data === 'object' && Array.isArray((data as { events?: unknown }).events)
+						? (data as { events: unknown[] }).events
+						: [];
+				return arr
+					.map((e, idx) => (e && typeof e === 'object' ? toEvent(e as Record<string, unknown>, `api-${idx}`) : null))
+					.filter((ev): ev is TimelineEvent => ev !== null);
+			},
+		};
+	}
+
 	// ── Create adapter ──
 	const adapter = $derived.by(() => {
-		if (api) {
-			const parsedHeaders = parseHeaders(headers);
-			return createRestAdapter({
-				baseUrl: api,
-				headers: parsedHeaders,
-				mapEvents: (data: unknown) => {
-					const arr = Array.isArray(data) ? data : (data as Record<string, unknown>).events as unknown[] ?? [];
-					return arr
-						.map((e: unknown, idx) => toEvent(e as Record<string, unknown>, `api-${idx}`))
-						.filter((ev): ev is TimelineEvent => ev !== null);
-				},
-			});
-		}
+		if (api) return createApiAdapter(api, parseHeaders(headers));
 		return createMemoryAdapter(parseEvents(events));
 	});
 </script>
@@ -175,7 +197,7 @@
 	mondayStart={isMondayStart}
 	dir={dirValue}
 	{locale}
-	readOnly={readonly === 'true'}
+	readOnly={readonly !== 'false'}
 	showModePills={pills !== 'false'}
 	showNavigation={nav !== 'false'}
 	mobile={mobileValue}

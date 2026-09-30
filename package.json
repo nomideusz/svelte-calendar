@@ -1,7 +1,7 @@
 {
   "name": "@nomideusz/svelte-calendar",
-  "version": "0.21.0",
-  "description": "A themeable Svelte 5 calendar with Day and Week views — Planner and Agenda.",
+  "version": "1.0.0",
+  "description": "A themeable Svelte 5 calendar: day, week, scrolling-week and month views, agenda lists, touch-first mobile layouts, drag-and-drop, timezones, a headless API and an embeddable web component.",
   "type": "module",
   "sideEffects": [
     "./widget/widget.js"
@@ -15,13 +15,18 @@
       "svelte": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./widget": "./widget/widget.js"
+    "./widget": {
+      "types": "./widget/widget.d.ts",
+      "default": "./widget/widget.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "widget",
     "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "!dist/**/*.spec.*",
+    "!dist/widget"
   ],
   "imports": {
     "#lib": "./src/lib",
@@ -33,7 +38,7 @@
     "package": "svelte-kit sync && svelte-package",
     "package:watch": "svelte-kit sync && svelte-package --watch",
     "build:widget": "vite build --config vite.config.widget.ts",
-    "prepublishOnly": "npm run package",
+    "prepublishOnly": "npm run package && npm run build:widget",
     "preview": "vite preview",
     "prepare": "svelte-kit sync && svelte-package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -42,7 +47,7 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "^5.29.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "8.0.0-next.4",
@@ -67,17 +72,27 @@
   },
   "keywords": [
     "svelte",
+    "svelte5",
     "calendar",
+    "event-calendar",
     "scheduler",
     "timeline",
-    "week",
+    "agenda",
     "day",
+    "week",
+    "month",
     "booking",
-    "svelte5"
+    "drag-and-drop",
+    "timezone",
+    "headless",
+    "web-component"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nomideusz/svelte-calendar"
+    "url": "git+https://github.com/nomideusz/svelte-calendar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nomideusz/svelte-calendar/issues"
   },
   "homepage": "https://svelte-calendar.xyz/"
 }

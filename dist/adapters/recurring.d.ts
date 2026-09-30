@@ -79,7 +79,7 @@ export interface RecurringAdapterOptions {
      * or provide your own array of hex strings.
      * Defaults to the built-in vivid palette.
      */
-    palette?: string[];
+    palette?: readonly string[];
     /**
      * Let projected occurrences be dragged (default: `false`).
      *

@@ -1,9 +1,48 @@
 <script module lang="ts">// Phone sheet scroll-lock: nested panels each take a lock; the page behind
 // unlocks when the last one closes.
 let sheetLocks = 0;
+// Open panels, oldest first. Escape and the outside tap belong to the
+// topmost one only, so a nested panel closes without its parent.
+const openPanels = [];
+// Events a panel already acted on — the next panel down must not act on
+// the same keydown/pointerdown once the top one unmounts mid-dispatch.
+const handled = new WeakSet();
+/**
+* Spend the click a closing tap synthesizes. `onclose` usually unmounts the
+* panel before that click arrives, so the listener lives on `window`,
+* outside the component: it eats the next click (capture phase, before any
+* calendar handler) and removes itself then, on the next pointerdown, on a
+* pointercancel (no click follows), or after a timeout.
+*/
+function swallowNextClick() {
+	const eat = (e) => {
+		e.stopPropagation();
+		e.preventDefault();
+		done();
+	};
+	const done = () => {
+		clearTimeout(timer);
+		window.removeEventListener("click", eat, true);
+		window.removeEventListener("pointerdown", done, true);
+		window.removeEventListener("pointercancel", done, true);
+	};
+	const timer = setTimeout(done, 1500);
+	window.addEventListener("click", eat, true);
+	window.addEventListener("pointercancel", done, true);
+	// Armed after this pointerdown has finished dispatching.
+	setTimeout(() => window.addEventListener("pointerdown", done, true), 0);
+}
+export {};
 </script>
 
-<script lang="ts">let { title = "", anchor = {
+<script lang="ts">// A non-modal window that floats over the calendar: opened beside the
+// block that was clicked (right of it, left when the right edge is near,
+// clamped to the viewport), dragged by its header, closed by Escape, its
+// own button, or a click anywhere outside — that outside click is spent on
+// closing, so a block under it is not opened by the same tap. Below 640px
+// it is a bottom sheet instead.
+import { untrack } from "svelte";
+let { title = "", anchor = {
 	x: 24,
 	y: 24
 }, width = 440, theme = "", closeLabel = "Close", closeOnOutside = true, onclose, children } = $props();
@@ -28,10 +67,65 @@ function beside(a) {
 	const px = right + w + EDGE <= window.innerWidth ? right : a.x - GAP - w >= EDGE ? a.x - GAP - w : a.x;
 	place(px, a.y);
 }
+// Where focus goes back to when the panel closes: whatever held it when
+// the panel opened (or when a new anchor re-focused it).
+let returnFocus = null;
+// Set once the user drags the panel: from then on a size change re-clamps
+// it where it is instead of jumping back beside the anchor.
+let dragged = false;
 // A new anchor (the next click) re-places the panel; each run focuses it.
 $effect(() => {
+	dragged = false;
 	beside(anchor);
+	const active = document.activeElement;
+	if (active instanceof HTMLElement && active !== document.body && !el?.contains(active)) {
+		returnFocus = active;
+	}
 	el?.focus({ preventScroll: true });
+});
+// Content that grows (or shrinks) after opening — a form section, loaded
+// data — must stay inside the viewport; so must a resized window.
+$effect(() => {
+	if (!el) return;
+	const reclamp = () => {
+		if (dragged) place(left, top);
+		else beside(anchor);
+	};
+	const ro = new ResizeObserver(reclamp);
+	ro.observe(el);
+	window.addEventListener("resize", reclamp);
+	return () => {
+		ro.disconnect();
+		window.removeEventListener("resize", reclamp);
+	};
+});
+// Topmost-panel stack + focus restore on close.
+const myId = Symbol("floating-panel");
+const isTopmost = () => openPanels[openPanels.length - 1] === myId;
+$effect(() => {
+	const id = myId;
+	openPanels.push(id);
+	const panel = untrack(() => el);
+	return () => {
+		const i = openPanels.indexOf(id);
+		if (i !== -1) openPanels.splice(i, 1);
+		// Only pull focus back when it would otherwise be lost (inside the
+		// closing panel, or dropped to <body>) — not from where the user
+		// has since moved it.
+		const active = document.activeElement;
+		const lost = !active || active === document.body || !!panel && panel.contains(active);
+		const target = returnFocus;
+		if (lost && target && target.isConnected) {
+			target.focus({ preventScroll: true });
+		} else if (lost && target) {
+			// The opener may be re-rendered by the close (a view refresh);
+			// try once more after the DOM settles.
+			queueMicrotask(() => {
+				const a = document.activeElement;
+				if ((!a || a === document.body) && target.isConnected) target.focus({ preventScroll: true });
+			});
+		}
+	};
 });
 // In sheet mode the page behind must not scroll — drags on the sheet
 // chrome, or reaching the end of the sheet body, would otherwise reach it.
@@ -59,35 +153,36 @@ function down(e) {
 	e.currentTarget.setPointerCapture(e.pointerId);
 }
 function move(e) {
-	if (grab) place(e.clientX - grab.dx, e.clientY - grab.dy);
+	if (!grab) return;
+	dragged = true;
+	place(e.clientX - grab.dx, e.clientY - grab.dy);
 }
 function up() {
 	grab = null;
 }
 // The outside pointerdown is swallowed here, before any calendar handler,
 // and so is the click it would synthesize — one tap closes, the next acts.
-let swallowClick = false;
+// With nested panels only the topmost reacts: a tap outside it (even on
+// the panel beneath) closes it alone.
 function outsideDown(e) {
 	if (!closeOnOutside || !el || el.contains(e.target)) return;
+	if (handled.has(e) || !isTopmost()) return;
+	handled.add(e);
 	e.stopPropagation();
 	e.preventDefault();
-	swallowClick = true;
+	swallowNextClick();
 	onclose?.();
 }
-function outsideClick(e) {
-	if (!swallowClick) return;
-	swallowClick = false;
-	e.stopPropagation();
-	e.preventDefault();
+function onKeydown(e) {
+	// defaultPrevented: a control inside the panel (a combobox, a menu)
+	// already used this Escape to close itself.
+	if (e.key !== "Escape" || e.defaultPrevented || handled.has(e) || !isTopmost()) return;
+	handled.add(e);
+	onclose?.();
 }
-export {};
 </script>
 
-<svelte:window
-	onkeydown={(e) => e.key === 'Escape' && onclose?.()}
-	onpointerdowncapture={outsideDown}
-	onclickcapture={outsideClick}
-/>
+<svelte:window onkeydown={onKeydown} onpointerdowncapture={outsideDown} />
 
 <div
 	class="fp"

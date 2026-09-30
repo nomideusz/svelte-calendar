@@ -14,8 +14,12 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getLabels } from '../core/locale.js';
+	import type { CalendarLabels } from '../core/locale.js';
+	import { getContext } from 'svelte';
 
-	const L = $derived(getLabels());
+	// Inside a Calendar: its per-instance labels; standalone: the global ones.
+	const calendarCtx = getContext<{ labels?: CalendarLabels } | undefined>('calendar');
+	const L = $derived(calendarCtx?.labels ?? getLabels());
 
 	interface Props {
 		/** Visual mode */
@@ -56,7 +60,9 @@
 </script>
 
 {#if mode === 'badge'}
-	<span class="ni-badge" style={colorVar} role="status" aria-live="polite" aria-label="{L.currentTime}: {time}">
+	<!-- Plain text, not a live region: the time it carries changes every
+	     second, and a status role would read each change aloud. -->
+	<span class="ni-badge" style={colorVar}>
 		{#if children}
 			{@render children()}
 		{:else}
@@ -64,7 +70,9 @@
 		{/if}
 	</span>
 {:else if mode === 'dot'}
-	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="{L.currentTime}: {time}">
+	<!-- Decorative: the visible time is the grid's own; hidden from AT so a
+	     ticking label is never announced. -->
+	<div class="ni ni-dot {orientation}" style="{posStyle}; {colorVar}" aria-hidden="true">
 		<div class="ni-dot-circle"></div>
 		{#if showLabel && time}
 			<div class="ni-label">
@@ -74,7 +82,7 @@
 		{/if}
 	</div>
 {:else}
-	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}" role="status" aria-label="{L.currentTime}: {time}">
+	<div class="ni ni-line {orientation}" style="{posStyle}; {colorVar}" aria-hidden="true">
 		<div class="ni-line-bar"></div>
 		{#if showLabel && time}
 			<div class="ni-label">

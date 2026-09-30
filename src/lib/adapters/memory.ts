@@ -13,6 +13,8 @@
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
 import { VIVID_PALETTE } from '../core/palette.js';
+import { overlapsRange } from '../core/time.js';
+import { EventNotFoundError } from './errors.js';
 
 export interface MemoryAdapterOptions {
 	/**
@@ -20,7 +22,7 @@ export interface MemoryAdapterOptions {
 	 * Defaults to VIVID_PALETTE. Pass `generatePalette(accent)` to
 	 * make event colors adapt to your theme.
 	 */
-	palette?: string[];
+	palette?: readonly string[];
 }
 
 let counter = 0;
@@ -55,7 +57,7 @@ export function createMemoryAdapter(
 	}
 
 	function overlaps(ev: TimelineEvent, range: DateRange): boolean {
-		return ev.start < range.end && ev.end > range.start;
+		return overlapsRange(ev, range.start, range.end);
 	}
 
 	const fetchEventsSync = (range: DateRange): TimelineEvent[] =>
@@ -80,14 +82,14 @@ export function createMemoryAdapter(
 			patch: Partial<TimelineEvent>,
 		): Promise<TimelineEvent> {
 			const idx = events.findIndex((e) => e.id === id);
-			if (idx < 0) throw new Error(`Event not found: ${id}`);
+			if (idx < 0) throw new EventNotFoundError(id);
 			events[idx] = { ...events[idx], ...patch, id };
 			return withColor(events[idx]);
 		},
 
 		async deleteEvent(id: string): Promise<void> {
 			const idx = events.findIndex((e) => e.id === id);
-			if (idx < 0) throw new Error(`Event not found: ${id}`);
+			if (idx < 0) throw new EventNotFoundError(id);
 			events.splice(idx, 1);
 		},
 	};

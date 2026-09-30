@@ -43,23 +43,25 @@ import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
 import { createViewState } from '../engine/view-state.svelte.js';
 import { toZonedTime, fromZonedTime, wrapAdapterWithTimezone } from '../core/timezone.js';
+import { isReadOnlyError, isNotFoundError } from '../adapters/errors.js';
 import { createSelection } from '../engine/selection.svelte.js';
 import { createDragState } from '../engine/drag.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
 import { sod, addDaysMs, HOUR_MS, startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay, } from '../core/time.js';
-import { monthLong, weekdayLong, weekdayShort } from '../core/locale.js';
+import { monthLong, weekdayLong, weekdayShort, fmtWeekRange, getDefaultLocale } from '../core/locale.js';
 export function createCalendar(options) {
     const { adapter, mondayStart: initialMondayStart = true, initialDate: rawInitialDate, locale, visibleHours, snapInterval = 15, equalDays = false, hideDays, blockedSlots, disabledDates, days: initialDayCount = 7, readOnly = false, minDuration, maxDuration, oneventclick, oneventcreate, oneventmove, } = options;
     // ── Create engine ────────────────────────────────────
     const timezone = options.timezone;
     const initialDate = rawInitialDate && timezone ? toZonedTime(rawInitialDate, timezone) : rawInitialDate;
-    const store = createEventStore(timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter);
+    const effectiveAdapter = timezone ? wrapAdapterWithTimezone(adapter, timezone) : adapter;
+    const store = createEventStore(effectiveAdapter);
     const viewState = createViewState({
         view: options.view ?? 'week-planner',
         mondayStart: initialMondayStart,
         initialDate,
         dayCount: initialDayCount,
-        modeForView: (id) => id.startsWith('day-') ? 'day' : 'week',
+        timezone,
     });
     const selection = createSelection();
     const drag = createDragState();
@@ -71,12 +73,25 @@ export function createCalendar(options) {
     const endHour = visibleHours?.[1] ?? 24;
     const hours = Array.from({ length: endHour - startHour }, (_, i) => startHour + i);
     // ── Load events reactively ───────────────────────────
-    $effect(() => {
+    // Eager initial load for synchronous adapters (the server render holds the
+    // events); the effect's first run then has nothing new to fetch.
+    let eagerKey = untrack(() => {
+        if (!effectiveAdapter.fetchEventsSync)
+            return '';
         const { start, end } = viewState.range;
         store.load({ start, end });
+        return `${start.getTime()}-${end.getTime()}`;
     });
-    // Eager initial load
-    untrack(() => store.load({ start: viewState.range.start, end: viewState.range.end }));
+    $effect(() => {
+        const { start, end } = viewState.range;
+        const key = `${start.getTime()}-${end.getTime()}`;
+        if (key === eagerKey) {
+            eagerKey = '';
+            return;
+        }
+        eagerKey = '';
+        store.load({ start, end });
+    });
     // ── Compute day cells ────────────────────────────────
     const days = $derived.by(() => {
         const { start, end } = viewState.range;
@@ -165,21 +180,36 @@ export function createCalendar(options) {
         }
         return { past, current, upcoming };
     });
+    // "Now" on the same (zoned) plane as the range. A month view's range spills
+    // into the neighbouring months, so it compares the focused month instead.
+    function includesToday() {
+        const now = clock.tick;
+        if (viewState.mode === 'month') {
+            const f = viewState.focusDate;
+            const n = new Date(now);
+            return f.getMonth() === n.getMonth() && f.getFullYear() === n.getFullYear();
+        }
+        const { start, end } = viewState.range;
+        return now >= start.getTime() && now < end.getTime();
+    }
     // ── Header context ───────────────────────────────────
     const headerContext = $derived.by(() => {
         const mode = viewState.mode;
         const focus = viewState.focusDate;
-        const now = Date.now();
-        const { start, end } = viewState.range;
-        const isViewOnToday = now >= start.getTime() && now < end.getTime();
+        const isViewOnToday = includesToday();
+        const loc = locale ?? getDefaultLocale();
         let dateLabel;
         if (mode === 'day') {
-            dateLabel = focus.toLocaleDateString(locale, {
+            dateLabel = focus.toLocaleDateString(loc, {
                 weekday: 'long', month: 'short', day: 'numeric',
             });
         }
+        else if (mode === 'week') {
+            const { start, end } = viewState.range;
+            dateLabel = fmtWeekRange(start.getTime(), loc, end.getTime() - 1);
+        }
         else {
-            dateLabel = focus.toLocaleDateString(locale, {
+            dateLabel = focus.toLocaleDateString(loc, {
                 month: 'long', year: 'numeric',
             });
         }
@@ -189,7 +219,16 @@ export function createCalendar(options) {
             modes: ['day', 'week', 'month'],
             switchMode: (m) => {
                 const currentView = viewState.view;
-                const currentLabel = currentView.replace(/^(day|week)-/, '');
+                const currentLabel = currentView.replace(/^(day|week|month)-/, '');
+                // Month has one layout of its own; leaving it lands on the planner.
+                if (m === 'month') {
+                    viewState.setView('month-grid');
+                    return;
+                }
+                if (currentView.startsWith('month-')) {
+                    viewState.setView(`${m}-planner`);
+                    return;
+                }
                 viewState.setView(`${m}-${currentLabel}`);
             },
             prev: () => viewState.prev(),
@@ -200,13 +239,11 @@ export function createCalendar(options) {
         };
     });
     const navigationContext = $derived.by(() => {
-        const { start, end } = viewState.range;
-        const now = Date.now();
         return {
             prev: () => viewState.prev(),
             next: () => viewState.next(),
             goToday: () => viewState.goToday(),
-            isViewOnToday: now >= start.getTime() && now < end.getTime(),
+            isViewOnToday: includesToday(),
             focusDate: viewState.focusDate,
             mode: viewState.mode,
         };
@@ -288,15 +325,14 @@ export function createCalendar(options) {
                     oneventmove?.(ev, unzoneDate(start), unzoneDate(end));
             }
             catch (e) {
-                const msg = e instanceof Error ? e.message : '';
                 // Read-only adapter: the host still gets the callback — it owns
                 // persistence and refetches.
-                if (msg.includes('read-only')) {
+                if (isReadOnlyError(e)) {
                     const ev = store.byId(payload.eventId);
                     if (ev)
                         oneventmove?.(ev, unzoneDate(start), unzoneDate(end));
                 }
-                else if (!msg.includes('not found')) {
+                else if (!isNotFoundError(e)) {
                     console.warn('[calendar] drag commit failed:', e);
                 }
                 return null;

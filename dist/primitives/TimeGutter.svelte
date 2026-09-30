@@ -8,23 +8,26 @@
 <script lang="ts">import { HOURS } from "../core/time.js";
 import { fmtH } from "../core/locale.js";
 let { orientation = "horizontal", hourSize = 120, halfHour = true, hours = HOURS, formatHour = fmtH } = $props();
+// Labels sit relative to the first hour shown: hours [6…21] start at 0px,
+// not 6 hours down.
+const firstHour = $derived(hours[0] ?? 0);
 </script>
 
 {#if orientation === 'horizontal'}
-	<div class="tg tg-h" style="--tg-hour: {hourSize}px">
+	<div class="tg tg-h" style="--tg-hour: {hourSize}px; --tg-count: {hours.length}">
 		{#each hours as h}
-			<div class="tg-tick" style="left: {h * hourSize}px">
+			<div class="tg-tick" style="left: {(h - firstHour) * hourSize}px">
 				<span class="tg-label">{formatHour(h)}</span>
 			</div>
 			{#if halfHour}
-				<div class="tg-tick tg-tick-half" style="left: {(h + 0.5) * hourSize}px"></div>
+				<div class="tg-tick tg-tick-half" style="left: {(h - firstHour + 0.5) * hourSize}px"></div>
 			{/if}
 		{/each}
 	</div>
 {:else}
-	<div class="tg tg-v" style="--tg-hour: {hourSize}px">
+	<div class="tg tg-v" style="--tg-hour: {hourSize}px; --tg-count: {hours.length}">
 		{#each hours as h}
-			<div class="tg-row" style="top: {h * hourSize}px; height: {hourSize}px">
+			<div class="tg-row" style="top: {(h - firstHour) * hourSize}px; height: {hourSize}px">
 				<span class="tg-label">{formatHour(h)}</span>
 			</div>
 		{/each}
@@ -41,7 +44,7 @@ let { orientation = "horizontal", hourSize = 120, halfHour = true, hours = HOURS
 	/* ── Horizontal ── */
 	.tg-h {
 		height: 100%;
-		width: calc(24 * var(--tg-hour));
+		width: calc(var(--tg-count, 24) * var(--tg-hour));
 	}
 	.tg-tick {
 		position: absolute;
@@ -66,6 +69,7 @@ let { orientation = "horizontal", hourSize = 120, halfHour = true, hours = HOURS
 	/* ── Vertical ── */
 	.tg-v {
 		width: 48px;
+		height: calc(var(--tg-count, 24) * var(--tg-hour));
 		flex-shrink: 0;
 	}
 	.tg-row {

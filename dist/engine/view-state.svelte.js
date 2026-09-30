@@ -12,6 +12,7 @@
  *   vs.goToday()   — jump to today
  */
 import { startOfWeek as calcStartOfWeek, addDaysMs } from '../core/time.js';
+import { nowInZone } from '../core/timezone.js';
 function inferMode(view) {
     if (view.startsWith('day'))
         return 'day';
@@ -52,11 +53,12 @@ function computeRange(focus, mode, mondayStart, dayCount = 7) {
     };
 }
 export function createViewState(options = {}) {
+    const timezone = options.timezone;
+    const today = () => (timezone ? nowInZone(timezone) : new Date());
     let view = $state(options.view ?? 'week-planner');
-    let focusDate = $state(options.initialDate ?? new Date());
+    let focusDate = $state(options.initialDate ?? today());
     let mondayStart = $state(options.mondayStart ?? true);
     let dayCount = $state(options.dayCount ?? 7);
-    const timezone = options.timezone;
     const modeResolver = options.modeForView;
     const mode = $derived(modeResolver?.(view) ?? inferMode(view));
     const range = $derived(computeRange(focusDate, mode, mondayStart, dayCount));
@@ -112,7 +114,7 @@ export function createViewState(options = {}) {
             focusDate = new Date(addDaysMs(focusDate.getTime(), days));
         },
         goToday() {
-            focusDate = new Date();
+            focusDate = today();
         },
     };
 }

@@ -40,8 +40,9 @@ export function createClock(timezone?: string): Clock {
 	// With a timezone, ticks are "zoned wall-clock" epoch ms — the same plane
 	// the wrapped adapter shifts event Dates into. Views stay zone-agnostic.
 	const now = () => (timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now());
-	let tick = $state(now());
-	let today = $state(sod(tick));
+	const t0 = now();
+	let tick = $state(t0);
+	let today = $state(sod(t0));
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
 	function start() {

@@ -32,7 +32,8 @@
  */
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
-import { sod, addDaysMs } from '../core/time.js';
+import { sod, addDaysMs, overlapsRange } from '../core/time.js';
+import { toZonedTime, nowInZone, wrapAdapterWithTimezone } from '../core/timezone.js';
 import { fmtTime as _fmtTime, fmtDuration } from '../core/locale.js';
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter } from '../adapters/types.js';
@@ -51,6 +52,13 @@ export interface RangeAgendaOptions {
 	initialDate?: Date;
 	/** BCP 47 locale tag (e.g. 'en-US', 'pl-PL') for the format helpers */
 	locale?: string;
+	/**
+	 * Show the agenda in an IANA timezone (e.g. 'Europe/Warsaw'), as the
+	 * Calendar's `timezone` prop does: days, "today" and every event Date are
+	 * wall-clock values in that zone (read them with `getHours()`, `getDate()`…).
+	 * `initialDate` and `setDate()` take real instants. Default: the viewer's zone.
+	 */
+	timezone?: string;
 }
 
 // ─── Return types ───────────────────────────────────────
@@ -113,31 +121,47 @@ export interface HeadlessRangeAgenda {
 // ─── Implementation ─────────────────────────────────────
 
 export function createRangeAgenda(options: RangeAgendaOptions): HeadlessRangeAgenda {
-	const { initialDate, locale, days: dayCount = 7 } = options;
+	const { initialDate, locale, days: dayCount = 7, timezone } = options;
 
-	const resolveAdapter =
+	const rawAdapter =
 		typeof options.adapter === 'function'
 			? (options.adapter as () => CalendarAdapter)
 			: () => options.adapter as CalendarAdapter;
+	const resolveAdapter = timezone
+		? () => wrapAdapterWithTimezone(rawAdapter(), timezone)
+		: rawAdapter;
+	/** An instant on the plane the days are drawn on (zoned wall-clock with `timezone`). */
+	const plane = (ms: number) => (timezone ? toZonedTime(ms, timezone).getTime() : ms);
+	const nowMs = () => (timezone ? nowInZone(timezone).getTime() : Date.now());
 
-	const store = $derived(createEventStore(resolveAdapter()));
+	// One store for the agenda's life: a getter adapter that changes identity
+	// reloads it instead of rebuilding it empty (every row blinking out).
+	const store = createEventStore(resolveAdapter);
 
 	// ── Window start (reactive, writable) ──
-	let startMs = $state(sod(initialDate?.getTime() ?? Date.now()));
+	let startMs = $state(sod(initialDate ? plane(initialDate.getTime()) : nowMs()));
 	const endMs = $derived(addDaysMs(startMs, dayCount));
 
 	// ── Load events for the window (re-runs on paging / adapter swap) ──
-	$effect(() => {
+	// Eager initial load for synchronous adapters (the server render holds the
+	// rows); the effect's first run then has nothing new to fetch — a seeded
+	// adapter would otherwise send its seed range straight to the network.
+	let eagerKey = untrack(() => {
+		if (!resolveAdapter().fetchEventsSync) return '';
 		store.load({ start: new Date(startMs), end: new Date(endMs) });
+		return `${startMs}-${endMs}`;
 	});
-	// Eager initial load
-	untrack(() => {
+	$effect(() => {
+		rawAdapter(); // a new adapter reloads
+		const key = `${startMs}-${endMs}`;
+		if (key === eagerKey) { eagerKey = ''; return; }
+		eagerKey = '';
 		store.load({ start: new Date(startMs), end: new Date(endMs) });
 	});
 
 	// ── Day derivations ──
 	const days = $derived.by((): RangeAgendaDay[] => {
-		const todayMs = sod(Date.now());
+		const todayMs = sod(nowMs());
 		const events = store.events;
 		return Array.from({ length: dayCount }, (_, i) => {
 			const ms = addDaysMs(startMs, i);
@@ -152,7 +176,7 @@ export function createRangeAgenda(options: RangeAgendaOptions): HeadlessRangeAge
 				isToday: ms === todayMs,
 				isPast: dayEnd <= todayMs,
 				events: events
-					.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
+					.filter((ev) => overlapsRange(ev, date, new Date(dayEnd)))
 					.sort((a, b) => a.start.getTime() - b.start.getTime()),
 			};
 		});
@@ -184,10 +208,10 @@ export function createRangeAgenda(options: RangeAgendaOptions): HeadlessRangeAge
 			startMs = addDaysMs(startMs, dayCount);
 		},
 		goToday() {
-			startMs = sod(Date.now());
+			startMs = sod(nowMs());
 		},
 		setDate(date: Date) {
-			startMs = sod(date.getTime());
+			startMs = sod(plane(date.getTime()));
 		},
 		refresh() {
 			void store.load({ start: new Date(startMs), end: new Date(endMs) });

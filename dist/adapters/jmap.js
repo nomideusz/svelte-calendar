@@ -1,37 +1,46 @@
+import { addDaysMs } from '../core/time.js';
 export function createJmapAdapter(client, options) {
     const getAccountId = options.getAccountId;
     const timeZone = options.timeZone ?? 'Etc/UTC';
+    /**
+     * Parse an RFC 8601/JSCalendar duration into its calendar part (weeks and
+     * days — whole days on the wall clock, which a DST change makes 23 or 25
+     * hours long) and its exact part (hours, minutes, seconds).
+     */
     function parseIsoDuration(duration) {
-        const match = /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/i.exec(duration);
+        const match = /^P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/i.exec(duration);
         if (!match)
-            return 0;
-        const days = Number(match[1] ?? 0);
-        const hours = Number(match[2] ?? 0);
-        const minutes = Number(match[3] ?? 0);
-        const seconds = Number(match[4] ?? 0);
-        return (((days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000;
+            return { days: 0, ms: 0 };
+        const weeks = Number(match[1] ?? 0);
+        const days = Number(match[2] ?? 0);
+        const hours = Number(match[3] ?? 0);
+        const minutes = Number(match[4] ?? 0);
+        const seconds = Number(match[5] ?? 0);
+        return { days: weeks * 7 + days, ms: ((hours * 60 + minutes) * 60 + seconds) * 1000 };
     }
     function parseEventStart(event) {
+        // An all-day event is floating: it sits on its date wherever the viewer
+        // is. utcStart would pin it to the server zone's midnight instead.
+        if (event.start && event.showWithoutTime) {
+            const [datePart] = event.start.split('T');
+            const [year, month, day] = datePart.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
         if (event.utcStart)
             return new Date(event.utcStart);
-        if (event.start) {
-            if (event.showWithoutTime) {
-                const [datePart] = event.start.split('T');
-                const [year, month, day] = datePart.split('-').map(Number);
-                return new Date(year, month - 1, day);
-            }
+        if (event.start)
             return new Date(event.start);
-        }
         return new Date();
     }
     function parseEventEnd(event, start) {
-        if (event.utcEnd)
+        if (event.utcEnd && !event.showWithoutTime)
             return new Date(event.utcEnd);
         if (event.duration) {
-            return new Date(start.getTime() + parseIsoDuration(event.duration));
+            const { days, ms } = parseIsoDuration(event.duration);
+            return new Date(addDaysMs(start.getTime(), days) + ms);
         }
         if (event.showWithoutTime) {
-            return new Date(start.getFullYear(), start.getMonth(), start.getDate(), 23, 59, 59, 999);
+            return new Date(addDaysMs(start.getTime(), 1));
         }
         return new Date(start.getTime() + 60 * 60 * 1000);
     }

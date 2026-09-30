@@ -33,29 +33,47 @@
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
 import { createClock } from '../core/clock.svelte.js';
-import { sod, addDaysMs, isAllDay, isMultiDay } from '../core/time.js';
+import { sod, addDaysMs, isAllDay, isMultiDay, overlapsRange } from '../core/time.js';
+import { toZonedTime, wrapAdapterWithTimezone } from '../core/timezone.js';
 import { fmtTime as _fmtTime, fmtDuration } from '../core/locale.js';
 import { timeUntilMs, progress as _progress, groupIntoSlots } from '../views/shared/format.js';
 // ─── Implementation ─────────────────────────────────────
 export function createAgenda(options) {
-    const { initialDate, locale, lookahead = 7, } = options;
-    const resolveAdapter = typeof options.adapter === 'function'
+    const { initialDate, locale, lookahead = 7, timezone, } = options;
+    const rawAdapter = typeof options.adapter === 'function'
         ? options.adapter
         : () => options.adapter;
-    const store = $derived(createEventStore(resolveAdapter()));
-    const clock = createClock();
+    const resolveAdapter = timezone
+        ? () => wrapAdapterWithTimezone(rawAdapter(), timezone)
+        : rawAdapter;
+    /** An instant on the plane the day is drawn on (zoned wall-clock with `timezone`). */
+    const plane = (ms) => (timezone ? toZonedTime(ms, timezone).getTime() : ms);
+    // One store for the agenda's life: a getter adapter that changes identity
+    // reloads it instead of rebuilding it empty (every row blinking out).
+    const store = createEventStore(resolveAdapter);
+    const clock = createClock(timezone);
     // ── Focus date (reactive, writable) ──
-    let focusDayMs = $state(sod(initialDate?.getTime() ?? Date.now()));
+    let focusDayMs = $state(sod(initialDate ? plane(initialDate.getTime()) : clock.tick));
     // ── Load events for focus date range ──
-    $effect(() => {
-        const start = new Date(focusDayMs);
-        const end = new Date(addDaysMs(focusDayMs, lookahead));
-        store.load({ start, end });
+    // Eager initial load for synchronous adapters (the server render holds
+    // the rows); the effect's first run then has nothing new to fetch — a
+    // seeded adapter would otherwise refetch the seed at once.
+    let eagerKey = untrack(() => {
+        if (!resolveAdapter().fetchEventsSync)
+            return '';
+        store.load({ start: new Date(focusDayMs), end: new Date(addDaysMs(focusDayMs, lookahead)) });
+        return `${focusDayMs}`;
     });
-    // Eager initial load
-    untrack(() => {
+    $effect(() => {
+        rawAdapter(); // a new adapter reloads
         const start = new Date(focusDayMs);
         const end = new Date(addDaysMs(focusDayMs, lookahead));
+        const key = `${focusDayMs}`;
+        if (key === eagerKey) {
+            eagerKey = '';
+            return;
+        }
+        eagerKey = '';
         store.load({ start, end });
     });
     // ── Day derivations ──
@@ -70,7 +88,7 @@ export function createAgenda(options) {
     }));
     const dayEvents = $derived.by(() => {
         return store.events
-            .filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > focusDayMs)
+            .filter((ev) => overlapsRange(ev, new Date(focusDayMs), new Date(dayEnd)))
             .sort((a, b) => a.start.getTime() - b.start.getTime());
     });
     const allDay = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
@@ -96,7 +114,7 @@ export function createAgenda(options) {
     function prev() { focusDayMs = addDaysMs(focusDayMs, -1); }
     function next() { focusDayMs = addDaysMs(focusDayMs, 1); }
     function goToday() { focusDayMs = clock.today; }
-    function setDate(date) { focusDayMs = sod(date.getTime()); }
+    function setDate(date) { focusDayMs = sod(plane(date.getTime())); }
     // ── Format helpers ──
     const fmtTime = (d) => _fmtTime(d, locale);
     const fmtDur = (ev) => fmtDuration(ev.start, ev.end);

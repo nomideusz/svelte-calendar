@@ -33,6 +33,14 @@ export function addDaysMs(ms, n) {
 export function diffDays(a, b) {
     return differenceInCalendarDays(a, b);
 }
+/**
+ * Whether an event overlaps [start, end). A zero-length event (a deadline,
+ * a marker) has no extent to overlap with, so it counts where it sits —
+ * including exactly at `start`, which the plain interval test drops.
+ */
+export function overlapsRange(ev, start, end) {
+    return ev.start < end && (ev.end > start || ev.start >= start);
+}
 /** Zero-pad a number to 2 digits */
 export function pad(n) {
     return n < 10 ? '0' + n : '' + n;

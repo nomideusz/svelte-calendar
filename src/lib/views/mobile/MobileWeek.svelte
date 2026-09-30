@@ -10,7 +10,7 @@
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { DAY_MS, sod, addDaysMs, isAllDay, isMultiDay } from '../../core/time.js';
+	import { sod, addDaysMs, isAllDay } from '../../core/time.js';
 	import { startOfWeek as sowFn } from '../../core/time.js';
 	import { fmtTime as _fmtTime, weekdayShort } from '../../core/locale.js';
 	import { createSwipe } from './swipe.js';
@@ -72,8 +72,8 @@
 	// ── Load range ─────────────────────────────────────
 	$effect(() => {
 		if (!loadRangeCtx) return;
-		const rangeStart = new Date(weekStart - 7 * DAY_MS);
-		const rangeEnd = new Date(weekStart + (customDays + 7) * DAY_MS);
+		const rangeStart = new Date(addDaysMs(weekStart, -7));
+		const rangeEnd = new Date(addDaysMs(weekStart, customDays + 7));
 		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
 		return () => loadRangeCtx.set(null);
 	});
@@ -114,7 +114,7 @@
 				.filter(ev => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
 				.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-			const allDayCount = dayEvents.filter(ev => isAllDay(ev) || isMultiDay(ev)).length;
+			const allDayCount = dayEvents.filter(inAllDayStrip).length;
 
 			result.push({
 				ms,
@@ -146,9 +146,23 @@
 		return _fmtTime(d, locale);
 	}
 
+	/** All-day events and timed ones at least a (wall-clock) day long read as
+	 *  "All day"; a shorter overnight event keeps its time on both days. */
+	function inAllDayStrip(ev: TimelineEvent): boolean {
+		return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+	}
+
 	function evTimeLabel(ev: TimelineEvent): string {
-		if (isAllDay(ev) || isMultiDay(ev)) return L.allDay;
+		if (inAllDayStrip(ev)) return L.allDay;
 		return `${fmtTime(ev.start)} – ${fmtTime(ev.end)}`;
+	}
+
+	/** Visible time on a day row: the start, or "until 01:00" on the day an
+	 *  overnight event runs into. */
+	function evRowTime(ev: TimelineEvent, dayMs: number): string {
+		if (inAllDayStrip(ev)) return L.allDay;
+		if (ev.start.getTime() < dayMs) return `${L.until} ${fmtTime(ev.end)}`;
+		return fmtTime(ev.start);
 	}
 
 	function statusText(ev: TimelineEvent): string {
@@ -160,6 +174,14 @@
 	}
 
 	// ── Touch swipe ────────────────────────────────────
+	let listEl = $state<HTMLDivElement | null>(null);
+	// A new week starts at its first day: the list's scroll offset belongs to
+	// the week that was showing (swipe, header nav, or a host date change).
+	$effect(() => {
+		void weekStart;
+		if (listEl) listEl.scrollTop = 0;
+	});
+
 	let swipeOffset = $state(0);
 	let swipeAnimate = $state(false);
 
@@ -223,6 +245,7 @@
 	<!-- Vertical day list -->
 	<div
 		class="mw-list"
+		bind:this={listEl}
 		class:mw-list--animate={swipeAnimate}
 		style:transform={swipeOffset !== 0 ? `translateX(${swipeOffset}px)` : undefined}
 		role="list"
@@ -263,8 +286,8 @@
 								type="button"
 								class="mw-ev"
 								class:mw-ev--selected={selectedEventId === ev.id}
-								class:mw-ev--allday={isAllDay(ev) || isMultiDay(ev)}
-								class:mw-ev--current={!isAllDay(ev) && !isMultiDay(ev) && ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
+								class:mw-ev--allday={inAllDayStrip(ev)}
+								class:mw-ev--current={!inAllDayStrip(ev) && ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick}
 								class:mw-ev--cancelled={ev.status === 'cancelled'}
 								class:mw-ev--tentative={ev.status === 'tentative'}
 								class:mw-ev--full={ev.status === 'full'}
@@ -279,11 +302,7 @@
 								<div class="mw-ev-body">
 									<EventContent event={ev}>
 									<span class="mw-ev-title">{ev.title}</span>
-									{#if isAllDay(ev) || isMultiDay(ev)}
-										<span class="mw-ev-time">{L.allDay}</span>
-									{:else}
-										<span class="mw-ev-time">{fmtTime(ev.start)}</span>
-									{/if}
+									<span class="mw-ev-time">{evRowTime(ev, cell.ms)}</span>
 									</EventContent>
 								</div>
 							</button>
@@ -319,7 +338,7 @@
 		overflow: hidden;
 		background: var(--dt-bg, #fff);
 		-webkit-tap-highlight-color: transparent;
-		touch-action: pan-y;
+		touch-action: pan-y pinch-zoom;
 	}
 	.mw--auto { overflow: visible; }
 

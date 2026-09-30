@@ -9,7 +9,8 @@
  * cannot leak out. The bundled CSS is injected into each shadow root — see
  * `injectStyles` below and the inlineCss plugin in vite.config.widget.ts.
  */
-import { asClassComponent } from 'svelte/legacy';
+import { mount, unmount } from 'svelte';
+import { createSubscriber } from 'svelte/reactivity';
 import CalendarWidget from './CalendarWidget.svelte';
 
 declare global {
@@ -22,8 +23,6 @@ declare global {
 	// A `var` declaration is required for `globalThis` typing.
 	var __DAY_CALENDAR_CSS__: string | undefined;
 }
-
-const CalendarWidgetClass = asClassComponent(CalendarWidget);
 
 /**
  * Shared constructable stylesheet — parsed once, adopted by every
@@ -85,10 +84,50 @@ const WIDGET_ATTRS = [
 	'headers', 'readonly', 'pills', 'nav', 'mobile', 'days', 'compact', 'timezone',
 ] as const;
 
+type WidgetAttr = (typeof WIDGET_ATTRS)[number];
+
+/**
+ * Attribute values as reactive props for `mount()`. A plain .ts module has
+ * no `$state`, so each getter reports a read through its own
+ * `createSubscriber` and `set()` invalidates that attribute's readers only —
+ * the component re-renders what changed without a remount (view, focus date
+ * and loaded events survive; changing `view` does not rebuild the adapter).
+ */
+function createReactiveProps(initial: WidgetProps) {
+	const values: WidgetProps = { ...initial };
+	const invalidators = new Map<WidgetAttr, () => void>();
+	const props = {} as WidgetProps;
+	for (const attr of WIDGET_ATTRS) {
+		const track = createSubscriber((update) => {
+			invalidators.set(attr, update);
+			return () => invalidators.delete(attr);
+		});
+		Object.defineProperty(props, attr, {
+			enumerable: true,
+			get() {
+				track();
+				return values[attr];
+			},
+		});
+	}
+	return {
+		props,
+		set(name: WidgetAttr, value: string | undefined) {
+			if (values[name] === value) return;
+			values[name] = value;
+			invalidators.get(name)?.();
+		},
+	};
+}
+
 type WidgetInstance = {
-	$set: (props: Partial<WidgetProps>) => void;
-	$destroy: () => void;
+	component: ReturnType<typeof mount>;
+	attrs: ReturnType<typeof createReactiveProps>;
 };
+
+function isWidgetAttr(name: string): name is WidgetAttr {
+	return (WIDGET_ATTRS as readonly string[]).includes(name);
+}
 
 class DayCalendarElement extends HTMLElement {
 	private instance: WidgetInstance | null = null;
@@ -106,22 +145,19 @@ class DayCalendarElement extends HTMLElement {
 			injectStyles(root);
 			this.stylesInjected = true;
 		}
-		this.instance = new CalendarWidgetClass({
-			target: root,
-			props: this.readProps(),
-		}) as unknown as WidgetInstance;
+		const attrs = createReactiveProps(this.readProps());
+		const component = mount(CalendarWidget, { target: root, props: attrs.props });
+		this.instance = { component, attrs };
 	}
 
 	disconnectedCallback(): void {
-		this.instance?.$destroy();
+		if (this.instance) void unmount(this.instance.component);
 		this.instance = null;
 	}
 
 	attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null): void {
-		if (!this.instance) return;
-		this.instance.$set({
-			[name]: newValue ?? undefined,
-		} as Partial<WidgetProps>);
+		if (!this.instance || !isWidgetAttr(name)) return;
+		this.instance.attrs.set(name, newValue ?? undefined);
 	}
 
 	private readProps(): WidgetProps {

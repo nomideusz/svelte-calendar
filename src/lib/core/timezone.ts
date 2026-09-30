@@ -67,9 +67,13 @@ export function formatInTimeZone(
  * real instants. This is how the Calendar's `timezone` prop works: views keep
  * doing plain local-time math on an already-shifted plane.
  *
- * Known limit shared by every wall-clock calendar UI: during a DST fall-back
- * the repeated hour is ambiguous on the wall clock, so writes made inside it
- * resolve to one of the two instants (date-fns-tz picks the offset).
+ * Known limits shared by every wall-clock calendar UI:
+ * - during a DST fall-back in `timezone` the repeated hour is ambiguous on
+ *   the wall clock, so writes made inside it resolve to one of the two
+ *   instants (date-fns-tz picks the offset);
+ * - the plane is made of the *browser's* local Dates, so a wall-clock time
+ *   that does not exist in the browser's own zone (its spring-forward hour,
+ *   when that differs from `timezone`'s) displays an hour late.
  */
 import type { CalendarAdapter, DateRange } from '../adapters/types.js';
 import type { TimelineEvent } from './types.js';
@@ -89,15 +93,22 @@ export function wrapAdapterWithTimezone(
 		...(obj.end instanceof Date ? { end: fromZonedTime(obj.end, timezone) } : {}),
 	});
 
+	const unzoneRange = (range: DateRange): DateRange => ({
+		start: fromZonedTime(range.start, timezone),
+		end: fromZonedTime(range.end, timezone),
+	});
+
 	const wrapped: CalendarAdapter = {
 		async fetchEvents(range: DateRange) {
-			const events = await adapter.fetchEvents({
-				start: fromZonedTime(range.start, timezone),
-				end: fromZonedTime(range.end, timezone),
-			});
+			const events = await adapter.fetchEvents(unzoneRange(range));
 			return events.map(zoneEvent);
 		},
 	};
+	// Keep the synchronous path: without it a seeded or in-memory adapter
+	// renders empty on the server and flashes a loading state on the client.
+	if (adapter.fetchEventsSync) {
+		wrapped.fetchEventsSync = (range) => adapter.fetchEventsSync!(unzoneRange(range))?.map(zoneEvent);
+	}
 	if (adapter.createEvent) {
 		wrapped.createEvent = async (event) => zoneEvent(await adapter.createEvent!(unzonePartial(event)));
 	}

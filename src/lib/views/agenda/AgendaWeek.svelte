@@ -16,6 +16,7 @@
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
+	import { createSwipe } from '../mobile/swipe.js';
 
 	const ctx = useCalendarContext();
 	const L = $derived(ctx.labels);
@@ -61,6 +62,30 @@
 	function clickDay(ms: number) {
 		ondayclick?.(new Date(ms));
 	}
+	/** Keyboard activation for the day header / empty-day row (role="button").
+	 *  Keys aimed at a control inside a custom dayHeader snippet stay its own. */
+	function dayKeydown(e: KeyboardEvent, ms: number) {
+		if (e.target !== e.currentTarget) return;
+		if (e.key !== 'Enter' && e.key !== ' ') return;
+		e.preventDefault();
+		clickDay(ms);
+	}
+
+	// ── Status suffix (aria) ────────────────────────────
+	function statusText(ev: TimelineEvent): string {
+		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
+		if (ev.status === 'tentative') return ` (${L.tentative})`;
+		if (ev.status === 'full') return ` (${L.full})`;
+		if (ev.status === 'limited') return ` (${L.limited})`;
+		return '';
+	}
+
+	/** All-day events and timed ones at least a (wall-clock) day long go to
+	 *  the all-day chips; a shorter overnight event is listed with its time on
+	 *  each day it touches. */
+	function inAllDayStrip(ev: TimelineEvent): boolean {
+		return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+	}
 
 	// ── Day-to-day card drag (timetable columns) ────────
 	// This view has no hour axis, so a drag can only choose a DAY: the card
@@ -96,38 +121,25 @@
 		if (!ev) return;
 		// Same-day drop is a no-op, not a zero-minute "move" for the host to reject.
 		if (sod(ev.start.getTime()) === day.ms) return;
-		const start = new Date(day.ms + (ev.start.getTime() - sod(ev.start.getTime())));
+		// Same wall-clock time on the target day (a fixed ms offset from
+		// midnight is an hour off when a DST change lies between the two).
+		const s = ev.start;
+		const start = new Date(new Date(day.ms).setHours(s.getHours(), s.getMinutes(), s.getSeconds(), s.getMilliseconds()));
 		const end = new Date(start.getTime() + (ev.end.getTime() - ev.start.getTime()));
 		oneventmove?.(ev, start, end);
 	}
 
 	// ── Swipe navigation (mobile, touch only) ──────────
-	let swipeStartX = 0;
-	let swipeStartY = 0;
-	let swipeActive = false;
-	const SWIPE_THRESHOLD = 50;
-
-	function onPointerDown(e: PointerEvent) {
-		if (!isMobile || e.pointerType !== 'touch') return;
-		swipeActive = true;
-		swipeStartX = e.clientX;
-		swipeStartY = e.clientY;
-	}
-
-	function onPointerUp(e: PointerEvent) {
-		if (!swipeActive || e.pointerType !== 'touch') return;
-		swipeActive = false;
-		const dx = e.clientX - swipeStartX;
-		const dy = e.clientY - swipeStartY;
-		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-			if (dx > 0) viewState?.prev();
-			else viewState?.next();
-		}
-	}
-
-	function onPointerCancel() {
-		swipeActive = false;
-	}
+	// Touch events, not pointer events: once the browser claims a touch for
+	// panning it sends pointercancel and the pointerup never arrives.
+	const swipe = createSwipe({
+		disabled: () => !isMobile,
+		onmove: () => {},
+		onend: (dir) => {
+			if (dir > 0) viewState?.prev();
+			else if (dir < 0) viewState?.next();
+		},
+	});
 
 	// ── Compact-day disclosure ("+N more" → expand) ─────
 	let expandedDays = $state<number[]>([]);
@@ -199,8 +211,8 @@
 			const dayEvts = events
 				.filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms)
 				.sort((a, b) => a.start.getTime() - b.start.getTime());
-			const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
-			const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
+			const allDayEvts = dayEvts.filter(inAllDayStrip);
+			const timedEvts = dayEvts.filter((ev) => !inAllDayStrip(ev));
 			const totalMinutes = timedEvts.reduce((sum, ev) => {
 				const s = Math.max(ev.start.getTime(), ms);
 				const e = Math.min(ev.end.getTime(), dEnd);
@@ -267,7 +279,7 @@
 		class:ag-card--full={ev.status === 'full'}
 		class:ag-card--limited={ev.status === 'limited'}
 		style:--ev-color={ev.color || 'var(--dt-accent)'}
-		aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
+		aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}, {duration(ev)}"
 		class:ag-card--drag={dragId === String(ev.id)}
 		draggable={canDrag(ev)}
 		ondragstart={(e) => onCardDragStart(e, ev)}
@@ -324,7 +336,7 @@
 		class:ag-compact--full={ev.status === 'full'}
 		class:ag-compact--limited={ev.status === 'limited'}
 		style:--ev-color={ev.color || 'var(--dt-accent)'}
-		aria-label="{ev.title}{done ? `, ${L.completed}` : ''}, {fmt(ev.start)}, {duration(ev)}"
+		aria-label="{ev.title}{statusText(ev)}{done ? `, ${L.completed}` : ''}, {fmt(ev.start)}, {duration(ev)}"
 		onclick={() => handleClick(ev)}
 		onpointerenter={() => oneventhover?.(ev)}
 	>
@@ -364,7 +376,7 @@
 	</button>
 {/snippet}
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions (touch swipe only; no pointer/keyboard role) -->
 <div
 	class="ag ag--week"
 	class:ag--mobile={isMobile}
@@ -372,9 +384,10 @@
 	class:ag--cols={cols}
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
-	onpointerdown={onPointerDown}
-	onpointerup={onPointerUp}
-	onpointercancel={onPointerCancel}
+	ontouchstart={swipe.ontouchstart}
+	ontouchmove={swipe.ontouchmove}
+	ontouchend={swipe.ontouchend}
+	ontouchcancel={swipe.ontouchcancel}
 >
 	<div class="ag-body" role="list" aria-label={L.weekAhead} style:--ag-cols={weekDays.length}>
 		{#each weekDays as day (day.ms)}
@@ -382,11 +395,15 @@
 			{#if day.tier === 'past'}
 				<!-- Past day: single collapsed line -->
 				<div class="ag-wday ag-wday--past" class:ag-wday--disabled={disabledSet.has(day.ms)} data-day={day.ms} role="listitem">
-					<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+					<!-- role="button" exactly when ondayclick is set (Calendar always sets it) -->
+					<!-- svelte-ignore a11y_no_static_element_interactions, a11y_no_noninteractive_tabindex -->
 					<div
 						class="ag-wday-head"
 						class:ag-wday-head--click={!!ondayclick}
+						role={ondayclick ? 'button' : undefined}
+						tabindex={ondayclick ? 0 : undefined}
 						onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+						onkeydown={ondayclick ? (e) => dayKeydown(e, day.ms) : undefined}
 					>
 						<div class="ag-wday-head-left">
 							<span class="ag-wday-name">{day.dayName}</span>
@@ -434,11 +451,15 @@
 				ondrop={(e) => onDayDrop(e, day)}
 			>
 				<!-- Day header -->
-				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+				<!-- role="button" exactly when ondayclick is set (Calendar always sets it) -->
+				<!-- svelte-ignore a11y_no_static_element_interactions, a11y_no_noninteractive_tabindex -->
 				<div
 					class="ag-wday-head"
 					class:ag-wday-head--click={!!ondayclick}
+					role={ondayclick ? 'button' : undefined}
+					tabindex={ondayclick ? 0 : undefined}
 					onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+					onkeydown={ondayclick ? (e) => dayKeydown(e, day.ms) : undefined}
 				>
 					<div class="ag-wday-head-left">
 						{#if day.isToday}
@@ -481,11 +502,14 @@
 				{/if}
 
 				{#if day.events.length === 0}
-					<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+					<!-- svelte-ignore a11y_no_static_element_interactions, a11y_no_noninteractive_tabindex -->
 					<div
 						class="ag-wday-empty"
 						class:ag-wday-empty--click={!!ondayclick}
+						role={ondayclick ? 'button' : undefined}
+						tabindex={ondayclick ? 0 : undefined}
 						onclick={ondayclick ? () => clickDay(day.ms) : undefined}
+						onkeydown={ondayclick ? (e) => dayKeydown(e, day.ms) : undefined}
 					>{L.noEvents}</div>
 				{:else if compact && !cols}
 					<!-- Compact: minimal dot + time + title rows for all days.
@@ -853,6 +877,12 @@
 	.ag-wday-empty--click {
 		cursor: pointer;
 	}
+	.ag-wday-head--click:focus-visible,
+	.ag-wday-empty--click:focus-visible {
+		outline: 2px solid var(--dt-accent, #2563eb);
+		outline-offset: -2px;
+		border-radius: 4px;
+	}
 	.ag-wday-head {
 		display: flex;
 		justify-content: space-between;
@@ -1200,6 +1230,12 @@
 	}
 
 	/* ═══ Mobile adaptations ═══ */
+	/* Horizontal swipes are ours (week navigation); the browser keeps
+	   vertical scrolling and pinch-zoom. */
+	.ag--mobile,
+	.ag--mobile .ag-body {
+		touch-action: pan-y pinch-zoom;
+	}
 	.ag--mobile .ag-wday-head {
 		padding: 12px 16px;
 	}

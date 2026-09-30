@@ -5,7 +5,7 @@ interface Props {
     height?: number | null;
     locale?: string;
     focusDate?: Date;
-    oneventclick?: (event: TimelineEvent) => void;
+    oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
     selectedEventId?: string | null;
     readOnly?: boolean;
     [key: string]: unknown;

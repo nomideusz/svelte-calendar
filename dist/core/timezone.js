@@ -62,15 +62,21 @@ export function wrapAdapterWithTimezone(adapter, timezone) {
         ...(obj.start instanceof Date ? { start: fromZonedTime(obj.start, timezone) } : {}),
         ...(obj.end instanceof Date ? { end: fromZonedTime(obj.end, timezone) } : {}),
     });
+    const unzoneRange = (range) => ({
+        start: fromZonedTime(range.start, timezone),
+        end: fromZonedTime(range.end, timezone),
+    });
     const wrapped = {
         async fetchEvents(range) {
-            const events = await adapter.fetchEvents({
-                start: fromZonedTime(range.start, timezone),
-                end: fromZonedTime(range.end, timezone),
-            });
+            const events = await adapter.fetchEvents(unzoneRange(range));
             return events.map(zoneEvent);
         },
     };
+    // Keep the synchronous path: without it a seeded or in-memory adapter
+    // renders empty on the server and flashes a loading state on the client.
+    if (adapter.fetchEventsSync) {
+        wrapped.fetchEventsSync = (range) => adapter.fetchEventsSync(unzoneRange(range))?.map(zoneEvent);
+    }
     if (adapter.createEvent) {
         wrapped.createEvent = async (event) => zoneEvent(await adapter.createEvent(unzonePartial(event)));
     }

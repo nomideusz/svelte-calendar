@@ -21,7 +21,7 @@ interface CalendarContextRaw {
 	readonly viewState: ViewState;
 	readonly selection: Selection;
 	readonly drag: DragState;
-	readonly commitDrag: () => void;
+	readonly commitDrag: () => Promise<void>;
 
 	// Callbacks
 	readonly oneventclick?: (event: TimelineEvent, anchor?: DOMRect) => void;
@@ -61,7 +61,7 @@ interface CalendarContextRaw {
 export interface CalendarContext {
 	readonly viewState: ViewState | undefined;
 	readonly drag: DragState | undefined;
-	readonly commitDrag: (() => void) | undefined;
+	readonly commitDrag: (() => Promise<void>) | undefined;
 	readonly snapInterval: number;
 	readonly minColumnWidth: number;
 	readonly equalDays: boolean;

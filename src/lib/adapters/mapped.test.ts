@@ -65,6 +65,8 @@ const MARCH_3: DateRange = {
 	start: new Date('2026-03-03T00:00:00+01:00'),
 	end: new Date('2026-03-04T00:00:00+01:00'),
 };
+/** 3 March in the zone the tests run in — for date + time strings, which are local wall-clock times. */
+const MARCH_3_LOCAL: DateRange = { start: new Date(2026, 2, 3), end: new Date(2026, 2, 4) };
 
 const MARCH_5: DateRange = {
 	start: new Date('2026-03-05T00:00:00+01:00'),
@@ -252,7 +254,7 @@ describe('createMappedAdapter', () => {
 					subtitle: 'instructor',
 				},
 			});
-			const events = await adapter.fetchEvents(MARCH_3);
+			const events = await adapter.fetchEvents(MARCH_3_LOCAL);
 
 			expect(events).toHaveLength(2);
 			expect(events[0].title).toBe('Morning Class');
@@ -483,7 +485,7 @@ describe('createMappedAdapter', () => {
 				},
 			});
 
-			const events = await adapter.fetchEvents(MARCH_3);
+			const events = await adapter.fetchEvents(MARCH_3_LOCAL);
 
 			expect(events).toHaveLength(1);
 			expect(events[0].title).toBe('Mathematics');

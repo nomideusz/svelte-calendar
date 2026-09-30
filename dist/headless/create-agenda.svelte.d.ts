@@ -9,6 +9,13 @@ export interface AgendaOptions {
     locale?: string;
     /** Number of days to load ahead of focus date for the upcoming list (default: 7) */
     lookahead?: number;
+    /**
+     * Show the agenda in an IANA timezone (e.g. 'Europe/Warsaw'), as the
+     * Calendar's `timezone` prop does: the day, "now" and every event Date are
+     * wall-clock values in that zone. `initialDate` and `setDate()` take real
+     * instants. Default: the viewer's zone.
+     */
+    timezone?: string;
 }
 export interface HeadlessAgenda {
     /** The focused date */
@@ -29,7 +36,7 @@ export interface HeadlessAgenda {
     readonly dayEvents: TimelineEvent[];
     /** All-day or multi-day events */
     readonly allDay: TimelineEvent[];
-    /** Timed events that have ended (today only; empty for other days) */
+    /** Timed events that have ended — measured against now, so every event of a past day and none of a future one */
     readonly past: TimelineEvent[];
     /** Timed events currently in progress */
     readonly current: TimelineEvent[];

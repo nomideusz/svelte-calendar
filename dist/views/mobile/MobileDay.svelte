@@ -9,7 +9,7 @@
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
-import { DAY_MS, HOUR_MS, sod, addDaysMs, isAllDay, isMultiDay, segmentForDay } from "../../core/time.js";
+import { HOUR_MS, sod, addDaysMs, diffDays, isAllDay, segmentForDay } from "../../core/time.js";
 import { fmtH, fmtTime } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
 let { height = null, events = [], style = "", locale, focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
@@ -27,6 +27,36 @@ const drag = $derived(ctx.drag);
 const commitDragCtx = $derived(ctx.commitDrag);
 const SNAP_MS = $derived(ctx.snapInterval * 6e4);
 const clock = createClock(ctx.timezone);
+// ── Wall-clock time axis ───────────────────────────
+// The grid is 24 wall-clock rows. A DST day is 23 or 25 hours long, so
+// `dayMs + h * HOUR_MS` lands an hour off after the change: every
+// hour ↔ instant conversion goes through the local calendar instead.
+/** Fractional wall-clock hour `hour` on the day starting at `dayMs` → epoch ms. */
+function atHour(day, hour) {
+	// MakeTime sums the fields in local time, so 24 → next midnight.
+	return new Date(day).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+}
+/** Epoch ms → fractional wall-clock hour counted from the day at `day`
+*  (24 = the next midnight; calendar days, not 24 h steps). */
+function hourOf(ms, day) {
+	const d = new Date(ms);
+	return diffDays(ms, day) * 24 + d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600 + d.getMilliseconds() / HOUR_MS;
+}
+/** Snap a fractional hour to the snap interval in wall-clock minutes of
+*  the local day (not UTC multiples — those are off in +05:30 zones). */
+function snapHour(hour, how) {
+	const step = Math.max(1, ctx.snapInterval);
+	const units = hour * 60 / step;
+	// Epsilon: 10:15 must not floor to 10:00 (or ceil to 10:30) through float noise.
+	const n = how === "floor" ? Math.floor(units + 1e-9) : how === "ceil" ? Math.ceil(units - 1e-9) : Math.round(units);
+	return n * step / 60;
+}
+/** Timed events at least a (wall-clock) day long, and all-day ones, sit in
+*  the all-day strip; a shorter overnight event is drawn in the grid,
+*  clipped to this day. */
+function inAllDayStrip(ev) {
+	return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+}
 // ── Config ─────────────────────────────────────────
 const HOUR_HEIGHT = 64;
 const GUTTER_W = 40;
@@ -42,8 +72,8 @@ const isDisabled = $derived(disabledSet.has(dayMs));
 // ── Load range ─────────────────────────────────────
 $effect(() => {
 	if (!loadRangeCtx) return;
-	const rangeStart = new Date(dayMs - 2 * DAY_MS);
-	const rangeEnd = new Date(dayMs + 3 * DAY_MS);
+	const rangeStart = new Date(addDaysMs(dayMs, -2));
+	const rangeEnd = new Date(addDaysMs(dayMs, 3));
 	loadRangeCtx.set({
 		start: rangeStart,
 		end: rangeEnd
@@ -51,11 +81,11 @@ $effect(() => {
 	return () => loadRangeCtx.set(null);
 });
 // ── Events partition ───────────────────────────────
-const timedEvents = $derived(events.filter((ev) => !isAllDay(ev) && !isMultiDay(ev) && ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs).sort((a, b) => a.start.getTime() - b.start.getTime()));
+const timedEvents = $derived(events.filter((ev) => !inAllDayStrip(ev) && ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs).sort((a, b) => a.start.getTime() - b.start.getTime()));
 const allDayEvents = $derived.by(() => {
 	const segs = [];
 	for (const ev of events) {
-		if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+		if (!inAllDayStrip(ev)) continue;
 		const seg = segmentForDay(ev, dayMs);
 		if (seg) segs.push(seg);
 	}
@@ -82,27 +112,38 @@ const positionedEvents = $derived.by(() => {
 		}
 	}
 	// Overlap grouping
-	const infos = sorted.map((ev) => {
+	const bandStart = atHour(dayMs, startHour);
+	const bandEnd = atHour(dayMs, endHour);
+	const infos = sorted.flatMap((ev) => {
 		// While resizing, this event tracks the tentative drag payload
 		const resizing = rsP?.eventId === ev.id;
 		const evStart = resizing ? rsP.start : ev.start;
 		const evEnd = resizing ? rsP.end : ev.end;
-		const sMs = Math.max(evStart.getTime(), dayMs + startHour * HOUR_MS);
-		const eMs = Math.min(evEnd.getTime(), dayMs + endHour * HOUR_MS);
-		const topH = (sMs - dayMs) / HOUR_MS - startHour;
-		const botH = (eMs - dayMs) / HOUR_MS - startHour;
-		return {
+		const s0 = evStart.getTime();
+		const e0 = evEnd.getTime();
+		const sMs = Math.max(s0, bandStart);
+		const eMs = Math.min(e0, bandEnd);
+		// Outside the visible hours: nothing to draw (a zero-length marker
+		// counts only when it sits inside them).
+		if (eMs < sMs || eMs === sMs && (s0 !== e0 || s0 < bandStart || s0 >= bandEnd)) return [];
+		const topH = hourOf(sMs, dayMs) - startHour;
+		const botH = hourOf(eMs, dayMs) - startHour;
+		return [{
 			ev,
 			top: topH * HOUR_HEIGHT,
 			height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
 			isCurrent: ev.start.getTime() <= now && ev.end.getTime() > now,
 			isNext: ev.id === nextEventId,
 			isResizing: resizing,
+			// Grips only on the edges that are the event's own — not where the
+			// day or the visible hours cut it.
+			hasStart: s0 >= Math.max(dayMs, bandStart),
+			hasEnd: e0 <= Math.min(dayEnd, bandEnd),
 			startMs: sMs,
 			endMs: eMs,
 			col: 0,
 			totalCols: 1
-		};
+		}];
 	});
 	// Assign columns for overlapping events
 	const par = infos.map((_, i) => i);
@@ -151,6 +192,8 @@ const positionedEvents = $derived.by(() => {
 		isCurrent: info.isCurrent,
 		isNext: info.isNext,
 		isResizing: info.isResizing,
+		hasStart: info.hasStart,
+		hasEnd: info.hasEnd,
 		col: info.col,
 		totalCols: info.totalCols
 	}));
@@ -158,7 +201,7 @@ const positionedEvents = $derived.by(() => {
 // ── Now indicator ──────────────────────────────────
 const nowOffset = $derived.by(() => {
 	if (!isToday) return -1;
-	const h = (clock.tick - dayMs) / HOUR_MS - startHour;
+	const h = hourOf(clock.tick, dayMs) - startHour;
 	if (h < 0 || h > hourCount) return -1;
 	return h * HOUR_HEIGHT;
 });
@@ -184,8 +227,14 @@ function statusText(ev) {
 let swipeOffset = $state(0);
 let swipeAnimate = $state(false);
 const swipe = createSwipe({
-	disabled: () => !!drag?.active || mbCreateStarted || mbRsStarted || longPressTimer !== null,
+	// A pending long-press must not block the swipe: pointerdown arms it
+	// before touchstart, so the swipe would never track. A horizontal move
+	// past the long-press tolerance cancels the pending create instead.
+	disabled: () => !!drag?.active || mbCreateStarted || mbRsStarted,
 	onmove: (dx) => {
+		if (longPressTimer !== null && !mbCreateStarted && Math.abs(dx) > LONG_PRESS_TOLERANCE) {
+			cleanupGridCreate();
+		}
 		swipeAnimate = false;
 		swipeOffset = dx;
 	},
@@ -211,9 +260,9 @@ function handleGridClick(e) {
 	}
 	if (!oneventcreate || readOnly || isDisabled) return;
 	if (e.target.closest(".mb-event")) return;
-	const tMs = gridTimeMs(e.clientY);
-	if (isBlockedAt((tMs - dayMs) / HOUR_MS)) return;
-	const startMs = clampToDay(Math.floor(tMs / SNAP_MS) * SNAP_MS);
+	const hour = gridHour(e.clientY);
+	if (isBlockedAt(hour)) return;
+	const startMs = clampToDay(atHour(dayMs, snapHour(hour, "floor")));
 	const durMin = minDuration ?? 60;
 	oneventcreate({
 		start: new Date(startMs),
@@ -226,9 +275,9 @@ function onGridKeydown(e) {
 	if (e.key !== "Enter" && e.key !== " ") return;
 	if (!oneventcreate || readOnly || isDisabled) return;
 	e.preventDefault();
-	const raw = isToday ? clock.tick : dayMs + startHour * HOUR_MS;
-	const startMs = clampToDay(Math.ceil(raw / SNAP_MS) * SNAP_MS);
-	if (isBlockedAt((startMs - dayMs) / HOUR_MS)) return;
+	const rawHour = isToday ? hourOf(clock.tick, dayMs) : startHour;
+	const startMs = clampToDay(atHour(dayMs, snapHour(rawHour, "ceil")));
+	if (isBlockedAt(hourOf(startMs, dayMs))) return;
 	const durMin = minDuration ?? 60;
 	oneventcreate({
 		start: new Date(startMs),
@@ -265,20 +314,23 @@ function clearLongPress() {
 		longPressTimer = null;
 	}
 }
-/** Pointer Y → epoch ms within the day grid (accounts for scroll). */
-function gridTimeMs(clientY) {
+/** Pointer Y → fractional wall-clock hour of this day (accounts for scroll). */
+function gridHour(clientY) {
 	const rect = gridEl.getBoundingClientRect();
 	const y = clientY - rect.top + gridEl.scrollTop;
-	return dayMs + (startHour + y / HOUR_HEIGHT) * HOUR_MS;
+	return startHour + y / HOUR_HEIGHT;
+}
+/** Pointer Y → wall-clock time snapped to the interval, clamped to the band. */
+function gridSnapped(clientY, how) {
+	return clampToDay(atHour(dayMs, snapHour(gridHour(clientY), how)));
 }
 /** Clamp a timestamp into the visible hour range of this day. */
 function clampToDay(ms) {
-	return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
+	return Math.max(atHour(dayMs, startHour), Math.min(atHour(dayMs, endHour), ms));
 }
 function startGridCreate() {
 	if (!drag) return;
 	mbCreateStarted = true;
-	mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / SNAP_MS) * SNAP_MS);
 	drag.beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + SNAP_MS));
 	addTouchScrollBlock();
 }
@@ -287,7 +339,7 @@ function onGridPointerDown(e) {
 	if (e.target.closest(".mb-event")) return;
 	mbCreateStartX = e.clientX;
 	mbCreateStartY = e.clientY;
-	mbCreateAnchorMs = gridTimeMs(e.clientY);
+	mbCreateAnchorMs = gridSnapped(e.clientY, "floor");
 	mbCreateStarted = false;
 	if (e.pointerType === "touch") {
 		longPressTimer = setTimeout(() => {
@@ -312,7 +364,7 @@ function onGridCreateMove(e) {
 		if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
 		startGridCreate();
 	}
-	const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
+	const snapped = gridSnapped(e.clientY, "round");
 	drag.updatePointer(new Date(Math.min(mbCreateAnchorMs, snapped)), new Date(Math.max(mbCreateAnchorMs + SNAP_MS, snapped)));
 }
 function cleanupGridCreate() {
@@ -370,7 +422,7 @@ function onResizeMove(e) {
 		drag.beginResize(ev.id, mbRsEdge, ev.start, ev.end);
 		addTouchScrollBlock();
 	}
-	const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / SNAP_MS) * SNAP_MS);
+	const snapped = gridSnapped(e.clientY, "round");
 	if (mbRsEdge === "end") {
 		const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
 		drag.updatePointer(ev.start, new Date(end));
@@ -562,24 +614,29 @@ $effect(() => {
 							<span class="mb-ev-next-badge">{L.upNext}</span>
 						{/if}
 						{#if !readOnly && !p.ev.data?.readOnly}
-							<span
-								class="mb-ev-handle mb-ev-handle--start"
-								aria-hidden="true"
-								onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
-							></span>
-							<span
-								class="mb-ev-handle mb-ev-handle--end"
-								aria-hidden="true"
-								onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
-							></span>
+							{#if p.hasStart}
+								<span
+									class="mb-ev-handle mb-ev-handle--start"
+									aria-hidden="true"
+									onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
+								></span>
+							{/if}
+							{#if p.hasEnd}
+								<span
+									class="mb-ev-handle mb-ev-handle--end"
+									aria-hidden="true"
+									onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
+								></span>
+							{/if}
 						{/if}
 					</button>
 				{/each}
 
 				<!-- Drag-to-create ghost -->
 				{#if !readOnly && drag?.active && drag.mode === 'create' && drag.payload}
-					{@const gTop = ((drag.payload.start.getTime() - dayMs) / HOUR_MS - startHour) * HOUR_HEIGHT}
-					{@const gH = Math.max(12, ((drag.payload.end.getTime() - drag.payload.start.getTime()) / HOUR_MS) * HOUR_HEIGHT)}
+					{@const gTopH = hourOf(drag.payload.start.getTime(), dayMs)}
+					{@const gTop = (gTopH - startHour) * HOUR_HEIGHT}
+					{@const gH = Math.max(12, (hourOf(drag.payload.end.getTime(), dayMs) - gTopH) * HOUR_HEIGHT)}
 					<div class="mb-create-ghost" style:top="{gTop}px" style:height="{gH}px" aria-hidden="true">
 						<span class="mb-create-ghost-time">
 							{fmtTime(drag.payload.start, locale)} – {fmtTime(drag.payload.end, locale)}
@@ -613,7 +670,7 @@ $effect(() => {
 		overflow: hidden;
 		background: var(--dt-bg, #fff);
 		-webkit-tap-highlight-color: transparent;
-		touch-action: pan-y;
+		touch-action: pan-y pinch-zoom;
 	}
 	.mb--auto { overflow: visible; }
 

@@ -1,7 +1,12 @@
+/** JSON carries dates as strings; the calendar needs Date objects. */
+function reviveEvent(data) {
+    const ev = data;
+    return { ...ev, start: new Date(ev.start), end: new Date(ev.end) };
+}
 export function createRestAdapter(options) {
     const { baseUrl, headers = {} } = options;
-    const mapEvents = options.mapEvents ?? ((data) => data);
-    const mapEvent = options.mapEvent ?? ((data) => data);
+    const mapEvents = options.mapEvents ?? ((data) => data.map(reviveEvent));
+    const mapEvent = options.mapEvent ?? reviveEvent;
     async function request(path, init) {
         const res = await fetch(`${baseUrl}${path}`, {
             ...init,
@@ -40,14 +45,14 @@ export function createRestAdapter(options) {
             return mapEvent(data);
         },
         async updateEvent(id, patch) {
-            const data = await request(`/events/${id}`, {
+            const data = await request(`/events/${encodeURIComponent(id)}`, {
                 method: 'PATCH',
                 body: JSON.stringify(patch),
             });
             return mapEvent(data);
         },
         async deleteEvent(id) {
-            await request(`/events/${id}`, { method: 'DELETE' });
+            await request(`/events/${encodeURIComponent(id)}`, { method: 'DELETE' });
         },
     };
 }

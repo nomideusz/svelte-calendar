@@ -21,8 +21,8 @@
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { fitParts } from '../../text-fit.js';
-	import { DAY_MS, HOUR_MS, sod, addDaysMs } from '../../core/time.js';
-	import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import { HOUR_MS, sod, addDaysMs, diffDays } from '../../core/time.js';
+	import { startOfWeek as sowFn, isAllDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
 	import { fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong } from '../../core/locale.js';
 
@@ -83,6 +83,49 @@
 	const oneventhover = $derived(ctx.oneventhover);
 	const disabledSet = $derived(ctx.disabledSet);
 	const SNAP_MS = $derived(ctx.snapInterval * 60_000);
+
+	// ── Wall-clock time axis ───────────────────────────
+	// The grid is 24 wall-clock rows per day. A DST day is 23 or 25 hours
+	// long, so `dayMs + h * HOUR_MS` lands an hour off after the change:
+	// every hour ↔ instant conversion goes through the local calendar instead.
+	/** Fractional wall-clock hour `hour` on the day starting at `dayMs` → epoch ms. */
+	function atHour(dayMs: number, hour: number): number {
+		// MakeTime sums the fields in local time before converting, so the
+		// milliseconds may exceed a day (24 → next midnight) or be negative.
+		return new Date(dayMs).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+	}
+	/** Epoch ms → fractional wall-clock hour counted from the day at `dayMs`
+	 *  (24 = the next midnight; calendar days, not 24 h steps). */
+	function hourOf(ms: number, dayMs: number): number {
+		const d = new Date(ms);
+		return (
+			diffDays(ms, dayMs) * 24 +
+			d.getHours() +
+			d.getMinutes() / 60 +
+			d.getSeconds() / 3600 +
+			d.getMilliseconds() / HOUR_MS
+		);
+	}
+	/** Snap a fractional hour to the snap interval, in wall-clock minutes of
+	 *  the local day (not UTC multiples — those are off in +05:30 zones). */
+	function snapHour(hour: number, how: 'floor' | 'round'): number {
+		const step = Math.max(1, ctx.snapInterval);
+		// Epsilon: 10:15 must not floor to 10:00 through float noise.
+		const units = (hour * 60) / step;
+		const n = how === 'floor' ? Math.floor(units + 1e-9) : Math.round(units);
+		return (n * step) / 60;
+	}
+	/** Snap an instant, relative to its own local day. */
+	function snapMs(ms: number, how: 'floor' | 'round'): number {
+		const day = sod(ms);
+		return atHour(day, snapHour(hourOf(ms, day), how));
+	}
+	/** Timed events at least a (wall-clock) day long, and all-day ones, sit in
+	 *  the all-day strip; a shorter overnight event is drawn as a clamped
+	 *  segment on each day it touches. */
+	function inAllDayStrip(ev: TimelineEvent): boolean {
+		return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+	}
 
 	// ── Config ─────────────────────────────────────────
 	const HOUR_H = 48;
@@ -156,8 +199,8 @@
 	// ── Load range: visible week ±7 days ───────────────
 	$effect(() => {
 		if (!loadRangeCtx) return;
-		const rangeStart = new Date(weekStartMs - 7 * DAY_MS);
-		const rangeEnd = new Date(weekEndMs + 7 * DAY_MS);
+		const rangeStart = new Date(addDaysMs(weekStartMs, -7));
+		const rangeEnd = new Date(addDaysMs(weekEndMs, 7));
 		loadRangeCtx.set({ start: rangeStart, end: rangeEnd });
 		return () => loadRangeCtx.set(null);
 	});
@@ -168,7 +211,7 @@
 		for (const day of dayCols) {
 			const segs: DaySegment[] = [];
 			for (const ev of events) {
-				if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+				if (!inAllDayStrip(ev)) continue;
 				const seg = segmentForDay(ev, day.ms);
 				if (seg) segs.push(seg);
 			}
@@ -195,12 +238,21 @@
 		totalCols: number;
 		isResizing: boolean;
 		isMoving: boolean;
+		/** This day holds the event's start / end (an overnight event is two
+		 *  segments; each resize grip lives only on the segment it moves). */
+		hasStart: boolean;
+		hasEnd: boolean;
 	}
 
 	interface LaneInfo {
 		ev: TimelineEvent;
 		startMs: number;
+		/** Lane extent — a zero-length event claims its minimum block height. */
 		endMs: number;
+		/** The clamped end the block is drawn to. */
+		drawEndMs: number;
+		hasStart: boolean;
+		hasEnd: boolean;
 		isResizing: boolean;
 		isMoving: boolean;
 		col: number;
@@ -215,12 +267,12 @@
 
 		for (const day of dayCols) {
 			const dayEnd = addDaysMs(day.ms, 1);
-			const bandStart = day.ms + startHour * HOUR_MS;
-			const bandEnd = day.ms + endHour * HOUR_MS;
+			const bandStart = atHour(day.ms, startHour);
+			const bandEnd = atHour(day.ms, endHour);
 			const infos: LaneInfo[] = [];
 
 			for (const ev of events) {
-				if (isAllDay(ev) || isMultiDay(ev)) continue;
+				if (inAllDayStrip(ev)) continue;
 				// The event being moved stays laned at its ORIGINAL slot, dimmed:
 				// the ghost shows where it is going, the faded block where it came
 				// from, and neither the drop target nor its neighbours re-lane
@@ -228,12 +280,27 @@
 				const isResizing = rsP?.eventId === ev.id;
 				const s0 = isResizing ? rsP!.start.getTime() : ev.start.getTime();
 				const e0 = isResizing ? rsP!.end.getTime() : ev.end.getTime();
+				// Inverted events are bad data; skip them.
+				if (e0 < s0) continue;
+				const hasStart = s0 >= day.ms && s0 < dayEnd;
+				const hasEnd = e0 > day.ms && e0 <= dayEnd;
+				if (e0 === s0) {
+					// Zero-length (a deadline, a marker): drawn at its start with the
+					// minimum block height, when that start is inside the band.
+					if (!hasStart || s0 < bandStart || s0 >= bandEnd) continue;
+					const laneEnd = Math.min(bandEnd, s0 + HOUR_MS / 2);
+					infos.push({ ev, startMs: s0, endMs: laneEnd, drawEndMs: s0, hasStart, hasEnd: true, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
+					continue;
+				}
 				if (s0 >= dayEnd || e0 <= day.ms) continue;
 				const sMs = Math.max(s0, bandStart);
 				const eMs = Math.min(e0, bandEnd);
 				// Entirely outside the visible hour band — skip, don't paint a sliver
 				if (eMs <= sMs) continue;
-				infos.push({ ev, startMs: sMs, endMs: eMs, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
+				// A grip only where the event really starts / ends: an edge cut by the
+				// visible band (a 21:00–22:30 class in a 6–22 grid) is not its end,
+				// and dragging it would rewrite the class's length to the band.
+				infos.push({ ev, startMs: sMs, endMs: eMs, drawEndMs: eMs, hasStart: hasStart && s0 >= bandStart, hasEnd: hasEnd && e0 <= bandEnd, isResizing, isMoving: ev.id === movingId, col: 0, totalCols: 1 });
 			}
 
 			infos.sort((a, b) => a.startMs - b.startMs || b.endMs - a.endMs);
@@ -277,12 +344,14 @@
 				day.ms,
 				infos.map((inf) => ({
 					ev: inf.ev,
-					top: ((inf.startMs - day.ms) / HOUR_MS - startHour) * HOUR_H,
-					height: Math.max(24, ((inf.endMs - inf.startMs) / HOUR_MS) * HOUR_H),
+					top: (hourOf(inf.startMs, day.ms) - startHour) * HOUR_H,
+					height: Math.max(24, (hourOf(inf.drawEndMs, day.ms) - hourOf(inf.startMs, day.ms)) * HOUR_H),
 					col: inf.col,
 					totalCols: inf.totalCols,
 					isResizing: inf.isResizing,
 					isMoving: inf.isMoving,
+					hasStart: inf.hasStart,
+					hasEnd: inf.hasEnd,
 				})),
 			);
 		}
@@ -299,7 +368,7 @@
 		return s;
 	});
 
-	const nowFracHour = $derived((clock.tick - clock.today) / HOUR_MS);
+	const nowFracHour = $derived(hourOf(clock.tick, clock.today));
 	/** Y offset of the now-line, or null when outside visibleHours */
 	const nowY = $derived.by(() => {
 		if (nowFracHour < startHour || nowFracHour > endHour) return null;
@@ -374,13 +443,19 @@
 		return rectCache ?? colsEl.getBoundingClientRect();
 	}
 
-	/** Pointer X → index into dayCols (clamped) */
+	/** Pointer X → index into dayCols (clamped). Under `dir="rtl"` the flex
+	 *  row runs right-to-left, so the first day is the rightmost column. */
 	function pointerDayIndex(clientX: number): number {
 		const r = colsRect();
 		const n = dayCols.length;
 		if (n === 0) return 0;
 		const w = r.width / n;
-		return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+		const i = Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+		return isRtl() ? n - 1 - i : i;
+	}
+
+	function isRtl(): boolean {
+		return !!colsEl && getComputedStyle(colsEl).direction === 'rtl';
 	}
 
 	/** Pointer Y → fractional hour (unclamped) */
@@ -392,12 +467,12 @@
 	function pointerTimeMs(clientX: number, clientY: number): number {
 		const dayMs = dayCols[pointerDayIndex(clientX)]?.ms ?? weekStartMs;
 		const hour = Math.min(Math.max(pointerHour(clientY), startHour), endHour);
-		return dayMs + hour * HOUR_MS;
+		return atHour(dayMs, hour);
 	}
 
 	/** Clamp a timestamp into the visible band of a specific day */
 	function clampToDayBand(ms: number, dayMs: number): number {
-		return Math.max(dayMs + startHour * HOUR_MS, Math.min(dayMs + endHour * HOUR_MS, ms));
+		return Math.max(atHour(dayMs, startHour), Math.min(atHour(dayMs, endHour), ms));
 	}
 
 	// ── Blocked slot helpers ───────────────────────────
@@ -412,7 +487,7 @@
 	}
 
 	function blockedRangeLabel(dayMs: number, slotStart: number, slotEnd: number): string {
-		return `${fmtTime(new Date(dayMs + slotStart * HOUR_MS), locale)} – ${fmtTime(new Date(dayMs + slotEnd * HOUR_MS), locale)}`;
+		return `${fmtTime(new Date(atHour(dayMs, slotStart)), locale)} – ${fmtTime(new Date(atHour(dayMs, slotEnd)), locale)}`;
 	}
 
 	// ── Status label (aria) ────────────────────────────
@@ -465,14 +540,16 @@
 		if (mode !== 'move' && mode !== 'create') return null;
 		const s = drag.payload.start.getTime();
 		const e = drag.payload.end.getTime();
-		const bandS = dayMs + startHour * HOUR_MS;
-		const bandE = dayMs + endHour * HOUR_MS;
+		const bandS = atHour(dayMs, startHour);
+		const bandE = atHour(dayMs, endHour);
 		const cs = Math.max(s, bandS);
 		const ce = Math.min(e, bandE);
-		if (ce <= cs) return null;
+		// A zero-length event (moved marker) shows at its start, like its block
+		const zero = e === s;
+		if (zero ? s < bandS || s >= bandE : ce <= cs) return null;
 		return {
-			top: ((cs - dayMs) / HOUR_MS - startHour) * HOUR_H,
-			height: Math.max(12, ((ce - cs) / HOUR_MS) * HOUR_H),
+			top: (hourOf(cs, dayMs) - startHour) * HOUR_H,
+			height: Math.max(zero ? 24 : 12, (hourOf(ce, dayMs) - hourOf(cs, dayMs)) * HOUR_H),
 			start: drag.payload.start,
 			end: drag.payload.end,
 			create: mode === 'create',
@@ -500,6 +577,8 @@
 	let crStartX = 0;
 	let crStartY = 0;
 	let crAnchorMs = 0;
+	/** The press's wall-clock hour (clamped into the band) — snapped on start. */
+	let crAnchorHour = 0;
 	let crDayMs = 0;
 	let crStarted = false;
 	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
@@ -521,7 +600,7 @@
 	function startColsCreate() {
 		if (!drag) return;
 		crStarted = true;
-		crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / SNAP_MS) * SNAP_MS, crDayMs);
+		crAnchorMs = clampToDayBand(atHour(crDayMs, snapHour(crAnchorHour, 'floor')), crDayMs);
 		drag.beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + SNAP_MS));
 		addTouchScrollBlock();
 	}
@@ -539,8 +618,8 @@
 		const day = dayCols[pointerDayIndex(e.clientX)];
 		if (!day || day.isDisabled) return;
 		e.preventDefault();
-		const raw = clampToDayBand(day.ms + pointerHour(e.clientY) * HOUR_MS, day.ms);
-		const snapped = day.ms + Math.floor((raw - day.ms) / SNAP_MS) * SNAP_MS;
+		const hour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
+		const snapped = clampToDayBand(atHour(day.ms, snapHour(hour, 'floor')), day.ms);
 		onexternaldrop({ start: new Date(snapped), dataTransfer: e.dataTransfer });
 	}
 
@@ -554,10 +633,8 @@
 		crStartX = e.clientX;
 		crStartY = e.clientY;
 		crDayMs = day.ms;
-		crAnchorMs = clampToDayBand(
-			day.ms + Math.max(pointerHour(e.clientY), startHour) * HOUR_MS,
-			day.ms,
-		);
+		crAnchorHour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
+		crAnchorMs = atHour(day.ms, crAnchorHour);
 		crStarted = false;
 		if (e.pointerType === 'touch') {
 			longPressTimer = setTimeout(() => {
@@ -583,8 +660,7 @@
 			if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
 			startColsCreate();
 		}
-		const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
-		const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, crDayMs);
+		const snapped = clampToDayBand(atHour(crDayMs, snapHour(pointerHour(e.clientY), 'round')), crDayMs);
 		drag.updatePointer(
 			new Date(Math.min(crAnchorMs, snapped)),
 			new Date(Math.max(crAnchorMs + SNAP_MS, snapped)),
@@ -635,11 +711,10 @@
 		if (!day || day.isDisabled) return;
 		const hour = Math.min(Math.max(pointerHour(e.clientY), startHour), endHour);
 		if (isBlockedAt(day.ms, hour)) return;
-		const startMs = clampToDayBand(
-			Math.floor((day.ms + hour * HOUR_MS) / SNAP_MS) * SNAP_MS,
-			day.ms,
-		);
-		const durMin = minDuration ?? 60;
+		const startMs = clampToDayBand(atHour(day.ms, snapHour(hour, 'floor')), day.ms);
+		// An hour, or the minimum duration when that is longer. Blocked-slot and
+		// max-duration validation is Calendar's (ctx.oneventcreate), not ours.
+		const durMin = Math.max(60, minDuration ?? 0);
 		oneventcreate({ start: new Date(startMs), end: new Date(startMs + durMin * 60_000) });
 	}
 
@@ -684,7 +759,7 @@
 		}
 		const duration = ev.end.getTime() - ev.start.getTime();
 		const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
-		const snapped = Math.round(raw / SNAP_MS) * SNAP_MS;
+		const snapped = snapMs(raw, 'round');
 		drag.updatePointer(new Date(snapped), new Date(snapped + duration));
 	});
 
@@ -723,8 +798,11 @@
 	let rsStarted = false;
 	let rsEdge: 'start' | 'end' = 'end';
 	let rsEvent: TimelineEvent | null = null;
+	/** The day column whose segment holds the grabbed grip — an overnight
+	 *  event's end grip sits on the next day. */
+	let rsDayMs = 0;
 
-	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end') {
+	function onResizePointerDown(e: PointerEvent, ev: TimelineEvent, edge: 'start' | 'end', dayMs: number) {
 		if (e.button !== 0 || !drag || readOnly || ev.data?.readOnly) return;
 		e.stopPropagation();
 		evAnchor = (e.currentTarget as HTMLElement).parentElement?.getBoundingClientRect();
@@ -733,6 +811,7 @@
 		rsStarted = false;
 		rsEdge = edge;
 		rsEvent = ev;
+		rsDayMs = dayMs;
 		window.addEventListener('pointermove', onResizeMove);
 		window.addEventListener('pointerup', onResizeUp, { once: true });
 		window.addEventListener('pointercancel', onResizeCancel, { once: true });
@@ -747,9 +826,7 @@
 			drag.beginResize(ev.id, rsEdge, ev.start, ev.end);
 			addTouchScrollBlock();
 		}
-		const evDayMs = sod(ev.start.getTime());
-		const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
-		const snapped = clampToDayBand(Math.round(raw / SNAP_MS) * SNAP_MS, evDayMs);
+		const snapped = clampToDayBand(atHour(rsDayMs, snapHour(pointerHour(e.clientY), 'round')), rsDayMs);
 		if (rsEdge === 'end') {
 			const end = Math.max(snapped, ev.start.getTime() + SNAP_MS);
 			drag.updatePointer(ev.start, new Date(end));
@@ -788,6 +865,19 @@
 		if (drag && rsStarted) drag.cancel();
 		cleanupResize();
 	}
+
+	// ── Unmount mid-gesture ────────────────────────────
+	// A view switch (or the host unmounting the calendar) can land between
+	// pointerdown and pointerup: tear down the window listeners, the
+	// long-press timer, the pending frame and the touch-scroll blocker, and
+	// drop the half-made drag rather than leave it live in the shared context.
+	$effect(() => () => {
+		const live = crStarted || evDragStarted || rsStarted;
+		cleanupColsCreate();
+		cleanupEvDrag();
+		cleanupResize();
+		if (live && drag?.active) drag.cancel();
+	});
 
 	// ── Escape cancels any in-flight drag ──────────────
 	function onWindowKeydown(e: KeyboardEvent) {
@@ -964,7 +1054,7 @@
 												style:top="{(s - startHour) * HOUR_H}px"
 												style:height="{(e - s) * HOUR_H}px"
 												title="{slot.label ? `${slot.label}, ` : ''}{range}"
-												aria-label="{slot.label || 'Unavailable'}, {range}"
+												aria-label="{slot.label || L.unavailable}, {range}"
 											>
 												{#if slot.label}
 													<span class="tw-blocked-lb">{slot.label}</span>
@@ -1021,16 +1111,20 @@
 										<span class="tw-ev-live" aria-hidden="true"></span>
 									{/if}
 									{#if !readOnly && !p.ev.data?.readOnly}
-										<span
-											class="tw-ev-handle tw-ev-handle--start"
-											aria-hidden="true"
-											onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start')}
-										></span>
-										<span
-											class="tw-ev-handle tw-ev-handle--end"
-											aria-hidden="true"
-											onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end')}
-										></span>
+										{#if p.hasStart}
+											<span
+												class="tw-ev-handle tw-ev-handle--start"
+												aria-hidden="true"
+												onpointerdown={(e) => onResizePointerDown(e, p.ev, 'start', day.ms)}
+											></span>
+										{/if}
+										{#if p.hasEnd}
+											<span
+												class="tw-ev-handle tw-ev-handle--end"
+												aria-hidden="true"
+												onpointerdown={(e) => onResizePointerDown(e, p.ev, 'end', day.ms)}
+											></span>
+										{/if}
 									{/if}
 								</div>
 							{/each}
@@ -1099,7 +1193,11 @@
 		min-height: 0;
 		overflow-y: auto;
 		overflow-x: auto;
-		overscroll-behavior: contain;
+		/* Horizontal stays contained (a sideways swipe must not trigger the
+		   browser's back navigation); vertical chains to the page, so a wheel
+		   over a page-embedded calendar scrolls on once the grid ends. */
+		overscroll-behavior-x: contain;
+		overscroll-behavior-y: auto;
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
 	}
@@ -1173,7 +1271,7 @@
 	}
 	.tw-hd-num--today {
 		background: var(--dt-accent, #2563eb);
-		color: var(--dt-accent-fg, #ffffff);
+		color: var(--dt-accent-fg, var(--dt-btn-text, #ffffff));
 		font-weight: 700;
 	}
 

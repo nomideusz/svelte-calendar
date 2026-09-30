@@ -1,5 +1,104 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- 0a64748: **1.0.** The API is now stable under semver: the public surface is exactly the
+  `.` and `./widget` exports; `TimelineEvent`, `CalendarAdapter` and `DateRange`
+  keep their shapes; the `--dt-*` theme tokens are part of the contract.
+  `labels` / `setLabels()` take a `Partial<CalendarLabels>` — new keys may arrive
+  in minor releases. Nothing was removed on the way to 1.0: code written for
+  0.21 keeps compiling. The Svelte peer is `^5.29.0` (attachments were already
+  required).
+  
+  ### New
+  
+  - `defaultViews` — spread it to add your own view and keep the built-ins.
+    `PlannerScroll` (the `week-scroll` view) and `MonthGrid` join the raw views.
+  - Types for everything a host touches: `CalendarProps`, `CalendarViewProps`
+    (what a custom view receives), `FloatingPanelProps`, `FloatingPanelAnchor`,
+    `TimeSlot`, `TextLayoutOptions`. `CalendarView.component` accepts any typed
+    component.
+  - `useCalendarContext()` / `CalendarContext` — the running calendar's engines,
+    config and labels, for custom views.
+  - `CalendarReadOnlyError`, `EventNotFoundError`, `isReadOnlyError`,
+    `isNotFoundError` — the two refusals the calendar tells apart, as classes.
+    Plain errors whose message says "read-only" / "not found" still work.
+  - `createAgenda` and `createRangeAgenda` take `timezone`, as the Calendar does.
+  - `createCompositeAdapter(…, { onFetchError })` keeps the other sources
+    loading when one fails. A composite answers synchronously when all of its
+    children do, and routes each update/delete to the child that returned the
+    event.
+  - `sod`, `addDaysMs`, `diffDays` — calendar-day math that survives DST.
+  - Label keys `scroll`, `unavailable`, `noViews`; the built-in view-type pills
+    (Planner / Agenda / Scroll) are now localized through them.
+  
+  ### Fixed
+  
+  - **DST days.** The day and week planners, week-scroll and the mobile day
+    placed events, clicks, drags and the now-line an hour off on the days the
+    clocks change (Europe: 2026-10-25, 2027-03-28). Hours now map through the
+    wall clock, and snapping is relative to the local day (it snapped to :30
+    in UTC+05:30).
+  - **Phones.** A reload of a server-rendered page on a phone failed hydration
+    (the first client render chose the mobile layout, the server the desktop
+    one). Swiping days did nothing when `oneventcreate` was set; agenda swipes
+    never fired on touch; a committed week swipe kept the old scroll offset.
+  - **Timezone.** "Today", the default focus, `goToday()` and the Today button
+    follow `timezone` instead of the device zone; `currentDate` is read in the
+    zone like `initialDate` and seeds the server render; the timezone wrapper
+    keeps a seeded or in-memory adapter's synchronous path (it rendered empty
+    on the server).
+    **With `timezone`, `ondatechange` and `ondayclick` now hand out instants**
+    (the start of the day in that zone), as `currentDate` takes them — the
+    wall-clock Date they gave before, fed back into `currentDate`, moved the
+    focus by the zone offset on every round. Read the zone's date with
+    `formatInTimeZone` / `toZonedTime`. Without `timezone` nothing changes.
+  - **Writes.** A load that was already in flight no longer undoes a create,
+    move or delete made meanwhile, and `loading` settles in every order. A
+    composite no longer turns an HTTP 500 into "not found" (which dropped the
+    error silently) nor a read-only child's refusal into a lost move.
+    Click-to-create gets the drag's checks: blocked slots, disabled dates,
+    min/max duration.
+  - **Recurring rules.** Weekly rules landed a day early in Sunday-start weeks;
+    a monthly `count` came up short when `startDate` was past `dayOfMonth`;
+    overnight rules (22:00–02:00) ended before they started; a monthly
+    occurrence was missed when the range began mid-day.
+  - **Adapters.** The REST adapter's default mappers parse `start`/`end` into
+    Dates and URL-encode ids; `createMappedAdapter` works without options and
+    reads `7:00` / `07:00:00`; JMAP all-day events stay on their date and `P1W`
+    durations are read.
+  - **Rendering.** Overnight timed events are drawn as timed blocks, not all-day
+    bars; zero-length events render; RTL clicks, drags and drops land on the day
+    under the pointer and ←/→ follow the reading direction.
+  - **Headless.** `createCalendar` gives `month-grid` a month range and
+    `switchMode` leaves it; a seeded `createRangeAgenda` / `createAgenda` no
+    longer refetches its seed on mount (an async adapter is fetched once, not
+    twice, by the Calendar too) — a page whose seed may be stale (CDN-cached)
+    calls `refresh()` once mounted; both keep one store when the adapter
+    changes.
+  - **Localization.** The week title uses the locale's own order
+    (pl-PL: "21–27 wrz 2026", was "wrz 21 – 27, 2026"); the day/month title
+    uses the default locale instead of the browser's; hard-coded English in
+    week-scroll, agenda and event aria labels comes from `labels`.
+  - **Accessibility.** Month grid: Enter on an event opens the event, a disabled
+    date no longer traps arrow keys or removes the only Tab stop. Week-scroll
+    and agenda day headers are always reachable by keyboard. `FloatingPanel`
+    returns focus on close, Escape closes only the top panel, an outside click
+    that closes it is spent, and it re-clamps when its content grows.
+  - The planner's scroller lets the vertical wheel reach the page.
+  - The CDN widget is read-only unless `readonly="false"`, requests exactly
+    `GET {api}?start=…&end=…` as documented, and sends no preflight-forcing
+    header.
+
+### Patch Changes
+
+- 733418d: `week-scroll`: a click on an empty day, or an external drop onto it, lands at
+  the half-hour under the pointer on the day's time axis instead of at the first
+  visible hour. While something is dragged over a day, a line with that time
+  shows where it will land.
+
 ## 0.21.0
 
 ### Minor Changes

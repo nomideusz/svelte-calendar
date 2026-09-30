@@ -46,6 +46,11 @@ export function createSwipe(cb: SwipeCallbacks): SwipeHandlers {
 
 	return {
 		ontouchstart(e: TouchEvent) {
+			// A second finger (pinch-zoom) is never a swipe.
+			if (e.touches.length > 1) {
+				abandon();
+				return;
+			}
 			if (cb.disabled?.()) {
 				tracking = false;
 				return;
@@ -59,7 +64,7 @@ export function createSwipe(cb: SwipeCallbacks): SwipeHandlers {
 
 		ontouchmove(e: TouchEvent) {
 			if (!tracking) return;
-			if (cb.disabled?.()) {
+			if (e.touches.length > 1 || cb.disabled?.()) {
 				abandon();
 				return;
 			}

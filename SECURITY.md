@@ -4,10 +4,10 @@
 
 | Version | Supported |
 |---------|-----------|
-| 0.7.x   | ✅        |
-| < 0.7   | ❌        |
+| 1.x     | ✅        |
+| < 1.0   | ❌        |
 
-Only the latest minor release receives security fixes.
+Security fixes ship in a patch release of the latest 1.x minor.
 
 ## Reporting a Vulnerability
 
@@ -20,4 +20,4 @@ You can expect an acknowledgement within a few days. Once a fix is released, the
 
 ## Scope notes
 
-This is a client-side UI library. Reports most likely to qualify: XSS via event data rendering (titles, subtitles, locations, tags), the embeddable widget's handling of `api` / `events` / `headers` attributes, and the REST/JMAP adapters' request construction.
+This is a client-side UI library. Reports most likely to qualify: XSS via event data rendering (titles, subtitles, locations, tags), the embeddable widget's handling of its `api` / `events` / `headers` attributes, and the REST/JMAP adapters' request construction.

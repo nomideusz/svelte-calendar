@@ -14,11 +14,12 @@
 	 */
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, addDaysMs, dayNum, isAllDay, isMultiDay } from '../../core/time.js';
+	import { sod, addDaysMs, dayNum, isAllDay } from '../../core/time.js';
 	import { weekdayLong, monthLong } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
+	import { createSwipe } from '../mobile/swipe.js';
 
 	const ctx = useCalendarContext();
 	const L = $derived(ctx.labels);
@@ -61,31 +62,30 @@
 	const disabledSet = $derived(ctx.disabledSet);
 
 	// ── Swipe navigation (mobile, touch only) ──────────
-	let swipeStartX = 0;
-	let swipeStartY = 0;
-	let swipeActive = false;
-	const SWIPE_THRESHOLD = 50;
+	// Touch events, not pointer events: once the browser claims a touch for
+	// panning it sends pointercancel and the pointerup never arrives.
+	const swipe = createSwipe({
+		disabled: () => !isMobile,
+		onmove: () => {},
+		onend: (dir) => {
+			if (dir > 0) viewState?.prev();
+			else if (dir < 0) viewState?.next();
+		},
+	});
 
-	function onPointerDown(e: PointerEvent) {
-		if (!isMobile || e.pointerType !== 'touch') return;
-		swipeActive = true;
-		swipeStartX = e.clientX;
-		swipeStartY = e.clientY;
+	// ── Status suffix (aria) ────────────────────────────
+	function statusText(ev: TimelineEvent): string {
+		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
+		if (ev.status === 'tentative') return ` (${L.tentative})`;
+		if (ev.status === 'full') return ` (${L.full})`;
+		if (ev.status === 'limited') return ` (${L.limited})`;
+		return '';
 	}
 
-	function onPointerUp(e: PointerEvent) {
-		if (!swipeActive || e.pointerType !== 'touch') return;
-		swipeActive = false;
-		const dx = e.clientX - swipeStartX;
-		const dy = e.clientY - swipeStartY;
-		if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-			if (dx > 0) viewState?.prev();
-			else viewState?.next();
-		}
-	}
-
-	function onPointerCancel() {
-		swipeActive = false;
+	/** All-day events and timed ones at least a (wall-clock) day long go to
+	 *  the all-day strip; a shorter overnight event is listed with its time. */
+	function inAllDayStrip(ev: TimelineEvent): boolean {
+		return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
 	}
 
 	// ── Format helpers (delegated to shared/format.ts) ──
@@ -113,10 +113,10 @@
 	});
 
 	/** All-day / multi-day events shown in a separate strip */
-	const allDayBanner = $derived(dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)));
+	const allDayBanner = $derived(dayEvents.filter(inAllDayStrip));
 
 	/** Timed events (non-all-day) for normal slot rendering */
-	const timedDayEvents = $derived(dayEvents.filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
+	const timedDayEvents = $derived(dayEvents.filter((ev) => !inAllDayStrip(ev)));
 
 	const dayCat = $derived.by(() => {
 		const now = clock.tick;
@@ -154,7 +154,7 @@
 	const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.length - DONE_VISIBLE));
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions (touch swipe only; no pointer/keyboard role) -->
 <div
 	class="ag ag--day"
 	class:ag--disabled={disabledSet.has(dayMs)}
@@ -162,9 +162,10 @@
 	class:ag--auto={autoHeight}
 	style={style || undefined}
 	style:height={height ? `${height}px` : undefined}
-	onpointerdown={onPointerDown}
-	onpointerup={onPointerUp}
-	onpointercancel={onPointerCancel}
+	ontouchstart={swipe.ontouchstart}
+	ontouchmove={swipe.ontouchmove}
+	ontouchend={swipe.ontouchend}
+	ontouchcancel={swipe.ontouchcancel}
 >
 	<div class="ag-body" role="group" aria-label={L.todaysLineup}>
 		<!-- ─── In-view date header (only when the chrome doesn't label the day) ─── -->
@@ -190,7 +191,7 @@
 							class="ag-allday-chip"
 							class:ag-allday-chip--selected={selectedEventId === ev.id}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							aria-label="{ev.title}, {L.allDay}"
+							aria-label="{ev.title}{statusText(ev)}, {L.allDay}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
 						>
@@ -218,7 +219,7 @@
 							class:ag-compact-row--cancelled={ev.status === 'cancelled'}
 							class:ag-compact-row--tentative={ev.status === 'tentative'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
 						>
@@ -313,7 +314,7 @@
 									class="ag-compact-row ag-compact-row--queue"
 									class:ag-compact-row--selected={selectedEventId === ev.id}
 									style:--ev-color={ev.color || 'var(--dt-accent)'}
-									aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+									aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 									onclick={() => handleClick(ev)}
 									onpointerenter={() => oneventhover?.(ev)}
 								>
@@ -334,7 +335,7 @@
 								class:ag-card--hero={i === 0}
 								class:ag-card--selected={selectedEventId === ev.id}
 								style:--ev-color={ev.color || 'var(--dt-accent)'}
-								aria-label="{ev.title}, {fmt(ev.start)}, {duration(ev)}"
+								aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}
 								onpointerenter={() => oneventhover?.(ev)}
 							>
@@ -381,7 +382,7 @@
 							class="ag-log-row"
 							class:ag-log-row--selected={selectedEventId === ev.id}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							aria-label="{ev.title}, {fmt(ev.start)} to {fmt(ev.end)}"
+							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
 						>
@@ -414,7 +415,7 @@
 							class:ag-card--full={ev.status === 'full'}
 							class:ag-card--limited={ev.status === 'limited'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
-							aria-label="{ev.title}{ev.status === 'cancelled' ? ' (cancelled)' : ''}{ev.status === 'tentative' ? ' (tentative)' : ''}{ev.status === 'full' ? ' (full)' : ''}{ev.status === 'limited' ? ' (limited)' : ''}, {fmt(ev.start)} to {fmt(ev.end)}, {duration(ev)}"
+							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
 						>
@@ -803,6 +804,12 @@
 	}
 	/* Mobile: stack queue columns vertically — "Up next" (hero) first,
 	   Now/Done status column second */
+	/* Horizontal swipes are ours (day navigation); the browser keeps
+	   vertical scrolling and pinch-zoom. */
+	.ag--mobile,
+	.ag--mobile .ag-body {
+		touch-action: pan-y pinch-zoom;
+	}
 	.ag--mobile .ag-q {
 		grid-template-columns: 1fr;
 		min-height: auto;

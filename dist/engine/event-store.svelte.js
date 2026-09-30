@@ -17,7 +17,8 @@
  */
 import { SvelteMap } from 'svelte/reactivity';
 import { untrack } from 'svelte';
-import { sod, addDaysMs } from '../core/time.js';
+import { sod, addDaysMs, overlapsRange } from '../core/time.js';
+import { CalendarReadOnlyError, isReadOnlyError, isNotFoundError } from '../adapters/errors.js';
 /**
  * Create a reactive event store backed by a CalendarAdapter.
  *
@@ -30,15 +31,30 @@ import { sod, addDaysMs } from '../core/time.js';
 export function createEventStore(adapter) {
     const getAdapter = typeof adapter === 'function' ? adapter : () => adapter;
     let eventMap = new SvelteMap();
-    let loading = $state(false);
+    /** The latest load is async and has not resolved yet */
+    let loadPending = $state(false);
+    /** Mutations in flight — a counter, since several can overlap */
+    let mutationsPending = $state(0);
+    const loading = $derived(loadPending || mutationsPending > 0);
     let error = $state(null);
     /** Guards against an older in-flight load pruning a newer one's result */
     let loadSeq = 0;
+    /**
+     * Mutation clock. A load that was already in flight when an event was
+     * added, moved or removed must not undo that write when it lands — its
+     * snapshot predates it. Each mutation stamps its id; a load skips ids
+     * stamped after it started.
+     */
+    let epoch = 0;
+    const touched = new Map();
+    function touch(id) {
+        touched.set(id, ++epoch);
+    }
     // Derived array view of the map — consumers read this.
     const eventArray = $derived([...eventMap.values()]);
     // ── Internal helpers ──
     function overlaps(ev, start, end) {
-        return ev.start < end && ev.end > start;
+        return overlapsRange(ev, start, end);
     }
     function removeEvent(id) {
         eventMap.delete(id);
@@ -49,14 +65,39 @@ export function createEventStore(adapter) {
     // Merge: upsert fetched, don't blow away events outside this range.
     // Inside the range the adapter is authoritative — drop what it no
     // longer returns, or deleted/moved events linger until remount.
-    function merge(fetched, range) {
+    // `since` is the mutation clock when the fetch started: ids written after
+    // that are newer than the adapter's answer and are left as they are.
+    function merge(fetched, range, since = epoch) {
+        const stale = (id) => (touched.get(id) ?? 0) > since;
         const keep = new Set(fetched.map((ev) => ev.id));
         for (const ev of [...eventMap.values()]) {
-            if (!keep.has(ev.id) && overlaps(ev, range.start, range.end))
+            if (!keep.has(ev.id) && !stale(ev.id) && overlaps(ev, range.start, range.end))
                 removeEvent(ev.id);
         }
         for (const ev of fetched)
-            upsertEvent(ev);
+            if (!stale(ev.id))
+                upsertEvent(ev);
+        // Stamps no in-flight load can predate are no longer needed.
+        for (const [id, at] of touched)
+            if (at <= since)
+                touched.delete(id);
+    }
+    async function mutate(run) {
+        mutationsPending++;
+        error = null;
+        try {
+            return await run();
+        }
+        catch (e) {
+            // A refusal (read-only) or "not mine" is an answer the caller acts
+            // on — the Calendar hands the move to the host — not a failure.
+            if (!isReadOnlyError(e) && !isNotFoundError(e))
+                error = e instanceof Error ? e.message : String(e);
+            throw e;
+        }
+        finally {
+            mutationsPending--;
+        }
     }
     // ── Public API ──
     return {
@@ -71,31 +112,46 @@ export function createEventStore(adapter) {
         },
         async load(range) {
             const seq = ++loadSeq;
+            const since = epoch;
             const adapter = getAdapter();
             // In-memory adapters answer at once: no loading state, and a server
             // render already holds the events.
-            const sync = adapter.fetchEventsSync?.(range);
-            if (sync) {
-                error = null;
-                // Callers load from an effect; reading the map here would make that
-                // effect depend on what it writes.
-                untrack(() => merge(sync, range));
+            let sync;
+            try {
+                sync = adapter.fetchEventsSync?.(range);
+            }
+            catch (e) {
+                // Callers fire load() and forget it (and on the server): a throw
+                // here must land in `error`, never as an unhandled rejection.
+                loadPending = false;
+                error = e instanceof Error ? e.message : String(e);
                 return;
             }
-            loading = true;
+            if (sync) {
+                error = null;
+                // This load supersedes any async one still in flight, whose
+                // finally will no longer clear the flag.
+                loadPending = false;
+                // Callers load from an effect; reading the map here would make that
+                // effect depend on what it writes.
+                untrack(() => merge(sync, range, since));
+                return;
+            }
+            loadPending = true;
             error = null;
             try {
                 const fetched = await adapter.fetchEvents(range);
                 if (seq !== loadSeq)
                     return; // superseded by a newer load
-                merge(fetched, range);
+                merge(fetched, range, since);
             }
             catch (e) {
-                error = e instanceof Error ? e.message : String(e);
+                if (seq === loadSeq)
+                    error = e instanceof Error ? e.message : String(e);
             }
             finally {
                 if (seq === loadSeq)
-                    loading = false;
+                    loadPending = false;
             }
         },
         forRange(start, end) {
@@ -110,56 +166,35 @@ export function createEventStore(adapter) {
             return eventMap.get(id);
         },
         async add(eventData) {
-            if (!getAdapter().createEvent)
-                throw new Error('Adapter is read-only: createEvent not implemented');
-            loading = true;
-            error = null;
-            try {
-                const created = await getAdapter().createEvent(eventData);
+            const adapter = getAdapter();
+            if (!adapter.createEvent)
+                throw new CalendarReadOnlyError('Adapter is read-only: createEvent not implemented');
+            return mutate(async () => {
+                const created = await adapter.createEvent(eventData);
                 upsertEvent(created);
+                touch(created.id);
                 return created;
-            }
-            catch (e) {
-                error = e instanceof Error ? e.message : String(e);
-                throw e;
-            }
-            finally {
-                loading = false;
-            }
+            });
         },
         async update(id, patch) {
-            if (!getAdapter().updateEvent)
-                throw new Error('Adapter is read-only: updateEvent not implemented');
-            loading = true;
-            error = null;
-            try {
-                const updated = await getAdapter().updateEvent(id, patch);
+            const adapter = getAdapter();
+            if (!adapter.updateEvent)
+                throw new CalendarReadOnlyError('Adapter is read-only: updateEvent not implemented');
+            await mutate(async () => {
+                const updated = await adapter.updateEvent(id, patch);
                 upsertEvent(updated);
-            }
-            catch (e) {
-                error = e instanceof Error ? e.message : String(e);
-                throw e;
-            }
-            finally {
-                loading = false;
-            }
+                touch(id);
+            });
         },
         async remove(id) {
-            if (!getAdapter().deleteEvent)
-                throw new Error('Adapter is read-only: deleteEvent not implemented');
-            loading = true;
-            error = null;
-            try {
-                await getAdapter().deleteEvent(id);
+            const adapter = getAdapter();
+            if (!adapter.deleteEvent)
+                throw new CalendarReadOnlyError('Adapter is read-only: deleteEvent not implemented');
+            await mutate(async () => {
+                await adapter.deleteEvent(id);
                 removeEvent(id);
-            }
-            catch (e) {
-                error = e instanceof Error ? e.message : String(e);
-                throw e;
-            }
-            finally {
-                loading = false;
-            }
+                touch(id);
+            });
         },
         async move(id, newStart, newEnd) {
             // Optimistic update: apply locally first so the UI doesn't flash
@@ -167,6 +202,7 @@ export function createEventStore(adapter) {
             const existing = eventMap.get(id);
             if (existing) {
                 upsertEvent({ ...existing, start: newStart, end: newEnd });
+                touch(id);
             }
             try {
                 await this.update(id, { start: newStart, end: newEnd });
@@ -176,9 +212,10 @@ export function createEventStore(adapter) {
                 // adapter, where the HOST owns persistence (Calendar forwards to
                 // oneventmove). Reverting there snaps the block back to its old
                 // slot for the length of the host's round-trip.
-                const msg = e instanceof Error ? e.message : '';
-                if (existing && !msg.includes('read-only'))
+                if (existing && !isReadOnlyError(e)) {
                     upsertEvent(existing);
+                    touch(id);
+                }
                 throw e;
             }
         },

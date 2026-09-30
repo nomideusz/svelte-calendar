@@ -9,8 +9,9 @@
 		auto,
 		neutral,
 		presets,
+		addDaysMs,
 	} from "#lib/index.js";
-	import type { PresetName } from "#lib/index.js";
+	import type { PresetName, CalendarLabels } from "#lib/index.js";
 	import Settings from "./_components/Settings.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
 	import type { CalendarView, TimelineEvent } from "#lib/index.js";
@@ -62,6 +63,7 @@
 		equalDays: false,
 		activeView: "day-planner",
 		locale: "en-US",
+		timezone: "",
 		showDates: true,
 		calendarPreset: "auto",
 		mobileMode: "auto",
@@ -164,6 +166,34 @@
 		(settingsValues.activeView as CalendarView["id"]) ?? "week-planner",
 	);
 	const locale = $derived((settingsValues.locale as string) ?? "en-US");
+	const timezone = $derived((settingsValues.timezone as string) || undefined);
+
+	// The calendar formats dates in `locale` by itself; its UI words come from
+	// `labels` — a partial set is merged over the English defaults.
+	const LABELS: Record<string, Partial<CalendarLabels>> = {
+		"pl-PL": {
+			today: "Dziś", day: "Dzień", week: "Tydzień", month: "Miesiąc",
+			planner: "Plan", agenda: "Lista", scroll: "Tygodnie", allDay: "Cały dzień",
+			noEvents: "Brak wydarzeń", nothingScheduled: "Nic nie zaplanowano",
+			goToToday: "Przejdź do dziś", unavailable: "Niedostępne",
+			cancelled: "odwołane", full: "brak miejsc", nMore: (n) => `+${n} więcej`,
+		},
+		"de-DE": {
+			today: "Heute", day: "Tag", week: "Woche", month: "Monat",
+			planner: "Planer", agenda: "Liste", scroll: "Wochen", allDay: "Ganztägig",
+			noEvents: "Keine Termine", nothingScheduled: "Nichts geplant",
+			goToToday: "Zu heute", unavailable: "Nicht verfügbar",
+			cancelled: "abgesagt", full: "ausgebucht", nMore: (n) => `+${n} weitere`,
+		},
+		"fr-FR": {
+			today: "Aujourd’hui", day: "Jour", week: "Semaine", month: "Mois",
+			planner: "Planning", agenda: "Liste", scroll: "Semaines", allDay: "Toute la journée",
+			noEvents: "Aucun événement", nothingScheduled: "Rien de prévu",
+			goToToday: "Aller à aujourd’hui", unavailable: "Indisponible",
+			cancelled: "annulé", full: "complet", nMore: (n) => `+${n} de plus`,
+		},
+	};
+	const labels = $derived(LABELS[locale]);
 	const dir = $derived<"ltr" | "rtl">(settingsValues.rtl ? "rtl" : "ltr");
 	const phoneFrame = $derived(Boolean(settingsValues.phoneFrame));
 
@@ -221,6 +251,19 @@
 				{ value: "de-DE", label: "de-DE" },
 				{ value: "fr-FR", label: "fr-FR" },
 				{ value: "ar-SA", label: "ar-SA" },
+			],
+		},
+		{
+			key: "timezone",
+			hint: "Show events and 'now' in an IANA zone instead of your own (prop: timezone)",
+			label: "Timezone",
+			group: "",
+			type: "select",
+			options: [
+				{ value: "", label: "Your own" },
+				{ value: "Europe/Warsaw", label: "Europe/Warsaw" },
+				{ value: "America/New_York", label: "America/New_York" },
+				{ value: "Asia/Tokyo", label: "Asia/Tokyo" },
 			],
 		},
 		{
@@ -434,8 +477,8 @@
 	const disabledDates = $derived(
 		disabledDatesEnabled
 			? [
-					new Date(today.getTime() + 2 * 86_400_000),
-					new Date(today.getTime() + 4 * 86_400_000),
+					new Date(addDaysMs(today.getTime(), 2)),
+					new Date(addDaysMs(today.getTime(), 4)),
 				]
 			: undefined,
 	);
@@ -463,7 +506,8 @@
 
 		const props: string[] = ["{adapter}", `view="${activeView}"`];
 		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
-		if (locale !== "en-US") props.push(`locale="${locale}"`);
+		if (locale !== "en-US") props.push(`locale="${locale}"`, "labels={{ today: '…', week: '…' /* your language */ }}");
+		if (timezone) props.push(`timezone="${timezone}"`);
 		if (dir === "rtl") props.push(`dir="rtl"`);
 		if (readOnly) props.push("readOnly");
 		if (!mondayStart) props.push("mondayStart={false}");
@@ -526,36 +570,41 @@
 
 	<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
 		<div class="cal-frame">
-			<Calendar
-				{adapter}
-				view={activeView}
-				theme={calendarTheme}
-				autoTheme={autoThemeProp}
-				height={phoneFrame ? 688 : calendarHeight}
-				borderRadius={phoneFrame ? 0 : calendarRadius}
-				currentDate={focusedDate}
-				{readOnly}
-				{mondayStart}
-				{showModePills}
-				{showNavigation}
-				{equalDays}
-				{showDates}
-				{visibleHours}
-				mobile={mobileMode}
-				{days}
-				{compact}
-				{columns}
-				{locale}
-				{dir}
-				blockedSlots={blockedSlots}
-				disabledDates={disabledDates}
-				onviewchange={handleViewChange}
-				oneventclick={handleClick}
-				onexternaldrop={handleExternalDrop}
-				oneventcreate={handleCreate}
-				oneventmove={handleMove}
-				ondayclick={handleDayClick}
-			/>
+			<!-- timezone is read when the calendar mounts; a new zone remounts it -->
+			{#key timezone}
+				<Calendar
+					{adapter}
+					view={activeView}
+					theme={calendarTheme}
+					autoTheme={autoThemeProp}
+					height={phoneFrame ? 688 : calendarHeight}
+					borderRadius={phoneFrame ? 0 : calendarRadius}
+					currentDate={focusedDate}
+					{readOnly}
+					{mondayStart}
+					{showModePills}
+					{showNavigation}
+					{equalDays}
+					{showDates}
+					{visibleHours}
+					mobile={mobileMode}
+					{days}
+					{compact}
+					{columns}
+					{locale}
+					{labels}
+					{timezone}
+					{dir}
+					blockedSlots={blockedSlots}
+					disabledDates={disabledDates}
+					onviewchange={handleViewChange}
+					oneventclick={handleClick}
+					onexternaldrop={handleExternalDrop}
+					oneventcreate={handleCreate}
+					oneventmove={handleMove}
+					ondayclick={handleDayClick}
+				/>
+			{/key}
 		</div>
 	</div>
 

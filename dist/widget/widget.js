@@ -9,9 +9,9 @@
  * cannot leak out. The bundled CSS is injected into each shadow root — see
  * `injectStyles` below and the inlineCss plugin in vite.config.widget.ts.
  */
-import { asClassComponent } from 'svelte/legacy';
+import { mount, unmount } from 'svelte';
+import { createSubscriber } from 'svelte/reactivity';
 import CalendarWidget from './CalendarWidget.svelte';
-const CalendarWidgetClass = asClassComponent(CalendarWidget);
 /**
  * Shared constructable stylesheet — parsed once, adopted by every
  * <day-calendar> shadow root on the page.
@@ -50,6 +50,43 @@ const WIDGET_ATTRS = [
     'api', 'events', 'theme', 'view', 'height', 'locale', 'dir', 'mondaystart',
     'headers', 'readonly', 'pills', 'nav', 'mobile', 'days', 'compact', 'timezone',
 ];
+/**
+ * Attribute values as reactive props for `mount()`. A plain .ts module has
+ * no `$state`, so each getter reports a read through its own
+ * `createSubscriber` and `set()` invalidates that attribute's readers only —
+ * the component re-renders what changed without a remount (view, focus date
+ * and loaded events survive; changing `view` does not rebuild the adapter).
+ */
+function createReactiveProps(initial) {
+    const values = { ...initial };
+    const invalidators = new Map();
+    const props = {};
+    for (const attr of WIDGET_ATTRS) {
+        const track = createSubscriber((update) => {
+            invalidators.set(attr, update);
+            return () => invalidators.delete(attr);
+        });
+        Object.defineProperty(props, attr, {
+            enumerable: true,
+            get() {
+                track();
+                return values[attr];
+            },
+        });
+    }
+    return {
+        props,
+        set(name, value) {
+            if (values[name] === value)
+                return;
+            values[name] = value;
+            invalidators.get(name)?.();
+        },
+    };
+}
+function isWidgetAttr(name) {
+    return WIDGET_ATTRS.includes(name);
+}
 class DayCalendarElement extends HTMLElement {
     instance = null;
     stylesInjected = false;
@@ -65,21 +102,19 @@ class DayCalendarElement extends HTMLElement {
             injectStyles(root);
             this.stylesInjected = true;
         }
-        this.instance = new CalendarWidgetClass({
-            target: root,
-            props: this.readProps(),
-        });
+        const attrs = createReactiveProps(this.readProps());
+        const component = mount(CalendarWidget, { target: root, props: attrs.props });
+        this.instance = { component, attrs };
     }
     disconnectedCallback() {
-        this.instance?.$destroy();
+        if (this.instance)
+            void unmount(this.instance.component);
         this.instance = null;
     }
     attributeChangedCallback(name, _oldValue, newValue) {
-        if (!this.instance)
+        if (!this.instance || !isWidgetAttr(name))
             return;
-        this.instance.$set({
-            [name]: newValue ?? undefined,
-        });
+        this.instance.attrs.set(name, newValue ?? undefined);
     }
     readProps() {
         const props = {};

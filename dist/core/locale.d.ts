@@ -20,6 +20,8 @@ export interface CalendarLabels {
     month: string;
     planner: string;
     agenda: string;
+    /** The scrolling-weeks view (`week-scroll`) in the view-type pills */
+    scroll: string;
     now: string;
     free: string;
     allDay: string;
@@ -48,6 +50,10 @@ export interface CalendarLabels {
     full: string;
     /** Event status: limited availability */
     limited: string;
+    /** A blocked slot without a label of its own */
+    unavailable: string;
+    /** Shown when a Calendar has no views to render */
+    noViews: string;
     dayNavigation: string;
     weekNavigation: string;
     dayPlanner: string;
@@ -114,7 +120,11 @@ export declare function fmtDay(ms: number, todayMs: number, opts?: {
     short?: boolean;
 }, locale?: string): string;
 /**
- * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
+ * Format a date range label in the locale's own order:
+ * "Sep 21 – 27, 2026" (en-US), "21–27 wrz 2026" (pl-PL),
+ * "Dec 28, 2026 – Jan 3, 2027" across a year.
+ *
+ * `weekEndMs` is the last day shown (inclusive); default: six days on.
  */
 export declare function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: number): string;
 /**

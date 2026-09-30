@@ -17,25 +17,19 @@
       oneventcreate={handleCreate}
     />
 -->
-<script lang="ts">import { setContext, untrack } from "svelte";
-import { createEventStore } from "../engine/event-store.svelte.js";
-import { createViewState } from "../engine/view-state.svelte.js";
-import { createSelection } from "../engine/selection.svelte.js";
-import { createDragState } from "../engine/drag.svelte.js";
-import { onMount } from "svelte";
-import { getLabels, fmtWeekRange } from "../core/locale.js";
-import { auto } from "../theme/presets.js";
-import { probeHostTheme, observeHostTheme } from "../theme/auto.js";
-import Planner from "../views/planner/Planner.svelte";
+<script module lang="ts">import Planner from "../views/planner/Planner.svelte";
 import PlannerScroll from "../views/planner/PlannerScroll.svelte";
 import Agenda from "../views/agenda/Agenda.svelte";
 import Mobile from "../views/mobile/Mobile.svelte";
 import MonthGrid from "../views/month/MonthGrid.svelte";
-import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from "../core/timezone.js";
-/** Breakpoint (px) at which auto-mobile activates */
-const MOBILE_BREAKPOINT = 768;
-// ── Built-in views (used when no custom views are provided) ──
-const DEFAULT_VIEWS = [
+/**
+* The built-in views — the registry a Calendar uses without a `views` prop.
+* Spread it to add your own view and keep these:
+* `views={[...defaultViews, { id: 'day-kanban', ... }]}`.
+* On phones (`mobile: 'auto'`), every view except `*-agenda` and `*-mobile`
+* swaps to the registered `{mode}-mobile` view, when there is one.
+*/
+export const defaultViews = [
 	{
 		id: "day-planner",
 		label: "Planner",
@@ -85,10 +79,29 @@ const DEFAULT_VIEWS = [
 		component: MonthGrid
 	}
 ];
-let { adapter, views = DEFAULT_VIEWS, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 12, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, onexternaldrop, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
+</script>
+
+<script lang="ts">import { setContext, untrack } from "svelte";
+import { createEventStore } from "../engine/event-store.svelte.js";
+import { createViewState } from "../engine/view-state.svelte.js";
+import { createSelection } from "../engine/selection.svelte.js";
+import { createDragState } from "../engine/drag.svelte.js";
+import { onMount } from "svelte";
+import { getLabels, getDefaultLocale, fmtWeekRange } from "../core/locale.js";
+import { createClock } from "../core/clock.svelte.js";
+import { auto } from "../theme/presets.js";
+import { observeHostTheme } from "../theme/auto.js";
+import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from "../core/timezone.js";
+import { isReadOnlyError, isNotFoundError } from "../adapters/errors.js";
+/** Breakpoint (px) at which auto-mobile activates */
+const MOBILE_BREAKPOINT = 768;
+let { adapter, views = defaultViews, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 12, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, onexternaldrop, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
 // In readOnly mode, suppress mutation callbacks. With a timezone, the
 // drag plane is zoned wall-clock — hosts always receive real instants.
 const unzone = (d) => timezone ? fromZonedTime(d, timezone) : d;
+// Dates handed IN (initialDate, currentDate) are instants; the views work on
+// the zoned wall-clock plane.
+const zoneIn = (d) => d && timezone ? toZonedTime(d, timezone) : d;
 const effectiveCreate = $derived(readOnly || !oneventcreate ? undefined : (range) => oneventcreate({
 	start: unzone(range.start),
 	end: unzone(range.end)
@@ -105,9 +118,11 @@ function handleEventClick(ev, anchor) {
 	oneventclick?.(ev, anchor);
 }
 // ── Mobile detection (container-based, not viewport) ──
-// Seeded from viewport width so the first client paint doesn't flash the
-// desktop chrome on phones; the ResizeObserver measurement takes over on mount.
-let containerWidth = $state(typeof window !== "undefined" && window.matchMedia?.(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches ? window.innerWidth : 0);
+// Starts unmeasured on server AND client: the first client render must be
+// the markup the server sent, or hydration fails (a phone reload of an SSR
+// page used to throw in the mobile branch). onMount measures before the
+// next paint; a page without SSR renders the right layout at once.
+let containerWidth = $state(0);
 const isMobileContainer = $derived(containerWidth > 0 && containerWidth < MOBILE_BREAKPOINT);
 const useMobile = $derived(mobileProp === "auto" ? isMobileContainer : Boolean(mobileProp));
 // Below this container width the mobile header can't fit pills + nav + a
@@ -154,24 +169,15 @@ const viewState = createViewState(untrack(() => ({
 	view: activeViewId ?? views[0]?.id,
 	mondayStart,
 	// Focus lives on the zoned plane too — day boundaries follow the zone.
-	initialDate: initialDate && timezone ? toZonedTime(initialDate, timezone) : initialDate,
+	// A controlled currentDate wins, so the server renders the right period.
+	initialDate: zoneIn(currentDate ?? initialDate),
 	dayCount: days,
 	timezone,
 	modeForView: (viewId) => views.find((v) => v.id === viewId)?.mode
 })));
 const selection = createSelection();
 const drag = createDragState();
-// ── Drag commit handler ──
-// Views call this on pointer-up to process drag results.
-async function commitDrag() {
-	if (readOnly) {
-		drag.cancel();
-		return;
-	}
-	const mode = drag.mode;
-	const payload = drag.commit();
-	if (!payload) return;
-	let { start, end } = payload;
+function validateRange(mode, start, end) {
 	// Enforce min/max duration for create and resize
 	if (mode === "create" || mode === "resize-start" || mode === "resize-end") {
 		// Defensive floor: never accept a zero/negative duration, even when
@@ -181,24 +187,14 @@ async function commitDrag() {
 			if (mode === "resize-start") start = new Date(end.getTime() - floorMs);
 			else end = new Date(start.getTime() + floorMs);
 		}
-		const durationMs = end.getTime() - start.getTime();
-		const durationMin = durationMs / 6e4;
-		if (minDuration && durationMin < minDuration) {
-			if (mode === "resize-start") {
-				start = new Date(end.getTime() - minDuration * 6e4);
-			} else {
-				end = new Date(start.getTime() + minDuration * 6e4);
-			}
-		}
-		if (maxDuration && durationMin > maxDuration) {
-			if (mode === "resize-start") {
-				start = new Date(end.getTime() - maxDuration * 6e4);
-			} else {
-				end = new Date(start.getTime() + maxDuration * 6e4);
-			}
+		const durationMin = (end.getTime() - start.getTime()) / 6e4;
+		const clampTo = minDuration && durationMin < minDuration ? minDuration : maxDuration && durationMin > maxDuration ? maxDuration : null;
+		if (clampTo !== null) {
+			if (mode === "resize-start") start = new Date(end.getTime() - clampTo * 6e4);
+			else end = new Date(start.getTime() + clampTo * 6e4);
 		}
 	}
-	// Reject if target lands on a disabled date
+	// Reject if the range touches a disabled date
 	if (disabledDates?.length) {
 		const startDay = new Date(start);
 		startDay.setHours(0, 0, 0, 0);
@@ -208,10 +204,10 @@ async function commitDrag() {
 			const dt = new Date(dd);
 			dt.setHours(0, 0, 0, 0);
 			const ts = dt.getTime();
-			if (ts >= startDay.getTime() && ts <= endDay.getTime()) return;
+			if (ts >= startDay.getTime() && ts <= endDay.getTime()) return null;
 		}
 	}
-	// Reject if target overlaps a blocked slot
+	// Reject if the range overlaps a blocked slot
 	if (blockedSlots?.length) {
 		const startH = start.getHours() + start.getMinutes() / 60;
 		const endH = end.getHours() + end.getMinutes() / 60 + (end.getDate() !== start.getDate() ? 24 : 0);
@@ -219,25 +215,51 @@ async function commitDrag() {
 		const isoDay = jsDay === 0 ? 7 : jsDay;
 		for (const slot of blockedSlots) {
 			if (slot.day && slot.day !== isoDay) continue;
-			if (startH < slot.end && endH > slot.start) return;
+			if (startH < slot.end && endH > slot.start) return null;
 		}
 	}
+	return {
+		start,
+		end
+	};
+}
+// What views call for a click-to-create: the same checks a drag gets.
+const checkedCreate = $derived.by(() => {
+	const create = effectiveCreate;
+	if (!create) return undefined;
+	return (range) => {
+		const ok = validateRange("create", range.start, range.end);
+		if (ok) create(ok);
+	};
+});
+// ── Drag commit handler ──
+// Views call this on pointer-up to process drag results.
+async function commitDrag() {
+	if (readOnly) {
+		drag.cancel();
+		return;
+	}
+	const mode = drag.mode;
+	const payload = drag.commit();
+	if (!payload || mode === "none") return;
+	const checked = validateRange(mode, payload.start, payload.end);
+	if (!checked) return;
+	const { start, end } = checked;
 	if ((mode === "move" || mode === "resize-start" || mode === "resize-end") && payload.eventId) {
 		try {
 			await store.move(payload.eventId, start, end);
 			const ev = store.byId(payload.eventId);
 			if (ev) effectiveMove?.(ev, start, end);
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : "";
 			// Read-only adapter: the store can't persist, but the HOST still
 			// gets the callback — it owns persistence (e.g. scheduler RPC) and
 			// refetches. Missing event stays silent; real failures surface.
-			if (msg.includes("read-only")) {
+			if (isReadOnlyError(e)) {
 				const ev = store.byId(payload.eventId);
 				if (ev) effectiveMove?.(ev, start, end);
-			} else if (!msg.includes("not found")) {
-				if (onerror) onerror(e instanceof Error ? e : new Error(String(e)));
-				else console.warn("[calendar] drag commit failed:", e);
+			} else if (!isNotFoundError(e) && !onerror) {
+				// With onerror, the store.error effect below reports it — once.
+				console.warn("[calendar] drag commit failed:", e);
 			}
 		}
 	} else if (mode === "create") {
@@ -282,7 +304,7 @@ setContext("calendar", {
 		return handleEventClick;
 	},
 	get oneventcreate() {
-		return effectiveCreate;
+		return checkedCreate;
 	},
 	get oneventmove() {
 		return effectiveMove;
@@ -291,7 +313,7 @@ setContext("calendar", {
 		return oneventhover;
 	},
 	get ondayclick() {
-		return ondayclick ?? defaultDayClick;
+		return ondayclick ? (d) => ondayclick(unzone(d)) : defaultDayClick;
 	},
 	get timezone() {
 		return timezone;
@@ -370,19 +392,27 @@ $effect(() => {
 		end: range.end
 	});
 });
-// Eager initial load — $effect runs after paint, but for sync adapters
-// (memory, recurring) this resolves in the same microtask.
-untrack(() => store.load({
-	start: viewState.range.start,
-	end: viewState.range.end
-}));
+// Eager initial load for adapters that answer synchronously (memory,
+// recurring, seeded): the server render and the first paint hold the
+// events. An async adapter waits for the effect — by then the view has
+// declared its wider load range, so it is fetched once, not twice.
+untrack(() => {
+	if (effectiveAdapter.fetchEventsSync) store.load({
+		start: viewState.range.start,
+		end: viewState.range.end
+	});
+});
 // Keep active view in sync when external view prop changes after mount.
 $effect(() => {
 	if (activeViewId) viewState.setView(activeViewId);
 });
 // Sync controlled currentDate prop → viewState
 $effect(() => {
-	if (currentDate) viewState.setFocusDate(currentDate);
+	const d = zoneIn(currentDate);
+	// Compared by time: the host often hands back what ondatechange gave it.
+	if (d && untrack(() => viewState.focusDate.getTime()) !== d.getTime()) {
+		untrack(() => viewState.setFocusDate(d));
+	}
 });
 // Sync days prop → viewState.dayCount
 $effect(() => {
@@ -390,8 +420,10 @@ $effect(() => {
 });
 // Notify host when focusDate changes
 $effect(() => {
-	const d = viewState.focusDate;
-	ondatechange?.(d);
+	// An instant, like currentDate takes — so a host that feeds it back
+	// (currentDate={d} ondatechange={(x) => d = x}) gets the same day back.
+	const d = unzone(viewState.focusDate);
+	untrack(() => ondatechange?.(d));
 });
 // Keep view state's week-start rule in sync with incoming prop changes.
 $effect(() => {
@@ -417,7 +449,7 @@ const resolvedView = $derived.by(() => {
 	// Already a mobile view? Keep it.
 	if (requested.id.endsWith("-mobile")) return requested;
 	// Agenda views: keep as-is (they adapt internally via mobile context).
-	if (requested.label === "Agenda") return requested;
+	if (requested.component === Agenda || requested.id.endsWith("-agenda")) return requested;
 	// Planner / other views: remap to mobile variant with the same mode.
 	const mobileVariant = views.find((v) => v.id === `${requested.mode}-mobile`);
 	return mobileVariant ?? requested;
@@ -432,7 +464,7 @@ const dateLabel = $derived.by(() => {
 		return "";
 	}
 	if (viewState.mode === "day") {
-		return viewState.focusDate.toLocaleDateString(locale, {
+		return viewState.focusDate.toLocaleDateString(locale ?? getDefaultLocale(), {
 			weekday: "long",
 			month: "short",
 			day: "numeric"
@@ -442,7 +474,7 @@ const dateLabel = $derived.by(() => {
 		// The actual visible span — respects custom day counts (3/5-day views).
 		return fmtWeekRange(viewState.range.start.getTime(), locale, viewState.range.end.getTime() - 1);
 	}
-	return viewState.focusDate.toLocaleDateString(locale, {
+	return viewState.focusDate.toLocaleDateString(locale ?? getDefaultLocale(), {
 		month: "long",
 		year: "numeric"
 	});
@@ -482,6 +514,13 @@ const labelsForMode = $derived.by(() => {
 	}
 	return seen;
 });
+/** Built-in view-type names are shown in the calendar's language. */
+function viewLabel(label) {
+	if (label === "Planner") return L.planner;
+	if (label === "Agenda") return L.agenda;
+	if (label === "Scroll") return L.scroll;
+	return label;
+}
 function switchLabel(label) {
 	const target = desktopViews.find((v) => v.mode === viewState.mode && v.label === label);
 	if (target) viewState.setView(target.id);
@@ -498,8 +537,11 @@ const defaultDayClick = $derived.by(() => {
 	};
 });
 /** True when the current view range already includes today. */
+// Ticks on the zoned plane, so "today" is today in `timezone` and the
+// Today button re-enables when the day rolls over.
+const clock = createClock(untrack(() => timezone));
 const viewIncludesToday = $derived.by(() => {
-	const now = new Date();
+	const now = new Date(clock.tick);
 	if (viewState.mode === "month") {
 		// The month grid's range is week-aligned and includes adjacent-month
 		// spill days — compare against the focused month instead.
@@ -528,15 +570,17 @@ function handleShortcuts(e) {
 	if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
 	const t = e.target;
 	if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+	// Arrows inside a radio group move between its options, not the period.
+	const inRadio = t?.getAttribute("role") === "radio";
+	// Arrows follow the reading direction: in RTL, ← is "later".
+	const rtl = !!calEl && getComputedStyle(calEl).direction === "rtl";
 	if (e.key === "t" || e.key === "T") {
 		e.preventDefault();
 		viewState.goToday();
-	} else if (e.key === "ArrowLeft") {
+	} else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !inRadio) {
 		e.preventDefault();
-		viewState.prev();
-	} else if (e.key === "ArrowRight") {
-		e.preventDefault();
-		viewState.next();
+		if (e.key === "ArrowRight" !== rtl) viewState.next();
+		else viewState.prev();
 	}
 }
 /** Header context for custom header snippet */
@@ -674,7 +718,7 @@ const navCtx = $derived({
 								aria-checked={activeView?.label === label}
 								onclick={() => switchLabel(label)}
 							>
-								{label}
+								{viewLabel(label)}
 							</button>
 						{/each}
 					</div>
@@ -711,7 +755,7 @@ const navCtx = $derived({
 				{locale}
 				focusDate={viewState.focusDate}
 				oneventclick={handleEventClick}
-				oneventcreate={effectiveCreate}
+				oneventcreate={checkedCreate}
 				onexternaldrop={effectiveExternalDrop}
 				readOnly={readOnly}
 				visibleHours={visibleHours}
@@ -719,7 +763,7 @@ const navCtx = $derived({
 				{...activeView.props ?? {}}
 			/>
 		{:else}
-			<div class="cal-empty">No views registered.</div>
+			<div class="cal-empty">{L.noViews}</div>
 		{/if}
 	</div>
 

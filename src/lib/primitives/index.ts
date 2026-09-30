@@ -6,3 +6,4 @@ export { default as DayHeader } from './DayHeader.svelte';
 export { default as EmptySlot } from './EmptySlot.svelte';
 export { default as FloatingPanel } from './FloatingPanel.svelte';
 
+export type { FloatingPanelAnchor, FloatingPanelProps } from './FloatingPanel.svelte';

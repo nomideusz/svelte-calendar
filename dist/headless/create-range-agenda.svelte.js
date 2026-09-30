@@ -32,29 +32,50 @@
  */
 import { untrack } from 'svelte';
 import { createEventStore } from '../engine/event-store.svelte.js';
-import { sod, addDaysMs } from '../core/time.js';
+import { sod, addDaysMs, overlapsRange } from '../core/time.js';
+import { toZonedTime, nowInZone, wrapAdapterWithTimezone } from '../core/timezone.js';
 import { fmtTime as _fmtTime, fmtDuration } from '../core/locale.js';
 // ─── Implementation ─────────────────────────────────────
 export function createRangeAgenda(options) {
-    const { initialDate, locale, days: dayCount = 7 } = options;
-    const resolveAdapter = typeof options.adapter === 'function'
+    const { initialDate, locale, days: dayCount = 7, timezone } = options;
+    const rawAdapter = typeof options.adapter === 'function'
         ? options.adapter
         : () => options.adapter;
-    const store = $derived(createEventStore(resolveAdapter()));
+    const resolveAdapter = timezone
+        ? () => wrapAdapterWithTimezone(rawAdapter(), timezone)
+        : rawAdapter;
+    /** An instant on the plane the days are drawn on (zoned wall-clock with `timezone`). */
+    const plane = (ms) => (timezone ? toZonedTime(ms, timezone).getTime() : ms);
+    const nowMs = () => (timezone ? nowInZone(timezone).getTime() : Date.now());
+    // One store for the agenda's life: a getter adapter that changes identity
+    // reloads it instead of rebuilding it empty (every row blinking out).
+    const store = createEventStore(resolveAdapter);
     // ── Window start (reactive, writable) ──
-    let startMs = $state(sod(initialDate?.getTime() ?? Date.now()));
+    let startMs = $state(sod(initialDate ? plane(initialDate.getTime()) : nowMs()));
     const endMs = $derived(addDaysMs(startMs, dayCount));
     // ── Load events for the window (re-runs on paging / adapter swap) ──
-    $effect(() => {
+    // Eager initial load for synchronous adapters (the server render holds the
+    // rows); the effect's first run then has nothing new to fetch — a seeded
+    // adapter would otherwise send its seed range straight to the network.
+    let eagerKey = untrack(() => {
+        if (!resolveAdapter().fetchEventsSync)
+            return '';
         store.load({ start: new Date(startMs), end: new Date(endMs) });
+        return `${startMs}-${endMs}`;
     });
-    // Eager initial load
-    untrack(() => {
+    $effect(() => {
+        rawAdapter(); // a new adapter reloads
+        const key = `${startMs}-${endMs}`;
+        if (key === eagerKey) {
+            eagerKey = '';
+            return;
+        }
+        eagerKey = '';
         store.load({ start: new Date(startMs), end: new Date(endMs) });
     });
     // ── Day derivations ──
     const days = $derived.by(() => {
-        const todayMs = sod(Date.now());
+        const todayMs = sod(nowMs());
         const events = store.events;
         return Array.from({ length: dayCount }, (_, i) => {
             const ms = addDaysMs(startMs, i);
@@ -69,7 +90,7 @@ export function createRangeAgenda(options) {
                 isToday: ms === todayMs,
                 isPast: dayEnd <= todayMs,
                 events: events
-                    .filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
+                    .filter((ev) => overlapsRange(ev, date, new Date(dayEnd)))
                     .sort((a, b) => a.start.getTime() - b.start.getTime()),
             };
         });
@@ -98,10 +119,10 @@ export function createRangeAgenda(options) {
             startMs = addDaysMs(startMs, dayCount);
         },
         goToday() {
-            startMs = sod(Date.now());
+            startMs = sod(nowMs());
         },
         setDate(date) {
-            startMs = sod(date.getTime());
+            startMs = sod(plane(date.getTime()));
         },
         refresh() {
             void store.load({ start: new Date(startMs), end: new Date(endMs) });

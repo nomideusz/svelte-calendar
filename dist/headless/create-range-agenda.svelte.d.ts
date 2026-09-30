@@ -12,6 +12,13 @@ export interface RangeAgendaOptions {
     initialDate?: Date;
     /** BCP 47 locale tag (e.g. 'en-US', 'pl-PL') for the format helpers */
     locale?: string;
+    /**
+     * Show the agenda in an IANA timezone (e.g. 'Europe/Warsaw'), as the
+     * Calendar's `timezone` prop does: days, "today" and every event Date are
+     * wall-clock values in that zone (read them with `getHours()`, `getDate()`…).
+     * `initialDate` and `setDate()` take real instants. Default: the viewer's zone.
+     */
+    timezone?: string;
 }
 export interface RangeAgendaDay {
     /** Start-of-day timestamp (ms) */

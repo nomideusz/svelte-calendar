@@ -1,6 +1,12 @@
-import { type PrepareOptions } from '@chenglou/pretext';
 import type { Attachment } from 'svelte/attachments';
-export declare function lineCount(text: string, font: string, width: number, options?: PrepareOptions): number;
+/** How text wraps when measured — the CSS properties of the same names. */
+export interface TextLayoutOptions {
+    whiteSpace?: 'normal' | 'pre-wrap';
+    wordBreak?: 'normal' | 'keep-all';
+    /** Extra px between characters */
+    letterSpacing?: number;
+}
+export declare function lineCount(text: string, font: string, width: number, options?: TextLayoutOptions): number;
 export declare function fits(text: string, font: string, width: number, lines?: number): boolean;
 /** Height the text will take at `width`, before it is in the DOM. */
 export declare function textHeight(text: string, font: string, width: number, lineHeight: number): number;

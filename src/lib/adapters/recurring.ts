@@ -39,8 +39,9 @@
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
-import { startOfWeek, addDaysMs, diffDays, DAY_MS } from '../core/time.js';
+import { startOfWeek, addDaysMs, diffDays, DAY_MS, overlapsRange } from '../core/time.js';
 import { VIVID_PALETTE } from '../core/palette.js';
+import { CalendarReadOnlyError, EventNotFoundError } from './errors.js';
 
 // ── Types ───────────────────────────────────────────────
 
@@ -134,7 +135,7 @@ export interface RecurringAdapterOptions {
 	 * or provide your own array of hex strings.
 	 * Defaults to the built-in vivid palette.
 	 */
-	palette?: string[];
+	palette?: readonly string[];
 	/**
 	 * Let projected occurrences be dragged (default: `false`).
 	 *
@@ -178,16 +179,23 @@ function parseDate(str: string): Date {
 	return date;
 }
 
-/** ISO weekday offset from Monday: 1→0, 2→1, … 7→6 */
-function isoWeekdayToOffset(dayOfWeek: number): number {
-	return dayOfWeek - 1;
+/**
+ * Days from the start of the week to an ISO weekday (1=Mon … 7=Sun).
+ * Monday weeks: 1→0 … 7→6. Sunday weeks: 7→0, 1→1 … 6→6.
+ */
+function isoWeekdayToOffset(dayOfWeek: number, mondayStart: boolean): number {
+	return mondayStart ? dayOfWeek - 1 : dayOfWeek % 7;
 }
 
-/** Normalize `dayOfWeek` to a sorted array */
-function normalizeDays(value: number | number[] | undefined): number[] {
+/**
+ * Normalize `dayOfWeek` to an array in week order — the projection walks it
+ * in order and stops at the first day past its bound, so Sunday must come
+ * first in a Sunday week.
+ */
+function normalizeDays(value: number | number[] | undefined, mondayStart: boolean): number[] {
 	if (value == null) return [];
 	const arr = Array.isArray(value) ? [...value] : [value];
-	return arr.sort((a, b) => a - b);
+	return arr.sort((a, b) => isoWeekdayToOffset(a, mondayStart) - isoWeekdayToOffset(b, mondayStart));
 }
 
 /** Clamp day to last day of month (e.g. 31 → 28 in Feb) */
@@ -212,7 +220,9 @@ function createConcreteEvent(
 	const [sh, sm] = parseTime(rec.startTime);
 	const [eh, em] = parseTime(rec.endTime);
 	const start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), sh, sm);
-	const end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), eh, em);
+	// An end before the start runs past midnight (22:00–02:00).
+	const overnight = eh * 60 + em < sh * 60 + sm;
+	const end = new Date(date.getFullYear(), date.getMonth(), date.getDate() + (overnight ? 1 : 0), eh, em);
 	return {
 		id: `${rec.id}--${dateKey(date)}`,
 		title: rec.title,
@@ -252,7 +262,7 @@ function computeUntilFromCount(
 			return d;
 		}
 		case 'weekly': {
-			const days = normalizeDays(rec.dayOfWeek);
+			const days = normalizeDays(rec.dayOfWeek, mondayStart);
 			if (days.length === 0) return undefined;
 			const startMs = startDateObj.getTime();
 			let weekMs = startOfWeek(startMs, mondayStart);
@@ -261,7 +271,7 @@ function computeUntilFromCount(
 
 			for (let c = 0; c < maxCycles; c++) {
 				for (const day of days) {
-					const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day));
+					const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day, mondayStart));
 					if (dayMs >= startMs) {
 						remaining--;
 						if (remaining === 0) return new Date(dayMs);
@@ -272,9 +282,13 @@ function computeUntilFromCount(
 			return undefined;
 		}
 		case 'monthly': {
+			// The start month counts only if its occurrence is on or after
+			// startDate (20 Jan with dayOfMonth 15 begins in February).
+			const first = clampDayOfMonth(startDateObj.getFullYear(), startDateObj.getMonth(), rec.dayOfMonth ?? 1);
 			const totalMonths =
 				startDateObj.getFullYear() * 12 +
 				startDateObj.getMonth() +
+				(first < startDateObj ? interval : 0) +
 				(count - 1) * interval;
 			const y = Math.floor(totalMonths / 12);
 			const m = totalMonths % 12;
@@ -330,7 +344,7 @@ function projectWeekly(
 	out: TimelineEvent[],
 ): void {
 	const interval = rec.interval ?? 1;
-	const days = normalizeDays(rec.dayOfWeek);
+	const days = normalizeDays(rec.dayOfWeek, mondayStart);
 	if (days.length === 0) return;
 
 	const startDateMs = startDate?.getTime();
@@ -356,7 +370,7 @@ function projectWeekly(
 
 	while (weekMs < rangeEndMs) {
 		for (const day of days) {
-			const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day));
+			const dayMs = addDaysMs(weekMs, isoWeekdayToOffset(day, mondayStart));
 			if (startDateMs != null && dayMs < startDateMs) continue;
 			if (dayMs >= rangeEndMs) break;
 			if (effectiveUntil && dayMs > effectiveUntil.getTime()) return;
@@ -400,7 +414,7 @@ function projectMonthly(
 		if (date >= range.end) break;
 		if (effectiveUntil && date > effectiveUntil) break;
 
-		if (date >= range.start && (!startDate || date >= startDate)) {
+		if (!startDate || date >= startDate) {
 			const ev = createConcreteEvent(rec, date);
 			if (ev.start < range.end && ev.end > range.start) {
 				out.push(ev);
@@ -452,6 +466,10 @@ export function createRecurringAdapter(
 
 	const fetchEventsSync = (range: DateRange): TimelineEvent[] => {
 			const events: TimelineEvent[] = [];
+			// Project from a day earlier: an occurrence that runs past midnight
+			// (22:00–02:00) overlaps the range from the day before it. The
+			// overlap filter below trims back to the requested range.
+			const projected: DateRange = { start: new Date(addDaysMs(range.start.getTime(), -1)), end: range.end };
 
 			for (const rec of schedule) {
 				const colored = { ...rec, color: resolveColor(rec) };
@@ -474,13 +492,13 @@ export function createRecurringAdapter(
 
 				switch (freq) {
 					case 'daily':
-						projectDaily(colored, range, sd, effectiveUntil, events);
+						projectDaily(colored, projected, sd, effectiveUntil, events);
 						break;
 					case 'weekly':
-						projectWeekly(colored, range, sd, effectiveUntil, mondayStart, events);
+						projectWeekly(colored, projected, sd, effectiveUntil, mondayStart, events);
 						break;
 					case 'monthly':
-						projectMonthly(colored, range, sd, effectiveUntil, events);
+						projectMonthly(colored, projected, sd, effectiveUntil, events);
 						break;
 				}
 			}
@@ -490,7 +508,7 @@ export function createRecurringAdapter(
 			for (const rec of schedule) {
 				for (const d of rec.excludeDates ?? []) skipped.add(`${rec.id}--${d.replace(/-/g, '')}`);
 			}
-			const kept = skipped.size ? events.filter((e) => !skipped.has(e.id)) : events;
+			const kept = events.filter((e) => !skipped.has(e.id) && overlapsRange(e, range.start, range.end));
 			return movable ? kept : kept.map((e) => ({ ...e, data: { ...e.data, readOnly: true } }));
 	};
 
@@ -507,9 +525,9 @@ export function createRecurringAdapter(
 		async updateEvent(id: string): Promise<TimelineEvent> {
 			const ruleId = id.split('--')[0];
 			if (!schedule.some((rec) => rec.id === ruleId)) {
-				throw new Error(`Event not found: ${id}`);
+				throw new EventNotFoundError(id);
 			}
-			throw new Error(
+			throw new CalendarReadOnlyError(
 				`read-only: ${id} is a projected occurrence. Add its date to the rule's excludeDates and store the change yourself.`,
 			);
 		},

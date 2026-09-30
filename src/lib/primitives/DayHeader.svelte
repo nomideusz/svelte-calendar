@@ -7,11 +7,12 @@
 -->
 <script lang="ts">
 	import { weekdayShort, weekdayLong, monthShort, fmtDay } from '../core/locale.js';
+	import { sod } from '../core/time.js';
 
 	interface Props {
 		/** Timestamp (ms) of the day to label */
 		dayMs: number;
-		/** Timestamp (ms) of today (for relative labels) */
+		/** Any timestamp (ms) on today, for relative labels — default: now */
 		todayMs?: number;
 		/** Display format */
 		format?: 'relative' | 'short' | 'long';
@@ -23,7 +24,7 @@
 
 	let {
 		dayMs,
-		todayMs = Date.now(),
+		todayMs = sod(Date.now()),
 		format = 'short',
 		isToday = false,
 		isPast = false,
@@ -38,7 +39,7 @@
 	class:dh-past={isPast}
 >
 	{#if format === 'relative'}
-		<span class="dh-rel">{fmtDay(dayMs, todayMs)}</span>
+		<span class="dh-rel">{fmtDay(sod(dayMs), sod(todayMs))}</span>
 	{:else if format === 'long'}
 		<span class="dh-name dh-name-long">{weekdayLong(dayMs)}</span>
 		<span class="dh-date">{monthShort(dayMs)} {dayNum}</span>

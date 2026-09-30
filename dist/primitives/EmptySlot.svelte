@@ -6,7 +6,10 @@
   between events.
 -->
 <script lang="ts">import { fmtTime, fmtDuration, getLabels } from "../core/locale.js";
-const L = $derived(getLabels());
+import { getContext } from "svelte";
+// Inside a Calendar: its per-instance labels; standalone: the global ones.
+const calendarCtx = getContext("calendar");
+const L = $derived(calendarCtx?.labels ?? getLabels());
 let { start, end, onclick, orientation = "vertical" } = $props();
 const dur = $derived(`${fmtDuration(start, end)} ${L.free}`);
 function handleKeydown(e) {
@@ -26,7 +29,7 @@ function handleKeydown(e) {
 	class:es-h={orientation === 'horizontal'}
 	role="button"
 	tabindex="0"
-	aria-label="{L.createEvent}, {fmtTime(start)} to {fmtTime(end)}, {dur}"
+	aria-label="{L.createEvent}, {fmtTime(start)} – {fmtTime(end)}, {dur}"
 	onclick={() => onclick?.({ start, end })}
 	onkeydown={handleKeydown}
 >

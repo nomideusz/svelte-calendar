@@ -1,7 +1,7 @@
 interface Props {
     /** Timestamp (ms) of the day to label */
     dayMs: number;
-    /** Timestamp (ms) of today (for relative labels) */
+    /** Any timestamp (ms) on today, for relative labels — default: now */
     todayMs?: number;
     /** Display format */
     format?: 'relative' | 'short' | 'long';

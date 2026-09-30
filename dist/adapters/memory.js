@@ -1,4 +1,6 @@
 import { VIVID_PALETTE } from '../core/palette.js';
+import { overlapsRange } from '../core/time.js';
+import { EventNotFoundError } from './errors.js';
 let counter = 0;
 function uid() {
     return `mem-${Date.now()}-${++counter}`;
@@ -24,7 +26,7 @@ export function createMemoryAdapter(initial = [], options) {
         return color ? { ...ev, color } : ev;
     }
     function overlaps(ev, range) {
-        return ev.start < range.end && ev.end > range.start;
+        return overlapsRange(ev, range.start, range.end);
     }
     const fetchEventsSync = (range) => events.filter((ev) => overlaps(ev, range)).map(withColor);
     return {
@@ -40,14 +42,14 @@ export function createMemoryAdapter(initial = [], options) {
         async updateEvent(id, patch) {
             const idx = events.findIndex((e) => e.id === id);
             if (idx < 0)
-                throw new Error(`Event not found: ${id}`);
+                throw new EventNotFoundError(id);
             events[idx] = { ...events[idx], ...patch, id };
             return withColor(events[idx]);
         },
         async deleteEvent(id) {
             const idx = events.findIndex((e) => e.id === id);
             if (idx < 0)
-                throw new Error(`Event not found: ${id}`);
+                throw new EventNotFoundError(id);
             events.splice(idx, 1);
         },
     };

@@ -44,23 +44,41 @@ let expandedMs = $state(null);
 let focusMs = $state(null);
 let bodyEl = $state(null);
 const cellsInteractive = $derived(!!ondayclick);
+/** A cell takes focus when it can act: drill down, or open its overflow. */
+function isFocusable(cell) {
+	return !cell.isDisabled && (cellsInteractive || cell.overflow > 0);
+}
+/** Focusable cells by day, in grid order. */
+const focusable = $derived.by(() => {
+	const map = new Map();
+	for (const row of weeks) for (const cell of row) if (isFocusable(cell)) map.set(cell.ms, cell);
+	return map;
+});
+// The roving anchor always lands on a focusable cell, so the grid keeps
+// its one Tab stop even when the remembered day or today is disabled.
 const rovingMs = $derived.by(() => {
-	if (!range) return null;
-	const start = sod(range.start.getTime());
-	const end = range.end.getTime();
-	if (focusMs !== null && focusMs >= start && focusMs < end) return focusMs;
-	if (todayMs >= start && todayMs < end) return todayMs;
-	return start;
+	if (focusMs !== null && focusable.has(focusMs)) return focusMs;
+	if (focusable.has(todayMs)) return todayMs;
+	const first = focusable.keys().next();
+	return first.done ? null : first.value;
 });
 function moveFocus(fromMs, deltaDays) {
 	if (!range) return;
-	const target = addDaysMs(fromMs, deltaDays);
-	if (target < sod(range.start.getTime()) || target >= range.end.getTime()) return;
+	const lo = sod(range.start.getTime());
+	const hi = range.end.getTime();
+	// Skip days that can't take focus, continuing in the same direction.
+	let target = addDaysMs(fromMs, deltaDays);
+	while (target >= lo && target < hi && !focusable.has(target)) target = addDaysMs(target, deltaDays);
+	if (target < lo || target >= hi) return;
 	focusMs = target;
 	const el = bodyEl?.querySelector(`[data-ms="${target}"]`);
 	el?.focus();
 }
 function cellKeydown(e, cell) {
+	// Enter/Space on an event chip or "+N more" belong to that button (a
+	// chip opens its event, not the day); arrows still move between days.
+	const onCell = e.target === e.currentTarget;
+	if (!onCell && (e.key === "Enter" || e.key === " ")) return;
 	switch (e.key) {
 		case "ArrowRight":
 			e.preventDefault();
@@ -183,13 +201,7 @@ function chipTime(e) {
 					aria-label={cellLabel(cell)}
 					aria-current={cell.isToday ? 'date' : undefined}
 					data-ms={cell.ms}
-					tabindex={cell.isDisabled
-						? undefined
-						: cellsInteractive || cell.overflow > 0
-							? cell.ms === rovingMs
-								? 0
-								: -1
-							: undefined}
+					tabindex={isFocusable(cell) ? (cell.ms === rovingMs ? 0 : -1) : undefined}
 					onclick={() => {
 						if (!cell.isDisabled) ondayclick?.(cell.date);
 					}}
@@ -208,7 +220,7 @@ function chipTime(e) {
 									class:mg-chip--selected={ev.id === selectedEventId}
 									onclick={(e) => {
 										e.stopPropagation();
-										oneventclick?.(ev);
+										oneventclick?.(ev, e.currentTarget.getBoundingClientRect());
 									}}
 									onmouseenter={() => oneventhover?.(ev)}
 								>
@@ -225,7 +237,7 @@ function chipTime(e) {
 									aria-label="{ev.title}{chipTime(ev) ? `, ${chipTime(ev)}` : ''}"
 									onclick={(e) => {
 										e.stopPropagation();
-										oneventclick?.(ev);
+										oneventclick?.(ev, e.currentTarget.getBoundingClientRect());
 									}}
 									onmouseenter={() => oneventhover?.(ev)}
 								>

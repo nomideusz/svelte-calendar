@@ -26,9 +26,13 @@ export declare function formatInTimeZone(date: Date | number, timezone: string, 
  * real instants. This is how the Calendar's `timezone` prop works: views keep
  * doing plain local-time math on an already-shifted plane.
  *
- * Known limit shared by every wall-clock calendar UI: during a DST fall-back
- * the repeated hour is ambiguous on the wall clock, so writes made inside it
- * resolve to one of the two instants (date-fns-tz picks the offset).
+ * Known limits shared by every wall-clock calendar UI:
+ * - during a DST fall-back in `timezone` the repeated hour is ambiguous on
+ *   the wall clock, so writes made inside it resolve to one of the two
+ *   instants (date-fns-tz picks the offset);
+ * - the plane is made of the *browser's* local Dates, so a wall-clock time
+ *   that does not exist in the browser's own zone (its spring-forward hour,
+ *   when that differs from `timezone`'s) displays an hour late.
  */
 import type { CalendarAdapter } from '../adapters/types.js';
 export declare function wrapAdapterWithTimezone(adapter: CalendarAdapter, timezone: string): CalendarAdapter;

@@ -22,13 +22,11 @@
 	import EventContent from '../shared/EventContent.svelte';
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { DAY_MS, HOUR_MS, sod, addDaysMs } from '../../core/time.js';
-	import { startOfWeek as sowFn, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import { HOUR_MS, sod, addDaysMs, diffDays } from '../../core/time.js';
+	import { startOfWeek as sowFn, isAllDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { weekdayShort, monthLong, fmtTime as _fmtTime, getLabels } from '../../core/locale.js';
+	import { weekdayShort, monthLong, fmtTime as _fmtTime } from '../../core/locale.js';
 	import { createChipFit } from '../shared/chip-fit.svelte.js';
-
-	const L = $derived(getLabels());
 
 	interface Props {
 		mondayStart?: boolean;
@@ -65,6 +63,8 @@
 	}: Props = $props();
 
 	const ctx = useCalendarContext();
+	/** Per-instance labels (Calendar's `labels` prop over the globals). */
+	const L = $derived(ctx.labels);
 	const clock = createClock(ctx.timezone);
 
 	// Drag ghost flies between day cells instead of teleporting.
@@ -114,6 +114,40 @@
 		return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : TIME_H + ROW_MARGIN;
 	}
 
+	// ─── Wall-clock helpers ─────────────────────────
+	// The axis is wall-clock hours. A DST day is 23 or 25 hours long, so
+	// `dayMs + h * HOUR_MS` is an hour off after the change: convert through
+	// the local calendar instead.
+	/** Fractional wall-clock hour `hour` on the day starting at `dayMs` → epoch ms. */
+	function atHour(dayMs: number, hour: number): number {
+		// MakeTime sums the fields in local time, so this may pass 24h.
+		return new Date(dayMs).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+	}
+	/** Epoch ms → fractional wall-clock hour counted from the day at `dayMs`. */
+	function hourOf(ms: number, dayMs: number): number {
+		const d = new Date(ms);
+		return (
+			diffDays(ms, dayMs) * 24 +
+			d.getHours() +
+			d.getMinutes() / 60 +
+			d.getSeconds() / 3600 +
+			d.getMilliseconds() / HOUR_MS
+		);
+	}
+	/** All-day events and timed ones a (wall-clock) day or longer are bars;
+	 *  a shorter overnight event is a chip on the day it starts. */
+	function inAllDayStrip(ev: TimelineEvent): boolean {
+		return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+	}
+
+	function statusText(ev: TimelineEvent): string {
+		if (ev.status === 'cancelled') return ` (${L.cancelled})`;
+		if (ev.status === 'tentative') return ` (${L.tentative})`;
+		if (ev.status === 'full') return ` (${L.full})`;
+		if (ev.status === 'limited') return ` (${L.limited})`;
+		return '';
+	}
+
 	// ─── Time axis ──────────────────────────────────
 	// Without visibleHours the axis spans the hours the loaded events start in:
 	// a timetable of 7:00–21:00 classes spread over 24 hours bunches them up.
@@ -121,7 +155,7 @@
 		let lo = 24;
 		let hi = -1;
 		for (const ev of events) {
-			if (isAllDay(ev) || isMultiDay(ev)) continue;
+			if (inAllDayStrip(ev)) continue;
 			const h = ev.start.getHours() + ev.start.getMinutes() / 60;
 			lo = Math.min(lo, h);
 			hi = Math.max(hi, h);
@@ -131,10 +165,10 @@
 	const startHour = $derived(visibleHours?.[0] ?? eventHours[0]);
 	const endHour = $derived(visibleHours?.[1] ?? eventHours[1]);
 
-	/** Where a chip starting this far into the day sits, px from the axis top.
-	 *  A chip at the last hour still ends inside the floor height. */
-	function timeTop(msIntoDay: number): number {
-		const f = (msIntoDay / HOUR_MS - startHour) / Math.max(1, endHour - startHour);
+	/** Where a chip starting this many wall-clock hours into the day sits, px
+	 *  from the axis top. A chip at the last hour still ends inside the floor height. */
+	function timeTop(hoursIntoDay: number): number {
+		const f = (hoursIntoDay - startHour) / Math.max(1, endHour - startHour);
 		return Math.min(Math.max(f, 0), 1) * (TIME_H - CHIP_H);
 	}
 
@@ -144,7 +178,7 @@
 		const tops: number[] = [];
 		let min = 0;
 		for (const ev of list) {
-			const top = Math.max(timeTop(ev.start.getTime() - dayMs), min);
+			const top = Math.max(timeTop(hourOf(ev.start.getTime(), dayMs)), min);
 			tops.push(top);
 			min = top + CHIP_H + CHIP_GAP;
 		}
@@ -155,7 +189,7 @@
 	 *  it), but never above a chip that has already started — pushed-down
 	 *  chips would read as still to come. */
 	function nowTop(list: TimelineEvent[], tops: number[], dayMs: number): number {
-		let y = timeTop(clock.tick - dayMs);
+		let y = timeTop(hourOf(clock.tick, dayMs));
 		list.forEach((ev, i) => {
 			if (ev.start.getTime() <= clock.tick) y = Math.max(y, tops[i] + CHIP_H + CHIP_GAP / 2);
 		});
@@ -253,18 +287,20 @@
 				const isPast = equalDays ? false : ms < todayMs;
 
 				const dayEnd = addDaysMs(ms, 1);
+				// A zero-length event counts where it sits (even at midnight)
 				const dayEventsAll = events
-					.filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms)
+					.filter((ev) => ev.start.getTime() < dayEnd && (ev.end.getTime() > ms || ev.start.getTime() >= ms))
 					.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-				// Separate all-day / multi-day from timed events
+				// Separate all-day / day-long from timed events. A timed event that
+				// runs past midnight (22:00–01:00) is a chip on its start day only.
 				const timedEvents: TimelineEvent[] = [];
 				const allDaySegments: DaySegment[] = [];
 				for (const ev of dayEventsAll) {
-					if (isAllDay(ev) || isMultiDay(ev)) {
+					if (inAllDayStrip(ev)) {
 						const seg = segmentForDay(ev, ms);
 						if (seg) allDaySegments.push(seg);
-					} else {
+					} else if (ev.start.getTime() >= ms && ev.end.getTime() >= ev.start.getTime()) {
 						timedEvents.push(ev);
 					}
 				}
@@ -317,7 +353,15 @@
 	// ─── Scroll to current week on mount ────────────────
 	onMount(() => {
 		tick().then(() => scrollWeekIntoContainer());
-		return () => cancelAnimationFrame(syncRaf);
+		return () => {
+			cancelAnimationFrame(syncRaf);
+			// Unmounted mid-gesture (a view switch between pointerdown and
+			// pointerup): drop the window listeners and the auto-scroll frame,
+			// and the half-made drag with them.
+			const live = evDragStarted;
+			cleanupEvDrag();
+			if (live && drag?.active) drag.cancel();
+		};
 	});
 
 	// Rows grow when their events arrive, which moves every row below them —
@@ -422,55 +466,79 @@
 		}
 	}
 
-	/** Where a new thing lands on this day, or null when the day refuses it.
-	 *  A cell is a whole day here — there is no time axis to drop onto — so
-	 *  everything starts at the first visible hour. One rule, so an empty-cell
-	 *  click and a drop from outside can never disagree about a day. */
-	function dayDropStart(ms: number): Date | null {
+	/** The time at a pointer's height on a day's axis — timeTop read backwards,
+	 *  the pointer at the chip's middle. Half hours: the whole day is ~100px.
+	 *  Wall-clock ms into the local day; dayDropStart makes it an instant. */
+	function pointerTime(cell: HTMLElement, clientY: number): number {
+		const area = cell.querySelector<HTMLElement>('.wg-cell-events');
+		if (!area) return startHour * HOUR_MS;
+		// The result is wall-clock time into the day (ms), rounded to half hours
+		// of the local day — dayDropStart turns it into an instant.
+		const y = clientY - area.getBoundingClientRect().top - CHIP_H / 2;
+		const f = Math.min(Math.max(y / (TIME_H - CHIP_H), 0), 1);
+		const hours = startHour + f * Math.max(1, endHour - startHour);
+		return Math.round(hours * 2) * (HOUR_MS / 2);
+	}
+
+	/** Where a new thing lands on this day, or null when the day (or that hour
+	 *  of it) refuses it. `at` is the pointer's time into the day; without one
+	 *  (the keyboard) it is the first hour of the axis. One rule, so an
+	 *  empty-cell click and a drop from outside can never disagree. */
+	function dayDropStart(ms: number, at = startHour * HOUR_MS): Date | null {
 		if (disabledSet.has(ms)) return null;
-		const startHour = visibleHours?.[0] ?? 9;
+		const hour = at / HOUR_MS;
 		if (blockedSlots?.length) {
 			const jsDay = new Date(ms).getDay();
 			const isoDay = jsDay === 0 ? 7 : jsDay;
 			const blocked = blockedSlots.some((slot) => {
 				if (slot.day && slot.day !== isoDay) return false;
-				return startHour >= slot.start && startHour < slot.end;
+				return hour >= slot.start && hour < slot.end;
 			});
 			if (blocked) return null;
 		}
-		return new Date(ms + startHour * HOUR_MS);
+		return new Date(atHour(ms, hour));
 	}
 
 	function handleDayCellClick(ms: number, e: Event) {
 		const target = e.target as HTMLElement;
 		if (target.closest('.wg-ev, .wg-ad, .wg-ev-more')) return;
 		if (readOnly || !oneventcreate) return;
-		const start = dayDropStart(ms);
+		const at = e instanceof MouseEvent ? pointerTime(e.currentTarget as HTMLElement, e.clientY) : undefined;
+		const start = dayDropStart(ms, at);
 		if (!start) return;
-		const durMin = minDuration ? Math.max(60, minDuration) : 60;
+		// An hour, or the minimum duration when that is longer. Blocked-slot and
+		// max-duration validation is Calendar's (ctx.oneventcreate), not ours.
+		const durMin = Math.max(60, minDuration ?? 0);
 		oneventcreate({ start, end: new Date(start.getTime() + durMin * 60_000) });
 	}
 
 	// ─── External drop (HTML5 DnD) ──────────────────────
 	// A class chip dragged in from outside the calendar; the cell it is over
-	// lights up so the day it would land on is never in doubt.
-	let dropDayMs = $state<number | null>(null);
+	// lights up and a line on its axis says the time it would land at.
+	let drop = $state<{ day: number; at: number } | null>(null);
 
 	function onCellDragOver(e: DragEvent, ms: number) {
-		if (!onexternaldrop || readOnly || !dayDropStart(ms)) return;
+		if (!onexternaldrop || readOnly) return;
+		const at = pointerTime(e.currentTarget as HTMLElement, e.clientY);
+		if (!dayDropStart(ms, at)) {
+			drop = null;
+			return;
+		}
 		e.preventDefault();
 		if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-		dropDayMs = ms;
+		if (drop?.day !== ms || drop.at !== at) drop = { day: ms, at };
 	}
 
-	function onCellDragLeave(ms: number) {
-		if (dropDayMs === ms) dropDayMs = null;
+	function onCellDragLeave(e: DragEvent, ms: number) {
+		// Leaving for a chip inside the same cell is not leaving the cell.
+		if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) return;
+		if (drop?.day === ms) drop = null;
 	}
 
 	function onCellDrop(e: DragEvent, ms: number) {
-		dropDayMs = null;
+		drop = null;
 		if (!onexternaldrop || readOnly || !e.dataTransfer) return;
-		const start = dayDropStart(ms);
+		const start = dayDropStart(ms, pointerTime(e.currentTarget as HTMLElement, e.clientY));
 		if (!start) return;
 		e.preventDefault();
 		onexternaldrop({ start, dataTransfer: e.dataTransfer });
@@ -496,6 +564,11 @@
 	 *  step is the row under the pointer, found by hit-test, not by division.
 	 *  Held as a timestamp: an extension can renumber rows mid-drag. */
 	let evStartWeekMs = 0;
+	/** The day cell the press landed in; the drag moves the event by the days
+	 *  between it and the cell now under the pointer. */
+	let evPressDayMs = 0;
+	/** The grid runs right-to-left (`dir="rtl"`): a rightward drag goes back. */
+	let evRtl = false;
 
 	const dragPreviewEvent = $derived.by(() => {
 		const payload = drag?.active && drag.mode === 'move' ? drag.payload : null;
@@ -522,16 +595,17 @@
 
 	function dragPreviewTimedForDay(dayMs: number): TimelineEvent | null {
 		const ev = dragPreviewEvent;
-		if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
+		if (!ev || inAllDayStrip(ev)) return null;
+		// Where the chip would sit: its start day (as in the week rows)
 		const dayEnd = addDaysMs(dayMs, 1);
-		const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
+		const hit = ev.start.getTime() >= dayMs && ev.start.getTime() < dayEnd;
 		if (hit) previewKeySnapshot.set('timed', ev.id);
 		return hit ? ev : null;
 	}
 
 	function dragPreviewSegmentForDay(dayMs: number): DaySegment | null {
 		const ev = dragPreviewEvent;
-		if (!ev || (!isAllDay(ev) && !isMultiDay(ev))) return null;
+		if (!ev || !inAllDayStrip(ev)) return null;
 		const seg = segmentForDay(ev, dayMs);
 		if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
 		return seg;
@@ -595,24 +669,42 @@
 		evDragStarted = false;
 		evDragId = ev.id;
 		evDragEvent = ev;
+		const cellMs = Number((e.currentTarget as HTMLElement).closest<HTMLElement>('[data-day]')?.dataset.day);
+		evPressDayMs = Number.isFinite(cellMs) ? cellMs : sod(ev.start.getTime());
 
 		window.addEventListener('pointermove', onEvWindowPointerMove);
 		window.addEventListener('pointerup', onEvWindowPointerUp, { once: true });
 		window.addEventListener('pointercancel', onEvWindowPointerCancel, { once: true });
 	}
 
+	/** The day `cols` rendered columns away from the press cell, in the row
+	 *  whose start is `rowMs`. Columns are counted over the days actually shown
+	 *  (hideDays leaves gaps in the dates, not in the columns); running off a
+	 *  row's end carries into the neighbouring row. */
+	function dayAtColumn(rowMs: number, cols: number): number | null {
+		const startRow = weeks.findIndex((w) => w.weekStart === evStartWeekMs);
+		let r = weeks.findIndex((w) => w.weekStart === rowMs);
+		if (startRow < 0 || r < 0) return null;
+		const pressCol = weeks[startRow].days.findIndex((d) => d.ms === evPressDayMs);
+		if (pressCol < 0) return null;
+		let col = pressCol + cols;
+		while (col < 0 && r > 0) { r--; col += weeks[r].days.length; }
+		while (col >= weeks[r].days.length && r < weeks.length - 1) { col -= weeks[r].days.length; r++; }
+		const days = weeks[r].days;
+		if (!days.length) return null;
+		return days[Math.max(0, Math.min(days.length - 1, col))].ms;
+	}
+
 	/** Where the dragged event sits for the pointer's current offset. */
 	function updateDragFromPointer() {
 		const ev = evDragEvent;
 		if (!drag || !ev) return;
-		const dayOffset = Math.round((evLastX - evDragStartX) / evCellW);
+		const dx = (evLastX - evDragStartX) * (evRtl ? -1 : 1);
+		const colOffset = Math.round(dx / evCellW);
 		const nowWeekMs = weekMsAtY(evLastY);
-		// A vertical row step spans one period (customDays), not always 7 days
-		const weekOffset =
-			evStartWeekMs && nowWeekMs
-				? Math.round((nowWeekMs - evStartWeekMs) / (customDays * DAY_MS))
-				: 0;
-		const deltaDays = dayOffset + weekOffset * customDays;
+		const target = evStartWeekMs && nowWeekMs ? dayAtColumn(nowWeekMs, colOffset) : null;
+		// Without a mapped cell (the rows are mid-rebuild) keep the press day
+		const deltaDays = target === null ? 0 : diffDays(target, evPressDayMs);
 		drag.updatePointer(
 			new Date(addDaysMs(ev.start.getTime(), deltaDays)),
 			new Date(addDaysMs(ev.end.getTime(), deltaDays)),
@@ -667,6 +759,7 @@
 			evDragging = true;
 			evCellW = getCellWidth();
 			evStartWeekMs = weekMsAtY(evDragStartY);
+			evRtl = !!el && getComputedStyle(el).direction === 'rtl';
 			drag.beginMove(ev.id, ev.start, ev.end);
 		}
 
@@ -686,6 +779,8 @@
 		evAnchor = undefined;
 		evDragMovable = false;
 		evStartWeekMs = 0;
+		evPressDayMs = 0;
+		evRtl = false;
 	}
 
 	function onEvWindowPointerUp() {
@@ -715,9 +810,28 @@
 	let expandedCells = $state<Record<number, boolean>>({});
 
 	// ─── Roving tabindex for grid cells ─────────────────
-	// One tabbable cell (last focused, else today); arrows move focus.
+	// One tabbable cell (last focused, else today, else the first shown day of
+	// the anchor week — today may be a hidden day or outside the buffer, and
+	// the grid must never drop out of the tab order); arrows move focus.
 	let focusedCellMs = $state<number | null>(null);
-	const tabbableCellMs = $derived(focusedCellMs ?? todayMs);
+	const tabbableCellMs = $derived.by((): number | null => {
+		let fallback: number | null = null;
+		let anchorFirst: number | null = null;
+		let focusedShown = false;
+		let todayShown = false;
+		for (const w of weeks) {
+			if (!w.days.length) continue;
+			fallback ??= w.days[0].ms;
+			if (w.weekStart === anchorPeriodStart) anchorFirst = w.days[0].ms;
+			for (const d of w.days) {
+				if (d.ms === focusedCellMs) focusedShown = true;
+				if (d.ms === todayMs) todayShown = true;
+			}
+		}
+		if (focusedShown) return focusedCellMs;
+		if (todayShown) return todayMs;
+		return anchorFirst ?? fallback;
+	});
 
 	function onCellKeydown(e: KeyboardEvent, ms: number) {
 		if (e.key === 'Enter' || e.key === ' ') {
@@ -815,14 +929,14 @@
 								class:wg-cell--weekend={day.isWeekend}
 								class:wg-cell--disabled={disabledSet.has(day.ms)}
 								class:wg-cell--expanded={isExpanded}
-								class:wg-cell--drop={dropDayMs === day.ms}
+								class:wg-cell--drop={drop?.day === day.ms}
 								role="gridcell"
 								data-day={day.ms}
 								tabindex={day.ms === tabbableCellMs ? 0 : -1}
 								aria-label="{new Date(day.ms).toLocaleDateString(locale ?? 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}{day.isToday ? ` (${L.today.toLowerCase()})` : ''}, {L.nEvents(day.events.length + day.allDaySegments.length)}"
 								onclick={(e) => handleDayCellClick(day.ms, e)}
 								ondragover={(e) => onCellDragOver(e, day.ms)}
-								ondragleave={() => onCellDragLeave(day.ms)}
+								ondragleave={(e) => onCellDragLeave(e, day.ms)}
 								ondrop={(e) => onCellDrop(e, day.ms)}
 								onfocus={() => { focusedCellMs = day.ms; }}
 								onkeydown={(e) => onCellKeydown(e, day.ms)}
@@ -852,9 +966,9 @@
 										{@const isoDay = jsDay === 0 ? 7 : jsDay}
 										{#each blockedSlots as slot, i (i)}
 											{#if (!slot.day || slot.day === isoDay) && slot.end > startHour && slot.start < endHour}
-												{@const slotRange = `${_fmtTime(new Date(day.ms + slot.start * HOUR_MS), locale)} – ${_fmtTime(new Date(day.ms + slot.end * HOUR_MS), locale)}`}
-												{@const bandTop = timeTop(slot.start * HOUR_MS)}
-												{@const bandH = Math.max(14, timeTop(slot.end * HOUR_MS) - bandTop)}
+												{@const slotRange = `${_fmtTime(new Date(atHour(day.ms, slot.start)), locale)} – ${_fmtTime(new Date(atHour(day.ms, slot.end)), locale)}`}
+												{@const bandTop = timeTop(slot.start)}
+												{@const bandH = Math.max(14, timeTop(slot.end) - bandTop)}
 												<!-- A chip over the band would cut its label in half: the title keeps it -->
 												{@const covered = tops.some((t) => t < bandTop + bandH && t + CHIP_H > bandTop)}
 												<div
@@ -862,7 +976,7 @@
 													style:top="{bandTop}px"
 													style:height="{bandH}px"
 													title="{slot.label ? `${slot.label}, ` : ''}{slotRange}"
-													aria-label="{slot.label || 'Unavailable'}, {slotRange}"
+													aria-label="{slot.label || L.unavailable}, {slotRange}"
 												>
 													{#if slot.label && !covered}
 														<span class="wg-blocked-label">{slot.label}</span>
@@ -891,7 +1005,7 @@
 											style:margin-top="{tops[i] - (i ? tops[i - 1] + CHIP_H : 0)}px"
 											role="button"
 											tabindex="0"
-											aria-label="{ev.title}, {fmtAmPm(ev.start)} – {fmtAmPm(ev.end)}{ev.status === 'cancelled' ? ` (cancelled)` : ''}{ev.status === 'tentative' ? ` (tentative)` : ''}{ev.status === 'full' ? ` (full)` : ''}{ev.status === 'limited' ? ` (limited)` : ''}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
+											aria-label="{ev.title}, {fmtAmPm(ev.start)} – {fmtAmPm(ev.end)}{statusText(ev)}{ev.start.getTime() <= clock.tick && ev.end.getTime() > clock.tick ? ` (${L.inProgress})` : ''}"
 											onpointerdown={(e) => onEventPointerDown(e, ev)}
 											onpointerenter={() => oneventhover?.(ev)}
 											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev, e.currentTarget.getBoundingClientRect()); } }}
@@ -912,12 +1026,17 @@
 										<div
 											class="wg-ev wg-ev--drag-preview"
 											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
-											style:top="{timeTop(previewTimedEvent.start.getTime() - day.ms)}px"
+											style:top="{timeTop(hourOf(previewTimedEvent.start.getTime(), day.ms))}px"
 											aria-hidden="true"
 											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
 											out:previewSend={{ key: previewKeySnapshot.get('timed') ?? '' }}
 										>
 											{@render timedEventContent(previewTimedEvent, inset)}
+										</div>
+									{/if}
+									{#if drop?.day === day.ms}
+										<div class="wg-now wg-drop" style:top="{timeTop(drop.at / HOUR_MS) + CHIP_H / 2}px" aria-hidden="true">
+											<span class="wg-now-time">{fmtAmPm(new Date(atHour(day.ms, drop.at / HOUR_MS)))}</span>
 										</div>
 									{/if}
 									{#if nowY !== null}
@@ -1314,6 +1433,16 @@
 	.wg-now-time {
 		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-accent, #2563eb);
+	}
+	/* Where a dragged-in class would land: the now-line's shape, solid */
+	.wg-drop {
+		z-index: 3;
+	}
+	.wg-drop::after {
+		border-top-style: solid;
+	}
+	.wg-drop .wg-now-time {
+		font-weight: 600;
 	}
 
 	.wg-ev {

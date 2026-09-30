@@ -2,10 +2,18 @@
 // Browser-only (Canvas 2D + Intl.Segmenter): call from effects, attachments or
 // event handlers, never during SSR. `font` is a canvas font string, e.g.
 // "500 12px Inter" — name a real family; bare `system-ui` measures wrong on macOS.
-import { prepare, layout, prepareWithSegments, measureNaturalWidth, type PrepareOptions } from '@chenglou/pretext';
+import { prepare, layout, prepareWithSegments, measureNaturalWidth } from '@chenglou/pretext';
 import type { Attachment } from 'svelte/attachments';
 
-export function lineCount(text: string, font: string, width: number, options?: PrepareOptions): number {
+/** How text wraps when measured — the CSS properties of the same names. */
+export interface TextLayoutOptions {
+	whiteSpace?: 'normal' | 'pre-wrap';
+	wordBreak?: 'normal' | 'keep-all';
+	/** Extra px between characters */
+	letterSpacing?: number;
+}
+
+export function lineCount(text: string, font: string, width: number, options?: TextLayoutOptions): number {
 	return layout(prepare(text, font, options), width, 1).lineCount;
 }
 

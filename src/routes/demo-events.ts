@@ -37,7 +37,10 @@ function mondayOf(d: Date): Date {
 
 /** Create a Date at `dayOffset` from anchor + hours/minutes */
 function at(anchor: Date, dayOffset: number, h: number, m = 0): Date {
-	const d = new Date(anchor.getTime() + dayOffset * 86_400_000);
+	// Calendar days, not 24 h steps: across a DST change those land on the
+	// wrong date.
+	const d = new Date(anchor);
+	d.setDate(d.getDate() + dayOffset);
 	d.setHours(h, m, 0, 0);
 	return d;
 }

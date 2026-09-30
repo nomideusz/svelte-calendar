@@ -13,19 +13,24 @@ export interface RestAdapterOptions {
 	baseUrl: string;
 	/** Custom headers (e.g. Authorization) */
 	headers?: Record<string, string>;
-	/** Map API response to TimelineEvent[] */
+	/** Map API response to TimelineEvent[] (default: the body is an array of events, `start`/`end` parsed into Dates) */
 	mapEvents?: (data: unknown) => TimelineEvent[];
-	/** Map API response to a single TimelineEvent */
+	/** Map API response to a single TimelineEvent (default: the body is the event, `start`/`end` parsed into Dates) */
 	mapEvent?: (data: unknown) => TimelineEvent;
+}
+
+/** JSON carries dates as strings; the calendar needs Date objects. */
+function reviveEvent(data: unknown): TimelineEvent {
+	const ev = data as TimelineEvent & { start: Date | string | number; end: Date | string | number };
+	return { ...ev, start: new Date(ev.start), end: new Date(ev.end) };
 }
 
 export function createRestAdapter(options: RestAdapterOptions): CalendarAdapter {
 	const { baseUrl, headers = {} } = options;
 
 	const mapEvents =
-		options.mapEvents ?? ((data: unknown) => data as TimelineEvent[]);
-	const mapEvent =
-		options.mapEvent ?? ((data: unknown) => data as TimelineEvent);
+		options.mapEvents ?? ((data: unknown) => (data as unknown[]).map(reviveEvent));
+	const mapEvent = options.mapEvent ?? reviveEvent;
 
 	async function request(
 		path: string,
@@ -74,7 +79,7 @@ export function createRestAdapter(options: RestAdapterOptions): CalendarAdapter 
 			id: string,
 			patch: Partial<TimelineEvent>,
 		): Promise<TimelineEvent> {
-			const data = await request(`/events/${id}`, {
+			const data = await request(`/events/${encodeURIComponent(id)}`, {
 				method: 'PATCH',
 				body: JSON.stringify(patch),
 			});
@@ -82,7 +87,7 @@ export function createRestAdapter(options: RestAdapterOptions): CalendarAdapter 
 		},
 
 		async deleteEvent(id: string): Promise<void> {
-			await request(`/events/${id}`, { method: 'DELETE' });
+			await request(`/events/${encodeURIComponent(id)}`, { method: 'DELETE' });
 		},
 	};
 }

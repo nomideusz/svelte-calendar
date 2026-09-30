@@ -1,5 +1,5 @@
 interface Props {
-    /** REST API base URL — if provided, fetches events from this endpoint */
+    /** Events endpoint — fetched as `GET {api}?start=…&end=…` (ISO instants); answers an array of events or `{ events: [...] }` */
     api?: string;
     /** JSON string of events for static/inline data (alternative to api) */
     events?: string;
@@ -17,7 +17,7 @@ interface Props {
     mondaystart?: string;
     /** Custom HTTP headers as JSON string for REST adapter */
     headers?: string;
-    /** Read-only mode: "true" disables drag/resize/create */
+    /** Read-only unless explicitly "false" — an anonymous embed has nowhere to store an edit */
     readonly?: string;
     /** Show the Day/Week/Month pills (default: true) */
     pills?: string;

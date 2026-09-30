@@ -28,6 +28,8 @@ export interface CalendarLabels {
 	month: string;
 	planner: string;
 	agenda: string;
+	/** The scrolling-weeks view (`week-scroll`) in the view-type pills */
+	scroll: string;
 	now: string;
 	free: string;
 	allDay: string;
@@ -62,6 +64,10 @@ export interface CalendarLabels {
 	full: string;
 	/** Event status: limited availability */
 	limited: string;
+	/** A blocked slot without a label of its own */
+	unavailable: string;
+	/** Shown when a Calendar has no views to render */
+	noViews: string;
 	dayNavigation: string;
 	weekNavigation: string;
 	dayPlanner: string;
@@ -107,6 +113,7 @@ export const defaultLabels: CalendarLabels = {
 	month: 'Month',
 	planner: 'Planner',
 	agenda: 'Agenda',
+	scroll: 'Scroll',
 	now: 'now',
 	free: 'free',
 	allDay: 'All day',
@@ -134,6 +141,8 @@ export const defaultLabels: CalendarLabels = {
 	tentative: 'tentative',
 	full: 'full',
 	limited: 'limited',
+	unavailable: 'Unavailable',
+	noViews: 'No views registered.',
 	dayNavigation: 'Day navigation',
 	weekNavigation: 'Week navigation',
 	dayPlanner: 'Day planner',
@@ -277,23 +286,20 @@ export function fmtDay(
 }
 
 /**
- * Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
+ * Format a date range label in the locale's own order:
+ * "Sep 21 – 27, 2026" (en-US), "21–27 wrz 2026" (pl-PL),
+ * "Dec 28, 2026 – Jan 3, 2027" across a year.
+ *
+ * `weekEndMs` is the last day shown (inclusive); default: six days on.
  */
 export function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: number): string {
 	const loc = locale ?? defaultLocale;
 	const s = new Date(weekStartMs);
 	const e = new Date(weekEndMs ?? addDaysMs(weekStartMs, 6));
-	const sm = s.toLocaleDateString(loc, { month: 'short' });
-	const em = e.toLocaleDateString(loc, { month: 'short' });
-	const sy = s.getFullYear();
-	const ey = e.getFullYear();
-	if (sy !== ey) {
-		return `${sm} ${s.getDate()}, ${sy} – ${em} ${e.getDate()}, ${ey}`;
-	}
-	if (sm !== em) {
-		return `${sm} ${s.getDate()} – ${em} ${e.getDate()}, ${ey}`;
-	}
-	return `${sm} ${s.getDate()} – ${e.getDate()}, ${ey}`;
+	const fmt = new Intl.DateTimeFormat(loc, { month: 'short', day: 'numeric', year: 'numeric' });
+	// Thin/narrow spaces around the dash vary by engine; plain spaces keep
+	// the label stable across browsers and in tests.
+	return fmt.formatRange(s, e).replace(/[\u2009\u202f]/g, ' ');
 }
 
 // ─── Shared time / duration formatting ──────────────────

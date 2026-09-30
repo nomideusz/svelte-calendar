@@ -1,5 +1,48 @@
-globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\toverscroll-behavior: contain;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tpadding: 8px 4px 6px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tmin-width: 26px;\n\t\theight: 26px;\n\t\tborder-radius: 50%;\n\t\tfont: 600 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-accent-fg, #ffffff);\n\t\tfont-weight: 700;\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 4px 6px 4px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 3px 3px 4px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 6px;\n\t\tmin-height: 18px;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: background 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\tborder-radius: 0 3px 3px 0;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 6px;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 1px 3px;\n\t\tborder-radius: 3px;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #fff));\n\t\tfont: 600 10px/1.2 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\topacity: 0.75;\n\t\ttransform: translateY(-50%);\n\t\tz-index: 2;\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.6;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 1px dotted var(--dt-accent, #2563eb);\n\t\topacity: 0.7;\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -3px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t.tw-ev--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.tw-ev--limited.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 5px 0 0 5px;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 6px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t.tw-ev-time.svelte-j4rvbp {\n\t\tfont: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\tfont: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 10px;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(37, 99, 235, 0.04));\n\t\t/* Border width stays constant (no layout shift); emphasis via box-shadow */\n\t\tborder-color: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 0 1.5px color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t/* The inset is on the contents, not the cell's padding: flex adds padding\n\t   to a basis-0 cell, and that one column would come out wider. */\n\t.wg-cell--month.svelte-l8xuza .wg-cell-events:where(.svelte-l8xuza),\n\t.wg-cell--month.svelte-l8xuza .wg-allday:where(.svelte-l8xuza) { margin-left: var(--wg-month-inset, 22px); }\n\n\t/* ─── Month labels (vertical, read bottom-to-top) ─── */\n\t.wg-month.svelte-l8xuza {\n\t\tflex: 0 0 22px;\n\t\twriting-mode: vertical-rl;\n\t\ttransform: rotate(180deg);\n\t\ttext-align: end; /* the rotation puts the end at the top */\n\t\tpadding: 6px 0;\n\t\tfont: 700 11px / 22px var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-month:where(.svelte-l8xuza),\n\t.wg-month--start.svelte-l8xuza {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.wg-month--inset.svelte-l8xuza {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 2px;\n\t\tpointer-events: none;\n\t}\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent); }\n\n\t/* Dim non-current weeks with a subtle wash + softer header text instead of\n\t   a subtree opacity, so event content keeps full contrast everywhere. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-cell:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-cell--past:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t/* A band on the time axis, behind the chips */\n\t.wg-blocked.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tbox-sizing: border-box;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 3px;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\talign-self: flex-end;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 4px;\n\t\tpadding: 3px 7px;\n\t\tmargin: 1px 0 2px;\n\t\tborder-radius: 999px;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* Today's pill — after the week rules above, which it must beat */\n\t.wg-cell-hd--today.svelte-l8xuza {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza),\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-top: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 26%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ad--start.svelte-l8xuza {\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t}\n\n\t.wg-ad--mid.svelte-l8xuza {\n\t\tborder-radius: 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--end.svelte-l8xuza:not(.wg-ad--start) {\n\t\tborder-radius: 0 3px 3px 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t\tline-height: 1;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t/* The day's time axis: chips carry their own margin-top (chipTops), and\n\t   the area fills the cell, so the all-day bars line up at the bottom. */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tflex: 1 0 auto;\n\t\tmin-height: var(--wg-time-h, 100px);\n\t}\n\n\t.wg-now.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpointer-events: none;\n\t}\n\t.wg-now.svelte-l8xuza::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tborder-top: 1px dashed var(--dt-accent, #2563eb);\n\t}\n\t.wg-now-time.svelte-l8xuza {\n\t\tfont: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tposition: relative; /* above the blocked bands */\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tborder-radius: 4px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--cancelled.svelte-l8xuza {\n\t\topacity: 0.5;\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--full.svelte-l8xuza {\n\t\topacity: 0.55;\n\t}\n\t.wg-ev--limited.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 12px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t}\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\tmargin-top: 2px;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--ev-color, var(--dt-accent, #2563eb));\n\t\toutline-offset: 1px;\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbox-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 10px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-n8lbn1 {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: border-color 150ms, transform 100ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 999px;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 1px;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 1px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 6px;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t\tborder-radius: 6px;\n\t\tbox-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tflex-shrink: 0;\n\t\topacity: 0.6;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + subtitle + tags cluster. One line while it fits; on mobile the\n\t   metadata wraps to a second line under the title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 { opacity: 0.5; }\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { text-decoration: line-through; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 { opacity: 0.65; }\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 2px;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 2px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(\n\t\t\tin srgb,\n\t\t\tvar(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,\n\t\t\ttransparent\n\t\t);\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: dim + strike, single token layer */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-weight: 400;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t.ag-compact.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + location + subtitle + tags cluster. One line while it fits; on\n\t   mobile the metadata wraps to a second line instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-compact--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\ttext-align: right;\n\t\tpadding-right: 6px;\n\t\tfont: 700 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 8px;\n\t\tcursor: pointer;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--next.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the block. */\n\t.mb-event--cancelled.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--limited.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 600 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 4px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 8px 0 0 8px;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\twidth: 30px;\n\t\theight: 30px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 50%;\n\t\tfont-size: 15px;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the chip. */\n\t.mw-ev--cancelled.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--limited.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 6px 0 0 6px;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tcolor: var(--dt-text-2);\n\t\twidth: 22px;\n\t\theight: 22px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 999px;\n\t}\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tbackground: var(--dt-accent);\n\t\tcolor: var(--dt-btn-text);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 999px;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 10px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 12px);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 8px 12px;\n\t\tmin-height: 48px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding: 6px 10px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\ttransition: background 100ms, color 100ms;\n\t}\n\n\t/* :not(--active) — the hover rule otherwise outranks the active color,\n\t   and iOS keeps :hover stuck after a tap (dark text on the accent). */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),\n\t   so the controls row spreads pills and nav to the edges. */\n\t.cal-m-hd--stack.svelte-1b53e7w {\n\t\tjustify-content: space-between;\n\t}\n\t.cal-m-hd--titled.svelte-1b53e7w {\n\t\tborder-bottom: none;\n\t\tpadding-bottom: 2px;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tjustify-content: center;\n\t\tpadding: 0 8px 8px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w .cal-m-title:where(.svelte-1b53e7w) {\n\t\tflex: 0 1 auto;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 9px 12px;\n\t\tborder-radius: 6px;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover:not(.cal-m-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);\n\t\tborder: none;\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n/*$vite$:1*/";
+globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\t/* Horizontal stays contained (a sideways swipe must not trigger the\n\t\t   browser's back navigation); vertical chains to the page, so a wheel\n\t\t   over a page-embedded calendar scrolls on once the grid ends. */\n\t\toverscroll-behavior-x: contain;\n\t\toverscroll-behavior-y: auto;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tpadding: 8px 4px 6px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 600;\n\t}\n\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tmin-width: 26px;\n\t\theight: 26px;\n\t\tborder-radius: 50%;\n\t\tfont: 600 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-accent-fg, var(--dt-btn-text, #ffffff));\n\t\tfont-weight: 700;\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 4px 6px 4px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 3px 3px 4px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 2px 6px;\n\t\tmin-height: 18px;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: background 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t\tborder-radius: 0 3px 3px 0;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 6px;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 1px 3px;\n\t\tborder-radius: 3px;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #fff));\n\t\tfont: 600 10px/1.2 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\topacity: 0.75;\n\t\ttransform: translateY(-50%);\n\t\tz-index: 2;\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.6;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 1px dotted var(--dt-accent, #2563eb);\n\t\topacity: 0.7;\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -3px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t.tw-ev--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.tw-ev--limited.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 5px 0 0 5px;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 6px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t.tw-ev-time.svelte-j4rvbp {\n\t\tfont: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\tfont: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 10px;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(37, 99, 235, 0.04));\n\t\t/* Border width stays constant (no layout shift); emphasis via box-shadow */\n\t\tborder-color: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 0 1.5px color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t/* The inset is on the contents, not the cell's padding: flex adds padding\n\t   to a basis-0 cell, and that one column would come out wider. */\n\t.wg-cell--month.svelte-l8xuza .wg-cell-events:where(.svelte-l8xuza),\n\t.wg-cell--month.svelte-l8xuza .wg-allday:where(.svelte-l8xuza) { margin-left: var(--wg-month-inset, 22px); }\n\n\t/* ─── Month labels (vertical, read bottom-to-top) ─── */\n\t.wg-month.svelte-l8xuza {\n\t\tflex: 0 0 22px;\n\t\twriting-mode: vertical-rl;\n\t\ttransform: rotate(180deg);\n\t\ttext-align: end; /* the rotation puts the end at the top */\n\t\tpadding: 6px 0;\n\t\tfont: 700 11px / 22px var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-month:where(.svelte-l8xuza),\n\t.wg-month--start.svelte-l8xuza {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.wg-month--inset.svelte-l8xuza {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 2px;\n\t\tpointer-events: none;\n\t}\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent); }\n\n\t/* Dim non-current weeks with a subtle wash + softer header text instead of\n\t   a subtree opacity, so event content keeps full contrast everywhere. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-cell:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-cell--past:where(.svelte-l8xuza) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t/* A band on the time axis, behind the chips */\n\t.wg-blocked.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tbox-sizing: border-box;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 3px;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\talign-self: flex-end;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 4px;\n\t\tpadding: 3px 7px;\n\t\tmargin: 1px 0 2px;\n\t\tborder-radius: 999px;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* Today's pill — after the week rules above, which it must beat */\n\t.wg-cell-hd--today.svelte-l8xuza {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza),\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-top: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 3px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 26%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ad--start.svelte-l8xuza {\n\t\tborder-left: 2.5px solid var(--ev-color);\n\t}\n\n\t.wg-ad--mid.svelte-l8xuza {\n\t\tborder-radius: 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--end.svelte-l8xuza:not(.wg-ad--start) {\n\t\tborder-radius: 0 3px 3px 0;\n\t\tborder-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tline-height: 1;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tfont-size: 10px;\n\t\tcolor: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t\tline-height: 1;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t/* The day's time axis: chips carry their own margin-top (chipTops), and\n\t   the area fills the cell, so the all-day bars line up at the bottom. */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tflex: 1 0 auto;\n\t\tmin-height: var(--wg-time-h, 100px);\n\t}\n\n\t.wg-now.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpointer-events: none;\n\t}\n\t.wg-now.svelte-l8xuza::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tborder-top: 1px dashed var(--dt-accent, #2563eb);\n\t}\n\t.wg-now-time.svelte-l8xuza {\n\t\tfont: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t/* Where a dragged-in class would land: the now-line's shape, solid */\n\t.wg-drop.svelte-l8xuza {\n\t\tz-index: 3;\n\t}\n\t.wg-drop.svelte-l8xuza::after {\n\t\tborder-top-style: solid;\n\t}\n\t.wg-drop.svelte-l8xuza .wg-now-time:where(.svelte-l8xuza) {\n\t\tfont-weight: 600;\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tposition: relative; /* above the blocked bands */\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tborder-radius: 4px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s;\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\n\t.wg-ev--cancelled.svelte-l8xuza {\n\t\topacity: 0.5;\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--full.svelte-l8xuza {\n\t\topacity: 0.55;\n\t}\n\t.wg-ev--limited.svelte-l8xuza {\n\t\topacity: 0.65;\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 12px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t}\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\tmargin-top: 2px;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--ev-color, var(--dt-accent, #2563eb));\n\t\toutline-offset: 1px;\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbox-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 10px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 40%, transparent);\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-n8lbn1 {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-n8lbn1 {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: border-color 150ms, transform 100ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 700;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t/* Horizontal swipes are ours (day navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-n8lbn1,\n\t.ag--mobile.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 999px;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tborder-color: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 1px;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 1px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 6px;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t\tborder-radius: 6px;\n\t\tbox-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tflex-shrink: 0;\n\t\topacity: 0.6;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + subtitle + tags cluster. One line while it fits; on mobile the\n\t   metadata wraps to a second line under the title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 { opacity: 0.5; }\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { text-decoration: line-through; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 { opacity: 0.65; }\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s, border-color 0.15s;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\twidth: 5px;\n\t\theight: 5px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t.ag-card.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, border-color 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\tborder-color: color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tborder-color: var(--ev-color);\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-card--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t\tborder-style: dashed;\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 2px;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 2px;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head--click.svelte-uhwfyj:focus-visible,\n\t.ag-wday-empty--click.svelte-uhwfyj:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tpadding: 2px 7px;\n\t\tborder-radius: 3px;\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: color-mix(\n\t\t\tin srgb,\n\t\t\tvar(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,\n\t\t\ttransparent\n\t\t);\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: dim + strike, single token layer */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-weight: 400;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t.ag-compact.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0;\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t\tborder-radius: 4px;\n\t\t/* The highlight bleeds into the gutter via a spread shadow — zero\n\t\t   layout impact, so nothing shifts or clips even when the host\n\t\t   reduces the gutters below the bleed width. */\n\t\tbox-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, transparent);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t/* The time label doubles as the class-color signal (replaces the old\n\t   dot): the event color mixed toward the text color, so it stays\n\t   legible on any palette and costs zero horizontal space. */\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tfont-weight: 500;\n\t\tcolor: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + location + subtitle + tags cluster. One line while it fits; on\n\t   mobile the metadata wraps to a second line instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-mono, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj {\n\t\topacity: 0.5;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact--full.svelte-uhwfyj {\n\t\topacity: 0.55;\n\t}\n\t.ag-compact--limited.svelte-uhwfyj {\n\t\topacity: 0.65;\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t/* Horizontal swipes are ours (week navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-uhwfyj,\n\t.ag--mobile.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 5px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 500 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\ttext-align: right;\n\t\tpadding-right: 6px;\n\t\tfont: 700 10px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 2px;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tbox-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 8px;\n\t\tcursor: pointer;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));\n\t\tborder: none;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: 0 0 0 2px var(--ev-color),\n\t\t\t0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--next.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the block. */\n\t.mb-event--cancelled.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--limited.svelte-zbkzcp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 8px;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 600 11px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 4px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 8px 0 0 8px;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 3px;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\twidth: 30px;\n\t\theight: 30px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 50%;\n\t\tfont-size: 15px;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 6px;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: 0 0 0 1.5px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — never a bare opacity on the chip. */\n\t.mw-ev--cancelled.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--limited.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));\n\t\tborder: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 6px 0 0 6px;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-mono, ui-monospace, monospace);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 12px;\n\t\tfont-weight: 600;\n\t\tcolor: var(--dt-text-2);\n\t\twidth: 22px;\n\t\theight: 22px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tborder-radius: 999px;\n\t}\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tbackground: var(--dt-accent);\n\t\tcolor: var(--dt-btn-text);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 999px;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 5px;\n\t\tfont-family: var(--dt-mono);\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 10px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 12px);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 8px 12px;\n\t\tmin-height: 48px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding: 6px 10px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\ttransition: background 100ms, color 100ms;\n\t}\n\n\t/* :not(--active) — the hover rule otherwise outranks the active color,\n\t   and iOS keeps :hover stuck after a tap (dark text on the accent). */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),\n\t   so the controls row spreads pills and nav to the edges. */\n\t.cal-m-hd--stack.svelte-1b53e7w {\n\t\tjustify-content: space-between;\n\t}\n\t.cal-m-hd--titled.svelte-1b53e7w {\n\t\tborder-bottom: none;\n\t\tpadding-bottom: 2px;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tjustify-content: center;\n\t\tpadding: 0 8px 8px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w .cal-m-title:where(.svelte-1b53e7w) {\n\t\tflex: 0 1 auto;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tbackground: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);\n\t\tborder-radius: 8px;\n\t\tpadding: 2px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 9px 12px;\n\t\tborder-radius: 6px;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover:not(.cal-m-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);\n\t\tborder: none;\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 6px;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n/*$vite$:1*/";
 (function() {
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
+	var is_array = Array.isArray;
+	var index_of = Array.prototype.indexOf;
+	var includes = Array.prototype.includes;
+	var array_from = Array.from;
+	var define_property = Object.defineProperty;
+	var get_descriptor = Object.getOwnPropertyDescriptor;
+	var get_descriptors = Object.getOwnPropertyDescriptors;
+	var object_prototype = Object.prototype;
+	var array_prototype = Array.prototype;
+	var get_prototype_of = Object.getPrototypeOf;
+	var is_extensible = Object.isExtensible;
+	/**
+	* @param {any} thing
+	* @returns {thing is Function}
+	*/
+	function is_function(thing) {
+		return typeof thing === "function";
+	}
+	var noop = () => {};
+	/** @param {Array<() => void>} arr */
+	function run_all(arr) {
+		for (var i = 0; i < arr.length; i++) arr[i]();
+	}
+	/**
+	* TODO replace with Promise.withResolvers once supported widely enough
+	* @template [T=void]
+	*/
+	function deferred() {
+		/** @type {(value: T) => void} */
+		var resolve;
+		/** @type {(reason: any) => void} */
+		var reject;
+		return {
+			promise: new Promise((res, rej) => {
+				resolve = res;
+				reject = rej;
+			}),
+			resolve,
+			reject
+		};
+	}
+	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/constants.js
 	/**
 	* An effect that does not destroy its child effects when it reruns.
@@ -49,47 +92,107 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	}();
 	var IS_XHTML = !!globalThis.document?.contentType && /* @__PURE__ */ globalThis.document.contentType.includes("xml");
 	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
-	var is_array = Array.isArray;
-	var index_of = Array.prototype.indexOf;
-	var includes = Array.prototype.includes;
-	var array_from = Array.from;
-	var define_property = Object.defineProperty;
-	var get_descriptor = Object.getOwnPropertyDescriptor;
-	var get_descriptors = Object.getOwnPropertyDescriptors;
-	var object_prototype = Object.prototype;
-	var array_prototype = Array.prototype;
-	var get_prototype_of = Object.getPrototypeOf;
-	var is_extensible = Object.isExtensible;
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
+	var HYDRATION_ERROR = {};
+	var UNINITIALIZED = Symbol("uninitialized");
+	var NAMESPACE_HTML = "http://www.w3.org/1999/xhtml";
 	/**
-	* @param {any} thing
-	* @returns {thing is Function}
+	* Reading a derived belonging to a now-destroyed effect may result in stale values
 	*/
-	function is_function(thing) {
-		return typeof thing === "function";
-	}
-	var noop = () => {};
-	/** @param {Array<() => void>} arr */
-	function run_all(arr) {
-		for (var i = 0; i < arr.length; i++) arr[i]();
+	function derived_inert() {
+		console.warn(`https://svelte.dev/e/derived_inert`);
 	}
 	/**
-	* TODO replace with Promise.withResolvers once supported widely enough
-	* @template [T=void]
+	* Hydration failed because the initial UI does not match what was rendered on the server. The error occurred near %location%
+	* @param {string | undefined | null} [location]
 	*/
-	function deferred() {
-		/** @type {(value: T) => void} */
-		var resolve;
-		/** @type {(reason: any) => void} */
-		var reject;
-		return {
-			promise: new Promise((res, rej) => {
-				resolve = res;
-				reject = rej;
-			}),
-			resolve,
-			reject
-		};
+	function hydration_mismatch(location) {
+		console.warn(`https://svelte.dev/e/hydration_mismatch`);
+	}
+	/**
+	* A `<svelte:boundary>` `reset` function only resets the boundary the first time it is called
+	*/
+	function svelte_boundary_reset_noop() {
+		console.warn(`https://svelte.dev/e/svelte_boundary_reset_noop`);
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
+	/** @import { TemplateNode } from '#client' */
+	/**
+	* Use this variable to guard everything related to hydration code so it can be treeshaken out
+	* if the user doesn't use the `hydrate` method and these code paths are therefore not needed.
+	*/
+	var hydrating = false;
+	/** @param {boolean} value */
+	function set_hydrating(value) {
+		hydrating = value;
+	}
+	/**
+	* The node that is currently being hydrated. This starts out as the first node inside the opening
+	* <!--[--> comment, and updates each time a component calls `$.child(...)` or `$.sibling(...)`.
+	* When entering a block (e.g. `{#if ...}`), `hydrate_node` is the block opening comment; by the
+	* time we leave the block it is the closing comment, which serves as the block's anchor.
+	* @type {TemplateNode}
+	*/
+	var hydrate_node;
+	/** @param {TemplateNode | null} node */
+	function set_hydrate_node(node) {
+		if (node === null) {
+			hydration_mismatch();
+			throw HYDRATION_ERROR;
+		}
+		return hydrate_node = node;
+	}
+	function hydrate_next() {
+		return set_hydrate_node(/* @__PURE__ */ get_next_sibling(hydrate_node));
+	}
+	/** @param {TemplateNode} node */
+	function reset(node) {
+		if (!hydrating) return;
+		if (/* @__PURE__ */ get_next_sibling(hydrate_node) !== null) {
+			hydration_mismatch();
+			throw HYDRATION_ERROR;
+		}
+		hydrate_node = node;
+	}
+	function next(count = 1) {
+		if (hydrating) {
+			var i = count;
+			var node = hydrate_node;
+			while (i--) node = /* @__PURE__ */ get_next_sibling(node);
+			hydrate_node = node;
+		}
+	}
+	/**
+	* Skips or removes (depending on {@link remove}) all nodes starting at `hydrate_node` up until the next hydration end comment
+	* @param {boolean} remove
+	*/
+	function skip_nodes(remove = true) {
+		var depth = 0;
+		var node = hydrate_node;
+		while (true) {
+			if (node.nodeType === 8) {
+				var data = node.data;
+				if (data === "]") {
+					if (depth === 0) return node;
+					depth -= 1;
+				} else if (data === "[" || data === "[!" || data[0] === "[" && !isNaN(Number(data.slice(1)))) depth += 1;
+			}
+			var next = /* @__PURE__ */ get_next_sibling(node);
+			if (remove) node.remove();
+			node = next;
+		}
+	}
+	/**
+	*
+	* @param {TemplateNode} node
+	*/
+	function read_hydration_instruction(node) {
+		if (!node || node.nodeType !== 8) {
+			hydration_mismatch();
+			throw HYDRATION_ERROR;
+		}
+		return node.data;
 	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/equality.js
@@ -168,13 +271,6 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		throw new Error(`https://svelte.dev/e/effect_update_depth_exceeded`);
 	}
 	/**
-	* Failed to hydrate the application
-	* @returns {never}
-	*/
-	function hydration_failed() {
-		throw new Error(`https://svelte.dev/e/hydration_failed`);
-	}
-	/**
 	* Cannot do `bind:%key%={undefined}` when `%key%` has a fallback value
 	* @param {string} key
 	* @returns {never}
@@ -223,11 +319,6 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	var async_mode_flag = false;
 	/** True if we're not certain that we only have Svelte 5 code in the compilation */
 	var legacy_mode_flag = false;
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
-	var HYDRATION_ERROR = {};
-	var UNINITIALIZED = Symbol("uninitialized");
-	var NAMESPACE_HTML = "http://www.w3.org/1999/xhtml";
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/context.js
 	/**
@@ -375,487 +466,6 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	*/
 	function flush_tasks() {
 		while (micro_tasks.length > 0) run_micro_tasks();
-	}
-	/**
-	* Reading a derived belonging to a now-destroyed effect may result in stale values
-	*/
-	function derived_inert() {
-		console.warn(`https://svelte.dev/e/derived_inert`);
-	}
-	/**
-	* Hydration failed because the initial UI does not match what was rendered on the server. The error occurred near %location%
-	* @param {string | undefined | null} [location]
-	*/
-	function hydration_mismatch(location) {
-		console.warn(`https://svelte.dev/e/hydration_mismatch`);
-	}
-	/**
-	* A `<svelte:boundary>` `reset` function only resets the boundary the first time it is called
-	*/
-	function svelte_boundary_reset_noop() {
-		console.warn(`https://svelte.dev/e/svelte_boundary_reset_noop`);
-	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
-	/** @import { TemplateNode } from '#client' */
-	/**
-	* Use this variable to guard everything related to hydration code so it can be treeshaken out
-	* if the user doesn't use the `hydrate` method and these code paths are therefore not needed.
-	*/
-	var hydrating = false;
-	/** @param {boolean} value */
-	function set_hydrating(value) {
-		hydrating = value;
-	}
-	/**
-	* The node that is currently being hydrated. This starts out as the first node inside the opening
-	* <!--[--> comment, and updates each time a component calls `$.child(...)` or `$.sibling(...)`.
-	* When entering a block (e.g. `{#if ...}`), `hydrate_node` is the block opening comment; by the
-	* time we leave the block it is the closing comment, which serves as the block's anchor.
-	* @type {TemplateNode}
-	*/
-	var hydrate_node;
-	/** @param {TemplateNode | null} node */
-	function set_hydrate_node(node) {
-		if (node === null) {
-			hydration_mismatch();
-			throw HYDRATION_ERROR;
-		}
-		return hydrate_node = node;
-	}
-	function hydrate_next() {
-		return set_hydrate_node(/* @__PURE__ */ get_next_sibling(hydrate_node));
-	}
-	/** @param {TemplateNode} node */
-	function reset(node) {
-		if (!hydrating) return;
-		if (/* @__PURE__ */ get_next_sibling(hydrate_node) !== null) {
-			hydration_mismatch();
-			throw HYDRATION_ERROR;
-		}
-		hydrate_node = node;
-	}
-	function next(count = 1) {
-		if (hydrating) {
-			var i = count;
-			var node = hydrate_node;
-			while (i--) node = /* @__PURE__ */ get_next_sibling(node);
-			hydrate_node = node;
-		}
-	}
-	/**
-	* Skips or removes (depending on {@link remove}) all nodes starting at `hydrate_node` up until the next hydration end comment
-	* @param {boolean} remove
-	*/
-	function skip_nodes(remove = true) {
-		var depth = 0;
-		var node = hydrate_node;
-		while (true) {
-			if (node.nodeType === 8) {
-				var data = node.data;
-				if (data === "]") {
-					if (depth === 0) return node;
-					depth -= 1;
-				} else if (data === "[" || data === "[!" || data[0] === "[" && !isNaN(Number(data.slice(1)))) depth += 1;
-			}
-			var next = /* @__PURE__ */ get_next_sibling(node);
-			if (remove) node.remove();
-			node = next;
-		}
-	}
-	/**
-	*
-	* @param {TemplateNode} node
-	*/
-	function read_hydration_instruction(node) {
-		if (!node || node.nodeType !== 8) {
-			hydration_mismatch();
-			throw HYDRATION_ERROR;
-		}
-		return node.data;
-	}
-	/**
-	* @template T
-	* @param {T} value
-	* @returns {T}
-	*/
-	function proxy(value) {
-		if (typeof value !== "object" || value === null || STATE_SYMBOL in value || COMPONENT_SYMBOL in value) return value;
-		const prototype = get_prototype_of(value);
-		if (prototype !== object_prototype && prototype !== array_prototype) return value;
-		/** @type {Map<any, Source<any>>} */
-		var sources = /* @__PURE__ */ new Map();
-		var is_proxied_array = is_array(value);
-		var version = /* @__PURE__ */ state(0);
-		var stack = null;
-		var parent_version = update_version;
-		/**
-		* Executes the proxy in the context of the reaction it was originally created in, if any
-		* @template T
-		* @param {() => T} fn
-		*/
-		var with_parent = (fn) => {
-			if (update_version === parent_version) return fn();
-			var reaction = active_reaction;
-			var version = update_version;
-			set_active_reaction(null);
-			set_update_version(parent_version);
-			var result = fn();
-			set_active_reaction(reaction);
-			set_update_version(version);
-			return result;
-		};
-		if (is_proxied_array) sources.set("length", /* @__PURE__ */ state(
-			/** @type {any[]} */
-			value.length,
-			stack
-		));
-		return new Proxy(value, {
-			defineProperty(_, prop, descriptor) {
-				if (!("value" in descriptor) || descriptor.configurable === false || descriptor.enumerable === false || descriptor.writable === false) state_descriptors_fixed();
-				var s = sources.get(prop);
-				if (s === void 0) with_parent(() => {
-					var s = /* @__PURE__ */ state(descriptor.value, stack);
-					sources.set(prop, s);
-					return s;
-				});
-				else set(s, descriptor.value, true);
-				return true;
-			},
-			deleteProperty(target, prop) {
-				var s = sources.get(prop);
-				if (s === void 0) {
-					if (prop in target) {
-						const s = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED, stack));
-						sources.set(prop, s);
-						increment(version);
-					}
-				} else {
-					set(s, UNINITIALIZED);
-					increment(version);
-				}
-				return true;
-			},
-			get(target, prop, receiver) {
-				if (prop === STATE_SYMBOL) return value;
-				var s = sources.get(prop);
-				var exists = prop in target;
-				if (s === void 0 && (!exists || get_descriptor(target, prop)?.writable)) {
-					s = with_parent(() => {
-						return /* @__PURE__ */ state(proxy(exists ? target[prop] : UNINITIALIZED), stack);
-					});
-					sources.set(prop, s);
-				}
-				if (s !== void 0) {
-					var v = get(s);
-					return v === UNINITIALIZED ? void 0 : v;
-				}
-				return Reflect.get(target, prop, receiver);
-			},
-			getOwnPropertyDescriptor(target, prop) {
-				var descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
-				if (descriptor && "value" in descriptor) {
-					var s = sources.get(prop);
-					if (s) descriptor.value = get(s);
-				} else if (descriptor === void 0) {
-					var source = sources.get(prop);
-					var value = source?.v;
-					if (source !== void 0 && value !== UNINITIALIZED) return {
-						enumerable: true,
-						configurable: true,
-						value,
-						writable: true
-					};
-				}
-				return descriptor;
-			},
-			has(target, prop) {
-				if (prop === STATE_SYMBOL) return true;
-				var s = sources.get(prop);
-				var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop);
-				if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop)?.writable)) {
-					if (s === void 0) {
-						s = with_parent(() => {
-							return /* @__PURE__ */ state(has ? proxy(target[prop]) : UNINITIALIZED, stack);
-						});
-						sources.set(prop, s);
-					}
-					if (get(s) === UNINITIALIZED) return false;
-				}
-				return has;
-			},
-			set(target, prop, value, receiver) {
-				var s = sources.get(prop);
-				var has = prop in target;
-				if (is_proxied_array && prop === "length") for (var i = value; i < s.v; i += 1) {
-					var other_s = sources.get(i + "");
-					if (other_s !== void 0) set(other_s, UNINITIALIZED);
-					else if (i in target) {
-						other_s = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED, stack));
-						sources.set(i + "", other_s);
-					}
-				}
-				if (s === void 0) {
-					if (!has || get_descriptor(target, prop)?.writable) {
-						s = with_parent(() => /* @__PURE__ */ state(void 0, stack));
-						set(s, proxy(value));
-						sources.set(prop, s);
-					}
-				} else {
-					has = s.v !== UNINITIALIZED;
-					var p = with_parent(() => proxy(value));
-					set(s, p);
-				}
-				var descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
-				if (descriptor?.set) descriptor.set.call(receiver, value);
-				if (!has) {
-					if (is_proxied_array && typeof prop === "string") {
-						var ls = sources.get("length");
-						var n = Number(prop);
-						if (Number.isInteger(n) && n >= ls.v) set(ls, n + 1);
-					}
-					increment(version);
-				}
-				return true;
-			},
-			ownKeys(target) {
-				get(version);
-				var own_keys = Reflect.ownKeys(target).filter((key) => {
-					var source = sources.get(key);
-					return source === void 0 || source.v !== UNINITIALIZED;
-				});
-				for (var [key, source] of sources) if (source.v !== UNINITIALIZED && !(key in target)) own_keys.push(key);
-				return own_keys;
-			},
-			setPrototypeOf() {
-				state_prototype_fixed();
-			}
-		});
-	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
-	/** @import { Effect, TemplateNode } from '#client' */
-	/** @type {Window} */
-	var $window;
-	/** @type {boolean} */
-	var is_firefox;
-	/** @type {() => Node | null} */
-	var first_child_getter;
-	/** @type {() => Node | null} */
-	var next_sibling_getter;
-	/**
-	* Initialize these lazily to avoid issues when using the runtime in a server context
-	* where these globals are not available while avoiding a separate server entry point
-	*/
-	function init_operations() {
-		if ($window !== void 0) return;
-		$window = window;
-		is_firefox = /Firefox/.test(navigator.userAgent);
-		var element_prototype = Element.prototype;
-		var node_prototype = Node.prototype;
-		var text_prototype = Text.prototype;
-		first_child_getter = get_descriptor(node_prototype, "firstChild").get;
-		next_sibling_getter = get_descriptor(node_prototype, "nextSibling").get;
-		if (is_extensible(element_prototype)) {
-			/** @type {any} */ element_prototype[CLASS_CACHE] = void 0;
-			/** @type {any} */ element_prototype[ATTRIBUTES_CACHE] = null;
-			/** @type {any} */ element_prototype[STYLE_CACHE] = void 0;
-			element_prototype.__e = void 0;
-		}
-		if (is_extensible(text_prototype))
- /** @type {any} */ text_prototype[TEXT_CACHE] = void 0;
-	}
-	/**
-	* @param {string} value
-	* @returns {Text}
-	*/
-	function create_text(value = "") {
-		return document.createTextNode(value);
-	}
-	/**
-	* @template {Node} N
-	* @param {N} node
-	*/
-	/*@__NO_SIDE_EFFECTS__*/
-	function get_first_child(node) {
-		return first_child_getter.call(node);
-	}
-	/**
-	* @template {Node} N
-	* @param {N} node
-	*/
-	/*@__NO_SIDE_EFFECTS__*/
-	function get_next_sibling(node) {
-		return next_sibling_getter.call(node);
-	}
-	/**
-	* Don't mark this as side-effect-free, hydration needs to walk all nodes
-	* @template {Node} N
-	* @param {N} node
-	* @param {boolean} is_text
-	* @returns {TemplateNode | null}
-	*/
-	function child(node, is_text) {
-		if (!hydrating) return /* @__PURE__ */ get_first_child(node);
-		var child = /* @__PURE__ */ get_first_child(hydrate_node);
-		if (child === null) child = hydrate_node.appendChild(create_text());
-		else if (is_text && child.nodeType !== 3) {
-			var text = create_text();
-			child?.before(text);
-			set_hydrate_node(text);
-			return text;
-		}
-		if (is_text) merge_text_nodes(child);
-		set_hydrate_node(child);
-		return child;
-	}
-	/**
-	* Don't mark this as side-effect-free, hydration needs to walk all nodes
-	* @param {TemplateNode} node
-	* @param {boolean} [is_text]
-	* @returns {TemplateNode | null}
-	*/
-	function first_child(node, is_text = false) {
-		if (!hydrating) {
-			var first = /* @__PURE__ */ get_first_child(node);
-			if (first instanceof Comment && first.data === "") return /* @__PURE__ */ get_next_sibling(first);
-			return first;
-		}
-		if (is_text) {
-			if (hydrate_node?.nodeType !== 3) {
-				var text = create_text();
-				hydrate_node?.before(text);
-				set_hydrate_node(text);
-				return text;
-			}
-			merge_text_nodes(hydrate_node);
-		}
-		return hydrate_node;
-	}
-	/**
-	* `child`, for the very common case of an element with exactly one child. Resetting the
-	* hydration cursor is part of the same step, so the compiler doesn't have to emit a
-	* separate `reset` call for every `<p>{text}</p>` in an app.
-	* Don't mark this as side-effect-free, hydration needs to walk all nodes
-	* @param {TemplateNode} node
-	* @param {boolean} [is_text]
-	* @returns {TemplateNode | null}
-	*/
-	function only_child(node, is_text = false) {
-		if (!hydrating) return /* @__PURE__ */ get_first_child(node);
-		var first = child(node, is_text);
-		reset(node);
-		return first;
-	}
-	/**
-	* Don't mark this as side-effect-free, hydration needs to walk all nodes
-	* @param {TemplateNode} node
-	* @param {number} count
-	* @param {boolean} is_text
-	* @returns {TemplateNode | null}
-	*/
-	function sibling(node, count = 1, is_text = false) {
-		let next_sibling = hydrating ? hydrate_node : node;
-		var last_sibling;
-		while (count--) {
-			last_sibling = next_sibling;
-			next_sibling = /* @__PURE__ */ get_next_sibling(next_sibling);
-		}
-		if (!hydrating) return next_sibling;
-		if (is_text) {
-			if (next_sibling?.nodeType !== 3) {
-				var text = create_text();
-				if (next_sibling === null) last_sibling?.after(text);
-				else next_sibling.before(text);
-				set_hydrate_node(text);
-				return text;
-			}
-			merge_text_nodes(next_sibling);
-		}
-		set_hydrate_node(next_sibling);
-		return next_sibling;
-	}
-	/**
-	* @template {Node} N
-	* @param {N} node
-	* @returns {void}
-	*/
-	function clear_text_content(node) {
-		node.textContent = "";
-	}
-	/**
-	* Returns `true` if we're updating the current block, for example `condition` in
-	* an `{#if condition}` block just changed. In this case, the branch should be
-	* appended (or removed) at the same time as other updates within the
-	* current `<svelte:boundary>`
-	*/
-	function should_defer_append() {
-		if (!async_mode_flag) return false;
-		if (eager_block_effects !== null) return false;
-		return (active_effect.f & REACTION_RAN) !== 0;
-	}
-	/**
-	* Branching here is intentional and load-bearing for perf. `createElement(tag)`
-	* hits a fast path in Blink that `createElementNS(NAMESPACE_HTML, tag)` doesn't,
-	* and passing an explicit `undefined` as the trailing options arg measurably
-	* slows both APIs. Funnelling every case through a single `createElementNS(ns,
-	* tag, options)` call would be smaller but slower on the HTML path.
-	*
-	* @template {keyof HTMLElementTagNameMap | string} T
-	* @param {T} tag
-	* @param {string} [namespace]
-	* @param {string} [is]
-	* @returns {T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T] : Element}
-	*/
-	function create_element(tag, namespace, is) {
-		if (namespace == null || namespace === "http://www.w3.org/1999/xhtml") return is ? document.createElement(tag, { is }) : document.createElement(tag);
-		return is ? document.createElementNS(namespace, tag, { is }) : document.createElementNS(namespace, tag);
-	}
-	/**
-	* Browsers split text nodes larger than 65536 bytes when parsing.
-	* For hydration to succeed, we need to stitch them back together
-	* @param {Text} text
-	*/
-	function merge_text_nodes(text) {
-		if (text.nodeValue.length < 65536) return;
-		let next = text.nextSibling;
-		while (next !== null && next.nodeType === 3) {
-			next.remove();
-			/** @type {string} */ text.nodeValue += next.nodeValue;
-			next = text.nextSibling;
-		}
-	}
-	/**
-	* @param {unknown} error
-	*/
-	function handle_error(error) {
-		var effect = active_effect;
-		if (effect === null) {
-			/** @type {Derived} */ active_reaction.f |= ERROR_VALUE;
-			return error;
-		}
-		if ((effect.f & 32768) === 0 && (effect.f & 4) === 0) throw error;
-		invoke_error_boundary(error, effect);
-	}
-	/**
-	* @param {unknown} error
-	* @param {Effect | null} effect
-	*/
-	function invoke_error_boundary(error, effect) {
-		if (effect !== null && (effect.f & 16384) !== 0) return;
-		while (effect !== null) {
-			if ((effect.f & 128) !== 0 && (effect.f & 33570816) === 0) {
-				if ((effect.f & 32768) === 0) throw error;
-				try {
-					/** @type {Boundary} */ effect.b.error(error);
-					return;
-				} catch (e) {
-					error = e;
-				}
-			}
-			effect = effect.parent;
-		}
-		throw error;
 	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/status.js
@@ -2083,6 +1693,18 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		eager_effects.clear();
 	}
 	/**
+	* @template {number | bigint} T
+	* @param {Source<T>} source
+	* @param {1 | -1} [d]
+	* @returns {T}
+	*/
+	function update(source, d = 1) {
+		var value = get(source);
+		var result = d === 1 ? value++ : value--;
+		set(source, value);
+		return result;
+	}
+	/**
 	* Silently (without using `get`) increment a source
 	* @param {Source<number>} source
 	*/
@@ -2122,382 +1744,388 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			}
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
 	/**
-	* @type {Set<Value> | null}
-	* @deprecated
-	*/
-	var captured_signals = null;
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
-	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
-	/**
-	* True if updating in an effect context that is reactive (i.e. not branch/root effects)
-	*/
-	var is_updating_effect = false;
-	var is_destroying_effect = false;
-	/** @param {boolean} value */
-	function set_is_destroying_effect(value) {
-		is_destroying_effect = value;
-	}
-	/** @type {null | Reaction} */
-	var active_reaction = null;
-	var untracking = false;
-	/** @param {null | Reaction} reaction */
-	function set_active_reaction(reaction) {
-		active_reaction = reaction;
-	}
-	/** @type {null | Effect} */
-	var active_effect = null;
-	/** @param {null | Effect} effect */
-	function set_active_effect(effect) {
-		active_effect = effect;
-	}
-	/**
-	* When sources are created within a reaction, reading and writing
-	* them within that reaction should not cause a re-run
-	* @type {null | Set<Source>}
-	*/
-	var current_sources = null;
-	/** @param {Value} value */
-	function push_reaction_value(value) {
-		if (active_reaction !== null && (!async_mode_flag || (active_reaction.f & 2) !== 0)) (current_sources ??= /* @__PURE__ */ new Set()).add(value);
-	}
-	/**
-	* The dependencies of the reaction that is currently being executed. In many cases,
-	* the dependencies are unchanged between runs, and so this will be `null` unless
-	* and until a new dependency is accessed — we track this via `skipped_deps`
-	* @type {null | Value[]}
-	*/
-	var new_deps = null;
-	var skipped_deps = 0;
-	/**
-	* Tracks writes that the effect it's executed in doesn't listen to yet,
-	* so that the dependency can be added to the effect later on if it then reads it
-	* @type {null | Source[]}
-	*/
-	var untracked_writes = null;
-	/** @param {null | Source[]} value */
-	function set_untracked_writes(value) {
-		untracked_writes = value;
-	}
-	/**
-	* @type {number} Used by sources and deriveds for handling updates.
-	* Version starts from 1 so that unowned deriveds differentiate between a created effect and a run one for tracing
-	**/
-	var write_version = 1;
-	/** @type {number} Used to version each read of a source of derived to avoid duplicating dependencies inside a reaction */
-	var read_version = 0;
-	var update_version = read_version;
-	/** @param {number} value */
-	function set_update_version(value) {
-		update_version = value;
-	}
-	function increment_write_version() {
-		return ++write_version;
-	}
-	/**
-	* Determines whether a derived or effect is dirty.
-	* If it is MAYBE_DIRTY, will set the status to CLEAN
-	* @param {Reaction} reaction
-	* @returns {boolean}
-	*/
-	function is_dirty(reaction) {
-		var flags = reaction.f;
-		if ((flags & 2048) !== 0) return true;
-		if (flags & 2) reaction.f &= ~WAS_MARKED;
-		if ((flags & 4096) !== 0) {
-			var dependencies = reaction.deps;
-			var length = dependencies.length;
-			for (var i = 0; i < length; i++) {
-				var dependency = dependencies[i];
-				if (is_dirty(dependency)) update_derived(dependency);
-				if (dependency.wv > reaction.wv) return true;
-			}
-			if ((flags & 512) !== 0 && batch_values === null) set_signal_status(reaction, CLEAN);
-		}
-		return false;
-	}
-	/**
-	* @param {Value} signal
-	* @param {Effect} effect
-	* @param {boolean} [root]
-	*/
-	function schedule_possible_effect_self_invalidation(signal, effect, root = true) {
-		var reactions = signal.reactions;
-		if (reactions === null) return;
-		if (!async_mode_flag && current_sources !== null && current_sources.has(signal)) return;
-		for (var i = 0; i < reactions.length; i++) {
-			var reaction = reactions[i];
-			if ((reaction.f & 2) !== 0) schedule_possible_effect_self_invalidation(reaction, effect, false);
-			else if (effect === reaction) {
-				if (root) set_signal_status(reaction, DIRTY);
-				else if ((reaction.f & 1024) !== 0) set_signal_status(reaction, MAYBE_DIRTY);
-				schedule_effect(reaction);
-			}
-		}
-	}
-	/** @param {Reaction} reaction */
-	function update_reaction(reaction) {
-		var previous_deps = new_deps;
-		var previous_skipped_deps = skipped_deps;
-		var previous_untracked_writes = untracked_writes;
-		var previous_reaction = active_reaction;
-		var previous_sources = current_sources;
-		var previous_component_context = component_context;
-		var previous_untracking = untracking;
-		var previous_update_version = update_version;
-		var flags = reaction.f;
-		new_deps = null;
-		skipped_deps = 0;
-		untracked_writes = null;
-		active_reaction = (flags & 96) === 0 ? reaction : null;
-		current_sources = null;
-		set_component_context(reaction.ctx);
-		untracking = false;
-		update_version = ++read_version;
-		if (reaction.ac !== null) {
-			without_reactive_context(() => {
-				/** @type {AbortController} */ reaction.ac.abort(STALE_REACTION);
-			});
-			reaction.ac = null;
-		}
-		try {
-			reaction.f |= REACTION_IS_UPDATING;
-			var fn = reaction.fn;
-			var result = fn();
-			reaction.f |= REACTION_RAN;
-			var deps = update_dependencies(reaction);
-			if (is_runes() && untracked_writes !== null && !untracking && deps !== null && (reaction.f & 6146) === 0) for (var i = 0; i < untracked_writes.length; i++) schedule_possible_effect_self_invalidation(untracked_writes[i], reaction);
-			if (previous_reaction !== null && previous_reaction !== reaction) {
-				read_version++;
-				if (previous_reaction.deps !== null) for (let i = 0; i < previous_skipped_deps; i += 1) previous_reaction.deps[i].rv = read_version;
-				if (previous_deps !== null) for (const dep of previous_deps) dep.rv = read_version;
-				if (untracked_writes !== null) {
-					if (previous_untracked_writes === null) previous_untracked_writes = untracked_writes;
-					else previous_untracked_writes.push(...untracked_writes);
-				}
-			}
-			if ((reaction.f & 8388608) !== 0) reaction.f ^= ERROR_VALUE;
-			return result;
-		} catch (error) {
-			update_dependencies(reaction);
-			return handle_error(error);
-		} finally {
-			reaction.f ^= REACTION_IS_UPDATING;
-			new_deps = previous_deps;
-			skipped_deps = previous_skipped_deps;
-			untracked_writes = previous_untracked_writes;
-			active_reaction = previous_reaction;
-			current_sources = previous_sources;
-			set_component_context(previous_component_context);
-			untracking = previous_untracking;
-			update_version = previous_update_version;
-		}
-	}
-	/**
-	* @param {Reaction} reaction
-	*/
-	function update_dependencies(reaction) {
-		var deps = reaction.deps;
-		var is_fork = current_batch?.is_fork;
-		if (new_deps !== null) {
-			var i;
-			if (!is_fork) remove_reactions(reaction, skipped_deps);
-			if (deps !== null && skipped_deps > 0) {
-				deps.length = skipped_deps + new_deps.length;
-				for (i = 0; i < new_deps.length; i++) deps[skipped_deps + i] = new_deps[i];
-			} else reaction.deps = deps = new_deps;
-			if (effect_tracking() && (reaction.f & 512) !== 0) for (i = skipped_deps; i < deps.length; i++) (deps[i].reactions ??= []).push(reaction);
-		} else if (!is_fork && deps !== null && skipped_deps < deps.length) {
-			remove_reactions(reaction, skipped_deps);
-			deps.length = skipped_deps;
-		}
-		return deps;
-	}
-	/**
-	* @template V
-	* @param {Reaction} signal
-	* @param {Value<V>} dependency
-	* @returns {void}
-	*/
-	function remove_reaction(signal, dependency) {
-		let reactions = dependency.reactions;
-		if (reactions !== null) {
-			var index = index_of.call(reactions, signal);
-			if (index !== -1) {
-				var new_length = reactions.length - 1;
-				if (new_length === 0) reactions = dependency.reactions = null;
-				else {
-					reactions[index] = reactions[new_length];
-					reactions.pop();
-				}
-			}
-		}
-		if (reactions === null && (dependency.f & 2) !== 0 && (new_deps === null || !includes.call(new_deps, dependency))) {
-			var derived = dependency;
-			if ((derived.f & 512) !== 0) {
-				derived.f ^= 512;
-				derived.f &= ~WAS_MARKED;
-			}
-			if (derived.v !== UNINITIALIZED) update_derived_status(derived);
-			if (derived.ac !== null) without_reactive_context(() => {
-				/** @type {AbortController} */ derived.ac.abort(STALE_REACTION);
-				derived.ac = null;
-				set_signal_status(derived, DIRTY);
-			});
-			freeze_derived_effects(derived);
-			remove_reactions(derived, 0);
-		}
-	}
-	/**
-	* @param {Reaction} signal
-	* @param {number} start_index
-	* @returns {void}
-	*/
-	function remove_reactions(signal, start_index) {
-		var dependencies = signal.deps;
-		if (dependencies === null) return;
-		for (var i = start_index; i < dependencies.length; i++) remove_reaction(signal, dependencies[i]);
-	}
-	/**
-	* @param {Effect} effect
-	* @returns {void}
-	*/
-	function update_effect(effect) {
-		var flags = effect.f;
-		if ((flags & 16384) !== 0) return;
-		set_signal_status(effect, CLEAN);
-		var previous_effect = active_effect;
-		var was_updating_effect = is_updating_effect;
-		active_effect = effect;
-		is_updating_effect = (flags & 96) === 0;
-		try {
-			if ((flags & 16777232) !== 0) destroy_block_effect_children(effect);
-			else destroy_effect_children(effect);
-			execute_effect_teardown(effect);
-			var teardown = update_reaction(effect);
-			effect.teardown = typeof teardown === "function" ? teardown : null;
-			effect.wv = write_version;
-		} finally {
-			is_updating_effect = was_updating_effect;
-			active_effect = previous_effect;
-		}
-	}
-	/**
-	* Returns a promise that resolves once any pending state changes have been applied.
-	* @returns {Promise<void>}
-	*/
-	async function tick() {
-		if (async_mode_flag) return new Promise((f) => {
-			requestAnimationFrame(() => f());
-			setTimeout(() => f());
-		});
-		await Promise.resolve();
-		flushSync();
-	}
-	/**
-	* @template V
-	* @param {Value<V>} signal
-	* @returns {V}
-	*/
-	function get(signal) {
-		var is_derived = (signal.f & 2) !== 0;
-		captured_signals?.add(signal);
-		if (active_reaction !== null && !untracking) {
-			if (!(active_effect !== null && (active_effect.f & 16384) !== 0) && (current_sources === null || !current_sources.has(signal))) {
-				var deps = active_reaction.deps;
-				if ((active_reaction.f & 2097152) !== 0) {
-					if (signal.rv < read_version) {
-						signal.rv = read_version;
-						if (new_deps === null && deps !== null && deps[skipped_deps] === signal) skipped_deps++;
-						else if (new_deps === null) new_deps = [signal];
-						else new_deps.push(signal);
-					}
-				} else {
-					active_reaction.deps ??= [];
-					if (!includes.call(active_reaction.deps, signal)) active_reaction.deps.push(signal);
-					var reactions = signal.reactions;
-					if (reactions === null) signal.reactions = [active_reaction];
-					else if (!includes.call(reactions, active_reaction)) reactions.push(active_reaction);
-				}
-			}
-		}
-		if (is_destroying_effect && old_values.has(signal)) return old_values.get(signal);
-		if (is_derived) {
-			var derived = signal;
-			if (is_destroying_effect) {
-				var value = derived.v;
-				if ((derived.f & 1024) === 0 && derived.reactions !== null || depends_on_old_values(derived)) value = execute_derived(derived);
-				old_values.set(derived, value);
-				return value;
-			}
-			var should_connect = (derived.f & 512) === 0 && !untracking && active_reaction !== null && (is_updating_effect || (active_reaction.f & 512) !== 0);
-			var is_new = (derived.f & REACTION_RAN) === 0;
-			if (is_dirty(derived)) {
-				if (should_connect) derived.f |= 512;
-				update_derived(derived);
-			}
-			if (should_connect && !is_new) {
-				unfreeze_derived_effects(derived);
-				reconnect(derived);
-			}
-		}
-		if (batch_values?.has(signal)) return batch_values.get(signal);
-		if ((signal.f & 8388608) !== 0) throw signal.v;
-		return signal.v;
-	}
-	/**
-	* (Re)connect a disconnected derived, so that it is notified
-	* of changes in `mark_reactions`
-	* @param {Derived} derived
-	*/
-	function reconnect(derived) {
-		derived.f |= 512;
-		if (derived.deps === null) return;
-		for (const dep of derived.deps) {
-			(dep.reactions ??= []).push(derived);
-			if ((dep.f & 2) !== 0 && (dep.f & 512) === 0) {
-				unfreeze_derived_effects(dep);
-				reconnect(dep);
-			}
-		}
-	}
-	/** @param {Derived} derived */
-	function depends_on_old_values(derived) {
-		if (derived.v === UNINITIALIZED) return true;
-		if (derived.deps === null) return false;
-		for (const dep of derived.deps) {
-			if (old_values.has(dep)) return true;
-			if ((dep.f & 2) !== 0 && depends_on_old_values(dep)) return true;
-		}
-		return false;
-	}
-	/**
-	* When used inside a [`$derived`](https://svelte.dev/docs/svelte/$derived) or [`$effect`](https://svelte.dev/docs/svelte/$effect),
-	* any state read inside `fn` will not be treated as a dependency.
-	*
-	* ```ts
-	* $effect(() => {
-	*   // this will run when `data` changes, but not when `time` changes
-	*   save(data, {
-	*     timestamp: untrack(() => time)
-	*   });
-	* });
-	* ```
 	* @template T
-	* @param {() => T} fn
+	* @param {T} value
 	* @returns {T}
 	*/
-	function untrack(fn) {
-		var previous_untracking = untracking;
-		try {
-			untracking = true;
-			return fn();
-		} finally {
-			untracking = previous_untracking;
+	function proxy(value) {
+		if (typeof value !== "object" || value === null || STATE_SYMBOL in value || COMPONENT_SYMBOL in value) return value;
+		const prototype = get_prototype_of(value);
+		if (prototype !== object_prototype && prototype !== array_prototype) return value;
+		/** @type {Map<any, Source<any>>} */
+		var sources = /* @__PURE__ */ new Map();
+		var is_proxied_array = is_array(value);
+		var version = /* @__PURE__ */ state(0);
+		var stack = null;
+		var parent_version = update_version;
+		/**
+		* Executes the proxy in the context of the reaction it was originally created in, if any
+		* @template T
+		* @param {() => T} fn
+		*/
+		var with_parent = (fn) => {
+			if (update_version === parent_version) return fn();
+			var reaction = active_reaction;
+			var version = update_version;
+			set_active_reaction(null);
+			set_update_version(parent_version);
+			var result = fn();
+			set_active_reaction(reaction);
+			set_update_version(version);
+			return result;
+		};
+		if (is_proxied_array) sources.set("length", /* @__PURE__ */ state(
+			/** @type {any[]} */
+			value.length,
+			stack
+		));
+		return new Proxy(value, {
+			defineProperty(_, prop, descriptor) {
+				if (!("value" in descriptor) || descriptor.configurable === false || descriptor.enumerable === false || descriptor.writable === false) state_descriptors_fixed();
+				var s = sources.get(prop);
+				if (s === void 0) with_parent(() => {
+					var s = /* @__PURE__ */ state(descriptor.value, stack);
+					sources.set(prop, s);
+					return s;
+				});
+				else set(s, descriptor.value, true);
+				return true;
+			},
+			deleteProperty(target, prop) {
+				var s = sources.get(prop);
+				if (s === void 0) {
+					if (prop in target) {
+						const s = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED, stack));
+						sources.set(prop, s);
+						increment(version);
+					}
+				} else {
+					set(s, UNINITIALIZED);
+					increment(version);
+				}
+				return true;
+			},
+			get(target, prop, receiver) {
+				if (prop === STATE_SYMBOL) return value;
+				var s = sources.get(prop);
+				var exists = prop in target;
+				if (s === void 0 && (!exists || get_descriptor(target, prop)?.writable)) {
+					s = with_parent(() => {
+						return /* @__PURE__ */ state(proxy(exists ? target[prop] : UNINITIALIZED), stack);
+					});
+					sources.set(prop, s);
+				}
+				if (s !== void 0) {
+					var v = get(s);
+					return v === UNINITIALIZED ? void 0 : v;
+				}
+				return Reflect.get(target, prop, receiver);
+			},
+			getOwnPropertyDescriptor(target, prop) {
+				var descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
+				if (descriptor && "value" in descriptor) {
+					var s = sources.get(prop);
+					if (s) descriptor.value = get(s);
+				} else if (descriptor === void 0) {
+					var source = sources.get(prop);
+					var value = source?.v;
+					if (source !== void 0 && value !== UNINITIALIZED) return {
+						enumerable: true,
+						configurable: true,
+						value,
+						writable: true
+					};
+				}
+				return descriptor;
+			},
+			has(target, prop) {
+				if (prop === STATE_SYMBOL) return true;
+				var s = sources.get(prop);
+				var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop);
+				if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop)?.writable)) {
+					if (s === void 0) {
+						s = with_parent(() => {
+							return /* @__PURE__ */ state(has ? proxy(target[prop]) : UNINITIALIZED, stack);
+						});
+						sources.set(prop, s);
+					}
+					if (get(s) === UNINITIALIZED) return false;
+				}
+				return has;
+			},
+			set(target, prop, value, receiver) {
+				var s = sources.get(prop);
+				var has = prop in target;
+				if (is_proxied_array && prop === "length") for (var i = value; i < s.v; i += 1) {
+					var other_s = sources.get(i + "");
+					if (other_s !== void 0) set(other_s, UNINITIALIZED);
+					else if (i in target) {
+						other_s = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED, stack));
+						sources.set(i + "", other_s);
+					}
+				}
+				if (s === void 0) {
+					if (!has || get_descriptor(target, prop)?.writable) {
+						s = with_parent(() => /* @__PURE__ */ state(void 0, stack));
+						set(s, proxy(value));
+						sources.set(prop, s);
+					}
+				} else {
+					has = s.v !== UNINITIALIZED;
+					var p = with_parent(() => proxy(value));
+					set(s, p);
+				}
+				var descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
+				if (descriptor?.set) descriptor.set.call(receiver, value);
+				if (!has) {
+					if (is_proxied_array && typeof prop === "string") {
+						var ls = sources.get("length");
+						var n = Number(prop);
+						if (Number.isInteger(n) && n >= ls.v) set(ls, n + 1);
+					}
+					increment(version);
+				}
+				return true;
+			},
+			ownKeys(target) {
+				get(version);
+				var own_keys = Reflect.ownKeys(target).filter((key) => {
+					var source = sources.get(key);
+					return source === void 0 || source.v !== UNINITIALIZED;
+				});
+				for (var [key, source] of sources) if (source.v !== UNINITIALIZED && !(key in target)) own_keys.push(key);
+				return own_keys;
+			},
+			setPrototypeOf() {
+				state_prototype_fixed();
+			}
+		});
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
+	/** @import { Effect, TemplateNode } from '#client' */
+	/** @type {Window} */
+	var $window;
+	/** @type {boolean} */
+	var is_firefox;
+	/** @type {() => Node | null} */
+	var first_child_getter;
+	/** @type {() => Node | null} */
+	var next_sibling_getter;
+	/**
+	* Initialize these lazily to avoid issues when using the runtime in a server context
+	* where these globals are not available while avoiding a separate server entry point
+	*/
+	function init_operations() {
+		if ($window !== void 0) return;
+		$window = window;
+		is_firefox = /Firefox/.test(navigator.userAgent);
+		var element_prototype = Element.prototype;
+		var node_prototype = Node.prototype;
+		var text_prototype = Text.prototype;
+		first_child_getter = get_descriptor(node_prototype, "firstChild").get;
+		next_sibling_getter = get_descriptor(node_prototype, "nextSibling").get;
+		if (is_extensible(element_prototype)) {
+			/** @type {any} */ element_prototype[CLASS_CACHE] = void 0;
+			/** @type {any} */ element_prototype[ATTRIBUTES_CACHE] = null;
+			/** @type {any} */ element_prototype[STYLE_CACHE] = void 0;
+			element_prototype.__e = void 0;
 		}
+		if (is_extensible(text_prototype))
+ /** @type {any} */ text_prototype[TEXT_CACHE] = void 0;
+	}
+	/**
+	* @param {string} value
+	* @returns {Text}
+	*/
+	function create_text(value = "") {
+		return document.createTextNode(value);
+	}
+	/**
+	* @template {Node} N
+	* @param {N} node
+	*/
+	/*@__NO_SIDE_EFFECTS__*/
+	function get_first_child(node) {
+		return first_child_getter.call(node);
+	}
+	/**
+	* @template {Node} N
+	* @param {N} node
+	*/
+	/*@__NO_SIDE_EFFECTS__*/
+	function get_next_sibling(node) {
+		return next_sibling_getter.call(node);
+	}
+	/**
+	* Don't mark this as side-effect-free, hydration needs to walk all nodes
+	* @template {Node} N
+	* @param {N} node
+	* @param {boolean} is_text
+	* @returns {TemplateNode | null}
+	*/
+	function child(node, is_text) {
+		if (!hydrating) return /* @__PURE__ */ get_first_child(node);
+		var child = /* @__PURE__ */ get_first_child(hydrate_node);
+		if (child === null) child = hydrate_node.appendChild(create_text());
+		else if (is_text && child.nodeType !== 3) {
+			var text = create_text();
+			child?.before(text);
+			set_hydrate_node(text);
+			return text;
+		}
+		if (is_text) merge_text_nodes(child);
+		set_hydrate_node(child);
+		return child;
+	}
+	/**
+	* Don't mark this as side-effect-free, hydration needs to walk all nodes
+	* @param {TemplateNode} node
+	* @param {boolean} [is_text]
+	* @returns {TemplateNode | null}
+	*/
+	function first_child(node, is_text = false) {
+		if (!hydrating) {
+			var first = /* @__PURE__ */ get_first_child(node);
+			if (first instanceof Comment && first.data === "") return /* @__PURE__ */ get_next_sibling(first);
+			return first;
+		}
+		if (is_text) {
+			if (hydrate_node?.nodeType !== 3) {
+				var text = create_text();
+				hydrate_node?.before(text);
+				set_hydrate_node(text);
+				return text;
+			}
+			merge_text_nodes(hydrate_node);
+		}
+		return hydrate_node;
+	}
+	/**
+	* `child`, for the very common case of an element with exactly one child. Resetting the
+	* hydration cursor is part of the same step, so the compiler doesn't have to emit a
+	* separate `reset` call for every `<p>{text}</p>` in an app.
+	* Don't mark this as side-effect-free, hydration needs to walk all nodes
+	* @param {TemplateNode} node
+	* @param {boolean} [is_text]
+	* @returns {TemplateNode | null}
+	*/
+	function only_child(node, is_text = false) {
+		if (!hydrating) return /* @__PURE__ */ get_first_child(node);
+		var first = child(node, is_text);
+		reset(node);
+		return first;
+	}
+	/**
+	* Don't mark this as side-effect-free, hydration needs to walk all nodes
+	* @param {TemplateNode} node
+	* @param {number} count
+	* @param {boolean} is_text
+	* @returns {TemplateNode | null}
+	*/
+	function sibling(node, count = 1, is_text = false) {
+		let next_sibling = hydrating ? hydrate_node : node;
+		var last_sibling;
+		while (count--) {
+			last_sibling = next_sibling;
+			next_sibling = /* @__PURE__ */ get_next_sibling(next_sibling);
+		}
+		if (!hydrating) return next_sibling;
+		if (is_text) {
+			if (next_sibling?.nodeType !== 3) {
+				var text = create_text();
+				if (next_sibling === null) last_sibling?.after(text);
+				else next_sibling.before(text);
+				set_hydrate_node(text);
+				return text;
+			}
+			merge_text_nodes(next_sibling);
+		}
+		set_hydrate_node(next_sibling);
+		return next_sibling;
+	}
+	/**
+	* @template {Node} N
+	* @param {N} node
+	* @returns {void}
+	*/
+	function clear_text_content(node) {
+		node.textContent = "";
+	}
+	/**
+	* Returns `true` if we're updating the current block, for example `condition` in
+	* an `{#if condition}` block just changed. In this case, the branch should be
+	* appended (or removed) at the same time as other updates within the
+	* current `<svelte:boundary>`
+	*/
+	function should_defer_append() {
+		if (!async_mode_flag) return false;
+		if (eager_block_effects !== null) return false;
+		return (active_effect.f & REACTION_RAN) !== 0;
+	}
+	/**
+	* Branching here is intentional and load-bearing for perf. `createElement(tag)`
+	* hits a fast path in Blink that `createElementNS(NAMESPACE_HTML, tag)` doesn't,
+	* and passing an explicit `undefined` as the trailing options arg measurably
+	* slows both APIs. Funnelling every case through a single `createElementNS(ns,
+	* tag, options)` call would be smaller but slower on the HTML path.
+	*
+	* @template {keyof HTMLElementTagNameMap | string} T
+	* @param {T} tag
+	* @param {string} [namespace]
+	* @param {string} [is]
+	* @returns {T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T] : Element}
+	*/
+	function create_element(tag, namespace, is) {
+		if (namespace == null || namespace === "http://www.w3.org/1999/xhtml") return is ? document.createElement(tag, { is }) : document.createElement(tag);
+		return is ? document.createElementNS(namespace, tag, { is }) : document.createElementNS(namespace, tag);
+	}
+	/**
+	* Browsers split text nodes larger than 65536 bytes when parsing.
+	* For hydration to succeed, we need to stitch them back together
+	* @param {Text} text
+	*/
+	function merge_text_nodes(text) {
+		if (text.nodeValue.length < 65536) return;
+		let next = text.nextSibling;
+		while (next !== null && next.nodeType === 3) {
+			next.remove();
+			/** @type {string} */ text.nodeValue += next.nodeValue;
+			next = text.nextSibling;
+		}
+	}
+	/**
+	* @param {unknown} error
+	*/
+	function handle_error(error) {
+		var effect = active_effect;
+		if (effect === null) {
+			/** @type {Derived} */ active_reaction.f |= ERROR_VALUE;
+			return error;
+		}
+		if ((effect.f & 32768) === 0 && (effect.f & 4) === 0) throw error;
+		invoke_error_boundary(error, effect);
+	}
+	/**
+	* @param {unknown} error
+	* @param {Effect | null} effect
+	*/
+	function invoke_error_boundary(error, effect) {
+		if (effect !== null && (effect.f & 16384) !== 0) return;
+		while (effect !== null) {
+			if ((effect.f & 128) !== 0 && (effect.f & 33570816) === 0) {
+				if ((effect.f & 32768) === 0) throw error;
+				try {
+					/** @type {Boundary} */ effect.b.error(error);
+					return;
+				} catch (e) {
+					error = e;
+				}
+			}
+			effect = effect.parent;
+		}
+		throw error;
 	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/effects.js
@@ -2887,6 +2515,400 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 	}
 	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
+	/**
+	* @type {Set<Value> | null}
+	* @deprecated
+	*/
+	var captured_signals = null;
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
+	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
+	/**
+	* True if updating in an effect context that is reactive (i.e. not branch/root effects)
+	*/
+	var is_updating_effect = false;
+	var is_destroying_effect = false;
+	/** @param {boolean} value */
+	function set_is_destroying_effect(value) {
+		is_destroying_effect = value;
+	}
+	/** @type {null | Reaction} */
+	var active_reaction = null;
+	var untracking = false;
+	/** @param {null | Reaction} reaction */
+	function set_active_reaction(reaction) {
+		active_reaction = reaction;
+	}
+	/** @type {null | Effect} */
+	var active_effect = null;
+	/** @param {null | Effect} effect */
+	function set_active_effect(effect) {
+		active_effect = effect;
+	}
+	/**
+	* When sources are created within a reaction, reading and writing
+	* them within that reaction should not cause a re-run
+	* @type {null | Set<Source>}
+	*/
+	var current_sources = null;
+	/** @param {Value} value */
+	function push_reaction_value(value) {
+		if (active_reaction !== null && (!async_mode_flag || (active_reaction.f & 2) !== 0)) (current_sources ??= /* @__PURE__ */ new Set()).add(value);
+	}
+	/**
+	* The dependencies of the reaction that is currently being executed. In many cases,
+	* the dependencies are unchanged between runs, and so this will be `null` unless
+	* and until a new dependency is accessed — we track this via `skipped_deps`
+	* @type {null | Value[]}
+	*/
+	var new_deps = null;
+	var skipped_deps = 0;
+	/**
+	* Tracks writes that the effect it's executed in doesn't listen to yet,
+	* so that the dependency can be added to the effect later on if it then reads it
+	* @type {null | Source[]}
+	*/
+	var untracked_writes = null;
+	/** @param {null | Source[]} value */
+	function set_untracked_writes(value) {
+		untracked_writes = value;
+	}
+	/**
+	* @type {number} Used by sources and deriveds for handling updates.
+	* Version starts from 1 so that unowned deriveds differentiate between a created effect and a run one for tracing
+	**/
+	var write_version = 1;
+	/** @type {number} Used to version each read of a source of derived to avoid duplicating dependencies inside a reaction */
+	var read_version = 0;
+	var update_version = read_version;
+	/** @param {number} value */
+	function set_update_version(value) {
+		update_version = value;
+	}
+	function increment_write_version() {
+		return ++write_version;
+	}
+	/**
+	* Determines whether a derived or effect is dirty.
+	* If it is MAYBE_DIRTY, will set the status to CLEAN
+	* @param {Reaction} reaction
+	* @returns {boolean}
+	*/
+	function is_dirty(reaction) {
+		var flags = reaction.f;
+		if ((flags & 2048) !== 0) return true;
+		if (flags & 2) reaction.f &= ~WAS_MARKED;
+		if ((flags & 4096) !== 0) {
+			var dependencies = reaction.deps;
+			var length = dependencies.length;
+			for (var i = 0; i < length; i++) {
+				var dependency = dependencies[i];
+				if (is_dirty(dependency)) update_derived(dependency);
+				if (dependency.wv > reaction.wv) return true;
+			}
+			if ((flags & 512) !== 0 && batch_values === null) set_signal_status(reaction, CLEAN);
+		}
+		return false;
+	}
+	/**
+	* @param {Value} signal
+	* @param {Effect} effect
+	* @param {boolean} [root]
+	*/
+	function schedule_possible_effect_self_invalidation(signal, effect, root = true) {
+		var reactions = signal.reactions;
+		if (reactions === null) return;
+		if (!async_mode_flag && current_sources !== null && current_sources.has(signal)) return;
+		for (var i = 0; i < reactions.length; i++) {
+			var reaction = reactions[i];
+			if ((reaction.f & 2) !== 0) schedule_possible_effect_self_invalidation(reaction, effect, false);
+			else if (effect === reaction) {
+				if (root) set_signal_status(reaction, DIRTY);
+				else if ((reaction.f & 1024) !== 0) set_signal_status(reaction, MAYBE_DIRTY);
+				schedule_effect(reaction);
+			}
+		}
+	}
+	/** @param {Reaction} reaction */
+	function update_reaction(reaction) {
+		var previous_deps = new_deps;
+		var previous_skipped_deps = skipped_deps;
+		var previous_untracked_writes = untracked_writes;
+		var previous_reaction = active_reaction;
+		var previous_sources = current_sources;
+		var previous_component_context = component_context;
+		var previous_untracking = untracking;
+		var previous_update_version = update_version;
+		var flags = reaction.f;
+		new_deps = null;
+		skipped_deps = 0;
+		untracked_writes = null;
+		active_reaction = (flags & 96) === 0 ? reaction : null;
+		current_sources = null;
+		set_component_context(reaction.ctx);
+		untracking = false;
+		update_version = ++read_version;
+		if (reaction.ac !== null) {
+			without_reactive_context(() => {
+				/** @type {AbortController} */ reaction.ac.abort(STALE_REACTION);
+			});
+			reaction.ac = null;
+		}
+		try {
+			reaction.f |= REACTION_IS_UPDATING;
+			var fn = reaction.fn;
+			var result = fn();
+			reaction.f |= REACTION_RAN;
+			var deps = update_dependencies(reaction);
+			if (is_runes() && untracked_writes !== null && !untracking && deps !== null && (reaction.f & 6146) === 0) for (var i = 0; i < untracked_writes.length; i++) schedule_possible_effect_self_invalidation(untracked_writes[i], reaction);
+			if (previous_reaction !== null && previous_reaction !== reaction) {
+				read_version++;
+				if (previous_reaction.deps !== null) for (let i = 0; i < previous_skipped_deps; i += 1) previous_reaction.deps[i].rv = read_version;
+				if (previous_deps !== null) for (const dep of previous_deps) dep.rv = read_version;
+				if (untracked_writes !== null) {
+					if (previous_untracked_writes === null) previous_untracked_writes = untracked_writes;
+					else previous_untracked_writes.push(...untracked_writes);
+				}
+			}
+			if ((reaction.f & 8388608) !== 0) reaction.f ^= ERROR_VALUE;
+			return result;
+		} catch (error) {
+			update_dependencies(reaction);
+			return handle_error(error);
+		} finally {
+			reaction.f ^= REACTION_IS_UPDATING;
+			new_deps = previous_deps;
+			skipped_deps = previous_skipped_deps;
+			untracked_writes = previous_untracked_writes;
+			active_reaction = previous_reaction;
+			current_sources = previous_sources;
+			set_component_context(previous_component_context);
+			untracking = previous_untracking;
+			update_version = previous_update_version;
+		}
+	}
+	/**
+	* @param {Reaction} reaction
+	*/
+	function update_dependencies(reaction) {
+		var deps = reaction.deps;
+		var is_fork = current_batch?.is_fork;
+		if (new_deps !== null) {
+			var i;
+			if (!is_fork) remove_reactions(reaction, skipped_deps);
+			if (deps !== null && skipped_deps > 0) {
+				deps.length = skipped_deps + new_deps.length;
+				for (i = 0; i < new_deps.length; i++) deps[skipped_deps + i] = new_deps[i];
+			} else reaction.deps = deps = new_deps;
+			if (effect_tracking() && (reaction.f & 512) !== 0) for (i = skipped_deps; i < deps.length; i++) (deps[i].reactions ??= []).push(reaction);
+		} else if (!is_fork && deps !== null && skipped_deps < deps.length) {
+			remove_reactions(reaction, skipped_deps);
+			deps.length = skipped_deps;
+		}
+		return deps;
+	}
+	/**
+	* @template V
+	* @param {Reaction} signal
+	* @param {Value<V>} dependency
+	* @returns {void}
+	*/
+	function remove_reaction(signal, dependency) {
+		let reactions = dependency.reactions;
+		if (reactions !== null) {
+			var index = index_of.call(reactions, signal);
+			if (index !== -1) {
+				var new_length = reactions.length - 1;
+				if (new_length === 0) reactions = dependency.reactions = null;
+				else {
+					reactions[index] = reactions[new_length];
+					reactions.pop();
+				}
+			}
+		}
+		if (reactions === null && (dependency.f & 2) !== 0 && (new_deps === null || !includes.call(new_deps, dependency))) {
+			var derived = dependency;
+			if ((derived.f & 512) !== 0) {
+				derived.f ^= 512;
+				derived.f &= ~WAS_MARKED;
+			}
+			if (derived.v !== UNINITIALIZED) update_derived_status(derived);
+			if (derived.ac !== null) without_reactive_context(() => {
+				/** @type {AbortController} */ derived.ac.abort(STALE_REACTION);
+				derived.ac = null;
+				set_signal_status(derived, DIRTY);
+			});
+			freeze_derived_effects(derived);
+			remove_reactions(derived, 0);
+		}
+	}
+	/**
+	* @param {Reaction} signal
+	* @param {number} start_index
+	* @returns {void}
+	*/
+	function remove_reactions(signal, start_index) {
+		var dependencies = signal.deps;
+		if (dependencies === null) return;
+		for (var i = start_index; i < dependencies.length; i++) remove_reaction(signal, dependencies[i]);
+	}
+	/**
+	* @param {Effect} effect
+	* @returns {void}
+	*/
+	function update_effect(effect) {
+		var flags = effect.f;
+		if ((flags & 16384) !== 0) return;
+		set_signal_status(effect, CLEAN);
+		var previous_effect = active_effect;
+		var was_updating_effect = is_updating_effect;
+		active_effect = effect;
+		is_updating_effect = (flags & 96) === 0;
+		try {
+			if ((flags & 16777232) !== 0) destroy_block_effect_children(effect);
+			else destroy_effect_children(effect);
+			execute_effect_teardown(effect);
+			var teardown = update_reaction(effect);
+			effect.teardown = typeof teardown === "function" ? teardown : null;
+			effect.wv = write_version;
+		} finally {
+			is_updating_effect = was_updating_effect;
+			active_effect = previous_effect;
+		}
+	}
+	/**
+	* Returns a promise that resolves once any pending state changes have been applied.
+	* @returns {Promise<void>}
+	*/
+	async function tick() {
+		if (async_mode_flag) return new Promise((f) => {
+			requestAnimationFrame(() => f());
+			setTimeout(() => f());
+		});
+		await Promise.resolve();
+		flushSync();
+	}
+	/**
+	* @template V
+	* @param {Value<V>} signal
+	* @returns {V}
+	*/
+	function get(signal) {
+		var is_derived = (signal.f & 2) !== 0;
+		captured_signals?.add(signal);
+		if (active_reaction !== null && !untracking) {
+			if (!(active_effect !== null && (active_effect.f & 16384) !== 0) && (current_sources === null || !current_sources.has(signal))) {
+				var deps = active_reaction.deps;
+				if ((active_reaction.f & 2097152) !== 0) {
+					if (signal.rv < read_version) {
+						signal.rv = read_version;
+						if (new_deps === null && deps !== null && deps[skipped_deps] === signal) skipped_deps++;
+						else if (new_deps === null) new_deps = [signal];
+						else new_deps.push(signal);
+					}
+				} else {
+					active_reaction.deps ??= [];
+					if (!includes.call(active_reaction.deps, signal)) active_reaction.deps.push(signal);
+					var reactions = signal.reactions;
+					if (reactions === null) signal.reactions = [active_reaction];
+					else if (!includes.call(reactions, active_reaction)) reactions.push(active_reaction);
+				}
+			}
+		}
+		if (is_destroying_effect && old_values.has(signal)) return old_values.get(signal);
+		if (is_derived) {
+			var derived = signal;
+			if (is_destroying_effect) {
+				var value = derived.v;
+				if ((derived.f & 1024) === 0 && derived.reactions !== null || depends_on_old_values(derived)) value = execute_derived(derived);
+				old_values.set(derived, value);
+				return value;
+			}
+			var should_connect = (derived.f & 512) === 0 && !untracking && active_reaction !== null && (is_updating_effect || (active_reaction.f & 512) !== 0);
+			var is_new = (derived.f & REACTION_RAN) === 0;
+			if (is_dirty(derived)) {
+				if (should_connect) derived.f |= 512;
+				update_derived(derived);
+			}
+			if (should_connect && !is_new) {
+				unfreeze_derived_effects(derived);
+				reconnect(derived);
+			}
+		}
+		if (batch_values?.has(signal)) return batch_values.get(signal);
+		if ((signal.f & 8388608) !== 0) throw signal.v;
+		return signal.v;
+	}
+	/**
+	* (Re)connect a disconnected derived, so that it is notified
+	* of changes in `mark_reactions`
+	* @param {Derived} derived
+	*/
+	function reconnect(derived) {
+		derived.f |= 512;
+		if (derived.deps === null) return;
+		for (const dep of derived.deps) {
+			(dep.reactions ??= []).push(derived);
+			if ((dep.f & 2) !== 0 && (dep.f & 512) === 0) {
+				unfreeze_derived_effects(dep);
+				reconnect(dep);
+			}
+		}
+	}
+	/** @param {Derived} derived */
+	function depends_on_old_values(derived) {
+		if (derived.v === UNINITIALIZED) return true;
+		if (derived.deps === null) return false;
+		for (const dep of derived.deps) {
+			if (old_values.has(dep)) return true;
+			if ((dep.f & 2) !== 0 && depends_on_old_values(dep)) return true;
+		}
+		return false;
+	}
+	/**
+	* When used inside a [`$derived`](https://svelte.dev/docs/svelte/$derived) or [`$effect`](https://svelte.dev/docs/svelte/$effect),
+	* any state read inside `fn` will not be treated as a dependency.
+	*
+	* ```ts
+	* $effect(() => {
+	*   // this will run when `data` changes, but not when `time` changes
+	*   save(data, {
+	*     timestamp: untrack(() => time)
+	*   });
+	* });
+	* ```
+	* @template T
+	* @param {() => T} fn
+	* @returns {T}
+	*/
+	function untrack(fn) {
+		var previous_untracking = untracking;
+		try {
+			untracking = true;
+			return fn();
+		} finally {
+			untracking = previous_untracking;
+		}
+	}
+	/**
+	* Subset of delegated events which should be passive by default.
+	* These two are already passive via browser defaults on window, document and body.
+	* But since
+	* - we're delegating them
+	* - they happen often
+	* - they apply to mobile which is generally less performant
+	* we're marking them as passive by default for other elements, too.
+	*/
+	var PASSIVE_EVENTS = ["touchstart", "touchmove"];
+	/**
+	* Returns `true` if `name` is a passive event
+	* @param {string} name
+	*/
+	function is_passive_event(name) {
+		return PASSIVE_EVENTS.includes(name);
+	}
+	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/events.js
 	/**
 	* Used on elements, as a map of event type -> event handler,
@@ -3168,23 +3190,6 @@ createHTML: (html) => {
 		}
 		if (anchor === null) return;
 		anchor.before(dom);
-	}
-	/**
-	* Subset of delegated events which should be passive by default.
-	* These two are already passive via browser defaults on window, document and body.
-	* But since
-	* - we're delegating them
-	* - they happen often
-	* - they apply to mobile which is generally less performant
-	* we're marking them as passive by default for other elements, too.
-	*/
-	var PASSIVE_EVENTS = ["touchstart", "touchmove"];
-	/**
-	* Returns `true` if `name` is a passive event
-	* @param {string} name
-	*/
-	function is_passive_event(name) {
-		return PASSIVE_EVENTS.includes(name);
 	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/create-subscriber.js
@@ -3666,62 +3671,6 @@ createHTML: (html) => {
 	function mount(component, options) {
 		return _mount(component, options);
 	}
-	/**
-	* Hydrates a component on the given target and returns the exports and potentially the props (if compiled with `accessors: true`) of the component
-	*
-	* @template {Record<string, any>} Props
-	* @template {Record<string, any>} Exports
-	* @param {ComponentType<SvelteComponent<Props>> | Component<Props, Exports, any>} component
-	* @param {{} extends Props ? {
-	* 		target: Document | Element | ShadowRoot;
-	* 		props?: Props;
-	* 		events?: Record<string, (e: any) => any>;
-	*  	context?: Map<any, any>;
-	* 		intro?: boolean;
-	* 		recover?: boolean;
-	*		transformError?: (error: unknown) => unknown;
-	* 	} : {
-	* 		target: Document | Element | ShadowRoot;
-	* 		props: Props;
-	* 		events?: Record<string, (e: any) => any>;
-	*  	context?: Map<any, any>;
-	* 		intro?: boolean;
-	* 		recover?: boolean;
-	*		transformError?: (error: unknown) => unknown;
-	* 	}} options
-	* @returns {Exports}
-	*/
-	function hydrate(component, options) {
-		init_operations();
-		options.intro = options.intro ?? false;
-		const target = options.target;
-		const was_hydrating = hydrating;
-		const previous_hydrate_node = hydrate_node;
-		try {
-			var anchor = /* @__PURE__ */ get_first_child(target);
-			while (anchor && (anchor.nodeType !== 8 || anchor.data !== "[")) anchor = /* @__PURE__ */ get_next_sibling(anchor);
-			if (!anchor) throw HYDRATION_ERROR;
-			set_hydrating(true);
-			set_hydrate_node(anchor);
-			const instance = _mount(component, {
-				...options,
-				anchor
-			});
-			set_hydrating(false);
-			return instance;
-		} catch (error) {
-			if (error instanceof Error && error.message.split("\n").some((line) => line.startsWith("https://svelte.dev/e/"))) throw error;
-			if (error !== HYDRATION_ERROR) console.warn("Failed to hydrate: ", error);
-			if (options.recover === false) hydration_failed();
-			init_operations();
-			clear_text_content(target);
-			set_hydrating(false);
-			return mount(component, options);
-		} finally {
-			set_hydrating(was_hydrating);
-			set_hydrate_node(previous_hydrate_node);
-		}
-	}
 	/** @type {Map<EventTarget, Map<string, number>>} */
 	var listeners = /* @__PURE__ */ new Map();
 	/**
@@ -3830,131 +3779,6 @@ createHTML: (html) => {
 		}
 		return Promise.resolve();
 	}
-	/**
-	* Takes the component function and returns a Svelte 4 compatible component constructor.
-	*
-	* @deprecated Use this only as a temporary solution to migrate your imperative component code to Svelte 5.
-	*
-	* @template {Record<string, any>} Props
-	* @template {Record<string, any>} Exports
-	* @template {Record<string, any>} Events
-	* @template {Record<string, any>} Slots
-	*
-	* @param {SvelteComponent<Props, Events, Slots> | Component<Props>} component
-	* @returns {ComponentType<SvelteComponent<Props, Events, Slots> & Exports>}
-	*/
-	function asClassComponent(component) {
-		return class extends Svelte4Component {
-			/** @param {any} options */
-			constructor(options) {
-				super({
-					component,
-					...options
-				});
-			}
-		};
-	}
-	/**
-	* Support using the component as both a class and function during the transition period
-	* @typedef  {{new (o: ComponentConstructorOptions): SvelteComponent;(...args: Parameters<Component<Record<string, any>>>): ReturnType<Component<Record<string, any>, Record<string, any>>>;}} LegacyComponentType
-	*/
-	var Svelte4Component = class {
-		/** @type {any} */
-		#events;
-		/** @type {Record<string, any>} */
-		#instance;
-		/**
-		* @param {ComponentConstructorOptions & {
-		*  component: any;
-		* }} options
-		*/
-		constructor(options) {
-			var sources = /* @__PURE__ */ new Map();
-			/**
-			* @param {string | symbol} key
-			* @param {unknown} value
-			*/
-			var add_source = (key, value) => {
-				var s = /* @__PURE__ */ mutable_source(value, false, false);
-				sources.set(key, s);
-				return s;
-			};
-			const props = new Proxy({
-				...options.props || {},
-				$$events: {}
-			}, {
-				get(target, prop) {
-					return get(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
-				},
-				has(target, prop) {
-					if (prop === LEGACY_PROPS) return true;
-					get(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
-					return Reflect.has(target, prop);
-				},
-				set(target, prop, value) {
-					set(sources.get(prop) ?? add_source(prop, value), value);
-					return Reflect.set(target, prop, value);
-				}
-			});
-			this.#instance = (options.hydrate ? hydrate : mount)(options.component, {
-				target: options.target,
-				anchor: options.anchor,
-				props,
-				context: options.context,
-				intro: options.intro ?? false,
-				recover: options.recover,
-				transformError: options.transformError
-			});
-			if (!async_mode_flag && (!options?.props?.$$host || options.sync === false)) flushSync();
-			this.#events = props.$$events;
-			for (const key of Object.keys(this.#instance)) {
-				if (key === "$set" || key === "$destroy" || key === "$on") continue;
-				define_property(this, key, {
-					get() {
-						return this.#instance[key];
-					},
-					/** @param {any} value */
-					set(value) {
-						this.#instance[key] = value;
-					},
-					enumerable: true
-				});
-			}
-			this.#instance.$set = (next) => {
-				Object.assign(props, next);
-			};
-			this.#instance.$destroy = () => {
-				unmount(this.#instance);
-			};
-		}
-		/** @param {Record<string, any>} props */
-		$set(props) {
-			this.#instance.$set(props);
-		}
-		/**
-		* @param {string} event
-		* @param {(...args: any[]) => any} callback
-		* @returns {any}
-		*/
-		$on(event, callback) {
-			this.#events[event] = this.#events[event] || [];
-			/** @param {any[]} args */
-			const cb = (...args) => callback.call(this, ...args);
-			this.#events[event].push(cb);
-			return () => {
-				this.#events[event] = this.#events[event].filter(
-					/** @param {any} fn */
-					(fn) => fn !== cb
-				);
-			};
-		}
-		$destroy() {
-			this.#instance.$destroy();
-		}
-	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
-	if (typeof window !== "undefined") ((window.__svelte ??= {}).v ??= /* @__PURE__ */ new Set()).add("5");
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/branches.js
 	/** @import { Effect, TemplateNode } from '#client' */
@@ -4103,59 +3927,6 @@ createHTML: (html) => {
 			}
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
-	/** @import { Snippet } from 'svelte' */
-	/** @import { TemplateNode } from '#client' */
-	/** @import { Getters } from '#shared' */
-	/**
-	* @template {(node: TemplateNode, ...args: any[]) => void} SnippetFn
-	* @param {TemplateNode} node
-	* @param {() => SnippetFn | null | undefined} get_snippet
-	* @param {(() => any)[]} args
-	* @returns {void}
-	*/
-	function snippet(node, get_snippet, ...args) {
-		var branches = new BranchManager(node);
-		block(() => {
-			const snippet = get_snippet() ?? null;
-			branches.ensure(snippet, snippet && ((anchor) => snippet(anchor, ...args)));
-		}, EFFECT_TRANSPARENT);
-	}
-	/**
-	* `onMount`, like [`$effect`](https://svelte.dev/docs/svelte/$effect), schedules a function to run as soon as the component has been mounted to the DOM.
-	* Unlike `$effect`, the provided function only runs once.
-	*
-	* It must be called during the component's initialisation (but doesn't need to live _inside_ the component;
-	* it can be called from an external module). If a function is returned _synchronously_ from `onMount`,
-	* it will be called when the component is unmounted.
-	*
-	* `onMount` functions do not run during [server-side rendering](https://svelte.dev/docs/svelte/svelte-server#render).
-	*
-	* @template T
-	* @param {() => NotFunction<T> | Promise<NotFunction<T>> | (() => any)} fn
-	* @returns {void}
-	*/
-	function onMount(fn) {
-		if (component_context === null) lifecycle_outside_component("onMount");
-		if (legacy_mode_flag && component_context.l !== null) init_update_callbacks(component_context).m.push(fn);
-		else user_effect(() => {
-			const cleanup = untrack(fn);
-			if (typeof cleanup === "function") return cleanup;
-		});
-	}
-	/**
-	* Legacy-mode: Init callbacks object for onMount/beforeUpdate/afterUpdate
-	* @param {ComponentContext} context
-	*/
-	function init_update_callbacks(context) {
-		var l = context.l;
-		return l.u ??= {
-			a: [],
-			b: [],
-			m: []
-		};
-	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/if.js
 	/** @import { TemplateNode } from '#client' */
@@ -4618,6 +4389,25 @@ createHTML: (html) => {
 		else prev.next = next;
 		if (next === null) state.effect.last = prev;
 		else next.prev = prev;
+	}
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
+	/** @import { Snippet } from 'svelte' */
+	/** @import { TemplateNode } from '#client' */
+	/** @import { Getters } from '#shared' */
+	/**
+	* @template {(node: TemplateNode, ...args: any[]) => void} SnippetFn
+	* @param {TemplateNode} node
+	* @param {() => SnippetFn | null | undefined} get_snippet
+	* @param {(() => any)[]} args
+	* @returns {void}
+	*/
+	function snippet(node, get_snippet, ...args) {
+		var branches = new BranchManager(node);
+		block(() => {
+			const snippet = get_snippet() ?? null;
+			branches.ensure(snippet, snippet && ((anchor) => snippet(anchor, ...args)));
+		}, EFFECT_TRANSPARENT);
 	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/svelte-component.js
@@ -5546,6 +5336,40 @@ createHTML: (html) => {
 		});
 	}
 	if (typeof HTMLElement === "function");
+	/**
+	* `onMount`, like [`$effect`](https://svelte.dev/docs/svelte/$effect), schedules a function to run as soon as the component has been mounted to the DOM.
+	* Unlike `$effect`, the provided function only runs once.
+	*
+	* It must be called during the component's initialisation (but doesn't need to live _inside_ the component;
+	* it can be called from an external module). If a function is returned _synchronously_ from `onMount`,
+	* it will be called when the component is unmounted.
+	*
+	* `onMount` functions do not run during [server-side rendering](https://svelte.dev/docs/svelte/svelte-server#render).
+	*
+	* @template T
+	* @param {() => NotFunction<T> | Promise<NotFunction<T>> | (() => any)} fn
+	* @returns {void}
+	*/
+	function onMount(fn) {
+		if (component_context === null) lifecycle_outside_component("onMount");
+		if (legacy_mode_flag && component_context.l !== null) init_update_callbacks(component_context).m.push(fn);
+		else user_effect(() => {
+			const cleanup = untrack(fn);
+			if (typeof cleanup === "function") return cleanup;
+		});
+	}
+	/**
+	* Legacy-mode: Init callbacks object for onMount/beforeUpdate/afterUpdate
+	* @param {ComponentContext} context
+	*/
+	function init_update_callbacks(context) {
+		var l = context.l;
+		return l.u ??= {
+			a: [],
+			b: [],
+			m: []
+		};
+	}
 	//#endregion
 	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/map.js
 	/** @import { Source } from '#client' */
@@ -5819,6 +5643,9 @@ createHTML: (html) => {
 			super(() => q.matches, (update) => on(q, "change", update));
 		}
 	};
+	//#endregion
+	//#region ../../node_modules/.pnpm/svelte@5.57.0_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
+	if (typeof window !== "undefined") ((window.__svelte ??= {}).v ??= /* @__PURE__ */ new Set()).add("5");
 	//#endregion
 	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/constants.js
 	/**
@@ -6283,6 +6110,14 @@ createHTML: (html) => {
 	function diffDays(a, b) {
 		return differenceInCalendarDays(a, b);
 	}
+	/**
+	* Whether an event overlaps [start, end). A zero-length event (a deadline,
+	* a marker) has no extent to overlap with, so it counts where it sits —
+	* including exactly at `start`, which the plain interval test drops.
+	*/
+	function overlapsRange(ev, start, end) {
+		return ev.start < end && (ev.end > start || ev.start >= start);
+	}
 	/** Zero-pad a number to 2 digits */
 	function pad(n) {
 		return n < 10 ? "0" + n : "" + n;
@@ -6348,348 +6183,6 @@ createHTML: (html) => {
 			allDay: isAllDay(ev)
 		};
 	}
-	//#endregion
-	//#region src/lib/engine/event-store.svelte.ts
-	function createEventStore(adapter) {
-		const getAdapter = typeof adapter === "function" ? adapter : () => adapter;
-		let eventMap = new SvelteMap();
-		let loading = /* @__PURE__ */ state(false);
-		let error = /* @__PURE__ */ state(null);
-		/** Guards against an older in-flight load pruning a newer one's result */
-		let loadSeq = 0;
-		const eventArray = /* @__PURE__ */ user_derived(() => [...eventMap.values()]);
-		function overlaps(ev, start, end) {
-			return ev.start < end && ev.end > start;
-		}
-		function removeEvent(id) {
-			eventMap.delete(id);
-		}
-		function upsertEvent(ev) {
-			eventMap.set(ev.id, ev);
-		}
-		function merge(fetched, range) {
-			const keep = new Set(fetched.map((ev) => ev.id));
-			for (const ev of [...eventMap.values()]) if (!keep.has(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
-			for (const ev of fetched) upsertEvent(ev);
-		}
-		return {
-			get events() {
-				return get(eventArray);
-			},
-			get loading() {
-				return get(loading);
-			},
-			get error() {
-				return get(error);
-			},
-			async load(range) {
-				const seq = ++loadSeq;
-				const adapter = getAdapter();
-				const sync = adapter.fetchEventsSync?.(range);
-				if (sync) {
-					set(error, null);
-					untrack(() => merge(sync, range));
-					return;
-				}
-				set(loading, true);
-				set(error, null);
-				try {
-					const fetched = await adapter.fetchEvents(range);
-					if (seq !== loadSeq) return;
-					merge(fetched, range);
-				} catch (e) {
-					set(error, e instanceof Error ? e.message : String(e), true);
-				} finally {
-					if (seq === loadSeq) set(loading, false);
-				}
-			},
-			forRange(start, end) {
-				return get(eventArray).filter((ev) => overlaps(ev, start, end));
-			},
-			forDay(date) {
-				const dayStart = new Date(sod(date.getTime()));
-				const dayEnd = new Date(addDaysMs(dayStart.getTime(), 1));
-				return get(eventArray).filter((ev) => overlaps(ev, dayStart, dayEnd));
-			},
-			byId(id) {
-				return eventMap.get(id);
-			},
-			async add(eventData) {
-				if (!getAdapter().createEvent) throw new Error("Adapter is read-only: createEvent not implemented");
-				set(loading, true);
-				set(error, null);
-				try {
-					const created = await getAdapter().createEvent(eventData);
-					upsertEvent(created);
-					return created;
-				} catch (e) {
-					set(error, e instanceof Error ? e.message : String(e), true);
-					throw e;
-				} finally {
-					set(loading, false);
-				}
-			},
-			async update(id, patch) {
-				if (!getAdapter().updateEvent) throw new Error("Adapter is read-only: updateEvent not implemented");
-				set(loading, true);
-				set(error, null);
-				try {
-					upsertEvent(await getAdapter().updateEvent(id, patch));
-				} catch (e) {
-					set(error, e instanceof Error ? e.message : String(e), true);
-					throw e;
-				} finally {
-					set(loading, false);
-				}
-			},
-			async remove(id) {
-				if (!getAdapter().deleteEvent) throw new Error("Adapter is read-only: deleteEvent not implemented");
-				set(loading, true);
-				set(error, null);
-				try {
-					await getAdapter().deleteEvent(id);
-					removeEvent(id);
-				} catch (e) {
-					set(error, e instanceof Error ? e.message : String(e), true);
-					throw e;
-				} finally {
-					set(loading, false);
-				}
-			},
-			async move(id, newStart, newEnd) {
-				const existing = eventMap.get(id);
-				if (existing) upsertEvent({
-					...existing,
-					start: newStart,
-					end: newEnd
-				});
-				try {
-					await this.update(id, {
-						start: newStart,
-						end: newEnd
-					});
-				} catch (e) {
-					const msg = e instanceof Error ? e.message : "";
-					if (existing && !msg.includes("read-only")) upsertEvent(existing);
-					throw e;
-				}
-			}
-		};
-	}
-	//#endregion
-	//#region src/lib/engine/view-state.svelte.ts
-	function inferMode(view) {
-		if (view.startsWith("day")) return "day";
-		if (view.startsWith("month")) return "month";
-		return "week";
-	}
-	function computeRange(focus, mode, mondayStart, dayCount = 7) {
-		if (mode === "day") {
-			const start = new Date(focus);
-			start.setHours(0, 0, 0, 0);
-			return {
-				start,
-				end: new Date(addDaysMs(start.getTime(), 1))
-			};
-		}
-		if (mode === "month") {
-			const first = new Date(focus.getFullYear(), focus.getMonth(), 1);
-			const last = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
-			const gridStart = startOfWeek(first.getTime(), mondayStart);
-			const gridEnd = addDaysMs(startOfWeek(last.getTime(), mondayStart), 7);
-			return {
-				start: new Date(gridStart),
-				end: new Date(gridEnd)
-			};
-		}
-		if (dayCount === 7) {
-			const ws = startOfWeek(focus.getTime(), mondayStart);
-			return {
-				start: new Date(ws),
-				end: new Date(addDaysMs(ws, 7))
-			};
-		}
-		const start = new Date(focus);
-		start.setHours(0, 0, 0, 0);
-		return {
-			start,
-			end: new Date(addDaysMs(start.getTime(), dayCount))
-		};
-	}
-	function createViewState(options = {}) {
-		let view = /* @__PURE__ */ state(proxy(options.view ?? "week-planner"));
-		let focusDate = /* @__PURE__ */ state(proxy(options.initialDate ?? /* @__PURE__ */ new Date()));
-		let mondayStart = /* @__PURE__ */ state(proxy(options.mondayStart ?? true));
-		let dayCount = /* @__PURE__ */ state(proxy(options.dayCount ?? 7));
-		const timezone = options.timezone;
-		const modeResolver = options.modeForView;
-		const mode = /* @__PURE__ */ user_derived(() => modeResolver?.(get(view)) ?? inferMode(get(view)));
-		const range = /* @__PURE__ */ user_derived(() => computeRange(get(focusDate), get(mode), get(mondayStart), get(dayCount)));
-		return {
-			get view() {
-				return get(view);
-			},
-			get focusDate() {
-				return get(focusDate);
-			},
-			get range() {
-				return get(range);
-			},
-			get mode() {
-				return get(mode);
-			},
-			get mondayStart() {
-				return get(mondayStart);
-			},
-			get timezone() {
-				return timezone;
-			},
-			get dayCount() {
-				return get(dayCount);
-			},
-			setView(id) {
-				set(view, id, true);
-			},
-			setMondayStart(value) {
-				set(mondayStart, value, true);
-			},
-			setFocusDate(date) {
-				set(focusDate, date, true);
-			},
-			setDayCount(n) {
-				set(dayCount, n, true);
-			},
-			next() {
-				if (get(mode) === "month") {
-					set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() + 1, 1), true);
-					return;
-				}
-				const days = get(mode) === "day" ? 1 : get(dayCount);
-				set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
-			},
-			prev() {
-				if (get(mode) === "month") {
-					set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() - 1, 1), true);
-					return;
-				}
-				const days = get(mode) === "day" ? -1 : -get(dayCount);
-				set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
-			},
-			goToday() {
-				set(focusDate, /* @__PURE__ */ new Date(), true);
-			}
-		};
-	}
-	//#endregion
-	//#region src/lib/engine/selection.svelte.ts
-	function createSelection() {
-		let selectedId = /* @__PURE__ */ state(null);
-		let hoveredId = /* @__PURE__ */ state(null);
-		let selectedIds = /* @__PURE__ */ state(proxy(/* @__PURE__ */ new Set()));
-		return {
-			get selectedId() {
-				return get(selectedId);
-			},
-			get hoveredId() {
-				return get(hoveredId);
-			},
-			get selectedIds() {
-				return get(selectedIds);
-			},
-			select(id) {
-				set(selectedId, id, true);
-				set(selectedIds, /* @__PURE__ */ new Set([id]), true);
-			},
-			deselect() {
-				set(selectedId, null);
-				set(selectedIds, /* @__PURE__ */ new Set(), true);
-			},
-			toggle(id) {
-				const next = new Set(get(selectedIds));
-				if (next.has(id)) next.delete(id);
-				else next.add(id);
-				set(selectedIds, next, true);
-				set(selectedId, next.size === 1 ? [...next][0] : null, true);
-			},
-			clear() {
-				set(selectedId, null);
-				set(hoveredId, null);
-				set(selectedIds, /* @__PURE__ */ new Set(), true);
-			},
-			hover(id) {
-				set(hoveredId, id, true);
-			},
-			isSelected(id) {
-				return get(selectedIds).has(id);
-			}
-		};
-	}
-	//#endregion
-	//#region src/lib/engine/drag.svelte.ts
-	function createDragState() {
-		let mode = /* @__PURE__ */ state("none");
-		let payload = /* @__PURE__ */ state(null);
-		const active = /* @__PURE__ */ user_derived(() => get(mode) !== "none");
-		function reset() {
-			set(mode, "none");
-			set(payload, null);
-		}
-		return {
-			get mode() {
-				return get(mode);
-			},
-			get payload() {
-				return get(payload);
-			},
-			get active() {
-				return get(active);
-			},
-			beginCreate(start, end, dayIndex = 0) {
-				set(mode, "create");
-				set(payload, {
-					eventId: null,
-					start,
-					end,
-					dayIndex
-				}, true);
-			},
-			beginMove(eventId, start, end) {
-				set(mode, "move");
-				set(payload, {
-					eventId,
-					start,
-					end,
-					dayIndex: 0
-				}, true);
-			},
-			beginResize(eventId, edge, start, end) {
-				set(mode, edge === "start" ? "resize-start" : "resize-end", true);
-				set(payload, {
-					eventId,
-					start,
-					end,
-					dayIndex: 0
-				}, true);
-			},
-			updatePointer(start, end, dayIndex) {
-				if (!get(payload)) return;
-				set(payload, {
-					...get(payload),
-					start,
-					end,
-					...dayIndex !== void 0 ? { dayIndex } : {}
-				}, true);
-			},
-			commit() {
-				const result = get(payload);
-				reset();
-				return result;
-			},
-			cancel() {
-				reset();
-			}
-		};
-	}
 	var _labels = {
 		today: "Today",
 		yesterday: "Yesterday",
@@ -6699,6 +6192,7 @@ createHTML: (html) => {
 		month: "Month",
 		planner: "Planner",
 		agenda: "Agenda",
+		scroll: "Scroll",
 		now: "now",
 		free: "free",
 		allDay: "All day",
@@ -6723,6 +6217,8 @@ createHTML: (html) => {
 		tentative: "tentative",
 		full: "full",
 		limited: "limited",
+		unavailable: "Unavailable",
+		noViews: "No views registered.",
 		dayNavigation: "Day navigation",
 		weekNavigation: "Week navigation",
 		dayPlanner: "Day planner",
@@ -6752,6 +6248,10 @@ createHTML: (html) => {
 	}
 	/** Module-level default locale — consumers can override via setDefaultLocale() */
 	var defaultLocale = "en-US";
+	/** Get the current default locale */
+	function getDefaultLocale() {
+		return defaultLocale;
+	}
 	/**
 	* Detect whether the current locale uses 12-hour or 24-hour time.
 	* Caches per locale tag for performance.
@@ -6785,19 +6285,21 @@ createHTML: (html) => {
 		return new Date(ms).toLocaleDateString(locale ?? defaultLocale, { month: "long" });
 	}
 	/**
-	* Format a week range label: "Feb 17 – 23, 2026" or "Jan 27 – Feb 2, 2026"
+	* Format a date range label in the locale's own order:
+	* "Sep 21 – 27, 2026" (en-US), "21–27 wrz 2026" (pl-PL),
+	* "Dec 28, 2026 – Jan 3, 2027" across a year.
+	*
+	* `weekEndMs` is the last day shown (inclusive); default: six days on.
 	*/
 	function fmtWeekRange(weekStartMs, locale, weekEndMs) {
 		const loc = locale ?? defaultLocale;
 		const s = new Date(weekStartMs);
 		const e = new Date(weekEndMs ?? addDaysMs(weekStartMs, 6));
-		const sm = s.toLocaleDateString(loc, { month: "short" });
-		const em = e.toLocaleDateString(loc, { month: "short" });
-		const sy = s.getFullYear();
-		const ey = e.getFullYear();
-		if (sy !== ey) return `${sm} ${s.getDate()}, ${sy} – ${em} ${e.getDate()}, ${ey}`;
-		if (sm !== em) return `${sm} ${s.getDate()} – ${em} ${e.getDate()}, ${ey}`;
-		return `${sm} ${s.getDate()} – ${e.getDate()}, ${ey}`;
+		return new Intl.DateTimeFormat(loc, {
+			month: "short",
+			day: "numeric",
+			year: "numeric"
+		}).formatRange(s, e).replace(/[\u2009\u202f]/g, " ");
 	}
 	/**
 	* Format a Date as a compact time string.
@@ -6826,628 +6328,6 @@ createHTML: (html) => {
 		const h = Math.floor(mins / 60);
 		const m = mins % 60;
 		return m > 0 ? `${h}h ${m}m` : `${h}h`;
-	}
-	//#endregion
-	//#region src/lib/theme/presets.ts
-	/**
-	* Theme presets for timeline components.
-	*
-	* Each preset is a CSS inline-style string of --dt-* custom properties.
-	* Pass to the `theme` prop of any timeline component.
-	*
-	* Presets:
-	*   auto     — Transparent: inherit --dt-* from the host page (recommended default)
-	*   neutral  — Explicit light theme: white bg, blue accent, works standalone
-	*   midnight — Explicit dark theme: charcoal bg, red accent
-	*/
-	/**
-	* Auto — triggers the smart auto-theme engine.
-	*
-	* When passed to Calendar's `theme` prop, the component will probe the host
-	* page at mount time (background, fonts, accent color, light/dark mode)
-	* and generate matching --dt-* CSS tokens automatically.
-	*
-	* Reactively watches for host theme changes (e.g. dark-mode toggle).
-	*
-	* If you want passive inheritance only (no probing), pass `autoTheme={false}`
-	* alongside `theme={auto}`.
-	*/
-	var auto = ``;
-	/** All available presets keyed by name */
-	var presets = {
-		auto,
-		neutral: `
-	--dt-stage-bg: #ffffff;
-	--dt-bg: #ffffff;
-	--dt-surface: #f9fafb;
-	--dt-border: rgba(0, 0, 0, 0.08);
-	--dt-border-day: rgba(0, 0, 0, 0.14);
-	--dt-text: rgba(0, 0, 0, 0.87);
-	--dt-text-2: rgba(0, 0, 0, 0.54);
-	--dt-text-3: rgba(0, 0, 0, 0.38);
-	--dt-accent: var(--asini-accent, #2563eb);
-	--dt-accent-dim: color-mix(in srgb, var(--dt-accent) 12%, transparent);
-	--dt-glow: color-mix(in srgb, var(--dt-accent) 25%, transparent);
-	--dt-today-bg: color-mix(in srgb, var(--dt-accent) 7%, transparent);
-	--dt-btn-text: #fff;
-	--dt-scrollbar: rgba(0, 0, 0, 0.1);
-	--dt-success: rgba(22, 163, 74, 0.7);
-	--dt-weekend-bg: rgba(0, 0, 0, 0.02);
-	--dt-hover: rgba(0, 0, 0, 0.04);
-	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
-`,
-		midnight: `
-	--dt-stage-bg: #080a0f;
-	--dt-bg: #0b0e14;
-	--dt-surface: #10141c;
-	--dt-border: rgba(148, 163, 184, 0.07);
-	--dt-border-day: rgba(148, 163, 184, 0.14);
-	--dt-text: rgba(226, 232, 240, 0.85);
-	--dt-text-2: rgba(148, 163, 184, 0.55);
-	--dt-text-3: rgba(100, 116, 139, 0.55);
-	--dt-accent: #ef4444;
-	--dt-accent-dim: rgba(239, 68, 68, 0.18);
-	--dt-glow: rgba(239, 68, 68, 0.35);
-	--dt-today-bg: rgba(239, 68, 68, 0.07);
-	--dt-btn-text: #fff;
-	--dt-scrollbar: rgba(148, 163, 184, 0.12);
-	--dt-success: rgba(74, 222, 128, 0.7);
-	--dt-weekend-bg: rgba(148, 163, 184, 0.03);
-	--dt-hover: rgba(148, 163, 184, 0.06);
-	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
-`
-	};
-	//#endregion
-	//#region src/lib/theme/auto.ts
-	function parseColor(raw) {
-		if (!raw || raw === "transparent" || raw === "rgba(0, 0, 0, 0)") return null;
-		const rgba = raw.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
-		if (rgba) return [
-			+rgba[1],
-			+rgba[2],
-			+rgba[3]
-		];
-		if (raw.startsWith("#")) {
-			const h = raw.replace("#", "");
-			const n = h.length === 3 ? parseInt(h[0] + h[0] + h[1] + h[1] + h[2] + h[2], 16) : parseInt(h, 16);
-			return [
-				n >> 16 & 255,
-				n >> 8 & 255,
-				n & 255
-			];
-		}
-		return null;
-	}
-	function luminance([r, g, b]) {
-		const lin = (c) => {
-			const s = c / 255;
-			return s <= .03928 ? s / 12.92 : ((s + .055) / 1.055) ** 2.4;
-		};
-		return .2126 * lin(r) + .7152 * lin(g) + .0722 * lin(b);
-	}
-	function rgbToHsl(r, g, b) {
-		r /= 255;
-		g /= 255;
-		b /= 255;
-		const max = Math.max(r, g, b), min = Math.min(r, g, b);
-		const l = (max + min) / 2;
-		if (max === min) return [
-			0,
-			0,
-			l
-		];
-		const d = max - min;
-		const s = l > .5 ? d / (2 - max - min) : d / (max + min);
-		let h = 0;
-		if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-		else if (max === g) h = ((b - r) / d + 2) / 6;
-		else h = ((r - g) / d + 4) / 6;
-		return [
-			h,
-			s,
-			l
-		];
-	}
-	function hslToRgb(h, s, l) {
-		h = (h % 1 + 1) % 1;
-		const hue2rgb = (p, q, t) => {
-			if (t < 0) t += 1;
-			if (t > 1) t -= 1;
-			if (t < 1 / 6) return p + (q - p) * 6 * t;
-			if (t < 1 / 2) return q;
-			if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-			return p;
-		};
-		if (s === 0) {
-			const v = Math.round(l * 255);
-			return [
-				v,
-				v,
-				v
-			];
-		}
-		const q = l < .5 ? l * (1 + s) : l + s - l * s;
-		const p = 2 * l - q;
-		return [
-			Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
-			Math.round(hue2rgb(p, q, h) * 255),
-			Math.round(hue2rgb(p, q, h - 1 / 3) * 255)
-		];
-	}
-	function rgbStr(r, g, b) {
-		return `#${[
-			r,
-			g,
-			b
-		].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
-	}
-	function rgba(r, g, b, a) {
-		return `rgba(${r}, ${g}, ${b}, ${a})`;
-	}
-	/** Mix two colors. t=0 → c1, t=1 → c2. */
-	function mix(c1, c2, t) {
-		return [
-			Math.round(c1[0] + (c2[0] - c1[0]) * t),
-			Math.round(c1[1] + (c2[1] - c1[1]) * t),
-			Math.round(c1[2] + (c2[2] - c1[2]) * t)
-		];
-	}
-	/**
-	* Parent element that hops shadow boundaries. When a node is a direct child
-	* of a ShadowRoot, `parentElement` is null — continue the walk from the
-	* shadow host so probes can still see the host page (the embeddable widget
-	* mounts the calendar inside a shadow root).
-	*/
-	function parentAcrossShadow(node) {
-		if (node.parentElement) return node.parentElement;
-		const root = node.getRootNode();
-		return typeof ShadowRoot !== "undefined" && root instanceof ShadowRoot && root.host instanceof HTMLElement ? root.host : null;
-	}
-	/**
-	* Common CSS variable names for text / foreground color used by popular frameworks.
-	*/
-	var TEXT_VAR_CANDIDATES = [
-		"--text",
-		"--text-color",
-		"--color-text",
-		"--foreground",
-		"--color-foreground",
-		"--bs-body-color",
-		"--chakra-colors-text",
-		"--chakra-colors-gray-800",
-		"--md-sys-color-on-background",
-		"--mdc-theme-on-surface",
-		"--bc",
-		"--gray-12",
-		"--text-1"
-	];
-	/**
-	* Probe the host page for a usable text (foreground) color.
-	* Uses the same three-pass strategy as `probeBackground()`:
-	*   1. CSS custom-property probe on :root (discrete, not animated)
-	*   2. Inline-style walk (`element.style.color` — immune to CSS transitions)
-	*   3. Computed-style walk (`getComputedStyle().color`)
-	*
-	* After probing, validates that the text color has adequate contrast against
-	* the given background. If contrast is poor (WCAG ratio < 3:1), returns null
-	* so the caller can derive text from the background luminance.
-	*/
-	function probeTextColor(el, bg) {
-		const candidates = [];
-		try {
-			const rootCs = getComputedStyle(document.documentElement);
-			for (const name of TEXT_VAR_CANDIDATES) {
-				const val = rootCs.getPropertyValue(name).trim();
-				if (val) {
-					const rgb = parseColor(val);
-					if (rgb) {
-						candidates.push(rgb);
-						break;
-					}
-				}
-			}
-		} catch {}
-		let node = el;
-		while (node) {
-			const raw = node.style.color;
-			if (raw) {
-				const rgb = parseColor(raw);
-				if (rgb) {
-					candidates.push(rgb);
-					break;
-				}
-			}
-			node = parentAcrossShadow(node);
-		}
-		node = el;
-		while (node) {
-			try {
-				const raw = getComputedStyle(node).color;
-				const rgb = parseColor(raw);
-				if (rgb) {
-					candidates.push(rgb);
-					break;
-				}
-			} catch {}
-			node = parentAcrossShadow(node);
-		}
-		const bgLum = luminance(bg);
-		for (const c of candidates) {
-			const cLum = luminance(c);
-			if ((Math.max(bgLum, cLum) + .05) / (Math.min(bgLum, cLum) + .05) >= 3) return c;
-		}
-		return null;
-	}
-	/**
-	* Common CSS variable names used by popular frameworks/design systems
-	* for their primary/brand accent color.
-	*/
-	var ACCENT_VAR_CANDIDATES = [
-		"--accent",
-		"--accent-color",
-		"--primary",
-		"--primary-color",
-		"--brand",
-		"--brand-color",
-		"--theme-color",
-		"--color-primary",
-		"--color-accent",
-		"--p",
-		"--color-primary",
-		"--primary",
-		"--md-sys-color-primary",
-		"--mdc-theme-primary",
-		"--bs-primary",
-		"--bs-primary-rgb",
-		"--chakra-colors-brand-500",
-		"--chakra-colors-primary",
-		"--blue-6",
-		"--accent-9",
-		"--color-primary-500",
-		"--primary-500"
-	];
-	/**
-	* Try to extract a usable accent color from the host page.
-	* Priority: CSS variables → link color → selection color → null.
-	*/
-	function probeAccent(root) {
-		let cs;
-		try {
-			cs = getComputedStyle(root);
-		} catch {
-			return null;
-		}
-		for (const name of ACCENT_VAR_CANDIDATES) {
-			const val = cs.getPropertyValue(name).trim();
-			if (val) {
-				const rgb = parseColor(val);
-				if (rgb) {
-					const [, s] = rgbToHsl(...rgb);
-					if (s > .15) return rgb;
-				}
-			}
-		}
-		const link = root.querySelector("a[href]");
-		if (link) {
-			const lc = parseColor(getComputedStyle(link).color);
-			if (lc) {
-				const [, s] = rgbToHsl(...lc);
-				if (s > .2) return lc;
-			}
-		}
-		const accent = cs.getPropertyValue("accent-color").trim();
-		if (accent && accent !== "auto") {
-			const rgb = parseColor(accent);
-			if (rgb) return rgb;
-		}
-		const btn = root.querySelector("button:not([class*=\"cal-\"])");
-		if (btn) {
-			const bg = parseColor(getComputedStyle(btn).backgroundColor);
-			if (bg) {
-				const [, s] = rgbToHsl(...bg);
-				if (s > .25) return bg;
-			}
-		}
-		return null;
-	}
-	/** Common CSS variable names for the host's monospace font stack. */
-	var MONO_VAR_CANDIDATES = [
-		"--font-mono",
-		"--font-family-mono",
-		"--font-monospace",
-		"--mono-font",
-		"--code-font"
-	];
-	var MONO_FALLBACK = "ui-monospace, 'SFMono-Regular', monospace";
-	/**
-	* Adopt the host page's fonts.
-	*
-	* Sans: the host element's *computed* font-family — the resolved authored
-	* stack, so webfont names come through verbatim. (Declaring `--dt-sans:
-	* inherit` does NOT work: a custom property with no ancestor value computes
-	* to guaranteed-invalid, so `var(--dt-sans, fallback)` used the fallback and
-	* the host font never applied.)
-	*
-	* Mono: common CSS variables on :root, then any code-ish element's computed
-	* font, then a generic stack.
-	*/
-	function probeFonts(host) {
-		let sans = "system-ui, sans-serif";
-		try {
-			const f = getComputedStyle(host).fontFamily;
-			if (f) sans = f;
-		} catch {}
-		let mono = "";
-		try {
-			const rootCs = getComputedStyle(document.documentElement);
-			for (const name of MONO_VAR_CANDIDATES) {
-				const val = rootCs.getPropertyValue(name).trim();
-				if (val) {
-					mono = val;
-					break;
-				}
-			}
-		} catch {}
-		if (!mono) {
-			const code = document.querySelector("pre, code, kbd, samp");
-			if (code) try {
-				mono = getComputedStyle(code).fontFamily || "";
-			} catch {}
-		}
-		return {
-			sans,
-			mono: mono || MONO_FALLBACK
-		};
-	}
-	/**
-	* Common CSS variable names for background color used by popular frameworks.
-	*/
-	var BG_VAR_CANDIDATES = [
-		"--bg",
-		"--background",
-		"--color-bg",
-		"--color-background",
-		"--body-bg",
-		"--bs-body-bg",
-		"--chakra-colors-bg",
-		"--md-sys-color-background",
-		"--b1",
-		"--background",
-		"--color-background"
-	];
-	/**
-	* Walk up the DOM tree to find the first non-transparent background.
-	* Also probes common CSS variables for background color.
-	* Returns the parsed RGB and whether this is a dark background.
-	*
-	* Uses a three-pass strategy:
-	*   1. CSS custom-property probe on :root (instant, not animated)
-	*   2. Inline-style walk (reads `element.style.background` — the *target*
-	*      value, immune to CSS `transition` interpolation)
-	*   3. Computed-style walk (reads `getComputedStyle().backgroundColor` —
-	*      may return a mid-transition intermediate value)
-	*
-	* Passes 1-2 are preferred because CSS transitions animate the resolved
-	* `background-color` property, making `getComputedStyle` unreliable
-	* during the transition window.
-	*/
-	function probeBackground(el) {
-		const result = (rgb) => ({
-			bg: rgb,
-			isDark: luminance(rgb) < .4
-		});
-		try {
-			const rootCs = getComputedStyle(document.documentElement);
-			for (const name of BG_VAR_CANDIDATES) {
-				const val = rootCs.getPropertyValue(name).trim();
-				if (val) {
-					const rgb = parseColor(val);
-					if (rgb) return result(rgb);
-				}
-			}
-		} catch {}
-		let node = el;
-		while (node) {
-			const raw = node.style.backgroundColor || node.style.background;
-			if (raw) {
-				const rgb = parseColor(raw);
-				if (rgb) return result(rgb);
-			}
-			node = parentAcrossShadow(node);
-		}
-		node = el;
-		while (node) {
-			try {
-				const raw = getComputedStyle(node).backgroundColor;
-				const rgb = parseColor(raw);
-				if (rgb) return result(rgb);
-			} catch {}
-			node = parentAcrossShadow(node);
-		}
-		if (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) return {
-			bg: [
-				18,
-				18,
-				18
-			],
-			isDark: true
-		};
-		return {
-			bg: [
-				255,
-				255,
-				255
-			],
-			isDark: false
-		};
-	}
-	/**
-	* Probe the host page surrounding `el` and generate a complete --dt-* CSS string.
-	*
-	* @param el       The calendar's root element (or any element in the host page).
-	* @param options  Optional overrides for mode, accent, font.
-	* @returns        A CSS inline-style string of --dt-* custom properties.
-	*/
-	function probeHostTheme(el, options = {}) {
-		const host = parentAcrossShadow(el) ?? el;
-		const htmlRoot = (host.closest("body") ?? host) instanceof HTMLElement ? host.closest("body") ?? host : document.body;
-		const { bg, isDark: autoDark } = probeBackground(host);
-		const isDark = options.mode === "auto" || !options.mode ? autoDark : options.mode === "dark";
-		let accent;
-		if (options.accent) accent = parseColor(options.accent) ?? [
-			37,
-			99,
-			235
-		];
-		else accent = probeAccent(htmlRoot) ?? (isDark ? [
-			239,
-			68,
-			68
-		] : [
-			37,
-			99,
-			235
-		]);
-		const [aH, aS, aL] = rgbToHsl(...accent);
-		const fonts = options.font ? {
-			sans: options.font,
-			mono: MONO_FALLBACK
-		} : probeFonts(host);
-		const textBase = probeTextColor(host, bg) ?? (isDark ? [
-			226,
-			232,
-			240
-		] : [
-			30,
-			30,
-			46
-		]);
-		const calBg = isDark ? mix(bg, [
-			255,
-			255,
-			255
-		], .02) : mix(bg, [
-			0,
-			0,
-			0
-		], .005);
-		const stageBg = bg;
-		const surface = isDark ? mix(calBg, [
-			255,
-			255,
-			255
-		], .04) : mix(calBg, [
-			0,
-			0,
-			0
-		], .02);
-		const borderAlpha = isDark ? .07 : .08;
-		const borderDayAlpha = isDark ? .14 : .14;
-		const borderRgb = isDark ? [
-			148,
-			163,
-			184
-		] : [
-			0,
-			0,
-			0
-		];
-		const accentDim = isDark ? .15 : .12;
-		const glow = isDark ? .3 : .25;
-		const todayBg = isDark ? .07 : .07;
-		const accentAdj = hslToRgb(aH, Math.max(aS, .5), isDark ? Math.max(aL, .45) : Math.min(aL, .48));
-		const btnText = luminance(accentAdj) < .4 ? "#ffffff" : "#1a1a2e";
-		const scrollAlpha = isDark ? .12 : .1;
-		const successRgb = isDark ? [
-			74,
-			222,
-			128
-		] : [
-			22,
-			163,
-			74
-		];
-		return [
-			`--dt-stage-bg: ${rgbStr(...stageBg)}`,
-			`--dt-bg: ${rgbStr(...calBg)}`,
-			`--dt-surface: ${rgbStr(...surface)}`,
-			`--dt-border: ${rgba(...borderRgb, borderAlpha)}`,
-			`--dt-border-day: ${rgba(...borderRgb, borderDayAlpha)}`,
-			`--dt-text: ${rgba(...textBase, isDark ? .87 : .87)}`,
-			`--dt-text-2: ${rgba(...textBase, isDark ? .55 : .54)}`,
-			`--dt-text-3: ${rgba(...textBase, isDark ? .38 : .38)}`,
-			`--dt-accent: ${rgbStr(...accentAdj)}`,
-			`--dt-accent-dim: ${rgba(...accentAdj, accentDim)}`,
-			`--dt-glow: ${rgba(...accentAdj, glow)}`,
-			`--dt-today-bg: ${rgba(...accentAdj, todayBg)}`,
-			`--dt-btn-text: ${btnText}`,
-			`--dt-scrollbar: ${rgba(...borderRgb, scrollAlpha)}`,
-			`--dt-success: ${rgba(...successRgb, .7)}`,
-			`--dt-weekend-bg: ${rgba(...borderRgb, isDark ? .03 : .02)}`,
-			`--dt-hover: ${rgba(...borderRgb, isDark ? .06 : .04)}`,
-			`--dt-sans: ${fonts.sans}`,
-			`--dt-mono: ${fonts.mono}`
-		].map((v) => `\t${v}`).join(";\n") + ";";
-	}
-	/**
-	* Observe changes to the host page that might affect theming
-	* (color-scheme toggle, class changes on <html>/<body>, style attribute changes).
-	*
-	* Returns a cleanup function to stop observing.
-	*
-	* @param el        The calendar's root element.
-	* @param callback  Called with the new CSS string whenever the host theme changes.
-	* @param options   Passthrough to probeHostTheme.
-	*/
-	function observeHostTheme(el, callback, options = {}) {
-		let last = "";
-		const update = () => {
-			const next = probeHostTheme(el, options);
-			if (next !== last) {
-				last = next;
-				callback(next);
-			}
-		};
-		const mql = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
-		const onScheme = () => update();
-		mql?.addEventListener("change", onScheme);
-		let rafId = 0;
-		const scheduleUpdate = () => {
-			cancelAnimationFrame(rafId);
-			rafId = requestAnimationFrame(() => {
-				rafId = requestAnimationFrame(update);
-			});
-		};
-		const observer = new MutationObserver(scheduleUpdate);
-		observer.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: [
-				"class",
-				"style",
-				"data-theme",
-				"data-mode",
-				"color-scheme"
-			]
-		});
-		observer.observe(document.body, {
-			attributes: true,
-			attributeFilter: [
-				"class",
-				"style",
-				"data-theme",
-				"data-mode",
-				"color-scheme"
-			]
-		});
-		if (document.readyState !== "complete") window.addEventListener("load", scheduleUpdate, { once: true });
-		document.fonts?.ready?.then(scheduleUpdate).catch(() => {});
-		update();
-		return () => {
-			cancelAnimationFrame(rafId);
-			mql?.removeEventListener("change", onScheme);
-			window.removeEventListener("load", scheduleUpdate);
-			observer.disconnect();
-		};
 	}
 	//#endregion
 	//#region src/lib/views/shared/context.svelte.ts
@@ -8159,6 +7039,12 @@ createHTML: (html) => {
 	function fromZonedTime(date, timezone) {
 		return fromZonedTime$1(date, timezone);
 	}
+	/**
+	* Get the current time as it appears in the given timezone.
+	*/
+	function nowInZone(timezone) {
+		return toZonedTime$1(/* @__PURE__ */ new Date(), timezone);
+	}
 	function wrapAdapterWithTimezone(adapter, timezone) {
 		const zoneEvent = (ev) => ({
 			...ev,
@@ -8170,12 +7056,14 @@ createHTML: (html) => {
 			...obj.start instanceof Date ? { start: fromZonedTime(obj.start, timezone) } : {},
 			...obj.end instanceof Date ? { end: fromZonedTime(obj.end, timezone) } : {}
 		});
+		const unzoneRange = (range) => ({
+			start: fromZonedTime(range.start, timezone),
+			end: fromZonedTime(range.end, timezone)
+		});
 		const wrapped = { async fetchEvents(range) {
-			return (await adapter.fetchEvents({
-				start: fromZonedTime(range.start, timezone),
-				end: fromZonedTime(range.end, timezone)
-			})).map(zoneEvent);
+			return (await adapter.fetchEvents(unzoneRange(range))).map(zoneEvent);
 		} };
+		if (adapter.fetchEventsSync) wrapped.fetchEventsSync = (range) => adapter.fetchEventsSync(unzoneRange(range))?.map(zoneEvent);
 		if (adapter.createEvent) wrapped.createEvent = async (event) => zoneEvent(await adapter.createEvent(unzonePartial(event)));
 		if (adapter.updateEvent) wrapped.updateEvent = async (id, patch) => zoneEvent(await adapter.updateEvent(id, unzonePartial(patch)));
 		if (adapter.deleteEvent) wrapped.deleteEvent = (id) => adapter.deleteEvent(id);
@@ -8185,8 +7073,9 @@ createHTML: (html) => {
 	//#region src/lib/core/clock.svelte.ts
 	function createClock(timezone) {
 		const now = () => timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now();
-		let tick = /* @__PURE__ */ state(proxy(now()));
-		let today = /* @__PURE__ */ state(proxy(sod(get(tick))));
+		const t0 = now();
+		let tick = /* @__PURE__ */ state(proxy(t0));
+		let today = /* @__PURE__ */ state(proxy(sod(t0)));
 		let intervalId = null;
 		function start() {
 			intervalId = setInterval(() => {
@@ -14162,7 +13051,7 @@ createHTML: (html) => {
 	var root_5$7 = /* @__PURE__ */ from_html(`<span> </span>`);
 	var root_6$7 = /* @__PURE__ */ from_html(`<div class="tw-hd-custom svelte-j4rvbp"><!></div>`);
 	var root_7$7 = /* @__PURE__ */ from_html(`<div><span class="tw-hd-wd svelte-j4rvbp"> </span> <!> <!></div>`);
-	var root_8$7 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
+	var root_8$6 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
 	var root_9$5 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
 	var root_10$5 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
 	var root_11$5 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
@@ -14176,15 +13065,17 @@ createHTML: (html) => {
 	var root_19$4 = /* @__PURE__ */ from_html(`<span class="tw-ev-loc svelte-j4rvbp"> </span>`);
 	var root_20$4 = /* @__PURE__ */ from_html(`<span class="tw-ev-time svelte-j4rvbp"> </span> <span class="tw-ev-title svelte-j4rvbp"> </span> <!>`, 1);
 	var root_21$4 = /* @__PURE__ */ from_html(`<span class="tw-ev-live svelte-j4rvbp" aria-hidden="true"></span>`);
-	var root_22$2 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--start svelte-j4rvbp" aria-hidden="true"></span> <span class="tw-ev-handle tw-ev-handle--end svelte-j4rvbp" aria-hidden="true"></span>`, 1);
-	var root_23$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="tw-ev-stripe svelte-j4rvbp" aria-hidden="true"></div> <div class="tw-ev-body svelte-j4rvbp"><!></div> <!> <!></div>`);
-	var root_24$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
-	var root_25$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
-	var root_26$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
-	var root_27$2 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
-	var root_28$2 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
-	var root_29$2 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
-	var root_30$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><!> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"></div> <!></div></div></div></div> <!></div>`);
+	var root_22$4 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--start svelte-j4rvbp" aria-hidden="true"></span>`);
+	var root_23$3 = /* @__PURE__ */ from_html(`<span class="tw-ev-handle tw-ev-handle--end svelte-j4rvbp" aria-hidden="true"></span>`);
+	var root_24$2 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+	var root_25$2 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><div class="tw-ev-stripe svelte-j4rvbp" aria-hidden="true"></div> <div class="tw-ev-body svelte-j4rvbp"><!></div> <!> <!></div>`);
+	var root_26$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
+	var root_27$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
+	var root_28$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
+	var root_29$2 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
+	var root_30$1 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
+	var root_31$1 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
+	var root_32$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><!> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"></div> <!></div></div></div></div> <!></div>`);
 	function PlannerWeek($$anchor, $$props) {
 		push($$props, true);
 		const allDayChip = ($$anchor, seg = noop) => {
@@ -14252,6 +13143,33 @@ createHTML: (html) => {
 		const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
 		const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
 		const SNAP_MS = /* @__PURE__ */ user_derived(() => ctx.snapInterval * 6e4);
+		function atHour(dayMs, hour) {
+			return new Date(dayMs).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+		}
+		/** Epoch ms → fractional wall-clock hour counted from the day at `dayMs`
+		*  (24 = the next midnight; calendar days, not 24 h steps). */
+		function hourOf(ms, dayMs) {
+			const d = new Date(ms);
+			return diffDays(ms, dayMs) * 24 + d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600 + d.getMilliseconds() / HOUR_MS;
+		}
+		/** Snap a fractional hour to the snap interval, in wall-clock minutes of
+		*  the local day (not UTC multiples — those are off in +05:30 zones). */
+		function snapHour(hour, how) {
+			const step = Math.max(1, ctx.snapInterval);
+			const units = hour * 60 / step;
+			return (how === "floor" ? Math.floor(units + 1e-9) : Math.round(units)) * step / 60;
+		}
+		/** Snap an instant, relative to its own local day. */
+		function snapMs(ms, how) {
+			const day = sod(ms);
+			return atHour(day, snapHour(hourOf(ms, day), how));
+		}
+		/** Timed events at least a (wall-clock) day long, and all-day ones, sit in
+		*  the all-day strip; a shorter overnight event is drawn as a clamped
+		*  segment on each day it touches. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+		}
 		const HOUR_H = 48;
 		const GUTTER_W = 48;
 		const MIN_COL_W = /* @__PURE__ */ user_derived(() => ctx.minColumnWidth);
@@ -14297,8 +13215,8 @@ createHTML: (html) => {
 		const innerMinWidth = /* @__PURE__ */ user_derived(() => GUTTER_W + get(dayCols).length * get(MIN_COL_W));
 		user_effect(() => {
 			if (!get(loadRangeCtx)) return;
-			const rangeStart = /* @__PURE__ */ new Date(get(weekStartMs) - 7 * DAY_MS);
-			const rangeEnd = new Date(get(weekEndMs) + 7 * DAY_MS);
+			const rangeStart = new Date(addDaysMs(get(weekStartMs), -7));
+			const rangeEnd = new Date(addDaysMs(get(weekEndMs), 7));
 			get(loadRangeCtx).set({
 				start: rangeStart,
 				end: rangeEnd
@@ -14310,7 +13228,7 @@ createHTML: (html) => {
 			for (const day of get(dayCols)) {
 				const segs = [];
 				for (const ev of events()) {
-					if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+					if (!inAllDayStrip(ev)) continue;
 					const seg = segmentForDay(ev, day.ms);
 					if (seg) segs.push(seg);
 				}
@@ -14322,19 +13240,43 @@ createHTML: (html) => {
 		let adExpanded = proxy({});
 		const movingId = /* @__PURE__ */ user_derived(() => get(drag)?.active && get(drag).mode === "move" ? get(drag).payload?.eventId ?? null : null);
 		const movingEvent = /* @__PURE__ */ user_derived(() => get(movingId) ? events().find((e) => e.id === get(movingId)) ?? null : null);
+		/** This day holds the event's start / end (an overnight event is two
+		*  segments; each resize grip lives only on the segment it moves). */
+		/** Lane extent — a zero-length event claims its minimum block height. */
+		/** The clamped end the block is drawn to. */
 		const layoutByDay = /* @__PURE__ */ user_derived(() => {
 			const rsP = get(drag)?.active && (get(drag).mode === "resize-start" || get(drag).mode === "resize-end") ? get(drag).payload : null;
 			const map = /* @__PURE__ */ new Map();
 			for (const day of get(dayCols)) {
 				const dayEnd = addDaysMs(day.ms, 1);
-				const bandStart = day.ms + get(startHour) * HOUR_MS;
-				const bandEnd = day.ms + get(endHour) * HOUR_MS;
+				const bandStart = atHour(day.ms, get(startHour));
+				const bandEnd = atHour(day.ms, get(endHour));
 				const infos = [];
 				for (const ev of events()) {
-					if (isAllDay(ev) || isMultiDay(ev)) continue;
+					if (inAllDayStrip(ev)) continue;
 					const isResizing = rsP?.eventId === ev.id;
 					const s0 = isResizing ? rsP.start.getTime() : ev.start.getTime();
 					const e0 = isResizing ? rsP.end.getTime() : ev.end.getTime();
+					if (e0 < s0) continue;
+					const hasStart = s0 >= day.ms && s0 < dayEnd;
+					const hasEnd = e0 > day.ms && e0 <= dayEnd;
+					if (e0 === s0) {
+						if (!hasStart || s0 < bandStart || s0 >= bandEnd) continue;
+						const laneEnd = Math.min(bandEnd, s0 + HOUR_MS / 2);
+						infos.push({
+							ev,
+							startMs: s0,
+							endMs: laneEnd,
+							drawEndMs: s0,
+							hasStart,
+							hasEnd: true,
+							isResizing,
+							isMoving: ev.id === get(movingId),
+							col: 0,
+							totalCols: 1
+						});
+						continue;
+					}
 					if (s0 >= dayEnd || e0 <= day.ms) continue;
 					const sMs = Math.max(s0, bandStart);
 					const eMs = Math.min(e0, bandEnd);
@@ -14343,6 +13285,9 @@ createHTML: (html) => {
 						ev,
 						startMs: sMs,
 						endMs: eMs,
+						drawEndMs: eMs,
+						hasStart: hasStart && s0 >= bandStart,
+						hasEnd: hasEnd && e0 <= bandEnd,
 						isResizing,
 						isMoving: ev.id === get(movingId),
 						col: 0,
@@ -14386,12 +13331,14 @@ createHTML: (html) => {
 				}
 				map.set(day.ms, infos.map((inf) => ({
 					ev: inf.ev,
-					top: ((inf.startMs - day.ms) / HOUR_MS - get(startHour)) * HOUR_H,
-					height: Math.max(24, (inf.endMs - inf.startMs) / HOUR_MS * HOUR_H),
+					top: (hourOf(inf.startMs, day.ms) - get(startHour)) * HOUR_H,
+					height: Math.max(24, (hourOf(inf.drawEndMs, day.ms) - hourOf(inf.startMs, day.ms)) * HOUR_H),
 					col: inf.col,
 					totalCols: inf.totalCols,
 					isResizing: inf.isResizing,
-					isMoving: inf.isMoving
+					isMoving: inf.isMoving,
+					hasStart: inf.hasStart,
+					hasEnd: inf.hasEnd
 				})));
 			}
 			return map;
@@ -14402,7 +13349,7 @@ createHTML: (html) => {
 			for (const ev of events()) if (ev.start.getTime() <= now && ev.end.getTime() > now) s.add(ev.id);
 			return s;
 		});
-		const nowFracHour = /* @__PURE__ */ user_derived(() => (clock.tick - clock.today) / HOUR_MS);
+		const nowFracHour = /* @__PURE__ */ user_derived(() => hourOf(clock.tick, clock.today));
 		/** Y offset of the now-line, or null when outside visibleHours */
 		const nowY = /* @__PURE__ */ user_derived(() => {
 			if (get(nowFracHour) < get(startHour) || get(nowFracHour) > get(endHour)) return null;
@@ -14459,13 +13406,18 @@ createHTML: (html) => {
 		function colsRect() {
 			return rectCache ?? colsEl.getBoundingClientRect();
 		}
-		/** Pointer X → index into dayCols (clamped) */
+		/** Pointer X → index into dayCols (clamped). Under `dir="rtl"` the flex
+		*  row runs right-to-left, so the first day is the rightmost column. */
 		function pointerDayIndex(clientX) {
 			const r = colsRect();
 			const n = get(dayCols).length;
 			if (n === 0) return 0;
 			const w = r.width / n;
-			return Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+			const i = Math.max(0, Math.min(n - 1, Math.floor((clientX - r.left) / w)));
+			return isRtl() ? n - 1 - i : i;
+		}
+		function isRtl() {
+			return !!colsEl && getComputedStyle(colsEl).direction === "rtl";
 		}
 		/** Pointer Y → fractional hour (unclamped) */
 		function pointerHour(clientY) {
@@ -14473,11 +13425,11 @@ createHTML: (html) => {
 		}
 		/** Pointer → epoch ms (day from X, time from Y, clamped into the band) */
 		function pointerTimeMs(clientX, clientY) {
-			return (get(dayCols)[pointerDayIndex(clientX)]?.ms ?? get(weekStartMs)) + Math.min(Math.max(pointerHour(clientY), get(startHour)), get(endHour)) * HOUR_MS;
+			return atHour(get(dayCols)[pointerDayIndex(clientX)]?.ms ?? get(weekStartMs), Math.min(Math.max(pointerHour(clientY), get(startHour)), get(endHour)));
 		}
 		/** Clamp a timestamp into the visible band of a specific day */
 		function clampToDayBand(ms, dayMs) {
-			return Math.max(dayMs + get(startHour) * HOUR_MS, Math.min(dayMs + get(endHour) * HOUR_MS, ms));
+			return Math.max(atHour(dayMs, get(startHour)), Math.min(atHour(dayMs, get(endHour)), ms));
 		}
 		function isBlockedAt(dayMs, hour) {
 			if (!get(blockedSlots)?.length) return false;
@@ -14489,7 +13441,7 @@ createHTML: (html) => {
 			});
 		}
 		function blockedRangeLabel(dayMs, slotStart, slotEnd) {
-			return `${fmtTime$1(new Date(dayMs + slotStart * HOUR_MS), $$props.locale)} – ${fmtTime$1(new Date(dayMs + slotEnd * HOUR_MS), $$props.locale)}`;
+			return `${fmtTime$1(new Date(atHour(dayMs, slotStart)), $$props.locale)} – ${fmtTime$1(new Date(atHour(dayMs, slotEnd)), $$props.locale)}`;
 		}
 		const BODY_PAD_Y = 6;
 		const TIME_LINE = 11 * 1.1;
@@ -14526,14 +13478,15 @@ createHTML: (html) => {
 			if (mode !== "move" && mode !== "create") return null;
 			const s = get(drag).payload.start.getTime();
 			const e = get(drag).payload.end.getTime();
-			const bandS = dayMs + get(startHour) * HOUR_MS;
-			const bandE = dayMs + get(endHour) * HOUR_MS;
+			const bandS = atHour(dayMs, get(startHour));
+			const bandE = atHour(dayMs, get(endHour));
 			const cs = Math.max(s, bandS);
 			const ce = Math.min(e, bandE);
-			if (ce <= cs) return null;
+			const zero = e === s;
+			if (zero ? s < bandS || s >= bandE : ce <= cs) return null;
 			return {
-				top: ((cs - dayMs) / HOUR_MS - get(startHour)) * HOUR_H,
-				height: Math.max(12, (ce - cs) / HOUR_MS * HOUR_H),
+				top: (hourOf(cs, dayMs) - get(startHour)) * HOUR_H,
+				height: Math.max(zero ? 24 : 12, (hourOf(ce, dayMs) - hourOf(cs, dayMs)) * HOUR_H),
 				start: get(drag).payload.start,
 				end: get(drag).payload.end,
 				create: mode === "create",
@@ -14554,6 +13507,8 @@ createHTML: (html) => {
 		let crStartX = 0;
 		let crStartY = 0;
 		let crAnchorMs = 0;
+		/** The press's wall-clock hour (clamped into the band) — snapped on start. */
+		let crAnchorHour = 0;
 		let crDayMs = 0;
 		let crStarted = false;
 		let longPressTimer = null;
@@ -14575,7 +13530,7 @@ createHTML: (html) => {
 		function startColsCreate() {
 			if (!get(drag)) return;
 			crStarted = true;
-			crAnchorMs = clampToDayBand(Math.floor(crAnchorMs / get(SNAP_MS)) * get(SNAP_MS), crDayMs);
+			crAnchorMs = clampToDayBand(atHour(crDayMs, snapHour(crAnchorHour, "floor")), crDayMs);
 			get(drag).beginCreate(new Date(crAnchorMs), new Date(crAnchorMs + get(SNAP_MS)));
 			addTouchScrollBlock();
 		}
@@ -14591,8 +13546,8 @@ createHTML: (html) => {
 			const day = get(dayCols)[pointerDayIndex(e.clientX)];
 			if (!day || day.isDisabled) return;
 			e.preventDefault();
-			const raw = clampToDayBand(day.ms + pointerHour(e.clientY) * HOUR_MS, day.ms);
-			const snapped = day.ms + Math.floor((raw - day.ms) / get(SNAP_MS)) * get(SNAP_MS);
+			const hour = Math.min(Math.max(pointerHour(e.clientY), get(startHour)), get(endHour));
+			const snapped = clampToDayBand(atHour(day.ms, snapHour(hour, "floor")), day.ms);
 			$$props.onexternaldrop({
 				start: new Date(snapped),
 				dataTransfer: e.dataTransfer
@@ -14607,7 +13562,8 @@ createHTML: (html) => {
 			crStartX = e.clientX;
 			crStartY = e.clientY;
 			crDayMs = day.ms;
-			crAnchorMs = clampToDayBand(day.ms + Math.max(pointerHour(e.clientY), get(startHour)) * HOUR_MS, day.ms);
+			crAnchorHour = Math.min(Math.max(pointerHour(e.clientY), get(startHour)), get(endHour));
+			crAnchorMs = atHour(day.ms, crAnchorHour);
 			crStarted = false;
 			if (e.pointerType === "touch") longPressTimer = setTimeout(() => {
 				longPressTimer = null;
@@ -14628,8 +13584,7 @@ createHTML: (html) => {
 				if (Math.abs(e.clientY - crStartY) < CREATE_THRESHOLD) return;
 				startColsCreate();
 			}
-			const raw = crDayMs + pointerHour(e.clientY) * HOUR_MS;
-			const snapped = clampToDayBand(Math.round(raw / get(SNAP_MS)) * get(SNAP_MS), crDayMs);
+			const snapped = clampToDayBand(atHour(crDayMs, snapHour(pointerHour(e.clientY), "round")), crDayMs);
 			get(drag).updatePointer(new Date(Math.min(crAnchorMs, snapped)), new Date(Math.max(crAnchorMs + get(SNAP_MS), snapped)));
 		});
 		function cleanupColsCreate() {
@@ -14670,8 +13625,8 @@ createHTML: (html) => {
 			if (!day || day.isDisabled) return;
 			const hour = Math.min(Math.max(pointerHour(e.clientY), get(startHour)), get(endHour));
 			if (isBlockedAt(day.ms, hour)) return;
-			const startMs = clampToDayBand(Math.floor((day.ms + hour * HOUR_MS) / get(SNAP_MS)) * get(SNAP_MS), day.ms);
-			const durMin = get(minDuration) ?? 60;
+			const startMs = clampToDayBand(atHour(day.ms, snapHour(hour, "floor")), day.ms);
+			const durMin = Math.max(60, get(minDuration) ?? 0);
 			$$props.oneventcreate({
 				start: new Date(startMs),
 				end: new Date(startMs + durMin * 6e4)
@@ -14708,8 +13663,7 @@ createHTML: (html) => {
 				get(drag).beginMove(ev.id, ev.start, ev.end);
 			}
 			const duration = ev.end.getTime() - ev.start.getTime();
-			const raw = pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs;
-			const snapped = Math.round(raw / get(SNAP_MS)) * get(SNAP_MS);
+			const snapped = snapMs(pointerTimeMs(e.clientX, e.clientY) - evGrabOffsetMs, "round");
 			get(drag).updatePointer(new Date(snapped), new Date(snapped + duration));
 		});
 		function cleanupEvDrag() {
@@ -14741,7 +13695,10 @@ createHTML: (html) => {
 		let rsStarted = false;
 		let rsEdge = "end";
 		let rsEvent = null;
-		function onResizePointerDown(e, ev, edge) {
+		/** The day column whose segment holds the grabbed grip — an overnight
+		*  event's end grip sits on the next day. */
+		let rsDayMs = 0;
+		function onResizePointerDown(e, ev, edge, dayMs) {
 			if (e.button !== 0 || !get(drag) || readOnly() || ev.data?.readOnly) return;
 			e.stopPropagation();
 			evAnchor = e.currentTarget.parentElement?.getBoundingClientRect();
@@ -14749,6 +13706,7 @@ createHTML: (html) => {
 			rsStarted = false;
 			rsEdge = edge;
 			rsEvent = ev;
+			rsDayMs = dayMs;
 			window.addEventListener("pointermove", onResizeMove);
 			window.addEventListener("pointerup", onResizeUp, { once: true });
 			window.addEventListener("pointercancel", onResizeCancel, { once: true });
@@ -14762,9 +13720,7 @@ createHTML: (html) => {
 				get(drag).beginResize(ev.id, rsEdge, ev.start, ev.end);
 				addTouchScrollBlock();
 			}
-			const evDayMs = sod(ev.start.getTime());
-			const raw = evDayMs + pointerHour(e.clientY) * HOUR_MS;
-			const snapped = clampToDayBand(Math.round(raw / get(SNAP_MS)) * get(SNAP_MS), evDayMs);
+			const snapped = clampToDayBand(atHour(rsDayMs, snapHour(pointerHour(e.clientY), "round")), rsDayMs);
 			if (rsEdge === "end") {
 				const end = Math.max(snapped, ev.start.getTime() + get(SNAP_MS));
 				get(drag).updatePointer(ev.start, new Date(end));
@@ -14797,6 +13753,13 @@ createHTML: (html) => {
 			if (get(drag) && rsStarted) get(drag).cancel();
 			cleanupResize();
 		}
+		user_effect(() => () => {
+			const live = crStarted || evDragStarted || rsStarted;
+			cleanupColsCreate();
+			cleanupEvDrag();
+			cleanupResize();
+			if (live && get(drag)?.active) get(drag).cancel();
+		});
 		function onWindowKeydown(e) {
 			if (e.key !== "Escape" || !get(drag)?.active) return;
 			get(drag).cancel();
@@ -14808,7 +13771,7 @@ createHTML: (html) => {
 				suppressColsClick = false;
 			}, 0), { once: true });
 		}
-		var div = root_30$1();
+		var div = root_32$1();
 		event("keydown", $window, onWindowKeydown);
 		let classes_1;
 		let styles_1;
@@ -14820,7 +13783,7 @@ createHTML: (html) => {
 			var div_3 = root_12$5();
 			var node_4 = child(div_3);
 			var consequent_5 = ($$anchor) => {
-				var div_4 = root_8$7();
+				var div_4 = root_8$6();
 				var div_5 = child(div_4);
 				set_style(div_5, "", {}, { width: "48px" });
 				each(sibling(div_5, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
@@ -14992,7 +13955,7 @@ createHTML: (html) => {
 		each(sibling(div_14, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
 			const positioned = /* @__PURE__ */ user_derived(() => get(layoutByDay).get(get(day).ms) ?? []);
 			const ghost = /* @__PURE__ */ user_derived(() => ghostForDay(get(day).ms));
-			var div_17 = root_28$2();
+			var div_17 = root_30$1();
 			let classes_5;
 			var node_18 = child(div_17);
 			var consequent_15 = ($$anchor) => {
@@ -15022,7 +13985,7 @@ createHTML: (html) => {
 							reset(div_18);
 							template_effect(() => {
 								set_attribute(div_18, "title", `${get(slot).label ? `${get(slot).label}, ` : ""}${get(range) ?? ""}`);
-								set_attribute(div_18, "aria-label", `${(get(slot).label || "Unavailable") ?? ""}, ${get(range) ?? ""}`);
+								set_attribute(div_18, "aria-label", `${(get(slot).label || get(L).unavailable) ?? ""}, ${get(range) ?? ""}`);
 								styles_7 = set_style(div_18, "", styles_7, {
 									top: `${(get(s) - get(startHour)) * HOUR_H}px`,
 									height: `${(get(e) - get(s)) * HOUR_H}px`
@@ -15048,7 +14011,7 @@ createHTML: (html) => {
 			var node_23 = sibling(node_18, 2);
 			each(node_23, 17, () => get(positioned), (p) => p.ev.id, ($$anchor, p) => {
 				const isCurrent = /* @__PURE__ */ user_derived(() => get(nowIds).has(get(p).ev.id));
-				var div_19 = root_23$2();
+				var div_19 = root_25$2();
 				let classes_6;
 				let styles_8;
 				var div_20 = sibling(child(div_19), 2);
@@ -15090,16 +14053,30 @@ createHTML: (html) => {
 					if (get(isCurrent)) $$render(consequent_17);
 				});
 				var node_27 = sibling(node_26, 2);
-				var consequent_18 = ($$anchor) => {
-					var fragment_8 = root_22$2();
-					var span_16 = first_child(fragment_8);
-					var span_17 = sibling(span_16, 2);
-					delegated("pointerdown", span_16, (e) => onResizePointerDown(e, get(p).ev, "start"));
-					delegated("pointerdown", span_17, (e) => onResizePointerDown(e, get(p).ev, "end"));
+				var consequent_20 = ($$anchor) => {
+					var fragment_8 = root_24$2();
+					var node_28 = first_child(fragment_8);
+					var consequent_18 = ($$anchor) => {
+						var span_16 = root_22$4();
+						delegated("pointerdown", span_16, (e) => onResizePointerDown(e, get(p).ev, "start", get(day).ms));
+						append($$anchor, span_16);
+					};
+					if_block(node_28, ($$render) => {
+						if (get(p).hasStart) $$render(consequent_18);
+					});
+					var node_29 = sibling(node_28, 2);
+					var consequent_19 = ($$anchor) => {
+						var span_17 = root_23$3();
+						delegated("pointerdown", span_17, (e) => onResizePointerDown(e, get(p).ev, "end", get(day).ms));
+						append($$anchor, span_17);
+					};
+					if_block(node_29, ($$render) => {
+						if (get(p).hasEnd) $$render(consequent_19);
+					});
 					append($$anchor, fragment_8);
 				};
 				if_block(node_27, ($$render) => {
-					if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_18);
+					if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_20);
 				});
 				reset(div_19);
 				template_effect(($0, $1, $2, $3, $4) => {
@@ -15144,31 +14121,31 @@ createHTML: (html) => {
 				});
 				append($$anchor, div_19);
 			});
-			var node_28 = sibling(node_23, 2);
-			var consequent_21 = ($$anchor) => {
-				var div_21 = root_26$2();
+			var node_30 = sibling(node_23, 2);
+			var consequent_23 = ($$anchor) => {
+				var div_21 = root_28$2();
 				let classes_7;
 				let styles_9;
-				var node_29 = child(div_21);
-				var consequent_20 = ($$anchor) => {
-					var fragment_9 = root_25$2();
+				var node_31 = child(div_21);
+				var consequent_22 = ($$anchor) => {
+					var fragment_9 = root_27$2();
 					var span_18 = first_child(fragment_9);
 					var text_14 = only_child(span_18);
-					var node_30 = sibling(span_18, 2);
-					var consequent_19 = ($$anchor) => {
-						var span_19 = root_24$2();
+					var node_32 = sibling(span_18, 2);
+					var consequent_21 = ($$anchor) => {
+						var span_19 = root_26$2();
 						var text_15 = only_child(span_19, true);
 						template_effect(() => set_text(text_15, get(movingEvent).title));
 						append($$anchor, span_19);
 					};
-					if_block(node_30, ($$render) => {
-						if (!get(ghost).create && get(movingEvent)) $$render(consequent_19);
+					if_block(node_32, ($$render) => {
+						if (!get(ghost).create && get(movingEvent)) $$render(consequent_21);
 					});
 					template_effect(($0, $1) => set_text(text_14, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(ghost).start, $$props.locale), () => fmtTime$1(get(ghost).end, $$props.locale)]);
 					append($$anchor, fragment_9);
 				};
-				if_block(node_29, ($$render) => {
-					if (get(ghost).showTime) $$render(consequent_20);
+				if_block(node_31, ($$render) => {
+					if (get(ghost).showTime) $$render(consequent_22);
 				});
 				reset(div_21);
 				template_effect(() => {
@@ -15181,12 +14158,12 @@ createHTML: (html) => {
 				});
 				append($$anchor, div_21);
 			};
-			if_block(node_28, ($$render) => {
-				if (get(ghost)) $$render(consequent_21);
+			if_block(node_30, ($$render) => {
+				if (get(ghost)) $$render(consequent_23);
 			});
-			var node_31 = sibling(node_28, 2);
-			var consequent_22 = ($$anchor) => {
-				var div_22 = root_27$2();
+			var node_33 = sibling(node_30, 2);
+			var consequent_24 = ($$anchor) => {
+				var div_22 = root_29$2();
 				let styles_10;
 				template_effect(() => {
 					set_attribute(div_22, "aria-label", get(L).currentTime);
@@ -15194,8 +14171,8 @@ createHTML: (html) => {
 				});
 				append($$anchor, div_22);
 			};
-			if_block(node_31, ($$render) => {
-				if (get(day).isToday && get(nowY) !== null) $$render(consequent_22);
+			if_block(node_33, ($$render) => {
+				if (get(day).isToday && get(nowY) !== null) $$render(consequent_24);
 			});
 			reset(div_17);
 			template_effect(() => {
@@ -15215,15 +14192,15 @@ createHTML: (html) => {
 		reset(div_2);
 		reset(div_1);
 		bind_this(div_1, ($$value) => scrollEl = $$value, () => scrollEl);
-		var node_32 = sibling(div_1, 2);
-		var consequent_23 = ($$anchor) => {
-			var div_23 = root_29$2();
+		var node_34 = sibling(div_1, 2);
+		var consequent_25 = ($$anchor) => {
+			var div_23 = root_31$1();
 			snippet(child(div_23), () => ctx.emptySnippet);
 			reset(div_23);
 			append($$anchor, div_23);
 		};
-		if_block(node_32, ($$render) => {
-			if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_23);
+		if_block(node_34, ($$render) => {
+			if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_25);
 		});
 		reset(div);
 		template_effect(() => {
@@ -15530,7 +14507,7 @@ createHTML: (html) => {
 	var root_5$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-l8xuza"> </span>`);
 	var root_6$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-l8xuza"> </span>`);
 	var root_7$6 = /* @__PURE__ */ from_html(`<!> <span class="wg-ev-title svelte-l8xuza"> </span> <!>`, 1);
-	var root_8$6 = /* @__PURE__ */ from_html(`<div class="wg-month wg-month--start wg-month--inset svelte-l8xuza" aria-hidden="true"> </div>`);
+	var root_8$5 = /* @__PURE__ */ from_html(`<div class="wg-month wg-month--start wg-month--inset svelte-l8xuza" aria-hidden="true"> </div>`);
 	var root_9$4 = /* @__PURE__ */ from_html(`<span class="wg-day-num svelte-l8xuza"> </span>`);
 	var root_10$4 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-l8xuza"><!></div>`);
 	var root_11$4 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-l8xuza"> </span>`);
@@ -15538,12 +14515,13 @@ createHTML: (html) => {
 	var root_13$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
 	var root_14$3 = /* @__PURE__ */ from_html(`<button type="button" class="wg-ev-more svelte-l8xuza"> </button>`);
 	var root_15$3 = /* @__PURE__ */ from_html(`<div class="wg-ev wg-ev--drag-preview svelte-l8xuza" aria-hidden="true"><!></div>`);
-	var root_16$3 = /* @__PURE__ */ from_html(`<div class="wg-now svelte-l8xuza" aria-hidden="true"><span class="wg-now-time svelte-l8xuza"> </span></div>`);
-	var root_17$3 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
-	var root_18$3 = /* @__PURE__ */ from_html(`<div class="wg-allday svelte-l8xuza"><!> <!></div>`);
-	var root_19$3 = /* @__PURE__ */ from_html(`<div role="gridcell"><!> <div><span class="wg-day-wd svelte-l8xuza"> </span> <!></div> <!> <div class="wg-cell-events svelte-l8xuza"><!> <!> <!> <!> <!></div> <!></div>`);
-	var root_20$3 = /* @__PURE__ */ from_html(`<div role="presentation"><div aria-hidden="true"> </div> <div class="wg-week-body svelte-l8xuza" role="presentation"><div class="wg-days svelte-l8xuza" role="row"></div></div></div>`);
-	var root_21$3 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-l8xuza" role="grid"><div class="wg-probe svelte-l8xuza" aria-hidden="true"><span class="wg-ev-time svelte-l8xuza"></span><span class="wg-ev-title svelte-l8xuza"></span><span class="wg-ev-loc svelte-l8xuza"></span></div> <!></div></div>`);
+	var root_16$3 = /* @__PURE__ */ from_html(`<div class="wg-now wg-drop svelte-l8xuza" aria-hidden="true"><span class="wg-now-time svelte-l8xuza"> </span></div>`);
+	var root_17$3 = /* @__PURE__ */ from_html(`<div class="wg-now svelte-l8xuza" aria-hidden="true"><span class="wg-now-time svelte-l8xuza"> </span></div>`);
+	var root_18$3 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
+	var root_19$3 = /* @__PURE__ */ from_html(`<div class="wg-allday svelte-l8xuza"><!> <!></div>`);
+	var root_20$3 = /* @__PURE__ */ from_html(`<div role="gridcell"><!> <div><span class="wg-day-wd svelte-l8xuza"> </span> <!></div> <!> <div class="wg-cell-events svelte-l8xuza"><!> <!> <!> <!> <!> <!></div> <!></div>`);
+	var root_21$3 = /* @__PURE__ */ from_html(`<div role="presentation"><div aria-hidden="true"> </div> <div class="wg-week-body svelte-l8xuza" role="presentation"><div class="wg-days svelte-l8xuza" role="row"></div></div></div>`);
+	var root_22$3 = /* @__PURE__ */ from_html(`<div><div class="wg-body svelte-l8xuza" role="grid"><div class="wg-probe svelte-l8xuza" aria-hidden="true"><span class="wg-ev-time svelte-l8xuza"></span><span class="wg-ev-title svelte-l8xuza"></span><span class="wg-ev-loc svelte-l8xuza"></span></div> <!></div></div>`);
 	function PlannerScroll($$anchor, $$props) {
 		push($$props, true);
 		const timedEventContent = ($$anchor, ev = noop, inset = noop) => {
@@ -15582,9 +14560,9 @@ createHTML: (html) => {
 				$$slots: { default: true }
 			});
 		};
-		const L = /* @__PURE__ */ user_derived(getLabels);
 		let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, 520), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
 		const ctx = useCalendarContext();
+		const L = /* @__PURE__ */ user_derived(() => ctx.labels);
 		const clock = createClock(ctx.timezone);
 		const [previewSend, previewReceive] = crossfade({ duration: () => prefersReducedMotion.current ? 0 : 160 });
 		const drag = /* @__PURE__ */ user_derived(() => ctx.drag);
@@ -15613,11 +14591,32 @@ createHTML: (html) => {
 			const rows = el?.querySelectorAll("[data-week]");
 			return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 132;
 		}
+		/** Fractional wall-clock hour `hour` on the day starting at `dayMs` → epoch ms. */
+		function atHour(dayMs, hour) {
+			return new Date(dayMs).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+		}
+		/** Epoch ms → fractional wall-clock hour counted from the day at `dayMs`. */
+		function hourOf(ms, dayMs) {
+			const d = new Date(ms);
+			return diffDays(ms, dayMs) * 24 + d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600 + d.getMilliseconds() / HOUR_MS;
+		}
+		/** All-day events and timed ones a (wall-clock) day or longer are bars;
+		*  a shorter overnight event is a chip on the day it starts. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+		}
+		function statusText(ev) {
+			if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+			if (ev.status === "tentative") return ` (${get(L).tentative})`;
+			if (ev.status === "full") return ` (${get(L).full})`;
+			if (ev.status === "limited") return ` (${get(L).limited})`;
+			return "";
+		}
 		const eventHours = /* @__PURE__ */ user_derived(() => {
 			let lo = 24;
 			let hi = -1;
 			for (const ev of events()) {
-				if (isAllDay(ev) || isMultiDay(ev)) continue;
+				if (inAllDayStrip(ev)) continue;
 				const h = ev.start.getHours() + ev.start.getMinutes() / 60;
 				lo = Math.min(lo, h);
 				hi = Math.max(hi, h);
@@ -15626,10 +14625,10 @@ createHTML: (html) => {
 		});
 		const startHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[0] ?? get(eventHours)[0]);
 		const endHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[1] ?? get(eventHours)[1]);
-		/** Where a chip starting this far into the day sits, px from the axis top.
-		*  A chip at the last hour still ends inside the floor height. */
-		function timeTop(msIntoDay) {
-			const f = (msIntoDay / HOUR_MS - get(startHour)) / Math.max(1, get(endHour) - get(startHour));
+		/** Where a chip starting this many wall-clock hours into the day sits, px
+		*  from the axis top. A chip at the last hour still ends inside the floor height. */
+		function timeTop(hoursIntoDay) {
+			const f = (hoursIntoDay - get(startHour)) / Math.max(1, get(endHour) - get(startHour));
 			return Math.min(Math.max(f, 0), 1) * 98;
 		}
 		/** Each chip at its start time, or just under the chip before it when that
@@ -15638,7 +14637,7 @@ createHTML: (html) => {
 			const tops = [];
 			let min = 0;
 			for (const ev of list) {
-				const top = Math.max(timeTop(ev.start.getTime() - dayMs), min);
+				const top = Math.max(timeTop(hourOf(ev.start.getTime(), dayMs)), min);
 				tops.push(top);
 				min = top + CHIP_H + CHIP_GAP;
 			}
@@ -15648,7 +14647,7 @@ createHTML: (html) => {
 		*  it), but never above a chip that has already started — pushed-down
 		*  chips would read as still to come. */
 		function nowTop(list, tops, dayMs) {
-			let y = timeTop(clock.tick - dayMs);
+			let y = timeTop(hourOf(clock.tick, dayMs));
 			list.forEach((ev, i) => {
 				if (ev.start.getTime() <= clock.tick) y = Math.max(y, tops[i] + CHIP_H + CHIP_GAP / 2);
 			});
@@ -15711,13 +14710,13 @@ createHTML: (html) => {
 					const isToday = ms === get(todayMs);
 					const isPast = get(equalDays) ? false : ms < get(todayMs);
 					const dayEnd = addDaysMs(ms, 1);
-					const dayEventsAll = events().filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
+					const dayEventsAll = events().filter((ev) => ev.start.getTime() < dayEnd && (ev.end.getTime() > ms || ev.start.getTime() >= ms)).sort((a, b) => a.start.getTime() - b.start.getTime());
 					const timedEvents = [];
 					const allDaySegments = [];
-					for (const ev of dayEventsAll) if (isAllDay(ev) || isMultiDay(ev)) {
+					for (const ev of dayEventsAll) if (inAllDayStrip(ev)) {
 						const seg = segmentForDay(ev, ms);
 						if (seg) allDaySegments.push(seg);
-					} else timedEvents.push(ev);
+					} else if (ev.start.getTime() >= ms && ev.end.getTime() >= ev.start.getTime()) timedEvents.push(ev);
 					days.push({
 						ms,
 						dayNum,
@@ -15762,7 +14761,12 @@ createHTML: (html) => {
 		}
 		onMount(() => {
 			tick().then(() => scrollWeekIntoContainer());
-			return () => cancelAnimationFrame(syncRaf);
+			return () => {
+				cancelAnimationFrame(syncRaf);
+				const live = evDragStarted;
+				cleanupEvDrag();
+				if (live && get(drag)?.active) get(drag).cancel();
+			};
 		});
 		let settled = /* @__PURE__ */ state(false);
 		user_effect(() => {
@@ -15836,48 +14840,68 @@ createHTML: (html) => {
 				});
 			} else if (el.scrollHeight - el.clientHeight - el.scrollTop < EDGE_PX) set(bufferAfter, get(bufferAfter) + EXTEND_BY);
 		}
-		/** Where a new thing lands on this day, or null when the day refuses it.
-		*  A cell is a whole day here — there is no time axis to drop onto — so
-		*  everything starts at the first visible hour. One rule, so an empty-cell
-		*  click and a drop from outside can never disagree about a day. */
-		function dayDropStart(ms) {
+		/** The time at a pointer's height on a day's axis — timeTop read backwards,
+		*  the pointer at the chip's middle. Half hours: the whole day is ~100px.
+		*  Wall-clock ms into the local day; dayDropStart makes it an instant. */
+		function pointerTime(cell, clientY) {
+			const area = cell.querySelector(".wg-cell-events");
+			if (!area) return get(startHour) * HOUR_MS;
+			const y = clientY - area.getBoundingClientRect().top - CHIP_H / 2;
+			const f = Math.min(Math.max(y / 98, 0), 1);
+			const hours = get(startHour) + f * Math.max(1, get(endHour) - get(startHour));
+			return Math.round(hours * 2) * (HOUR_MS / 2);
+		}
+		/** Where a new thing lands on this day, or null when the day (or that hour
+		*  of it) refuses it. `at` is the pointer's time into the day; without one
+		*  (the keyboard) it is the first hour of the axis. One rule, so an
+		*  empty-cell click and a drop from outside can never disagree. */
+		function dayDropStart(ms, at = get(startHour) * HOUR_MS) {
 			if (get(disabledSet).has(ms)) return null;
-			const startHour = $$props.visibleHours?.[0] ?? 9;
+			const hour = at / HOUR_MS;
 			if (get(blockedSlots)?.length) {
 				const jsDay = new Date(ms).getDay();
 				const isoDay = jsDay === 0 ? 7 : jsDay;
 				if (get(blockedSlots).some((slot) => {
 					if (slot.day && slot.day !== isoDay) return false;
-					return startHour >= slot.start && startHour < slot.end;
+					return hour >= slot.start && hour < slot.end;
 				})) return null;
 			}
-			return new Date(ms + startHour * HOUR_MS);
+			return new Date(atHour(ms, hour));
 		}
 		function handleDayCellClick(ms, e) {
 			if (e.target.closest(".wg-ev, .wg-ad, .wg-ev-more")) return;
 			if (readOnly() || !$$props.oneventcreate) return;
-			const start = dayDropStart(ms);
+			const start = dayDropStart(ms, e instanceof MouseEvent ? pointerTime(e.currentTarget, e.clientY) : void 0);
 			if (!start) return;
-			const durMin = get(minDuration) ? Math.max(60, get(minDuration)) : 60;
+			const durMin = Math.max(60, get(minDuration) ?? 0);
 			$$props.oneventcreate({
 				start,
 				end: new Date(start.getTime() + durMin * 6e4)
 			});
 		}
-		let dropDayMs = /* @__PURE__ */ state(null);
+		let drop = /* @__PURE__ */ state(null);
 		function onCellDragOver(e, ms) {
-			if (!$$props.onexternaldrop || readOnly() || !dayDropStart(ms)) return;
+			if (!$$props.onexternaldrop || readOnly()) return;
+			const at = pointerTime(e.currentTarget, e.clientY);
+			if (!dayDropStart(ms, at)) {
+				set(drop, null);
+				return;
+			}
 			e.preventDefault();
 			if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
-			set(dropDayMs, ms, true);
+			if (get(drop)?.day !== ms || get(drop).at !== at) set(drop, {
+				day: ms,
+				at
+			}, true);
 		}
-		function onCellDragLeave(ms) {
-			if (get(dropDayMs) === ms) set(dropDayMs, null);
+		function onCellDragLeave(e, ms) {
+			if (e.currentTarget.contains(e.relatedTarget)) return;
+			if (get(drop)?.day === ms) set(drop, null);
 		}
 		function onCellDrop(e, ms) {
-			set(dropDayMs, null);
+			set(drop, null);
 			if (!$$props.onexternaldrop || readOnly() || !e.dataTransfer) return;
-			const start = dayDropStart(ms);
+			const start = dayDropStart(ms, pointerTime(e.currentTarget, e.clientY));
 			if (!start) return;
 			e.preventDefault();
 			$$props.onexternaldrop({
@@ -15903,6 +14927,11 @@ createHTML: (html) => {
 		*  step is the row under the pointer, found by hit-test, not by division.
 		*  Held as a timestamp: an extension can renumber rows mid-drag. */
 		let evStartWeekMs = 0;
+		/** The day cell the press landed in; the drag moves the event by the days
+		*  between it and the cell now under the pointer. */
+		let evPressDayMs = 0;
+		/** The grid runs right-to-left (`dir="rtl"`): a rightward drag goes back. */
+		let evRtl = false;
 		const dragPreviewEvent = /* @__PURE__ */ user_derived(() => {
 			const payload = get(drag)?.active && get(drag).mode === "move" ? get(drag).payload : null;
 			if (!payload?.eventId) return null;
@@ -15924,15 +14953,15 @@ createHTML: (html) => {
 		const previewKeySnapshot = /* @__PURE__ */ new Map();
 		function dragPreviewTimedForDay(dayMs) {
 			const ev = get(dragPreviewEvent);
-			if (!ev || isAllDay(ev) || isMultiDay(ev)) return null;
+			if (!ev || inAllDayStrip(ev)) return null;
 			const dayEnd = addDaysMs(dayMs, 1);
-			const hit = ev.start.getTime() < dayEnd && ev.end.getTime() > dayMs;
+			const hit = ev.start.getTime() >= dayMs && ev.start.getTime() < dayEnd;
 			if (hit) previewKeySnapshot.set("timed", ev.id);
 			return hit ? ev : null;
 		}
 		function dragPreviewSegmentForDay(dayMs) {
 			const ev = get(dragPreviewEvent);
-			if (!ev || !isAllDay(ev) && !isMultiDay(ev)) return null;
+			if (!ev || !inAllDayStrip(ev)) return null;
 			const seg = segmentForDay(ev, dayMs);
 			if (seg) previewKeySnapshot.set(dayMs, `${ev.id}:${seg.dayIndex}`);
 			return seg;
@@ -15996,17 +15025,44 @@ createHTML: (html) => {
 			evDragStarted = false;
 			set(evDragId, ev.id, true);
 			evDragEvent = ev;
+			const cellMs = Number(e.currentTarget.closest("[data-day]")?.dataset.day);
+			evPressDayMs = Number.isFinite(cellMs) ? cellMs : sod(ev.start.getTime());
 			window.addEventListener("pointermove", onEvWindowPointerMove);
 			window.addEventListener("pointerup", onEvWindowPointerUp, { once: true });
 			window.addEventListener("pointercancel", onEvWindowPointerCancel, { once: true });
+		}
+		/** The day `cols` rendered columns away from the press cell, in the row
+		*  whose start is `rowMs`. Columns are counted over the days actually shown
+		*  (hideDays leaves gaps in the dates, not in the columns); running off a
+		*  row's end carries into the neighbouring row. */
+		function dayAtColumn(rowMs, cols) {
+			const startRow = get(weeks).findIndex((w) => w.weekStart === evStartWeekMs);
+			let r = get(weeks).findIndex((w) => w.weekStart === rowMs);
+			if (startRow < 0 || r < 0) return null;
+			const pressCol = get(weeks)[startRow].days.findIndex((d) => d.ms === evPressDayMs);
+			if (pressCol < 0) return null;
+			let col = pressCol + cols;
+			while (col < 0 && r > 0) {
+				r--;
+				col += get(weeks)[r].days.length;
+			}
+			while (col >= get(weeks)[r].days.length && r < get(weeks).length - 1) {
+				col -= get(weeks)[r].days.length;
+				r++;
+			}
+			const days = get(weeks)[r].days;
+			if (!days.length) return null;
+			return days[Math.max(0, Math.min(days.length - 1, col))].ms;
 		}
 		/** Where the dragged event sits for the pointer's current offset. */
 		function updateDragFromPointer() {
 			const ev = evDragEvent;
 			if (!get(drag) || !ev) return;
-			const dayOffset = Math.round((evLastX - evDragStartX) / evCellW);
+			const dx = (evLastX - evDragStartX) * (evRtl ? -1 : 1);
+			const colOffset = Math.round(dx / evCellW);
 			const nowWeekMs = weekMsAtY(evLastY);
-			const deltaDays = dayOffset + (evStartWeekMs && nowWeekMs ? Math.round((nowWeekMs - evStartWeekMs) / (get(customDays) * DAY_MS)) : 0) * get(customDays);
+			const target = evStartWeekMs && nowWeekMs ? dayAtColumn(nowWeekMs, colOffset) : null;
+			const deltaDays = target === null ? 0 : diffDays(target, evPressDayMs);
 			get(drag).updatePointer(new Date(addDaysMs(ev.start.getTime(), deltaDays)), new Date(addDaysMs(ev.end.getTime(), deltaDays)));
 		}
 		const AUTO_EDGE = 56;
@@ -16047,6 +15103,7 @@ createHTML: (html) => {
 				set(evDragging, true);
 				evCellW = getCellWidth();
 				evStartWeekMs = weekMsAtY(evDragStartY);
+				evRtl = !!el && getComputedStyle(el).direction === "rtl";
 				get(drag).beginMove(ev.id, ev.start, ev.end);
 			}
 			setAutoScroll(e.clientY);
@@ -16064,6 +15121,8 @@ createHTML: (html) => {
 			evAnchor = void 0;
 			evDragMovable = false;
 			evStartWeekMs = 0;
+			evPressDayMs = 0;
+			evRtl = false;
 		}
 		function onEvWindowPointerUp() {
 			if (!evDragStarted) {
@@ -16082,7 +15141,24 @@ createHTML: (html) => {
 		}
 		let expandedCells = proxy({});
 		let focusedCellMs = /* @__PURE__ */ state(null);
-		const tabbableCellMs = /* @__PURE__ */ user_derived(() => get(focusedCellMs) ?? get(todayMs));
+		const tabbableCellMs = /* @__PURE__ */ user_derived(() => {
+			let fallback = null;
+			let anchorFirst = null;
+			let focusedShown = false;
+			let todayShown = false;
+			for (const w of get(weeks)) {
+				if (!w.days.length) continue;
+				fallback ??= w.days[0].ms;
+				if (w.weekStart === get(anchorPeriodStart)) anchorFirst = w.days[0].ms;
+				for (const d of w.days) {
+					if (d.ms === get(focusedCellMs)) focusedShown = true;
+					if (d.ms === get(todayMs)) todayShown = true;
+				}
+			}
+			if (focusedShown) return get(focusedCellMs);
+			if (todayShown) return get(todayMs);
+			return anchorFirst ?? fallback;
+		});
 		function onCellKeydown(e, ms) {
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
@@ -16108,13 +15184,13 @@ createHTML: (html) => {
 				target = addDaysMs(target, step < 0 ? -1 : 1);
 			}
 		}
-		var div = root_21$3();
+		var div = root_22$3();
 		event("keydown", $window, onWindowKeydown);
 		let classes;
 		let styles;
 		var div_1 = child(div);
 		each(sibling(child(div_1), 2), 17, () => get(weeks), (week) => week.weekStart, ($$anchor, week) => {
-			var div_2 = root_20$3();
+			var div_2 = root_21$3();
 			let classes_1;
 			var div_3 = child(div_2);
 			let classes_2;
@@ -16133,11 +15209,11 @@ createHTML: (html) => {
 				const tops = /* @__PURE__ */ user_derived(() => chipTops(get(shownTimed), get(day).ms));
 				const nowY = /* @__PURE__ */ user_derived(() => get(day).isToday ? nowTop(get(shownTimed), get(tops), get(day).ms) : null);
 				const inset = /* @__PURE__ */ user_derived(() => get(day).monthLabel ? MONTH_INSET : 0);
-				var div_6 = root_19$3();
+				var div_6 = root_20$3();
 				let classes_3;
 				var node_5 = child(div_6);
 				var consequent_4 = ($$anchor) => {
-					var div_7 = root_8$6();
+					var div_7 = root_8$5();
 					var text_6 = only_child(div_7, true);
 					template_effect(() => set_text(text_6, get(day).monthLabel));
 					append($$anchor, div_7);
@@ -16188,9 +15264,9 @@ createHTML: (html) => {
 						var fragment_5 = comment();
 						var node_11 = first_child(fragment_5);
 						var consequent_8 = ($$anchor) => {
-							const slotRange = /* @__PURE__ */ user_derived(() => `${fmtTime$1(new Date(get(day).ms + get(slot).start * HOUR_MS), $$props.locale)} – ${fmtTime$1(new Date(get(day).ms + get(slot).end * HOUR_MS), $$props.locale)}`);
-							const bandTop = /* @__PURE__ */ user_derived(() => timeTop(get(slot).start * HOUR_MS));
-							const bandH = /* @__PURE__ */ user_derived(() => Math.max(14, timeTop(get(slot).end * HOUR_MS) - get(bandTop)));
+							const slotRange = /* @__PURE__ */ user_derived(() => `${fmtTime$1(new Date(atHour(get(day).ms, get(slot).start)), $$props.locale)} – ${fmtTime$1(new Date(atHour(get(day).ms, get(slot).end)), $$props.locale)}`);
+							const bandTop = /* @__PURE__ */ user_derived(() => timeTop(get(slot).start));
+							const bandH = /* @__PURE__ */ user_derived(() => Math.max(14, timeTop(get(slot).end) - get(bandTop)));
 							const covered = /* @__PURE__ */ user_derived(() => get(tops).some((t) => t < get(bandTop) + get(bandH) && t + CHIP_H > get(bandTop)));
 							var div_11 = root_12$4();
 							let styles_1;
@@ -16207,7 +15283,7 @@ createHTML: (html) => {
 							reset(div_11);
 							template_effect(() => {
 								set_attribute(div_11, "title", `${get(slot).label ? `${get(slot).label}, ` : ""}${get(slotRange) ?? ""}`);
-								set_attribute(div_11, "aria-label", `${(get(slot).label || "Unavailable") ?? ""}, ${get(slotRange) ?? ""}`);
+								set_attribute(div_11, "aria-label", `${(get(slot).label || get(L).unavailable) ?? ""}, ${get(slotRange) ?? ""}`);
 								styles_1 = set_style(div_11, "", styles_1, {
 									top: `${get(bandTop) ?? ""}px`,
 									height: `${get(bandH) ?? ""}px`
@@ -16233,7 +15309,7 @@ createHTML: (html) => {
 					var node_14 = child(div_12);
 					timedEventContent(node_14, () => get(ev), () => get(inset));
 					reset(div_12);
-					template_effect(($0, $1, $2, $3) => {
+					template_effect(($0, $1, $2, $3, $4) => {
 						classes_5 = set_class(div_12, 1, "wg-ev svelte-l8xuza", null, classes_5, {
 							"wg-ev--selected": selectedEventId() === get(ev).id,
 							"wg-ev--current": $0,
@@ -16244,7 +15320,7 @@ createHTML: (html) => {
 							"wg-ev--full": get(ev).status === "full",
 							"wg-ev--limited": get(ev).status === "limited"
 						});
-						set_attribute(div_12, "aria-label", `${get(ev).title ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}${get(ev).status === "cancelled" ? ` (cancelled)` : ""}${get(ev).status === "tentative" ? ` (tentative)` : ""}${get(ev).status === "full" ? ` (full)` : ""}${get(ev).status === "limited" ? ` (limited)` : ""}${$3 ?? ""}`);
+						set_attribute(div_12, "aria-label", `${get(ev).title ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}${$3 ?? ""}${$4 ?? ""}`);
 						styles_2 = set_style(div_12, "", styles_2, {
 							"--ev-color": get(ev).color ?? "var(--dt-accent)",
 							"margin-top": `${get(tops)[get(i)] - (get(i) ? get(tops)[get(i) - 1] + CHIP_H : 0)}px`
@@ -16253,6 +15329,7 @@ createHTML: (html) => {
 						() => get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
 						() => fmtAmPm(get(ev).start),
 						() => fmtAmPm(get(ev).end),
+						() => statusText(get(ev)),
 						() => get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick ? ` (${get(L).inProgress})` : ""
 					]);
 					delegated("pointerdown", div_12, (e) => onEventPointerDown(e, get(ev)));
@@ -16296,7 +15373,7 @@ createHTML: (html) => {
 					template_effect(($0) => styles_3 = set_style(div_13, "", styles_3, {
 						"--ev-color": get(previewTimedEvent).color ?? "var(--dt-accent)",
 						top: $0
-					}), [() => `${timeTop(get(previewTimedEvent).start.getTime() - get(day).ms) ?? ""}px`]);
+					}), [() => `${timeTop(hourOf(get(previewTimedEvent).start.getTime(), get(day).ms)) ?? ""}px`]);
 					transition(1, div_13, () => previewReceive, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
 					transition(2, div_13, () => previewSend, () => ({ key: previewKeySnapshot.get("timed") ?? "" }));
 					append($$anchor, div_13);
@@ -16310,76 +15387,91 @@ createHTML: (html) => {
 					let styles_4;
 					var text_11 = only_child(child(div_14), true);
 					reset(div_14);
-					template_effect(($0) => {
-						styles_4 = set_style(div_14, "", styles_4, { top: `${get(nowY) ?? ""}px` });
-						set_text(text_11, $0);
-					}, [() => fmtAmPm(new Date(clock.tick))]);
+					template_effect(($0, $1) => {
+						styles_4 = set_style(div_14, "", styles_4, { top: $0 });
+						set_text(text_11, $1);
+					}, [() => `${timeTop(get(drop).at / HOUR_MS) + CHIP_H / 2}px`, () => fmtAmPm(new Date(atHour(get(day).ms, get(drop).at / HOUR_MS)))]);
 					append($$anchor, div_14);
 				};
 				if_block(node_18, ($$render) => {
-					if (get(nowY) !== null) $$render(consequent_12);
+					if (get(drop)?.day === get(day).ms) $$render(consequent_12);
+				});
+				var node_19 = sibling(node_18, 2);
+				var consequent_13 = ($$anchor) => {
+					var div_15 = root_17$3();
+					let styles_5;
+					var text_12 = only_child(child(div_15), true);
+					reset(div_15);
+					template_effect(($0) => {
+						styles_5 = set_style(div_15, "", styles_5, { top: `${get(nowY) ?? ""}px` });
+						set_text(text_12, $0);
+					}, [() => fmtAmPm(new Date(clock.tick))]);
+					append($$anchor, div_15);
+				};
+				if_block(node_19, ($$render) => {
+					if (get(nowY) !== null) $$render(consequent_13);
 				});
 				reset(div_10);
-				var node_19 = sibling(div_10, 2);
-				var consequent_14 = ($$anchor) => {
-					var div_15 = root_18$3();
-					var node_20 = child(div_15);
-					each(node_20, 25, () => get(visibleAllDaySegments), (seg) => seg.ev.id, ($$anchor, seg) => {
-						var div_16 = root_13$3();
+				var node_20 = sibling(div_10, 2);
+				var consequent_15 = ($$anchor) => {
+					var div_16 = root_19$3();
+					var node_21 = child(div_16);
+					each(node_21, 25, () => get(visibleAllDaySegments), (seg) => seg.ev.id, ($$anchor, seg) => {
+						var div_17 = root_13$3();
 						let classes_6;
-						let styles_5;
-						allDaySegmentContent(child(div_16), () => get(seg));
-						reset(div_16);
+						let styles_6;
+						allDaySegmentContent(child(div_17), () => get(seg));
+						reset(div_17);
 						template_effect(($0) => {
-							classes_6 = set_class(div_16, 1, "wg-ad svelte-l8xuza", null, classes_6, {
+							classes_6 = set_class(div_17, 1, "wg-ad svelte-l8xuza", null, classes_6, {
 								"wg-ad--start": get(seg).isStart,
 								"wg-ad--end": get(seg).isEnd,
 								"wg-ad--mid": !get(seg).isStart && !get(seg).isEnd,
 								"wg-ad--selected": selectedEventId() === get(seg).ev.id
 							});
-							set_attribute(div_16, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
-							styles_5 = set_style(div_16, "", styles_5, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+							set_attribute(div_17, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
+							styles_6 = set_style(div_17, "", styles_6, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
 						}, [() => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`]);
-						delegated("pointerdown", div_16, (e) => onEventPointerDown(e, get(seg).ev));
-						delegated("keydown", div_16, (e) => {
+						delegated("pointerdown", div_17, (e) => onEventPointerDown(e, get(seg).ev));
+						delegated("keydown", div_17, (e) => {
 							if (e.key === "Enter" || e.key === " ") {
 								e.preventDefault();
 								e.stopPropagation();
 								$$props.oneventclick?.(get(seg).ev, e.currentTarget.getBoundingClientRect());
 							}
 						});
-						animation(div_16, () => flip, () => ({ duration: get(ANIM) }));
-						transition(1, div_16, () => previewReceive, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
-						transition(2, div_16, () => previewSend, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
-						append($$anchor, div_16);
+						animation(div_17, () => flip, () => ({ duration: get(ANIM) }));
+						transition(1, div_17, () => previewReceive, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
+						transition(2, div_17, () => previewSend, () => ({ key: `${get(seg).ev.id}:${get(seg).dayIndex}` }));
+						append($$anchor, div_17);
 					});
-					var node_22 = sibling(node_20, 2);
-					var consequent_13 = ($$anchor) => {
-						var div_17 = root_17$3();
+					var node_23 = sibling(node_21, 2);
+					var consequent_14 = ($$anchor) => {
+						var div_18 = root_18$3();
 						let classes_7;
-						let styles_6;
-						allDaySegmentContent(child(div_17), () => get(previewSegment));
-						reset(div_17);
+						let styles_7;
+						allDaySegmentContent(child(div_18), () => get(previewSegment));
+						reset(div_18);
 						template_effect(() => {
-							classes_7 = set_class(div_17, 1, "wg-ad wg-ad--drag-preview svelte-l8xuza", null, classes_7, {
+							classes_7 = set_class(div_18, 1, "wg-ad wg-ad--drag-preview svelte-l8xuza", null, classes_7, {
 								"wg-ad--start": get(previewSegment).isStart,
 								"wg-ad--end": get(previewSegment).isEnd,
 								"wg-ad--mid": !get(previewSegment).isStart && !get(previewSegment).isEnd
 							});
-							styles_6 = set_style(div_17, "", styles_6, { "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)" });
+							styles_7 = set_style(div_18, "", styles_7, { "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)" });
 						});
-						transition(1, div_17, () => previewReceive, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
-						transition(2, div_17, () => previewSend, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
-						append($$anchor, div_17);
+						transition(1, div_18, () => previewReceive, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
+						transition(2, div_18, () => previewSend, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
+						append($$anchor, div_18);
 					};
-					if_block(node_22, ($$render) => {
-						if (get(previewSegment)) $$render(consequent_13);
+					if_block(node_23, ($$render) => {
+						if (get(previewSegment)) $$render(consequent_14);
 					});
-					reset(div_15);
-					append($$anchor, div_15);
+					reset(div_16);
+					append($$anchor, div_16);
 				};
-				if_block(node_19, ($$render) => {
-					if (get(visibleAllDaySegments).length > 0 || get(previewSegment)) $$render(consequent_14);
+				if_block(node_20, ($$render) => {
+					if (get(visibleAllDaySegments).length > 0 || get(previewSegment)) $$render(consequent_15);
 				});
 				reset(div_6);
 				template_effect(($0, $1, $2, $3, $4) => {
@@ -16390,7 +15482,7 @@ createHTML: (html) => {
 						"wg-cell--weekend": get(day).isWeekend,
 						"wg-cell--disabled": $0,
 						"wg-cell--expanded": get(isExpanded),
-						"wg-cell--drop": get(dropDayMs) === get(day).ms
+						"wg-cell--drop": get(drop)?.day === get(day).ms
 					});
 					set_attribute(div_6, "data-day", get(day).ms);
 					set_attribute(div_6, "tabindex", get(day).ms === get(tabbableCellMs) ? 0 : -1);
@@ -16410,7 +15502,7 @@ createHTML: (html) => {
 				]);
 				delegated("click", div_6, (e) => handleDayCellClick(get(day).ms, e));
 				event("dragover", div_6, (e) => onCellDragOver(e, get(day).ms));
-				event("dragleave", div_6, () => onCellDragLeave(get(day).ms));
+				event("dragleave", div_6, (e) => onCellDragLeave(e, get(day).ms));
 				event("drop", div_6, (e) => onCellDrop(e, get(day).ms));
 				event("focus", div_6, () => {
 					set(focusedCellMs, get(day).ms, true);
@@ -16497,6 +15589,68 @@ createHTML: (html) => {
 		}
 		return slots;
 	}
+	function createSwipe(cb) {
+		let startX = 0;
+		let startY = 0;
+		let tracking = false;
+		let dx = 0;
+		function abandon() {
+			tracking = false;
+			if (dx !== 0) {
+				dx = 0;
+				cb.onmove(0);
+			}
+		}
+		return {
+			ontouchstart(e) {
+				if (e.touches.length > 1) {
+					abandon();
+					return;
+				}
+				if (cb.disabled?.()) {
+					tracking = false;
+					return;
+				}
+				const t = e.touches[0];
+				startX = t.clientX;
+				startY = t.clientY;
+				tracking = true;
+				dx = 0;
+			},
+			ontouchmove(e) {
+				if (!tracking) return;
+				if (e.touches.length > 1 || cb.disabled?.()) {
+					abandon();
+					return;
+				}
+				const t = e.touches[0];
+				const mx = t.clientX - startX;
+				const my = t.clientY - startY;
+				if (Math.abs(my) > Math.abs(mx) * .8) {
+					abandon();
+					return;
+				}
+				dx = mx;
+				cb.onmove(dx);
+			},
+			ontouchend() {
+				if (!tracking) {
+					cb.onend(0);
+					return;
+				}
+				tracking = false;
+				const dir = Math.abs(dx) > 50 ? dx > 0 ? 1 : -1 : 0;
+				dx = 0;
+				cb.onend(dir);
+			},
+			ontouchcancel() {
+				if (!tracking) return;
+				tracking = false;
+				dx = 0;
+				cb.onend(0);
+			}
+		};
+	}
 	//#endregion
 	//#region src/lib/views/agenda/AgendaDay.svelte
 	var root$4 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge svelte-n8lbn1"> </span>`);
@@ -16507,7 +15661,7 @@ createHTML: (html) => {
 	var root_5$5 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"><!></div>`);
 	var root_6$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
 	var root_7$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
-	var root_8$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-time svelte-n8lbn1"> </span> <div class="ag-compact-row-main svelte-n8lbn1"><span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!></div> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
+	var root_8$4 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-time svelte-n8lbn1"> </span> <div class="ag-compact-row-main svelte-n8lbn1"><span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!></div> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
 	var root_9$3 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
 	var root_10$3 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
 	var root_11$3 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
@@ -16521,8 +15675,8 @@ createHTML: (html) => {
 	var root_19$2 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
 	var root_20$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
 	var root_21$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
-	var root_22$1 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-n8lbn1"><!></div></button>`);
-	var root_23$1 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
+	var root_22$2 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-n8lbn1"><!></div></button>`);
+	var root_23$2 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
 	var root_24$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></button>`);
 	var root_25$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
 	var root_26$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
@@ -16558,28 +15712,25 @@ createHTML: (html) => {
 		const compact = /* @__PURE__ */ user_derived(() => ctx.compact);
 		const oneventhover = /* @__PURE__ */ user_derived(() => ctx.oneventhover);
 		const disabledSet = /* @__PURE__ */ user_derived(() => ctx.disabledSet);
-		let swipeStartX = 0;
-		let swipeStartY = 0;
-		let swipeActive = false;
-		const SWIPE_THRESHOLD = 50;
-		function onPointerDown(e) {
-			if (!get(isMobile) || e.pointerType !== "touch") return;
-			swipeActive = true;
-			swipeStartX = e.clientX;
-			swipeStartY = e.clientY;
-		}
-		function onPointerUp(e) {
-			if (!swipeActive || e.pointerType !== "touch") return;
-			swipeActive = false;
-			const dx = e.clientX - swipeStartX;
-			const dy = e.clientY - swipeStartY;
-			if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-				if (dx > 0) get(viewState)?.prev();
-				else get(viewState)?.next();
+		const swipe = createSwipe({
+			disabled: () => !get(isMobile),
+			onmove: () => {},
+			onend: (dir) => {
+				if (dir > 0) get(viewState)?.prev();
+				else if (dir < 0) get(viewState)?.next();
 			}
+		});
+		function statusText(ev) {
+			if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+			if (ev.status === "tentative") return ` (${get(L).tentative})`;
+			if (ev.status === "full") return ` (${get(L).full})`;
+			if (ev.status === "limited") return ` (${get(L).limited})`;
+			return "";
 		}
-		function onPointerCancel() {
-			swipeActive = false;
+		/** All-day events and timed ones at least a (wall-clock) day long go to
+		*  the all-day strip; a shorter overnight event is listed with its time. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
 		}
 		const fmt = (d) => fmtTime(d, $$props.locale);
 		const eta = (ms) => timeUntilMs(ms, clock.tick, get(L));
@@ -16597,9 +15748,9 @@ createHTML: (html) => {
 			return events().filter((ev) => ev.start.getTime() < get(dayEnd) && ev.end.getTime() > get(dayMs)).sort((a, b) => a.start.getTime() - b.start.getTime());
 		});
 		/** All-day / multi-day events shown in a separate strip */
-		const allDayBanner = /* @__PURE__ */ user_derived(() => get(dayEvents).filter((ev) => isAllDay(ev) || isMultiDay(ev)));
+		const allDayBanner = /* @__PURE__ */ user_derived(() => get(dayEvents).filter(inAllDayStrip));
 		/** Timed events (non-all-day) for normal slot rendering */
-		const timedDayEvents = /* @__PURE__ */ user_derived(() => get(dayEvents).filter((ev) => !isAllDay(ev) && !isMultiDay(ev)));
+		const timedDayEvents = /* @__PURE__ */ user_derived(() => get(dayEvents).filter((ev) => !inAllDayStrip(ev)));
 		const dayCat = /* @__PURE__ */ user_derived(() => {
 			const now = clock.tick;
 			const past = [];
@@ -16686,12 +15837,12 @@ createHTML: (html) => {
 				let styles_1;
 				var text_5 = only_child(sibling(child(button), 2), true);
 				reset(button);
-				template_effect(() => {
+				template_effect(($0) => {
 					classes_1 = set_class(button, 1, "ag-allday-chip svelte-n8lbn1", null, classes_1, { "ag-allday-chip--selected": selectedEventId() === get(ev).id });
-					set_attribute(button, "aria-label", `${get(ev).title ?? ""}, ${get(L).allDay ?? ""}`);
+					set_attribute(button, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${get(L).allDay ?? ""}`);
 					styles_1 = set_style(button, "", styles_1, { "--ev-color": get(ev).color || "var(--dt-accent)" });
 					set_text(text_5, get(ev).title);
-				});
+				}, [() => statusText(get(ev))]);
 				delegated("click", button, () => handleClick(get(ev)));
 				event("pointerenter", button, () => get(oneventhover)?.(get(ev)));
 				append($$anchor, button);
@@ -16739,7 +15890,7 @@ createHTML: (html) => {
 							return get(ev);
 						},
 						children: ($$anchor, $$slotProps) => {
-							var fragment_3 = root_8$5();
+							var fragment_3 = root_8$4();
 							var span_5 = first_child(fragment_3);
 							var text_7 = only_child(span_5, true);
 							var div_8 = sibling(span_5, 2);
@@ -16781,15 +15932,19 @@ createHTML: (html) => {
 						$$slots: { default: true }
 					});
 					reset(button_1);
-					template_effect(($0, $1) => {
+					template_effect(($0, $1, $2) => {
 						classes_2 = set_class(button_1, 1, "ag-compact-row svelte-n8lbn1", null, classes_2, {
 							"ag-compact-row--selected": selectedEventId() === get(ev).id,
 							"ag-compact-row--cancelled": get(ev).status === "cancelled",
 							"ag-compact-row--tentative": get(ev).status === "tentative"
 						});
-						set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+						set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""}, ${$2 ?? ""}`);
 						styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-					}, [() => fmt(get(ev).start), () => duration(get(ev))]);
+					}, [
+						() => statusText(get(ev)),
+						() => fmt(get(ev).start),
+						() => duration(get(ev))
+					]);
 					delegated("click", button_1, () => handleClick(get(ev)));
 					event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
 					append($$anchor, button_1);
@@ -16804,7 +15959,7 @@ createHTML: (html) => {
 			append($$anchor, div_6);
 		};
 		var consequent_19 = ($$anchor) => {
-			var div_9 = root_23$1();
+			var div_9 = root_23$2();
 			var div_10 = child(div_9);
 			var div_11 = child(div_10);
 			var text_12 = child(div_11);
@@ -16967,17 +16122,21 @@ createHTML: (html) => {
 							$$slots: { default: true }
 						});
 						reset(button_5);
-						template_effect(($0, $1) => {
+						template_effect(($0, $1, $2) => {
 							classes_5 = set_class(button_5, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_5, { "ag-compact-row--selected": selectedEventId() === get(ev).id });
-							set_attribute(button_5, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+							set_attribute(button_5, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""}, ${$2 ?? ""}`);
 							styles_5 = set_style(button_5, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-						}, [() => fmt(get(ev).start), () => duration(get(ev))]);
+						}, [
+							() => statusText(get(ev)),
+							() => fmt(get(ev).start),
+							() => duration(get(ev))
+						]);
 						delegated("click", button_5, () => handleClick(get(ev)));
 						event("pointerenter", button_5, () => get(oneventhover)?.(get(ev)));
 						append($$anchor, button_5);
 					};
 					var alternate_4 = ($$anchor) => {
-						var button_6 = root_22$1();
+						var button_6 = root_22$2();
 						let classes_6;
 						let styles_6;
 						var div_25 = child(button_6);
@@ -17038,14 +16197,18 @@ createHTML: (html) => {
 						});
 						reset(div_25);
 						reset(button_6);
-						template_effect(($0, $1) => {
+						template_effect(($0, $1, $2) => {
 							classes_6 = set_class(button_6, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_6, {
 								"ag-card--hero": get(i) === 0,
 								"ag-card--selected": selectedEventId() === get(ev).id
 							});
-							set_attribute(button_6, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+							set_attribute(button_6, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""}, ${$2 ?? ""}`);
 							styles_6 = set_style(button_6, "", styles_6, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-						}, [() => fmt(get(ev).start), () => duration(get(ev))]);
+						}, [
+							() => statusText(get(ev)),
+							() => fmt(get(ev).start),
+							() => duration(get(ev))
+						]);
 						delegated("click", button_6, () => handleClick(get(ev)));
 						event("pointerenter", button_6, () => get(oneventhover)?.(get(ev)));
 						append($$anchor, button_6);
@@ -17108,15 +16271,16 @@ createHTML: (html) => {
 					var text_34 = only_child(span_22, true);
 					var text_35 = only_child(sibling(span_22, 2), true);
 					reset(button_7);
-					template_effect(($0, $1, $2, $3) => {
+					template_effect(($0, $1, $2, $3, $4) => {
 						classes_7 = set_class(button_7, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
-						set_attribute(button_7, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""} to ${$1 ?? ""}`);
+						set_attribute(button_7, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}`);
 						styles_7 = set_style(button_7, "", styles_7, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-						set_text(text_33, $2);
+						set_text(text_33, $3);
 						styles_8 = set_style(span_21, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
 						set_text(text_34, get(ev).title);
-						set_text(text_35, $3);
+						set_text(text_35, $4);
 					}, [
+						() => statusText(get(ev)),
 						() => fmt(get(ev).start),
 						() => fmt(get(ev).end),
 						() => fmt(get(ev).start),
@@ -17161,7 +16325,7 @@ createHTML: (html) => {
 			var alternate_9 = ($$anchor) => {
 				var fragment_17 = comment();
 				each(first_child(fragment_17), 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor, ev, i) => {
-					var button_8 = root_22$1();
+					var button_8 = root_22$2();
 					let classes_8;
 					let styles_9;
 					var div_33 = child(button_8);
@@ -17231,7 +16395,7 @@ createHTML: (html) => {
 					});
 					reset(div_33);
 					reset(button_8);
-					template_effect(($0, $1, $2) => {
+					template_effect(($0, $1, $2, $3) => {
 						classes_8 = set_class(button_8, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_8, {
 							"ag-card--first": get(i) === 0,
 							"ag-card--selected": selectedEventId() === get(ev).id,
@@ -17240,9 +16404,10 @@ createHTML: (html) => {
 							"ag-card--full": get(ev).status === "full",
 							"ag-card--limited": get(ev).status === "limited"
 						});
-						set_attribute(button_8, "aria-label", `${get(ev).title ?? ""}${get(ev).status === "cancelled" ? " (cancelled)" : ""}${get(ev).status === "tentative" ? " (tentative)" : ""}${get(ev).status === "full" ? " (full)" : ""}${get(ev).status === "limited" ? " (limited)" : ""}, ${$0 ?? ""} to ${$1 ?? ""}, ${$2 ?? ""}`);
+						set_attribute(button_8, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}, ${$3 ?? ""}`);
 						styles_9 = set_style(button_8, "", styles_9, { "--ev-color": get(ev).color || "var(--dt-accent)" });
 					}, [
+						() => statusText(get(ev)),
 						() => fmt(get(ev).start),
 						() => fmt(get(ev).end),
 						() => duration(get(ev))
@@ -17277,15 +16442,25 @@ createHTML: (html) => {
 			styles = set_style(div, style() || void 0, styles, { height: $$props.height ? `${$$props.height}px` : void 0 });
 			set_attribute(div_1, "aria-label", get(L).todaysLineup);
 		}, [() => get(disabledSet).has(get(dayMs))]);
-		delegated("pointerdown", div, onPointerDown);
-		delegated("pointerup", div, onPointerUp);
-		event("pointercancel", div, onPointerCancel);
+		delegated("touchstart", div, function(...$$args) {
+			swipe.ontouchstart?.apply(this, $$args);
+		}, void 0, true);
+		delegated("touchmove", div, function(...$$args) {
+			swipe.ontouchmove?.apply(this, $$args);
+		}, void 0, true);
+		delegated("touchend", div, function(...$$args) {
+			swipe.ontouchend?.apply(this, $$args);
+		});
+		event("touchcancel", div, function(...$$args) {
+			swipe.ontouchcancel?.apply(this, $$args);
+		});
 		append($$anchor, div);
 		pop();
 	}
 	delegate([
-		"pointerdown",
-		"pointerup",
+		"touchstart",
+		"touchmove",
+		"touchend",
 		"click"
 	]);
 	//#endregion
@@ -17298,7 +16473,7 @@ createHTML: (html) => {
 	var root_5$4 = /* @__PURE__ */ from_html(`<span class="ag-card-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!>`, 1);
 	var root_6$4 = /* @__PURE__ */ from_html(`<div class="ag-card-progress svelte-uhwfyj"><div class="ag-card-progress-fill svelte-uhwfyj"></div></div>`);
 	var root_7$4 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-uhwfyj"><!> <!></div></button>`);
-	var root_8$4 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
+	var root_8$3 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
 	var root_9$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
 	var root_10$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
 	var root_11$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-time svelte-uhwfyj"> </span> <div class="ag-compact-main svelte-uhwfyj"><span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!></div> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
@@ -17312,8 +16487,8 @@ createHTML: (html) => {
 	var root_19$1 = /* @__PURE__ */ from_html(`<div role="listitem"><div><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!></div>`);
 	var root_20$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
 	var root_21$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
-	var root_22 = /* @__PURE__ */ from_html(`<span class="ag-allday-span svelte-uhwfyj"> </span>`);
-	var root_23 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span> <!></button>`);
+	var root_22$1 = /* @__PURE__ */ from_html(`<span class="ag-allday-span svelte-uhwfyj"> </span>`);
+	var root_23$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span> <!></button>`);
 	var root_24 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
 	var root_25 = /* @__PURE__ */ from_html(`<div> </div>`);
 	var root_26 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
@@ -17426,7 +16601,7 @@ createHTML: (html) => {
 			});
 			reset(div);
 			reset(button);
-			template_effect(($0, $1, $2, $3, $4) => {
+			template_effect(($0, $1, $2, $3, $4, $5) => {
 				classes = set_class(button, 1, "ag-card svelte-uhwfyj", null, classes, {
 					"ag-card--selected": selectedEventId() === ev().id,
 					"ag-card--cancelled": ev().status === "cancelled",
@@ -17435,11 +16610,12 @@ createHTML: (html) => {
 					"ag-card--limited": ev().status === "limited",
 					"ag-card--drag": $0
 				});
-				set_attribute(button, "aria-label", `${ev().title ?? ""}${ev().status === "cancelled" ? " (cancelled)" : ""}${ev().status === "tentative" ? " (tentative)" : ""}${ev().status === "full" ? " (full)" : ""}${ev().status === "limited" ? " (limited)" : ""}, ${$1 ?? ""} to ${$2 ?? ""}, ${$3 ?? ""}`);
-				set_attribute(button, "draggable", $4);
+				set_attribute(button, "aria-label", `${ev().title ?? ""}${$1 ?? ""}, ${$2 ?? ""} – ${$3 ?? ""}, ${$4 ?? ""}`);
+				set_attribute(button, "draggable", $5);
 				styles = set_style(button, "", styles, { "--ev-color": ev().color || "var(--dt-accent)" });
 			}, [
 				() => get(dragId) === String(ev().id),
+				() => statusText(ev()),
 				() => fmt(ev().start),
 				() => fmt(ev().end),
 				() => duration(ev()),
@@ -17468,7 +16644,7 @@ createHTML: (html) => {
 					var text_9 = only_child(span_8, true);
 					var node_8 = sibling(span_8, 2);
 					var consequent_6 = ($$anchor) => {
-						var span_9 = root_8$4();
+						var span_9 = root_8$3();
 						var text_10 = only_child(span_9, true);
 						template_effect(() => set_text(text_10, ev().location));
 						append($$anchor, span_9);
@@ -17512,7 +16688,7 @@ createHTML: (html) => {
 				$$slots: { default: true }
 			});
 			reset(button_1);
-			template_effect(($0, $1) => {
+			template_effect(($0, $1, $2) => {
 				classes_1 = set_class(button_1, 1, "ag-compact svelte-uhwfyj", null, classes_1, {
 					"ag-compact--selected": selectedEventId() === ev().id,
 					"ag-compact--done": done(),
@@ -17521,9 +16697,13 @@ createHTML: (html) => {
 					"ag-compact--full": ev().status === "full",
 					"ag-compact--limited": ev().status === "limited"
 				});
-				set_attribute(button_1, "aria-label", `${ev().title ?? ""}${done() ? `, ${get(L).completed}` : ""}, ${$0 ?? ""}, ${$1 ?? ""}`);
+				set_attribute(button_1, "aria-label", `${ev().title ?? ""}${$0 ?? ""}${done() ? `, ${get(L).completed}` : ""}, ${$1 ?? ""}, ${$2 ?? ""}`);
 				styles_2 = set_style(button_1, "", styles_2, { "--ev-color": ev().color || "var(--dt-accent)" });
-			}, [() => fmt(ev().start), () => duration(ev())]);
+			}, [
+				() => statusText(ev()),
+				() => fmt(ev().start),
+				() => duration(ev())
+			]);
 			delegated("click", button_1, () => handleClick(ev()));
 			event("pointerenter", button_1, () => get(oneventhover)?.(ev()));
 			append($$anchor, button_1);
@@ -17564,6 +16744,27 @@ createHTML: (html) => {
 		function clickDay(ms) {
 			get(ondayclick)?.(new Date(ms));
 		}
+		/** Keyboard activation for the day header / empty-day row (role="button").
+		*  Keys aimed at a control inside a custom dayHeader snippet stay its own. */
+		function dayKeydown(e, ms) {
+			if (e.target !== e.currentTarget) return;
+			if (e.key !== "Enter" && e.key !== " ") return;
+			e.preventDefault();
+			clickDay(ms);
+		}
+		function statusText(ev) {
+			if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
+			if (ev.status === "tentative") return ` (${get(L).tentative})`;
+			if (ev.status === "full") return ` (${get(L).full})`;
+			if (ev.status === "limited") return ` (${get(L).limited})`;
+			return "";
+		}
+		/** All-day events and timed ones at least a (wall-clock) day long go to
+		*  the all-day chips; a shorter overnight event is listed with its time on
+		*  each day it touches. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+		}
 		const oneventmove = /* @__PURE__ */ user_derived(() => ctx.oneventmove);
 		let dragId = /* @__PURE__ */ state(null);
 		let dropDay = /* @__PURE__ */ state(null);
@@ -17586,33 +16787,19 @@ createHTML: (html) => {
 			set(dropDay, null);
 			if (!ev) return;
 			if (sod(ev.start.getTime()) === day.ms) return;
-			const start = new Date(day.ms + (ev.start.getTime() - sod(ev.start.getTime())));
+			const s = ev.start;
+			const start = new Date(new Date(day.ms).setHours(s.getHours(), s.getMinutes(), s.getSeconds(), s.getMilliseconds()));
 			const end = new Date(start.getTime() + (ev.end.getTime() - ev.start.getTime()));
 			get(oneventmove)?.(ev, start, end);
 		}
-		let swipeStartX = 0;
-		let swipeStartY = 0;
-		let swipeActive = false;
-		const SWIPE_THRESHOLD = 50;
-		function onPointerDown(e) {
-			if (!get(isMobile) || e.pointerType !== "touch") return;
-			swipeActive = true;
-			swipeStartX = e.clientX;
-			swipeStartY = e.clientY;
-		}
-		function onPointerUp(e) {
-			if (!swipeActive || e.pointerType !== "touch") return;
-			swipeActive = false;
-			const dx = e.clientX - swipeStartX;
-			const dy = e.clientY - swipeStartY;
-			if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4) {
-				if (dx > 0) get(viewState)?.prev();
-				else get(viewState)?.next();
+		const swipe = createSwipe({
+			disabled: () => !get(isMobile),
+			onmove: () => {},
+			onend: (dir) => {
+				if (dir > 0) get(viewState)?.prev();
+				else if (dir < 0) get(viewState)?.next();
 			}
-		}
-		function onPointerCancel() {
-			swipeActive = false;
-		}
+		});
 		let expandedDays = /* @__PURE__ */ state(proxy([]));
 		function toggleDayExpand(ms) {
 			set(expandedDays, get(expandedDays).includes(ms) ? get(expandedDays).filter((m) => m !== ms) : [...get(expandedDays), ms], true);
@@ -17639,8 +16826,8 @@ createHTML: (html) => {
 				const ms = addDaysMs(get(weekStartMs), i);
 				const dEnd = addDaysMs(ms, 1);
 				const dayEvts = events().filter((ev) => ev.start.getTime() < dEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
-				const allDayEvts = dayEvts.filter((ev) => isAllDay(ev) || isMultiDay(ev));
-				const timedEvts = dayEvts.filter((ev) => !isAllDay(ev) && !isMultiDay(ev));
+				const allDayEvts = dayEvts.filter(inAllDayStrip);
+				const timedEvts = dayEvts.filter((ev) => !inAllDayStrip(ev));
 				const totalMinutes = timedEvts.reduce((sum, ev) => {
 					const s = Math.max(ev.start.getTime(), ms);
 					return sum + (Math.min(ev.end.getTime(), dEnd) - s) / 6e4;
@@ -17757,10 +16944,15 @@ createHTML: (html) => {
 					classes_5 = set_class(div_7, 1, "ag-wday ag-wday--past svelte-uhwfyj", null, classes_5, { "ag-wday--disabled": $0 });
 					set_attribute(div_7, "data-day", get(day).ms);
 					classes_6 = set_class(div_8, 1, "ag-wday-head svelte-uhwfyj", null, classes_6, { "ag-wday-head--click": !!get(ondayclick) });
+					set_attribute(div_8, "role", get(ondayclick) ? "button" : void 0);
+					set_attribute(div_8, "tabindex", get(ondayclick) ? 0 : void 0);
 					set_text(text_15, get(day).dayName);
 				}, [() => get(disabledSet).has(get(day).ms)]);
 				delegated("click", div_8, function(...$$args) {
 					(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
+				});
+				delegated("keydown", div_8, function(...$$args) {
+					(get(ondayclick) ? (e) => dayKeydown(e, get(day).ms) : void 0)?.apply(this, $$args);
 				});
 				append($$anchor, div_7);
 			};
@@ -17821,14 +17013,14 @@ createHTML: (html) => {
 					each(div_17, 21, () => get(day).allDayEvents, (ev) => ev.id, ($$anchor, ev) => {
 						const seg = /* @__PURE__ */ user_derived(() => segmentForDay(get(ev), get(day).ms));
 						const isCont = /* @__PURE__ */ user_derived(() => get(seg) !== null && get(seg).totalDays > 1);
-						var button_3 = root_23();
+						var button_3 = root_23$1();
 						let classes_9;
 						let styles_5;
 						var span_19 = sibling(child(button_3), 2);
 						var text_22 = only_child(span_19, true);
 						var node_24 = sibling(span_19, 2);
 						var consequent_19 = ($$anchor) => {
-							var span_20 = root_22();
+							var span_20 = root_22$1();
 							var text_23 = only_child(span_20);
 							template_effect(() => set_text(text_23, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
 							append($$anchor, span_20);
@@ -17860,10 +17052,15 @@ createHTML: (html) => {
 					var text_24 = only_child(div_18, true);
 					template_effect(() => {
 						classes_10 = set_class(div_18, 1, "ag-wday-empty svelte-uhwfyj", null, classes_10, { "ag-wday-empty--click": !!get(ondayclick) });
+						set_attribute(div_18, "role", get(ondayclick) ? "button" : void 0);
+						set_attribute(div_18, "tabindex", get(ondayclick) ? 0 : void 0);
 						set_text(text_24, get(L).noEvents);
 					});
 					delegated("click", div_18, function(...$$args) {
 						(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
+					});
+					delegated("keydown", div_18, function(...$$args) {
+						(get(ondayclick) ? (e) => dayKeydown(e, get(day).ms) : void 0)?.apply(this, $$args);
 					});
 					append($$anchor, div_18);
 				};
@@ -17996,6 +17193,8 @@ createHTML: (html) => {
 					});
 					set_attribute(div_13, "data-day", get(day).ms);
 					classes_8 = set_class(div_14, 1, "ag-wday-head svelte-uhwfyj", null, classes_8, { "ag-wday-head--click": !!get(ondayclick) });
+					set_attribute(div_14, "role", get(ondayclick) ? "button" : void 0);
+					set_attribute(div_14, "tabindex", get(ondayclick) ? 0 : void 0);
 					set_text(text_20, get(day).dayName);
 				}, [() => get(disabledSet).has(get(day).ms), () => get(dropDay) === get(day).ms && isDropDay(get(day))]);
 				event("dragover", div_13, (e) => {
@@ -18010,6 +17209,9 @@ createHTML: (html) => {
 				event("drop", div_13, (e) => onDayDrop(e, get(day)));
 				delegated("click", div_14, function(...$$args) {
 					(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
+				});
+				delegated("keydown", div_14, function(...$$args) {
+					(get(ondayclick) ? (e) => dayKeydown(e, get(day).ms) : void 0)?.apply(this, $$args);
 				});
 				append($$anchor, div_13);
 			};
@@ -18031,16 +17233,27 @@ createHTML: (html) => {
 			set_attribute(div_6, "aria-label", get(L).weekAhead);
 			styles_4 = set_style(div_6, "", styles_4, { "--ag-cols": get(weekDays).length });
 		});
-		delegated("pointerdown", div_5, onPointerDown);
-		delegated("pointerup", div_5, onPointerUp);
-		event("pointercancel", div_5, onPointerCancel);
+		delegated("touchstart", div_5, function(...$$args) {
+			swipe.ontouchstart?.apply(this, $$args);
+		}, void 0, true);
+		delegated("touchmove", div_5, function(...$$args) {
+			swipe.ontouchmove?.apply(this, $$args);
+		}, void 0, true);
+		delegated("touchend", div_5, function(...$$args) {
+			swipe.ontouchend?.apply(this, $$args);
+		});
+		event("touchcancel", div_5, function(...$$args) {
+			swipe.ontouchcancel?.apply(this, $$args);
+		});
 		append($$anchor, div_5);
 		pop();
 	}
 	delegate([
 		"click",
-		"pointerdown",
-		"pointerup"
+		"touchstart",
+		"touchmove",
+		"touchend",
+		"keydown"
 	]);
 	//#endregion
 	//#region src/lib/views/agenda/Agenda.svelte
@@ -18066,64 +17279,6 @@ createHTML: (html) => {
 		});
 		append($$anchor, fragment);
 	}
-	function createSwipe(cb) {
-		let startX = 0;
-		let startY = 0;
-		let tracking = false;
-		let dx = 0;
-		function abandon() {
-			tracking = false;
-			if (dx !== 0) {
-				dx = 0;
-				cb.onmove(0);
-			}
-		}
-		return {
-			ontouchstart(e) {
-				if (cb.disabled?.()) {
-					tracking = false;
-					return;
-				}
-				const t = e.touches[0];
-				startX = t.clientX;
-				startY = t.clientY;
-				tracking = true;
-				dx = 0;
-			},
-			ontouchmove(e) {
-				if (!tracking) return;
-				if (cb.disabled?.()) {
-					abandon();
-					return;
-				}
-				const t = e.touches[0];
-				const mx = t.clientX - startX;
-				const my = t.clientY - startY;
-				if (Math.abs(my) > Math.abs(mx) * .8) {
-					abandon();
-					return;
-				}
-				dx = mx;
-				cb.onmove(dx);
-			},
-			ontouchend() {
-				if (!tracking) {
-					cb.onend(0);
-					return;
-				}
-				tracking = false;
-				const dir = Math.abs(dx) > 50 ? dx > 0 ? 1 : -1 : 0;
-				dx = 0;
-				cb.onend(dir);
-			},
-			ontouchcancel() {
-				if (!tracking) return;
-				tracking = false;
-				dx = 0;
-				cb.onend(0);
-			}
-		};
-	}
 	//#endregion
 	//#region src/lib/views/mobile/MobileDay.svelte
 	var root_1$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-span svelte-zbkzcp"> </span>`);
@@ -18133,7 +17288,7 @@ createHTML: (html) => {
 	var root_5$3 = /* @__PURE__ */ from_html(`<span class="mb-blocked-label svelte-zbkzcp"> </span>`);
 	var root_6$3 = /* @__PURE__ */ from_html(`<div><div class="mb-hour-label svelte-zbkzcp"> </div> <div class="mb-hour-line svelte-zbkzcp"></div> <!></div>`);
 	var root_7$3 = /* @__PURE__ */ from_html(`<div class="mb-now svelte-zbkzcp"><span class="mb-now-label svelte-zbkzcp"> </span> <div class="mb-now-line svelte-zbkzcp"></div></div>`);
-	var root_8$3 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
+	var root_8$2 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
 	var root_9$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-sub svelte-zbkzcp"> </span>`);
 	var root_10$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-loc svelte-zbkzcp"> </span>`);
 	var root_11$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
@@ -18141,12 +17296,14 @@ createHTML: (html) => {
 	var root_13 = /* @__PURE__ */ from_html(`<span class="mb-ev-title svelte-zbkzcp"> </span> <!> <!> <!> <!>`, 1);
 	var root_14 = /* @__PURE__ */ from_html(`<span class="mb-ev-live svelte-zbkzcp"></span>`);
 	var root_15 = /* @__PURE__ */ from_html(`<span class="mb-ev-next-badge svelte-zbkzcp"> </span>`);
-	var root_16 = /* @__PURE__ */ from_html(`<span class="mb-ev-handle mb-ev-handle--start svelte-zbkzcp" aria-hidden="true"></span> <span class="mb-ev-handle mb-ev-handle--end svelte-zbkzcp" aria-hidden="true"></span>`, 1);
-	var root_17 = /* @__PURE__ */ from_html(`<button type="button"><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><!></div> <!> <!></button>`);
-	var root_18 = /* @__PURE__ */ from_html(`<div class="mb-create-ghost svelte-zbkzcp" aria-hidden="true"><span class="mb-create-ghost-time svelte-zbkzcp"> </span></div>`);
-	var root_19 = /* @__PURE__ */ from_html(`<span class="mb-empty-text svelte-zbkzcp"> </span>`);
-	var root_20 = /* @__PURE__ */ from_html(`<div class="mb-empty svelte-zbkzcp"><!></div>`);
-	var root_21 = /* @__PURE__ */ from_html(`<div role="region"><div><!>  <div class="mb-grid svelte-zbkzcp" role="region" tabindex="0"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!> <!></div></div> <!></div></div>`);
+	var root_16 = /* @__PURE__ */ from_html(`<span class="mb-ev-handle mb-ev-handle--start svelte-zbkzcp" aria-hidden="true"></span>`);
+	var root_17 = /* @__PURE__ */ from_html(`<span class="mb-ev-handle mb-ev-handle--end svelte-zbkzcp" aria-hidden="true"></span>`);
+	var root_18 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+	var root_19 = /* @__PURE__ */ from_html(`<button type="button"><div class="mb-ev-stripe svelte-zbkzcp"></div> <div class="mb-ev-body svelte-zbkzcp"><!></div> <!> <!></button>`);
+	var root_20 = /* @__PURE__ */ from_html(`<div class="mb-create-ghost svelte-zbkzcp" aria-hidden="true"><span class="mb-create-ghost-time svelte-zbkzcp"> </span></div>`);
+	var root_21 = /* @__PURE__ */ from_html(`<span class="mb-empty-text svelte-zbkzcp"> </span>`);
+	var root_22 = /* @__PURE__ */ from_html(`<div class="mb-empty svelte-zbkzcp"><!></div>`);
+	var root_23 = /* @__PURE__ */ from_html(`<div role="region"><div><!>  <div class="mb-grid svelte-zbkzcp" role="region" tabindex="0"><div class="mb-grid-inner svelte-zbkzcp"><!> <!> <!> <!></div></div> <!></div></div>`);
 	function MobileDay($$anchor, $$props) {
 		push($$props, true);
 		let height = prop($$props, "height", 3, null), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null), readOnly = prop($$props, "readOnly", 3, false);
@@ -18163,6 +17320,29 @@ createHTML: (html) => {
 		const commitDragCtx = /* @__PURE__ */ user_derived(() => ctx.commitDrag);
 		const SNAP_MS = /* @__PURE__ */ user_derived(() => ctx.snapInterval * 6e4);
 		const clock = createClock(ctx.timezone);
+		/** Fractional wall-clock hour `hour` on the day starting at `dayMs` → epoch ms. */
+		function atHour(day, hour) {
+			return new Date(day).setHours(0, 0, 0, Math.round(hour * HOUR_MS));
+		}
+		/** Epoch ms → fractional wall-clock hour counted from the day at `day`
+		*  (24 = the next midnight; calendar days, not 24 h steps). */
+		function hourOf(ms, day) {
+			const d = new Date(ms);
+			return diffDays(ms, day) * 24 + d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600 + d.getMilliseconds() / HOUR_MS;
+		}
+		/** Snap a fractional hour to the snap interval in wall-clock minutes of
+		*  the local day (not UTC multiples — those are off in +05:30 zones). */
+		function snapHour(hour, how) {
+			const step = Math.max(1, ctx.snapInterval);
+			const units = hour * 60 / step;
+			return (how === "floor" ? Math.floor(units + 1e-9) : how === "ceil" ? Math.ceil(units - 1e-9) : Math.round(units)) * step / 60;
+		}
+		/** Timed events at least a (wall-clock) day long, and all-day ones, sit in
+		*  the all-day strip; a shorter overnight event is drawn in the grid,
+		*  clipped to this day. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+		}
 		const HOUR_HEIGHT = 64;
 		const GUTTER_W = 40;
 		const startHour = /* @__PURE__ */ user_derived(() => $$props.visibleHours?.[0] ?? 0);
@@ -18175,19 +17355,19 @@ createHTML: (html) => {
 		const isDisabled = /* @__PURE__ */ user_derived(() => get(disabledSet).has(get(dayMs)));
 		user_effect(() => {
 			if (!get(loadRangeCtx)) return;
-			const rangeStart = /* @__PURE__ */ new Date(get(dayMs) - 2 * DAY_MS);
-			const rangeEnd = new Date(get(dayMs) + 3 * DAY_MS);
+			const rangeStart = new Date(addDaysMs(get(dayMs), -2));
+			const rangeEnd = new Date(addDaysMs(get(dayMs), 3));
 			get(loadRangeCtx).set({
 				start: rangeStart,
 				end: rangeEnd
 			});
 			return () => get(loadRangeCtx).set(null);
 		});
-		const timedEvents = /* @__PURE__ */ user_derived(() => events().filter((ev) => !isAllDay(ev) && !isMultiDay(ev) && ev.start.getTime() < get(dayEnd) && ev.end.getTime() > get(dayMs)).sort((a, b) => a.start.getTime() - b.start.getTime()));
+		const timedEvents = /* @__PURE__ */ user_derived(() => events().filter((ev) => !inAllDayStrip(ev) && ev.start.getTime() < get(dayEnd) && ev.end.getTime() > get(dayMs)).sort((a, b) => a.start.getTime() - b.start.getTime()));
 		const allDayEvents = /* @__PURE__ */ user_derived(() => {
 			const segs = [];
 			for (const ev of events()) {
-				if (!isAllDay(ev) && !isMultiDay(ev)) continue;
+				if (!inAllDayStrip(ev)) continue;
 				const seg = segmentForDay(ev, get(dayMs));
 				if (seg) segs.push(seg);
 			}
@@ -18197,6 +17377,7 @@ createHTML: (html) => {
 		const ALLDAY_MAX = 3;
 		let allDayExpanded = /* @__PURE__ */ state(false);
 		const visibleAllDay = /* @__PURE__ */ user_derived(() => get(allDayExpanded) ? get(allDayEvents) : get(allDayEvents).slice(0, ALLDAY_MAX));
+		/** The event's own start / end is on this day, inside the visible hours */
 		const positionedEvents = /* @__PURE__ */ user_derived(() => {
 			const now = clock.tick;
 			const sorted = [...get(timedEvents)];
@@ -18208,26 +17389,33 @@ createHTML: (html) => {
 					break;
 				}
 			}
-			const infos = sorted.map((ev) => {
+			const bandStart = atHour(get(dayMs), get(startHour));
+			const bandEnd = atHour(get(dayMs), get(endHour));
+			const infos = sorted.flatMap((ev) => {
 				const resizing = rsP?.eventId === ev.id;
 				const evStart = resizing ? rsP.start : ev.start;
 				const evEnd = resizing ? rsP.end : ev.end;
-				const sMs = Math.max(evStart.getTime(), get(dayMs) + get(startHour) * HOUR_MS);
-				const eMs = Math.min(evEnd.getTime(), get(dayMs) + get(endHour) * HOUR_MS);
-				const topH = (sMs - get(dayMs)) / HOUR_MS - get(startHour);
-				const botH = (eMs - get(dayMs)) / HOUR_MS - get(startHour);
-				return {
+				const s0 = evStart.getTime();
+				const e0 = evEnd.getTime();
+				const sMs = Math.max(s0, bandStart);
+				const eMs = Math.min(e0, bandEnd);
+				if (eMs < sMs || eMs === sMs && (s0 !== e0 || s0 < bandStart || s0 >= bandEnd)) return [];
+				const topH = hourOf(sMs, get(dayMs)) - get(startHour);
+				const botH = hourOf(eMs, get(dayMs)) - get(startHour);
+				return [{
 					ev,
 					top: topH * HOUR_HEIGHT,
 					height: Math.max(24, (botH - topH) * HOUR_HEIGHT),
 					isCurrent: ev.start.getTime() <= now && ev.end.getTime() > now,
 					isNext: ev.id === nextEventId,
 					isResizing: resizing,
+					hasStart: s0 >= Math.max(get(dayMs), bandStart),
+					hasEnd: e0 <= Math.min(get(dayEnd), bandEnd),
 					startMs: sMs,
 					endMs: eMs,
 					col: 0,
 					totalCols: 1
-				};
+				}];
 			});
 			const par = infos.map((_, i) => i);
 			function find(i) {
@@ -18271,13 +17459,15 @@ createHTML: (html) => {
 				isCurrent: info.isCurrent,
 				isNext: info.isNext,
 				isResizing: info.isResizing,
+				hasStart: info.hasStart,
+				hasEnd: info.hasEnd,
 				col: info.col,
 				totalCols: info.totalCols
 			}));
 		});
 		const nowOffset = /* @__PURE__ */ user_derived(() => {
 			if (!get(isToday)) return -1;
-			const h = (clock.tick - get(dayMs)) / HOUR_MS - get(startHour);
+			const h = hourOf(clock.tick, get(dayMs)) - get(startHour);
 			if (h < 0 || h > get(hourCount)) return -1;
 			return h * HOUR_HEIGHT;
 		});
@@ -18300,8 +17490,9 @@ createHTML: (html) => {
 		let swipeOffset = /* @__PURE__ */ state(0);
 		let swipeAnimate = /* @__PURE__ */ state(false);
 		const swipe = createSwipe({
-			disabled: () => !!get(drag)?.active || mbCreateStarted || mbRsStarted || longPressTimer !== null,
+			disabled: () => !!get(drag)?.active || mbCreateStarted || mbRsStarted,
 			onmove: (dx) => {
+				if (longPressTimer !== null && !mbCreateStarted && Math.abs(dx) > LONG_PRESS_TOLERANCE) cleanupGridCreate();
 				set(swipeAnimate, false);
 				set(swipeOffset, dx, true);
 			},
@@ -18324,9 +17515,9 @@ createHTML: (html) => {
 			}
 			if (!$$props.oneventcreate || readOnly() || get(isDisabled)) return;
 			if (e.target.closest(".mb-event")) return;
-			const tMs = gridTimeMs(e.clientY);
-			if (isBlockedAt((tMs - get(dayMs)) / 36e5)) return;
-			const startMs = clampToDay(Math.floor(tMs / get(SNAP_MS)) * get(SNAP_MS));
+			const hour = gridHour(e.clientY);
+			if (isBlockedAt(hour)) return;
+			const startMs = clampToDay(atHour(get(dayMs), snapHour(hour, "floor")));
 			const durMin = get(minDuration) ?? 60;
 			$$props.oneventcreate({
 				start: new Date(startMs),
@@ -18337,9 +17528,9 @@ createHTML: (html) => {
 			if (e.key !== "Enter" && e.key !== " ") return;
 			if (!$$props.oneventcreate || readOnly() || get(isDisabled)) return;
 			e.preventDefault();
-			const raw = get(isToday) ? clock.tick : get(dayMs) + get(startHour) * HOUR_MS;
-			const startMs = clampToDay(Math.ceil(raw / get(SNAP_MS)) * get(SNAP_MS));
-			if (isBlockedAt((startMs - get(dayMs)) / 36e5)) return;
+			const rawHour = get(isToday) ? hourOf(clock.tick, get(dayMs)) : get(startHour);
+			const startMs = clampToDay(atHour(get(dayMs), snapHour(rawHour, "ceil")));
+			if (isBlockedAt(hourOf(startMs, get(dayMs)))) return;
 			const durMin = get(minDuration) ?? 60;
 			$$props.oneventcreate({
 				start: new Date(startMs),
@@ -18370,19 +17561,22 @@ createHTML: (html) => {
 				longPressTimer = null;
 			}
 		}
-		/** Pointer Y → epoch ms within the day grid (accounts for scroll). */
-		function gridTimeMs(clientY) {
+		/** Pointer Y → fractional wall-clock hour of this day (accounts for scroll). */
+		function gridHour(clientY) {
 			const y = clientY - gridEl.getBoundingClientRect().top + gridEl.scrollTop;
-			return get(dayMs) + (get(startHour) + y / HOUR_HEIGHT) * HOUR_MS;
+			return get(startHour) + y / HOUR_HEIGHT;
+		}
+		/** Pointer Y → wall-clock time snapped to the interval, clamped to the band. */
+		function gridSnapped(clientY, how) {
+			return clampToDay(atHour(get(dayMs), snapHour(gridHour(clientY), how)));
 		}
 		/** Clamp a timestamp into the visible hour range of this day. */
 		function clampToDay(ms) {
-			return Math.max(get(dayMs) + get(startHour) * HOUR_MS, Math.min(get(dayMs) + get(endHour) * HOUR_MS, ms));
+			return Math.max(atHour(get(dayMs), get(startHour)), Math.min(atHour(get(dayMs), get(endHour)), ms));
 		}
 		function startGridCreate() {
 			if (!get(drag)) return;
 			mbCreateStarted = true;
-			mbCreateAnchorMs = clampToDay(Math.floor(mbCreateAnchorMs / get(SNAP_MS)) * get(SNAP_MS));
 			get(drag).beginCreate(new Date(mbCreateAnchorMs), new Date(mbCreateAnchorMs + get(SNAP_MS)));
 			addTouchScrollBlock();
 		}
@@ -18391,7 +17585,7 @@ createHTML: (html) => {
 			if (e.target.closest(".mb-event")) return;
 			mbCreateStartX = e.clientX;
 			mbCreateStartY = e.clientY;
-			mbCreateAnchorMs = gridTimeMs(e.clientY);
+			mbCreateAnchorMs = gridSnapped(e.clientY, "floor");
 			mbCreateStarted = false;
 			if (e.pointerType === "touch") longPressTimer = setTimeout(() => {
 				longPressTimer = null;
@@ -18412,7 +17606,7 @@ createHTML: (html) => {
 				if (Math.abs(e.clientY - mbCreateStartY) < CREATE_THRESHOLD) return;
 				startGridCreate();
 			}
-			const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
+			const snapped = gridSnapped(e.clientY, "round");
 			get(drag).updatePointer(new Date(Math.min(mbCreateAnchorMs, snapped)), new Date(Math.max(mbCreateAnchorMs + get(SNAP_MS), snapped)));
 		}
 		function cleanupGridCreate() {
@@ -18465,7 +17659,7 @@ createHTML: (html) => {
 				get(drag).beginResize(ev.id, mbRsEdge, ev.start, ev.end);
 				addTouchScrollBlock();
 			}
-			const snapped = clampToDay(Math.round(gridTimeMs(e.clientY) / get(SNAP_MS)) * get(SNAP_MS));
+			const snapped = gridSnapped(e.clientY, "round");
 			if (mbRsEdge === "end") {
 				const end = Math.max(snapped, ev.start.getTime() + get(SNAP_MS));
 				get(drag).updatePointer(ev.start, new Date(end));
@@ -18507,7 +17701,7 @@ createHTML: (html) => {
 				if (get(nowOffset) >= 0) el.scrollTop = Math.max(0, get(nowOffset) - 120);
 			});
 		});
-		var div = root_21();
+		var div = root_23();
 		let classes;
 		let styles;
 		var div_1 = child(div);
@@ -18625,7 +17819,7 @@ createHTML: (html) => {
 		});
 		var node_8 = sibling(node_7, 2);
 		each(node_8, 17, () => get(positionedEvents), (p) => p.ev.id, ($$anchor, p) => {
-			var button_2 = root_17();
+			var button_2 = root_19();
 			let classes_5;
 			let styles_5;
 			var div_8 = sibling(child(button_2), 2);
@@ -18639,7 +17833,7 @@ createHTML: (html) => {
 					var text_6 = only_child(span_4, true);
 					var node_10 = sibling(span_4, 2);
 					var consequent_6 = ($$anchor) => {
-						var span_5 = root_8$3();
+						var span_5 = root_8$2();
 						var text_7 = only_child(span_5);
 						template_effect(($0, $1) => set_text(text_7, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(p).ev.start, $$props.locale), () => fmtTime$1(get(p).ev.end, $$props.locale)]);
 						append($$anchor, span_5);
@@ -18703,16 +17897,30 @@ createHTML: (html) => {
 				else if (get(p).isNext) $$render(consequent_11, 1);
 			});
 			var node_15 = sibling(node_14, 2);
-			var consequent_12 = ($$anchor) => {
-				var fragment_2 = root_16();
-				var span_11 = first_child(fragment_2);
-				var span_12 = sibling(span_11, 2);
-				delegated("pointerdown", span_11, (e) => onResizePointerDown(e, get(p).ev, "start"));
-				delegated("pointerdown", span_12, (e) => onResizePointerDown(e, get(p).ev, "end"));
+			var consequent_14 = ($$anchor) => {
+				var fragment_2 = root_18();
+				var node_16 = first_child(fragment_2);
+				var consequent_12 = ($$anchor) => {
+					var span_11 = root_16();
+					delegated("pointerdown", span_11, (e) => onResizePointerDown(e, get(p).ev, "start"));
+					append($$anchor, span_11);
+				};
+				if_block(node_16, ($$render) => {
+					if (get(p).hasStart) $$render(consequent_12);
+				});
+				var node_17 = sibling(node_16, 2);
+				var consequent_13 = ($$anchor) => {
+					var span_12 = root_17();
+					delegated("pointerdown", span_12, (e) => onResizePointerDown(e, get(p).ev, "end"));
+					append($$anchor, span_12);
+				};
+				if_block(node_17, ($$render) => {
+					if (get(p).hasEnd) $$render(consequent_13);
+				});
 				append($$anchor, fragment_2);
 			};
 			if_block(node_15, ($$render) => {
-				if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_12);
+				if (!readOnly() && !get(p).ev.data?.readOnly) $$render(consequent_14);
 			});
 			reset(button_2);
 			template_effect(($0, $1, $2) => {
@@ -18751,11 +17959,12 @@ createHTML: (html) => {
 			event("pointerenter", button_2, () => get(oneventhover)?.(get(p).ev));
 			append($$anchor, button_2);
 		});
-		var node_16 = sibling(node_8, 2);
-		var consequent_13 = ($$anchor) => {
-			const gTop = /* @__PURE__ */ user_derived(() => ((get(drag).payload.start.getTime() - get(dayMs)) / HOUR_MS - get(startHour)) * HOUR_HEIGHT);
-			const gH = /* @__PURE__ */ user_derived(() => Math.max(12, (get(drag).payload.end.getTime() - get(drag).payload.start.getTime()) / HOUR_MS * HOUR_HEIGHT));
-			var div_10 = root_18();
+		var node_18 = sibling(node_8, 2);
+		var consequent_15 = ($$anchor) => {
+			const gTopH = /* @__PURE__ */ user_derived(() => hourOf(get(drag).payload.start.getTime(), get(dayMs)));
+			const gTop = /* @__PURE__ */ user_derived(() => (get(gTopH) - get(startHour)) * HOUR_HEIGHT);
+			const gH = /* @__PURE__ */ user_derived(() => Math.max(12, (hourOf(get(drag).payload.end.getTime(), get(dayMs)) - get(gTopH)) * HOUR_HEIGHT));
+			var div_10 = root_20();
 			let styles_6;
 			var text_12 = only_child(child(div_10));
 			reset(div_10);
@@ -18768,36 +17977,36 @@ createHTML: (html) => {
 			}, [() => fmtTime$1(get(drag).payload.start, $$props.locale), () => fmtTime$1(get(drag).payload.end, $$props.locale)]);
 			append($$anchor, div_10);
 		};
-		if_block(node_16, ($$render) => {
-			if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_13);
+		if_block(node_18, ($$render) => {
+			if (!readOnly() && get(drag)?.active && get(drag).mode === "create" && get(drag).payload) $$render(consequent_15);
 		});
 		reset(div_4);
 		reset(div_3);
 		bind_this(div_3, ($$value) => gridEl = $$value, () => gridEl);
-		var node_17 = sibling(div_3, 2);
-		var consequent_15 = ($$anchor) => {
-			var div_11 = root_20();
-			var node_18 = child(div_11);
-			var consequent_14 = ($$anchor) => {
+		var node_19 = sibling(div_3, 2);
+		var consequent_17 = ($$anchor) => {
+			var div_11 = root_22();
+			var node_20 = child(div_11);
+			var consequent_16 = ($$anchor) => {
 				var fragment_3 = comment();
 				snippet(first_child(fragment_3), () => ctx.emptySnippet);
 				append($$anchor, fragment_3);
 			};
 			var alternate = ($$anchor) => {
-				var span_14 = root_19();
+				var span_14 = root_21();
 				var text_13 = only_child(span_14, true);
 				template_effect(() => set_text(text_13, get(L).nothingScheduled));
 				append($$anchor, span_14);
 			};
-			if_block(node_18, ($$render) => {
-				if (ctx.emptySnippet) $$render(consequent_14);
+			if_block(node_20, ($$render) => {
+				if (ctx.emptySnippet) $$render(consequent_16);
 				else $$render(alternate, -1);
 			});
 			reset(div_11);
 			append($$anchor, div_11);
 		};
-		if_block(node_17, ($$render) => {
-			if (get(isEmpty)) $$render(consequent_15);
+		if_block(node_19, ($$render) => {
+			if (get(isEmpty)) $$render(consequent_17);
 		});
 		reset(div_1);
 		reset(div);
@@ -18842,13 +18051,12 @@ createHTML: (html) => {
 	//#region src/lib/views/mobile/MobileWeek.svelte
 	var root$2 = /* @__PURE__ */ from_html(`<span> </span>`);
 	var root_1$2 = /* @__PURE__ */ from_html(`<span class="mw-empty svelte-1d18hkf"> </span>`);
-	var root_2$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-time svelte-1d18hkf"> </span>`);
-	var root_3$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-title svelte-1d18hkf"> </span> <!>`, 1);
-	var root_4$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="mw-ev-stripe svelte-1d18hkf"></span> <div class="mw-ev-body svelte-1d18hkf"><!></div></button>`);
-	var root_5$2 = /* @__PURE__ */ from_html(`<button type="button" class="mw-ev-more svelte-1d18hkf"> </button>`);
-	var root_6$2 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-	var root_7$2 = /* @__PURE__ */ from_html(`<div role="listitem"><button type="button" class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
-	var root_8$2 = /* @__PURE__ */ from_html(`<div role="region"><div role="list"></div></div>`);
+	var root_2$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-title svelte-1d18hkf"> </span> <span class="mw-ev-time svelte-1d18hkf"> </span>`, 1);
+	var root_3$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="mw-ev-stripe svelte-1d18hkf"></span> <div class="mw-ev-body svelte-1d18hkf"><!></div></button>`);
+	var root_4$2 = /* @__PURE__ */ from_html(`<button type="button" class="mw-ev-more svelte-1d18hkf"> </button>`);
+	var root_5$2 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+	var root_6$2 = /* @__PURE__ */ from_html(`<div role="listitem"><button type="button" class="mw-row-target svelte-1d18hkf"></button> <div class="mw-date svelte-1d18hkf"><span> </span> <!></div> <div class="mw-events svelte-1d18hkf"><!></div> <svg class="mw-chevron svelte-1d18hkf" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5"></path></svg></div>`);
+	var root_7$2 = /* @__PURE__ */ from_html(`<div role="region"><div role="list"></div></div>`);
 	function MobileWeek($$anchor, $$props) {
 		push($$props, true);
 		let mondayStart = prop($$props, "mondayStart", 3, true), height = prop($$props, "height", 3, null), events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), selectedEventId = prop($$props, "selectedEventId", 3, null);
@@ -18870,8 +18078,8 @@ createHTML: (html) => {
 		const weekStart = /* @__PURE__ */ user_derived(() => get(customDays) === 7 ? startOfWeek(get(focusMs), mondayStart()) : sod(get(focusMs)));
 		user_effect(() => {
 			if (!get(loadRangeCtx)) return;
-			const rangeStart = /* @__PURE__ */ new Date(get(weekStart) - 7 * DAY_MS);
-			const rangeEnd = new Date(get(weekStart) + (get(customDays) + 7) * DAY_MS);
+			const rangeStart = new Date(addDaysMs(get(weekStart), -7));
+			const rangeEnd = new Date(addDaysMs(get(weekStart), get(customDays) + 7));
 			get(loadRangeCtx).set({
 				start: rangeStart,
 				end: rangeEnd
@@ -18893,7 +18101,7 @@ createHTML: (html) => {
 				const isDisabled = get(disabledSet).has(ms);
 				const dayEnd = addDaysMs(ms, 1);
 				const dayEvents = events().filter((ev) => ev.start.getTime() < dayEnd && ev.end.getTime() > ms).sort((a, b) => a.start.getTime() - b.start.getTime());
-				const allDayCount = dayEvents.filter((ev) => isAllDay(ev) || isMultiDay(ev)).length;
+				const allDayCount = dayEvents.filter(inAllDayStrip).length;
 				result.push({
 					ms,
 					dayNum: d.getDate(),
@@ -18919,9 +18127,21 @@ createHTML: (html) => {
 		function fmtTime(d) {
 			return fmtTime$1(d, $$props.locale);
 		}
+		/** All-day events and timed ones at least a (wall-clock) day long read as
+		*  "All day"; a shorter overnight event keeps its time on both days. */
+		function inAllDayStrip(ev) {
+			return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
+		}
 		function evTimeLabel(ev) {
-			if (isAllDay(ev) || isMultiDay(ev)) return get(L).allDay;
+			if (inAllDayStrip(ev)) return get(L).allDay;
 			return `${fmtTime(ev.start)} – ${fmtTime(ev.end)}`;
+		}
+		/** Visible time on a day row: the start, or "until 01:00" on the day an
+		*  overnight event runs into. */
+		function evRowTime(ev, dayMs) {
+			if (inAllDayStrip(ev)) return get(L).allDay;
+			if (ev.start.getTime() < dayMs) return `${get(L).until} ${fmtTime(ev.end)}`;
+			return fmtTime(ev.start);
 		}
 		function statusText(ev) {
 			if (ev.status === "cancelled") return ` (${get(L).cancelled})`;
@@ -18930,6 +18150,11 @@ createHTML: (html) => {
 			if (ev.status === "limited") return ` (${get(L).limited})`;
 			return "";
 		}
+		let listEl = /* @__PURE__ */ state(null);
+		user_effect(() => {
+			get(weekStart);
+			if (get(listEl)) get(listEl).scrollTop = 0;
+		});
 		let swipeOffset = /* @__PURE__ */ state(0);
 		let swipeAnimate = /* @__PURE__ */ state(false);
 		const swipe = createSwipe({
@@ -18962,14 +18187,14 @@ createHTML: (html) => {
 			e.preventDefault();
 			handleDayTap(dayMs);
 		}
-		var div = root_8$2();
+		var div = root_7$2();
 		let classes;
 		let styles;
 		var div_1 = child(div);
 		let classes_1;
 		let styles_1;
 		each(div_1, 21, () => get(dayCells), (cell) => cell.ms, ($$anchor, cell) => {
-			var div_2 = root_7$2();
+			var div_2 = root_6$2();
 			let classes_2;
 			var button = child(div_2);
 			var div_3 = sibling(button, 2);
@@ -18999,11 +18224,11 @@ createHTML: (html) => {
 				template_effect(() => set_text(text_2, get(L).noEvents));
 				append($$anchor, span_2);
 			};
-			var alternate_1 = ($$anchor) => {
-				var fragment = root_6$2();
+			var alternate = ($$anchor) => {
+				var fragment = root_5$2();
 				var node_2 = first_child(fragment);
 				each(node_2, 17, () => get(expandedDays).has(get(cell).ms) ? get(cell).events : get(cell).events.slice(0, MAX_EVENTS), (ev) => ev.id, ($$anchor, ev) => {
-					var button_1 = root_4$2();
+					var button_1 = root_3$2();
 					let classes_5;
 					let styles_2;
 					var div_5 = sibling(child(button_1), 2);
@@ -19012,28 +18237,14 @@ createHTML: (html) => {
 							return get(ev);
 						},
 						children: ($$anchor, $$slotProps) => {
-							var fragment_1 = root_3$2();
+							var fragment_1 = root_2$2();
 							var span_3 = first_child(fragment_1);
 							var text_3 = only_child(span_3, true);
-							var node_4 = sibling(span_3, 2);
-							var consequent_2 = ($$anchor) => {
-								var span_4 = root_2$2();
-								var text_4 = only_child(span_4, true);
-								template_effect(() => set_text(text_4, get(L).allDay));
-								append($$anchor, span_4);
-							};
-							var d_1 = /* @__PURE__ */ user_derived(() => isAllDay(get(ev)) || isMultiDay(get(ev)));
-							var alternate = ($$anchor) => {
-								var span_5 = root_2$2();
-								var text_5 = only_child(span_5, true);
-								template_effect(($0) => set_text(text_5, $0), [() => fmtTime(get(ev).start)]);
-								append($$anchor, span_5);
-							};
-							if_block(node_4, ($$render) => {
-								if (get(d_1)) $$render(consequent_2);
-								else $$render(alternate, -1);
-							});
-							template_effect(() => set_text(text_3, get(ev).title));
+							var text_4 = only_child(sibling(span_3, 2), true);
+							template_effect(($0) => {
+								set_text(text_3, get(ev).title);
+								set_text(text_4, $0);
+							}, [() => evRowTime(get(ev), get(cell).ms)]);
 							append($$anchor, fragment_1);
 						},
 						$$slots: { default: true }
@@ -19053,8 +18264,8 @@ createHTML: (html) => {
 						set_attribute(button_1, "aria-label", `${get(ev).title ?? ""}${$2 ?? ""}, ${$3 ?? ""}`);
 						styles_2 = set_style(button_1, "", styles_2, { "--ev-color": get(ev).color ?? "var(--dt-accent)" });
 					}, [
-						() => isAllDay(get(ev)) || isMultiDay(get(ev)),
-						() => !isAllDay(get(ev)) && !isMultiDay(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
+						() => inAllDayStrip(get(ev)),
+						() => !inAllDayStrip(get(ev)) && get(ev).start.getTime() <= clock.tick && get(ev).end.getTime() > clock.tick,
 						() => statusText(get(ev)),
 						() => evTimeLabel(get(ev))
 					]);
@@ -19072,25 +18283,25 @@ createHTML: (html) => {
 					event("pointerenter", button_1, () => get(oneventhover)?.(get(ev)));
 					append($$anchor, button_1);
 				});
-				var node_5 = sibling(node_2, 2);
-				var consequent_3 = ($$anchor) => {
-					var button_2 = root_5$2();
-					var text_6 = only_child(button_2, true);
+				var node_4 = sibling(node_2, 2);
+				var consequent_2 = ($$anchor) => {
+					var button_2 = root_4$2();
+					var text_5 = only_child(button_2, true);
 					template_effect(($0, $1) => {
 						set_attribute(button_2, "aria-expanded", $0);
-						set_text(text_6, $1);
+						set_text(text_5, $1);
 					}, [() => get(expandedDays).has(get(cell).ms), () => get(expandedDays).has(get(cell).ms) ? get(L).showLess : get(L).nMore(get(cell).totalCount - MAX_EVENTS)]);
 					delegated("click", button_2, () => toggleExpand(get(cell).ms));
 					append($$anchor, button_2);
 				};
-				if_block(node_5, ($$render) => {
-					if (get(cell).totalCount > MAX_EVENTS) $$render(consequent_3);
+				if_block(node_4, ($$render) => {
+					if (get(cell).totalCount > MAX_EVENTS) $$render(consequent_2);
 				});
 				append($$anchor, fragment);
 			};
 			if_block(node_1, ($$render) => {
 				if (get(cell).events.length === 0) $$render(consequent_1);
-				else $$render(alternate_1, -1);
+				else $$render(alternate, -1);
 			});
 			reset(div_4);
 			next(2);
@@ -19113,6 +18324,7 @@ createHTML: (html) => {
 			append($$anchor, div_2);
 		});
 		reset(div_1);
+		bind_this(div_1, ($$value) => set(listEl, $$value), () => get(listEl));
 		reset(div);
 		template_effect(() => {
 			classes = set_class(div, 1, "mw svelte-1d18hkf", null, classes, { "mw--auto": get(autoHeight) });
@@ -19211,22 +18423,34 @@ createHTML: (html) => {
 		let focusMs = /* @__PURE__ */ state(null);
 		let bodyEl = /* @__PURE__ */ state(null);
 		const cellsInteractive = /* @__PURE__ */ user_derived(() => !!get(ondayclick));
+		/** A cell takes focus when it can act: drill down, or open its overflow. */
+		function isFocusable(cell) {
+			return !cell.isDisabled && (get(cellsInteractive) || cell.overflow > 0);
+		}
+		/** Focusable cells by day, in grid order. */
+		const focusable = /* @__PURE__ */ user_derived(() => {
+			const map = /* @__PURE__ */ new Map();
+			for (const row of get(weeks)) for (const cell of row) if (isFocusable(cell)) map.set(cell.ms, cell);
+			return map;
+		});
 		const rovingMs = /* @__PURE__ */ user_derived(() => {
-			if (!get(range)) return null;
-			const start = sod(get(range).start.getTime());
-			const end = get(range).end.getTime();
-			if (get(focusMs) !== null && get(focusMs) >= start && get(focusMs) < end) return get(focusMs);
-			if (get(todayMs) >= start && get(todayMs) < end) return get(todayMs);
-			return start;
+			if (get(focusMs) !== null && get(focusable).has(get(focusMs))) return get(focusMs);
+			if (get(focusable).has(get(todayMs))) return get(todayMs);
+			const first = get(focusable).keys().next();
+			return first.done ? null : first.value;
 		});
 		function moveFocus(fromMs, deltaDays) {
 			if (!get(range)) return;
-			const target = addDaysMs(fromMs, deltaDays);
-			if (target < sod(get(range).start.getTime()) || target >= get(range).end.getTime()) return;
+			const lo = sod(get(range).start.getTime());
+			const hi = get(range).end.getTime();
+			let target = addDaysMs(fromMs, deltaDays);
+			while (target >= lo && target < hi && !get(focusable).has(target)) target = addDaysMs(target, deltaDays);
+			if (target < lo || target >= hi) return;
 			set(focusMs, target, true);
 			(get(bodyEl)?.querySelector(`[data-ms="${target}"]`))?.focus();
 		}
 		function cellKeydown(e, cell) {
+			if (!(e.target === e.currentTarget) && (e.key === "Enter" || e.key === " ")) return;
 			switch (e.key) {
 				case "ArrowRight":
 					e.preventDefault();
@@ -19345,7 +18569,7 @@ createHTML: (html) => {
 						template_effect(() => classes_3 = set_class(button, 1, "mg-chip mg-chip--custom svelte-pvjuld", null, classes_3, { "mg-chip--selected": get(ev).id === selectedEventId() }));
 						delegated("click", button, (e) => {
 							e.stopPropagation();
-							$$props.oneventclick?.(get(ev));
+							$$props.oneventclick?.(get(ev), e.currentTarget.getBoundingClientRect());
 						});
 						event("mouseenter", button, () => get(oneventhover)?.(get(ev)));
 						append($$anchor, button);
@@ -19379,7 +18603,7 @@ createHTML: (html) => {
 						}, [() => chipTime(get(ev)) ? `, ${chipTime(get(ev))}` : ""]);
 						delegated("click", button_1, (e) => {
 							e.stopPropagation();
-							$$props.oneventclick?.(get(ev));
+							$$props.oneventclick?.(get(ev), e.currentTarget.getBoundingClientRect());
 						});
 						event("mouseenter", button_1, () => get(oneventhover)?.(get(ev)));
 						append($$anchor, button_1);
@@ -19418,7 +18642,7 @@ createHTML: (html) => {
 				});
 				reset(div_6);
 				reset(div_5);
-				template_effect(($0) => {
+				template_effect(($0, $1) => {
 					classes_1 = set_class(div_5, 1, "mg-cell svelte-pvjuld", null, classes_1, {
 						"mg-cell--out": !get(cell).inMonth,
 						"mg-cell--today": get(cell).isToday,
@@ -19430,10 +18654,10 @@ createHTML: (html) => {
 					set_attribute(div_5, "aria-label", $0);
 					set_attribute(div_5, "aria-current", get(cell).isToday ? "date" : void 0);
 					set_attribute(div_5, "data-ms", get(cell).ms);
-					set_attribute(div_5, "tabindex", get(cell).isDisabled ? void 0 : get(cellsInteractive) || get(cell).overflow > 0 ? get(cell).ms === get(rovingMs) ? 0 : -1 : void 0);
+					set_attribute(div_5, "tabindex", $1);
 					classes_2 = set_class(span, 1, "mg-daynum svelte-pvjuld", null, classes_2, { "mg-daynum--today": get(cell).isToday });
 					set_text(text_1, get(cell).dayNum);
-				}, [() => cellLabel(get(cell))]);
+				}, [() => cellLabel(get(cell)), () => isFocusable(get(cell)) ? get(cell).ms === get(rovingMs) ? 0 : -1 : void 0]);
 				delegated("click", div_5, () => {
 					if (!get(cell).isDisabled) get(ondayclick)?.(get(cell).date);
 				});
@@ -19465,7 +18689,1084 @@ createHTML: (html) => {
 		"keydown"
 	]);
 	//#endregion
+	//#region src/lib/adapters/errors.ts
+	/**
+	* The two refusals the calendar tells apart when a write fails.
+	*
+	* Throw `CalendarReadOnlyError` from an adapter that holds an event but
+	* cannot store a change to it: the Calendar keeps the dragged block where it
+	* was dropped and hands the move to the host (`oneventmove`), which owns the
+	* write. Throw `EventNotFoundError` when an id is not yours: a composite
+	* adapter then asks its next child, and a drag of it ends quietly.
+	*
+	* Plain `Error`s whose message contains "read-only" / "not found" are read
+	* the same way, so adapters written before these classes keep working.
+	*/
+	var CalendarReadOnlyError = class extends Error {
+		constructor(message = "read-only: this adapter cannot store changes") {
+			super(message.includes("read-only") ? message : `read-only: ${message}`);
+			this.name = "CalendarReadOnlyError";
+		}
+	};
+	var EventNotFoundError = class extends Error {
+		constructor(id) {
+			super(`Event not found: ${id}`);
+			this.name = "EventNotFoundError";
+		}
+	};
+	/** Whether an adapter refused a write it could not store. */
+	function isReadOnlyError(e) {
+		return e instanceof CalendarReadOnlyError || e instanceof Error && /read-only/i.test(e.message);
+	}
+	/** Whether an adapter answered "not my event". */
+	function isNotFoundError(e) {
+		return e instanceof EventNotFoundError || e instanceof Error && /not found/i.test(e.message);
+	}
+	//#endregion
+	//#region src/lib/engine/event-store.svelte.ts
+	function createEventStore(adapter) {
+		const getAdapter = typeof adapter === "function" ? adapter : () => adapter;
+		let eventMap = new SvelteMap();
+		/** The latest load is async and has not resolved yet */
+		let loadPending = /* @__PURE__ */ state(false);
+		/** Mutations in flight — a counter, since several can overlap */
+		let mutationsPending = /* @__PURE__ */ state(0);
+		const loading = /* @__PURE__ */ user_derived(() => get(loadPending) || get(mutationsPending) > 0);
+		let error = /* @__PURE__ */ state(null);
+		/** Guards against an older in-flight load pruning a newer one's result */
+		let loadSeq = 0;
+		/**
+		* Mutation clock. A load that was already in flight when an event was
+		* added, moved or removed must not undo that write when it lands — its
+		* snapshot predates it. Each mutation stamps its id; a load skips ids
+		* stamped after it started.
+		*/
+		let epoch = 0;
+		const touched = /* @__PURE__ */ new Map();
+		function touch(id) {
+			touched.set(id, ++epoch);
+		}
+		const eventArray = /* @__PURE__ */ user_derived(() => [...eventMap.values()]);
+		function overlaps(ev, start, end) {
+			return overlapsRange(ev, start, end);
+		}
+		function removeEvent(id) {
+			eventMap.delete(id);
+		}
+		function upsertEvent(ev) {
+			eventMap.set(ev.id, ev);
+		}
+		function merge(fetched, range, since = epoch) {
+			const stale = (id) => (touched.get(id) ?? 0) > since;
+			const keep = new Set(fetched.map((ev) => ev.id));
+			for (const ev of [...eventMap.values()]) if (!keep.has(ev.id) && !stale(ev.id) && overlaps(ev, range.start, range.end)) removeEvent(ev.id);
+			for (const ev of fetched) if (!stale(ev.id)) upsertEvent(ev);
+			for (const [id, at] of touched) if (at <= since) touched.delete(id);
+		}
+		async function mutate(run) {
+			update(mutationsPending);
+			set(error, null);
+			try {
+				return await run();
+			} catch (e) {
+				if (!isReadOnlyError(e) && !isNotFoundError(e)) set(error, e instanceof Error ? e.message : String(e), true);
+				throw e;
+			} finally {
+				update(mutationsPending, -1);
+			}
+		}
+		return {
+			get events() {
+				return get(eventArray);
+			},
+			get loading() {
+				return get(loading);
+			},
+			get error() {
+				return get(error);
+			},
+			async load(range) {
+				const seq = ++loadSeq;
+				const since = epoch;
+				const adapter = getAdapter();
+				let sync;
+				try {
+					sync = adapter.fetchEventsSync?.(range);
+				} catch (e) {
+					set(loadPending, false);
+					set(error, e instanceof Error ? e.message : String(e), true);
+					return;
+				}
+				if (sync) {
+					set(error, null);
+					set(loadPending, false);
+					untrack(() => merge(sync, range, since));
+					return;
+				}
+				set(loadPending, true);
+				set(error, null);
+				try {
+					const fetched = await adapter.fetchEvents(range);
+					if (seq !== loadSeq) return;
+					merge(fetched, range, since);
+				} catch (e) {
+					if (seq === loadSeq) set(error, e instanceof Error ? e.message : String(e), true);
+				} finally {
+					if (seq === loadSeq) set(loadPending, false);
+				}
+			},
+			forRange(start, end) {
+				return get(eventArray).filter((ev) => overlaps(ev, start, end));
+			},
+			forDay(date) {
+				const dayStart = new Date(sod(date.getTime()));
+				const dayEnd = new Date(addDaysMs(dayStart.getTime(), 1));
+				return get(eventArray).filter((ev) => overlaps(ev, dayStart, dayEnd));
+			},
+			byId(id) {
+				return eventMap.get(id);
+			},
+			async add(eventData) {
+				const adapter = getAdapter();
+				if (!adapter.createEvent) throw new CalendarReadOnlyError("Adapter is read-only: createEvent not implemented");
+				return mutate(async () => {
+					const created = await adapter.createEvent(eventData);
+					upsertEvent(created);
+					touch(created.id);
+					return created;
+				});
+			},
+			async update(id, patch) {
+				const adapter = getAdapter();
+				if (!adapter.updateEvent) throw new CalendarReadOnlyError("Adapter is read-only: updateEvent not implemented");
+				await mutate(async () => {
+					upsertEvent(await adapter.updateEvent(id, patch));
+					touch(id);
+				});
+			},
+			async remove(id) {
+				const adapter = getAdapter();
+				if (!adapter.deleteEvent) throw new CalendarReadOnlyError("Adapter is read-only: deleteEvent not implemented");
+				await mutate(async () => {
+					await adapter.deleteEvent(id);
+					removeEvent(id);
+					touch(id);
+				});
+			},
+			async move(id, newStart, newEnd) {
+				const existing = eventMap.get(id);
+				if (existing) {
+					upsertEvent({
+						...existing,
+						start: newStart,
+						end: newEnd
+					});
+					touch(id);
+				}
+				try {
+					await this.update(id, {
+						start: newStart,
+						end: newEnd
+					});
+				} catch (e) {
+					if (existing && !isReadOnlyError(e)) {
+						upsertEvent(existing);
+						touch(id);
+					}
+					throw e;
+				}
+			}
+		};
+	}
+	//#endregion
+	//#region src/lib/engine/view-state.svelte.ts
+	function inferMode(view) {
+		if (view.startsWith("day")) return "day";
+		if (view.startsWith("month")) return "month";
+		return "week";
+	}
+	function computeRange(focus, mode, mondayStart, dayCount = 7) {
+		if (mode === "day") {
+			const start = new Date(focus);
+			start.setHours(0, 0, 0, 0);
+			return {
+				start,
+				end: new Date(addDaysMs(start.getTime(), 1))
+			};
+		}
+		if (mode === "month") {
+			const first = new Date(focus.getFullYear(), focus.getMonth(), 1);
+			const last = new Date(focus.getFullYear(), focus.getMonth() + 1, 0);
+			const gridStart = startOfWeek(first.getTime(), mondayStart);
+			const gridEnd = addDaysMs(startOfWeek(last.getTime(), mondayStart), 7);
+			return {
+				start: new Date(gridStart),
+				end: new Date(gridEnd)
+			};
+		}
+		if (dayCount === 7) {
+			const ws = startOfWeek(focus.getTime(), mondayStart);
+			return {
+				start: new Date(ws),
+				end: new Date(addDaysMs(ws, 7))
+			};
+		}
+		const start = new Date(focus);
+		start.setHours(0, 0, 0, 0);
+		return {
+			start,
+			end: new Date(addDaysMs(start.getTime(), dayCount))
+		};
+	}
+	function createViewState(options = {}) {
+		const timezone = options.timezone;
+		const today = () => timezone ? nowInZone(timezone) : /* @__PURE__ */ new Date();
+		let view = /* @__PURE__ */ state(proxy(options.view ?? "week-planner"));
+		let focusDate = /* @__PURE__ */ state(proxy(options.initialDate ?? today()));
+		let mondayStart = /* @__PURE__ */ state(proxy(options.mondayStart ?? true));
+		let dayCount = /* @__PURE__ */ state(proxy(options.dayCount ?? 7));
+		const modeResolver = options.modeForView;
+		const mode = /* @__PURE__ */ user_derived(() => modeResolver?.(get(view)) ?? inferMode(get(view)));
+		const range = /* @__PURE__ */ user_derived(() => computeRange(get(focusDate), get(mode), get(mondayStart), get(dayCount)));
+		return {
+			get view() {
+				return get(view);
+			},
+			get focusDate() {
+				return get(focusDate);
+			},
+			get range() {
+				return get(range);
+			},
+			get mode() {
+				return get(mode);
+			},
+			get mondayStart() {
+				return get(mondayStart);
+			},
+			get timezone() {
+				return timezone;
+			},
+			get dayCount() {
+				return get(dayCount);
+			},
+			setView(id) {
+				set(view, id, true);
+			},
+			setMondayStart(value) {
+				set(mondayStart, value, true);
+			},
+			setFocusDate(date) {
+				set(focusDate, date, true);
+			},
+			setDayCount(n) {
+				set(dayCount, n, true);
+			},
+			next() {
+				if (get(mode) === "month") {
+					set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() + 1, 1), true);
+					return;
+				}
+				const days = get(mode) === "day" ? 1 : get(dayCount);
+				set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
+			},
+			prev() {
+				if (get(mode) === "month") {
+					set(focusDate, new Date(get(focusDate).getFullYear(), get(focusDate).getMonth() - 1, 1), true);
+					return;
+				}
+				const days = get(mode) === "day" ? -1 : -get(dayCount);
+				set(focusDate, new Date(addDaysMs(get(focusDate).getTime(), days)), true);
+			},
+			goToday() {
+				set(focusDate, today(), true);
+			}
+		};
+	}
+	//#endregion
+	//#region src/lib/engine/selection.svelte.ts
+	function createSelection() {
+		let selectedId = /* @__PURE__ */ state(null);
+		let hoveredId = /* @__PURE__ */ state(null);
+		let selectedIds = /* @__PURE__ */ state(proxy(/* @__PURE__ */ new Set()));
+		return {
+			get selectedId() {
+				return get(selectedId);
+			},
+			get hoveredId() {
+				return get(hoveredId);
+			},
+			get selectedIds() {
+				return get(selectedIds);
+			},
+			select(id) {
+				set(selectedId, id, true);
+				set(selectedIds, /* @__PURE__ */ new Set([id]), true);
+			},
+			deselect() {
+				set(selectedId, null);
+				set(selectedIds, /* @__PURE__ */ new Set(), true);
+			},
+			toggle(id) {
+				const next = new Set(get(selectedIds));
+				if (next.has(id)) next.delete(id);
+				else next.add(id);
+				set(selectedIds, next, true);
+				set(selectedId, next.size === 1 ? [...next][0] : null, true);
+			},
+			clear() {
+				set(selectedId, null);
+				set(hoveredId, null);
+				set(selectedIds, /* @__PURE__ */ new Set(), true);
+			},
+			hover(id) {
+				set(hoveredId, id, true);
+			},
+			isSelected(id) {
+				return get(selectedIds).has(id);
+			}
+		};
+	}
+	//#endregion
+	//#region src/lib/engine/drag.svelte.ts
+	function createDragState() {
+		let mode = /* @__PURE__ */ state("none");
+		let payload = /* @__PURE__ */ state(null);
+		const active = /* @__PURE__ */ user_derived(() => get(mode) !== "none");
+		function reset() {
+			set(mode, "none");
+			set(payload, null);
+		}
+		return {
+			get mode() {
+				return get(mode);
+			},
+			get payload() {
+				return get(payload);
+			},
+			get active() {
+				return get(active);
+			},
+			beginCreate(start, end, dayIndex = 0) {
+				set(mode, "create");
+				set(payload, {
+					eventId: null,
+					start,
+					end,
+					dayIndex
+				}, true);
+			},
+			beginMove(eventId, start, end) {
+				set(mode, "move");
+				set(payload, {
+					eventId,
+					start,
+					end,
+					dayIndex: 0
+				}, true);
+			},
+			beginResize(eventId, edge, start, end) {
+				set(mode, edge === "start" ? "resize-start" : "resize-end", true);
+				set(payload, {
+					eventId,
+					start,
+					end,
+					dayIndex: 0
+				}, true);
+			},
+			updatePointer(start, end, dayIndex) {
+				if (!get(payload)) return;
+				set(payload, {
+					...get(payload),
+					start,
+					end,
+					...dayIndex !== void 0 ? { dayIndex } : {}
+				}, true);
+			},
+			commit() {
+				const result = get(payload);
+				reset();
+				return result;
+			},
+			cancel() {
+				reset();
+			}
+		};
+	}
+	//#endregion
+	//#region src/lib/theme/presets.ts
+	/**
+	* Theme presets for timeline components.
+	*
+	* Each preset is a CSS inline-style string of --dt-* custom properties.
+	* Pass to the `theme` prop of any timeline component.
+	*
+	* Presets:
+	*   auto     — Transparent: inherit --dt-* from the host page (recommended default)
+	*   neutral  — Explicit light theme: white bg, blue accent, works standalone
+	*   midnight — Explicit dark theme: charcoal bg, red accent
+	*/
+	/**
+	* Auto — triggers the smart auto-theme engine.
+	*
+	* When passed to Calendar's `theme` prop, the component will probe the host
+	* page at mount time (background, fonts, accent color, light/dark mode)
+	* and generate matching --dt-* CSS tokens automatically.
+	*
+	* Reactively watches for host theme changes (e.g. dark-mode toggle).
+	*
+	* If you want passive inheritance only (no probing), pass `autoTheme={false}`
+	* alongside `theme={auto}`.
+	*/
+	var auto = ``;
+	/** All available presets keyed by name */
+	var presets = {
+		auto,
+		neutral: `
+	--dt-stage-bg: #ffffff;
+	--dt-bg: #ffffff;
+	--dt-surface: #f9fafb;
+	--dt-border: rgba(0, 0, 0, 0.08);
+	--dt-border-day: rgba(0, 0, 0, 0.14);
+	--dt-text: rgba(0, 0, 0, 0.87);
+	--dt-text-2: rgba(0, 0, 0, 0.54);
+	--dt-text-3: rgba(0, 0, 0, 0.38);
+	--dt-accent: var(--asini-accent, #2563eb);
+	--dt-accent-dim: color-mix(in srgb, var(--dt-accent) 12%, transparent);
+	--dt-glow: color-mix(in srgb, var(--dt-accent) 25%, transparent);
+	--dt-today-bg: color-mix(in srgb, var(--dt-accent) 7%, transparent);
+	--dt-btn-text: #fff;
+	--dt-scrollbar: rgba(0, 0, 0, 0.1);
+	--dt-success: rgba(22, 163, 74, 0.7);
+	--dt-weekend-bg: rgba(0, 0, 0, 0.02);
+	--dt-hover: rgba(0, 0, 0, 0.04);
+	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
+`,
+		midnight: `
+	--dt-stage-bg: #080a0f;
+	--dt-bg: #0b0e14;
+	--dt-surface: #10141c;
+	--dt-border: rgba(148, 163, 184, 0.07);
+	--dt-border-day: rgba(148, 163, 184, 0.14);
+	--dt-text: rgba(226, 232, 240, 0.85);
+	--dt-text-2: rgba(148, 163, 184, 0.55);
+	--dt-text-3: rgba(100, 116, 139, 0.55);
+	--dt-accent: #ef4444;
+	--dt-accent-dim: rgba(239, 68, 68, 0.18);
+	--dt-glow: rgba(239, 68, 68, 0.35);
+	--dt-today-bg: rgba(239, 68, 68, 0.07);
+	--dt-btn-text: #fff;
+	--dt-scrollbar: rgba(148, 163, 184, 0.12);
+	--dt-success: rgba(74, 222, 128, 0.7);
+	--dt-weekend-bg: rgba(148, 163, 184, 0.03);
+	--dt-hover: rgba(148, 163, 184, 0.06);
+	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
+`
+	};
+	//#endregion
+	//#region src/lib/theme/auto.ts
+	function parseColor(raw) {
+		if (!raw || raw === "transparent" || raw === "rgba(0, 0, 0, 0)") return null;
+		const rgba = raw.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+		if (rgba) return [
+			+rgba[1],
+			+rgba[2],
+			+rgba[3]
+		];
+		if (raw.startsWith("#")) {
+			const h = raw.replace("#", "");
+			const n = h.length === 3 ? parseInt(h[0] + h[0] + h[1] + h[1] + h[2] + h[2], 16) : parseInt(h, 16);
+			return [
+				n >> 16 & 255,
+				n >> 8 & 255,
+				n & 255
+			];
+		}
+		return null;
+	}
+	function luminance([r, g, b]) {
+		const lin = (c) => {
+			const s = c / 255;
+			return s <= .03928 ? s / 12.92 : ((s + .055) / 1.055) ** 2.4;
+		};
+		return .2126 * lin(r) + .7152 * lin(g) + .0722 * lin(b);
+	}
+	function rgbToHsl(r, g, b) {
+		r /= 255;
+		g /= 255;
+		b /= 255;
+		const max = Math.max(r, g, b), min = Math.min(r, g, b);
+		const l = (max + min) / 2;
+		if (max === min) return [
+			0,
+			0,
+			l
+		];
+		const d = max - min;
+		const s = l > .5 ? d / (2 - max - min) : d / (max + min);
+		let h = 0;
+		if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+		else if (max === g) h = ((b - r) / d + 2) / 6;
+		else h = ((r - g) / d + 4) / 6;
+		return [
+			h,
+			s,
+			l
+		];
+	}
+	function hslToRgb(h, s, l) {
+		h = (h % 1 + 1) % 1;
+		const hue2rgb = (p, q, t) => {
+			if (t < 0) t += 1;
+			if (t > 1) t -= 1;
+			if (t < 1 / 6) return p + (q - p) * 6 * t;
+			if (t < 1 / 2) return q;
+			if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+			return p;
+		};
+		if (s === 0) {
+			const v = Math.round(l * 255);
+			return [
+				v,
+				v,
+				v
+			];
+		}
+		const q = l < .5 ? l * (1 + s) : l + s - l * s;
+		const p = 2 * l - q;
+		return [
+			Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+			Math.round(hue2rgb(p, q, h) * 255),
+			Math.round(hue2rgb(p, q, h - 1 / 3) * 255)
+		];
+	}
+	function rgbStr(r, g, b) {
+		return `#${[
+			r,
+			g,
+			b
+		].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+	}
+	function rgba(r, g, b, a) {
+		return `rgba(${r}, ${g}, ${b}, ${a})`;
+	}
+	/** Mix two colors. t=0 → c1, t=1 → c2. */
+	function mix(c1, c2, t) {
+		return [
+			Math.round(c1[0] + (c2[0] - c1[0]) * t),
+			Math.round(c1[1] + (c2[1] - c1[1]) * t),
+			Math.round(c1[2] + (c2[2] - c1[2]) * t)
+		];
+	}
+	/**
+	* Parent element that hops shadow boundaries. When a node is a direct child
+	* of a ShadowRoot, `parentElement` is null — continue the walk from the
+	* shadow host so probes can still see the host page (the embeddable widget
+	* mounts the calendar inside a shadow root).
+	*/
+	function parentAcrossShadow(node) {
+		if (node.parentElement) return node.parentElement;
+		const root = node.getRootNode();
+		return typeof ShadowRoot !== "undefined" && root instanceof ShadowRoot && root.host instanceof HTMLElement ? root.host : null;
+	}
+	/**
+	* Common CSS variable names for text / foreground color used by popular frameworks.
+	*/
+	var TEXT_VAR_CANDIDATES = [
+		"--text",
+		"--text-color",
+		"--color-text",
+		"--foreground",
+		"--color-foreground",
+		"--bs-body-color",
+		"--chakra-colors-text",
+		"--chakra-colors-gray-800",
+		"--md-sys-color-on-background",
+		"--mdc-theme-on-surface",
+		"--bc",
+		"--gray-12",
+		"--text-1"
+	];
+	/**
+	* Probe the host page for a usable text (foreground) color.
+	* Uses the same three-pass strategy as `probeBackground()`:
+	*   1. CSS custom-property probe on :root (discrete, not animated)
+	*   2. Inline-style walk (`element.style.color` — immune to CSS transitions)
+	*   3. Computed-style walk (`getComputedStyle().color`)
+	*
+	* After probing, validates that the text color has adequate contrast against
+	* the given background. If contrast is poor (WCAG ratio < 3:1), returns null
+	* so the caller can derive text from the background luminance.
+	*/
+	function probeTextColor(el, bg) {
+		const candidates = [];
+		try {
+			const rootCs = getComputedStyle(document.documentElement);
+			for (const name of TEXT_VAR_CANDIDATES) {
+				const val = rootCs.getPropertyValue(name).trim();
+				if (val) {
+					const rgb = parseColor(val);
+					if (rgb) {
+						candidates.push(rgb);
+						break;
+					}
+				}
+			}
+		} catch {}
+		let node = el;
+		while (node) {
+			const raw = node.style.color;
+			if (raw) {
+				const rgb = parseColor(raw);
+				if (rgb) {
+					candidates.push(rgb);
+					break;
+				}
+			}
+			node = parentAcrossShadow(node);
+		}
+		node = el;
+		while (node) {
+			try {
+				const raw = getComputedStyle(node).color;
+				const rgb = parseColor(raw);
+				if (rgb) {
+					candidates.push(rgb);
+					break;
+				}
+			} catch {}
+			node = parentAcrossShadow(node);
+		}
+		const bgLum = luminance(bg);
+		for (const c of candidates) {
+			const cLum = luminance(c);
+			if ((Math.max(bgLum, cLum) + .05) / (Math.min(bgLum, cLum) + .05) >= 3) return c;
+		}
+		return null;
+	}
+	/**
+	* Common CSS variable names used by popular frameworks/design systems
+	* for their primary/brand accent color.
+	*/
+	var ACCENT_VAR_CANDIDATES = [
+		"--accent",
+		"--accent-color",
+		"--primary",
+		"--primary-color",
+		"--brand",
+		"--brand-color",
+		"--theme-color",
+		"--color-primary",
+		"--color-accent",
+		"--p",
+		"--color-primary",
+		"--primary",
+		"--md-sys-color-primary",
+		"--mdc-theme-primary",
+		"--bs-primary",
+		"--bs-primary-rgb",
+		"--chakra-colors-brand-500",
+		"--chakra-colors-primary",
+		"--blue-6",
+		"--accent-9",
+		"--color-primary-500",
+		"--primary-500"
+	];
+	/**
+	* Try to extract a usable accent color from the host page.
+	* Priority: CSS variables → link color → selection color → null.
+	*/
+	function probeAccent(root) {
+		let cs;
+		try {
+			cs = getComputedStyle(root);
+		} catch {
+			return null;
+		}
+		for (const name of ACCENT_VAR_CANDIDATES) {
+			const val = cs.getPropertyValue(name).trim();
+			if (val) {
+				const rgb = parseColor(val);
+				if (rgb) {
+					const [, s] = rgbToHsl(...rgb);
+					if (s > .15) return rgb;
+				}
+			}
+		}
+		const link = root.querySelector("a[href]");
+		if (link) {
+			const lc = parseColor(getComputedStyle(link).color);
+			if (lc) {
+				const [, s] = rgbToHsl(...lc);
+				if (s > .2) return lc;
+			}
+		}
+		const accent = cs.getPropertyValue("accent-color").trim();
+		if (accent && accent !== "auto") {
+			const rgb = parseColor(accent);
+			if (rgb) return rgb;
+		}
+		const btn = root.querySelector("button:not([class*=\"cal-\"])");
+		if (btn) {
+			const bg = parseColor(getComputedStyle(btn).backgroundColor);
+			if (bg) {
+				const [, s] = rgbToHsl(...bg);
+				if (s > .25) return bg;
+			}
+		}
+		return null;
+	}
+	/** Common CSS variable names for the host's monospace font stack. */
+	var MONO_VAR_CANDIDATES = [
+		"--font-mono",
+		"--font-family-mono",
+		"--font-monospace",
+		"--mono-font",
+		"--code-font"
+	];
+	var MONO_FALLBACK = "ui-monospace, 'SFMono-Regular', monospace";
+	/**
+	* Adopt the host page's fonts.
+	*
+	* Sans: the host element's *computed* font-family — the resolved authored
+	* stack, so webfont names come through verbatim. (Declaring `--dt-sans:
+	* inherit` does NOT work: a custom property with no ancestor value computes
+	* to guaranteed-invalid, so `var(--dt-sans, fallback)` used the fallback and
+	* the host font never applied.)
+	*
+	* Mono: common CSS variables on :root, then any code-ish element's computed
+	* font, then a generic stack.
+	*/
+	function probeFonts(host) {
+		let sans = "system-ui, sans-serif";
+		try {
+			const f = getComputedStyle(host).fontFamily;
+			if (f) sans = f;
+		} catch {}
+		let mono = "";
+		try {
+			const rootCs = getComputedStyle(document.documentElement);
+			for (const name of MONO_VAR_CANDIDATES) {
+				const val = rootCs.getPropertyValue(name).trim();
+				if (val) {
+					mono = val;
+					break;
+				}
+			}
+		} catch {}
+		if (!mono) {
+			const code = document.querySelector("pre, code, kbd, samp");
+			if (code) try {
+				mono = getComputedStyle(code).fontFamily || "";
+			} catch {}
+		}
+		return {
+			sans,
+			mono: mono || MONO_FALLBACK
+		};
+	}
+	/**
+	* Common CSS variable names for background color used by popular frameworks.
+	*/
+	var BG_VAR_CANDIDATES = [
+		"--bg",
+		"--background",
+		"--color-bg",
+		"--color-background",
+		"--body-bg",
+		"--bs-body-bg",
+		"--chakra-colors-bg",
+		"--md-sys-color-background",
+		"--b1",
+		"--background",
+		"--color-background"
+	];
+	/**
+	* Walk up the DOM tree to find the first non-transparent background.
+	* Also probes common CSS variables for background color.
+	* Returns the parsed RGB and whether this is a dark background.
+	*
+	* Uses a three-pass strategy:
+	*   1. CSS custom-property probe on :root (instant, not animated)
+	*   2. Inline-style walk (reads `element.style.background` — the *target*
+	*      value, immune to CSS `transition` interpolation)
+	*   3. Computed-style walk (reads `getComputedStyle().backgroundColor` —
+	*      may return a mid-transition intermediate value)
+	*
+	* Passes 1-2 are preferred because CSS transitions animate the resolved
+	* `background-color` property, making `getComputedStyle` unreliable
+	* during the transition window.
+	*/
+	function probeBackground(el) {
+		const result = (rgb) => ({
+			bg: rgb,
+			isDark: luminance(rgb) < .4
+		});
+		try {
+			const rootCs = getComputedStyle(document.documentElement);
+			for (const name of BG_VAR_CANDIDATES) {
+				const val = rootCs.getPropertyValue(name).trim();
+				if (val) {
+					const rgb = parseColor(val);
+					if (rgb) return result(rgb);
+				}
+			}
+		} catch {}
+		let node = el;
+		while (node) {
+			const raw = node.style.backgroundColor || node.style.background;
+			if (raw) {
+				const rgb = parseColor(raw);
+				if (rgb) return result(rgb);
+			}
+			node = parentAcrossShadow(node);
+		}
+		node = el;
+		while (node) {
+			try {
+				const raw = getComputedStyle(node).backgroundColor;
+				const rgb = parseColor(raw);
+				if (rgb) return result(rgb);
+			} catch {}
+			node = parentAcrossShadow(node);
+		}
+		if (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) return {
+			bg: [
+				18,
+				18,
+				18
+			],
+			isDark: true
+		};
+		return {
+			bg: [
+				255,
+				255,
+				255
+			],
+			isDark: false
+		};
+	}
+	/**
+	* Probe the host page surrounding `el` and generate a complete --dt-* CSS string.
+	*
+	* @param el       The calendar's root element (or any element in the host page).
+	* @param options  Optional overrides for mode, accent, font.
+	* @returns        A CSS inline-style string of --dt-* custom properties.
+	*/
+	function probeHostTheme(el, options = {}) {
+		const host = parentAcrossShadow(el) ?? el;
+		const htmlRoot = (host.closest("body") ?? host) instanceof HTMLElement ? host.closest("body") ?? host : document.body;
+		const { bg, isDark: autoDark } = probeBackground(host);
+		const isDark = options.mode === "auto" || !options.mode ? autoDark : options.mode === "dark";
+		let accent;
+		if (options.accent) accent = parseColor(options.accent) ?? [
+			37,
+			99,
+			235
+		];
+		else accent = probeAccent(htmlRoot) ?? (isDark ? [
+			239,
+			68,
+			68
+		] : [
+			37,
+			99,
+			235
+		]);
+		const [aH, aS, aL] = rgbToHsl(...accent);
+		const fonts = options.font ? {
+			sans: options.font,
+			mono: MONO_FALLBACK
+		} : probeFonts(host);
+		const textBase = probeTextColor(host, bg) ?? (isDark ? [
+			226,
+			232,
+			240
+		] : [
+			30,
+			30,
+			46
+		]);
+		const calBg = isDark ? mix(bg, [
+			255,
+			255,
+			255
+		], .02) : mix(bg, [
+			0,
+			0,
+			0
+		], .005);
+		const stageBg = bg;
+		const surface = isDark ? mix(calBg, [
+			255,
+			255,
+			255
+		], .04) : mix(calBg, [
+			0,
+			0,
+			0
+		], .02);
+		const borderAlpha = isDark ? .07 : .08;
+		const borderDayAlpha = isDark ? .14 : .14;
+		const borderRgb = isDark ? [
+			148,
+			163,
+			184
+		] : [
+			0,
+			0,
+			0
+		];
+		const accentDim = isDark ? .15 : .12;
+		const glow = isDark ? .3 : .25;
+		const todayBg = isDark ? .07 : .07;
+		const accentAdj = hslToRgb(aH, Math.max(aS, .5), isDark ? Math.max(aL, .45) : Math.min(aL, .48));
+		const btnText = luminance(accentAdj) < .4 ? "#ffffff" : "#1a1a2e";
+		const scrollAlpha = isDark ? .12 : .1;
+		const successRgb = isDark ? [
+			74,
+			222,
+			128
+		] : [
+			22,
+			163,
+			74
+		];
+		return [
+			`--dt-stage-bg: ${rgbStr(...stageBg)}`,
+			`--dt-bg: ${rgbStr(...calBg)}`,
+			`--dt-surface: ${rgbStr(...surface)}`,
+			`--dt-border: ${rgba(...borderRgb, borderAlpha)}`,
+			`--dt-border-day: ${rgba(...borderRgb, borderDayAlpha)}`,
+			`--dt-text: ${rgba(...textBase, isDark ? .87 : .87)}`,
+			`--dt-text-2: ${rgba(...textBase, isDark ? .55 : .54)}`,
+			`--dt-text-3: ${rgba(...textBase, isDark ? .38 : .38)}`,
+			`--dt-accent: ${rgbStr(...accentAdj)}`,
+			`--dt-accent-dim: ${rgba(...accentAdj, accentDim)}`,
+			`--dt-glow: ${rgba(...accentAdj, glow)}`,
+			`--dt-today-bg: ${rgba(...accentAdj, todayBg)}`,
+			`--dt-btn-text: ${btnText}`,
+			`--dt-scrollbar: ${rgba(...borderRgb, scrollAlpha)}`,
+			`--dt-success: ${rgba(...successRgb, .7)}`,
+			`--dt-weekend-bg: ${rgba(...borderRgb, isDark ? .03 : .02)}`,
+			`--dt-hover: ${rgba(...borderRgb, isDark ? .06 : .04)}`,
+			`--dt-sans: ${fonts.sans}`,
+			`--dt-mono: ${fonts.mono}`
+		].map((v) => `\t${v}`).join(";\n") + ";";
+	}
+	/**
+	* Observe changes to the host page that might affect theming
+	* (color-scheme toggle, class changes on <html>/<body>, style attribute changes).
+	*
+	* Returns a cleanup function to stop observing.
+	*
+	* @param el        The calendar's root element.
+	* @param callback  Called with the new CSS string whenever the host theme changes.
+	* @param options   Passthrough to probeHostTheme.
+	*/
+	function observeHostTheme(el, callback, options = {}) {
+		let last = "";
+		const update = () => {
+			const next = probeHostTheme(el, options);
+			if (next !== last) {
+				last = next;
+				callback(next);
+			}
+		};
+		const mql = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+		const onScheme = () => update();
+		mql?.addEventListener("change", onScheme);
+		let rafId = 0;
+		const scheduleUpdate = () => {
+			cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(() => {
+				rafId = requestAnimationFrame(update);
+			});
+		};
+		const observer = new MutationObserver(scheduleUpdate);
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: [
+				"class",
+				"style",
+				"data-theme",
+				"data-mode",
+				"color-scheme"
+			]
+		});
+		observer.observe(document.body, {
+			attributes: true,
+			attributeFilter: [
+				"class",
+				"style",
+				"data-theme",
+				"data-mode",
+				"color-scheme"
+			]
+		});
+		if (document.readyState !== "complete") window.addEventListener("load", scheduleUpdate, { once: true });
+		document.fonts?.ready?.then(scheduleUpdate).catch(() => {});
+		update();
+		return () => {
+			cancelAnimationFrame(rafId);
+			mql?.removeEventListener("change", onScheme);
+			window.removeEventListener("load", scheduleUpdate);
+			observer.disconnect();
+		};
+	}
+	//#endregion
 	//#region src/lib/calendar/Calendar.svelte
+	var defaultViews = [
+		{
+			id: "day-planner",
+			label: "Planner",
+			mode: "day",
+			component: Planner
+		},
+		{
+			id: "week-planner",
+			label: "Planner",
+			mode: "week",
+			component: Planner
+		},
+		{
+			id: "week-scroll",
+			label: "Scroll",
+			mode: "week",
+			component: PlannerScroll
+		},
+		{
+			id: "day-agenda",
+			label: "Agenda",
+			mode: "day",
+			component: Agenda
+		},
+		{
+			id: "week-agenda",
+			label: "Agenda",
+			mode: "week",
+			component: Agenda
+		},
+		{
+			id: "day-mobile",
+			label: "Mobile",
+			mode: "day",
+			component: Mobile
+		},
+		{
+			id: "week-mobile",
+			label: "Mobile",
+			mode: "week",
+			component: Mobile
+		},
+		{
+			id: "month-grid",
+			label: "Month",
+			mode: "month",
+			component: MonthGrid
+		}
+	];
 	var root = /* @__PURE__ */ from_html(`<button type="button" role="radio"> </button>`);
 	var root_1 = /* @__PURE__ */ from_html(`<div class="cal-m-pills svelte-1b53e7w" role="radiogroup"></div>`);
 	var root_2 = /* @__PURE__ */ from_html(`<span class="cal-m-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span>`);
@@ -19476,64 +19777,16 @@ createHTML: (html) => {
 	var root_7 = /* @__PURE__ */ from_html(`<div class="cal-pills cal-pills--labels svelte-1b53e7w" role="radiogroup"></div>`);
 	var root_8 = /* @__PURE__ */ from_html(`<div class="cal-pills svelte-1b53e7w" role="radiogroup"></div>`);
 	var root_9 = /* @__PURE__ */ from_html(`<div class="cal-hd svelte-1b53e7w"><div class="cal-hd-side svelte-1b53e7w"><!></div> <span class="cal-hd-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span> <div class="cal-hd-side cal-hd-side--end svelte-1b53e7w"><!> <!></div></div>`);
-	var root_10 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w">No views registered.</div>`);
+	var root_10 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w"> </div>`);
 	var root_11 = /* @__PURE__ */ from_html(`<div class="cal-loading svelte-1b53e7w"></div>`);
 	var root_12 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="cal-body svelte-1b53e7w"><!></div> <!></div>`);
 	function Calendar($$anchor, $$props) {
 		push($$props, true);
 		/** Breakpoint (px) at which auto-mobile activates */
 		const MOBILE_BREAKPOINT = 768;
-		let views = prop($$props, "views", 3, [
-			{
-				id: "day-planner",
-				label: "Planner",
-				mode: "day",
-				component: Planner
-			},
-			{
-				id: "week-planner",
-				label: "Planner",
-				mode: "week",
-				component: Planner
-			},
-			{
-				id: "week-scroll",
-				label: "Scroll",
-				mode: "week",
-				component: PlannerScroll
-			},
-			{
-				id: "day-agenda",
-				label: "Agenda",
-				mode: "day",
-				component: Agenda
-			},
-			{
-				id: "week-agenda",
-				label: "Agenda",
-				mode: "week",
-				component: Agenda
-			},
-			{
-				id: "day-mobile",
-				label: "Mobile",
-				mode: "day",
-				component: Mobile
-			},
-			{
-				id: "week-mobile",
-				label: "Mobile",
-				mode: "week",
-				component: Mobile
-			},
-			{
-				id: "month-grid",
-				label: "Month",
-				mode: "month",
-				component: MonthGrid
-			}
-		]), theme = prop($$props, "theme", 3, auto), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 12), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), minColumnWidth = prop($$props, "minColumnWidth", 3, 110), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), columns = prop($$props, "columns", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
+		let views = prop($$props, "views", 3, defaultViews), theme = prop($$props, "theme", 3, auto), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 12), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), minColumnWidth = prop($$props, "minColumnWidth", 3, 110), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), columns = prop($$props, "columns", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
 		const unzone = (d) => $$props.timezone ? fromZonedTime(d, $$props.timezone) : d;
+		const zoneIn = (d) => d && $$props.timezone ? toZonedTime(d, $$props.timezone) : d;
 		const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventcreate ? void 0 : (range) => $$props.oneventcreate({
 			start: unzone(range.start),
 			end: unzone(range.end)
@@ -19547,7 +19800,7 @@ createHTML: (html) => {
 			selection.select(ev.id);
 			$$props.oneventclick?.(ev, anchor);
 		}
-		let containerWidth = /* @__PURE__ */ state(proxy(typeof window !== "undefined" && window.matchMedia?.(`(max-width: 767px)`).matches ? window.innerWidth : 0));
+		let containerWidth = /* @__PURE__ */ state(0);
 		const isMobileContainer = /* @__PURE__ */ user_derived(() => get(containerWidth) > 0 && get(containerWidth) < MOBILE_BREAKPOINT);
 		const useMobile = /* @__PURE__ */ user_derived(() => mobileProp() === "auto" ? get(isMobileContainer) : Boolean(mobileProp()));
 		const HEADER_STACK_BREAKPOINT = 520;
@@ -19579,22 +19832,14 @@ createHTML: (html) => {
 		const viewState = createViewState(untrack(() => ({
 			view: $$props.view ?? views()[0]?.id,
 			mondayStart: mondayStart(),
-			initialDate: $$props.initialDate && $$props.timezone ? toZonedTime($$props.initialDate, $$props.timezone) : $$props.initialDate,
+			initialDate: zoneIn($$props.currentDate ?? $$props.initialDate),
 			dayCount: $$props.days,
 			timezone: $$props.timezone,
 			modeForView: (viewId) => views().find((v) => v.id === viewId)?.mode
 		})));
 		const selection = createSelection();
 		const drag = createDragState();
-		async function commitDrag() {
-			if (readOnly()) {
-				drag.cancel();
-				return;
-			}
-			const mode = drag.mode;
-			const payload = drag.commit();
-			if (!payload) return;
-			let { start, end } = payload;
+		function validateRange(mode, start, end) {
 			if (mode === "create" || mode === "resize-start" || mode === "resize-end") {
 				if (end.getTime() <= start.getTime()) {
 					const floorMs = Math.max(1, snapInterval()) * 6e4;
@@ -19602,13 +19847,10 @@ createHTML: (html) => {
 					else end = new Date(start.getTime() + floorMs);
 				}
 				const durationMin = (end.getTime() - start.getTime()) / 6e4;
-				if ($$props.minDuration && durationMin < $$props.minDuration) {
-					if (mode === "resize-start") start = /* @__PURE__ */ new Date(end.getTime() - $$props.minDuration * 6e4);
-					else end = new Date(start.getTime() + $$props.minDuration * 6e4);
-				}
-				if ($$props.maxDuration && durationMin > $$props.maxDuration) {
-					if (mode === "resize-start") start = /* @__PURE__ */ new Date(end.getTime() - $$props.maxDuration * 6e4);
-					else end = new Date(start.getTime() + $$props.maxDuration * 6e4);
+				const clampTo = $$props.minDuration && durationMin < $$props.minDuration ? $$props.minDuration : $$props.maxDuration && durationMin > $$props.maxDuration ? $$props.maxDuration : null;
+				if (clampTo !== null) {
+					if (mode === "resize-start") start = /* @__PURE__ */ new Date(end.getTime() - clampTo * 6e4);
+					else end = new Date(start.getTime() + clampTo * 6e4);
 				}
 			}
 			if ($$props.disabledDates?.length) {
@@ -19620,7 +19862,7 @@ createHTML: (html) => {
 					const dt = new Date(dd);
 					dt.setHours(0, 0, 0, 0);
 					const ts = dt.getTime();
-					if (ts >= startDay.getTime() && ts <= endDay.getTime()) return;
+					if (ts >= startDay.getTime() && ts <= endDay.getTime()) return null;
 				}
 			}
 			if ($$props.blockedSlots?.length) {
@@ -19630,22 +19872,42 @@ createHTML: (html) => {
 				const isoDay = jsDay === 0 ? 7 : jsDay;
 				for (const slot of $$props.blockedSlots) {
 					if (slot.day && slot.day !== isoDay) continue;
-					if (startH < slot.end && endH > slot.start) return;
+					if (startH < slot.end && endH > slot.start) return null;
 				}
 			}
+			return {
+				start,
+				end
+			};
+		}
+		const checkedCreate = /* @__PURE__ */ user_derived(() => {
+			const create = get(effectiveCreate);
+			if (!create) return void 0;
+			return (range) => {
+				const ok = validateRange("create", range.start, range.end);
+				if (ok) create(ok);
+			};
+		});
+		async function commitDrag() {
+			if (readOnly()) {
+				drag.cancel();
+				return;
+			}
+			const mode = drag.mode;
+			const payload = drag.commit();
+			if (!payload || mode === "none") return;
+			const checked = validateRange(mode, payload.start, payload.end);
+			if (!checked) return;
+			const { start, end } = checked;
 			if ((mode === "move" || mode === "resize-start" || mode === "resize-end") && payload.eventId) try {
 				await store.move(payload.eventId, start, end);
 				const ev = store.byId(payload.eventId);
 				if (ev) get(effectiveMove)?.(ev, start, end);
 			} catch (e) {
-				const msg = e instanceof Error ? e.message : "";
-				if (msg.includes("read-only")) {
+				if (isReadOnlyError(e)) {
 					const ev = store.byId(payload.eventId);
 					if (ev) get(effectiveMove)?.(ev, start, end);
-				} else if (!msg.includes("not found")) {
-					if ($$props.onerror) $$props.onerror(e instanceof Error ? e : new Error(String(e)));
-					else console.warn("[calendar] drag commit failed:", e);
-				}
+				} else if (!isNotFoundError(e) && !$$props.onerror) console.warn("[calendar] drag commit failed:", e);
 			}
 			else if (mode === "create") get(effectiveCreate)?.({
 				start,
@@ -19670,7 +19932,7 @@ createHTML: (html) => {
 				return handleEventClick;
 			},
 			get oneventcreate() {
-				return get(effectiveCreate);
+				return get(checkedCreate);
 			},
 			get oneventmove() {
 				return get(effectiveMove);
@@ -19679,7 +19941,7 @@ createHTML: (html) => {
 				return $$props.oneventhover;
 			},
 			get ondayclick() {
-				return $$props.ondayclick ?? get(defaultDayClick);
+				return $$props.ondayclick ? (d) => $$props.ondayclick(unzone(d)) : get(defaultDayClick);
 			},
 			get timezone() {
 				return $$props.timezone;
@@ -19755,22 +20017,25 @@ createHTML: (html) => {
 				end: range.end
 			});
 		});
-		untrack(() => store.load({
-			start: viewState.range.start,
-			end: viewState.range.end
-		}));
+		untrack(() => {
+			if (get(effectiveAdapter).fetchEventsSync) store.load({
+				start: viewState.range.start,
+				end: viewState.range.end
+			});
+		});
 		user_effect(() => {
 			if ($$props.view) viewState.setView($$props.view);
 		});
 		user_effect(() => {
-			if ($$props.currentDate) viewState.setFocusDate($$props.currentDate);
+			const d = zoneIn($$props.currentDate);
+			if (d && untrack(() => viewState.focusDate.getTime()) !== d.getTime()) untrack(() => viewState.setFocusDate(d));
 		});
 		user_effect(() => {
 			if ($$props.days !== void 0 && viewState.dayCount !== $$props.days) viewState.setDayCount($$props.days);
 		});
 		user_effect(() => {
-			const d = viewState.focusDate;
-			$$props.ondatechange?.(d);
+			const d = unzone(viewState.focusDate);
+			untrack(() => $$props.ondatechange?.(d));
 		});
 		user_effect(() => {
 			if (viewState.mondayStart !== mondayStart()) viewState.setMondayStart(mondayStart());
@@ -19785,20 +20050,20 @@ createHTML: (html) => {
 			const requested = views().find((v) => v.id === viewState.view) ?? views()[0];
 			if (!get(useMobile) || !requested) return requested;
 			if (requested.id.endsWith("-mobile")) return requested;
-			if (requested.label === "Agenda") return requested;
+			if (requested.component === Agenda || requested.id.endsWith("-agenda")) return requested;
 			return views().find((v) => v.id === `${requested.mode}-mobile`) ?? requested;
 		});
 		const activeView = /* @__PURE__ */ user_derived(() => get(resolvedView));
 		const desktopViews = /* @__PURE__ */ user_derived(() => views().filter((v) => !v.id.endsWith("-mobile")));
 		const dateLabel = /* @__PURE__ */ user_derived(() => {
 			if (!showDates()) return "";
-			if (viewState.mode === "day") return viewState.focusDate.toLocaleDateString($$props.locale, {
+			if (viewState.mode === "day") return viewState.focusDate.toLocaleDateString($$props.locale ?? getDefaultLocale(), {
 				weekday: "long",
 				month: "short",
 				day: "numeric"
 			});
 			if (viewState.mode === "week") return fmtWeekRange(viewState.range.start.getTime(), $$props.locale, viewState.range.end.getTime() - 1);
-			return viewState.focusDate.toLocaleDateString($$props.locale, {
+			return viewState.focusDate.toLocaleDateString($$props.locale ?? getDefaultLocale(), {
 				month: "long",
 				year: "numeric"
 			});
@@ -19830,6 +20095,13 @@ createHTML: (html) => {
 			for (const v of get(desktopViews)) if (v.mode === viewState.mode && !seen.includes(v.label)) seen.push(v.label);
 			return seen;
 		});
+		/** Built-in view-type names are shown in the calendar's language. */
+		function viewLabel(label) {
+			if (label === "Planner") return get(L).planner;
+			if (label === "Agenda") return get(L).agenda;
+			if (label === "Scroll") return get(L).scroll;
+			return label;
+		}
 		function switchLabel(label) {
 			const target = get(desktopViews).find((v) => v.mode === viewState.mode && v.label === label);
 			if (target) viewState.setView(target.id);
@@ -19843,8 +20115,9 @@ createHTML: (html) => {
 			};
 		});
 		/** True when the current view range already includes today. */
+		const clock = createClock(untrack(() => $$props.timezone));
 		const viewIncludesToday = /* @__PURE__ */ user_derived(() => {
-			const now = /* @__PURE__ */ new Date();
+			const now = new Date(clock.tick);
 			if (viewState.mode === "month") {
 				const f = viewState.focusDate;
 				return f.getMonth() === now.getMonth() && f.getFullYear() === now.getFullYear();
@@ -19867,15 +20140,15 @@ createHTML: (html) => {
 			if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
 			const t = e.target;
 			if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+			const inRadio = t?.getAttribute("role") === "radio";
+			const rtl = !!get(calEl) && getComputedStyle(get(calEl)).direction === "rtl";
 			if (e.key === "t" || e.key === "T") {
 				e.preventDefault();
 				viewState.goToday();
-			} else if (e.key === "ArrowLeft") {
+			} else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !inRadio) {
 				e.preventDefault();
-				viewState.prev();
-			} else if (e.key === "ArrowRight") {
-				e.preventDefault();
-				viewState.next();
+				if (e.key === "ArrowRight" !== rtl) viewState.next();
+				else viewState.prev();
 			}
 		}
 		/** Header context for custom header snippet */
@@ -20036,11 +20309,11 @@ createHTML: (html) => {
 					var button_7 = root();
 					let classes_3;
 					var text_6 = only_child(button_7, true);
-					template_effect(() => {
+					template_effect(($0) => {
 						classes_3 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_3, { "cal-pill--active": get(activeView)?.label === label });
 						set_attribute(button_7, "aria-checked", get(activeView)?.label === label);
-						set_text(text_6, label);
-					});
+						set_text(text_6, $0);
+					}, [() => viewLabel(label)]);
 					delegated("click", button_7, () => switchLabel(label));
 					append($$anchor, button_7);
 				});
@@ -20111,7 +20384,7 @@ createHTML: (html) => {
 					},
 					oneventclick: handleEventClick,
 					get oneventcreate() {
-						return get(effectiveCreate);
+						return get(checkedCreate);
 					},
 					get onexternaldrop() {
 						return get(effectiveExternalDrop);
@@ -20130,7 +20403,10 @@ createHTML: (html) => {
 			append($$anchor, fragment_6);
 		};
 		var alternate = ($$anchor) => {
-			append($$anchor, root_10());
+			var div_12 = root_10();
+			var text_8 = only_child(div_12, true);
+			template_effect(() => set_text(text_8, get(L).noViews));
+			append($$anchor, div_12);
 		};
 		if_block(node_11, ($$render) => {
 			if (get(activeView)) $$render(consequent_12);
@@ -20160,56 +20436,6 @@ createHTML: (html) => {
 		pop();
 	}
 	delegate(["keydown", "click"]);
-	//#endregion
-	//#region src/lib/adapters/rest.ts
-	function createRestAdapter(options) {
-		const { baseUrl, headers = {} } = options;
-		const mapEvents = options.mapEvents ?? ((data) => data);
-		const mapEvent = options.mapEvent ?? ((data) => data);
-		async function request(path, init) {
-			const res = await fetch(`${baseUrl}${path}`, {
-				...init,
-				headers: {
-					"Content-Type": "application/json",
-					...headers,
-					...init?.headers ?? {}
-				}
-			});
-			if (!res.ok) throw new Error(`Calendar API error: ${res.status} ${res.statusText}`);
-			if (res.status === 204) return void 0;
-			try {
-				return await res.json();
-			} catch {
-				throw new Error(`Calendar API error: invalid JSON response from ${path}`);
-			}
-		}
-		return {
-			async fetchEvents(range) {
-				const data = await request(`/events?${new URLSearchParams({
-					start: range.start.toISOString(),
-					end: range.end.toISOString()
-				})}`);
-				return mapEvents(data);
-			},
-			async createEvent(event) {
-				const data = await request("/events", {
-					method: "POST",
-					body: JSON.stringify(event)
-				});
-				return mapEvent(data);
-			},
-			async updateEvent(id, patch) {
-				const data = await request(`/events/${id}`, {
-					method: "PATCH",
-					body: JSON.stringify(patch)
-				});
-				return mapEvent(data);
-			},
-			async deleteEvent(id) {
-				await request(`/events/${id}`, { method: "DELETE" });
-			}
-		};
-	}
 	//#endregion
 	//#region src/lib/core/palette.ts
 	/**
@@ -20267,7 +20493,7 @@ createHTML: (html) => {
 			} : ev;
 		}
 		function overlaps(ev, range) {
-			return ev.start < range.end && ev.end > range.start;
+			return overlapsRange(ev, range.start, range.end);
 		}
 		const fetchEventsSync = (range) => events.filter((ev) => overlaps(ev, range)).map(withColor);
 		return {
@@ -20285,7 +20511,7 @@ createHTML: (html) => {
 			},
 			async updateEvent(id, patch) {
 				const idx = events.findIndex((e) => e.id === id);
-				if (idx < 0) throw new Error(`Event not found: ${id}`);
+				if (idx < 0) throw new EventNotFoundError(id);
 				events[idx] = {
 					...events[idx],
 					...patch,
@@ -20295,7 +20521,7 @@ createHTML: (html) => {
 			},
 			async deleteEvent(id) {
 				const idx = events.findIndex((e) => e.id === id);
-				if (idx < 0) throw new Error(`Event not found: ${id}`);
+				if (idx < 0) throw new EventNotFoundError(id);
 				events.splice(idx, 1);
 			}
 		};
@@ -20304,7 +20530,7 @@ createHTML: (html) => {
 	//#region src/lib/widget/CalendarWidget.svelte
 	function CalendarWidget($$anchor, $$props) {
 		push($$props, true);
-		/** REST API base URL — if provided, fetches events from this endpoint */
+		/** Events endpoint — fetched as `GET {api}?start=…&end=…` (ISO instants); answers an array of events or `{ events: [...] }` */
 		/** JSON string of events for static/inline data (alternative to api) */
 		/** Theme preset name: auto (default — adapts to the host page), neutral, midnight */
 		/** Default view ID */
@@ -20313,7 +20539,7 @@ createHTML: (html) => {
 		/** Text direction: ltr, rtl, auto */
 		/** Start week on Monday (default: true) */
 		/** Custom HTTP headers as JSON string for REST adapter */
-		/** Read-only mode: "true" disables drag/resize/create */
+		/** Read-only unless explicitly "false" — an anonymous embed has nowhere to store an edit */
 		/** Show the Day/Week/Month pills (default: true) */
 		/** Show prev/next/today navigation (default: true) */
 		/** Mobile mode: "auto" (default), "true", "false" */
@@ -20358,7 +20584,10 @@ createHTML: (html) => {
 				title: String(raw.title ?? "Untitled"),
 				start,
 				end,
-				color: raw.color ? String(raw.color) : void 0
+				color: raw.color ? String(raw.color) : void 0,
+				allDay: raw.allDay === true ? true : void 0,
+				subtitle: typeof raw.subtitle === "string" ? raw.subtitle : void 0,
+				location: typeof raw.location === "string" ? raw.location : void 0
 			};
 		}
 		function parseEvents(json) {
@@ -20373,21 +20602,34 @@ createHTML: (html) => {
 				return [];
 			}
 		}
-		const adapter = /* @__PURE__ */ user_derived(() => {
-			if ($$props.api) {
-				const parsedHeaders = parseHeaders($$props.headers);
-				return createRestAdapter({
-					baseUrl: $$props.api,
-					headers: parsedHeaders,
-					mapEvents: (data) => {
-						return (Array.isArray(data) ? data : data.events ?? []).map((e, idx) => toEvent(e, `api-${idx}`)).filter((ev) => ev !== null);
-					}
+		/**
+		* The documented widget contract: `GET {api}?start=…&end=…`, answered by
+		* an array of events or `{ events: [...] }` with ISO date strings. Read
+		* only — there is no write endpoint to call. No Content-Type on the GET,
+		* so a cross-origin embed stays a simple request (no CORS preflight)
+		* unless the page adds its own `headers`.
+		*/
+		function createApiAdapter(url, extraHeaders) {
+			return { async fetchEvents(range) {
+				const params = new URLSearchParams({
+					start: range.start.toISOString(),
+					end: range.end.toISOString()
 				});
-			}
+				const res = await fetch(`${url}${url.includes("?") ? "&" : "?"}${params}`, { headers: {
+					Accept: "application/json",
+					...extraHeaders
+				} });
+				if (!res.ok) throw new Error(`[day-calendar] ${url} answered ${res.status} ${res.statusText}`);
+				const data = await res.json();
+				return (Array.isArray(data) ? data : data && typeof data === "object" && Array.isArray(data.events) ? data.events : []).map((e, idx) => e && typeof e === "object" ? toEvent(e, `api-${idx}`) : null).filter((ev) => ev !== null);
+			} };
+		}
+		const adapter = /* @__PURE__ */ user_derived(() => {
+			if ($$props.api) return createApiAdapter($$props.api, parseHeaders($$props.headers));
 			return createMemoryAdapter(parseEvents($$props.events));
 		});
 		{
-			let $0 = /* @__PURE__ */ user_derived(() => $$props.readonly === "true");
+			let $0 = /* @__PURE__ */ user_derived(() => $$props.readonly !== "false");
 			let $1 = /* @__PURE__ */ user_derived(() => $$props.pills !== "false");
 			let $2 = /* @__PURE__ */ user_derived(() => $$props.nav !== "false");
 			let $3 = /* @__PURE__ */ user_derived(() => $$props.compact === "true");
@@ -20452,7 +20694,6 @@ createHTML: (html) => {
 	* cannot leak out. The bundled CSS is injected into each shadow root — see
 	* `injectStyles` below and the inlineCss plugin in vite.config.widget.ts.
 	*/
-	var CalendarWidgetClass = asClassComponent(CalendarWidget);
 	/**
 	* Shared constructable stylesheet — parsed once, adopted by every
 	* <day-calendar> shadow root on the page.
@@ -20499,6 +20740,42 @@ createHTML: (html) => {
 		"compact",
 		"timezone"
 	];
+	/**
+	* Attribute values as reactive props for `mount()`. A plain .ts module has
+	* no `$state`, so each getter reports a read through its own
+	* `createSubscriber` and `set()` invalidates that attribute's readers only —
+	* the component re-renders what changed without a remount (view, focus date
+	* and loaded events survive; changing `view` does not rebuild the adapter).
+	*/
+	function createReactiveProps(initial) {
+		const values = { ...initial };
+		const invalidators = /* @__PURE__ */ new Map();
+		const props = {};
+		for (const attr of WIDGET_ATTRS) {
+			const track = createSubscriber((update) => {
+				invalidators.set(attr, update);
+				return () => invalidators.delete(attr);
+			});
+			Object.defineProperty(props, attr, {
+				enumerable: true,
+				get() {
+					track();
+					return values[attr];
+				}
+			});
+		}
+		return {
+			props,
+			set(name, value) {
+				if (values[name] === value) return;
+				values[name] = value;
+				invalidators.get(name)?.();
+			}
+		};
+	}
+	function isWidgetAttr(name) {
+		return WIDGET_ATTRS.includes(name);
+	}
 	var DayCalendarElement = class extends HTMLElement {
 		instance = null;
 		stylesInjected = false;
@@ -20512,18 +20789,23 @@ createHTML: (html) => {
 				injectStyles(root);
 				this.stylesInjected = true;
 			}
-			this.instance = new CalendarWidgetClass({
+			const attrs = createReactiveProps(this.readProps());
+			const component = mount(CalendarWidget, {
 				target: root,
-				props: this.readProps()
+				props: attrs.props
 			});
+			this.instance = {
+				component,
+				attrs
+			};
 		}
 		disconnectedCallback() {
-			this.instance?.$destroy();
+			if (this.instance) unmount(this.instance.component);
 			this.instance = null;
 		}
 		attributeChangedCallback(name, _oldValue, newValue) {
-			if (!this.instance) return;
-			this.instance.$set({ [name]: newValue ?? void 0 });
+			if (!this.instance || !isWidgetAttr(name)) return;
+			this.instance.attrs.set(name, newValue ?? void 0);
 		}
 		readProps() {
 			const props = {};

@@ -8,10 +8,11 @@ Closes #
 
 - [ ] `pnpm check` passes (no type errors)
 - [ ] `pnpm test` passes
+- [ ] `pnpm package` builds
 - [ ] Added/updated tests for logic changes (or explained why not needed)
-- [ ] Added a `CHANGELOG.md` entry under "Unreleased"
+- [ ] Described the user-visible change above (the maintainer records it as a changeset — don't edit `CHANGELOG.md`)
 - [ ] No hardcoded colors — `--dt-*` tokens only
-- [ ] Does **not** change `TimelineEvent`, `CalendarAdapter`, or `DateRange` (or the change is called out below)
+- [ ] Does **not** change `TimelineEvent`, `CalendarAdapter`, `DateRange`, the `--dt-*` tokens or other public exports (or the change is called out below)
 
 ## Screenshots / recordings
 

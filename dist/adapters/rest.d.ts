@@ -12,9 +12,9 @@ export interface RestAdapterOptions {
     baseUrl: string;
     /** Custom headers (e.g. Authorization) */
     headers?: Record<string, string>;
-    /** Map API response to TimelineEvent[] */
+    /** Map API response to TimelineEvent[] (default: the body is an array of events, `start`/`end` parsed into Dates) */
     mapEvents?: (data: unknown) => TimelineEvent[];
-    /** Map API response to a single TimelineEvent */
+    /** Map API response to a single TimelineEvent (default: the body is the event, `start`/`end` parsed into Dates) */
     mapEvent?: (data: unknown) => TimelineEvent;
 }
 export declare function createRestAdapter(options: RestAdapterOptions): CalendarAdapter;
