@@ -1212,7 +1212,7 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-day-wd {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
@@ -1298,7 +1298,7 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ad-title {
-		font: 500 10px / 1.1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px / 1.1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1306,16 +1306,19 @@ function onCellKeydown(e, ms) {
 		flex: 1;
 	}
 
+	/* The event colour as ink can be a pale fill (a host's "no colour" tint);
+	   pulled toward the text colour it stays the event's hue and stays legible
+	   on the chip in either theme. */
 	.wg-ad-cont {
-		font-size: 10px;
-		color: var(--ev-color);
+		font-size: 11px;
+		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
 		flex-shrink: 0;
 		line-height: 1;
 	}
 
 	.wg-ad-arrow {
-		font-size: 10px;
-		color: var(--ev-color);
+		font-size: 11px;
+		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
 		flex-shrink: 0;
 		margin-left: auto;
 		line-height: 1;
@@ -1349,7 +1352,7 @@ function onCellKeydown(e, ms) {
 		border-top: 1px dashed var(--dt-accent, #2563eb);
 	}
 	.wg-now-time {
-		font: 500 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-accent, #2563eb);
 	}
 	/* Where a dragged-in class would land: the now-line's shape, solid */
@@ -1426,9 +1429,11 @@ function onCellKeydown(e, ms) {
 		cursor: default;
 	}
 
+	/* On the tinted chip the tertiary ink fell under 4.5:1; the time is the
+	   chip's first answer, so it reads in the secondary ink. */
 	.wg-ev-time {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
@@ -1444,7 +1449,7 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ev-loc {
-		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		white-space: nowrap;
 		flex-shrink: 0; /* shown only when measured to fit — never squeezed */

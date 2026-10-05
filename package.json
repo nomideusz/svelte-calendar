@@ -1,6 +1,6 @@
 {
   "name": "@nomideusz/svelte-calendar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A themeable Svelte 5 calendar: day, week, scrolling-week and month views, agenda lists, touch-first mobile layouts, drag-and-drop, timezones, a headless API and an embeddable web component.",
   "type": "module",
   "sideEffects": [
@@ -50,16 +50,16 @@
     "svelte": "^5.29.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "8.0.0-next.4",
-    "@sveltejs/adapter-vercel": "7.0.0-next.9",
-    "@sveltejs/kit": "3.0.0-next.27",
-    "@sveltejs/package": "3.0.0-next.7",
+    "@sveltejs/adapter-auto": "^8.0.0",
+    "@sveltejs/adapter-vercel": "^7.0.0",
+    "@sveltejs/kit": "^3.0.0",
+    "@sveltejs/package": "^3.0.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@types/node": "^22.20.0",
     "@vercel/analytics": "^1.6.1",
     "jsdom": "^29.1.1",
     "marked": "^17.0.6",
-    "svelte": "^5.57.0",
+    "svelte": "^5.57.1",
     "svelte-check": "^4.7.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.0",

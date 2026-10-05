@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- 58e0d82: Week grid (`week-scroll`) legibility: chip time, room, weekday and all-day
+  labels go from 10px to 11px (the now-time from 9px to 10px); the chip time
+  reads in `--dt-text-2` instead of `--dt-text-3`, which fell under 4.5:1 on the
+  tinted chip; all-day continuation marks mix the event colour toward
+  `--dt-text`, so a pale event colour no longer vanishes.
+
 ## 1.0.0
 
 ### Major Changes
