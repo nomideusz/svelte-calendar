@@ -784,11 +784,11 @@ function onCellKeydown(e, ms) {
 	{#if seg.isStart}
 		<span class="wg-ad-title">{seg.ev.title}</span>
 	{:else}
-		<span class="wg-ad-cont" aria-hidden="true">◂</span>
+		<span class="wg-ad-cont" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8"><path d="M5.5 1.5 2.5 4l3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
 		<span class="wg-ad-title">{seg.ev.title}</span>
 	{/if}
 	{#if !seg.isEnd && seg.totalDays > 1}
-		<span class="wg-ad-arrow" aria-hidden="true">▸</span>
+		<span class="wg-ad-arrow" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8"><path d="M2.5 1.5 5.5 4l-3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
 	{/if}
 {/snippet}
 
@@ -1232,12 +1232,13 @@ function onCellKeydown(e, ms) {
 	}
 
 	/* Today's pill — after the week rules above, which it must beat */
-	.wg-cell-hd--today {
-		background: var(--dt-accent, #2563eb);
-	}
 	.wg-cell-hd--today .wg-day-wd,
 	.wg-cell-hd--today .wg-day-num {
-		color: var(--dt-btn-text, #fff);
+		color: var(--dt-accent, #2563eb);
+	}
+	.wg-cell-hd--today .wg-day-num {
+		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
+		padding-bottom: 2px;
 	}
 
 	/* ─── All-day / multi-day events ─────────────────── */
@@ -1310,18 +1311,16 @@ function onCellKeydown(e, ms) {
 	   pulled toward the text colour it stays the event's hue and stays legible
 	   on the chip in either theme. */
 	.wg-ad-cont {
-		font-size: 11px;
+		display: flex;
 		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
 		flex-shrink: 0;
-		line-height: 1;
 	}
 
 	.wg-ad-arrow {
-		font-size: 11px;
+		display: flex;
 		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
 		flex-shrink: 0;
 		margin-left: auto;
-		line-height: 1;
 	}
 
 	/* ─── Events ─────────────────────────────────────── */

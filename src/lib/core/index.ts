@@ -31,6 +31,7 @@ export {
 	getDefaultLocale,
 	is24HourLocale,
 	fmtH,
+	fmtHParts,
 	fmtTime,
 	fmtDuration,
 	weekdayShort,

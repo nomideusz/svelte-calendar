@@ -1,728 +1,341 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
-	import { onMount } from 'svelte';
+	import type { Snippet } from 'svelte';
 
 	/* ─── Field definition types ─────────────────────── */
 	type BaseField = {
 		key: string;
+		/** The prop this control drives, shown as the control's name */
 		label: string;
-		group?: string;
-		enabledWhen?: string;
-		/** One-line description rendered as visible helper text under the field */
+		/** One line on what the prop does — shown in the info line on hover/focus */
 		hint?: string;
-		/**
-		 * Return a reason string to disable the field (e.g. the current view
-		 * doesn't read this option). The reason replaces the hint so the demo
-		 * explains why the control is inert. Falsy = enabled.
-		 */
+		/** Key of a toggle that must be on for this field to apply */
+		enabledWhen?: string;
+		/** Return a reason to disable the field (the current view ignores it). */
 		disabledWhen?: (values: Record<string, string | number | boolean>) => string | false;
 	};
+	type RangeField = BaseField & { type: 'range'; min: number; max: number; step: number };
+	type ToggleField = BaseField & { type: 'toggle' };
+	type SelectField = BaseField & { type: 'select'; options: { value: string; label: string }[] };
 
-	type RangeField = BaseField & {
-		type: 'range';
-		min: number;
-		max: number;
-		step: number;
-	};
+	export type SettingsField = RangeField | ToggleField | SelectField;
 
-	type ToggleField = BaseField & {
-		type: 'toggle';
-	};
-
-	type SelectField = BaseField & {
-		type: 'select';
-		options: { value: string; label: string }[];
-	};
-
-	type SegmentField = BaseField & {
-		type: 'segment';
-		options: { value: string; label: string }[];
-	};
-
-	export type SettingsField = RangeField | ToggleField | SelectField | SegmentField;
-
-	/* ─── Props ───────────────────────────────────────── */
 	interface Props {
 		fields: SettingsField[];
 		values: Record<string, string | number | boolean>;
+		/** Shown in the info line while no control is hovered or focused */
+		status?: string;
+		/** Rendered at the start of the info line (the external drag source) */
+		lead?: Snippet;
 	}
 
-	let { fields, values = $bindable() }: Props = $props();
+	let { fields, values = $bindable(), status = '', lead }: Props = $props();
 
-	const panelId = 'stg-panel';
-
-	let open = $state(true);
-
-	/* Collapse on mobile after mount (SSR-safe) */
-	onMount(() => {
-		if (window.innerWidth <= 600) open = false;
-	});
+	let hint = $state('');
+	let open = $state(false);
 
 	function setVal(key: string, v: string | number | boolean) {
 		values = { ...values, [key]: v };
 	}
 
-	/* Disabled by an unmet enabledWhen dependency or a disabledWhen reason;
-	   the reason swaps in for the hint so the user sees why. */
-	function resolve<F extends SettingsField>(field: F): { field: F; disabled: boolean } {
-		const reason = field.disabledWhen?.(values) || '';
-		const disabled = (!!field.enabledWhen && values[field.enabledWhen] !== true) || !!reason;
-		return { field: reason ? { ...field, hint: reason } : field, disabled };
+	function reasonOf(f: SettingsField): string {
+		const reason = f.disabledWhen?.(values);
+		if (reason) return reason;
+		if (f.enabledWhen && values[f.enabledWhen] !== true) return `Needs ${f.enabledWhen}`;
+		return '';
 	}
 
-	function fmt(v: string | number | boolean): string {
-		if (typeof v === 'string') return v;
-		if (typeof v === 'boolean') return v ? 'true' : 'false';
-		if (Number.isInteger(v)) return String(v);
-		return v.toFixed(2);
+	const selects = $derived(fields.filter((f): f is SelectField => f.type === 'select'));
+	const toggles = $derived(fields.filter((f): f is ToggleField => f.type === 'toggle'));
+	const ranges = $derived(fields.filter((f): f is RangeField => f.type === 'range'));
+
+	/* hover/focus feed the info line; the disabled reason wins over the hint */
+	function show(f: SettingsField) {
+		return {
+			onpointerenter: () => (hint = reasonOf(f) || f.hint || ''),
+			onpointerleave: () => (hint = ''),
+			onfocusin: () => (hint = reasonOf(f) || f.hint || ''),
+			onfocusout: () => (hint = ''),
+		};
 	}
-
-	function controlId(key: string): string {
-		return `stg-${key.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
-	}
-
-	function isPrimaryField(field: SettingsField): field is SelectField | SegmentField {
-		return field.type === 'select' || field.type === 'segment';
-	}
-
-	function isToggleField(field: SettingsField): field is ToggleField {
-		return field.type === 'toggle';
-	}
-
-	function isNotToggleField(field: SettingsField): field is Exclude<SettingsField, ToggleField> {
-		return field.type !== 'toggle';
-	}
-
-	/* Split fields into top-level (no group name) and grouped */
-	const { topFields, groupedFields } = $derived.by(() => {
-		const top: SettingsField[] = [];
-		const orderedGroups: { name: string; id: string; fields: SettingsField[] }[] = [];
-		const indexByName = new Map<string, number>();
-
-		for (const field of fields) {
-			const groupName = field.group ?? '';
-
-			if (!groupName) {
-				top.push(field);
-				continue;
-			}
-
-			const existingIndex = indexByName.get(groupName);
-			if (existingIndex === undefined) {
-				const id = groupName
-					.toLowerCase()
-					.replace(/[^a-z0-9]+/g, '-')
-					.replace(/(^-|-$)/g, '');
-				indexByName.set(groupName, orderedGroups.length);
-				orderedGroups.push({ name: groupName, id: id || 'general', fields: [field] });
-			} else {
-				orderedGroups[existingIndex].fields.push(field);
-			}
-		}
-
-		return { topFields: top, groupedFields: orderedGroups };
-	});
-
-	/* For mobile: split top-level fields into selects/segments vs toggles */
-	const topSelects = $derived(topFields.filter(isPrimaryField));
-	const topToggles = $derived(topFields.filter(isToggleField));
 </script>
 
-{#snippet segmentControl(f: SegmentField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
-	{#if f.label}
-		<span class={labelClass} id={`${fid}-label`}>{f.label}</span>
-	{/if}
-	<div
-		class="stg-pills"
-		role="radiogroup"
-		aria-labelledby={f.label ? `${fid}-label` : undefined}
-		aria-label={f.label ? undefined : f.key}
-		aria-describedby={f.hint ? `${fid}-hint` : undefined}
-	>
-		{#each f.options as option (option.value)}
-			<button
-				type="button"
-				class="stg-pill"
-				class:stg-pill--on={String(values[f.key]) === option.value}
-				role="radio"
-				aria-checked={String(values[f.key]) === option.value}
-				{disabled}
-				onclick={() => setVal(f.key, option.value)}
-			>
-				{option.label}
-			</button>
-		{/each}
-	</div>
-	{#if f.hint}
-		<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
-	{/if}
-{/snippet}
-
-{#snippet selectControl(f: SelectField, fid: string, disabled: boolean, labelClass = 'stg-lbl')}
-	{#if f.label}
-		<label class={labelClass} for={fid}>{f.label}</label>
-	{/if}
-	<select
-		id={fid}
-		class="stg-sel"
-		value={String(values[f.key] ?? '')}
-		{disabled}
-		aria-describedby={f.hint ? `${fid}-hint` : undefined}
-		onchange={(e) => setVal(f.key, (e.target as HTMLSelectElement).value)}
-	>
-		{#each f.options as option (option.value)}
-			<option value={option.value}>{option.label}</option>
-		{/each}
-	</select>
-	{#if f.hint}
-		<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
-	{/if}
-{/snippet}
-
-{#snippet toggleControl(f: ToggleField, fid: string, disabled: boolean)}
-	<div class="stg-field" class:stg-row--disabled={disabled}>
-		<label class="stg-row stg-row--toggle" for={fid}>
-			<span class="stg-lbl">{f.label}</span>
-			<input
-				id={fid}
-				class="stg-sr"
-				type="checkbox"
-				role="switch"
-				checked={values[f.key] === true}
-				{disabled}
-				aria-describedby={f.hint ? `${fid}-hint` : undefined}
-				onchange={(e) => setVal(f.key, (e.target as HTMLInputElement).checked)}
-			/>
-			<span class="stg-sw" aria-hidden="true">
-				<span class="stg-sw-knob"></span>
-			</span>
-		</label>
-		{#if f.hint}
-			<small class="stg-hint" id={`${fid}-hint`}>{f.hint}</small>
-		{/if}
-	</div>
-{/snippet}
-
-<div class="stg">
-	<button
-		class="stg-hd"
-		aria-expanded={open}
-		aria-controls={panelId}
-		onclick={() => (open = !open)}
-	>
-		<svg
-			class="stg-chevron"
-			class:stg-chevron--open={open}
-			viewBox="0 0 16 16"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-		>
-			<path d="M6 4l4 4-4 4" />
-		</svg>
-		<span class="stg-hd-copy">
-			<span>Settings</span>
-		</span>
+<section class="ps" aria-label="Calendar props">
+	<button class="ps-open" aria-expanded={open} aria-controls="ps-body" onclick={() => (open = !open)}>
+		<span>Props</span>
+		<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
 	</button>
 
-	{#if open}
-		<div class="stg-body" id={panelId} transition:slide={{ duration: 180 }}>
-			<!-- ─── Primary controls stay visible to keep the demo quick to scan. ─── -->
-			{#if topSelects.length > 0}
-				<div class="stg-bar">
-					{#each topSelects as f (f.key)}
-						{@const fid = controlId(f.key)}
-						{@const { field: rf, disabled } = resolve(f)}
-						{#if rf.type === 'segment'}
-							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-								{@render segmentControl(rf, fid, disabled, 'stg-col-title')}
-							</div>
-						{:else if rf.type === 'select'}
-							<div class="stg-bar-item" class:stg-row--disabled={disabled}>
-								{@render selectControl(rf, fid, disabled, 'stg-col-title')}
-							</div>
-						{/if}
-					{/each}
-				</div>
-			{/if}
-
-			{#if topToggles.length > 0}
-				<div class="stg-toggles">
-					{#each topToggles as f (f.key)}
-						{@const fid = controlId(f.key)}
-						{@const { field: rf, disabled } = resolve(f)}
-						{@render toggleControl(rf, fid, disabled)}
-					{/each}
-				</div>
-			{/if}
-
-			{#if groupedFields.length > 0}
-				<details class="stg-advanced">
-					<summary>Advanced controls</summary>
-					<div class="stg-grid">
-						{#each groupedFields as section (section.id)}
-							<section class="stg-col" aria-labelledby={`stg-s-${section.id}`}>
-								<h3 class="stg-col-title" id={`stg-s-${section.id}`}>{section.name}</h3>
-
-								{#if section.fields.some(isToggleField)}
-									<div class="stg-toggles stg-toggles--advanced">
-										{#each section.fields.filter(isToggleField) as f (f.key)}
-											{@const fid = controlId(f.key)}
-											{@const { field: rf, disabled } = resolve(f)}
-											{@render toggleControl(rf, fid, disabled)}
-										{/each}
-									</div>
-								{/if}
-
-								{#each section.fields.filter(isNotToggleField) as f (f.key)}
-									{@const fid = controlId(f.key)}
-									{@const { field: rf, disabled } = resolve(f)}
-
-									{#if rf.type === 'range'}
-										<div class="stg-row stg-row--rng" class:stg-row--disabled={disabled}>
-											<div class="stg-rng-hd">
-												<label class="stg-lbl" for={fid}>{rf.label}</label>
-												<span class="stg-num">{fmt(values[rf.key])}</span>
-											</div>
-											<input
-												id={fid}
-												class="stg-rng"
-												type="range"
-												min={rf.min}
-												max={rf.max}
-												step={rf.step}
-												value={values[rf.key]}
-												{disabled}
-												aria-describedby={rf.hint ? `${fid}-hint` : undefined}
-												oninput={(e) => setVal(rf.key, Number((e.target as HTMLInputElement).value))}
-											/>
-											{#if rf.hint}
-												<small class="stg-hint" id={`${fid}-hint`}>{rf.hint}</small>
-											{/if}
-										</div>
-
-									{:else if rf.type === 'select'}
-										<div class="stg-row" class:stg-row--disabled={disabled}>
-											{@render selectControl(rf, fid, disabled)}
-										</div>
-
-									{:else if rf.type === 'segment'}
-										<div class="stg-row stg-row--seg" class:stg-row--disabled={disabled}>
-											{@render segmentControl(rf, fid, disabled)}
-										</div>
-									{/if}
-								{/each}
-							</section>
+	<div class="ps-body" class:ps-body--open={open} id="ps-body">
+		<div class="ps-row ps-row--selects">
+			{#each selects as f (f.key)}
+				{@const reason = reasonOf(f)}
+				<label class="ps-sel" class:ps-off={!!reason} {...show(f)}>
+					<span class="ps-name">{f.label}</span>
+					<select
+						value={String(values[f.key] ?? '')}
+						disabled={!!reason}
+						onchange={(e) => setVal(f.key, e.currentTarget.value)}
+					>
+						{#each f.options as o (o.value)}
+							<option value={o.value}>{o.label}</option>
 						{/each}
-					</div>
-				</details>
-			{/if}
+					</select>
+				</label>
+			{/each}
 		</div>
-	{/if}
-</div>
+
+		<div class="ps-row ps-row--chips">
+			{#each toggles as f (f.key)}
+				{@const reason = reasonOf(f)}
+				<button
+					type="button"
+					class="ps-chip"
+					class:ps-chip--on={values[f.key] === true}
+					class:ps-off={!!reason}
+					aria-pressed={values[f.key] === true}
+					aria-disabled={!!reason}
+					{...show(f)}
+					onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
+				>
+					<span class="ps-box" aria-hidden="true"></span>{f.label}
+				</button>
+			{/each}
+
+			{#each ranges as f (f.key)}
+				{@const reason = reasonOf(f)}
+				<label class="ps-rng" class:ps-off={!!reason} {...show(f)}>
+					<span class="ps-name">{f.label}</span>
+					<input
+						type="range"
+						min={f.min}
+						max={f.max}
+						step={f.step}
+						value={values[f.key]}
+						disabled={!!reason}
+						oninput={(e) => setVal(f.key, Number(e.currentTarget.value))}
+					/>
+					<output>{values[f.key]}</output>
+				</label>
+			{/each}
+		</div>
+	</div>
+
+	<div class="ps-info">
+		{@render lead?.()}
+		<p class="ps-msg" aria-live="polite">
+			{#if hint}
+				{hint}
+			{:else if status}
+				<span class="ps-live" aria-hidden="true"></span>{status}
+			{:else}
+				Drag an event to move it, drag its edge to resize, drag on empty time to create.
+			{/if}
+		</p>
+	</div>
+</section>
 
 <style>
-	.stg {
-		--stg-border: var(--dt-border, rgba(148, 160, 180, 0.12));
-		--stg-soft: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 8%, transparent);
-		--stg-strong: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 14%, transparent);
-
-		border: 1px solid var(--stg-border);
-		border-radius: 10px;
-		background: color-mix(in srgb, var(--dt-surface, #10141c) 88%, transparent);
-		overflow: hidden;
-		font-family: var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		margin-bottom: 14px;
+	.ps {
+		--ps-rule: var(--dt-border-day, rgba(0, 0, 0, 0.14));
+		border-top: 2px solid var(--dt-text, #111);
+		border-bottom: 1px solid var(--ps-rule);
+		color: var(--dt-text, #111);
 	}
 
-	.stg-hd {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		padding: 8px 12px;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.78));
-		text-align: left;
-		transition: background 140ms, color 140ms;
-	}
-	.stg-hd:hover {
-		background: var(--stg-soft);
-		color: var(--dt-text, rgba(228, 234, 245, 0.9));
-	}
-	.stg-chevron {
-		width: 12px;
-		height: 12px;
-		flex-shrink: 0;
-		transition: transform 160ms ease;
-	}
-	.stg-chevron--open {
-		transform: rotate(90deg);
-	}
-	.stg-hd-copy > span {
-		font-weight: 700;
-		font-size: 11px;
-		line-height: 1;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-	}
-
-	.stg-body {
-		padding: 0 12px 12px;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 12px 18px;
-	}
-
-	.stg-bar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 12px 16px;
-	}
-	.stg-bar-item {
-		display: grid;
-		grid-template-columns: auto minmax(92px, auto);
-		align-items: center;
-		gap: 8px;
-	}
-
-	.stg-toggles {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		align-items: start;
-		gap: 10px 16px;
-		width: 100%;
-	}
-	.stg-toggles--advanced {
-		margin-bottom: 8px;
-	}
-
-	.stg-field {
-		min-width: 0;
-	}
-
-	.stg-advanced {
-		width: 100%;
-		border-top: 1px solid color-mix(in srgb, var(--stg-border) 65%, transparent);
-		padding-top: 9px;
-	}
-	.stg-advanced summary {
-		width: fit-content;
-		cursor: pointer;
-		list-style: none;
-		font-weight: 700;
-		font-size: 10px;
-		line-height: 1;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 160, 180, 0.56));
-	}
-	.stg-advanced summary::-webkit-details-marker {
+	.ps-open {
 		display: none;
 	}
-	.stg-advanced summary::after {
-		content: ' +';
-	}
-	.stg-advanced[open] summary::after {
-		content: ' -';
-	}
-	.stg-grid {
+
+	.ps-row {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 16px 24px;
-		margin-top: 12px;
-	}
-	.stg-col {
-		min-width: min(260px, 100%);
-		flex: 1;
-	}
-	.stg-col-title {
-		margin: 0 0 8px;
-		font-weight: 700;
-		font-size: 10px;
-		line-height: 1;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 160, 180, 0.5));
-	}
-
-	.stg-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-		min-height: 34px;
-		padding: 5px 0;
-	}
-	.stg-col > .stg-row + .stg-row {
-		border-top: 1px solid color-mix(in srgb, var(--stg-border) 45%, transparent);
-	}
-	.stg-row--toggle {
-		justify-content: flex-start;
-		min-height: 24px;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		cursor: pointer;
-		gap: 8px;
-		transition: color 140ms;
-	}
-	.stg-row--toggle:hover {
-		color: var(--dt-text, rgba(228, 234, 245, 0.9));
-	}
-	.stg-row--rng {
-		flex-direction: column;
 		align-items: stretch;
-		justify-content: flex-start;
-		gap: 7px;
-		min-height: auto;
-		padding: 8px 0;
+		border-bottom: 1px solid var(--ps-rule);
 	}
-	.stg-row--seg {
+
+	/* ── Selects: prop name over value, ruled like timetable columns ── */
+	.ps-sel {
+		flex: 1 1 140px;
+		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
-		justify-content: flex-start;
-		gap: 7px;
+		gap: 4px;
+		padding: 8px 14px 8px 0;
+		margin-right: 14px;
+		border-right: 1px solid var(--ps-rule);
+		min-width: 0;
+	}
+	.ps-sel:last-child {
+		border-right: none;
+		margin-right: 0;
+	}
+	.ps-name {
+		font: 500 11.5px/1 var(--dt-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+	}
+	.ps-sel select {
+		appearance: none;
+		width: 100%;
+		padding: 2px 22px 2px 0;
+		border: none;
+		background: transparent
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='gray' stroke-width='1.6'/%3E%3C/svg%3E")
+			right 0 center / 14px no-repeat;
+		font: 700 15px/1.3 var(--dt-sans, inherit);
+		letter-spacing: -0.01em;
+		color: inherit;
+		cursor: pointer;
+		text-overflow: ellipsis;
+	}
+	.ps-sel select option {
+		color: initial;
+		background: initial;
+	}
+	.ps-sel select:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	/* ── Toggles: prop chips, on = reversed ink plate ── */
+	.ps-row--chips {
+		gap: 5px;
 		padding: 8px 0;
 	}
-	.stg-row--disabled {
-		opacity: 0.42;
-		pointer-events: none;
-	}
-
-	.stg-rng-hd {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 8px;
-	}
-
-	/* ─── Labels ──────────────────────────────────────── */
-	.stg-lbl {
-		font-weight: 700;
-		font-size: 11px;
-		line-height: 1.2;
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	/* ─── Field hints ────────────────────────────────── */
-	.stg-hint {
-		display: block;
-		margin-top: 3px;
-		font-weight: 400;
-		font-size: 10.5px;
-		line-height: 1.35;
-		color: var(--dt-text-3, rgba(148, 160, 180, 0.55));
-	}
-	/* In the two-column select bar, hints span under label + control */
-	.stg-bar-item > .stg-hint {
-		grid-column: 1 / -1;
-		margin-top: 0;
-	}
-	/* In flex rows (advanced selects/segments), hints drop to their own line */
-	.stg-row {
-		flex-wrap: wrap;
-	}
-	.stg-row > .stg-hint {
-		flex-basis: 100%;
-		margin-top: 0;
-	}
-
-	/* ─── Toggle switch ──────────────────────────────── */
-	.stg-sr {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
-		padding: 0;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		border: 0;
-	}
-	.stg-sw {
-		position: relative;
-		display: block;
-		width: 30px;
-		height: 16px;
-		border-radius: 999px;
-		border: 1px solid color-mix(in srgb, var(--stg-border) 82%, transparent);
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 15%, transparent);
+	.ps-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		min-height: 28px;
+		padding: 0 10px 0 8px;
+		border: 1px solid var(--ps-rule);
+		border-radius: 4px;
+		background: transparent;
+		font: 500 12px/1 var(--dt-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
+		color: inherit;
 		cursor: pointer;
-		flex-shrink: 0;
-		transition: background 150ms, border-color 150ms;
+		transition: background 120ms, color 120ms, border-color 120ms;
 	}
-	.stg-sr:checked + .stg-sw {
-		background: color-mix(in srgb, var(--dt-accent, #6366f1) 28%, transparent);
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 55%, transparent);
+	.ps-chip:hover:not(.ps-off) {
+		border-color: var(--dt-text, #111);
 	}
-	.stg-sw-knob {
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--dt-text-3, rgba(148, 160, 180, 0.55));
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-		transition: transform 150ms ease, background 150ms;
+	.ps-box {
+		width: 9px;
+		height: 9px;
+		border: 1.5px solid currentColor;
+		border-radius: 1px;
+		box-sizing: border-box;
 	}
-	.stg-sr:checked + .stg-sw .stg-sw-knob {
-		transform: translateX(14px);
-		background: var(--dt-btn-text, #fff);
+	.ps-chip--on {
+		background: var(--dt-text, #111);
+		border-color: var(--dt-text, #111);
+		color: var(--dt-bg, #fff);
 	}
-
-	/* ─── Range slider ───────────────────────────────── */
-	.stg-rng {
-		width: 100%;
-		-webkit-appearance: none;
-		appearance: none;
-		height: 4px;
-		border-radius: 999px;
-		background: linear-gradient(90deg, var(--dt-accent, #6366f1), color-mix(in srgb, var(--dt-text-3, rgba(148, 160, 180, 0.4)) 34%, transparent));
-		outline: none;
-		cursor: pointer;
+	.ps-chip--on .ps-box {
+		background: currentColor;
 	}
-	.stg-rng::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: var(--dt-text, rgba(228, 234, 245, 0.9));
-		border: 2px solid color-mix(in srgb, var(--dt-bg, #0b0e14) 80%, transparent);
-		cursor: grab;
-		transition: transform 100ms, border-color 100ms;
-	}
-	.stg-rng::-webkit-slider-thumb:hover {
-		transform: scale(1.12);
-		border-color: var(--dt-accent, #6366f1);
-	}
-	.stg-rng::-webkit-slider-thumb:active {
-		cursor: grabbing;
-	}
-	.stg-rng::-moz-range-thumb {
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: var(--dt-text, rgba(228, 234, 245, 0.9));
-		border: 2px solid color-mix(in srgb, var(--dt-bg, #0b0e14) 80%, transparent);
-		cursor: grab;
-	}
-	.stg-rng:disabled {
-		cursor: default;
-	}
-	.stg-num {
-		flex-shrink: 0;
-		min-width: 28px;
-		text-align: right;
-		font: 700 11px / 1 var(--dt-mono, 'SF Mono', 'Cascadia Code', ui-monospace, monospace);
-		font-variant-numeric: tabular-nums;
-		color: var(--dt-accent, #6366f1);
-	}
-
-	/* ─── Select dropdown ────────────────────────────── */
-	.stg-sel {
-		appearance: none;
-		width: auto;
-		min-width: 84px;
-		font-weight: 600;
-		font-size: 12px;
-		line-height: 1;
-		padding: 7px 26px 7px 9px;
-		border-radius: 7px;
-		border: 1px solid color-mix(in srgb, var(--stg-border) 76%, transparent);
-		background: var(--stg-soft);
-		color: var(--dt-text, rgba(228, 234, 245, 0.9));
-		outline: none;
-		cursor: pointer;
-		background-image: linear-gradient(45deg, transparent 50%, var(--dt-text-3, rgba(148, 160, 180, 0.5)) 50%),
-			linear-gradient(135deg, var(--dt-text-3, rgba(148, 160, 180, 0.5)) 50%, transparent 50%);
-		background-position: calc(100% - 14px) center, calc(100% - 9px) center;
-		background-size: 5px 5px, 5px 5px;
-		background-repeat: no-repeat;
-		transition: border-color 120ms, background-color 120ms;
-	}
-	.stg-sel:hover {
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 30%, var(--stg-border));
-		background-color: var(--stg-strong);
-	}
-	.stg-sel:focus {
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 55%, transparent);
-	}
-	.stg-sel option {
-		background: var(--dt-bg, #0b0e14);
-		color: var(--dt-text, rgba(228, 234, 245, 0.9));
-	}
-
-	/* ─── Segment pills ──────────────────────────────── */
-	.stg-pills {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 5px;
-	}
-	.stg-pill {
-		padding: 6px 10px;
-		border-radius: 999px;
-		border: 1px solid color-mix(in srgb, var(--stg-border) 68%, transparent);
-		background: var(--stg-soft);
-		color: var(--dt-text-2, rgba(148, 160, 180, 0.72));
-		font-weight: 600;
-		font-size: 12px;
-		line-height: 1;
-		cursor: pointer;
-		transition: border-color 120ms, color 120ms, background 120ms, transform 120ms;
-	}
-	.stg-pill:hover {
-		color: var(--dt-text, rgba(228, 234, 245, 0.9));
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 24%, var(--stg-border));
-	}
-	.stg-pill--on {
-		color: var(--dt-btn-text, #fff);
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 70%, transparent);
-		background: color-mix(in srgb, var(--dt-accent, #6366f1) 78%, #000 0%);
-		box-shadow: 0 6px 18px color-mix(in srgb, var(--dt-accent, #6366f1) 18%, transparent);
-	}
-
-	/* ─── Focus rings ────────────────────────────────── */
-	.stg-sr:focus-visible + .stg-sw,
-	.stg-sel:focus-visible,
-	.stg-rng:focus-visible,
-	.stg-pill:focus-visible,
-	.stg-hd:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #6366f1) 55%, transparent);
+	.ps-chip:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
 
-	/* ─── Responsive ─────────────────────────────────── */
-	@media (max-width: 760px) {
-		.stg {
-			border-radius: 0;
-			border-left: none;
+	.ps-off {
+		opacity: 0.38;
+		cursor: not-allowed;
+	}
+	.ps-off * {
+		cursor: not-allowed;
+	}
+
+	/* ── Ranges ── */
+	.ps-rng {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 28px;
+		padding: 0 10px;
+		border: 1px solid var(--ps-rule);
+		border-radius: 4px;
+	}
+	.ps-rng input {
+		width: 84px;
+		accent-color: var(--dt-text, #111);
+	}
+	.ps-rng output {
+		min-width: 2ch;
+		font: 700 14px/1 var(--dt-sans, inherit);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+	}
+
+	/* ── Info line: one message at a time, like a board's running text ── */
+	.ps-info {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		min-height: 40px;
+	}
+	.ps-msg {
+		margin: 0;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font: 500 13px/1.35 var(--dt-sans, inherit);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+	}
+	.ps-live {
+		flex: none;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--signal, #eb0000);
+	}
+
+	@media (max-width: 700px) {
+		.ps-open {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			min-height: 44px;
+			padding: 0;
+			border: none;
+			border-bottom: 1px solid var(--ps-rule);
+			background: none;
+			font: 700 15px/1 var(--dt-sans, inherit);
+			color: inherit;
+			cursor: pointer;
+		}
+		.ps-open[aria-expanded='true'] svg {
+			transform: rotate(180deg);
+		}
+		.ps-body {
+			display: none;
+		}
+		.ps-body--open {
+			display: block;
+		}
+		.ps-sel {
+			flex-basis: 40%;
+		}
+		.ps-chip,
+		.ps-rng {
+			min-height: 36px;
+		}
+		.ps-sel:nth-child(2n) {
 			border-right: none;
+			margin-right: 0;
 		}
-		.stg-hd {
-			padding: 10px 16px;
+		.ps-row--selects {
+			row-gap: 0;
 		}
-		.stg-body {
-			padding: 0 16px 12px;
-			gap: 10px 14px;
+		.ps-row--selects .ps-sel {
+			border-bottom: 1px solid var(--ps-rule);
 		}
-		.stg-bar-item {
-			grid-template-columns: 86px minmax(0, 1fr);
-			width: 100%;
-		}
-		.stg-sel {
-			width: 100%;
-		}
-		.stg-grid,
-		.stg-col {
-			width: 100%;
+		.ps-info {
+			flex-wrap: wrap;
+			gap: 8px;
+			padding: 10px 0;
 		}
 	}
 </style>

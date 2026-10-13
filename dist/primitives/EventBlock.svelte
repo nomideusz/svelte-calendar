@@ -245,7 +245,8 @@ function handleKeydown(e) {
 		white-space: nowrap;
 	}
 	.eb-card .eb-time {
-		font: 400 10px / 1 var(--dt-mono, 'SF Mono', monospace);
+		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.eb-card .eb-dur {
@@ -270,7 +271,8 @@ function handleKeydown(e) {
 		flex-shrink: 0;
 	}
 	.eb-row .eb-time {
-		font: 400 10px / 1 var(--dt-mono, 'SF Mono', monospace);
+		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex-shrink: 0;
 		width: 90px;

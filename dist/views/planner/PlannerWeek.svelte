@@ -21,7 +21,7 @@ import { createClock } from "../../core/clock.svelte.js";
 import { fitParts } from "../../text-fit.js";
 import { HOUR_MS, sod, addDaysMs, diffDays } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, segmentForDay } from "../../core/time.js";
-import { fmtH, fmtTime, fmtDuration, weekdayShort, weekdayLong } from "../../core/locale.js";
+import { fmtHParts, fmtTime, fmtDuration, weekdayShort, weekdayLong } from "../../core/locale.js";
 let { mode = "week", mondayStart = true, locale, height = 520, events = [], style = "", focusDate, oneventclick, oneventcreate, onexternaldrop, selectedEventId = null, readOnly = false, visibleHours } = $props();
 // ── Context ────────────────────────────────────────
 const ctx = useCalendarContext();
@@ -79,7 +79,7 @@ function inAllDayStrip(ev) {
 }
 // ── Config ─────────────────────────────────────────
 const HOUR_H = 48;
-const GUTTER_W = 48;
+const GUTTER_W = 52;
 const MIN_COL_W = $derived(ctx.minColumnWidth);
 const ALLDAY_MAX = 3;
 const startHour = $derived(visibleHours?.[0] ?? 0);
@@ -802,14 +802,14 @@ function onWindowKeydown(e) {
 		onpointerenter={() => oneventhover?.(seg.ev)}
 	>
 		{#if !seg.isStart}
-			<span class="tw-ad-cont" aria-hidden="true">◂</span>
+			<span class="tw-ad-cont" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8"><path d="M5.5 1.5 2.5 4l3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
 		{/if}
 		<span class="tw-ad-title">{seg.ev.title}</span>
 		{#if seg.totalDays > 1}
 			<span class="tw-ad-span" aria-hidden="true">{seg.dayIndex}/{seg.totalDays}</span>
 		{/if}
 		{#if !seg.isEnd && seg.totalDays > 1}
-			<span class="tw-ad-arrow" aria-hidden="true">▸</span>
+			<span class="tw-ad-arrow" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8"><path d="M2.5 1.5 5.5 4l-3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
 		{/if}
 	</button>
 {/snippet}
@@ -887,7 +887,12 @@ function onWindowKeydown(e) {
 				<div class="tw-gutter" style:width="{GUTTER_W}px" aria-hidden="true">
 					{#each { length: hourCount } as _, i}
 						{#if i > 0}
-							<span class="tw-gutter-lb" style:top="{i * HOUR_H}px">{fmtH(startHour + i, locale)}</span>
+							{@const [hNum, hSuf] = fmtHParts(startHour + i, locale)}
+							<!-- an hour the now plate would half-cover gives way to it -->
+							<span
+								class="tw-gutter-lb"
+								class:tw-gutter-lb--under={nowY !== null && weekHasToday && Math.abs(i * HOUR_H - nowY) < 18}
+								style:top="{i * HOUR_H}px">{hNum}<small>{hSuf}</small></span>
 						{/if}
 					{/each}
 					{#if axisGhost}
@@ -990,7 +995,7 @@ function onWindowKeydown(e) {
 									<div class="tw-ev-body">
 										<EventContent event={p.ev}>
 											{@const parts = blockParts(p.ev, p.height)}
-											<span class="tw-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
+											<span class="tw-ev-time">{fmtTime(p.ev.start, locale)}<span class="tw-ev-end">{` – ${fmtTime(p.ev.end, locale)}`}</span></span>
 											<span class="tw-ev-title">{p.ev.title}</span>
 											{#if parts.room}
 												<span class="tw-ev-loc">{p.ev.location}</span>
@@ -1139,7 +1144,7 @@ function onWindowKeydown(e) {
 	}
 
 	.tw-hd-wd {
-		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
@@ -1154,15 +1159,15 @@ function onWindowKeydown(e) {
 		align-items: center;
 		justify-content: center;
 		min-width: 26px;
-		height: 26px;
-		border-radius: 50%;
-		font: 600 14px/1 var(--dt-sans, system-ui, sans-serif);
+		height: 24px;
+		font: 700 18px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: -0.02em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
+	/* Today: the numeral in the accent over a 2px rule — no disc. */
 	.tw-hd-num--today {
-		background: var(--dt-accent, #2563eb);
-		color: var(--dt-accent-fg, var(--dt-btn-text, #ffffff));
-		font-weight: 700;
+		color: var(--dt-accent, #2563eb);
+		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
 	}
 
 	.tw-hd-custom {
@@ -1257,10 +1262,9 @@ function onWindowKeydown(e) {
 	}
 	.tw-ad-cont,
 	.tw-ad-arrow {
-		font-size: 10px;
+		display: flex;
 		color: var(--ev-color);
 		flex-shrink: 0;
-		line-height: 1;
 	}
 	.tw-ad-arrow { margin-left: auto; }
 
@@ -1299,13 +1303,31 @@ function onWindowKeydown(e) {
 		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 
+	/* Timetable hour: the numeral carries the rank, the suffix sits raised
+	   and small beside it. */
 	.tw-gutter-lb {
 		position: absolute;
 		right: 6px;
 		transform: translateY(-50%);
-		font: 500 11px/1 var(--dt-mono, ui-monospace, monospace);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		display: flex;
+		align-items: flex-start;
+		gap: 1px;
+		font: 700 17px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
+	}
+	.tw-gutter-lb--under {
+		visibility: hidden;
+	}
+	.tw-gutter-lb small {
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: 0;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
 	/* The clock beside the now line, and the drag's edges while it lasts —
@@ -1315,18 +1337,19 @@ function onWindowKeydown(e) {
 		position: absolute;
 		right: 3px;
 		transform: translateY(-50%);
-		padding: 1px 3px;
+		padding: 2px 4px;
 		border-radius: 3px;
 		background: var(--dt-surface, var(--dt-bg, #fff));
-		font: 600 10px/1.2 var(--dt-mono, ui-monospace, monospace);
+		font: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		white-space: nowrap;
 		z-index: 2;
 	}
+	/* The clock is a reversed plate on the accent, like a board's live time. */
 	.tw-gutter-now {
-		opacity: 0.75;
-		transform: translateY(-50%);
-		z-index: 2;
+		background: var(--dt-accent, #2563eb);
+		color: var(--dt-btn-text, #ffffff);
 	}
 
 	/* ─── Columns wrapper ────────────────────────────── */
@@ -1421,8 +1444,7 @@ function onWindowKeydown(e) {
 		left: 0;
 		right: 0;
 		height: 0;
-		border-top: 1px dotted var(--dt-accent, #2563eb);
-		opacity: 0.7;
+		border-top: 2px solid var(--dt-accent, #2563eb);
 		z-index: 12;
 		pointer-events: none;
 		transform: translateY(-1px);
@@ -1430,7 +1452,7 @@ function onWindowKeydown(e) {
 	.tw-now-dot {
 		position: absolute;
 		left: -4px;
-		top: -3px;
+		top: -5px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
@@ -1441,7 +1463,7 @@ function onWindowKeydown(e) {
 	.tw-ev {
 		position: absolute;
 		z-index: 6;
-		border-radius: 5px;
+		border-radius: 3px;
 		background: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		display: flex;
 		align-items: stretch;
@@ -1518,10 +1540,11 @@ function onWindowKeydown(e) {
 		width: 3px;
 		background: var(--ev-color);
 		flex-shrink: 0;
-		border-radius: 5px 0 0 5px;
+		border-radius: 3px 0 0 3px;
 	}
 
 	.tw-ev-body {
+		container: tw-ev / inline-size;
 		flex: 1;
 		min-width: 0;
 		padding: 3px 6px;
@@ -1539,16 +1562,22 @@ function onWindowKeydown(e) {
 		padding-bottom: 1px;
 	}
 
+	/* Time and title share one size; rank is weight alone. */
 	.tw-ev-time {
-		font: 400 11px/1.1 var(--dt-mono, ui-monospace, monospace);
+		font: 500 12px/1.15 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 	.tw-ev--compact .tw-ev-time { order: 0; }
+	/* A narrow overlap column keeps the start time whole and drops the end. */
+	@container tw-ev (max-width: 104px) {
+		.tw-ev-end { display: none; }
+	}
 
 	.tw-ev-title {
-		font: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 700 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1641,7 +1670,7 @@ function onWindowKeydown(e) {
 		left: 1px;
 		right: 3px;
 		z-index: 40;
-		border-radius: 5px;
+		border-radius: 3px;
 		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		outline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);
 		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
@@ -1660,7 +1689,8 @@ function onWindowKeydown(e) {
 		box-shadow: none;
 	}
 	.tw-ghost-time {
-		font: 600 11px/1.1 var(--dt-mono, ui-monospace, monospace);
+		font: 700 12px/1.15 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--ev-color, var(--dt-accent, #2563eb));
 		white-space: nowrap;
 	}

@@ -1030,7 +1030,9 @@
 	}
 
 	.cal-hd-title {
-		font: 600 14px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 700 16px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1046,7 +1048,7 @@
 		border: none;
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		border-radius: 6px;
+		border-radius: 4px;
 		cursor: pointer;
 		transition: background 120ms, color 120ms;
 	}
@@ -1064,12 +1066,12 @@
 	}
 
 	.cal-hd-today {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font: 600 12px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		background: transparent;
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
-		padding: 6px 10px;
-		border-radius: 6px;
+		border: 1px solid var(--dt-border-day, var(--dt-border, rgba(0, 0, 0, 0.14)));
+		padding: 7px 10px;
+		border-radius: 4px;
 		cursor: pointer;
 		white-space: nowrap;
 		margin-right: 2px;
@@ -1089,7 +1091,7 @@
 		display: flex;
 		gap: 2px;
 		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		border-radius: 8px;
+		border-radius: 6px;
 		padding: 2px;
 		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
@@ -1100,9 +1102,9 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		cursor: pointer;
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
-		padding: 5px 12px;
-		border-radius: 6px;
+		font: 600 12px/1 var(--dt-sans, system-ui, sans-serif);
+		padding: 6px 12px;
+		border-radius: 4px;
 		transition: background 100ms, color 100ms;
 	}
 
@@ -1112,9 +1114,10 @@
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
+	/* Selected = a reversed ink plate; the accent is kept for now and selection. */
 	.cal-pill--active {
-		background: var(--dt-accent, #2563eb);
-		color: var(--dt-btn-text, #fff);
+		background: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-bg, #fff);
 	}
 
 	.cal-body {
@@ -1237,7 +1240,7 @@
 		display: flex;
 		gap: 2px;
 		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		border-radius: 8px;
+		border-radius: 6px;
 		padding: 2px;
 		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
@@ -1249,9 +1252,7 @@
 		cursor: pointer;
 		font: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);
 		padding: 9px 12px;
-		border-radius: 6px;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
+		border-radius: 4px;
 		transition: background 100ms, color 100ms;
 		-webkit-tap-highlight-color: transparent;
 	}
@@ -1259,8 +1260,8 @@
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.cal-m-pill--active {
-		background: var(--dt-accent, #2563eb);
-		color: var(--dt-btn-text, #fff);
+		background: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-bg, #fff);
 	}
 
 	.cal-m-title {
@@ -1275,33 +1276,31 @@
 	}
 
 	.cal-m-today {
-		font: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-accent, #2563eb);
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 10%, transparent);
-		border: none;
+		font: 600 13px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.12));
 		min-height: 40px;
 		padding: 5px 12px;
-		border-radius: 6px;
+		border-radius: 4px;
 		cursor: pointer;
 		white-space: nowrap;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
 		transition: background 120ms, color 120ms;
 		-webkit-tap-highlight-color: transparent;
 		flex-shrink: 0;
 	}
 	.cal-m-today:hover:not(:disabled) {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);
+		border-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.cal-m-today:active:not(:disabled) {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 25%, transparent);
+		background: color-mix(in srgb, var(--dt-text, #000) 8%, transparent);
 	}
 	.cal-m-today:disabled {
 		opacity: 0.45;
 		cursor: default;
 	}
 	.cal-m-today:focus-visible {
-		outline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
+		outline: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));
 		outline-offset: 2px;
 	}
 </style>

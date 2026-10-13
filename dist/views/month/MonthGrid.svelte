@@ -300,7 +300,8 @@ function chipTime(e) {
 	}
 	.mg-head-cell {
 		padding: 6px 8px;
-		font-family: var(--dt-mono);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-size: 11px;
 		font-weight: 600;
 		text-transform: uppercase;
@@ -371,20 +372,21 @@ function chipTime(e) {
 
 	.mg-daynum {
 		flex: none;
-		font-family: var(--dt-mono);
-		font-size: 12px;
-		font-weight: 600;
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-size: 13px;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2);
-		width: 22px;
-		height: 22px;
+		min-width: 22px;
+		height: 20px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 999px;
 	}
+	/* Today: accent numeral on a 2px rule — the same mark in every view. */
 	.mg-daynum--today {
-		background: var(--dt-accent);
-		color: var(--dt-btn-text);
+		color: var(--dt-accent);
+		box-shadow: inset 0 -2px 0 var(--dt-accent);
 	}
 
 	.mg-chips {
@@ -438,7 +440,8 @@ function chipTime(e) {
 	}
 	.mg-chip-time {
 		flex: none;
-		font-family: var(--dt-mono);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-size: 11px;
 		color: var(--dt-text-2);
 	}
@@ -453,7 +456,8 @@ function chipTime(e) {
 		background: none;
 		padding: 1px 4px;
 		border-radius: 5px;
-		font-family: var(--dt-mono);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-size: 11px;
 		color: var(--dt-text-2);
 		cursor: pointer;

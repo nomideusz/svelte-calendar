@@ -144,7 +144,8 @@
 	.ni-label {
 		position: absolute;
 		white-space: nowrap;
-		font: 600 10px / 1 var(--dt-mono, 'SF Mono', 'Fira Code', monospace);
+		font: 600 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-btn-text, #fff);
 		background: var(--ni-color, var(--dt-accent, #2563eb));
 		padding: 3px 6px;

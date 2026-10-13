@@ -451,15 +451,9 @@
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.mw-day-num--today {
-		background: var(--dt-accent, #2563eb);
-		color: var(--dt-btn-text, #fff);
-		width: 30px;
-		height: 30px;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 50%;
-		font-size: 15px;
+		color: var(--dt-accent, #2563eb);
+		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
+		padding-bottom: 3px;
 	}
 
 	/* ─── Events column ──────────────────────────────── */
@@ -566,7 +560,8 @@
 	}
 
 	.mw-ev-time {
-		font: 400 12px/1 var(--dt-mono, ui-monospace, monospace);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;

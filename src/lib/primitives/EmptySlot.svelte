@@ -96,7 +96,8 @@
 		color: var(--dt-accent, #2563eb);
 	}
 	.es-range {
-		font: 400 10px / 1 var(--dt-mono, 'SF Mono', monospace);
+		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 

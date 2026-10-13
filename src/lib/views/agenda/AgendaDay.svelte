@@ -545,7 +545,8 @@
 	}
 	.ag-day-head-date {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		line-height: 1.2;
 	}
@@ -683,7 +684,8 @@
 	.ag-card-meta {
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		line-height: 1;
 	}
 	.ag-card-dur {
@@ -767,7 +769,8 @@
 		font-size: 10px;
 		font-weight: 700;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		flex-shrink: 0;
 	}
 	.ag-card--plan .ag-card-title {
@@ -936,7 +939,8 @@
 		border: 1px solid var(--dt-border);
 		border-radius: 999px;
 		background: none;
-		font-family: var(--dt-mono);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-size: 11px;
 		color: var(--dt-text-3);
 		cursor: pointer;
@@ -963,7 +967,8 @@
 	.ag-q-clock {
 		font-size: 11px;
 		font-weight: 600;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		margin-left: 4px;
 	}
@@ -1025,7 +1030,8 @@
 	}
 	.ag-q-now-time {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		margin-bottom: 6px;
 	}
@@ -1148,7 +1154,8 @@
 	}
 	.ag-log-time {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		width: 64px;
 		flex-shrink: 0;
@@ -1176,7 +1183,8 @@
 	}
 	.ag-log-dur {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 	}
@@ -1222,7 +1230,8 @@
 	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-row-time {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-weight: 500;
 		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
 		min-width: 64px;
@@ -1269,7 +1278,8 @@
 	}
 	.ag-compact-row-dur {
 		font-size: 10px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		line-height: 1.4;

@@ -100,6 +100,11 @@ export declare function getDefaultLocale(): string;
 export declare function is24HourLocale(locale?: string): boolean;
 /** Format hour index (0-23) as compact label: 12h ("12a", "1p") or 24h ("0", "13") */
 export declare function fmtH(h: number, locale?: string): string;
+/**
+ * Hour index (0-23) split for a timetable gutter: the numeral and the small
+ * part set beside it — `['13', '00']` in 24h locales, `['1', 'pm']` in 12h.
+ */
+export declare function fmtHParts(h: number, locale?: string): [string, string];
 /** Short weekday name for a timestamp: "Mon", "Tue", etc. */
 export declare function weekdayShort(ms: number, locale?: string): string;
 /** Long weekday name for a timestamp: "Monday", "Tuesday", etc. */

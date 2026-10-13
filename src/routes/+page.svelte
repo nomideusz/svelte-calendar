@@ -15,7 +15,7 @@
 	import Settings from "./_components/Settings.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
 	import type { CalendarView, TimelineEvent } from "#lib/index.js";
-	import { themeStore, demoThemes } from "./theme.svelte.js";
+	import { themeStore, demoThemes, boardStore } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 
 	type SettingValue = string | number | boolean;
@@ -53,7 +53,7 @@
 	}
 
 	const calendarHeight = $derived(isMobile ? 500 : 700);
-	const calendarRadius = $derived(isMobile ? 0 : 12);
+	const calendarRadius = $derived(isMobile ? 0 : 4);
 
 	const DEFAULT_SETTINGS: Record<string, SettingValue> = {
 		readOnly: false,
@@ -83,6 +83,7 @@
 
 	// ── Recipes: one-click prop bundles showing common setups ──
 	const recipes: { name: string; hint: string; values: Record<string, SettingValue> }[] = [
+		{ name: "Default", hint: "Every prop at its default — day planner, editable", values: {} },
 		{
 			name: "Booking page",
 			hint: "Editable week grid with business hours, blocked lunch slots, and disabled dates",
@@ -134,9 +135,6 @@
 	function applyRecipe(recipe: (typeof recipes)[number]) {
 		settingsValues = { ...DEFAULT_SETTINGS, ...recipe.values };
 	}
-	function resetSettings() {
-		settingsValues = { ...DEFAULT_SETTINGS };
-	}
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
@@ -167,6 +165,10 @@
 	);
 	const locale = $derived((settingsValues.locale as string) ?? "en-US");
 	const timezone = $derived((settingsValues.timezone as string) || undefined);
+	// The board clock in the header shows the zone the calendar shows.
+	$effect(() => {
+		boardStore.timezone = timezone ?? "";
+	});
 
 	// The calendar formats dates in `locale` by itself; its UI words come from
 	// `labels` — a partial set is merged over the English defaults.
@@ -211,176 +213,94 @@
 	// Views with a time axis: the planners' grid, week-scroll's chip heights.
 	const TIMED = [...PLANNERS, "week-scroll"];
 
+	// Every control is named for the prop it drives; options read as values.
 	const settingsFields: SettingsField[] = [
 		{
-			key: "activeView",
-			hint: "Which built-in view renders: Planner is a time grid, Agenda is a list",
-			label: "View",
-			group: "",
-			type: "select",
+			key: "activeView", label: "view", type: "select",
+			hint: "Which built-in view renders: planners are time grids, agendas are lists",
+			options: ["week-planner", "week-scroll", "day-planner", "week-agenda", "day-agenda", "month-grid"]
+				.map((v) => ({ value: v, label: v })),
+		},
+		{
+			key: "calendarPreset", label: "theme", type: "select",
+			hint: "auto reads the host page's colours and type; neutral and midnight are fixed presets",
 			options: [
-				{ value: "week-planner", label: "Week Planner" },
-				{ value: "week-scroll", label: "Week Scroll" },
-				{ value: "day-planner", label: "Day Planner" },
-				{ value: "week-agenda", label: "Week Agenda" },
-				{ value: "day-agenda", label: "Day Agenda" },
-				{ value: "month-grid", label: "Month Grid" },
+				{ value: "auto", label: "auto" },
+				{ value: "neutral", label: "neutral" },
+				{ value: "midnight", label: "midnight" },
 			],
 		},
 		{
-			key: "calendarPreset",
-			hint: "auto probes your page and matches it; neutral/midnight are fixed presets",
-			label: "Theme",
-			group: "",
-			type: "select",
+			key: "locale", label: "locale", type: "select",
+			hint: "BCP 47 tag for dates, weekdays and the 12/24-hour clock",
+			options: ["en-US", "pl-PL", "de-DE", "fr-FR", "ar-SA"].map((v) => ({ value: v, label: v })),
+		},
+		{
+			key: "timezone", label: "timezone", type: "select",
+			hint: "Show events and the now line in an IANA zone instead of the visitor's own",
 			options: [
-				{ value: "auto", label: "Auto (adapt to page)" },
-				{ value: "neutral", label: "Neutral (light)" },
-				{ value: "midnight", label: "Midnight (dark)" },
+				{ value: "", label: "visitor's own" },
+				...["Europe/Warsaw", "America/New_York", "Asia/Tokyo"].map((v) => ({ value: v, label: v })),
 			],
 		},
 		{
-			key: "locale",
-			hint: "BCP 47 tag for date/time formatting (prop: locale)",
-			label: "Locale",
-			group: "",
-			type: "select",
+			key: "mobileMode", label: "mobile", type: "select",
+			hint: "Below 768px of container width the calendar swaps to touch-first views",
 			options: [
-				{ value: "en-US", label: "en-US" },
-				{ value: "pl-PL", label: "pl-PL" },
-				{ value: "de-DE", label: "de-DE" },
-				{ value: "fr-FR", label: "fr-FR" },
-				{ value: "ar-SA", label: "ar-SA" },
-			],
-		},
-		{
-			key: "timezone",
-			hint: "Show events and 'now' in an IANA zone instead of your own (prop: timezone)",
-			label: "Timezone",
-			group: "",
-			type: "select",
-			options: [
-				{ value: "", label: "Your own" },
-				{ value: "Europe/Warsaw", label: "Europe/Warsaw" },
-				{ value: "America/New_York", label: "America/New_York" },
-				{ value: "Asia/Tokyo", label: "Asia/Tokyo" },
-			],
-		},
-		{
-			key: "mobileMode",
-			hint: "Below 768px the calendar swaps to touch-first views (prop: mobile)",
-			label: "Mobile",
-			group: "",
-			type: "select",
-			options: [
-				{ value: "auto", label: "Auto" },
-				{ value: "force", label: "Force mobile" },
-				{ value: "desktop", label: "Force desktop" },
+				{ value: "auto", label: "'auto'" },
+				{ value: "force", label: "true" },
+				{ value: "desktop", label: "false" },
 			],
 		},
 
-		{
-			key: "mondayStart",
+		{ key: "mondayStart", label: "mondayStart", type: "toggle",
 			hint: "Start weeks on Monday instead of Sunday",
-			label: "Monday Start",
-			group: "",
-			type: "toggle",
-			disabledWhen: inViews([...WEEKS, "month-grid"], "Single-day view — no week start"),
-		},
-		{ key: "readOnly",
-			hint: "Disables drag, resize, and click-to-create", label: "Read Only", group: "", type: "toggle",
+			disabledWhen: inViews([...WEEKS, "month-grid"], "Single-day view — no week start") },
+		{ key: "readOnly", label: "readOnly", type: "toggle",
+			hint: "Turns off drag, resize and drag-to-create",
 			disabledWhen: inViews(TIMED, "No drag editing in this view") },
-		{
-			key: "showModePills",
-			hint: "Day/Week switch in the header (prop: showModePills)",
-			label: "Mode Pills",
-			group: "",
-			type: "toggle",
-		},
-		{
-			key: "showNavigation",
-			hint: "Prev/next arrows and Today button in the header",
-			label: "Navigation",
-			group: "",
-			type: "toggle",
-		},
-		{ key: "equalDays",
-			hint: "No past-day dimming — for template schedules", label: "Equal Days", group: "", type: "toggle",
-			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by Month Grid") },
-		{ key: "showDates",
-			hint: "Off: headers show day names only (Mon, Tue, …)", label: "Show Dates", group: "", type: "toggle",
-			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by Month Grid") },
-		{ key: "rtl",
-			hint: "Right-to-left text direction (prop: dir='rtl')", label: "RTL", group: "", type: "toggle" },
-		{ key: "compact",
-			hint: "Minimal dot + time + title rows in Agenda views (prop: compact)", label: "Compact Agenda", group: "", type: "toggle",
+		{ key: "showModePills", label: "showModePills", type: "toggle",
+			hint: "The view switch in the header" },
+		{ key: "showNavigation", label: "showNavigation", type: "toggle",
+			hint: "Previous/next arrows and the Today button" },
+		{ key: "equalDays", label: "equalDays", type: "toggle",
+			hint: "No past-day dimming — for template schedules",
+			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by month-grid") },
+		{ key: "showDates", label: "showDates", type: "toggle",
+			hint: "Off: headers show day names only (Mon, Tue, …)",
+			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by month-grid") },
+		{ key: "rtl", label: 'dir="rtl"', type: "toggle",
+			hint: "Right-to-left layout" },
+		{ key: "compact", label: "compact", type: "toggle",
+			hint: "Minimal dot, time and title rows in agenda views",
 			disabledWhen: (v) =>
 				(!AGENDAS.includes(String(v.activeView)) && "Agenda views only") ||
-				(v.activeView === "week-agenda" && v.columns === true && "Overridden by Timetable Columns") },
-		{ key: "columns",
-			hint: "Week agenda days as side-by-side timetable columns on desktop; overrides Compact (prop: columns)", label: "Timetable Columns", group: "", type: "toggle",
-			disabledWhen: inViews(["week-agenda"], "Week Agenda only") },
-		{ key: "phoneFrame",
-			hint: "Preview in a 390px frame — the container-based mobile mode kicks in", label: "Phone Frame", group: "", type: "toggle",
+				(v.activeView === "week-agenda" && v.columns === true && "Overridden by columns") },
+		{ key: "columns", label: "columns", type: "toggle",
+			hint: "Week agenda days as side-by-side timetable columns on desktop; overrides compact",
+			disabledWhen: inViews(["week-agenda"], "week-agenda only") },
+		{ key: "blockedSlotsEnabled", label: "blockedSlots", type: "toggle",
+			hint: "Hatched unbookable ranges, like a lunch break",
+			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
+		{ key: "disabledDatesEnabled", label: "disabledDates", type: "toggle",
+			hint: "Dates that refuse new events and moves" },
+		{ key: "visibleHoursEnabled", label: "visibleHours", type: "toggle",
+			hint: "Crop the grid to a start and end hour",
+			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
+		{ key: "phoneFrame", label: "390px container", type: "toggle",
+			hint: "Not a prop: a 390px-wide host — the container-based mobile mode kicks in",
 			disabledWhen: (v) => v.mobileMode === "force" && "Mobile views already forced" },
-		{
-			key: "blockedSlotsEnabled",
-			hint: "Hatched unbookable ranges, e.g. lunch breaks (prop: blockedSlots)",
-			label: "Blocked Slots",
-			group: "Availability",
-			type: "toggle",
-			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
-		},
-		{
-			key: "disabledDatesEnabled",
-			hint: "Dates that reject event creation and moves (prop: disabledDates)",
-			label: "Disabled Dates",
-			group: "Availability",
-			type: "toggle",
-		},
-		{
-			key: "visibleHoursEnabled",
-			hint: "Crop the grid to a start/end hour (prop: visibleHours)",
-			label: "Visible Hours",
-			group: "Planner",
-			type: "toggle",
-			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
-		},
-		{
-			key: "startHour",
+		{ key: "startHour", label: "visibleHours[0]", type: "range", min: 0, max: 22, step: 1,
 			hint: "First visible hour of the grid",
-			label: "Start Hour",
-			group: "Planner",
-			type: "range",
-			min: 0,
-			max: 22,
-			step: 1,
 			enabledWhen: "visibleHoursEnabled",
-			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
-		},
-		{
-			key: "endHour",
+			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
+		{ key: "endHour", label: "visibleHours[1]", type: "range", min: 1, max: 24, step: 1,
 			hint: "Hour the grid ends at (exclusive)",
-			label: "End Hour",
-			group: "Planner",
-			type: "range",
-			min: 1,
-			max: 24,
-			step: 1,
 			enabledWhen: "visibleHoursEnabled",
-			disabledWhen: inViews(TIMED, "Planner and Scroll views only"),
-		},
-		{
-			key: "days",
-			hint: "Days per week view — 5 = workweek, 3 = rolling window (prop: days)",
-			label: "Week Days",
-			group: "Planner",
-			type: "range",
-			min: 1,
-			max: 14,
-			step: 1,
-			disabledWhen: inViews(["week-planner", "week-agenda"], "Week Planner and Agenda only"),
-		},
+			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
+		{ key: "days", label: "days", type: "range", min: 1, max: 14, step: 1,
+			hint: "Days per week view — 5 is a workweek, 3 a rolling window",
+			disabledWhen: inViews(["week-planner", "week-agenda"], "week-planner and week-agenda only") },
 	];
 
 	// ── Seed data (auto-generated relative to today) ──────
@@ -483,6 +403,17 @@
 			: undefined,
 	);
 
+	let codeCopied = $state(false);
+	async function copyCode() {
+		try {
+			await navigator.clipboard.writeText(codeSnippet);
+			codeCopied = true;
+			setTimeout(() => (codeCopied = false), 1600);
+		} catch {
+			/* clipboard blocked — the code stays selectable */
+		}
+	}
+
 	// ── Live code snippet: the <Calendar> markup for the current settings ──
 	const codeSnippet = $derived.by(() => {
 		const extraImports = selectedPreset !== "auto" ? `, ${selectedPreset}` : "";
@@ -529,44 +460,31 @@
 </script>
 
 <main>
-	<h1 class="page-title">
-		svelte-calendar <span class="page-title-sub">— interactive demo</span>
-	</h1>
+	<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
 
-	<div class="recipes" role="group" aria-label="Example setups">
-		<span class="recipes-lbl">Examples</span>
+	<div class="setups" role="group" aria-label="Setups">
 		{#each recipes as r (r.name)}
 			<button
-				class="recipe"
-				class:recipe--on={activeRecipe === r.name}
+				class="setup"
+				aria-pressed={activeRecipe === r.name}
 				title={r.hint}
 				onclick={() => applyRecipe(r)}
-			>
-				{r.name}
-			</button>
+			>{r.name}</button>
 		{/each}
-		<button class="recipe recipe--reset" onclick={resetSettings}>Reset</button>
 	</div>
 
-	<Settings fields={settingsFields} bind:values={settingsValues} />
-
-	<div class="toolbar">
-		<div
-			class="drag-source"
-			draggable="true"
-			ondragstart={(e) => e.dataTransfer?.setData('text/plain', 'Vinyasa Flow')}
-			role="button"
-			tabindex="0"
-		>Vinyasa Flow — drag onto a day</div>
-		<div class="action-area">
-			{#if lastAction}
-				<div class="action">
-					<span class="dot"></span>
-					{lastAction}
-				</div>
-			{/if}
-		</div>
-	</div>
+	<Settings fields={settingsFields} bind:values={settingsValues} status={lastAction}>
+		{#snippet lead()}
+			<div
+				class="drag-source"
+				draggable="true"
+				ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
+				role="button"
+				tabindex="0"
+				aria-label="Vinyasa Flow: drag onto a day in the calendar"
+			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
+		{/snippet}
+	</Settings>
 
 	<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
 		<div class="cal-frame">
@@ -595,8 +513,8 @@
 					{labels}
 					{timezone}
 					{dir}
-					blockedSlots={blockedSlots}
-					disabledDates={disabledDates}
+					{blockedSlots}
+					{disabledDates}
 					onviewchange={handleViewChange}
 					oneventclick={handleClick}
 					onexternaldrop={handleExternalDrop}
@@ -608,92 +526,100 @@
 		</div>
 	</div>
 
-	<details class="code-panel" open>
-		<summary>Code for this setup</summary>
+	<section class="code" aria-labelledby="code-title">
+		<header class="code-hd">
+			<h2 id="code-title">This setup in code</h2>
+			<button class="code-copy" onclick={copyCode} aria-live="polite">{codeCopied ? "Copied" : "Copy"}</button>
+		</header>
 		<pre><code>{codeSnippet}</code></pre>
-	</details>
+	</section>
 </main>
 
 <style>
+	main {
+		max-width: var(--site-w, 1280px);
+		margin: 0 auto;
+		padding: 0 24px 72px;
+		color: var(--dt-text, #111);
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	/* ── Setups: a row of departure tabs; the chosen one is the ink plate ── */
+	.setups {
+		display: flex;
+		gap: 2px;
+		padding: 8px 0 6px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.setup {
+		flex: none;
+		padding: 8px 12px;
+		border: none;
+		border-radius: 4px;
+		background: transparent;
+		font: 600 14px/1 var(--dt-sans, inherit);
+		letter-spacing: -0.005em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		cursor: pointer;
+		transition: color 120ms, background 120ms;
+	}
+	.setup:hover {
+		color: var(--dt-text, #111);
+	}
+	.setup[aria-pressed='true'] {
+		background: var(--dt-text, #111);
+		color: var(--dt-bg, #fff);
+	}
+	.setup:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
+	}
+
+	/* ── External drag source: a class card waiting to be scheduled ── */
 	.drag-source {
 		flex: none;
-		padding: 4px 10px;
-		border: 1px dashed currentColor;
-		border-radius: 999px;
-		font-size: 12px;
-		opacity: 0.75;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		height: 30px;
+		padding: 0 10px 0 6px;
+		border: 1px dashed var(--dt-text-3, rgba(0, 0, 0, 0.4));
+		border-radius: 3px;
+		font: 700 12.5px/1 var(--dt-sans, inherit);
+		color: var(--dt-text, #111);
 		cursor: grab;
 		user-select: none;
 	}
-	.drag-source:active { cursor: grabbing; }
-
-	main {
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 32px 24px 64px;
-		background: var(--dt-stage-bg, #080a0f);
-		transition:
-			background 300ms ease,
-			color 300ms ease;
+	.drag-source:active {
+		cursor: grabbing;
+	}
+	.drag-source:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
+	}
+	.drag-grip {
+		width: 6px;
+		height: 14px;
+		background: radial-gradient(circle, currentColor 1px, transparent 1.4px) 0 0 / 3px 3.5px;
+		opacity: 0.6;
+	}
+	.drag-hint {
+		font-weight: 500;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
 	}
 
-	@media (max-width: 600px) {
-		main {
-			padding: 16px 0 32px;
-		}
+	.cal-stage {
+		margin-top: 12px;
 	}
-
-	.page-title {
-		margin: 0 0 14px;
-		padding: 0 10px;
-		font: 600 18px/1.25 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		letter-spacing: -0.01em;
-		color: var(--dt-text, rgba(226, 232, 240, 0.9));
-	}
-	.page-title-sub {
-		font-weight: 400;
-		font-size: 15px;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.6));
-	}
-
-	.recipes {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px;
-		margin: 0 0 12px;
-		padding: 0 10px;
-	}
-	.recipes-lbl {
-		font: 700 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 163, 184, 0.52));
-	}
-	.recipe {
-		font: 600 12px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		padding: 6px 12px;
-		border-radius: 999px;
-		border: 1px solid color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 30%, transparent);
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
-		color: var(--dt-text-2, rgba(226, 232, 240, 0.6));
-		cursor: pointer;
-		transition: all 150ms;
-	}
-	.recipe:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.9));
-		border-color: color-mix(in srgb, var(--dt-text-2, rgba(148, 163, 184, 0.6)) 58%, transparent);
-	}
-	.recipe--on {
-		background: color-mix(in srgb, var(--dt-accent, #6366f1) 22%, transparent);
-		border-color: color-mix(in srgb, var(--dt-accent, #6366f1) 60%, transparent);
-		color: var(--dt-text, rgba(226, 232, 240, 0.92));
-	}
-	.recipe--reset {
-		margin-left: auto;
-		border-style: dashed;
-	}
-
 	.cal-stage--phone {
 		display: flex;
 		justify-content: center;
@@ -702,80 +628,73 @@
 	.cal-stage--phone .cal-frame {
 		width: 390px;
 		max-width: 100%;
-		border: 8px solid color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 35%, var(--dt-surface, #10141c));
-		border-radius: 30px;
-		overflow: hidden;
-		box-shadow: 0 18px 48px color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.8)) 12%, transparent);
-	}
-
-	.code-panel {
-		margin-top: 16px;
-		border: 1px solid var(--dt-border-day, rgba(148, 163, 184, 0.14));
-		border-radius: 10px;
+		border: 8px solid var(--board, #111);
+		border-radius: 28px;
 		overflow: hidden;
 	}
-	.code-panel summary {
-		padding: 10px 14px;
-		cursor: pointer;
-		list-style: none;
-		font: 700 10px/1 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 163, 184, 0.55));
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 8%, transparent);
-	}
-	.code-panel summary::-webkit-details-marker {
-		display: none;
-	}
-	.code-panel summary::after {
-		content: " +";
-	}
-	.code-panel[open] summary::after {
-		content: " –";
-	}
-	.code-panel pre {
-		margin: 0;
-		padding: 14px 16px;
-		overflow-x: auto;
-		font: 400 12.5px/1.55 var(--dt-mono, ui-monospace, "Cascadia Code", monospace);
-		color: var(--dt-text-2, rgba(226, 232, 240, 0.72));
-		background: var(--dt-surface, rgba(0, 0, 0, 0.18));
-		scrollbar-width: thin;
-	}
 
-	.toolbar {
+	/* ── Code: printed on the board, the same enamel as the header ── */
+	.code {
+		margin-top: 32px;
+		border-radius: 4px;
+		background: var(--board, #111);
+		color: var(--board-ink, #f5f5f3);
+		overflow: hidden;
+	}
+	.code-hd {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 10px;
 		gap: 12px;
-		margin: -4px 0 16px;
+		padding: 12px 12px 12px 18px;
+		border-bottom: 1px solid var(--board-rule, rgba(255, 255, 255, 0.16));
 	}
-	.action-area {
-		flex: 1;
-		min-width: 0;
-		padding-top: 5px;
+	.code-hd h2 {
+		margin: 0;
+		font: 700 15px/1 var(--dt-sans, inherit);
+		letter-spacing: -0.01em;
 	}
-	.action {
-		font: 400 11px/1.2 var(--dt-sans, "Outfit", system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(226, 232, 240, 0.6));
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 0 10px;
+	.code-copy {
+		min-width: 64px;
+		padding: 7px 10px;
+		border: none;
+		border-radius: 2px;
+		background: var(--board-ink, #f5f5f3);
+		color: var(--board, #111);
+		font: 700 11px/1 var(--dt-sans, inherit);
+		cursor: pointer;
 	}
-	.dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--dt-success, #34d399);
-		flex-shrink: 0;
+	.code-copy:focus-visible {
+		outline: 2px solid var(--board-ink, #f5f5f3);
+		outline-offset: 2px;
 	}
-	@media (max-width: 760px) {
-		.toolbar {
-			flex-direction: column;
-			align-items: stretch;
-			padding: 0 16px;
+	.code pre {
+		margin: 0;
+		padding: 16px 18px 20px;
+		overflow-x: auto;
+		font: 400 13px/1.6 var(--dt-mono, ui-monospace, monospace);
+		color: var(--board-ink, #f5f5f3);
+		scrollbar-color: var(--board-rule, rgba(255, 255, 255, 0.16)) transparent;
+	}
+	.code pre::selection,
+	.code pre :global(*::selection) {
+		background: var(--board-ink, #f5f5f3);
+		color: var(--board, #111);
+	}
+
+	@media (max-width: 700px) {
+		main {
+			padding: 0 16px 48px;
+		}
+		.cal-stage:not(.cal-stage--phone) {
+			margin-inline: -16px;
+		}
+		.drag-hint {
+			display: none;
+		}
+		.code {
+			margin-inline: -16px;
+			border-radius: 0;
 		}
 	}
 </style>

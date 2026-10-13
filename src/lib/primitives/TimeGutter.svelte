@@ -82,7 +82,8 @@
 		position: absolute;
 		top: 4px;
 		left: 6px;
-		font: 400 9px / 1 var(--dt-mono, 'SF Mono', 'Fira Code', monospace);
+		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		white-space: nowrap;
 	}
@@ -104,7 +105,8 @@
 		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.tg-v .tg-label {
-		font: 400 9px / 1 var(--dt-mono, 'SF Mono', 'Fira Code', monospace);
+		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
 </style>

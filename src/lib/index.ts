@@ -68,6 +68,7 @@ export {
 	addDaysMs,
 	diffDays,
 	fmtH,
+	fmtHParts,
 	fmtTime,
 	fmtDuration,
 	weekdayShort,

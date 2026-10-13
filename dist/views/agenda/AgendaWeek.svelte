@@ -622,7 +622,8 @@ const weekDays = $derived.by(() => {
 		white-space: nowrap;
 	}
 	.ag-allday-span {
-		font: 500 10px/1.2 var(--dt-mono, monospace);
+		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 	}
@@ -694,7 +695,8 @@ const weekDays = $derived.by(() => {
 		align-items: center;
 		font-size: 11px;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		line-height: 1;
 	}
 	.ag-card-dur {
@@ -847,7 +849,8 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-wday-date {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		line-height: 1.2;
 	}
@@ -974,7 +977,8 @@ const weekDays = $derived.by(() => {
 	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-time {
 		font-size: 11px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		font-weight: 500;
 		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
 		min-width: 40px;
@@ -1023,7 +1027,8 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-compact-dur {
 		font-size: 10px;
-		font-family: var(--dt-mono, monospace);
+		font-family: var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
 		white-space: nowrap;

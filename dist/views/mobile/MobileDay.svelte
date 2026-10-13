@@ -10,7 +10,7 @@ import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
 import { HOUR_MS, sod, addDaysMs, diffDays, isAllDay, segmentForDay } from "../../core/time.js";
-import { fmtH, fmtTime } from "../../core/locale.js";
+import { fmtHParts, fmtTime } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
 let { height = null, events = [], style = "", locale, focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
 // ── Context ────────────────────────────────────────
@@ -535,13 +535,15 @@ $effect(() => {
 				{#each { length: hourCount } as _, h}
 					{@const hour = startHour + h}
 					{@const blocked = isBlockedAt(hour)}
+					{@const [hNum, hSuf] = fmtHParts(hour, locale)}
 					<div
 						class="mb-hour"
 						class:mb-hour--blocked={blocked}
 						style:top="{h * HOUR_HEIGHT}px"
 						style:height="{HOUR_HEIGHT}px"
 					>
-						<div class="mb-hour-label">{fmtH(hour, locale)}</div>
+						<!-- an hour the now plate would half-cover gives way to it -->
+						<div class="mb-hour-label" class:mb-hour-label--under={nowOffset >= 0 && Math.abs(h * HOUR_HEIGHT - nowOffset) < 16}>{hNum}<small>{hSuf}</small></div>
 						<div class="mb-hour-line"></div>
 						{#if blocked && blockedSlots}
 							{@const slot = blockedSlots.find(s => (!s.day || s.day === (new Date(dayMs).getDay() === 0 ? 7 : new Date(dayMs).getDay())) && hour >= s.start && hour < s.end)}
@@ -555,7 +557,7 @@ $effect(() => {
 				<!-- Now line -->
 				{#if nowOffset >= 0}
 					<div class="mb-now" style:top="{nowOffset}px">
-						<span class="mb-now-label">{clock.hm}</span>
+						<span class="mb-now-label"><span>{clock.hm}</span></span>
 						<div class="mb-now-line"></div>
 					</div>
 				{/if}
@@ -839,14 +841,28 @@ $effect(() => {
 		align-items: flex-start;
 	}
 
+	.mb-hour-label--under {
+		visibility: hidden;
+	}
+	.mb-hour-label small {
+		font-size: 9px;
+		font-weight: 600;
+		vertical-align: top;
+		margin-left: 1px;
+		letter-spacing: 0;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
 	.mb-hour-label {
 		width: 40px;
 		/* border-box keeps the label inside the 40px gutter that events
 		   start at — content-box pushed digits flush under the event edge */
 		box-sizing: border-box;
 		flex-shrink: 0;
-		font: 500 11px/1 var(--dt-mono, ui-monospace, monospace);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 700 15px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		text-align: right;
 		padding-right: 8px;
 		padding-top: 0;
@@ -892,14 +908,22 @@ $effect(() => {
 		pointer-events: none;
 	}
 
+	/* The clock is a reversed plate on the accent, as in the desktop gutter. */
 	.mb-now-label {
 		width: 40px;
 		box-sizing: border-box;
 		flex-shrink: 0;
+		padding: 0 4px 0 0;
 		text-align: right;
-		padding-right: 6px;
-		font: 700 10px/1 var(--dt-mono, ui-monospace, monospace);
-		color: var(--dt-accent, #2563eb);
+	}
+	.mb-now-label span {
+		display: inline-block;
+		padding: 2px 3px;
+		border-radius: 3px;
+		background: var(--dt-accent, #2563eb);
+		font: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
+		color: var(--dt-btn-text, #ffffff);
 	}
 
 	.mb-now-line {
@@ -1072,7 +1096,8 @@ $effect(() => {
 		pointer-events: none;
 	}
 	.mb-create-ghost-time {
-		font: 600 11px/1 var(--dt-mono, ui-monospace, monospace);
+		font: 700 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		padding: 4px 8px;
 		white-space: nowrap;
@@ -1104,7 +1129,8 @@ $effect(() => {
 	}
 
 	.mb-ev-time {
-		font: 400 12px/1 var(--dt-mono, ui-monospace, monospace);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 
@@ -1156,9 +1182,7 @@ $effect(() => {
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
+		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;

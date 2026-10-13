@@ -1,10 +1,41 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import favicon from '../assets/favicon.svg';
-	import { themeStore, setTheme, demoThemes, demoThemeNames } from './theme.svelte.js';
-	import type { DemoThemeName } from './theme.svelte.js';
+	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { themeStore, setTheme, demoThemes, demoThemeNames, boardStore } from './theme.svelte.js';
 
 	let { children } = $props();
+
+	const INSTALL = 'pnpm add @nomideusz/svelte-calendar';
+	let copied = $state(false);
+	async function copyInstall() {
+		try {
+			await navigator.clipboard.writeText(INSTALL);
+			copied = true;
+			setTimeout(() => (copied = false), 1600);
+		} catch {
+			/* clipboard blocked — the command stays selectable */
+		}
+	}
+
+	// Board clock: the zone the calendar is showing, ticking once a second.
+	let now = $state<Date | null>(null);
+	onMount(() => {
+		now = new Date();
+		const id = setInterval(() => (now = new Date()), 1000);
+		return () => clearInterval(id);
+	});
+	const clock = $derived.by(() => {
+		if (!now) return null;
+		const tz = boardStore.timezone || undefined;
+		try {
+			const hm = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: tz });
+			return { hm, zone: tz ? tz.split('/').pop()!.replace('_', ' ') : 'Local time' };
+		} catch {
+			return null;
+		}
+	});
 
 	const path = $derived(page.url.pathname);
 
@@ -90,207 +121,284 @@
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </svelte:head>
 
-<header class="site-hd">
-	<a class="site-logo" href="/">svelte-calendar</a>
+<header class="board">
+	<div class="board-row">
+		<a class="board-mark" href="/">svelte-calendar</a>
 
-	<nav class="site-nav">
-		<a class="site-link" class:site-link--active={path === '/'} href="/">Demo</a>
-		<a class="site-link" class:site-link--active={path === '/docs'} href="/docs">Docs</a>
-	</nav>
+		<nav class="board-nav" aria-label="Site">
+			<a href="/" aria-current={path === '/' ? 'page' : undefined}>Demo</a>
+			<a href="/docs" aria-current={path === '/docs' ? 'page' : undefined}>Docs</a>
+			<a href="https://github.com/nomideusz/svelte-calendar" target="_blank" rel="noopener">GitHub</a>
+		</nav>
 
-	<div class="theme-pills">
-		{#each demoThemeNames as name (name)}
-			{@const dt = demoThemes[name]}
-			<button
-				class="theme-dot"
-				class:active={themeStore.current === name}
-				title={dt.label}
-				aria-label={"Theme: " + dt.label}
-				aria-pressed={themeStore.current === name}
-				style="--dot: {dt.accent}"
-				onclick={() => setTheme(name)}
-			></button>
-		{/each}
+		<div class="board-host" role="group" aria-label="Host page">
+			<span class="board-host-name">Host: {demoThemes[themeStore.current].label}</span>
+			{#each demoThemeNames as name (name)}
+				{@const dt = demoThemes[name]}
+				<button
+					class="board-swatch"
+					title={dt.label}
+					aria-label={'Host page: ' + dt.label}
+					aria-pressed={themeStore.current === name}
+					style:--sw-bg={dt.stageBg}
+					style:--sw-ac={dt.accent}
+					onclick={() => setTheme(name)}
+				></button>
+			{/each}
+		</div>
+
+		<button class="board-install" onclick={copyInstall} aria-label="Copy install command">
+			<code>{INSTALL}</code>
+			<span class="board-install-act" aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+		</button>
+
+		<div class="board-clock" aria-label="Time shown by the calendar">
+			{#if clock}
+				<span class="board-clock-hm">
+					{#key clock.hm}
+						<span in:fly={{ y: -10, duration: 260 }}>{clock.hm}</span>
+					{/key}
+				</span>
+				<span class="board-clock-zone"><span class="board-clock-dot" aria-hidden="true"></span>{clock.zone}</span>
+			{/if}
+		</div>
 	</div>
-
-	<a class="site-gh" href="https://github.com/nomideusz/svelte-calendar" target="_blank" rel="noopener">
-		<svg viewBox="0 0 16 16" fill="currentColor" width="15" height="15" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.62 7.62 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-		<span>GitHub</span>
-	</a>
 </header>
 
 {@render children()}
 
 <style>
+	:global(:root) {
+		--board: #111111;
+		--board-ink: #f5f5f3;
+		--board-dim: rgba(245, 245, 243, 0.64);
+		--board-rule: rgba(245, 245, 243, 0.16);
+		--signal: #eb0000;
+		--site-w: 1280px;
+		--dt-sans: 'Archivo', system-ui, sans-serif;
+		--dt-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+	}
+
 	:global(body) {
 		margin: 0;
-		background: #08080c;
-		color: rgba(220, 225, 235, 0.85);
-		font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+		background: #ffffff;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		font-family: 'Archivo', system-ui, sans-serif;
+		font-variant-numeric: tabular-nums;
 		-webkit-font-smoothing: antialiased;
 		transition: background 300ms ease;
 	}
-
 	:global(a) {
 		color: inherit;
 		text-decoration: none;
 	}
-
-	/* ─── Site header ────────────────────────────────── */
-	.site-hd {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 16px 24px;
+	:global(::selection) {
+		background: var(--dt-text, #111);
+		color: var(--dt-bg, #fff);
+	}
+	:global(html) {
+		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.2)) transparent;
 	}
 
-	.site-logo {
-		font: 600 15px/1 'Outfit', system-ui, sans-serif;
-		color: rgba(226, 232, 240, 0.92);
-		letter-spacing: -0.01em;
+	/* ─── The board: black enamel, white type, red only for the live clock ─── */
+	.board {
+		background: var(--board);
+		color: var(--board-ink);
+	}
+	.board-row {
+		display: flex;
+		align-items: center;
+		gap: 28px;
+		max-width: var(--site-w);
+		margin: 0 auto;
+		padding: 0 24px;
+		min-height: 64px;
+	}
+
+	.board-mark {
+		font: 800 22px/1 'Archivo', system-ui, sans-serif;
+		font-stretch: 88%;
+		letter-spacing: -0.02em;
+		color: var(--board-ink);
+	}
+
+	.board-nav {
+		display: flex;
+		gap: 2px;
 		margin-right: auto;
 	}
+	.board-nav a {
+		position: relative;
+		padding: 10px 10px;
+		font: 600 14px/1 'Archivo', system-ui, sans-serif;
+		color: var(--board-dim);
+		transition: color 120ms;
+	}
+	.board-nav a:hover,
+	.board-nav a[aria-current='page'] {
+		color: var(--board-ink);
+	}
+	.board-nav a[aria-current='page']::after {
+		content: '';
+		position: absolute;
+		left: 10px;
+		right: 10px;
+		bottom: 2px;
+		height: 2px;
+		background: var(--signal);
+	}
 
-	.site-nav {
+	.board-host {
 		display: flex;
 		align-items: center;
-		gap: 2px;
+		gap: 4px;
+	}
+	.board-host-name {
+		margin-right: 6px;
+		font: 500 12px/1 'Archivo', system-ui, sans-serif;
+		color: var(--board-dim);
+		white-space: nowrap;
+	}
+	/* A swatch is the host's ground with its accent as a corner flag. */
+	.board-swatch {
+		position: relative;
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		border: 1px solid var(--board-rule);
+		border-radius: 3px;
+		background: linear-gradient(135deg, var(--sw-bg) 0 58%, var(--sw-ac) 58%);
+		cursor: pointer;
+		transition: transform 120ms;
+	}
+	.board-swatch:hover {
+		transform: translateY(-1px);
+	}
+	.board-swatch[aria-pressed='true'] {
+		outline: 2px solid var(--board-ink);
+		outline-offset: 2px;
+	}
+	.board-swatch:focus-visible {
+		outline: 2px solid var(--board-ink);
+		outline-offset: 2px;
 	}
 
-	.site-link {
-		padding: 5px 12px;
-		border-radius: 6px;
-		font: 500 11.5px/1 'Outfit', system-ui, sans-serif;
-		color: rgba(148, 163, 184, 0.55);
-		text-decoration: none;
-		transition: color 120ms, background 120ms;
+	.board-install {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		height: 36px;
+		padding: 0 4px 0 12px;
+		border: 1px solid var(--board-rule);
+		border-radius: 4px;
+		background: transparent;
+		color: var(--board-ink);
+		cursor: pointer;
+		transition: border-color 120ms;
 	}
-	.site-link:hover {
-		color: rgba(226, 232, 240, 0.85);
-		background: rgba(148, 163, 184, 0.06);
+	.board-install:hover {
+		border-color: var(--board-dim);
 	}
-	.site-link--active {
-		color: rgba(226, 232, 240, 0.88);
+	.board-install:focus-visible {
+		outline: 2px solid var(--board-ink);
+		outline-offset: 2px;
+	}
+	.board-install code {
+		font: 400 12.5px/1 'JetBrains Mono', ui-monospace, monospace;
+	}
+	.board-install-act {
+		min-width: 52px;
+		padding: 6px 8px;
+		border-radius: 2px;
+		background: var(--board-ink);
+		color: var(--board);
+		font: 700 11px/1 'Archivo', system-ui, sans-serif;
+		text-align: center;
 	}
 
-	.site-gh {
-		display: inline-flex;
+	.board-clock {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 3px;
+		min-width: 88px;
+	}
+	.board-clock-hm {
+		display: block;
+		overflow: hidden;
+		font: 800 26px/1 'Archivo', system-ui, sans-serif;
+		font-stretch: 88%;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.01em;
+	}
+	.board-clock-hm span {
+		display: block;
+	}
+	.board-clock-zone {
+		display: flex;
 		align-items: center;
 		gap: 5px;
-		padding: 4px 10px;
-		border-radius: 6px;
-		border: 1px solid rgba(148, 163, 184, 0.1);
-		background: rgba(148, 163, 184, 0.04);
-		font: 500 11px/1 'Outfit', system-ui, sans-serif;
-		color: rgba(148, 163, 184, 0.5);
-		text-decoration: none;
-		transition: color 120ms, border-color 120ms;
+		font: 500 11px/1 'Archivo', system-ui, sans-serif;
+		color: var(--board-dim);
+		white-space: nowrap;
 	}
-	.site-gh:hover {
-		color: rgba(226, 232, 240, 0.85);
-		border-color: rgba(148, 163, 184, 0.2);
-	}
-	.site-gh svg { opacity: 0.65; }
-
-	/* ─── Theme pills ───────────────────────────────── */
-	.theme-pills {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-	}
-
-	/* Button provides a >=24px hit area; the visible dot is the ::before. */
-	.theme-dot {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 26px;
-		height: 26px;
+	.board-clock-dot {
+		width: 6px;
+		height: 6px;
 		border-radius: 50%;
-		border: none;
-		padding: 0;
-		background: transparent;
-		cursor: pointer;
-	}
-	.theme-dot::before {
-		content: '';
-		width: 11px;
-		height: 11px;
-		border-radius: 50%;
-		background: var(--dot);
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-		opacity: 0.8;
-		transition: outline-color 150ms, transform 150ms, opacity 150ms;
-	}
-	.theme-dot:hover::before {
-		opacity: 1;
-		transform: scale(1.18);
-	}
-	.theme-dot.active::before {
-		opacity: 1;
-		transform: scale(1.18);
-		outline-color: var(--dot);
-	}
-	.theme-dot:focus-visible {
-		outline: 2px solid var(--dot);
-		outline-offset: 1px;
+		background: var(--signal);
 	}
 
-	/* ─── Mobile layout ─────────────────────────────── */
-	@media (max-width: 600px) {
-		.site-hd {
-			padding: 12px 16px;
-			gap: 6px 10px;
-			/* Never force the page wider than the viewport — overflowing
-			   items wrap to a second row instead. */
-			flex-wrap: wrap;
-		}
-		.site-logo {
-			font-size: 14px;
-		}
-		.site-link {
-			padding: 8px 12px;
-			font-size: 12px;
-		}
-		.site-gh span {
+	@media (max-width: 1100px) {
+		.board-host-name {
 			display: none;
 		}
-		.site-gh {
-			padding: 6px 8px;
+		.board-install code {
+			display: none;
+		}
+		.board-install {
+			padding: 0 4px;
+		}
+		.board-install-act::before {
+			content: 'pnpm add · ';
 		}
 	}
 
-	/* ─── Light scheme overrides ─────────────────────── */
-	:global([data-scheme="light"] body) {
-		background: #ffffff;
-		color: rgba(0, 0, 0, 0.8);
+	@media (max-width: 700px) {
+		.board-row {
+			flex-wrap: wrap;
+			gap: 0 12px;
+			padding: 10px 16px 6px;
+		}
+		.board-mark {
+			font-size: 19px;
+			margin-right: auto;
+		}
+		.board-clock {
+			min-width: 0;
+		}
+		.board-clock-hm {
+			font-size: 22px;
+		}
+		.board-nav {
+			order: 3;
+			margin-left: -10px;
+		}
+		.board-host {
+			order: 4;
+			margin-left: auto;
+		}
+		.board-install {
+			display: none;
+		}
 	}
-	:global([data-scheme="light"]) .site-logo {
-		color: rgba(0, 0, 0, 0.85);
-	}
-	:global([data-scheme="light"]) .site-link {
-		color: rgba(0, 0, 0, 0.4);
-	}
-	:global([data-scheme="light"]) .site-link:hover {
-		color: rgba(0, 0, 0, 0.75);
-		background: rgba(0, 0, 0, 0.04);
-	}
-	:global([data-scheme="light"]) .site-link--active {
-		color: rgba(0, 0, 0, 0.8);
-	}
-	:global([data-scheme="light"]) .site-gh {
-		color: rgba(0, 0, 0, 0.45);
-		border-color: rgba(0, 0, 0, 0.1);
-		background: rgba(0, 0, 0, 0.03);
-	}
-	:global([data-scheme="light"]) .site-gh:hover {
-		color: rgba(0, 0, 0, 0.75);
-		border-color: rgba(0, 0, 0, 0.18);
+
+	@media (prefers-reduced-motion: reduce) {
+		.board-swatch {
+			transition: none;
+		}
 	}
 </style>

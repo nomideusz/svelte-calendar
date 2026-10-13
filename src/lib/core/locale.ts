@@ -224,6 +224,15 @@ export function fmtH(h: number, locale?: string): string {
 	return h < 12 ? h + 'a' : h - 12 + 'p';
 }
 
+/**
+ * Hour index (0-23) split for a timetable gutter: the numeral and the small
+ * part set beside it — `['13', '00']` in 24h locales, `['1', 'pm']` in 12h.
+ */
+export function fmtHParts(h: number, locale?: string): [string, string] {
+	if (is24HourLocale(locale)) return [String(h), '00'];
+	return [String(h % 12 || 12), h < 12 ? 'am' : 'pm'];
+}
+
 /** Short weekday name for a timestamp: "Mon", "Tue", etc. */
 export function weekdayShort(ms: number, locale?: string): string {
 	return new Date(ms).toLocaleDateString(locale ?? defaultLocale, { weekday: 'short' });

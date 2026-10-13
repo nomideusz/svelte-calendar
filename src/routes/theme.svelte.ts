@@ -131,3 +131,8 @@ export function setTheme(name: DemoThemeName) {
 		localStorage.setItem(STORAGE_KEY, name);
 	}
 }
+
+// ── Board clock ───────────────────────────────────────────
+// The demo page sets the calendar's timezone here so the header clock reads
+// the same zone the calendar does. Empty = the visitor's own.
+export const boardStore = $state<{ timezone: string }>({ timezone: '' });
