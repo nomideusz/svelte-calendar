@@ -1185,6 +1185,9 @@ function onWindowKeydown(e) {
 
 	.tw-ad-gutter {
 		flex-shrink: 0;
+		/* The padding sits inside the gutter's width, so the all-day cells
+		   start where the day columns and headers start. */
+		box-sizing: border-box;
 		position: sticky;
 		left: 0;
 		z-index: 2;

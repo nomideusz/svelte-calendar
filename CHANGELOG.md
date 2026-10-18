@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- Planner: the all-day strip lines up with the day columns. Its gutter's right padding was added outside the 60px width, so every all-day band started 8px to the right of its column; the gutter is now border-box like the time gutter.
+
 ## 1.1.0
 
 ### Minor Changes
