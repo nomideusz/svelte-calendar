@@ -123,9 +123,6 @@
 		padding: calc(34 * var(--u)) calc(40 * var(--u)) calc(32 * var(--u));
 		border-right: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
 		box-sizing: border-box;
-		position: sticky;
-		top: 0;
-		max-height: 100vh;
 	}
 	.mark {
 		font: 600 calc(54 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
@@ -137,14 +134,10 @@
 	.mark--bar {
 		display: none;
 	}
+	/* The rail is as tall as its controls: when they run past the fold the page
+	   scrolls, and the calendar column stays put (sticky, one viewport tall). */
 	.rail-body {
 		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
-		/* When the controls run past the fold, the edge fades instead of cutting. */
-		mask-image: linear-gradient(#000 calc(100% - 28px), transparent);
-		scrollbar-width: thin;
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.18)) transparent;
 	}
 	.rail-foot {
 		padding-top: calc(28 * var(--u));
@@ -169,8 +162,8 @@
 		border: 2px solid var(--dt-text, #111);
 		border-radius: calc(5 * var(--u));
 		background:
-			linear-gradient(var(--sw-ac), var(--sw-ac)) 10% 22% / 80% 9% no-repeat,
-			repeating-linear-gradient(0deg, transparent 0 14%, var(--sw-ink) 14% calc(14% + 1px)) 10% 100% / 80% 62% no-repeat,
+			linear-gradient(var(--sw-ac), var(--sw-ac)) 50% 22% / 80% 9% no-repeat,
+			repeating-linear-gradient(0deg, transparent 0 14%, var(--sw-ink) 14% calc(14% + 1px)) 50% 100% / 80% 62% no-repeat,
 			var(--sw-bg);
 		cursor: pointer;
 		transition: transform 120ms;
@@ -225,7 +218,10 @@
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
-		min-height: 100vh;
+		height: 100vh;
+		position: sticky;
+		top: 0;
+		align-self: start;
 	}
 	.bar {
 		display: flex;
@@ -291,16 +287,10 @@
 			grid-template-columns: minmax(0, 1fr);
 		}
 		.rail {
-			position: static;
 			min-height: 0;
-			max-height: none;
 			padding: 24px 20px 20px;
 			border-right: none;
 			border-bottom: 2px solid var(--dt-text, #111);
-		}
-		.rail-body {
-			overflow: visible;
-			mask-image: none;
 		}
 		.rail-foot {
 			flex-direction: row;
@@ -315,7 +305,8 @@
 			gap: 10px;
 		}
 		.main {
-			min-height: 0;
+			position: static;
+			height: auto;
 		}
 		.bar {
 			flex-wrap: wrap;
