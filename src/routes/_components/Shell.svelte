@@ -83,7 +83,7 @@
 
 	<div class="main">
 		<header class="bar">
-			<a class="mark mark--bar" href="/" aria-hidden="true" tabindex="-1">svelte-calendar</a>
+			<a class="mark mark--bar" href="/">svelte-calendar</a>
 			<nav class="nav" aria-label="Site">
 				<a href="/" aria-current={path === '/' ? 'page' : undefined}>Demo</a>
 				<a href="/docs" aria-current={path === '/docs' ? 'page' : undefined}>Docs</a>
@@ -281,7 +281,8 @@
 		white-space: nowrap;
 	}
 
-	/* ── Narrow: the rail folds above the page; on a phone the calendar comes first ── */
+	/* ── Narrow: the calendar comes first, the rail folds under it, and the
+	   bar carries the wordmark so the brand is at the top of the page once. ── */
 	@media (max-width: 1100px) {
 		.shell {
 			grid-template-columns: minmax(0, 1fr);
@@ -290,7 +291,10 @@
 			min-height: 0;
 			padding: 24px 20px 20px;
 			border-right: none;
-			border-bottom: 2px solid var(--dt-text, #111);
+			border-top: 2px solid var(--dt-text, #111);
+		}
+		.rail > .mark {
+			display: none;
 		}
 		.rail-foot {
 			flex-direction: row;
@@ -305,6 +309,7 @@
 			gap: 10px;
 		}
 		.main {
+			order: -1;
 			position: static;
 			height: auto;
 		}
@@ -313,24 +318,19 @@
 			gap: 8px 24px;
 			padding: 10px 20px;
 		}
-	}
-	@media (max-width: 640px) {
-		.main {
-			order: -1;
-			min-height: 100vh;
-		}
-		.rail {
-			border-bottom: none;
-			border-top: 2px solid var(--dt-text, #111);
-		}
-		.mark {
-			font-size: 40px;
-		}
 		.mark--bar {
 			display: block;
 			flex-basis: 100%;
-			font-size: 30px;
+			font-size: 40px;
 			margin: 6px 0 2px;
+		}
+	}
+	@media (max-width: 640px) {
+		.main {
+			min-height: 100vh;
+		}
+		.mark--bar {
+			font-size: 30px;
 		}
 		.host {
 			width: 44px;

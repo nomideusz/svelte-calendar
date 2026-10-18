@@ -312,6 +312,24 @@
 		background: var(--dt-accent, #1d4fd7);
 	}
 
+	/* Folded under the calendar (tablet widths): the controls run in columns
+	   instead of stretching each select across the page. */
+	@media (min-width: 641px) and (max-width: 1100px) {
+		.ps-selects {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: calc(16 * var(--u)) calc(28 * var(--u));
+		}
+		.ps-toggles {
+			grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+		}
+		.ps-ranges {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: calc(10 * var(--u)) calc(28 * var(--u));
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.ps-knob,
 		.ps-knob::after,
