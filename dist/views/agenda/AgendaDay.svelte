@@ -491,17 +491,13 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-day-head-badge {
 		font-size: 10px;
-		font-weight: 600;
+		font-weight: 500;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-accent, #2563eb);
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
-		padding: 2px 7px;
-		border-radius: 3px;
 	}
 	.ag-day-head-badge--muted {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%, transparent);
 	}
 	.ag-day-head-name {
 		font-size: 13px;
@@ -545,86 +541,92 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		flex-wrap: wrap;
 		gap: 6px;
 	}
+	/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */
 	.ag-allday-chip {
 		display: flex;
 		align-items: center;
 		gap: 5px;
 		padding: 3px 10px;
-		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 20%, transparent);
+		border-radius: 0;
+		border: none;
+		background: var(--ev-color);
+		color: var(--dt-btn-text, #fff);
 		cursor: pointer;
-		transition: background 0.15s, border-color 0.15s;
 	}
 	.ag-allday-chip:hover,
 	.ag-allday-chip:active {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 35%, transparent);
+		filter: brightness(1.08);
 	}
 	.ag-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-allday-chip--selected {
-		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
 	}
 	.ag-allday-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--ev-color);
-		flex-shrink: 0;
+		display: none;
 	}
 	.ag-allday-title {
 		font: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: inherit;
 		white-space: nowrap;
 	}
 
 	/* ═══ Shared: event card ═══ */
+	/* Paper, not a tinted card: a 3px start bar in the event colour, a
+	   hairline rule beneath, ink text. Hover is a wash, selection a ring. */
 	.ag-card {
+		position: relative;
 		display: flex;
 		align-items: stretch;
-		border-radius: 10px;
-		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 10%, var(--dt-border, rgba(0, 0, 0, 0.08)));
+		border-radius: 0;
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		overflow: hidden;
 		cursor: pointer;
-		transition: background 150ms, border-color 150ms;
+		transition: background 150ms, box-shadow 150ms;
+	}
+	.ag-card::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 3px;
+		background: var(--ev-color);
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 40%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-card--selected {
-		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
-	.ag-card--cancelled {
-		opacity: 0.5;
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-card--cancelled .ag-card-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-card--tentative {
-		opacity: 0.65;
-		border-style: dashed;
+	.ag-card--cancelled::before,
+	.ag-card--full::before {
+		opacity: 0.45;
 	}
-	.ag-card--full {
-		opacity: 0.55;
+	.ag-card--tentative .ag-card-title,
+	.ag-card--limited .ag-card-title,
+	.ag-card--full .ag-card-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-card--limited {
-		opacity: 0.65;
-		border-style: dashed;
+	.ag-card--tentative::before,
+	.ag-card--limited::before {
+		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	.ag-card-body {
-		padding: 10px 12px;
+		padding: 10px 12px 10px 15px;
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
@@ -640,7 +642,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-card-title {
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		line-height: 1.3;
 		word-break: break-word;
 		flex: 1;
@@ -673,17 +676,20 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		flex-wrap: wrap;
 	}
 	.ag-card-tag {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--ev-color, var(--dt-accent));
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
 		padding: 2px 5px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 	}
 
 	/* ── Queue card variant ── */
 	.ag-card--q {
-		transition: border-color 150ms, transform 100ms;
+		transition: background 150ms, box-shadow 150ms;
 	}
 	.ag-compact-row--queue {
 		margin: 0;
@@ -697,25 +703,19 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-card-eta {
 		font-size: 11px;
-		font-weight: 600;
+		font-weight: 500;
 		letter-spacing: 0.04em;
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
-	.ag-card--hero {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
-	}
 	.ag-card--hero .ag-card-title {
 		font-size: 16px;
-		font-weight: 700;
+		font-weight: 500;
 	}
 	.ag-card--hero .ag-card-eta {
 		font-size: 11px;
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 18%, transparent);
-		padding: 2px 7px;
-		border-radius: 4px;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.ag-card--hero .ag-card-body {
 		padding: 14px 16px;
@@ -741,13 +741,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-card--plan .ag-card-title {
 		font-size: 14px;
 	}
-	.ag-card--first {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 25%, transparent);
-	}
 	.ag-card--first .ag-card-title {
 		font-size: 16px;
-		font-weight: 700;
+		font-weight: 500;
 	}
 	/* Everything under the title aligns past the order number — the
 	   subtitle, location, time and tags share one left edge. */
@@ -902,7 +898,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		margin-top: 2px;
 		padding: 3px 8px;
 		border: 1px solid var(--dt-border);
-		border-radius: 999px;
+		border-radius: 0;
 		background: none;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
@@ -938,27 +934,37 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		margin-left: 4px;
 	}
 	.ag-q-now {
+		position: relative;
 		display: block;
 		width: 100%;
-		padding: 8px 10px;
+		padding: 8px 10px 8px 13px;
 		margin-bottom: 8px;
-		border-radius: 8px;
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		border-radius: 0;
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
-		transition: background 150ms, border-color 150ms;
+		transition: background 150ms, box-shadow 150ms;
+	}
+	.ag-q-now::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 3px;
+		background: var(--ev-color, var(--dt-accent));
 	}
 	.ag-q-now:hover,
 	.ag-q-now:active {
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 35%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.ag-q-now:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-q-now--selected {
-		border-color: var(--ev-color, var(--dt-accent));
+		box-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));
 	}
 	.ag-q-now-dot {
 		width: 6px;
@@ -982,7 +988,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-q-now-title {
 		font-size: 12px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 1.25;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		display: -webkit-box;
@@ -1003,14 +1009,14 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-q-now-track {
 		height: 2px;
 		background: var(--dt-border, rgba(0, 0, 0, 0.08));
-		border-radius: 1px;
+		border-radius: 0;
 		overflow: hidden;
 	}
 	.ag-q-now-fill {
 		height: 100%;
 		width: 100%;
 		background: var(--ev-color, var(--dt-accent, #2563eb));
-		border-radius: 1px;
+		border-radius: 0;
 		transform-origin: left;
 		transition: transform 1s linear;
 	}
@@ -1055,7 +1061,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-q-done-item:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
-		border-radius: 4px;
+		border-radius: 0;
 	}
 	.ag-q-done-check {
 		font-size: 11px;
@@ -1102,15 +1108,18 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-log-row--selected .ag-log-title {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
+	.ag-log-row:hover,
+	.ag-log-row:active {
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+	}
 	.ag-log-row:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
-		border-radius: 6px;
+		border-radius: 0;
 	}
 	.ag-log-row--selected {
-		background: color-mix(in srgb, var(--ev-color) 6%, transparent);
-		border-radius: 6px;
-		box-shadow: 0 0 0 8px color-mix(in srgb, var(--ev-color) 6%, transparent);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
+		border-radius: 0;
 	}
 	.ag-log-check {
 		font-size: 10px;
@@ -1125,12 +1134,13 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		width: 64px;
 		flex-shrink: 0;
 	}
+	/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */
 	.ag-log-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
+		align-self: stretch;
+		width: 3px;
+		border-radius: 0;
 		flex-shrink: 0;
-		opacity: 0.6;
+		opacity: 0.45;
 	}
 	.ag-log-title {
 		font-size: 13px;
@@ -1162,43 +1172,46 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		scrollbar-width: none;
 	}
 	.ag-compact-list::-webkit-scrollbar { display: none; }
+	/* A compact row: 3px start bar, hairline beneath, ink text. */
 	.ag-compact-row {
+		position: relative;
 		display: flex;
 		align-items: baseline;
 		gap: 8px;
-		padding: 4px 0;
+		padding: 4px 0 4px 11px;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
 		min-width: 0;
 		width: 100%;
 	}
+	.ag-compact-row::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 3px;
+		background: var(--ev-color, var(--dt-accent));
+	}
 	.ag-compact-row--selected {
-		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
-		border-radius: 4px;
-		/* The highlight bleeds into the gutter via a spread shadow — zero
-		   layout impact, so nothing shifts or clips even when the host
-		   reduces the gutters below the bleed width. */
-		box-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-compact-row:hover .ag-compact-row-title,
 	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
+	.ag-compact-row:hover,
 	.ag-compact-row:active {
-		background: color-mix(in srgb, var(--ev-color) 8%, transparent);
-		border-radius: 4px;
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.ag-compact-row:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
-		border-radius: 4px;
 	}
-	/* The time label doubles as the class-color signal (replaces the old
-	   dot): the event color mixed toward the text color, so it stays
-	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-row-time {
 		font-size: 11px;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-weight: 500;
-		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
+		font-weight: 400;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 64px;
 		flex-shrink: 0;
 		line-height: 1.4;
@@ -1229,7 +1242,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-compact-row-title {
 		font-size: 12px;
 		font-weight: 500;
-		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 82%, transparent);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		flex: 1;
 		/* The title is the row's identity — never let subtitle/tags/duration
 		   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */
@@ -1261,20 +1274,29 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		line-height: 1.4;
 	}
 	.ag-compact-row-tag {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--ev-color, var(--dt-accent));
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);
+		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
 		padding: 1px 4px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 		flex-shrink: 1;
 		min-width: 2.5em;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	.ag-compact-row--cancelled { opacity: 0.5; }
-	.ag-compact-row--cancelled .ag-compact-row-title { text-decoration: line-through; }
-	.ag-compact-row--tentative { opacity: 0.65; }
+	.ag-compact-row--cancelled .ag-compact-row-title {
+		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.ag-compact-row--cancelled::before { opacity: 0.45; }
+	.ag-compact-row--tentative .ag-compact-row-title { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }
+	.ag-compact-row--tentative::before {
+		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
+	}
 	/* Mobile: larger touch targets for compact rows */
 	.ag--mobile .ag-compact-row { padding: 8px 0; }
 	.ag--mobile .ag-compact-row-title { font-size: 15px; }

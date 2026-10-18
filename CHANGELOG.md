@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- 2706af4: A new default look, "Stendig on paper": plain ground, ink text, drawn rules, one
+  accent. Every `--dt-*` token and every prop works as before; only the defaults'
+  visuals change.
+  
+  - Events are ink text on the grid with a 3px start bar in the event colour — no
+    tinted cards, no radii, no shadows — in every view (planners, scroll, agenda,
+    month, mobile). Cancelled is struck through, tentative gets a dashed bar.
+  - All-day events are a solid band in their colour; the now line is a 2px rule in
+    `--dt-accent`; today's number is the accent. The accent does nothing else.
+  - Grid rules are drawn, not hinted: `--dt-border` 0.3 and `--dt-border-day` 0.6
+    on light hosts (0.16 / 0.32 dark) in the `neutral` preset and the auto theme.
+  - New additive tokens: `--dt-event` (the default event ink, `--dt-text`) and
+    `--dt-paper` (a background image layered under every opaque calendar surface;
+    `none` by default).
+  - `borderRadius` defaults to 0; the week planner's hour is 64px tall and the
+    gutter 60px wide, with a tick from each hour label to the day line.
+  - Hour labels read as a numeral with a small `00` (24h) or `am`/`pm` (12h);
+    `fmtHParts(h, locale)` is exported. Every time in every view is set in the sans
+    with tabular numerals; the views no longer read `--dt-mono`.
+  - The demo site is redrawn in the same world: a rail of setups and prop controls,
+    the calendar edge to edge, Today and the arrows in the page bar, and the
+    `header` snippet shown empty so a host can own its navigation.
+
 ## 1.0.1
 
 ### Patch Changes

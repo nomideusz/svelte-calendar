@@ -3,6 +3,9 @@
 // event handlers, never during SSR. `font` is a canvas font string, e.g.
 // "500 12px Inter" — name a real family; bare `system-ui` measures wrong on macOS.
 import { prepare, layout, prepareWithSegments, measureNaturalWidth } from '@chenglou/pretext';
+// pretext needs Intl.Segmenter (Firefox < 125 has none): there the attachments
+// leave the server's text as it is.
+const canMeasure = typeof Intl !== 'undefined' && 'Segmenter' in Intl;
 export function lineCount(text, font, width, options) {
     return layout(prepare(text, font, options), width, 1).lineCount;
 }
@@ -71,6 +74,8 @@ export function fontOf(el) {
  */
 export function fitLabel(candidates, lines = 1) {
     return (el) => {
+        if (!canMeasure)
+            return;
         const font = fontOf(el);
         let width = 0;
         const apply = () => { el.textContent = pickFit(candidates, font, width, lines); };
@@ -179,7 +184,7 @@ export function breakLines(text, font, width) {
  */
 export function typeset(text) {
     return (el) => {
-        if (getComputedStyle(el).whiteSpace !== 'normal')
+        if (!canMeasure || getComputedStyle(el).whiteSpace !== 'normal')
             return;
         const font = fontOf(el);
         let width = 0;

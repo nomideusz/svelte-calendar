@@ -264,7 +264,7 @@
 		autoTheme,
 		mondayStart = true,
 		height: heightProp = 600,
-		borderRadius = 12,
+		borderRadius = 0,
 		dir,
 		locale,
 		labels: labelsProp,
@@ -990,8 +990,8 @@
 		width: 100%;
 		min-width: 0;
 		height: var(--cal-h, 600px);
-		background: var(--dt-bg, inherit);
-		border-radius: var(--cal-r, 12px);
+		background: var(--dt-paper, none), var(--dt-bg, inherit);
+		border-radius: var(--cal-r, 0);
 		overflow: clip;
 		display: flex;
 		flex-direction: column;
@@ -1010,8 +1010,8 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 8px;
-		padding: 8px 12px;
-		min-height: 48px;
+		padding: 6px 10px;
+		min-height: 44px;
 		box-sizing: border-box;
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
@@ -1030,7 +1030,7 @@
 	}
 
 	.cal-hd-title {
-		font: 700 16px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 16px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.01em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
@@ -1048,7 +1048,7 @@
 		border: none;
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		border-radius: 4px;
+		border-radius: 0;
 		cursor: pointer;
 		transition: background 120ms, color 120ms;
 	}
@@ -1066,12 +1066,12 @@
 	}
 
 	.cal-hd-today {
-		font: 600 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		background: transparent;
 		border: 1px solid var(--dt-border-day, var(--dt-border, rgba(0, 0, 0, 0.14)));
 		padding: 7px 10px;
-		border-radius: 4px;
+		border-radius: 0;
 		cursor: pointer;
 		white-space: nowrap;
 		margin-right: 2px;
@@ -1087,13 +1087,10 @@
 		cursor: default;
 	}
 
+	/* View switch: plain text tabs; the chosen one carries an ink rule. */
 	.cal-pills {
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		border-radius: 6px;
-		padding: 2px;
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
 	}
 
@@ -1102,10 +1099,11 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		cursor: pointer;
-		font: 600 12px/1 var(--dt-sans, system-ui, sans-serif);
-		padding: 6px 12px;
-		border-radius: 4px;
-		transition: background 100ms, color 100ms;
+		font: 500 13px/1 var(--dt-sans, system-ui, sans-serif);
+		padding: 8px 8px 7px;
+		border-radius: 0;
+		box-shadow: inset 0 -2px 0 transparent;
+		transition: box-shadow 100ms, color 100ms;
 	}
 
 	/* :not(--active) — the hover rule otherwise outranks the active color,
@@ -1114,10 +1112,10 @@
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
-	/* Selected = a reversed ink plate; the accent is kept for now and selection. */
+	/* Selected = ink text over an ink rule; the accent keeps its three jobs. */
 	.cal-pill--active {
-		background: var(--dt-text, rgba(0, 0, 0, 0.87));
-		color: var(--dt-bg, #fff);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		box-shadow: inset 0 -2px 0 var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
 	.cal-body {
@@ -1239,10 +1237,6 @@
 	.cal-m-pills {
 		display: flex;
 		gap: 2px;
-		background: color-mix(in srgb, var(--dt-surface, var(--dt-bg, #ffffff)) 85%, transparent);
-		border-radius: 6px;
-		padding: 2px;
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		flex-shrink: 0;
 	}
 	.cal-m-pill {
@@ -1250,18 +1244,19 @@
 		background: transparent;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		cursor: pointer;
-		font: 600 12px / 1 var(--dt-sans, system-ui, sans-serif);
-		padding: 9px 12px;
-		border-radius: 4px;
-		transition: background 100ms, color 100ms;
+		font: 500 13px / 1 var(--dt-sans, system-ui, sans-serif);
+		padding: 11px 10px 9px;
+		border-radius: 0;
+		box-shadow: inset 0 -2px 0 transparent;
+		transition: box-shadow 100ms, color 100ms;
 		-webkit-tap-highlight-color: transparent;
 	}
 	.cal-m-pill:hover:not(.cal-m-pill--active) {
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.cal-m-pill--active {
-		background: var(--dt-text, rgba(0, 0, 0, 0.87));
-		color: var(--dt-bg, #fff);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		box-shadow: inset 0 -2px 0 var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
 	.cal-m-title {
@@ -1282,7 +1277,7 @@
 		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.12));
 		min-height: 40px;
 		padding: 5px 12px;
-		border-radius: 4px;
+		border-radius: 0;
 		cursor: pointer;
 		white-space: nowrap;
 		transition: background 120ms, color 120ms;

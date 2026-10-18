@@ -1,23 +1,25 @@
 <script lang="ts">
+	import Shell from '../_components/Shell.svelte';
+
 	let { data } = $props();
 </script>
 
-<div class="doc-layout">
-	{#if data.toc.length > 0}
-		<aside class="doc-toc">
-			<nav aria-label="Table of contents">
+<Shell>
+	{#snippet rail()}
+		{#if data.toc.length > 0}
+			<nav class="doc-toc" aria-label="Table of contents">
 				<span class="doc-toc-title">On this page</span>
 				{#each data.toc as item (item.id)}
 					<a href={`#${item.id}`}>{item.label}</a>
 				{/each}
 			</nav>
-		</aside>
-	{/if}
+		{/if}
+	{/snippet}
 
 	<main class="doc-content">
 		{@html data.html}
 	</main>
-</div>
+</Shell>
 
 <style>
 	/*
@@ -25,64 +27,42 @@
 	 * <html>, so it stays readable in all five themes (dark and light).
 	 * Fallbacks match the slate defaults.
 	 */
-	.doc-layout {
-		display: flex;
-		align-items: flex-start;
-		gap: 40px;
-		max-width: 1100px;
-		margin: 0 auto;
-		padding: 0 24px;
-	}
 
 	/* ─── TOC sidebar ────────────────────────────────── */
+	/* The contents list at the rail's measure: the setups' rule, then plain links. */
 	.doc-toc {
-		position: sticky;
-		top: 24px;
-		flex-shrink: 0;
-		width: 190px;
-		max-height: calc(100vh - 48px);
-		overflow-y: auto;
-		padding: 48px 0 24px;
-		scrollbar-width: thin;
-	}
-	.doc-toc nav {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: calc(4 * var(--u));
 	}
 	.doc-toc-title {
-		font: 700 10px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(148, 163, 184, 0.5));
-		margin-bottom: 10px;
+		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		padding-bottom: calc(22 * var(--u));
+		margin-bottom: calc(22 * var(--u));
+		border-bottom: 2px solid var(--dt-text, #111);
 	}
 	.doc-toc a {
-		font: 500 12.5px/1.4 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.75));
+		font: 400 calc(21 * var(--u)) / 1.35 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		text-decoration: none;
-		padding: 4px 8px;
-		border-radius: 5px;
-		border-left: 2px solid transparent;
-		transition: color 120ms, background 120ms;
+		padding: calc(4 * var(--u)) 0;
+		box-shadow: inset 0 -2px 0 transparent;
+		transition: color 120ms, box-shadow 120ms;
+		width: fit-content;
 	}
 	.doc-toc a:hover {
-		color: var(--dt-text, rgba(226, 232, 240, 0.95));
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 12%, transparent);
+		color: var(--dt-text, #111);
+		box-shadow: inset 0 -2px 0 var(--dt-accent, #111);
 	}
 
-	@media (max-width: 900px) {
-		.doc-toc {
-			display: none;
-		}
-	}
 
 	/* ─── Main content ───────────────────────────────── */
 	.doc-content {
-		flex: 1;
 		min-width: 0;
-		padding: 48px 0 96px;
-		color: var(--dt-text, rgba(226, 232, 240, 0.82));
+		max-width: 76ch;
+		padding: calc(40 * var(--u)) calc(40 * var(--u)) 96px calc(38 * var(--u));
+		color: var(--dt-text, #111);
 		line-height: 1.7;
 	}
 	.doc-content :global(h2) {
@@ -91,44 +71,47 @@
 
 	/* ── Typography ── */
 	.doc-content :global(h1) {
-		font: 700 28px/1.2 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.95));
-		margin: 0 0 8px;
+		font: 500 36px/1.15 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: -0.015em;
+		color: var(--dt-text, #111);
+		margin: 0 0 10px;
 	}
 
 	.doc-content :global(h2) {
-		font: 600 20px/1.3 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.92));
-		margin: 48px 0 16px;
-		padding-bottom: 8px;
-		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		font: 500 26px/1.25 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		margin: 56px 0 18px;
+		padding-bottom: 10px;
+		border-bottom: 2px solid var(--dt-text, #111);
 	}
 
 	.doc-content :global(h3) {
-		font: 600 15px/1.3 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.88));
-		margin: 32px 0 12px;
+		font: 500 19px/1.3 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		margin: 36px 0 12px;
 	}
 
 	.doc-content :global(p) {
-		font-size: 14px;
+		font-size: 16px;
+		line-height: 1.55;
 		margin: 0 0 16px;
 	}
 
 	.doc-content :global(> p:first-of-type) {
-		font-size: 15px;
-		color: var(--dt-text-2, rgba(148, 163, 184, 0.7));
+		font-size: 19px;
+		line-height: 1.45;
+		color: var(--dt-text, #111);
 		margin-bottom: 32px;
 	}
 
 	.doc-content :global(blockquote) {
 		margin: 0 0 16px;
 		padding: 10px 16px;
-		border-left: 3px solid color-mix(in srgb, var(--dt-accent, #ef4444) 40%, transparent);
-		background: color-mix(in srgb, var(--dt-accent, #ef4444) 5%, transparent);
-		border-radius: 0 6px 6px 0;
-		font-size: 13px;
-		color: var(--dt-text-2, rgba(226, 232, 240, 0.7));
+		border-left: 3px solid var(--dt-accent, #111);
+		background: transparent;
+		border-radius: 0;
+		font-size: 15px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.doc-content :global(blockquote p) {
 		margin: 0;
@@ -136,28 +119,30 @@
 
 	/* ── Code blocks ── */
 	.doc-content :global(pre) {
-		background: var(--dt-surface, #0d1017);
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.06));
-		border-radius: 8px;
+		background: transparent;
+		border: 2px solid var(--dt-text, #111);
+		border-radius: 0;
 		padding: 16px 20px;
 		overflow-x: auto;
 		margin: 0 0 20px;
-		font: 400 13px/1.55 var(--dt-mono, ui-monospace, 'Cascadia Code', 'Fira Code', monospace);
-		color: var(--dt-text, rgba(226, 232, 240, 0.78));
+		font: 400 14px/1.55 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text, #111);
 		scrollbar-width: thin;
 		scrollbar-color: var(--dt-scrollbar, rgba(148, 163, 184, 0.1)) transparent;
 	}
 
 	.doc-content :global(code) {
-		font: 400 12.5px/1 var(--dt-mono, ui-monospace, 'Cascadia Code', 'Fira Code', monospace);
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 14%, transparent);
-		padding: 2px 6px;
-		border-radius: 4px;
-		color: var(--dt-text, rgba(226, 232, 240, 0.85));
+		font: 400 14px/1 var(--dt-mono, ui-monospace, monospace);
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
+		padding: 2px 5px;
+		border-radius: 0;
+		color: var(--dt-text, #111);
 	}
 
 	.doc-content :global(pre code) {
 		background: none;
+		border: none;
 		padding: 0;
 		border-radius: 0;
 		font-size: inherit;
@@ -169,34 +154,33 @@
 		width: 100%;
 		border-collapse: collapse;
 		margin: 0 0 20px;
-		font-size: 13px;
+		font-size: 15px;
 	}
 
 	.doc-content :global(th) {
 		text-align: left;
 		padding: 8px 12px;
-		font: 600 11px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dt-text-3, rgba(148, 163, 184, 0.5));
-		border-bottom: 1px solid var(--dt-border-day, rgba(148, 163, 184, 0.1));
+		letter-spacing: 0.06em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		border-bottom: 2px solid var(--dt-text, #111);
 	}
 
 	.doc-content :global(td) {
 		padding: 7px 12px;
-		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.05));
-		color: var(--dt-text-2, rgba(226, 232, 240, 0.72));
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		color: var(--dt-text, #111);
 		vertical-align: top;
 	}
 
 	.doc-content :global(td code) {
-		font-size: 12px;
-		color: var(--dt-accent, #ef4444);
-		background: var(--dt-accent-dim, rgba(239, 68, 68, 0.08));
+		font-size: 13px;
+		white-space: nowrap;
 	}
 
 	.doc-content :global(tr:hover td) {
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 6%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 
 	/* ── Lists ── */
@@ -207,37 +191,38 @@
 	}
 
 	.doc-content :global(li) {
-		font-size: 14px;
+		font-size: 16px;
+		line-height: 1.5;
 		margin-bottom: 4px;
 	}
 
 	/* ── Links ── */
 	.doc-content :global(a) {
-		color: var(--dt-accent, #ef4444);
+		color: var(--dt-accent, #111);
 		text-decoration: none;
-		border-bottom: 1px solid color-mix(in srgb, var(--dt-accent, #ef4444) 25%, transparent);
-		transition: border-color 120ms;
+		border-bottom: 1px solid var(--dt-accent, #111);
+		transition: border-width 120ms;
 	}
 	.doc-content :global(a:hover) {
-		border-color: var(--dt-accent, #ef4444);
+		border-bottom-width: 2px;
 	}
 
 	/* ── Details ── */
 	.doc-content :global(details) {
 		margin: 0 0 20px;
-		border: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
-		border-radius: 8px;
+		border: 2px solid var(--dt-text, #111);
+		border-radius: 0;
 		overflow: hidden;
 	}
 	.doc-content :global(summary) {
 		padding: 10px 16px;
 		cursor: pointer;
-		font: 500 13px/1 var(--dt-sans, 'Outfit', system-ui, sans-serif);
-		color: var(--dt-text, rgba(226, 232, 240, 0.8));
-		background: color-mix(in srgb, var(--dt-text-3, rgba(148, 163, 184, 0.4)) 6%, transparent);
+		font: 500 15px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		background: transparent;
 	}
 	.doc-content :global(details[open] summary) {
-		border-bottom: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
 	}
 	.doc-content :global(details > :not(summary)) {
 		padding: 0 16px;
@@ -251,35 +236,31 @@
 	/* ── Horizontal rule ── */
 	.doc-content :global(hr) {
 		border: none;
-		border-top: 1px solid var(--dt-border, rgba(148, 163, 184, 0.07));
+		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		margin: 32px 0;
 	}
 
 	/* ── Strong / em ── */
 	.doc-content :global(strong) {
 		font-weight: 600;
-		color: var(--dt-text, rgba(226, 232, 240, 0.92));
+		color: var(--dt-text, #111);
 	}
 
 	/* ─── Responsive ─────────────────────────────────── */
 	@media (max-width: 768px) {
-		.doc-layout {
-			padding: 0 16px;
-		}
 		.doc-content {
 			padding: 24px 0 64px;
 		}
 		.doc-content :global(h1) {
-			font-size: 22px;
+			font-size: 28px;
 		}
 		.doc-content :global(h2) {
-			font-size: 17px;
+			font-size: 22px;
 			margin-top: 32px;
 		}
 		.doc-content :global(pre) {
 			padding: 12px 14px;
-			font-size: 12px;
-			border-radius: 6px;
+			font-size: 13px;
 		}
 		/* Prevent tables from breaking layout */
 		.doc-content :global(table) {

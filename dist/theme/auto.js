@@ -485,13 +485,13 @@ export function probeHostTheme(el, options = {}) {
         ? mix(calBg, [255, 255, 255], 0.04) // surface: lift from card
         : mix(calBg, [0, 0, 0], 0.02); // slightly darker stripe
     // ── Border colors ──
-    const borderAlpha = isDark ? 0.07 : 0.08;
-    const borderDayAlpha = isDark ? 0.14 : 0.14;
+    // Rules are drawn, not hinted: the grid reads as the calendar's structure.
+    const borderAlpha = isDark ? 0.16 : 0.3;
+    const borderDayAlpha = isDark ? 0.32 : 0.6;
     const borderRgb = isDark ? [148, 163, 184] : [0, 0, 0];
     // ── Accent derivatives ──
     const accentDim = isDark ? 0.15 : 0.12;
     const glow = isDark ? 0.30 : 0.25;
-    const todayBg = isDark ? 0.07 : 0.07;
     // Ensure accent is readable on the background — adjust lightness if needed
     const accentL = isDark
         ? Math.max(aL, 0.45) // bright enough on dark
@@ -511,18 +511,21 @@ export function probeHostTheme(el, options = {}) {
         `--dt-surface: ${rgbStr(...surface)}`,
         `--dt-border: ${rgba(...borderRgb, borderAlpha)}`,
         `--dt-border-day: ${rgba(...borderRgb, borderDayAlpha)}`,
-        `--dt-text: ${rgba(...textBase, isDark ? 0.87 : 0.87)}`,
-        `--dt-text-2: ${rgba(...textBase, isDark ? 0.55 : 0.54)}`,
-        `--dt-text-3: ${rgba(...textBase, isDark ? 0.38 : 0.38)}`,
+        `--dt-text: ${rgba(...textBase, isDark ? 0.92 : 1)}`,
+        `--dt-text-2: ${rgba(...textBase, isDark ? 0.62 : 0.66)}`,
+        `--dt-text-3: ${rgba(...textBase, isDark ? 0.46 : 0.54)}`,
         `--dt-accent: ${rgbStr(...accentAdj)}`,
         `--dt-accent-dim: ${rgba(...accentAdj, accentDim)}`,
         `--dt-glow: ${rgba(...accentAdj, glow)}`,
-        `--dt-today-bg: ${rgba(...accentAdj, todayBg)}`,
+        // Today is marked by its number and the now line, never a column wash.
+        `--dt-today-bg: transparent`,
         `--dt-btn-text: ${btnText}`,
         `--dt-scrollbar: ${rgba(...borderRgb, scrollAlpha)}`,
         `--dt-success: ${rgba(...successRgb, 0.7)}`,
         `--dt-weekend-bg: ${rgba(...borderRgb, isDark ? 0.03 : 0.02)}`,
         `--dt-hover: ${rgba(...borderRgb, isDark ? 0.06 : 0.04)}`,
+        // Events are ink: the same colour as the text, so the accent keeps its three jobs.
+        `--dt-event: ${rgba(...textBase, isDark ? 0.92 : 1)}`,
         `--dt-sans: ${fonts.sans}`,
         `--dt-mono: ${fonts.mono}`,
     ];

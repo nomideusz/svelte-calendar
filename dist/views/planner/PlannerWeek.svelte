@@ -78,8 +78,8 @@ function inAllDayStrip(ev) {
 	return isAllDay(ev) || ev.end.getTime() >= addDaysMs(ev.start.getTime(), 1);
 }
 // ── Config ─────────────────────────────────────────
-const HOUR_H = 48;
-const GUTTER_W = 52;
+const HOUR_H = 64;
+const GUTTER_W = 60;
 const MIN_COL_W = $derived(ctx.minColumnWidth);
 const ALLDAY_MAX = 3;
 const startHour = $derived(visibleHours?.[0] ?? 0);
@@ -923,6 +923,10 @@ function onWindowKeydown(e) {
 							<div class="tw-line" style:top="{i * HOUR_H}px"></div>
 							<div class="tw-line tw-line--half" style:top="{i * HOUR_H + HOUR_H / 2}px"></div>
 						{/each}
+						{#if nowY !== null && weekHasToday}
+							<!-- now, ruled across the whole week; today's column draws it solid -->
+							<div class="tw-now-week" style:top="{nowY}px"></div>
+						{/if}
 					</div>
 
 					{#each dayCols as day (day.ms)}
@@ -981,7 +985,7 @@ function onWindowKeydown(e) {
 									style:height="{p.height}px"
 									style:left="calc({(p.col / p.totalCols) * 100}% + 1px)"
 									style:width="calc({100 / p.totalCols}% - {p.totalCols > 1 ? 3 : 8}px)"
-									style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
+									style:--ev-color={p.ev.color ?? 'var(--dt-event, var(--dt-accent))'}
 									role="button"
 									tabindex="0"
 									title={p.ev.title}
@@ -1077,7 +1081,7 @@ function onWindowKeydown(e) {
 		overflow: hidden;
 		user-select: none;
 		font-variant-numeric: tabular-nums;
-		background: var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw--auto { overflow: visible; }
@@ -1115,7 +1119,7 @@ function onWindowKeydown(e) {
 		position: sticky;
 		top: 0;
 		z-index: 30;
-		background: var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 
@@ -1129,7 +1133,7 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
 	}
 
 	.tw-hd {
@@ -1138,36 +1142,34 @@ function onWindowKeydown(e) {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 2px;
-		padding: 8px 4px 6px;
+		gap: 4px;
+		padding: 14px 4px 12px;
 		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 
 	.tw-hd-wd {
-		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.06em;
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.tw-hd--today .tw-hd-wd {
 		color: var(--dt-accent, #2563eb);
-		font-weight: 600;
 	}
 
+	/* The day number is the typography of the grid: large, regular weight. */
 	.tw-hd-num {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 26px;
-		height: 24px;
-		font: 700 18px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 40px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
 		letter-spacing: -0.02em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
-	/* Today: the numeral in the accent over a 2px rule — no disc. */
+	/* Today: the numeral in the accent, nothing else. */
 	.tw-hd-num--today {
 		color: var(--dt-accent, #2563eb);
-		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
 	}
 
 	.tw-hd-custom {
@@ -1186,11 +1188,11 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-end;
-		padding: 4px 6px 4px 0;
+		padding: 6px 8px 6px 0;
 	}
 	.tw-ad-gutter-lb {
 		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
@@ -1204,7 +1206,7 @@ function onWindowKeydown(e) {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		padding: 3px 3px 4px;
+		padding: 4px 0 5px;
 		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.tw-ad-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
@@ -1213,42 +1215,46 @@ function onWindowKeydown(e) {
 		appearance: none;
 		display: flex;
 		align-items: center;
-		gap: 3px;
-		padding: 2px 6px;
-		min-height: 18px;
+		gap: 4px;
+		padding: 0 10px;
+		min-height: 36px;
 		border: none;
-		border-radius: 3px;
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-left: 2.5px solid var(--ev-color);
+		border-radius: 0;
+		/* The paper's grain runs through the band (multiply keeps the colour). */
+		background: var(--dt-paper, none) var(--ev-color);
+		background-blend-mode: multiply;
+		color: var(--dt-btn-text, #fff);
 		cursor: pointer;
 		overflow: hidden;
 		text-align: left;
-		transition: background 0.12s;
+		transition: filter 0.12s;
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw-ad:hover {
-		background: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		filter: brightness(1.08);
 	}
+	/* A span continues across its days as one band: no edge between segments. */
 	.tw-ad--mid,
 	.tw-ad--end:not(.tw-ad--start) {
-		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
-		border-radius: 0 3px 3px 0;
+		margin-left: -1px;
 	}
 	.tw-ad--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
 	}
 	.tw-ad--cancelled .tw-ad-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+	}
+	.tw-ad--cancelled {
+		background: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #fff));
 	}
 	.tw-ad:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
 	.tw-ad-title {
-		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		font: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: inherit;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1256,14 +1262,28 @@ function onWindowKeydown(e) {
 		min-width: 0;
 	}
 	.tw-ad-span {
-		font: 400 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
+		color: inherit;
+		opacity: 0.75;
 		flex-shrink: 0;
 	}
+	.tw-ad--mid .tw-ad-title,
+	.tw-ad--end:not(.tw-ad--start) .tw-ad-title {
+		visibility: hidden;
+	}
+	.tw-ad-gutter + .tw-ad-cell .tw-ad-title {
+		visibility: visible;
+	}
+	.tw-ad-span,
 	.tw-ad-cont,
 	.tw-ad-arrow {
-		display: flex;
-		color: var(--ev-color);
+		display: none;
+	}
+	.tw-ad-arrow {
+		display: none;
+		color: inherit;
+		opacity: 0.75;
 		flex-shrink: 0;
 	}
 	.tw-ad-arrow { margin-left: auto; }
@@ -1299,7 +1319,7 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 20;
-		background: var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
 		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 
@@ -1307,24 +1327,34 @@ function onWindowKeydown(e) {
 	   and small beside it. */
 	.tw-gutter-lb {
 		position: absolute;
-		right: 6px;
+		left: 6px;
+		right: 0;
 		transform: translateY(-50%);
 		display: flex;
 		align-items: flex-start;
-		gap: 1px;
-		font: 700 17px/1 var(--dt-sans, system-ui, sans-serif);
-		font-stretch: 90%;
+		gap: 2px;
+		font: 400 26px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 85%;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.02em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
+	}
+	.tw-gutter-lb::after {
+		content: '';
+		flex: 1;
+		min-width: 6px;
+		height: 1px;
+		margin-left: 5px;
+		align-self: center;
+		background: var(--dt-border-day, rgba(0, 0, 0, 0.3));
 	}
 	.tw-gutter-lb--under {
 		visibility: hidden;
 	}
 	.tw-gutter-lb small {
 		font-size: 10px;
-		font-weight: 600;
+		font-weight: 500;
 		line-height: 1;
 		letter-spacing: 0;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
@@ -1338,9 +1368,9 @@ function onWindowKeydown(e) {
 		right: 3px;
 		transform: translateY(-50%);
 		padding: 2px 4px;
-		border-radius: 3px;
+		border-radius: 0;
 		background: var(--dt-surface, var(--dt-bg, #fff));
-		font: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		white-space: nowrap;
@@ -1376,6 +1406,15 @@ function onWindowKeydown(e) {
 		background: var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.tw-line--half { opacity: 0.4; }
+	.tw-now-week {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 0;
+		border-top: 2px solid var(--dt-accent, #2563eb);
+		opacity: 0.85;
+		transform: translateY(-1px);
+	}
 
 	/* ─── Day column ─────────────────────────────────── */
 	.tw-col {
@@ -1395,7 +1434,7 @@ function onWindowKeydown(e) {
 	}
 	/* What has already happened steps back; a cancelled block keeps its own look. */
 	.tw-ev--past:not(.tw-ev--cancelled) {
-		opacity: 0.6;
+		opacity: 0.78;
 	}
 	.tw-col--weekend:not(.tw-col--today):not(.tw-col--past) {
 		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
@@ -1463,8 +1502,8 @@ function onWindowKeydown(e) {
 	.tw-ev {
 		position: absolute;
 		z-index: 6;
-		border-radius: 3px;
-		background: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border-radius: 0;
+		background: transparent;
 		display: flex;
 		align-items: stretch;
 		overflow: hidden;
@@ -1477,7 +1516,7 @@ function onWindowKeydown(e) {
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw-ev:hover {
-		background: color-mix(in srgb, var(--ev-color) 24%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 		z-index: 8;
 	}
 	/* Short blocks keep duration-proportional height, but get a 44px
@@ -1493,12 +1532,11 @@ function onWindowKeydown(e) {
 		height: 44px;
 	}
 	.tw-ev--selected {
-		box-shadow: 0 0 0 2px var(--ev-color),
-			0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 		z-index: 9;
 	}
 	.tw-ev--current {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
 	}
 	.tw-ev--resizing {
 		z-index: 50;
@@ -1513,41 +1551,39 @@ function onWindowKeydown(e) {
 	}
 	/* Status treatments: token-level dims + a non-opacity signal
 	   (strikethrough / border style) — consistent with the other views. */
-	.tw-ev--cancelled {
-		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
+	/* Printed states: a cancelled class is struck through and stays on the
+	   grid; a tentative one is set in grey with a dashed bar. */
 	.tw-ev--cancelled .tw-ev-title {
 		text-decoration: line-through;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
 	.tw-ev--cancelled .tw-ev-stripe { opacity: 0.45; /* decorative bar only */ }
-	.tw-ev--tentative {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
+	.tw-ev--tentative .tw-ev-title,
+	.tw-ev--full .tw-ev-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.tw-ev--full {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);
+	.tw-ev--tentative .tw-ev-stripe,
+	.tw-ev--limited .tw-ev-stripe {
+		background: repeating-linear-gradient(
+			180deg,
+			var(--ev-color) 0 4px,
+			transparent 4px 7px
+		);
 	}
-	.tw-ev--full .tw-ev-title { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }
-	.tw-ev--limited {
-		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
-	}
+	.tw-ev--full .tw-ev-stripe { opacity: 0.45; }
 	.tw-ev--readonly { cursor: default; }
 
 	.tw-ev-stripe {
 		width: 3px;
 		background: var(--ev-color);
 		flex-shrink: 0;
-		border-radius: 3px 0 0 3px;
 	}
 
 	.tw-ev-body {
 		container: tw-ev / inline-size;
 		flex: 1;
 		min-width: 0;
-		padding: 3px 6px;
+		padding: 3px 7px;
 		display: flex;
 		flex-direction: column;
 		gap: 1px;
@@ -1562,11 +1598,12 @@ function onWindowKeydown(e) {
 		padding-bottom: 1px;
 	}
 
-	/* Time and title share one size; rank is weight alone. */
+	/* Title first, time under it; both one size, rank by weight and ink. */
 	.tw-ev-time {
-		font: 500 12px/1.15 var(--dt-sans, system-ui, sans-serif);
+		order: 1;
+		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -1577,7 +1614,8 @@ function onWindowKeydown(e) {
 	}
 
 	.tw-ev-title {
-		font: 700 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		order: 0;
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1585,8 +1623,9 @@ function onWindowKeydown(e) {
 	}
 
 	.tw-ev-loc {
-		font: 400 10px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		order: 2;
+		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1670,8 +1709,8 @@ function onWindowKeydown(e) {
 		left: 1px;
 		right: 3px;
 		z-index: 40;
-		border-radius: 3px;
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border-radius: 0;
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
 		outline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);
 		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
 		display: flex;

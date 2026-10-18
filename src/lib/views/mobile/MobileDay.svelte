@@ -789,12 +789,13 @@
 		gap: 4px;
 		padding: 4px 8px;
 		min-height: 32px;
-		border-radius: 5px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));
+		border-radius: 0;
+		background: var(--ev-color);
+		color: var(--dt-btn-text, #fff);
 		border: none;
 		cursor: pointer;
 		flex-shrink: 0;
-		transition: background 120ms;
+		transition: filter 120ms;
 		-webkit-tap-highlight-color: transparent;
 		max-width: 160px;
 		position: relative;
@@ -809,28 +810,26 @@
 		transform: translateY(-50%);
 		height: 44px;
 	}
+	.mb-allday-chip:hover,
 	.mb-allday-chip:active {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, #f9fafb));
+		filter: brightness(1.08);
 	}
 	.mb-allday-chip--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
 	}
 	.mb-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
+	/* The band is the colour; no dot. */
 	.mb-allday-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--ev-color);
-		flex-shrink: 0;
+		display: none;
 	}
 
 	.mb-allday-title {
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: inherit;
 		white-space: nowrap;
 		max-width: 100px;
 		overflow: hidden;
@@ -839,7 +838,9 @@
 
 	.mb-allday-span {
 		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font-variant-numeric: tabular-nums;
+		color: inherit;
+		opacity: 0.75;
 	}
 
 	.mb-allday-more {
@@ -994,7 +995,7 @@
 	.mb-now-label span {
 		display: inline-block;
 		padding: 2px 3px;
-		border-radius: 3px;
+		border-radius: 0;
 		background: var(--dt-accent, #2563eb);
 		font: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
@@ -1003,9 +1004,9 @@
 
 	.mb-now-line {
 		flex: 1;
-		height: 2px;
-		background: var(--dt-accent, #2563eb);
-		box-shadow: 0 0 6px var(--dt-glow, rgba(37, 99, 235, 0.25));
+		height: 0;
+		border-top: 2px solid var(--dt-accent, #2563eb);
+		box-shadow: none;
 		position: relative;
 	}
 
@@ -1024,10 +1025,12 @@
 	.mb-event {
 		position: absolute;
 		z-index: 5;
-		border-radius: 8px;
+		border-radius: 0;
 		cursor: pointer;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, #f9fafb));
+		background: transparent;
 		border: none;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		box-sizing: border-box;
 		display: flex;
 		align-items: stretch;
 		overflow: hidden;
@@ -1037,8 +1040,9 @@
 		-webkit-tap-highlight-color: transparent;
 		min-height: 24px;
 	}
+	.mb-event:hover,
 	.mb-event:active {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	/* Short blocks keep their duration-proportional height, but get a 44px
 	   transparent hit-slop so taps still land. */
@@ -1059,21 +1063,13 @@
 		padding-bottom: 2px;
 	}
 	.mb-event--selected {
-		box-shadow: 0 0 0 2px var(--ev-color),
-			0 2px 12px color-mix(in srgb, var(--ev-color) 25%, transparent);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.mb-event--current {
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, #f9fafb));
+		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
 	}
-	.mb-event--next {
-		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 35%, transparent);
-	}
-	/* Status treatments: token-level dims + a non-opacity signal
-	   (strikethrough / border style) — never a bare opacity on the block. */
-	.mb-event--cancelled {
-		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));
-	}
+	/* Printed states: a cancelled class is struck through; a tentative or
+	   limited one is set in grey with a dashed bar — never a bare opacity. */
 	.mb-event--cancelled .mb-ev-title {
 		text-decoration: line-through;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
@@ -1081,24 +1077,24 @@
 	.mb-event--cancelled .mb-ev-stripe {
 		opacity: 0.45; /* decorative bar only */
 	}
-	.mb-event--tentative {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
-	}
-	.mb-event--full {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);
-	}
+	.mb-event--tentative .mb-ev-title,
 	.mb-event--full .mb-ev-title {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.mb-event--limited {
-		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
+	.mb-event--tentative .mb-ev-stripe,
+	.mb-event--limited .mb-ev-stripe {
+		background: repeating-linear-gradient(
+			180deg,
+			var(--ev-color) 0 4px,
+			transparent 4px 7px
+		);
+	}
+	.mb-event--full .mb-ev-stripe {
+		opacity: 0.45;
 	}
 	.mb-event--resizing {
 		z-index: 50;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 		cursor: ns-resize;
 	}
 
@@ -1138,7 +1134,7 @@
 		transform: translateX(-50%);
 		width: 24px;
 		height: 3px;
-		border-radius: 2px;
+		border-radius: 0;
 		background: var(--ev-color);
 		opacity: 0;
 		transition: opacity 120ms;
@@ -1162,7 +1158,7 @@
 		left: 40px;
 		right: 4px;
 		z-index: 40;
-		border-radius: 8px;
+		border-radius: 0;
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
 		border: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
 		display: flex;
@@ -1179,10 +1175,10 @@
 	}
 
 	.mb-ev-stripe {
-		width: 4px;
+		width: 3px;
 		background: var(--ev-color);
 		flex-shrink: 0;
-		border-radius: 8px 0 0 8px;
+		border-radius: 0;
 	}
 
 	.mb-ev-body {
@@ -1196,7 +1192,7 @@
 	}
 
 	.mb-ev-title {
-		font: 600 15px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1204,7 +1200,7 @@
 	}
 
 	.mb-ev-time {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
@@ -1236,7 +1232,7 @@
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 	}
 
@@ -1261,7 +1257,7 @@
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 	}
 

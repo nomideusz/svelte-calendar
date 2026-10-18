@@ -1127,7 +1127,7 @@
 	.wg-body::-webkit-scrollbar { width: 4px; }
 	.wg-body::-webkit-scrollbar-thumb {
 		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));
-		border-radius: 4px;
+		border-radius: 0;
 	}
 	.wg-body::-webkit-scrollbar-track { background: transparent; }
 
@@ -1142,17 +1142,16 @@
 	/* ─── Week row ───────────────────────────────────── */
 	.wg-week {
 		display: flex;
-		border-radius: 10px;
+		border-radius: 0;
 		margin: var(--wg-row-margin, 12px) 8px;
-		border: 1.5px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		overflow: hidden;
 	}
 
 	.wg-week--current {
 		background: var(--dt-today-bg, rgba(37, 99, 235, 0.04));
-		/* Border width stays constant (no layout shift); emphasis via box-shadow */
-		border-color: var(--dt-accent, #2563eb);
-		box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
+		/* The current row's frame is a day rule, not the accent */
+		border-color: var(--dt-border-day, rgba(0, 0, 0, 0.3));
 	}
 
 	/* ─── Week body ──────────────────────────────────── */
@@ -1215,21 +1214,18 @@
 
 	.wg-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
 	.wg-cell--drop {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent) !important;
+		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)) !important;
 		box-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);
 	}
-	.wg-cell--today:hover { background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent); }
+	.wg-cell--today:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.04)); }
 
-	/* Dim non-current weeks with a subtle wash + softer header text instead of
-	   a subtree opacity, so event content keeps full contrast everywhere. */
-	.wg-week:not(.wg-week--current) .wg-cell {
-		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);
-	}
+	/* Non-current weeks sit on the same paper; only the header ink softens,
+	   and past events print a shade lighter. */
 	.wg-week:not(.wg-week--current) .wg-day-num {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.wg-week--current .wg-cell--past {
-		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 2.5%, transparent);
+	.wg-cell--past .wg-ev:not(.wg-ev--cancelled) {
+		opacity: 0.78;
 	}
 
 	/* equalDays: when no cells are marked past, all are full brightness */
@@ -1259,7 +1255,7 @@
 		align-items: flex-start;
 		gap: 3px;
 		padding: 2px 4px;
-		border-radius: 3px;
+		border-radius: 0;
 		background: repeating-linear-gradient(
 			-45deg,
 			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),
@@ -1290,7 +1286,7 @@
 		gap: 4px;
 		padding: 3px 7px;
 		margin: 1px 0 2px;
-		border-radius: 999px;
+		border-radius: 0;
 	}
 
 	.wg-day-wd {
@@ -1340,11 +1336,13 @@
 		height: var(--wg-chip-h, 22px);
 		box-sizing: border-box;
 		flex-shrink: 0;
-		border-radius: 3px;
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		border-radius: 0;
+		border: none;
+		background: var(--ev-color);
+		color: var(--dt-btn-text, #fff);
 		cursor: pointer;
 		overflow: hidden;
-		transition: background 0.12s;
+		transition: filter 0.12s;
 		min-height: 18px;
 	}
 
@@ -1353,54 +1351,40 @@
 		z-index: 8;
 		opacity: 0.95;
 		pointer-events: none;
-		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 26%, rgba(0, 0, 0, 0.22));
-		outline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);
 		cursor: grabbing;
 	}
 
 	.wg-ad:hover {
-		background: color-mix(in srgb, var(--ev-color) 32%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
-
-	.wg-ad--start {
-		border-left: 2.5px solid var(--ev-color);
-	}
-
-	.wg-ad--mid {
-		border-radius: 0;
-		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
-	}
-
-	.wg-ad--end:not(.wg-ad--start) {
-		border-radius: 0 3px 3px 0;
-		border-left: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+		filter: brightness(1.08);
 	}
 
 	.wg-ad--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
+	}
+
+	.wg-ad:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
 	.wg-ad-title {
 		font: 500 11px / 1.1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: inherit;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		flex: 1;
 	}
 
-	/* The event colour as ink can be a pale fill (a host's "no colour" tint);
-	   pulled toward the text colour it stays the event's hue and stays legible
-	   on the chip in either theme. */
 	.wg-ad-cont {
 		display: flex;
-		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
+		color: inherit;
 		flex-shrink: 0;
 	}
 
 	.wg-ad-arrow {
 		display: flex;
-		color: color-mix(in srgb, var(--ev-color) 45%, var(--dt-text, #000));
+		color: inherit;
 		flex-shrink: 0;
 		margin-left: auto;
 	}
@@ -1430,18 +1414,21 @@
 	.wg-now::after {
 		content: '';
 		flex: 1;
-		border-top: 1px dashed var(--dt-accent, #2563eb);
+		border-top: 2px solid var(--dt-accent, #2563eb);
 	}
 	.wg-now-time {
 		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-accent, #2563eb);
+		padding: 2px 4px;
+		border-radius: 0;
+		background: var(--dt-accent, #2563eb);
+		color: var(--dt-btn-text, #fff);
 	}
-	/* Where a dragged-in class would land: the now-line's shape, solid */
+	/* Where a dragged-in class would land: the now-line's shape, dashed */
 	.wg-drop {
 		z-index: 3;
 	}
 	.wg-drop::after {
-		border-top-style: solid;
+		border-top-style: dashed;
 	}
 	.wg-drop .wg-now-time {
 		font-weight: 600;
@@ -1456,16 +1443,25 @@
 		height: var(--wg-chip-h, 22px);
 		box-sizing: border-box;
 		flex-shrink: 0;
-		padding: 0 6px;
-		border-radius: 4px;
-		background: color-mix(in srgb, var(--ev-color) 15%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		/* 3px bar + 6px, and 3px on the right: 12px in all (CHIP_PAD_X) */
+		padding: 0 3px 0 9px;
+		border-radius: 0;
+		background: transparent;
 		cursor: pointer;
 		overflow: hidden;
-		transition: background 0.12s;
+		transition: background 0.12s, box-shadow 0.12s;
+	}
+	/* The start bar on the leading edge */
+	.wg-ev::before {
+		content: '';
+		position: absolute;
+		inset: 0 auto 0 0;
+		width: 3px;
+		background: var(--ev-color);
 	}
 
 	.wg-ev:hover {
-		background: color-mix(in srgb, var(--ev-color) 25%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 
 	.wg-ev--drag-preview {
@@ -1475,52 +1471,50 @@
 		z-index: 8;
 		opacity: 0.95;
 		pointer-events: none;
-		background: color-mix(in srgb, var(--ev-color) 28%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
-		outline: 1px solid color-mix(in srgb, var(--ev-color) 42%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 		cursor: grabbing;
 	}
 
 	.wg-ev--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 
 	.wg-ev--current {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
 	}
 
-	.wg-ev--cancelled {
-		opacity: 0.5;
-	}
+	/* Printed states: struck through, grey, or a dashed bar — never a tint */
 	.wg-ev--cancelled .wg-ev-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.wg-ev--tentative {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	.wg-ev--cancelled::before,
+	.wg-ev--full::before {
+		opacity: 0.45;
 	}
-	.wg-ev--full {
-		opacity: 0.55;
+	.wg-ev--tentative .wg-ev-title,
+	.wg-ev--full .wg-ev-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.wg-ev--limited {
-		opacity: 0.65;
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 40%, transparent);
+	.wg-ev--tentative::before,
+	.wg-ev--limited::before {
+		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	.wg-ev--readonly {
 		cursor: default;
 	}
 
-	/* On the tinted chip the tertiary ink fell under 4.5:1; the time is the
-	   chip's first answer, so it reads in the secondary ink. */
 	.wg-ev-time {
-		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		font: 400 14px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
 
 	.wg-ev-title {
-		font: 500 12px / 1.1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 15px / 1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1530,8 +1524,8 @@
 	}
 
 	.wg-ev-loc {
-		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0; /* shown only when measured to fit — never squeezed */
 	}
@@ -1541,7 +1535,7 @@
 		appearance: none;
 		background: none;
 		border: none;
-		border-radius: 3px;
+		border-radius: 0;
 		text-align: left;
 		align-self: flex-start;
 		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
@@ -1568,13 +1562,14 @@
 	}
 
 	.wg-ev:focus-visible {
-		outline: 2px solid var(--ev-color, var(--dt-accent, #2563eb));
-		outline-offset: 1px;
+		outline: none;
+		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 
 	.wg-ev--dragging {
 		cursor: grabbing;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 </style>
 

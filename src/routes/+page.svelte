@@ -5,17 +5,17 @@
 		createMemoryAdapter,
 		createRecurringAdapter,
 		createCompositeAdapter,
-		generatePalette,
 		auto,
 		neutral,
 		presets,
 		addDaysMs,
 	} from "#lib/index.js";
 	import type { PresetName, CalendarLabels } from "#lib/index.js";
+	import Shell from "./_components/Shell.svelte";
 	import Settings from "./_components/Settings.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
 	import type { CalendarView, TimelineEvent } from "#lib/index.js";
-	import { themeStore, demoThemes, boardStore } from "./theme.svelte.js";
+	import { boardStore } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 
 	type SettingValue = string | number | boolean;
@@ -52,16 +52,17 @@
 		return "auto";
 	}
 
-	const calendarHeight = $derived(isMobile ? 500 : 700);
-	const calendarRadius = $derived(isMobile ? 0 : 4);
+	// The calendar fills the main area between the bar and the code drawer.
+	let frameH = $state(0);
+	const calendarHeight = $derived(frameH > 320 ? frameH : (isMobile ? 500 : 700));
 
 	const DEFAULT_SETTINGS: Record<string, SettingValue> = {
 		readOnly: false,
 		mondayStart: true,
-		showModePills: true,
-		showNavigation: true,
+		showModePills: false,
+		showNavigation: false,
 		equalDays: false,
-		activeView: "day-planner",
+		activeView: "week-planner",
 		locale: "en-US",
 		timezone: "",
 		showDates: true,
@@ -83,7 +84,7 @@
 
 	// ── Recipes: one-click prop bundles showing common setups ──
 	const recipes: { name: string; hint: string; values: Record<string, SettingValue> }[] = [
-		{ name: "Default", hint: "Every prop at its default — day planner, editable", values: {} },
+		{ name: "Default", hint: "Week planner, editable; the page draws Today and the arrows in its own bar", values: {} },
 		{
 			name: "Booking page",
 			hint: "Editable week grid with business hours, blocked lunch slots, and disabled dates",
@@ -138,12 +139,11 @@
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
-	const showModePills = $derived(
-		Boolean(settingsValues.showModePills ?? true),
-	);
-	const showNavigation = $derived(
-		Boolean(settingsValues.showNavigation ?? true),
-	);
+	const showModePills = $derived(Boolean(settingsValues.showModePills));
+	const showNavigation = $derived(Boolean(settingsValues.showNavigation));
+	// With neither, the calendar's own header is gone (an empty `header`
+	// snippet) and the page owns Today and the arrows in the bar.
+	const ownHeader = $derived(!showModePills && !showNavigation);
 	const equalDays = $derived(Boolean(settingsValues.equalDays));
 	const showDates = $derived(Boolean(settingsValues.showDates ?? true));
 	const visibleHoursEnabled = $derived(Boolean(settingsValues.visibleHoursEnabled));
@@ -309,15 +309,17 @@
 	let seed = $state<TimelineEvent[]>(createDemoEvents(today));
 	let recurring = $state(createDemoRecurring());
 
-	// ── Adapter (palette adapts to demo theme accent) ─────────
-	// Composite: one-off events (memory) + recurring schedule
-	const accent = $derived(demoThemes[themeStore.current].accent);
-	const palette = $derived(generatePalette(accent));
+	// ── Adapter ────────────────────────────────────────────
+	// Composite: one-off events (memory) + recurring schedule. One-colour
+	// palette: every class is marked in ink (--dt-event); the all-day events
+	// name the accent themselves, so it keeps its three jobs — band, now
+	// line, today.
+	const INK = ["var(--dt-event, var(--dt-accent))"];
 	const adapter = $derived(
 		createCompositeAdapter([
-			createMemoryAdapter(seed, { palette }),
+			createMemoryAdapter(seed, { palette: INK }),
 			// movable: the demo handles the move itself (see handleMove)
-			createRecurringAdapter(recurring, { palette, movable: true }),
+			createRecurringAdapter(recurring, { palette: INK, movable: true }),
 		]),
 	);
 
@@ -377,6 +379,22 @@
 	// Month → day drill-down: clicking a month cell (or "+N more") jumps to
 	// the day planner focused on that date, via the controlled currentDate prop.
 	let focusedDate = $state<Date | undefined>(undefined);
+	// The bar's Today / ‹ › step the controlled date the way the calendar
+	// would: a day, the visible days, or a month (anchored to the 1st).
+	const stepMode = $derived(activeView.startsWith("day") ? "day" : activeView.startsWith("month") ? "month" : "week");
+	// Outside the week, nothing else on the page names the month.
+	const periodLabel = $derived.by(() => {
+		if (stepMode === "week") return "";
+		const d = focusedDate ?? new Date();
+		return new Intl.DateTimeFormat(locale, stepMode === "month" ? { month: "long", year: "numeric" } : { weekday: "long", day: "numeric", month: "long" }).format(d);
+	});
+	function stepDate(dir: 1 | -1) {
+		const d = focusedDate ?? new Date();
+		focusedDate =
+			stepMode === "month"
+				? new Date(d.getFullYear(), d.getMonth() + dir, 1)
+				: new Date(addDaysMs(d.getTime(), dir * (stepMode === "day" ? 1 : days)));
+	}
 	function handleDayClick(date: Date) {
 		focusedDate = date;
 		if (activeView !== "day-planner") {
@@ -403,6 +421,7 @@
 			: undefined,
 	);
 
+	let codeOpen = $state(false);
 	let codeCopied = $state(false);
 	async function copyCode() {
 		try {
@@ -434,6 +453,7 @@
 		if (disabledDatesEnabled) {
 			script.push("  const disabledDates = [/* Date objects to grey out */];");
 		}
+		if (ownHeader) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
 
 		const props: string[] = ["{adapter}", `view="${activeView}"`];
 		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
@@ -442,8 +462,12 @@
 		if (dir === "rtl") props.push(`dir="rtl"`);
 		if (readOnly) props.push("readOnly");
 		if (!mondayStart) props.push("mondayStart={false}");
-		if (!showModePills) props.push("showModePills={false}");
-		if (!showNavigation) props.push("showNavigation={false}");
+		if (ownHeader) {
+			props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
+		} else {
+			if (!showModePills) props.push("showModePills={false}");
+			if (!showNavigation) props.push("showNavigation={false}");
+		}
 		if (equalDays) props.push("equalDays");
 		if (!showDates) props.push("showDates={false}");
 		if (compact) props.push("compact");
@@ -455,94 +479,177 @@
 		if (disabledDatesEnabled) props.push("{disabledDates}");
 
 		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
-		return `<script>\n${script.join("\n")}\n</` + `script>\n\n<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n/>`;
+		const tag = `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n`;
+		const body = ownHeader
+			? `${tag}>\n  <!-- an empty header snippet: no built-in title, pills or arrows -->\n  {#snippet header()}{/snippet}\n</Calendar>`
+			: `${tag}/>`;
+		return `<script>\n${script.join("\n")}\n</` + `script>\n\n${body}`;
 	});
+	// The drawer's collapsed line: the <Calendar> tag on one line.
+	const codeLine = $derived(codeSnippet.slice(codeSnippet.indexOf("<Calendar")).replace(/\s+/g, " "));
 </script>
 
-<main>
-	<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
+{#snippet blankHeader()}{/snippet}
 
-	<div class="setups" role="group" aria-label="Setups">
-		{#each recipes as r (r.name)}
-			<button
-				class="setup"
-				aria-pressed={activeRecipe === r.name}
-				title={r.hint}
-				onclick={() => applyRecipe(r)}
-			>{r.name}</button>
-		{/each}
-	</div>
-
-	<Settings fields={settingsFields} bind:values={settingsValues} status={lastAction}>
-		{#snippet lead()}
-			<div
-				class="drag-source"
-				draggable="true"
-				ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
-				role="button"
-				tabindex="0"
-				aria-label="Vinyasa Flow: drag onto a day in the calendar"
-			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
-		{/snippet}
-	</Settings>
-
-	<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
-		<div class="cal-frame">
-			<!-- timezone is read when the calendar mounts; a new zone remounts it -->
-			{#key timezone}
-				<Calendar
-					{adapter}
-					view={activeView}
-					theme={calendarTheme}
-					autoTheme={autoThemeProp}
-					height={phoneFrame ? 688 : calendarHeight}
-					borderRadius={phoneFrame ? 0 : calendarRadius}
-					currentDate={focusedDate}
-					{readOnly}
-					{mondayStart}
-					{showModePills}
-					{showNavigation}
-					{equalDays}
-					{showDates}
-					{visibleHours}
-					mobile={mobileMode}
-					{days}
-					{compact}
-					{columns}
-					{locale}
-					{labels}
-					{timezone}
-					{dir}
-					{blockedSlots}
-					{disabledDates}
-					onviewchange={handleViewChange}
-					oneventclick={handleClick}
-					onexternaldrop={handleExternalDrop}
-					oneventcreate={handleCreate}
-					oneventmove={handleMove}
-					ondayclick={handleDayClick}
-				/>
-			{/key}
+<Shell>
+	{#snippet bar()}
+		{#if !showNavigation}
+			<div class="pager" role="group" aria-label="Calendar date">
+				{#if periodLabel}<span class="pager-label" role="status" aria-live="polite">{periodLabel}</span>{/if}
+				<button class="pager-today" onclick={() => (focusedDate = new Date())}>Today</button>
+				<button class="pager-btn" onclick={() => stepDate(-1)} aria-label={`Previous ${stepMode}`}>
+					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+				</button>
+				<button class="pager-btn" onclick={() => stepDate(1)} aria-label={`Next ${stepMode}`}>
+					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5" /></svg>
+				</button>
+			</div>
+		{/if}
+	{/snippet}
+	{#snippet rail()}
+		<div class="setups" role="group" aria-label="Setups">
+			{#each recipes as r (r.name)}
+				<button
+					class="setup"
+					aria-pressed={activeRecipe === r.name}
+					title={r.hint}
+					onclick={() => applyRecipe(r)}
+				>{r.name}</button>
+			{/each}
 		</div>
-	</div>
 
-	<section class="code" aria-labelledby="code-title">
-		<header class="code-hd">
-			<h2 id="code-title">This setup in code</h2>
-			<button class="code-copy" onclick={copyCode} aria-live="polite">{codeCopied ? "Copied" : "Copy"}</button>
-		</header>
-		<pre><code>{codeSnippet}</code></pre>
-	</section>
-</main>
+		<Settings fields={settingsFields} bind:values={settingsValues} status={lastAction}>
+			{#snippet lead()}
+				<div
+					class="drag-source"
+					draggable="true"
+					ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
+					role="button"
+					tabindex="0"
+					aria-label="Vinyasa Flow: drag onto a day in the calendar"
+				><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
+			{/snippet}
+		</Settings>
+	{/snippet}
+
+	<main>
+		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
+
+		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
+			<div class="cal-frame" bind:clientHeight={frameH}>
+				<!-- timezone is read when the calendar mounts; a new zone remounts it -->
+				{#key timezone}
+					<Calendar
+						{adapter}
+						view={activeView}
+						theme={calendarTheme}
+						autoTheme={autoThemeProp}
+						height={phoneFrame ? 688 : calendarHeight}
+						borderRadius={0}
+						currentDate={focusedDate}
+						ondatechange={(d) => (focusedDate = d)}
+						header={ownHeader ? blankHeader : undefined}
+						{readOnly}
+						{mondayStart}
+						{showModePills}
+						{showNavigation}
+						{equalDays}
+						{showDates}
+						{visibleHours}
+						mobile={mobileMode}
+						{days}
+						{compact}
+						{columns}
+						{locale}
+						{labels}
+						{timezone}
+						{dir}
+						{blockedSlots}
+						{disabledDates}
+						onviewchange={handleViewChange}
+						oneventclick={handleClick}
+						onexternaldrop={handleExternalDrop}
+						oneventcreate={handleCreate}
+						oneventmove={handleMove}
+						ondayclick={handleDayClick}
+					/>
+				{/key}
+			</div>
+		</div>
+
+		<section class="code" class:code--open={codeOpen} aria-labelledby="code-title">
+			<header class="code-hd">
+				<button class="code-toggle" aria-expanded={codeOpen} aria-controls="code-body" onclick={() => (codeOpen = !codeOpen)}>
+					<h2 id="code-title">This setup in code</h2>
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" /></svg>
+				</button>
+				<button class="code-copy" onclick={copyCode} aria-live="polite">{codeCopied ? "Copied" : "Copy"}</button>
+			</header>
+			{#if codeOpen}
+				<pre id="code-body"><code>{codeSnippet}</code></pre>
+			{:else}
+				<code class="code-line" id="code-body">{codeLine}</code>
+			{/if}
+		</section>
+	</main>
+</Shell>
 
 <style>
 	main {
-		max-width: var(--site-w, 1280px);
-		margin: 0 auto;
-		padding: 0 24px 72px;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		padding: 0 calc(40 * var(--u)) calc(24 * var(--u)) calc(38 * var(--u));
 		color: var(--dt-text, #111);
 	}
 
+	/* ── Bar pager: Today and the arrows, drawn by the page, not the calendar ── */
+	.pager {
+		display: flex;
+		align-items: center;
+		gap: calc(10 * var(--u));
+	}
+	.pager-label {
+		margin-right: calc(18 * var(--u));
+		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		white-space: nowrap;
+	}
+	.pager-today,
+	.pager-btn {
+		height: calc(44 * var(--u));
+		border: 2px solid var(--dt-text, #111);
+		border-radius: calc(6 * var(--u));
+		background: transparent;
+		color: var(--dt-text, #111);
+		cursor: pointer;
+		transition: color 120ms, border-color 120ms;
+	}
+	.pager-today {
+		padding: 0 calc(16 * var(--u));
+		font: 400 calc(22 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
+	}
+	.pager-btn {
+		display: grid;
+		place-items: center;
+		width: calc(44 * var(--u));
+		padding: 0;
+	}
+	.pager-today:hover,
+	.pager-btn:hover {
+		color: var(--dt-accent, #111);
+		border-color: var(--dt-accent, #111);
+	}
+
+	@media (max-width: 1100px) {
+		main {
+			padding: 0 20px 20px;
+		}
+		.cal-frame {
+			min-height: 70vh;
+		}
+	}
 	.sr-only {
 		position: absolute;
 		width: 1px;
@@ -552,49 +659,47 @@
 		white-space: nowrap;
 	}
 
-	/* ── Setups: a row of departure tabs; the chosen one is the ink plate ── */
+	/* ── Setups: a wrapped list; the chosen one over an ink rule ── */
 	.setups {
 		display: flex;
-		gap: 2px;
-		padding: 8px 0 6px;
-		overflow-x: auto;
-		scrollbar-width: none;
+		flex-wrap: wrap;
+		gap: calc(18 * var(--u)) calc(30 * var(--u));
+		padding-bottom: calc(22 * var(--u));
+		margin-bottom: calc(30 * var(--u));
+		border-bottom: 2px solid var(--dt-text, #111);
 	}
 	.setup {
-		flex: none;
-		padding: 8px 12px;
+		padding: 0 0 calc(6 * var(--u));
 		border: none;
-		border-radius: 4px;
+		border-radius: 0;
 		background: transparent;
-		font: 600 14px/1 var(--dt-sans, inherit);
-		letter-spacing: -0.005em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, inherit);
+		color: var(--dt-text, #111);
+		box-shadow: inset 0 -3px 0 transparent;
 		cursor: pointer;
-		transition: color 120ms, background 120ms;
+		transition: color 120ms, box-shadow 120ms;
 	}
 	.setup:hover {
-		color: var(--dt-text, #111);
+		box-shadow: inset 0 -3px 0 var(--dt-border-day, rgba(0, 0, 0, 0.3));
 	}
 	.setup[aria-pressed='true'] {
-		background: var(--dt-text, #111);
-		color: var(--dt-bg, #fff);
+		box-shadow: inset 0 -3px 0 var(--dt-accent, #1d4fd7);
 	}
 	.setup:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
 
-	/* ── External drag source: a class card waiting to be scheduled ── */
+	/* ── External drag source: a class waiting to be scheduled ── */
 	.drag-source {
 		flex: none;
 		display: inline-flex;
 		align-items: center;
-		gap: 8px;
-		height: 30px;
-		padding: 0 10px 0 6px;
-		border: 1px dashed var(--dt-text-3, rgba(0, 0, 0, 0.4));
-		border-radius: 3px;
-		font: 700 12.5px/1 var(--dt-sans, inherit);
+		gap: calc(10 * var(--u));
+		min-height: calc(36 * var(--u));
+		padding: 0 calc(12 * var(--u)) 0 calc(8 * var(--u));
+		border: 1px dashed var(--dt-text-3, rgba(0, 0, 0, 0.5));
+		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, inherit);
 		color: var(--dt-text, #111);
 		cursor: grab;
 		user-select: none;
@@ -613,87 +718,108 @@
 		opacity: 0.6;
 	}
 	.drag-hint {
-		font-weight: 500;
+		font-weight: 400;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
 	}
 
 	.cal-stage {
-		margin-top: 12px;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+	.cal-frame {
+		flex: 1;
+		min-height: 0;
 	}
 	.cal-stage--phone {
-		display: flex;
+		align-items: center;
 		justify-content: center;
-		padding: 12px 0;
+		padding: calc(12 * var(--u)) 0;
 	}
 	.cal-stage--phone .cal-frame {
+		flex: none;
 		width: 390px;
 		max-width: 100%;
-		border: 8px solid var(--board, #111);
+		border: 8px solid var(--dt-text, #111);
 		border-radius: 28px;
 		overflow: hidden;
 	}
 
-	/* ── Code: printed on the board, the same enamel as the header ── */
+	/* ── Code: a drawer pinned under the week, hairline-ruled ── */
 	.code {
-		margin-top: 32px;
-		border-radius: 4px;
-		background: var(--board, #111);
-		color: var(--board-ink, #f5f5f3);
-		overflow: hidden;
+		margin-top: calc(22 * var(--u));
+		border: 2px solid var(--dt-text, #111);
 	}
 	.code-hd {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		padding: 12px 12px 12px 18px;
-		border-bottom: 1px solid var(--board-rule, rgba(255, 255, 255, 0.16));
+		padding: calc(14 * var(--u)) calc(14 * var(--u)) calc(6 * var(--u)) calc(22 * var(--u));
+	}
+	.code-toggle {
+		display: flex;
+		align-items: center;
+		gap: calc(12 * var(--u));
+		padding: 0;
+		border: none;
+		background: none;
+		color: inherit;
+		cursor: pointer;
+	}
+	.code-toggle[aria-expanded='true'] svg {
+		transform: rotate(180deg);
+	}
+	.code-toggle:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 4px;
 	}
 	.code-hd h2 {
 		margin: 0;
-		font: 700 15px/1 var(--dt-sans, inherit);
+		font: 400 calc(26 * var(--u)) / 1 var(--dt-sans, inherit);
 		letter-spacing: -0.01em;
 	}
 	.code-copy {
-		min-width: 64px;
-		padding: 7px 10px;
-		border: none;
-		border-radius: 2px;
-		background: var(--board-ink, #f5f5f3);
-		color: var(--board, #111);
-		font: 700 11px/1 var(--dt-sans, inherit);
+		padding: calc(8 * var(--u)) calc(14 * var(--u));
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		border-radius: 0;
+		background: transparent;
+		color: inherit;
+		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, inherit);
 		cursor: pointer;
 	}
+	.code-copy:hover {
+		border-color: var(--dt-text, #111);
+	}
 	.code-copy:focus-visible {
-		outline: 2px solid var(--board-ink, #f5f5f3);
+		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
+	}
+	.code-line {
+		display: block;
+		padding: 0 calc(22 * var(--u)) calc(16 * var(--u));
+		overflow-x: auto;
+		white-space: nowrap;
+		font: 400 calc(17 * var(--u)) / 1.5 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		scrollbar-width: none;
 	}
 	.code pre {
 		margin: 0;
-		padding: 16px 18px 20px;
-		overflow-x: auto;
-		font: 400 13px/1.6 var(--dt-mono, ui-monospace, monospace);
-		color: var(--board-ink, #f5f5f3);
-		scrollbar-color: var(--board-rule, rgba(255, 255, 255, 0.16)) transparent;
-	}
-	.code pre::selection,
-	.code pre :global(*::selection) {
-		background: var(--board-ink, #f5f5f3);
-		color: var(--board, #111);
+		max-height: 44vh;
+		padding: calc(6 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u));
+		overflow: auto;
+		font: 400 13px / 1.6 var(--dt-mono, ui-monospace, monospace);
+		color: var(--dt-text, #111);
+		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.18)) transparent;
 	}
 
-	@media (max-width: 700px) {
-		main {
-			padding: 0 16px 48px;
-		}
-		.cal-stage:not(.cal-stage--phone) {
-			margin-inline: -16px;
-		}
-		.drag-hint {
-			display: none;
-		}
-		.code {
-			margin-inline: -16px;
+	/* On a phone the 390px frame is the screen itself. */
+	@media (max-width: 640px) {
+		.cal-stage--phone .cal-frame {
+			width: 100%;
+			border-width: 0;
 			border-radius: 0;
 		}
 	}

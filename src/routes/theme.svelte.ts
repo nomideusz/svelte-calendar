@@ -94,11 +94,13 @@ export interface DemoTheme {
 	dark: boolean;
 	stageBg: string;
 	accent: string;
+	/** Printed on the engraving-paper plate (the package's neutral look) */
+	paper?: boolean;
 }
 
 export const demoThemes: Record<DemoThemeName, DemoTheme> = {
 	slate:    { label: 'Slate',    vars: slate,    dark: true,  stageBg: '#0c0f17', accent: '#8b5cf6' },
-	light:     { label: 'Light',     vars: neutral,  dark: false, stageBg: '#ffffff', accent: '#2563eb' },
+	light:    { label: 'Paper',    vars: neutral,  dark: false, stageBg: '#efebe9', accent: '#1d4fd7', paper: true },
 
 	forest:   { label: 'Forest',   vars: forest,    dark: true,  stageBg: '#060d09', accent: '#10b981' },
 	ocean:    { label: 'Ocean',    vars: ocean,     dark: false, stageBg: '#f0f7ff', accent: '#0891b2' },

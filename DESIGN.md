@@ -1,252 +1,351 @@
 ---
 name: svelte-calendar
-description: Fahrplan — a Swiss railway timetable for the demo board and the calendar's default look.
+description: Stendig on paper — a wall calendar printed on engraving paper; dates and hours are the typography, events are ink on a rule, the host's accent is the only colour.
 colors:
-  board: "#111111"
-  board-ink: "#f5f5f3"
-  board-dim: "rgba(245, 245, 243, 0.64)"
-  board-rule: "rgba(245, 245, 243, 0.16)"
-  signal: "#eb0000"
-  page-white: "#ffffff"
-  neutral-text: "rgba(0, 0, 0, 0.87)"
-  neutral-text-2: "rgba(0, 0, 0, 0.54)"
-  neutral-text-3: "rgba(0, 0, 0, 0.38)"
-  neutral-border: "rgba(0, 0, 0, 0.08)"
-  neutral-border-day: "rgba(0, 0, 0, 0.14)"
-  neutral-accent: "#2563eb"
+  paper: "#efebe9"
+  paper-surface: "#f4f1ee"
+  ink: "#0f0f0f"
+  ink-2: "rgba(15, 15, 15, 0.66)"
+  ink-3: "rgba(15, 15, 15, 0.54)"
+  rule: "rgba(15, 15, 15, 0.3)"
+  rule-day: "rgba(15, 15, 15, 0.6)"
+  weekend-wash: "rgba(15, 15, 15, 0.035)"
+  hover-wash: "rgba(15, 15, 15, 0.05)"
+  accent: "#1d4fd7"
+  accent-text: "#ffffff"
+  midnight-bg: "#0b0e14"
+  midnight-surface: "#10141c"
+  midnight-ink: "rgba(226, 232, 240, 0.85)"
+  midnight-rule: "rgba(148, 163, 184, 0.07)"
+  midnight-rule-day: "rgba(148, 163, 184, 0.14)"
+  midnight-accent: "#ef4444"
 typography:
-  board-mark:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "22px"
-    fontWeight: 800
+  wordmark:
+    fontFamily: "Encode Sans, system-ui, sans-serif"
+    fontSize: "calc(54 * var(--u))"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "-0.025em"
+    fontVariation: "'wdth' 92"
+  day-number:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "40px"
+    fontWeight: 400
     lineHeight: 1
     letterSpacing: "-0.02em"
-    fontVariation: "'wdth' 88"
-  board-clock:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "26px"
-    fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "-0.01em"
-    fontFeature: "'tnum'"
-    fontVariation: "'wdth' 88"
+    fontVariation: "'wdth' 90"
   gutter-hour:
     fontFamily: "var(--dt-sans, system-ui, sans-serif)"
-    fontSize: "17px"
-    fontWeight: 700
+    fontSize: "26px"
+    fontWeight: 400
     lineHeight: 1
     letterSpacing: "-0.02em"
     fontFeature: "'tnum'"
-    fontVariation: "'wdth' 90"
+    fontVariation: "'wdth' 85"
   gutter-suffix:
     fontFamily: "var(--dt-sans, system-ui, sans-serif)"
     fontSize: "10px"
-    fontWeight: 600
+    fontWeight: 500
     lineHeight: 1
-  day-number:
-    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
-    fontSize: "18px"
-    fontWeight: 700
-    lineHeight: 1
-    letterSpacing: "-0.02em"
-    fontFeature: "'tnum'"
-  title:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "15px"
-    fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "-0.01em"
-  body:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 600
-    lineHeight: 1
-    fontFeature: "'tnum'"
-  event-time:
+  weekday:
     fontFamily: "var(--dt-sans, system-ui, sans-serif)"
     fontSize: "12px"
     fontWeight: 500
-    lineHeight: 1.15
-    fontFeature: "'tnum'"
-  prop-name:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "11.5px"
-    fontWeight: 500
     lineHeight: 1
+    letterSpacing: "0.08em"
+  control:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "calc(24 * var(--u))"
+    fontWeight: 400
+    lineHeight: 1
+  control-sm:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "calc(22 * var(--u))"
+    fontWeight: 400
+    lineHeight: 1.2
+  clock:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "calc(28 * var(--u))"
+    fontWeight: 400
+    lineHeight: 1
+    fontFeature: "'tnum'"
+  event-title:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "15px"
+    fontWeight: 500
+    lineHeight: 1.25
+  event-time:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.2
+    fontFeature: "'tnum'"
+  event-meta:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "12.5px"
+    fontWeight: 400
+    lineHeight: 1.2
+  allday:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "13.5px"
+    fontWeight: 500
+    lineHeight: 1.2
+  now-plate:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "11px"
+    fontWeight: 500
+    lineHeight: 1.2
+    fontFeature: "'tnum'"
   code:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontFamily: "var(--dt-mono, ui-monospace, monospace)"
     fontSize: "13px"
     fontWeight: 400
     lineHeight: 1.6
+  docs-h2:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "26px"
+    fontWeight: 500
+    lineHeight: 1.25
+  docs-body:
+    fontFamily: "var(--dt-sans, system-ui, sans-serif)"
+    fontSize: "16px"
+    fontWeight: 400
+    lineHeight: 1.55
 rounded:
-  key: "2px"
-  event: "3px"
-  plate: "4px"
+  none: "0"
+  control: "calc(6 * var(--u))"
+  swatch: "calc(5 * var(--u))"
+  install: "calc(8 * var(--u))"
+  switch: "calc(22 * var(--u))"
   phone: "28px"
 spacing:
-  hair: "2px"
-  xs: "8px"
-  sm: "12px"
-  md: "18px"
-  lg: "24px"
-  xl: "32px"
+  u: "clamp(0.7px, calc(100vw / 1872), 1px)"
+  rail-w: "calc(562 * var(--u))"
+  bar-h: "calc(74 * var(--u))"
+  rail-pad: "calc(34 * var(--u)) calc(40 * var(--u)) calc(32 * var(--u))"
+  main-pad: "0 calc(40 * var(--u)) calc(24 * var(--u)) calc(38 * var(--u))"
+  select-gap: "calc(22 * var(--u))"
+  toggle-gap: "calc(10 * var(--u)) calc(20 * var(--u))"
+  gutter-w: "60px"
+  hour-h: "64px"
 components:
-  board-bar:
-    backgroundColor: "{colors.board}"
-    textColor: "{colors.board-ink}"
-    height: "64px"
-    padding: "0 24px"
-  board-key:
-    backgroundColor: "{colors.board-ink}"
-    textColor: "{colors.board}"
-    rounded: "{rounded.key}"
-    padding: "7px 10px"
-  setup-tab:
-    textColor: "{colors.neutral-text-2}"
-    rounded: "{rounded.plate}"
-    padding: "8px 12px"
-    typography: "{typography.body}"
-  setup-tab-selected:
-    backgroundColor: "{colors.neutral-text}"
-    textColor: "{colors.page-white}"
-    rounded: "{rounded.plate}"
-  prop-chip:
-    rounded: "{rounded.plate}"
-    height: "28px"
-    padding: "0 10px 0 8px"
-  prop-chip-on:
-    backgroundColor: "{colors.neutral-text}"
-    textColor: "{colors.page-white}"
-    rounded: "{rounded.plate}"
-  view-pill-active:
-    backgroundColor: "{colors.neutral-text}"
-    textColor: "{colors.page-white}"
-    rounded: "{rounded.plate}"
-    padding: "6px 12px"
-  now-plate:
-    backgroundColor: "{colors.neutral-accent}"
-    textColor: "{colors.page-white}"
-    rounded: "{rounded.event}"
-    padding: "2px 4px"
-  code-panel:
-    backgroundColor: "{colors.board}"
-    textColor: "{colors.board-ink}"
-    rounded: "{rounded.plate}"
+  button-frame:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    height: "calc(44 * var(--u))"
+    padding: "0 calc(16 * var(--u))"
+    typography: "{typography.control-sm}"
+  button-frame-hover:
+    textColor: "{colors.accent}"
+  select:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    height: "calc(50 * var(--u))"
+    padding: "0 calc(40 * var(--u)) 0 calc(16 * var(--u))"
+    typography: "{typography.control-sm}"
+  switch:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.switch}"
+    height: "calc(40 * var(--u))"
+    padding: "0 calc(8 * var(--u)) 0 calc(16 * var(--u))"
+  switch-on:
+    textColor: "{colors.accent}"
+    rounded: "{rounded.switch}"
+  setup:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.none}"
+    padding: "0 0 calc(6 * var(--u))"
+    typography: "{typography.control}"
+  host-swatch:
+    rounded: "{rounded.swatch}"
+    width: "calc(62 * var(--u))"
+    height: "calc(74 * var(--u))"
+  install:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.install}"
+    height: "calc(52 * var(--u))"
+    padding: "0 calc(6 * var(--u)) 0 calc(14 * var(--u))"
+  code-drawer:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.none}"
     typography: "{typography.code}"
+  event:
+    textColor: "{colors.ink}"
+    rounded: "{rounded.none}"
+    padding: "3px 7px"
+    typography: "{typography.event-title}"
+  allday-band:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.accent-text}"
+    rounded: "{rounded.none}"
+    height: "36px"
+    padding: "0 10px"
+    typography: "{typography.allday}"
+  now-plate:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.accent-text}"
+    rounded: "{rounded.none}"
+    padding: "2px 4px"
+    typography: "{typography.now-plate}"
 ---
 
 # Design System: svelte-calendar
 
 ## Overview
 
-**Creative North Star: "Fahrplan"**
+**Creative North Star: "Stendig on paper"**
 
-A Swiss railway timetable and departure board. The demo site is a black enamel board over a stage that belongs to someone else: the board carries the wordmark, navigation, install line and a live clock; everything below it is the simulated host page, coloured only through `--dt-*` tokens from `src/routes/theme.svelte.ts`. The demo has no stage colour of its own.
+A wall calendar printed on good paper. Lineage: Vignelli's Stendig calendar (the numerals are the design) crossed with engraved score paper (ruled lines, one coloured beam). The date numbers in the headers and the hour numerals in the gutter are the typography of the page; events are text set on a rule with a short bar at their start; the host page's accent is the only colour and it does three jobs. Everything else is black ink and one mid grey on warm white engraving paper with a visible grain, a raster plate (`assets/plates/paper.png`) and never CSS noise.
 
-The system has two layers, recorded separately. **Demo layer** (`src/routes/+layout.svelte`, `+page.svelte`, `_components/Settings.svelte`): board tokens, Archivo, JetBrains Mono for prop names and code. **Calendar layer** (`src/lib/**`): themed only through the `--dt-*` contract; its defaults read like a timetable: bold hour numerals in the gutter, a reversed plate for now, an accent underline for today.
+The system has two layers. The **calendar** (`src/lib/**`) is themed only through the `--dt-*` contract; its `neutral` preset is this paper, its `midnight` preset is the same drawing in light ink on charcoal, and `auto` derives the same ratios from the host page. The **demo chrome** (`src/routes/**`) sits on the same paper: a left rail of controls drawn in 2px ink frames, a thin bar, and a code drawer. The chrome has no colour of its own; when a host swatch changes the page, the band, the now line and today take the host's colour and the paper stays.
 
-Rank comes from weight and reversal, never from colour. Selection is always an ink plate, meaning the text colour becomes the fill and the background colour becomes the text.
+Stendig's discipline without its shout: one grotesque at regular weight, no black weights, no poster sizes, nothing reversed except the all-day band and the now plate.
 
 **Key Characteristics:**
-- Black enamel board (#111) with white type; signal red only for the live clock dot, the info line's live dot and the active nav underline.
-- Archivo grotesque in two widths (variable wdth 62–125, used at 88–90% for the wordmark, clock and gutter numerals), with tabular numerals everywhere.
-- Hairline rules and 3–4px corners; flat, with no shadows.
-- Selected state = ink plate, the same in the props strip, setups, view pills and toggle chips.
-- The calendar's accent is reserved for now and today.
+- Black ink (#0f0f0f) and one mid grey on warm paper (#efebe9) with a raster grain under every opaque calendar surface.
+- Encode Sans at 400 for everything, 500 for titles, narrowed for numerals; tabular figures for every time.
+- Big numerals: day numbers 40px, gutter hours 26px, about three times the text.
+- Events are ink text on a hairline with a 3px start bar; no fills, no cards, no shadows.
+- One accent, three jobs: the all-day band, the now line, today's number.
+- Rules are drawn, not hinted: 2px ink frames in the chrome, visible hairlines in the grid.
 
 ## Colors
 
-The board is monochrome enamel with one signal red. The calendar has no fixed palette: every colour arrives through `--dt-*`, and the `neutral` preset values below are only its light fallback.
+Monochrome ink on paper, one host accent; the dark presets keep the same roles in light ink on charcoal.
 
 ### Primary
-- **Enamel Black** (board): the board bar, the code panel and the phone-frame bezel.
-- **Board White** (board-ink): all type on the board, and the fill of board keys (copy buttons).
-
-### Secondary
-- **Signal Red** (signal): the live clock dot, the props strip's live dot and the 2px underline under the current nav item. Nothing else.
+- **Host Accent** (accent): the all-day band fill, the 2px now line with its dot and reversed clock plate, today's weekday and number, and in the chrome the ON state of a switch, the underline of the chosen setup, the pressed host swatch's border and the hover colour of Today ‹ ›. `neutral` reads it from `--asini-accent`, else blue; `auto` probes the host page and raises saturation to at least 0.5 for legibility.
+- **Accent Text** (accent-text): the only text on an accent fill (band title, now plate). `auto` flips it to dark when the accent is light.
 
 ### Neutral
-- **Board Dim** (board-dim): inactive nav links, the host label and the timezone line on the board.
-- **Board Rule** (board-rule): hairlines and outlines on the board.
-- **Calendar defaults** (neutral-text, neutral-text-2/3, neutral-border, neutral-border-day, neutral-accent): the `neutral` preset in `src/lib/theme/presets.ts`. Hosts override them with `--dt-bg`, `--dt-surface`, `--dt-text`, `--dt-text-2`, `--dt-text-3`, `--dt-border`, `--dt-border-day`, `--dt-accent`, `--dt-btn-text` and the rest of the contract.
+- **Paper** (paper): the page and every opaque calendar surface, with the grain plate over it via `--dt-paper` on the Paper host.
+- **Paper Surface** (paper-surface): `--dt-surface`, the drag-time plate behind the gutter's time readout.
+- **Ink** (ink): all text, the 2px frames, 2px section rules, the wordmark, focus outlines, event titles and times, and the default event bar (`--dt-event: var(--dt-text)`).
+- **Ink 2** (ink-2): nav links at rest, the clock zone, the info line, tentative and full event titles, the gutter suffix, the switch's border when off.
+- **Ink 3** (ink-3): the all-day gutter label and the dashed border of the drag source.
+- **Rule** (rule): hour lines, column separators and the header's bottom rule (`--dt-border`). Half-hour lines are the same rule at 0.4 opacity.
+- **Rule Day** (rule-day): the rail's right hairline, the bar's bottom hairline, select-value hairlines and the gutter tick (`--dt-border-day`).
+- **Weekend Wash / Hover Wash** (weekend-wash, hover-wash): the weekend column tint and the event hover ground; past days take a 4% ink wash.
+- **Midnight** (midnight-bg, midnight-surface, midnight-ink, midnight-rule, midnight-rule-day, midnight-accent): the package's dark preset; charcoal, light ink, red accent.
 
 ### Named Rules
-**The One Signal Rule.** On the board, red marks only what is live or current: the clock dot, the live dot and the active nav underline. Red is never used for decoration, a button or a heading.
+**The Three Jobs Rule.** `--dt-accent` marks the all-day band, the now line and today's number. Selection, hover and rank never use it; in the chrome it may also say ON and underline the chosen setup, nothing more.
 
-**The Borrowed Stage Rule.** Below the board, every colour is a `--dt-*` token. The demo never paints the stage itself, because adapting to the host is the claim it has to show.
+**The Ink Event Rule.** An event's colour key is its 3px start bar; the text is ink. Per-event colours tint only the bar (and the all-day band). No fill behind a timed event, ever.
 
-**The Reserved Accent Rule.** In the calendar, `--dt-accent` marks now (the reversed clock plate and its 2px line) and today (an accent numeral on a 2px underline). Selection uses the ink plate and never the accent.
-
-**The Token Contract Rule.** `--dt-*` names are public API. Never rename or remove one. A new default look ships as new values only.
+**The Token Contract Rule.** `--dt-*` names are public API. Never rename or remove one; a new look ships as new values only.
 
 ## Typography
 
-**Display/Body Font:** Archivo (variable, wdth 62–125, wght 400–800), with system-ui as the fallback. The calendar uses `--dt-sans`.
-**Mono Font:** JetBrains Mono, for prop names, the install command and the code panel only.
+**Display/Body Font:** Encode Sans (variable, wdth 75–125, wght 100–900, from Google Fonts), with system-ui as the fallback; the calendar reads it as `--dt-sans`, so a host that sets `--dt-sans` or is probed by `auto` swaps the face.
+**Mono Font:** JetBrains Mono (400, 500), `--dt-mono`; only for the install command, the markup line and code blocks.
 
-**Character:** A railway grotesque at heavy weights for figures you read from across a platform, and a monospace that appears only where the text is literally code.
+**Character:** One grotesque at regular weight, narrowed where it becomes a numeral. Rank comes from size and ink, not from weight: the biggest figures on the page are the dates and hours at 400.
 
 ### Hierarchy
-- **Board mark / clock** (800, 22px / 26px, condensed to 88%): the wordmark and the live HH:MM.
-- **Gutter hour** (700, 17px, condensed to 90%, tabular): the hour numeral, with a raised suffix (600, 10px, `--dt-text-2`) of `00` in 24h locales and `am`/`pm` in 12h locales, from `fmtHParts`. On mobile the numeral is 15px and the suffix 9px.
-- **Day number** (700, 18px): the date in planner headers.
-- **Title** (700, 15px): select values in the props strip and the code panel heading.
-- **Body / control** (600, 14px): nav links and setup tabs.
-- **Event** (12px; time at 500, title at 700): time and title share one size, and weight alone ranks them.
-- **Prop name** (mono 500, 11.5–12px): the label over each select and the text on toggle chips.
+- **Wordmark** (600, 54u, stretch 92%, −0.025em): `svelte-calendar` at the top of the rail; the one semibold on the page.
+- **Day number** (400, 40px, stretch 90%, −0.02em): the date in every planner header; today's is accent, the rest ink. Above it the **weekday** (500, 12px, 0.08em, uppercase, ink-2).
+- **Gutter hour** (400, 26px, stretch 85%, tabular): the hour numeral, with a raised **suffix** (500, 10px, ink-2) of `am`/`pm` or `00`, then a 1px tick in rule-day to the first day line. A numeral the now plate would cover is hidden.
+- **Control** (400, 24u / 22u): nav links, setups, the pager label and Today, select names and values, the clock zone. The **clock** is 28u tabular.
+- **Event title** (500, 15px/1.25), **event time** (400, 14px/1.2, tabular), **event meta** (400, 12.5px): title first, time under it, location third; one family, ranked by weight only.
+- **All-day title** (500, 13.5px) on the band; **now plate** (500, 11px, tabular) reversed on the accent.
+- **Code** (mono 400, 13px/1.6 in blocks; 17–18u on the install and markup lines).
+- **Docs** (h1 500 36px, h2 500 26px over a 2px ink rule, body 16px/1.55, lede 19px/1.45, table heads 500 12px uppercase).
 
 ### Named Rules
-**The Tabular Rule.** Every time and date figure uses tabular numerals in the sans face. The calendar uses no mono for times.
+**The Tabular Rule.** Every time and date figure sets tabular numerals in the sans; the calendar never uses mono for times.
 
-**The Code-Only Mono Rule.** JetBrains Mono appears only where the text is a prop name, a command or markup.
+**The Regular Weight Rule.** Text is 400; a title or a label that must stand out is 500; nothing above 600, and 600 only on the wordmark.
 
 ## Layout
 
-The site is a 1280px column (`--site-w`) with 24px gutters (16px under 700px). The board bar is 64px tall and spans the full width, with its contents held in that column. Under it runs a ruled props strip: a 2px `--dt-text` top rule, 1px `--dt-border-day` row rules, and selects split by vertical hairlines like timetable columns, then a row of toggle chips and a one-line info row. The calendar sits at full content width; under 700px it bleeds to the screen edges, and the props collapse behind a 44px toggle. The code panel sits 32px below the calendar. Spacing steps are 2/8/12/18/24/32px; gaps of 2px separate the tabs within a row.
+The page is drawn at a 1872px comp and scales with one unit: `--u = clamp(0.7px, 100vw / 1872, 1px)`. Every chrome measure is `N * var(--u)`; the calendar's own measures stay in px (gutter 60px, hour row 64px, column minimum 110px) because hosts embed it at their own size.
+
+Desktop (above 1100px): a two-column grid, a sticky 562u rail on the left with the paper and one rule-day hairline on its right, the main column beside it. The rail is padded 34u/40u/32u and stacks: wordmark (36u below it), the page's controls (setups over a 2px ink rule, then selects at 22u gaps, toggles in two columns at 10u×20u, ranges, the info line), then a foot over a 2px ink rule with the five host swatches spaced across a 2px-ruled row and the install line. The main column opens with a 74u bar (nav left at 44u gaps; Today ‹ › and the clock right at 40u gaps) under a rule-day hairline, then the page padded 40u/38u. The calendar fills the remaining height; the code drawer sits 22u under it, pinned to the bottom edge.
+
+At or below 1100px the rail folds above the page (static, 24px/20px padding, a 2px ink rule beneath), its foot becomes a wrapping row, and the bar wraps at 10px/20px. At or below 640px the main column comes first and the rail follows under a 2px ink rule; the wordmark drops to 40px, swatches to 44×52px, the install line fills the width. The 390px phone preview is an 8px ink bezel with 28px corners on desktop and the screen itself on a phone.
 
 ## Elevation & Depth
 
-Flat. Depth comes from reversal (board on page, ink plate on ground) and from hairline rules, never from shadow. The only `box-shadow` in the new defaults is an inset 2px line under today's numeral, which works as an underline and not as elevation.
+Flat. The page is one sheet of paper; depth is drawn as rules and reversal, never as shadow. There is no shadow at rest anywhere in the chrome or the calendar. A pressed host swatch adds a 1px accent ring (`0 0 0 1px` box-shadow) outside its 2px border, which is an outline, not a lift. The only lifts are transient: an event being resized (`0 4px 20px rgba(0,0,0,0.25)`) and the move ghost, which vanish on release.
+
+### Named Rules
+**The Drawn Rule Rule.** Structure is a visible line: 2px ink for frames and section rules in the chrome, 1px rule (0.3 ink) for the grid, 1px rule-day (0.6 ink) for the rail, bar and gutter ticks. Nothing is implied by a background shift alone.
 
 ## Shapes
 
-Corners are small and square-cut: 4px for plates, chips, pills and the code panel; 3px for event blocks, the now plate and swatches; 2px for board keys and focus corners. Circles appear only in the live dots. The phone-preview bezel is the one round form (28px, with an 8px board border).
+The calendar is square-cut: 0 radius on events, the all-day band, the now plate, headers and the ghost. Demo controls keep small, consistent corners: 6u on framed buttons and selects, 5u on host swatches, 8u on the install line, and the switch is a 22u pill with a 13u track and a round 20u knob. Circles exist only as dots: the now dot (8px), the live dot (7px), the month chip dot (7px) and the switch knob. Frames are 2px ink; the drag source is a 1px dashed ink-3 box; the tentative bar is a dashed 4/3 pattern of the event colour.
 
 ## Components
 
-### Board bar
-Enamel bar 64px tall. Nav links are 600 14px in board-dim; the current one turns board-ink with a 2px signal underline. Host swatches are 24px squares split diagonally into the host ground and a corner flag of its accent; the pressed one gets a 2px board-ink outline. The install button is a hairline box with mono text and a board key. The clock is right-aligned, with the zone line and red dot below it.
+### Button frame (Today, ‹ ›)
+- **Shape:** 2px ink border, 6u corners, 44u tall; the arrows are 44u squares.
+- **Default:** transparent, ink text at 22u.
+- **Hover / Focus:** text and border turn accent (120ms); focus is a 2px ink outline offset 2px.
 
-### Ink plate (selected state)
-`--dt-text` fill with `--dt-bg` text. Setup tabs, toggle chips with a filled 9px box, the calendar's active view pill and the mobile view pill all use it. Hover darkens the text or the border and never adds a fill. Focus is a 2px `--dt-text` outline offset by 2px.
+### Install line and Copy
+A 2px ink frame with 8u corners, 52u tall, mono command at 18u on the left and a nested 2px ink key (6u corners, 500 17u) reading Copy, then Copied for 1.6s.
 
-### Props strip
-Selects show the prop name in mono over its value in bold sans, with a chevron data-SVG and no box. Ranges and chips use 1px rule boxes at 28px height (36px on mobile). Disabled controls drop to 0.38 opacity.
+### Setups
+A wrapped list of plain 24u labels over a 2px ink rule. Hover draws a 3px rule-day underline inset; the chosen one carries a 3px accent underline. No fill, no pill.
 
-### Timetable gutter (calendar)
-Bold hour numerals with a raised small suffix. An hour label that the now plate would half-cover is hidden. The gutter is 52px wide.
+### Selects (prop playground)
+The prop name (400 22u, ink) on a 108u column, the value in a 2px ink frame with 6u corners, 50u tall, 16u left padding, a 24u chevron SVG at the right. Hover keeps the ink border; focus is a 2px ink outline offset 2px. Disabled drops to 0.4 opacity.
 
-### Now and today (calendar)
-Now is the HH:MM on a reversed plate (`--dt-accent` fill, `--dt-btn-text` text, 700 10px) on a solid 2px accent line. Today is the accent numeral on a 2px underline. Every view uses that one mark; there are no discs or pills.
+### Switches (prop toggles)
+A 22u pill, 40u tall, bordered 2px ink-2 with the prop name at 19u and a 44×26u track on the right (18% ink), knob in paper. ON: border, label and track turn accent and the knob (white) slides 18u (140ms). Two columns in the rail.
+
+### Host swatches
+Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms).
+
+### Code drawer
+A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 180° when open, Copy as a 1px rule-day box with 0 radius, the markup as one scrolling mono line (17u, ink-2) and the full code at mono 13px/1.6 within 44vh when expanded.
 
 ### Event block (calendar)
-Event blocks have 3px corners, a fill of 14% `--ev-color` mixed into the surface, and a 3px left stripe of `--ev-color` as the colour key. Tentative events are dashed and cancelled ones fade. In narrow overlap columns a container query drops the end time.
+- **Shape:** 0 radius, transparent, a 3px start bar in `--ev-color` (the event's colour, else `--dt-event`, else the accent), body padded 3px 7px, min height 24px; a narrow overlap column drops the end time; a short block gets a 44px hit-slop.
+- **Normal:** title 500 15px, time 400 14px tabular, location 12.5px, all ink.
+- **Past:** 0.78 opacity; the day column behind it takes a 4% ink wash.
+- **Cancelled:** title struck through in ink-2, bar at 0.45; the block stays on the grid.
+- **Tentative / limited:** title in ink-2, bar dashed (4px on, 3px off).
+- **Full:** title in ink-2, bar at 0.45.
+- **Current:** `--dt-accent-dim` wash (12% accent).
+- **Hover:** hover-wash ground; the resize grips appear at 0.55.
+- **Selected:** a 1px inset ring in the event colour.
+- **Focus:** a 2px accent box-shadow ring (outline would be clipped).
+- **Moving:** origin at 0.3; the ghost is a 12% event-colour tint with a 1px outline.
 
-### Code panel
-Board enamel with 4px corners, a hairline under the 700 15px heading, a board key for copy, and mono 13px/1.6 for the code. It goes edge to edge on mobile.
+### All-day band (calendar)
+Solid `--ev-color` (the accent by default) with accent-text, 36px tall, 0 radius, title 500 13.5px; a span is one continuous band across its days. Selected is a 2px inset ring in accent-text; cancelled fades the fill 55% into the paper and strikes the title; hover brightens 8%.
+
+### Now and today (calendar)
+Now is a 2px accent line across the grid with an 8px dot at the gutter edge and the HH:MM on a reversed accent plate (500 11px, 0 radius) in the gutter. Today is the weekday and the day number in accent, with a 4% accent wash down its column. The same marks serve every view; the month grid underlines today's number in 2px accent.
+
+### Grid (calendar)
+Hour lines in rule, half-hours at 0.4 opacity, columns split by rule, the sticky header and gutter paint paper (with the grain plate when `--dt-paper` is set) so they cover what scrolls under. Weekend columns take the weekend wash, disabled days a 45° hatch of rule, blocked slots a −45° hatch of 4% ink with a 500 10px uppercase label in ink-3.
+
+### Hosts
+A dark host keeps every rule: light ink at 0.85 on charcoal, rules at 0.07/0.14, the accent doing the band, the now line and today, event text in ink. The paper plate is the Paper host's only; other hosts set `--dt-paper: none`. `auto` derives border alphas 0.3/0.6 (light) or 0.16/0.32 (dark), text-2 at 0.66/0.62, and keeps the accent legible against the probed ground.
+
+### Motion
+The bar clock flips its minute: the new HH:MM flies in from 8px above over 260ms. Switches slide their knob in 140ms, frames recolour in 120ms, the body ground crossfades 300ms on a host change, the live dot pulses 2s. Every transition and the pulse are off under `prefers-reduced-motion`, and the clock flip runs at 0ms.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** mark every selected state with the ink plate (`--dt-text` fill, `--dt-bg` text).
-- **Do** set every time and date figure in the sans face with tabular numerals.
-- **Do** keep `--dt-accent` for now and today only.
-- **Do** colour everything below the board through `--dt-*` tokens, with hex values only in preset and demo-theme definitions.
-- **Do** keep the event stripe as the event's colour key.
+- **Do** set every event as ink text on the paper with a 3px start bar; tint the bar, never the ground.
+- **Do** give `--dt-accent` exactly three jobs in the calendar: the all-day band, the now line, today's number.
+- **Do** draw structure as rules: 2px ink frames and section rules in the chrome, 1px rule and rule-day in the grid.
+- **Do** keep the calendar square-cut (0 radius) and the demo controls at 6u, with the switch as the only pill (22u).
+- **Do** set numerals large and regular: day numbers 40px, gutter hours 26px, both narrowed, both tabular.
+- **Do** paint the paper plate (`--dt-paper`) under every opaque calendar surface on the Paper host, and size the chrome in `--u`.
+- **Do** keep Today ‹ › in the page bar and let the week headers and the view select carry the date and the view.
 
 ### Don't:
-- **Don't** use signal red for anything except the live dots and the active nav underline.
-- **Don't** mark today with a disc, pill or filled circle; use the accent numeral on a 2px underline.
-- **Don't** use mono for times inside the calendar.
-- **Don't** add shadows to show elevation, or corners above 4px on plates and controls.
+- **Don't** fill a timed event with colour or draw it as a card; no tinted backgrounds, no card corners.
+- **Don't** add shadows at rest, to the chrome or the calendar; the only lifts are the in-flight resize and move ghost.
+- **Don't** add view pills, a date title or a second accent to the demo; the accent is the host's and there is one.
+- **Don't** reverse a day, a header or a selected event; only the all-day band and the now plate sit on a fill.
+- **Don't** mark today with a disc or a pill; today is the accent numeral.
+- **Don't** use weights above 500 in text, or 600 anywhere but the wordmark.
+- **Don't** replace the raster paper plate with CSS noise, or let it show on hosts that did not ask for it.
 - **Don't** rename or remove a `--dt-*` token or a prop.

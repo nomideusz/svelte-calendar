@@ -312,7 +312,7 @@ function handleDayKeydown(e, dayMs) {
 		border-bottom: none;
 	}
 	.mw-row:has(.mw-row-target:active) {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.mw-row--today {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);
@@ -381,8 +381,7 @@ function handleDayKeydown(e, dayMs) {
 	}
 	.mw-day-num--today {
 		color: var(--dt-accent, #2563eb);
-		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
-		padding-bottom: 3px;
+		font-weight: 500;
 	}
 
 	/* ─── Events column ──────────────────────────────── */
@@ -410,34 +409,48 @@ function handleDayKeydown(e, dayMs) {
 		align-items: center;
 		gap: 0;
 		min-height: 44px;
-		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 10%, var(--dt-surface, #f9fafb));
+		border-radius: 0;
+		background: transparent;
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 120ms;
 		-webkit-tap-highlight-color: transparent;
 		border: none;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		text-align: left;
 		padding: 0;
 		pointer-events: auto;
 	}
+	.mw-ev:hover,
 	.mw-ev:active {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, #f9fafb));
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.mw-ev--selected {
-		box-shadow: 0 0 0 1.5px var(--ev-color);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.mw-ev--current {
-		background: color-mix(in srgb, var(--ev-color) 16%, var(--dt-surface, #f9fafb));
+		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
 	}
+	/* All day: a solid band on the event colour, no tint. */
 	.mw-ev--allday {
-		background: color-mix(in srgb, var(--ev-color) 14%, var(--dt-surface, #f9fafb));
+		background: var(--dt-paper, none) var(--ev-color);
+		background-blend-mode: multiply;
+		color: var(--dt-btn-text, #fff);
 	}
-	/* Status treatments: token-level dims + a non-opacity signal
-	   (strikethrough / border style) — never a bare opacity on the chip. */
-	.mw-ev--cancelled {
-		background: color-mix(in srgb, var(--ev-color) 5%, var(--dt-surface, #f9fafb));
+	.mw-ev--allday:hover,
+	.mw-ev--allday:active {
+		background: var(--dt-paper, none) var(--ev-color);
+		filter: brightness(1.08);
 	}
+	.mw-ev--allday .mw-ev-title,
+	.mw-ev--allday .mw-ev-time {
+		color: inherit;
+	}
+	.mw-ev--allday.mw-ev--selected {
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
+	}
+	/* Printed states: a cancelled class is struck through; a tentative or
+	   limited one is set in grey with a dashed bar — never a bare opacity. */
 	.mw-ev--cancelled .mw-ev-title {
 		text-decoration: line-through;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
@@ -445,20 +458,20 @@ function handleDayKeydown(e, dayMs) {
 	.mw-ev--cancelled .mw-ev-stripe {
 		opacity: 0.45; /* decorative bar only */
 	}
-	.mw-ev--tentative {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
-	}
-	.mw-ev--full {
-		background: color-mix(in srgb, var(--ev-color) 6%, var(--dt-surface, #f9fafb));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 30%, transparent);
-	}
+	.mw-ev--tentative .mw-ev-title,
 	.mw-ev--full .mw-ev-title {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.mw-ev--limited {
-		background: color-mix(in srgb, var(--ev-color) 8%, var(--dt-surface, #f9fafb));
-		border: 1px dashed color-mix(in srgb, var(--ev-color) 45%, transparent);
+	.mw-ev--tentative .mw-ev-stripe,
+	.mw-ev--limited .mw-ev-stripe {
+		background: repeating-linear-gradient(
+			180deg,
+			var(--ev-color) 0 4px,
+			transparent 4px 7px
+		);
+	}
+	.mw-ev--full .mw-ev-stripe {
+		opacity: 0.45;
 	}
 
 	.mw-ev-stripe {
@@ -466,7 +479,7 @@ function handleDayKeydown(e, dayMs) {
 		align-self: stretch;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;
-		border-radius: 6px 0 0 6px;
+		border-radius: 0;
 	}
 
 	.mw-ev-body {
@@ -479,7 +492,7 @@ function handleDayKeydown(e, dayMs) {
 	}
 
 	.mw-ev-title {
-		font: 500 15px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
@@ -489,7 +502,7 @@ function handleDayKeydown(e, dayMs) {
 	}
 
 	.mw-ev-time {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;

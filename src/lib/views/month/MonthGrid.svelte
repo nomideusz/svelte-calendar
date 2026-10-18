@@ -415,12 +415,12 @@
 	.mg-daynum {
 		flex: none;
 		font-family: var(--dt-sans, system-ui, sans-serif);
-		font-size: 13px;
-		font-weight: 700;
+		font-size: 22px;
+		font-weight: 400;
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2);
-		min-width: 22px;
-		height: 20px;
+		color: var(--dt-text);
+		min-width: 26px;
+		height: 26px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -445,7 +445,7 @@
 		border: none;
 		background: none;
 		padding: 2px 4px;
-		border-radius: 5px;
+		border-radius: 0;
 		font-family: var(--dt-sans);
 		font-size: 12px;
 		line-height: 1.3;
@@ -475,9 +475,9 @@
 	}
 	.mg-chip-dot {
 		flex: none;
-		width: 7px;
-		height: 7px;
-		border-radius: 999px;
+		align-self: stretch;
+		width: 3px;
+		border-radius: 0;
 		background: var(--mg-chip-color);
 	}
 	.mg-chip-time {
@@ -497,7 +497,7 @@
 		border: none;
 		background: none;
 		padding: 1px 4px;
-		border-radius: 5px;
+		border-radius: 0;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		font-size: 11px;

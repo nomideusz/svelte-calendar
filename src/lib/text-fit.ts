@@ -5,6 +5,10 @@
 import { prepare, layout, prepareWithSegments, measureNaturalWidth } from '@chenglou/pretext';
 import type { Attachment } from 'svelte/attachments';
 
+// pretext needs Intl.Segmenter (Firefox < 125 has none): there the attachments
+// leave the server's text as it is.
+const canMeasure = typeof Intl !== 'undefined' && 'Segmenter' in Intl;
+
 /** How text wraps when measured — the CSS properties of the same names. */
 export interface TextLayoutOptions {
 	whiteSpace?: 'normal' | 'pre-wrap';
@@ -108,6 +112,7 @@ export function fontOf(el: Element): string {
  */
 export function fitLabel(candidates: readonly string[], lines = 1): Attachment<HTMLElement> {
 	return (el) => {
+		if (!canMeasure) return;
 		const font = fontOf(el);
 		let width = 0;
 		const apply = () => { el.textContent = pickFit(candidates, font, width, lines); };
@@ -213,7 +218,7 @@ export function breakLines(text: string, font: string, width: number): string[] 
  */
 export function typeset(text: string): Attachment<HTMLElement> {
 	return (el) => {
-		if (getComputedStyle(el).whiteSpace !== 'normal') return;
+		if (!canMeasure || getComputedStyle(el).whiteSpace !== 'normal') return;
 		const font = fontOf(el);
 		let width = 0;
 		// A line span never wraps: canvas and layout disagree by a pixel now and

@@ -31,7 +31,6 @@
 	let { fields, values = $bindable(), status = '', lead }: Props = $props();
 
 	let hint = $state('');
-	let open = $state(false);
 
 	function setVal(key: string, v: string | number | boolean) {
 		values = { ...values, [key]: v };
@@ -60,47 +59,46 @@
 </script>
 
 <section class="ps" aria-label="Calendar props">
-	<button class="ps-open" aria-expanded={open} aria-controls="ps-body" onclick={() => (open = !open)}>
-		<span>Props</span>
-		<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
-	</button>
-
-	<div class="ps-body" class:ps-body--open={open} id="ps-body">
-		<div class="ps-row ps-row--selects">
-			{#each selects as f (f.key)}
-				{@const reason = reasonOf(f)}
-				<label class="ps-sel" class:ps-off={!!reason} {...show(f)}>
-					<span class="ps-name">{f.label}</span>
-					<select
-						value={String(values[f.key] ?? '')}
-						disabled={!!reason}
-						onchange={(e) => setVal(f.key, e.currentTarget.value)}
-					>
-						{#each f.options as o (o.value)}
-							<option value={o.value}>{o.label}</option>
-						{/each}
-					</select>
-				</label>
-			{/each}
-		</div>
-
-		<div class="ps-row ps-row--chips">
-			{#each toggles as f (f.key)}
-				{@const reason = reasonOf(f)}
-				<button
-					type="button"
-					class="ps-chip"
-					class:ps-chip--on={values[f.key] === true}
-					class:ps-off={!!reason}
-					aria-pressed={values[f.key] === true}
-					aria-disabled={!!reason}
-					{...show(f)}
-					onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
+	<div class="ps-selects">
+		{#each selects as f (f.key)}
+			{@const reason = reasonOf(f)}
+			<label class="ps-sel" class:ps-off={!!reason} {...show(f)}>
+				<span class="ps-name">{f.label}:</span>
+				<select
+					value={String(values[f.key] ?? '')}
+					disabled={!!reason}
+					onchange={(e) => setVal(f.key, e.currentTarget.value)}
 				>
-					<span class="ps-box" aria-hidden="true"></span>{f.label}
-				</button>
-			{/each}
+					{#each f.options as o (o.value)}
+						<option value={o.value}>{o.label}</option>
+					{/each}
+				</select>
+			</label>
+		{/each}
+	</div>
 
+	<div class="ps-toggles">
+		{#each toggles as f (f.key)}
+			{@const reason = reasonOf(f)}
+			<button
+				type="button"
+				class="ps-switch"
+				class:ps-switch--on={values[f.key] === true}
+				class:ps-off={!!reason}
+				role="switch"
+				aria-checked={values[f.key] === true}
+				aria-disabled={!!reason}
+				{...show(f)}
+				onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
+			>
+				<span class="ps-switch-lb">{f.label}</span>
+				<span class="ps-knob" aria-hidden="true"></span>
+			</button>
+		{/each}
+	</div>
+
+	{#if ranges.length}
+		<div class="ps-ranges">
 			{#each ranges as f (f.key)}
 				{@const reason = reasonOf(f)}
 				<label class="ps-rng" class:ps-off={!!reason} {...show(f)}>
@@ -118,7 +116,7 @@
 				</label>
 			{/each}
 		</div>
-	</div>
+	{/if}
 
 	<div class="ps-info">
 		{@render lead?.()}
@@ -136,52 +134,38 @@
 
 <style>
 	.ps {
-		--ps-rule: var(--dt-border-day, rgba(0, 0, 0, 0.14));
-		border-top: 2px solid var(--dt-text, #111);
-		border-bottom: 1px solid var(--ps-rule);
+		--ps-rule: var(--dt-border-day, rgba(0, 0, 0, 0.3));
 		color: var(--dt-text, #111);
 	}
 
-	.ps-open {
-		display: none;
-	}
-
-	.ps-row {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: stretch;
-		border-bottom: 1px solid var(--ps-rule);
-	}
-
-	/* ── Selects: prop name over value, ruled like timetable columns ── */
-	.ps-sel {
-		flex: 1 1 140px;
+	/* ── Selects: the prop name on the left, its value in a hairline box ── */
+	.ps-selects {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
-		padding: 8px 14px 8px 0;
-		margin-right: 14px;
-		border-right: 1px solid var(--ps-rule);
-		min-width: 0;
+		gap: calc(22 * var(--u));
 	}
-	.ps-sel:last-child {
-		border-right: none;
-		margin-right: 0;
+	.ps-sel {
+		display: grid;
+		grid-template-columns: calc(108 * var(--u)) minmax(0, 1fr);
+		align-items: center;
+		gap: calc(12 * var(--u));
 	}
 	.ps-name {
-		font: 500 11.5px/1 var(--dt-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		font: 400 calc(22 * var(--u)) / 1 var(--dt-sans, inherit);
+		color: var(--dt-text, #111);
+		white-space: nowrap;
 	}
 	.ps-sel select {
 		appearance: none;
 		width: 100%;
-		padding: 2px 22px 2px 0;
-		border: none;
+		min-height: calc(50 * var(--u));
+		padding: 0 calc(40 * var(--u)) 0 calc(16 * var(--u));
+		border: 2px solid var(--dt-text, #111);
+		border-radius: calc(6 * var(--u));
 		background: transparent
-			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='gray' stroke-width='1.6'/%3E%3C/svg%3E")
-			right 0 center / 14px no-repeat;
-		font: 700 15px/1.3 var(--dt-sans, inherit);
-		letter-spacing: -0.01em;
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23333' stroke-width='1.4'/%3E%3C/svg%3E")
+			right calc(12 * var(--u)) center / calc(24 * var(--u)) no-repeat;
+		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, inherit);
 		color: inherit;
 		cursor: pointer;
 		text-overflow: ellipsis;
@@ -190,56 +174,83 @@
 		color: initial;
 		background: initial;
 	}
+	.ps-sel select:hover:not(:disabled) {
+		border-color: var(--dt-text, #111);
+	}
 	.ps-sel select:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
-		outline-offset: 3px;
-		border-radius: 2px;
+		outline-offset: 2px;
 	}
 
-	/* ── Toggles: prop chips, on = reversed ink plate ── */
-	.ps-row--chips {
-		gap: 5px;
-		padding: 8px 0;
+	/* ── Toggles: switches in two columns, on = the knob in the accent ── */
+	.ps-toggles {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(10 * var(--u)) calc(20 * var(--u));
+		margin-top: calc(28 * var(--u));
 	}
-	.ps-chip {
-		display: inline-flex;
+	.ps-switch {
+		display: flex;
 		align-items: center;
-		gap: 7px;
-		min-height: 28px;
-		padding: 0 10px 0 8px;
-		border: 1px solid var(--ps-rule);
-		border-radius: 4px;
+		justify-content: space-between;
+		gap: calc(8 * var(--u));
+		min-height: calc(40 * var(--u));
+		padding: 0 calc(8 * var(--u)) 0 calc(16 * var(--u));
+		border: 2px solid var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		border-radius: calc(22 * var(--u));
 		background: transparent;
-		font: 500 12px/1 var(--dt-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
 		color: inherit;
+		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, inherit);
+		text-align: left;
 		cursor: pointer;
-		transition: background 120ms, color 120ms, border-color 120ms;
+		transition: border-color 120ms;
 	}
-	.ps-chip:hover:not(.ps-off) {
+	.ps-switch:hover:not(.ps-off) {
 		border-color: var(--dt-text, #111);
 	}
-	.ps-box {
-		width: 9px;
-		height: 9px;
-		border: 1.5px solid currentColor;
-		border-radius: 1px;
-		box-sizing: border-box;
+	.ps-switch-lb {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
-	.ps-chip--on {
-		background: var(--dt-text, #111);
-		border-color: var(--dt-text, #111);
-		color: var(--dt-bg, #fff);
+	.ps-knob {
+		flex: none;
+		position: relative;
+		width: calc(44 * var(--u));
+		height: calc(26 * var(--u));
+		border-radius: calc(13 * var(--u));
+		background: color-mix(in srgb, var(--dt-text, #111) 18%, transparent);
+		transition: background 140ms;
 	}
-	.ps-chip--on .ps-box {
-		background: currentColor;
+	.ps-knob::after {
+		content: '';
+		position: absolute;
+		top: calc(3 * var(--u));
+		left: calc(3 * var(--u));
+		width: calc(20 * var(--u));
+		height: calc(20 * var(--u));
+		border-radius: 50%;
+		background: var(--dt-bg, #efebe9);
+		transition: transform 140ms;
 	}
-	.ps-chip:focus-visible {
+	.ps-switch--on {
+		color: var(--dt-accent, #1d4fd7);
+		border-color: var(--dt-accent, #1d4fd7);
+	}
+	.ps-switch--on .ps-knob {
+		background: var(--dt-accent, #1d4fd7);
+	}
+	.ps-switch--on .ps-knob::after {
+		transform: translateX(calc(18 * var(--u)));
+		background: #fff;
+	}
+	.ps-switch:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
 
 	.ps-off {
-		opacity: 0.38;
+		opacity: 0.4;
 		cursor: not-allowed;
 	}
 	.ps-off * {
@@ -247,32 +258,42 @@
 	}
 
 	/* ── Ranges ── */
+	.ps-ranges {
+		display: flex;
+		flex-direction: column;
+		gap: calc(10 * var(--u));
+		margin-top: calc(18 * var(--u));
+	}
 	.ps-rng {
-		display: inline-flex;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) calc(120 * var(--u)) 3ch;
 		align-items: center;
-		gap: 8px;
-		min-height: 28px;
-		padding: 0 10px;
-		border: 1px solid var(--ps-rule);
-		border-radius: 4px;
+		gap: calc(12 * var(--u));
+		min-height: calc(36 * var(--u));
+	}
+	.ps-rng .ps-name {
+		font-size: calc(18 * var(--u));
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.ps-rng input {
-		width: 84px;
-		accent-color: var(--dt-text, #111);
+		width: 100%;
+		accent-color: var(--dt-accent, #1d4fd7);
 	}
 	.ps-rng output {
-		min-width: 2ch;
-		font: 700 14px/1 var(--dt-sans, inherit);
+		font: 400 calc(18 * var(--u)) / 1 var(--dt-sans, inherit);
 		font-variant-numeric: tabular-nums;
 		text-align: right;
 	}
 
-	/* ── Info line: one message at a time, like a board's running text ── */
+	/* ── Info line: one message at a time ── */
 	.ps-info {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 14px;
-		min-height: 40px;
+		gap: calc(12 * var(--u)) calc(16 * var(--u));
+		margin-top: calc(24 * var(--u));
+		min-height: calc(36 * var(--u));
 	}
 	.ps-msg {
 		margin: 0;
@@ -280,7 +301,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font: 500 13px/1.35 var(--dt-sans, inherit);
+		font: 400 calc(17 * var(--u)) / 1.4 var(--dt-sans, inherit);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
 	}
 	.ps-live {
@@ -288,54 +309,14 @@
 		width: 7px;
 		height: 7px;
 		border-radius: 50%;
-		background: var(--signal, #eb0000);
+		background: var(--dt-accent, #1d4fd7);
 	}
 
-	@media (max-width: 700px) {
-		.ps-open {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			width: 100%;
-			min-height: 44px;
-			padding: 0;
-			border: none;
-			border-bottom: 1px solid var(--ps-rule);
-			background: none;
-			font: 700 15px/1 var(--dt-sans, inherit);
-			color: inherit;
-			cursor: pointer;
-		}
-		.ps-open[aria-expanded='true'] svg {
-			transform: rotate(180deg);
-		}
-		.ps-body {
-			display: none;
-		}
-		.ps-body--open {
-			display: block;
-		}
-		.ps-sel {
-			flex-basis: 40%;
-		}
-		.ps-chip,
-		.ps-rng {
-			min-height: 36px;
-		}
-		.ps-sel:nth-child(2n) {
-			border-right: none;
-			margin-right: 0;
-		}
-		.ps-row--selects {
-			row-gap: 0;
-		}
-		.ps-row--selects .ps-sel {
-			border-bottom: 1px solid var(--ps-rule);
-		}
-		.ps-info {
-			flex-wrap: wrap;
-			gap: 8px;
-			padding: 10px 0;
+	@media (prefers-reduced-motion: reduce) {
+		.ps-knob,
+		.ps-knob::after,
+		.ps-switch {
+			transition: none;
 		}
 	}
 </style>

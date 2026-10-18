@@ -585,92 +585,99 @@ const weekDays = $derived.by(() => {
 		gap: 4px;
 		padding: 4px 14px 6px;
 	}
+	/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */
 	.ag-allday-chip {
 		display: flex;
 		align-items: center;
 		gap: 4px;
 		padding: 2px 8px;
-		border-radius: 5px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 18%, transparent);
+		border-radius: 0;
+		border: none;
+		background: var(--ev-color);
+		color: var(--dt-btn-text, #fff);
 		cursor: pointer;
-		transition: background 0.15s, border-color 0.15s;
 	}
 	.ag-allday-chip:hover,
 	.ag-allday-chip:active {
-		background: color-mix(in srgb, var(--ev-color) 22%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
+		filter: brightness(1.08);
 	}
 	.ag-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-allday-chip--selected {
-		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 18%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
 	}
 	.ag-allday-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background: var(--ev-color);
-		flex-shrink: 0;
+		display: none;
 	}
 	.ag-allday-title {
 		font: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: inherit;
 		white-space: nowrap;
 	}
 	.ag-allday-span {
 		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: inherit;
+		opacity: 0.8;
 		white-space: nowrap;
 	}
 
 	/* ═══ Shared: event card ═══ */
+	/* Paper, not a tinted card: a 3px start bar in the event colour, a
+	   hairline rule beneath, ink text. Hover is a wash, selection a ring. */
 	.ag-card {
+		position: relative;
 		display: flex;
 		align-items: stretch;
-		border-radius: 6px;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border: 1px solid color-mix(in srgb, var(--ev-color) 8%, var(--dt-border, rgba(0, 0, 0, 0.08)));
+		border-radius: 0;
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		overflow: hidden;
 		cursor: pointer;
-		transition: background 150ms, border-color 150ms;
+		transition: background 150ms, box-shadow 150ms;
+	}
+	.ag-card::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 3px;
+		background: var(--ev-color);
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
-		border-color: color-mix(in srgb, var(--ev-color) 30%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-card--selected {
-		border-color: var(--ev-color);
-		background: color-mix(in srgb, var(--ev-color) 20%, var(--dt-surface, var(--dt-bg, #ffffff)));
-	}
-	.ag-card--cancelled {
-		opacity: 0.5;
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-card--cancelled .ag-card-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-card--tentative {
-		opacity: 0.65;
-		border-style: dashed;
+	.ag-card--cancelled::before,
+	.ag-card--full::before {
+		opacity: 0.45;
 	}
-	.ag-card--full {
-		opacity: 0.55;
+	.ag-card--tentative .ag-card-title,
+	.ag-card--limited .ag-card-title,
+	.ag-card--full .ag-card-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-card--limited {
-		opacity: 0.65;
-		border-style: dashed;
+	.ag-card--tentative::before,
+	.ag-card--limited::before {
+		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	.ag-card-body {
-		padding: 7px 10px;
+		padding: 7px 10px 7px 13px;
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
@@ -679,7 +686,8 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-card-title {
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		line-height: 1.3;
 		word-break: break-word;
 		flex: 1;
@@ -706,8 +714,8 @@ const weekDays = $derived.by(() => {
 	.ag-card-eta {
 		margin-left: auto;
 		font-size: 11px;
-		font-weight: 600;
-		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 60%, var(--ev-color));
+		font-weight: 500;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		letter-spacing: 0.02em;
 	}
 	.ag-card-sub {
@@ -726,17 +734,20 @@ const weekDays = $derived.by(() => {
 		flex-wrap: wrap;
 	}
 	.ag-card-tag {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--ev-color, var(--dt-accent));
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
+		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
 		padding: 2px 5px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 	}
 	.ag-card-progress {
 		height: 3px;
 		background: var(--dt-border, rgba(0, 0, 0, 0.08));
-		border-radius: 2px;
+		border-radius: 0;
 		overflow: hidden;
 		margin-top: 2px;
 	}
@@ -744,7 +755,7 @@ const weekDays = $derived.by(() => {
 		height: 100%;
 		width: 100%;
 		background: var(--ev-color, var(--dt-accent));
-		border-radius: 2px;
+		border-radius: 0;
 		transform-origin: left;
 		transition: transform 1s linear;
 	}
@@ -826,21 +837,13 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-wday-badge {
 		font-size: 10px;
-		font-weight: 600;
+		font-weight: 500;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-accent, #2563eb);
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
-		padding: 2px 7px;
-		border-radius: 3px;
 	}
 	.ag-wday-badge--muted {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: color-mix(
-			in srgb,
-			var(--dt-text-2, rgba(0, 0, 0, 0.54)) 10%,
-			transparent
-		);
 	}
 	.ag-wday-name {
 		font-size: 13px;
@@ -942,45 +945,48 @@ const weekDays = $derived.by(() => {
 	.ag-wday-compact {
 		padding: 0 20px 8px;
 	}
+	/* A compact row: 3px start bar, hairline beneath, ink text. */
 	.ag-compact {
+		position: relative;
 		display: flex;
 		align-items: baseline;
 		gap: 6px;
-		padding: 3px 0;
+		padding: 3px 0 3px 9px;
+		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
 		min-width: 0;
 		width: 100%;
 	}
+	.ag-compact::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 3px;
+		background: var(--ev-color, var(--dt-accent));
+	}
 	.ag-compact--selected {
-		background: color-mix(in srgb, var(--ev-color) 10%, transparent);
-		border-radius: 4px;
-		/* The highlight bleeds into the gutter via a spread shadow — zero
-		   layout impact, so nothing shifts or clips even when the host
-		   reduces the gutters below the bleed width. */
-		box-shadow: 0 0 0 6px color-mix(in srgb, var(--ev-color) 10%, transparent);
+		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-compact:hover .ag-compact-title,
 	.ag-compact:active .ag-compact-title {
 		color: var(--dt-text);
 	}
+	.ag-compact:hover,
 	.ag-compact:active {
-		background: color-mix(in srgb, var(--ev-color) 8%, transparent);
-		border-radius: 4px;
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
 	.ag-compact:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
-		border-radius: 4px;
 	}
-	/* The time label doubles as the class-color signal (replaces the old
-	   dot): the event color mixed toward the text color, so it stays
-	   legible on any palette and costs zero horizontal space. */
 	.ag-compact-time {
 		font-size: 11px;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-weight: 500;
-		color: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 60%, var(--dt-text, rgba(0, 0, 0, 0.87)));
+		font-weight: 400;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		min-width: 40px;
 		flex-shrink: 0;
 		white-space: nowrap;
@@ -1014,7 +1020,7 @@ const weekDays = $derived.by(() => {
 	.ag-compact-title {
 		font-size: 12px;
 		font-weight: 500;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		flex: 1;
 		/* The title is the row's identity — never let subtitle/tags/duration
 		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
@@ -1055,27 +1061,32 @@ const weekDays = $derived.by(() => {
 		text-overflow: ellipsis;
 		max-width: 100px;
 	}
-	.ag-compact--cancelled {
-		opacity: 0.5;
-	}
 	.ag-compact--cancelled .ag-compact-title {
 		text-decoration: line-through;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-compact--tentative {
-		opacity: 0.65;
+	.ag-compact--cancelled::before,
+	.ag-compact--full::before {
+		opacity: 0.45;
 	}
-	.ag-compact--full {
-		opacity: 0.55;
+	.ag-compact--tentative .ag-compact-title,
+	.ag-compact--limited .ag-compact-title,
+	.ag-compact--full .ag-compact-title {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
-	.ag-compact--limited {
-		opacity: 0.65;
+	.ag-compact--tentative::before,
+	.ag-compact--limited::before {
+		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	.ag-compact-tag {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--ev-color, var(--dt-accent));
-		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 12%, transparent);
+		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		background: transparent;
+		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
 		padding: 1px 4px;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
 		flex-shrink: 1;
 		min-width: 2.5em;
@@ -1097,7 +1108,7 @@ const weekDays = $derived.by(() => {
 	.ag-compact-more:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
-		border-radius: 4px;
+		border-radius: 0;
 	}
 
 	/* ═══ Day-drop drag ═══ */
@@ -1105,7 +1116,7 @@ const weekDays = $derived.by(() => {
 		opacity: 0.4;
 	}
 	.ag-wday--drop {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 6%, transparent);
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 		box-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);
 	}
 
