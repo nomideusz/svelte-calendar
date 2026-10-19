@@ -926,7 +926,7 @@ function onCellKeydown(e, ms) {
 											class:wg-ev--tentative={ev.status === 'tentative'}
 											class:wg-ev--full={ev.status === 'full'}
 											class:wg-ev--limited={ev.status === 'limited'}
-											style:--ev-color={ev.color ?? 'var(--dt-accent)'}
+											style:--ev-color={ev.color ?? 'var(--dt-event, var(--dt-accent))'}
 											style:margin-top="{tops[i] - (i ? tops[i - 1] + CHIP_H : 0)}px"
 											role="button"
 											tabindex="0"
@@ -951,7 +951,7 @@ function onCellKeydown(e, ms) {
 										<!-- The ghost floats at its own time; it pushes nothing aside -->
 										<div
 											class="wg-ev wg-ev--drag-preview"
-											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-accent)'}
+											style:--ev-color={previewTimedEvent.color ?? 'var(--dt-event, var(--dt-accent))'}
 											style:top="{timeTop(hourOf(previewTimedEvent.start.getTime(), day.ms))}px"
 											aria-hidden="true"
 											in:previewReceive={{ key: previewKeySnapshot.get('timed') ?? '' }}
@@ -1046,13 +1046,13 @@ function onCellKeydown(e, ms) {
 		overflow-x: auto;
 		box-sizing: border-box;
 		scrollbar-width: thin;
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;
 	}
 	.wg--auto .wg-body { overflow-y: visible; }
 
 	.wg-body::-webkit-scrollbar { width: 4px; }
 	.wg-body::-webkit-scrollbar-thumb {
-		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));
+		background: var(--dt-scrollbar, rgba(15, 15, 15, 0.1));
 		border-radius: 0;
 	}
 	.wg-body::-webkit-scrollbar-track { background: transparent; }
@@ -1070,14 +1070,14 @@ function onCellKeydown(e, ms) {
 		display: flex;
 		border-radius: 0;
 		margin: var(--wg-row-margin, 12px) 8px;
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		overflow: hidden;
 	}
 
 	.wg-week--current {
-		background: var(--dt-today-bg, rgba(37, 99, 235, 0.04));
+		background: var(--dt-today-bg, rgba(29, 79, 215, 0.04));
 		/* The current row's frame is a day rule, not the accent */
-		border-color: var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		border-color: var(--dt-border-day, rgba(15, 15, 15, 0.3));
 	}
 
 	/* ─── Week body ──────────────────────────────────── */
@@ -1102,7 +1102,7 @@ function onCellKeydown(e, ms) {
 		min-width: 90px;
 		box-sizing: border-box;
 		padding: 4px 4px 8px;
-		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		cursor: pointer;
 		transition: background 0.15s;
 	}
@@ -1124,11 +1124,11 @@ function onCellKeydown(e, ms) {
 		letter-spacing: 0.08em;
 		white-space: nowrap;
 		overflow: hidden;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 	}
 	.wg-week--current .wg-month,
 	.wg-month--start {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.wg-month--inset {
 		position: absolute;
@@ -1136,19 +1136,19 @@ function onCellKeydown(e, ms) {
 		left: 2px;
 		pointer-events: none;
 	}
-	.wg-cell:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }
+	.wg-cell:hover { background: var(--dt-hover, rgba(15, 15, 15, 0.015)); }
 
-	.wg-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
+	.wg-cell--today { background: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }
 	.wg-cell--drop {
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)) !important;
-		box-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);
+		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12)) !important;
+		box-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
-	.wg-cell--today:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.04)); }
+	.wg-cell--today:hover { background: var(--dt-hover, rgba(15, 15, 15, 0.04)); }
 
 	/* Non-current weeks sit on the same paper; only the header ink softens,
 	   and past events print a shade lighter. */
 	.wg-week:not(.wg-week--current) .wg-day-num {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.wg-cell--past .wg-ev:not(.wg-ev--cancelled) {
 		opacity: 0.78;
@@ -1156,7 +1156,7 @@ function onCellKeydown(e, ms) {
 
 	/* equalDays: when no cells are marked past, all are full brightness */
 
-	.wg-cell--weekend { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }
+	.wg-cell--weekend { background: var(--dt-weekend-bg, rgba(15, 15, 15, 0.012)); }
 
 	/* ─── Disabled cell ──────────────────────────────── */
 	.wg-cell--disabled {
@@ -1164,8 +1164,8 @@ function onCellKeydown(e, ms) {
 			45deg,
 			transparent,
 			transparent 6px,
-			var(--dt-border, rgba(0, 0, 0, 0.08)) 6px,
-			var(--dt-border, rgba(0, 0, 0, 0.08)) 7px
+			var(--dt-border, rgba(15, 15, 15, 0.08)) 6px,
+			var(--dt-border, rgba(15, 15, 15, 0.08)) 7px
 		) !important;
 	}
 
@@ -1184,8 +1184,8 @@ function onCellKeydown(e, ms) {
 		border-radius: 0;
 		background: repeating-linear-gradient(
 			-45deg,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent),
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 3px,
 			transparent 3px,
 			transparent 6px
 		);
@@ -1193,7 +1193,7 @@ function onCellKeydown(e, ms) {
 
 	.wg-blocked-label {
 		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		white-space: nowrap;
@@ -1219,30 +1219,30 @@ function onCellKeydown(e, ms) {
 		font: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 	}
 
 	.wg-week--current .wg-day-wd {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	.wg-day-num {
 		font: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	.wg-week--current .wg-day-num {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	/* Today's pill — after the week rules above, which it must beat */
 	.wg-cell-hd--today .wg-day-wd,
 	.wg-cell-hd--today .wg-day-num {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 	.wg-cell-hd--today .wg-day-num {
-		box-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);
+		box-shadow: inset 0 -2px 0 var(--dt-accent, #1d4fd7);
 		padding-bottom: 2px;
 	}
 
@@ -1291,7 +1291,7 @@ function onCellKeydown(e, ms) {
 
 	.wg-ad:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	.wg-ad-title {
@@ -1341,14 +1341,14 @@ function onCellKeydown(e, ms) {
 	.wg-now::after {
 		content: '';
 		flex: 1;
-		border-top: 2px solid var(--dt-accent, #2563eb);
+		border-top: 2px solid var(--dt-accent, #1d4fd7);
 	}
 	.wg-now-time {
 		font: 500 11px / 1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		padding: 2px 4px;
 		border-radius: 0;
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 		color: var(--dt-btn-text, #fff);
 	}
 	/* Where a dragged-in class would land: the now-line's shape, dashed */
@@ -1386,7 +1386,7 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ev:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 
 	.wg-ev--drag-preview {
@@ -1396,7 +1396,7 @@ function onCellKeydown(e, ms) {
 		z-index: 8;
 		opacity: 0.95;
 		pointer-events: none;
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 		cursor: grabbing;
 	}
@@ -1406,13 +1406,13 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ev--current {
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 
 	/* Printed states: struck through, grey, or a dashed bar — never a tint */
 	.wg-ev--cancelled .wg-ev-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.wg-ev--cancelled::before,
 	.wg-ev--full::before {
@@ -1420,7 +1420,7 @@ function onCellKeydown(e, ms) {
 	}
 	.wg-ev--tentative .wg-ev-title,
 	.wg-ev--full .wg-ev-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.wg-ev--tentative::before,
 	.wg-ev--limited::before {
@@ -1433,14 +1433,14 @@ function onCellKeydown(e, ms) {
 	.wg-ev-time {
 		font: 400 14px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		flex-shrink: 0;
 		white-space: nowrap;
 	}
 
 	.wg-ev-title {
 		font: 500 15px / 1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1450,7 +1450,7 @@ function onCellKeydown(e, ms) {
 
 	.wg-ev-loc {
 		font: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0; /* shown only when measured to fit — never squeezed */
 	}
@@ -1464,35 +1464,35 @@ function onCellKeydown(e, ms) {
 		text-align: left;
 		align-self: flex-start;
 		font: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		padding: 2px 8px;
 		cursor: pointer;
 		flex-shrink: 0;
 	}
 
 	.wg-ev-more:hover {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	.wg-ev-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
 	.wg-cell:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: -2px;
 	}
 
 	.wg-ev:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	.wg-ev--dragging {
 		cursor: grabbing;
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 </style>

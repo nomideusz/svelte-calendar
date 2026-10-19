@@ -52,6 +52,8 @@ interface CalendarContextRaw {
 	readonly compact: boolean;
 	readonly columns: boolean;
 	readonly labels: CalendarLabels;
+	/** Say something through the calendar's polite status line */
+	announce(text: string): void;
 
 	// Load range (read/write)
 	readonly loadRange: { start: Date; end: Date } | null;
@@ -90,6 +92,8 @@ export interface CalendarContext {
 	readonly emptySnippet: Snippet | undefined;
 	/** Per-instance labels (Calendar's `labels` prop merged over globals); global labels when headless. */
 	readonly labels: CalendarLabels;
+	/** Say something through the calendar's polite status line (no-op when headless). */
+	announce(text: string): void;
 }
 
 /**
@@ -138,5 +142,6 @@ export function useCalendarContext(): CalendarContext {
 		get eventSnippet() { return raw?.eventSnippet; },
 		get emptySnippet() { return raw?.emptySnippet; },
 		get labels() { return raw?.labels ?? getLabels(); },
+		announce: (text: string) => raw?.announce(text),
 	};
 }

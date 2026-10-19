@@ -51,5 +51,6 @@ export function useCalendarContext() {
         get eventSnippet() { return raw?.eventSnippet; },
         get emptySnippet() { return raw?.emptySnippet; },
         get labels() { return raw?.labels ?? getLabels(); },
+        announce: (text) => raw?.announce(text),
     };
 }

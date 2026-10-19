@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.0
+
+### Minor Changes
+
+- **Ink by default.** Adapters no longer auto-colour events. An event without its own `color` draws in `--dt-event`, which every preset sets to the text colour, so the pasted Quick Start looks like the demo. To keep the previous colouring, pass a palette: `createMemoryAdapter(events, { palette: VIVID_PALETTE })` (likewise `createRecurringAdapter`). `createMappedAdapter` now keeps source colours by default (`autoColor` defaults to `false`); `autoColor: true` restores the old behaviour.
+- Phone month grid: the day cell is the one tap and tab target (at least 44px, named "Monday, October 19, 7 events"). The dots and "+N" are decoration, so the 13px dot buttons are gone.
+- Week planner: Enter on a disabled date or a blocked slot announces why nothing was created, and a disabled column no longer offers "Create event".
+- `auto` theme: the all-day band text is picked by contrast ratio (white while it reaches 4.5:1, else ink).
+
+### Patch Changes
+
+- Built-in CSS fallbacks match the `neutral` preset (accent `#1d4fd7`, ink `rgba(15,15,15,…)`), so an unthemed embed stays on the palette.
+- With `showDates={false}` (a weekly template), no column is marked as today; the now line stays.
+- The week planner opens at the start of any event crossing the first visible hour, so it isn't cut under the all-day row, and it re-scrolls when `visibleHours` changes.
+- The agenda's done check is ink-2 and hidden from screen readers (the label already says completed).
+- Mobile week shows "All day" once per band instead of once per day.
+- `.tw-ad-more` is square-cut.
+
 ## 1.3.0
 
 ### Minor Changes

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createRecurringAdapter, type RecurringEvent } from './recurring.js';
+import { VIVID_PALETTE } from '../core/palette.js';
 
 // ── Shared fixtures ─────────────────────────────────────
 
@@ -120,13 +121,21 @@ describe('createRecurringAdapter — weekly (default)', () => {
 // ── Auto-coloring ───────────────────────────────────────
 
 describe('createRecurringAdapter — auto-coloring', () => {
-	it('auto-assigns colors to events without explicit color', async () => {
-		const noColorSchedule: RecurringEvent[] = [
-			{ id: '1', title: 'A', dayOfWeek: 1, startTime: '09:00', endTime: '10:00' },
-			{ id: '2', title: 'B', dayOfWeek: 2, startTime: '09:00', endTime: '10:00' },
-			{ id: '3', title: 'A', dayOfWeek: 3, startTime: '09:00', endTime: '10:00' },
-		];
+	const noColorSchedule: RecurringEvent[] = [
+		{ id: '1', title: 'A', dayOfWeek: 1, startTime: '09:00', endTime: '10:00' },
+		{ id: '2', title: 'B', dayOfWeek: 2, startTime: '09:00', endTime: '10:00' },
+		{ id: '3', title: 'A', dayOfWeek: 3, startTime: '09:00', endTime: '10:00' },
+	];
+
+	it('leaves events without a color uncoloured by default (ink)', async () => {
 		const adapter = createRecurringAdapter(noColorSchedule);
+		const events = await adapter.fetchEvents({ start: mondayMs(), end: mondayMs(1) });
+		expect(events).toHaveLength(3);
+		expect(events.every((e) => e.color === undefined)).toBe(true);
+	});
+
+	it('auto-assigns colors from an explicit palette', async () => {
+		const adapter = createRecurringAdapter(noColorSchedule, { palette: VIVID_PALETTE });
 		const monday = mondayMs();
 		const nextMonday = mondayMs(1);
 		const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
@@ -141,14 +150,13 @@ describe('createRecurringAdapter — auto-coloring', () => {
 	});
 
 	it('preserves explicit colors', async () => {
-		const adapter = createRecurringAdapter(schedule);
+		const adapter = createRecurringAdapter(schedule, { palette: VIVID_PALETTE });
 		const monday = mondayMs();
 		const nextMonday = mondayMs(1);
 		const events = await adapter.fetchEvents({ start: monday, end: nextMonday });
 
-		const vinyasa = events.find((e) => e.title === 'Vinyasa Flow')!;
-		// Should keep its explicit color from the schedule
-		expect(vinyasa.color).toBeTruthy();
+		const yoga = events.find((e) => e.title === 'Morning Yoga')!;
+		expect(yoga.color).toBe('#34d399');
 	});
 });
 

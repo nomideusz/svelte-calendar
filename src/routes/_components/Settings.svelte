@@ -60,10 +60,11 @@
 	<div class="ps-selects">
 		{#each selects as f (f.key)}
 			{@const reason = reasonOf(f)}
-			<label class="ps-sel" class:ps-off={!!reason} {...show(f)}>
+			<label class="ps-sel" class:ps-off={!!reason} title={reason || undefined} {...show(f)}>
 				<span class="ps-name">{f.label}:</span>
 				<select
 					name={f.key}
+					aria-describedby={reason ? `ps-why-${f.key}` : undefined}
 					value={String(values[f.key] ?? '')}
 					disabled={!!reason}
 					onchange={(e) => setVal(f.key, e.currentTarget.value)}
@@ -86,6 +87,8 @@
 			role="switch"
 			aria-checked={values[f.key] === true}
 			aria-disabled={!!reason}
+			aria-describedby={reason ? `ps-why-${f.key}` : undefined}
+			title={reason || undefined}
 			{...show(f)}
 			onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
 		>
@@ -106,10 +109,11 @@
 		<div class="ps-ranges">
 			{#each ranges as f (f.key)}
 				{@const reason = reasonOf(f)}
-				<label class="ps-rng" class:ps-off={!!reason} {...show(f)}>
+				<label class="ps-rng" class:ps-off={!!reason} title={reason || undefined} {...show(f)}>
 					<span class="ps-name">{f.label}</span>
 					<input
 						type="range"
+						aria-describedby={reason ? `ps-why-${f.key}` : undefined}
 						min={f.min}
 						max={f.max}
 						step={f.step}
@@ -122,6 +126,12 @@
 			{/each}
 		</div>
 	</details>
+
+	<!-- Why a control is off, read with the control (the info line is far away). -->
+	{#each fields as f (f.key)}
+		{@const reason = reasonOf(f)}
+		{#if reason}<span class="ps-why" id="ps-why-{f.key}">{reason}</span>{/if}
+	{/each}
 </section>
 
 <style>
@@ -154,13 +164,27 @@
 		padding: 0 calc(40 * var(--u)) 0 calc(16 * var(--u));
 		border: 2px solid var(--dt-text, #111);
 		border-radius: calc(6 * var(--u));
-		background: transparent
-			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23333' stroke-width='1.4'/%3E%3C/svg%3E")
-			right calc(12 * var(--u)) center / calc(24 * var(--u)) no-repeat;
+		background: transparent;
 		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, inherit);
 		color: inherit;
 		cursor: pointer;
 		text-overflow: ellipsis;
+	}
+	/* The chevron is a mask over currentColor, so it reads on dark hosts too. */
+	.ps-sel {
+		position: relative;
+	}
+	.ps-sel::after {
+		content: '';
+		position: absolute;
+		right: calc(12 * var(--u));
+		top: 50%;
+		width: calc(24 * var(--u));
+		height: calc(24 * var(--u));
+		translate: 0 -50%;
+		background: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E") center / contain no-repeat;
+		pointer-events: none;
 	}
 	.ps-sel select option {
 		color: initial;
@@ -201,6 +225,8 @@
 		border-color: var(--dt-text, #111);
 	}
 	.ps-switch-lb {
+		/* the switch sets /1; descenders need the room or the clip cuts them */
+		line-height: 1.3;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -247,6 +273,15 @@
 	}
 	.ps-off * {
 		cursor: not-allowed;
+	}
+
+	.ps-why {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	/* ── Ranges ── */

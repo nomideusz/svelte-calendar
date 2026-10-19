@@ -74,10 +74,10 @@ export interface RecurringAdapterOptions {
     /** Start weeks on Monday (default: true) */
     mondayStart?: boolean;
     /**
-     * Custom color palette for auto-coloring events.
-     * Pass `generatePalette('#yourAccent')` to get theme-harmonious colors,
-     * or provide your own array of hex strings.
-     * Defaults to the built-in vivid palette.
+     * Colour palette for auto-colouring events that have no `color`.
+     * Off by default (events draw in `--dt-event`). Pass `VIVID_PALETTE`
+     * for the pre-1.4 look, `generatePalette('#yourAccent')` for
+     * theme-harmonious colours, or your own array of colours.
      */
     palette?: readonly string[];
     /**
@@ -95,8 +95,8 @@ export interface RecurringAdapterOptions {
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
  *
- * Events without a `color` are auto-assigned one from a vivid palette,
- * grouped by `category` or `title` so related events share a color.
+ * Events without a `color` draw in `--dt-event` (ink) unless `palette` is
+ * given; then they are auto-assigned one, grouped by `category` or `title`.
  *
  * Read-only by default — create/update/delete throw.
  */

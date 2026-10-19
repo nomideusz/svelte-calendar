@@ -50,6 +50,23 @@ function luminance([r, g, b]: RGB): number {
 	return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
+const DARK_TEXT: RGB = [15, 15, 15]; // #0f0f0f, the ink
+
+function contrast(a: RGB, b: RGB): number {
+	const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+	return (hi + 0.05) / (lo + 0.05);
+}
+
+/**
+ * Text colour for an accent fill (all-day band, now plate): white when it
+ * reaches 4.5:1 on the accent, else whichever of white / dark ink contrasts more.
+ */
+export function accentTextFor(accent: [number, number, number]): '#ffffff' | '#0f0f0f' {
+	const white = contrast(accent, [255, 255, 255]);
+	if (white >= 4.5) return '#ffffff';
+	return contrast(accent, DARK_TEXT) > white ? '#0f0f0f' : '#ffffff';
+}
+
 function rgbToHsl(r: number, g: number, b: number): HSL {
 	r /= 255;
 	g /= 255;
@@ -540,9 +557,7 @@ export function probeHostTheme(
 		: Math.min(aL, 0.48); // dark enough on light
 	const accentAdj = hslToRgb(aH, Math.max(aS, 0.5), accentL);
 
-	// btn-text: white for dark accents, dark for light accents
-	const accentLum = luminance(accentAdj);
-	const btnText = accentLum < 0.4 ? '#ffffff' : '#1a1a2e';
+	const btnText = accentTextFor(accentAdj);
 
 	// ── Scrollbar ──
 	const scrollAlpha = isDark ? 0.12 : 0.10;

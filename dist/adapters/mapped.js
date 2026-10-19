@@ -139,14 +139,17 @@ function collectData(raw, mappedKeys, include) {
  * ```
  */
 export function createMappedAdapter(sourceData, options = {}) {
-    const { fields, mapEvent: customMapper, includeData = '*', autoColor = true, palette = VIVID_PALETTE, readOnly = true, } = options;
+    const { fields, mapEvent: customMapper, includeData = '*', autoColor = false, palette = autoColor ? VIVID_PALETTE : undefined, readOnly = true, } = options;
     // Build the internal event list
     const events = [];
     const colorAssignments = new Map();
     let colorIndex = 0;
     function resolveColor(ev) {
-        // When autoColor is on, always assign from palette (ignore source color)
+        // autoColor: always assign from the palette (ignore source color).
+        // Otherwise keep the source color; fill only when a palette is given.
         if (!autoColor && ev.color)
+            return ev.color;
+        if (!palette?.length)
             return ev.color;
         const key = ev.category ?? ev.title;
         if (!colorAssignments.has(key)) {

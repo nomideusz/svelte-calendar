@@ -51,7 +51,7 @@
 		children,
 	}: Props = $props();
 
-	const accentColor = $derived(event.color || 'var(--dt-accent, #2563eb)');
+	const accentColor = $derived(event.color || 'var(--dt-event, var(--dt-accent))');
 	const isCancelled = $derived(event.status === 'cancelled');
 	const isTentative = $derived(event.status === 'tentative');
 	const isFull = $derived(event.status === 'full');
@@ -184,7 +184,7 @@
 
 <style>
 	.eb {
-		--_color: var(--eb-color, var(--dt-accent, #2563eb));
+		--_color: var(--eb-color, var(--dt-accent, #1d4fd7));
 		cursor: default;
 		transition: opacity 120ms, transform 80ms;
 	}
@@ -195,7 +195,7 @@
 		transform: translateY(-1px);
 	}
 	.eb:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: 2px;
 		border-radius: 4px;
 	}
@@ -234,7 +234,7 @@
 		align-items: center;
 		gap: 5px;
 		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -260,8 +260,8 @@
 	.eb-card {
 		display: flex;
 		border-radius: 8px;
-		background: var(--dt-surface, var(--dt-bg, #ffffff));
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-surface, var(--dt-bg, #efebe9));
+		border: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		overflow: hidden;
 	}
 	.eb-card .eb-stripe {
@@ -278,7 +278,7 @@
 	}
 	.eb-card .eb-title {
 		font: 500 12px / 1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -286,11 +286,11 @@
 	.eb-card .eb-time {
 		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.eb-card .eb-dur {
 		font: 300 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 	}
 
 	/* ── Row ── */
@@ -299,7 +299,7 @@
 		align-items: center;
 		gap: 10px;
 		padding: 6px 12px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.eb-row .eb-stripe {
 		width: 3px;
@@ -312,13 +312,13 @@
 	.eb-row .eb-time {
 		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		flex-shrink: 0;
 		width: 90px;
 	}
 	.eb-row .eb-title {
 		font: 400 12px / 1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		flex: 1;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -326,14 +326,14 @@
 	}
 	.eb-row .eb-dur {
 		font: 300 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 		flex-shrink: 0;
 	}
 
 	/* ── Shared ── */
 	.eb-subtitle {
 		font: 400 10px / 1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -355,7 +355,7 @@
 	}
 	.eb-location {
 		font: 400 9px / 1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -371,16 +371,16 @@
 		width: fit-content;
 	}
 	.eb-cancelled-badge {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: color-mix(in srgb, var(--dt-text-2, rgba(0, 0, 0, 0.54)) 15%, transparent);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
+		background: color-mix(in srgb, var(--dt-text-2, rgba(15, 15, 15, 0.54)) 15%, transparent);
 	}
 	.eb-tentative-badge {
 		color: var(--_color);
 		background: color-mix(in srgb, var(--_color) 12%, transparent);
 	}
 	.eb-full-badge {
-		color: var(--dt-accent, #2563eb);
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 15%, transparent);
+		color: var(--dt-accent, #1d4fd7);
+		background: color-mix(in srgb, var(--dt-accent, #1d4fd7) 15%, transparent);
 	}
 	.eb-limited-badge {
 		color: var(--_color);

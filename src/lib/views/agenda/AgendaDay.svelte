@@ -219,7 +219,7 @@
 							class:ag-compact-row--selected={selectedEventId === ev.id}
 							class:ag-compact-row--cancelled={ev.status === 'cancelled'}
 							class:ag-compact-row--tentative={ev.status === 'tentative'}
-							style:--ev-color={ev.color || 'var(--dt-accent)'}
+							style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
@@ -256,7 +256,7 @@
 								type="button"
 								class="ag-q-now"
 								class:ag-q-now--selected={selectedEventId === ev.id}
-								style:--ev-color={ev.color || 'var(--dt-accent)'}
+								style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 								aria-label="{ev.title}, {L.happeningNow}, {L.percentComplete(Math.round(prog(ev) * 100))}"
 								onclick={() => handleClick(ev)}
 								onpointerenter={() => oneventhover?.(ev)}
@@ -287,7 +287,7 @@
 									aria-label="{ev.title}, {L.completed}, {fmt(ev.start)}"
 									onclick={() => handleClick(ev)}
 								>
-									<span class="ag-q-done-check">✓</span>
+									<span class="ag-q-done-check" aria-hidden="true">✓</span>
 									<span class="ag-q-done-title">{ev.title}</span>
 								</button>
 							{/each}
@@ -314,7 +314,7 @@
 									type="button"
 									class="ag-compact-row ag-compact-row--queue"
 									class:ag-compact-row--selected={selectedEventId === ev.id}
-									style:--ev-color={ev.color || 'var(--dt-accent)'}
+									style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 									aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 									onclick={() => handleClick(ev)}
 									onpointerenter={() => oneventhover?.(ev)}
@@ -335,7 +335,7 @@
 								class="ag-card ag-card--q"
 								class:ag-card--hero={i === 0}
 								class:ag-card--selected={selectedEventId === ev.id}
-								style:--ev-color={ev.color || 'var(--dt-accent)'}
+								style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 								aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)}, {duration(ev)}"
 								onclick={() => handleClick(ev)}
 								onpointerenter={() => oneventhover?.(ev)}
@@ -383,14 +383,14 @@
 							class="ag-log-row"
 							class:ag-log-row--selected={selectedEventId === ev.id}
 							class:ag-log-row--cancelled={ev.status === 'cancelled'}
-							style:--ev-color={ev.color || 'var(--dt-accent)'}
+							style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
 						>
-							<span class="ag-log-check">✓</span>
+							<span class="ag-log-check" aria-hidden="true">✓</span>
 							<span class="ag-log-time">{fmt(ev.start)}</span>
-							<span class="ag-log-dot" style:background={ev.color || 'var(--dt-accent)'}></span>
+							<span class="ag-log-dot" style:background={ev.color || 'var(--dt-event, var(--dt-accent))'}></span>
 							<span class="ag-log-title">{ev.title}</span>
 							<span class="ag-log-dur">{duration(ev)}</span>
 						</button>
@@ -416,7 +416,7 @@
 							class:ag-card--tentative={ev.status === 'tentative'}
 							class:ag-card--full={ev.status === 'full'}
 							class:ag-card--limited={ev.status === 'limited'}
-							style:--ev-color={ev.color || 'var(--dt-accent)'}
+							style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}, {duration(ev)}"
 							onclick={() => handleClick(ev)}
 							onpointerenter={() => oneventhover?.(ev)}
@@ -466,7 +466,7 @@
 		width: 100%;
 		min-width: 0;
 		box-sizing: border-box;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 
@@ -498,8 +498,8 @@
 			135deg,
 			transparent,
 			transparent 6px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 6px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 12px
 		);
 	}
 
@@ -533,7 +533,7 @@
 		font-stretch: 90%;
 		letter-spacing: -0.02em;
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		margin-inline-end: 4px;
 	}
 	.ag-day-head-badge,
@@ -541,19 +541,19 @@
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-day-head--today .ag-day-head-num,
 	.ag-day-head--today .ag-day-head-name,
 	.ag-day-head-badge {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 	.ag-day-head .ag-day-head-badge--muted {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-day-head-date {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag--auto .ag-body { overflow-y: visible; min-height: auto; }
 	.ag-body::-webkit-scrollbar {
@@ -570,13 +570,13 @@
 		align-items: center;
 		gap: 8px;
 		padding: 6px 16px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.ag-allday-label {
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -603,7 +603,7 @@
 	}
 	.ag-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-allday-chip--selected {
 		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
@@ -627,7 +627,7 @@
 		border-radius: 0;
 		background: transparent;
 		border: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, box-shadow 150ms;
@@ -643,18 +643,18 @@
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-card--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-card--cancelled .ag-card-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-card--cancelled::before,
 	.ag-card--full::before {
@@ -663,7 +663,7 @@
 	.ag-card--tentative .ag-card-title,
 	.ag-card--limited .ag-card-title,
 	.ag-card--full .ag-card-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-card--tentative::before,
 	.ag-card--limited::before {
@@ -688,14 +688,14 @@
 	}
 	.ag-card-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		word-break: break-word;
 		min-width: 0;
 	}
 	.ag-card-meta {
 		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-card-dur,
 	.ag-card-eta,
@@ -703,7 +703,7 @@
 	.ag-card-loc,
 	.ag-card-tag {
 		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-card-dur {
 		margin-left: 8px;
@@ -733,7 +733,7 @@
 	/* The next one up: its countdown in ink. Size stays on the scale — the
 	   happening-now item is the largest thing in the queue. */
 	.ag-card--hero .ag-card-eta {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	/* ── Plan card variant ── */
@@ -744,7 +744,7 @@
 	.ag-card-order {
 		font: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		min-width: 18px;
 		flex-shrink: 0;
 	}
@@ -810,7 +810,7 @@
 		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		margin-bottom: 8px;
 		padding: 0 12px;
 	}
@@ -820,13 +820,13 @@
 		justify-content: center;
 		flex: 1;
 		font-size: 14px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	/* ── NOW column (includes Done above) ── */
 	.ag-q-status {
 		padding: 0 10px 0 14px;
-		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
@@ -845,33 +845,33 @@
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		font-size: 12.5px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		cursor: pointer;
 	}
 	.ag-q-done-toggle:hover,
 	.ag-q-done-toggle:active {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		border-color: var(--dt-border-day, rgba(0, 0, 0, 0.6));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
+		border-color: var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.ag-q-done-toggle:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-q-now-sub {
 		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		margin-bottom: 4px;
 	}
 	.ag-q-done-section {
 		margin-top: 12px;
 		padding-top: 10px;
-		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.ag-q-clock {
 		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0;
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 		margin-left: 4px;
 	}
 	/* The one happening now is the most prominent thing on the day: the
@@ -884,9 +884,9 @@
 		padding: 12px 12px 12px 15px;
 		margin-bottom: 8px;
 		border-radius: 0;
-		background: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));
+		background: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));
 		border: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		cursor: pointer;
 		transition: background 150ms, box-shadow 150ms;
 	}
@@ -902,12 +902,12 @@
 	.ag-q-now:hover,
 	.ag-q-now:active {
 		background:
-			linear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),
-			var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));
+			linear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),
+			var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));
 	}
 	.ag-q-now:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-q-now--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));
@@ -916,7 +916,7 @@
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: var(--ev-color, var(--dt-accent, #2563eb));
+		background: var(--ev-color, var(--dt-accent, #1d4fd7));
 		margin-bottom: 8px;
 		animation: ag-pulse 2.5s ease-in-out infinite;
 	}
@@ -934,7 +934,7 @@
 	}
 	.ag-q-now-title {
 		font: 500 20px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
@@ -946,19 +946,19 @@
 	.ag-q-now-time {
 		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		margin-bottom: 10px;
 	}
 	.ag-q-now-track {
 		height: 2px;
-		background: var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-border, rgba(15, 15, 15, 0.08));
 		border-radius: 0;
 		overflow: hidden;
 	}
 	.ag-q-now-fill {
 		height: 100%;
 		width: 100%;
-		background: var(--ev-color, var(--dt-accent, #2563eb));
+		background: var(--ev-color, var(--dt-accent, #1d4fd7));
 		border-radius: 0;
 		transform-origin: left;
 		transition: transform 1s linear;
@@ -969,7 +969,7 @@
 	}
 	.ag-q-free-label {
 		font: 400 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		margin-bottom: 2px;
 	}
 
@@ -998,22 +998,22 @@
 	.ag-q-done-item:hover .ag-q-done-title,
 	.ag-q-done-item:active .ag-q-done-title,
 	.ag-q-done-item--selected .ag-q-done-title {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-q-done-item:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		border-radius: 0;
 	}
 	.ag-q-done-check {
 		font-size: 12.5px;
-		color: var(--dt-success, rgba(22, 163, 74, 0.7));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		flex-shrink: 0;
 	}
 	/* Finished: quieter ink, no strike (strikethrough means cancelled). */
 	.ag-q-done-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1037,7 +1037,7 @@
 		gap: 10px;
 		padding: 8px 0;
 		width: 100%;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		cursor: pointer;
 	}
 	.ag-log-row:last-child {
@@ -1046,15 +1046,15 @@
 	.ag-log-row:hover .ag-log-title,
 	.ag-log-row:active .ag-log-title,
 	.ag-log-row--selected .ag-log-title {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-log-row:hover,
 	.ag-log-row:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-log-row:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		border-radius: 0;
 	}
 	.ag-log-row--selected {
@@ -1063,13 +1063,13 @@
 	}
 	.ag-log-check {
 		font-size: 12.5px;
-		color: var(--dt-success, rgba(22, 163, 74, 0.7));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		flex-shrink: 0;
 	}
 	.ag-log-time {
 		font: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		min-width: 4.6em;
 		flex-shrink: 0;
 	}
@@ -1085,7 +1085,7 @@
 	   Strikethrough is kept for cancelled events only. */
 	.ag-log-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		flex: 0 1 auto;
 		min-width: 0;
 		white-space: nowrap;
@@ -1100,7 +1100,7 @@
 	.ag-log-dur {
 		font: 400 12.5px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		flex-shrink: 0;
 	}
 
@@ -1119,7 +1119,7 @@
 		align-items: baseline;
 		gap: 10px;
 		padding: 5px 0 5px 11px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		cursor: pointer;
 		min-width: 0;
 		width: 100%;
@@ -1140,16 +1140,16 @@
 	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
 	.ag-compact-row:hover,
 	.ag-compact-row:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-compact-row:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-compact-row-time {
 		font: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		min-width: 4.6em;
 		flex-shrink: 0;
 		white-space: nowrap;
@@ -1182,7 +1182,7 @@
 	}
 	.ag-compact-row-title {
 		font: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		flex: 0 1 auto;
 		/* The title is the row's identity — never let subtitle/tags/duration
 		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
@@ -1197,7 +1197,7 @@
 	.ag-compact-row-sub,
 	.ag-compact-row-tag {
 		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 	}
 	.ag-compact-row-dur {
@@ -1219,10 +1219,10 @@
 	}
 	.ag-compact-row--cancelled .ag-compact-row-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-compact-row--cancelled::before { opacity: 0.45; }
-	.ag-compact-row--tentative .ag-compact-row-title { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }
+	.ag-compact-row--tentative .ag-compact-row-title { color: var(--dt-text-2, rgba(15, 15, 15, 0.54)); }
 	.ag-compact-row--tentative::before {
 		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}

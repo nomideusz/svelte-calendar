@@ -2,7 +2,8 @@
 	import { page } from '$app/state';
 	import favicon from '../assets/favicon.svg';
 	import paperUrl from '../../assets/plates/paper.png';
-	import { themeStore, demoThemes } from './theme.svelte.js';
+	import { themeStore, demoThemes, demoThemeNames, STORAGE_KEY } from './theme.svelte.js';
+	import type { DemoThemeName } from './theme.svelte.js';
 
 	let { children } = $props();
 
@@ -34,6 +35,35 @@
 	});
 	const jsonLdTag = `<script type="application/ld+json">${jsonLd}<\/script>`;
 
+	// Every property a host theme sets on <html>: its --dt-* tokens, --accent
+	// for the calendar's auto-probe, the colour scheme, and the page ground
+	// (--page-bg, read by body below). The paper host prints on engraving
+	// paper: the plate tiles under the page and, through --dt-paper, under
+	// every opaque calendar surface.
+	function themeProps(name: DemoThemeName): Record<string, string> {
+		const dt = demoThemes[name];
+		const props: Record<string, string> = {};
+		for (const decl of dt.vars.split(';')) {
+			const i = decl.indexOf(':');
+			if (i === -1) continue;
+			const prop = decl.slice(0, i).trim();
+			if (prop) props[prop] = decl.slice(i + 1).trim();
+		}
+		props['--accent'] = dt.accent;
+		props['color-scheme'] = dt.dark ? 'dark' : 'light';
+		if (dt.paper) props['--dt-paper'] = `url(${paperUrl})`;
+		props['--page-bg'] = dt.paper ? `url(${paperUrl}) ${dt.stageBg}` : dt.stageBg;
+		return props;
+	}
+
+	// Before first paint, the same choice themeStore makes on the client (a
+	// ?host= link, the stored pick, else the OS scheme), so the server-rendered
+	// page never shows one host and then switches to another on hydration.
+	const THEMES = Object.fromEntries(
+		demoThemeNames.map((n) => [n, { s: demoThemes[n].dark ? 'dark' : 'light', p: themeProps(n) }]),
+	);
+	const themeScript = `<script>(function(){try{var T=${JSON.stringify(THEMES)},d=document.documentElement,n=new URLSearchParams(location.search).get('host');if(!T.hasOwnProperty(n)){try{n=localStorage.getItem(${JSON.stringify(STORAGE_KEY)})}catch(e){}}if(!T.hasOwnProperty(n))n=matchMedia('(prefers-color-scheme: dark)').matches?'slate':'light';d.dataset.theme=n;d.dataset.scheme=T[n].s;for(var k in T[n].p)d.style.setProperty(k,T[n].p[k])}catch(e){}})()<\/script>`;
+
 	// Properties we set on <html> last time, so a theme switch can remove
 	// tokens the new theme doesn't define without clobbering unrelated
 	// inline styles.
@@ -41,34 +71,17 @@
 
 	$effect(() => {
 		const t = themeStore.current;
-		const dt = demoThemes[t];
-		const scheme = dt.dark ? 'dark' : 'light';
 		const root = document.documentElement;
 		root.dataset.theme = t;
-		root.dataset.scheme = scheme;
-		// Set --dt-* vars on <html> to simulate the host page's design system.
-		// Also expose --accent so Calendar's auto-probe can discover the brand color.
-		const next = new Map<string, string>();
-		for (const decl of dt.vars.split(';')) {
-			const i = decl.indexOf(':');
-			if (i === -1) continue;
-			const prop = decl.slice(0, i).trim();
-			const value = decl.slice(i + 1).trim();
-			if (prop) next.set(prop, value);
-		}
-		next.set('--accent', dt.accent);
-		next.set('color-scheme', scheme);
-		// The paper host prints on engraving paper: the plate tiles under the
-		// page and, through --dt-paper, under every opaque calendar surface.
-		if (dt.paper) next.set('--dt-paper', `url(${paperUrl})`);
+		root.dataset.scheme = demoThemes[t].dark ? 'dark' : 'light';
+		const next = themeProps(t);
 		for (const prop of appliedProps) {
-			if (!next.has(prop)) root.style.removeProperty(prop);
+			if (!(prop in next)) root.style.removeProperty(prop);
 		}
-		for (const [prop, value] of next) {
+		for (const [prop, value] of Object.entries(next)) {
 			root.style.setProperty(prop, value);
 		}
-		appliedProps = [...next.keys()];
-		document.body.style.background = dt.paper ? `url(${paperUrl}) ${dt.stageBg}` : dt.stageBg;
+		appliedProps = Object.keys(next);
 	});
 </script>
 
@@ -87,6 +100,7 @@
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
+	{@html themeScript}
 	{#if path === '/'}
 		{@html jsonLdTag}
 	{/if}
@@ -108,7 +122,7 @@
 
 	:global(body) {
 		margin: 0;
-		background: #efebe9;
+		background: var(--page-bg, #efebe9);
 		color: var(--dt-text, #0f0f0f);
 		font-family: 'Encode Sans', system-ui, sans-serif;
 		font-variant-numeric: tabular-nums;

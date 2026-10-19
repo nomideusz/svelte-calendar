@@ -139,10 +139,17 @@ function cellKeydown(e, cell) {
 		case " ":
 			if (!cell.isDisabled) {
 				e.preventDefault();
-				ondayclick?.(cell.date);
+				activateCell(cell);
 			}
 			break;
 	}
+}
+/** The cell's own action: drill into the day; on phones (dots, no
+*  ondayclick) the whole cell opens its overflow instead of a tiny "+N". */
+function activateCell(cell) {
+	if (cell.isDisabled) return;
+	if (ondayclick) ondayclick(cell.date);
+	else if (dotsMode && cell.overflow > 0) expandedMs = expandedMs === cell.ms ? null : cell.ms;
 }
 function overflowClick(e, cell) {
 	e.stopPropagation();
@@ -236,18 +243,25 @@ function chipTime(e) {
 					aria-current={cell.isToday ? 'date' : undefined}
 					data-ms={cell.ms}
 					tabindex={isFocusable(cell) ? (cell.ms === rovingMs ? 0 : -1) : undefined}
-					onclick={() => {
-						if (!cell.isDisabled) ondayclick?.(cell.date);
-					}}
+					onclick={() => activateCell(cell)}
 					onfocusin={() => (focusMs = cell.ms)}
 					onkeydown={(e) => cellKeydown(e, cell)}
 				>
 					<span class="mg-daynum" class:mg-daynum--today={cell.isToday}>
 						{cell.dayNum}
 					</span>
-					<div class="mg-chips">
+					<!-- Phones: dots are a picture of the day; the cell (its label counts
+					     the events) is the one tap and tab target. -->
+					<div class="mg-chips" aria-hidden={dotsMode || undefined}>
 						{#each expandedMs === cell.ms ? cell.all : cell.chips as ev (ev.id + cell.ms)}
-							{#if eventSnippet}
+							{#if dotsMode}
+								<span
+									class="mg-chip"
+									class:mg-chip--selected={ev.id === selectedEventId}
+									class:mg-chip--cancelled={ev.status === 'cancelled'}
+									style:--mg-chip-color={ev.color ?? (isAllDay(ev) ? 'var(--dt-accent)' : 'var(--dt-event, var(--dt-accent))')}
+								><span class="mg-chip-dot"></span></span>
+							{:else if eventSnippet}
 								<button
 									type="button"
 									class="mg-chip mg-chip--custom"
@@ -266,7 +280,7 @@ function chipTime(e) {
 									class="mg-chip"
 									class:mg-chip--selected={ev.id === selectedEventId}
 									class:mg-chip--cancelled={ev.status === 'cancelled'}
-									style:--mg-chip-color={ev.color ?? 'var(--dt-accent)'}
+									style:--mg-chip-color={ev.color ?? (isAllDay(ev) ? 'var(--dt-accent)' : 'var(--dt-event, var(--dt-accent))')}
 									title={ev.title}
 									aria-label="{ev.title}{chipTime(ev) ? `, ${chipTime(ev)}` : ''}"
 									onclick={(e) => {
@@ -281,7 +295,11 @@ function chipTime(e) {
 								</button>
 							{/if}
 						{/each}
-						{#if cell.overflow > 0 && expandedMs !== cell.ms}
+						{#if dotsMode}
+							{#if cell.overflow > 0 && expandedMs !== cell.ms}
+								<span class="mg-more">+{cell.overflow}</span>
+							{/if}
+						{:else if cell.overflow > 0 && expandedMs !== cell.ms}
 							<button
 								type="button"
 								class="mg-more"
@@ -289,7 +307,7 @@ function chipTime(e) {
 								aria-label={L.nMore(cell.overflow)}
 								onclick={(e) => overflowClick(e, cell)}
 							>
-								{dotsMode ? `+${cell.overflow}` : L.nMore(cell.overflow)}
+								{L.nMore(cell.overflow)}
 							</button>
 						{:else if expandedMs === cell.ms}
 							<button
@@ -338,7 +356,7 @@ function chipTime(e) {
 		font-variant-numeric: tabular-nums;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	.mg-body {
@@ -372,7 +390,7 @@ function chipTime(e) {
 		border-right: none;
 	}
 	.mg-cell--weekend {
-		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));
+		background: var(--dt-weekend-bg, rgba(15, 15, 15, 0.02));
 	}
 	/* Dim only the day number for adjacent-month cells — their events stay
 	   legible. text-2, not text-3: a 22px numeral still needs 4.5:1. */
@@ -380,7 +398,7 @@ function chipTime(e) {
 		background: var(--dt-surface, transparent);
 	}
 	.mg-cell--out .mg-daynum {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.mg-cell--today {
 		background: var(--dt-today-bg);
@@ -396,10 +414,10 @@ function chipTime(e) {
 		cursor: pointer;
 	}
 	.mg-cell--clickable:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mg-cell:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: -2px;
 	}
 
@@ -446,10 +464,10 @@ function chipTime(e) {
 		text-align: left;
 	}
 	.mg-chip:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mg-chip:focus-visible {
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		outline: none;
 	}
 	.mg-chip--selected {
@@ -493,11 +511,11 @@ function chipTime(e) {
 		cursor: pointer;
 	}
 	.mg-more:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		color: var(--dt-text);
 	}
 	.mg-more:focus-visible {
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		outline: none;
 	}
 
@@ -518,12 +536,19 @@ function chipTime(e) {
 	/* ── Dots mode (mobile) ─────────────────────────────
 	   Cells are too narrow for text chips, so events render as colored
 	   dots in a wrapping row. The cell itself stays the tap target
-	   (day drill-down); dots keep their title/aria-label for a11y. */
+	   (day drill-down) and its label counts the events; dots are aria-hidden. */
 	.mg--dots .mg-chips {
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 3px;
+	}
+	/* The cell is the target: at least a 44px tap, dots never take the hit. */
+	.mg--dots .mg-cell {
+		min-height: 44px;
+	}
+	.mg--dots .mg-chips {
+		pointer-events: none;
 	}
 	.mg--dots .mg-chip {
 		padding: 3px;

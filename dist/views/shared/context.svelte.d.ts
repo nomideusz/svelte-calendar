@@ -48,6 +48,8 @@ export interface CalendarContext {
     readonly emptySnippet: Snippet | undefined;
     /** Per-instance labels (Calendar's `labels` prop merged over globals); global labels when headless. */
     readonly labels: CalendarLabels;
+    /** Say something through the calendar's polite status line (no-op when headless). */
+    announce(text: string): void;
 }
 /**
  * Read the calendar context.

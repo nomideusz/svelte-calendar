@@ -1,4 +1,3 @@
-import { VIVID_PALETTE } from '../core/palette.js';
 import { overlapsRange } from '../core/time.js';
 import { EventNotFoundError } from './errors.js';
 let counter = 0;
@@ -7,12 +6,12 @@ function uid() {
 }
 export function createMemoryAdapter(initial = [], options) {
     const events = [...initial];
-    const palette = options?.palette ?? VIVID_PALETTE;
-    // Auto-color: assign from vivid palette by category/title
+    const palette = options?.palette;
+    // Opt-in auto-color: assign from the palette by category/title
     const colorAssignments = new Map();
     let colorIndex = 0;
     function resolveColor(ev) {
-        if (ev.color)
+        if (ev.color || !palette?.length)
             return ev.color;
         const key = ev.category ?? ev.title;
         if (!colorAssignments.has(key)) {

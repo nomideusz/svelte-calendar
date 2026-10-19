@@ -72,7 +72,7 @@
 		top: 0;
 		bottom: 0;
 		width: 0;
-		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.tg-tick-half {
 		border-left-style: dashed;
@@ -84,7 +84,7 @@
 		left: 6px;
 		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 		white-space: nowrap;
 	}
 
@@ -102,11 +102,11 @@
 		align-items: flex-start;
 		justify-content: flex-end;
 		padding: 2px 8px 0 0;
-		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.tg-v .tg-label {
 		font: 400 9px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 	}
 </style>

@@ -1,5 +1,4 @@
 import { startOfWeek, addDaysMs, diffDays, DAY_MS, overlapsRange } from '../core/time.js';
-import { VIVID_PALETTE } from '../core/palette.js';
 import { CalendarReadOnlyError, EventNotFoundError } from './errors.js';
 // ── Helpers ─────────────────────────────────────────────
 /** Parse "HH:MM" into [hours, minutes] */
@@ -234,32 +233,31 @@ function projectMonthly(rec, range, startDate, effectiveUntil, out) {
     }
 }
 // ── Adapter factory ─────────────────────────────────────
-/** Default palette for auto-coloring */
-const PALETTE = VIVID_PALETTE;
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
  *
- * Events without a `color` are auto-assigned one from a vivid palette,
- * grouped by `category` or `title` so related events share a color.
+ * Events without a `color` draw in `--dt-event` (ink) unless `palette` is
+ * given; then they are auto-assigned one, grouped by `category` or `title`.
  *
  * Read-only by default — create/update/delete throw.
  */
 export function createRecurringAdapter(schedule, options = {}) {
     const { mondayStart = true, palette, movable = false } = options;
-    const colors = palette?.length ? palette : PALETTE;
+    const colors = palette?.length ? palette : undefined;
     // Auto-color: assign from palette by category/title
     const colorAssignments = new Map();
     let colorIndex = 0;
-    for (const rec of schedule) {
-        if (rec.color)
-            continue;
-        const key = rec.category ?? rec.title;
-        if (!colorAssignments.has(key)) {
-            colorAssignments.set(key, colors[colorIndex % colors.length]);
-            colorIndex++;
+    if (colors)
+        for (const rec of schedule) {
+            if (rec.color)
+                continue;
+            const key = rec.category ?? rec.title;
+            if (!colorAssignments.has(key)) {
+                colorAssignments.set(key, colors[colorIndex % colors.length]);
+                colorIndex++;
+            }
         }
-    }
     function resolveColor(rec) {
         if (rec.color)
             return rec.color;

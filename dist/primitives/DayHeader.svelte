@@ -43,18 +43,18 @@ const dayNum = $derived(new Date(dayMs).getDate());
 		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.dh-name-long {
 		font-size: 12px;
 		text-transform: none;
 		letter-spacing: 0.01em;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	.dh-num {
 		font: 600 14px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		width: 28px;
 		height: 28px;
 		display: flex;
@@ -63,20 +63,20 @@ const dayNum = $derived(new Date(dayMs).getDate());
 		border-radius: 50%;
 	}
 	.dh-num-today {
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 		color: var(--dt-btn-text, #fff);
 	}
 
 	.dh-date {
 		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	.dh-rel {
 		font: 500 12px / 1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.dh-today .dh-rel {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 </style>

@@ -249,8 +249,8 @@
 		max-height: calc(100vh - 16px);
 		display: flex;
 		flex-direction: column;
-		background: var(--dt-surface, #fff);
-		color: var(--dt-text, #111);
+		background: var(--dt-surface, #f4f1ee);
+		color: var(--dt-text, #0f0f0f);
 		border: 1px solid var(--dt-border, #e2e2e2);
 		border-radius: var(--dt-radius, 8px);
 		box-shadow: var(--dt-shadow, 0 16px 48px rgba(0, 0, 0, 0.18));
@@ -290,8 +290,8 @@
 		cursor: pointer;
 	}
 	.fp-close:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.06));
-		color: var(--dt-text, #111);
+		background: var(--dt-hover, rgba(15, 15, 15, 0.06));
+		color: var(--dt-text, #0f0f0f);
 	}
 	.fp-body {
 		/* A flex child defaults to min-height:auto and never shrinks below its

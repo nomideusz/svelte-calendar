@@ -11,13 +11,16 @@
 		neutral,
 		presets,
 		addDaysMs,
+		fmtTime,
+		weekdayShort,
+		toZonedTime,
 	} from "#lib/index.js";
 	import type { PresetName, CalendarLabels } from "#lib/index.js";
 	import Shell from "./_components/Shell.svelte";
 	import Settings from "./_components/Settings.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
 	import type { CalendarView, TimelineEvent } from "#lib/index.js";
-	import { boardStore } from "./theme.svelte.js";
+	import { boardStore, themeStore } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
 
 	type SettingValue = string | number | boolean;
@@ -138,106 +141,6 @@
 	];
 	const VIEWS = ["week-planner", "week-scroll", "day-planner", "week-agenda", "day-agenda", "month-grid"];
 
-	// `?setup=<slug>&view=<id>` opens the page on that setup and view.
-	function fromUrl(params: Pick<URLSearchParams, "get">): Record<string, SettingValue> {
-		const recipe = recipes.find((r) => r.slug === params.get("setup"));
-		const view = params.get("view");
-		return {
-			...DEFAULT_SETTINGS,
-			...recipe?.values,
-			...(view && VIEWS.includes(view) ? { activeView: view } : {}),
-		};
-	}
-	let settingsValues = $state<Record<string, SettingValue>>(fromUrl(page.url.searchParams));
-
-	// A recipe is on while every prop it sets still holds, so manual tweaks
-	// un-highlight it. The view is its own axis: a setup stays on across views.
-	const activeRecipe = $derived(
-		recipes.find((r) =>
-			Object.entries({ ...DEFAULT_SETTINGS, ...r.values }).every(
-				([k, v]) => k === "activeView" || settingsValues[k] === v,
-			),
-		),
-	);
-	function applyRecipe(recipe: (typeof recipes)[number]) {
-		settingsValues = { ...DEFAULT_SETTINGS, ...recipe.values };
-	}
-
-	// Write the setup and view back to the URL, without a history entry each.
-	$effect(() => {
-		const recipe = activeRecipe;
-		const q = new URLSearchParams();
-		if (recipe && recipe.slug !== "default") q.set("setup", recipe.slug);
-		if (activeView !== (recipe?.values.activeView ?? DEFAULT_SETTINGS.activeView)) q.set("view", activeView);
-		const search = q.size ? `?${q}` : "";
-		if (search !== location.search) replaceState(`${location.pathname}${search}${location.hash}`, {});
-	});
-
-	const readOnly = $derived(Boolean(settingsValues.readOnly));
-	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
-	const showModePills = $derived(Boolean(settingsValues.showModePills));
-	const showNavigation = $derived(Boolean(settingsValues.showNavigation));
-	// With neither, the calendar's own header is gone (an empty `header`
-	// snippet) and the page owns Today and the arrows in the bar.
-	const ownHeader = $derived(!showModePills && !showNavigation);
-	const equalDays = $derived(Boolean(settingsValues.equalDays));
-	const showDates = $derived(Boolean(settingsValues.showDates ?? true));
-	const visibleHoursEnabled = $derived(Boolean(settingsValues.visibleHoursEnabled));
-	const visibleHours = $derived<[number, number] | undefined>(
-		createVisibleHours(
-			visibleHoursEnabled,
-			settingsValues.startHour,
-			settingsValues.endHour,
-		),
-	);
-	const mobileMode = $derived<"auto" | boolean>(toMobileMode(settingsValues.mobileMode));
-	const days = $derived(Math.max(1, Math.min(14, Number(settingsValues.days ?? 7))));
-	const compact = $derived(Boolean(settingsValues.compact));
-	const columns = $derived(Boolean(settingsValues.columns));
-	const blockedSlotsEnabled = $derived(Boolean(settingsValues.blockedSlotsEnabled));
-	const disabledDatesEnabled = $derived(Boolean(settingsValues.disabledDatesEnabled));
-	const activeView = $derived(
-		(settingsValues.activeView as CalendarView["id"]) ?? "week-planner",
-	);
-	const locale = $derived((settingsValues.locale as string) ?? "en-US");
-	const timezone = $derived((settingsValues.timezone as string) || undefined);
-	// The board clock in the header shows the zone the calendar shows.
-	$effect(() => {
-		boardStore.timezone = timezone ?? "";
-	});
-
-	// The calendar formats dates in `locale` by itself; its UI words come from
-	// `labels` — a partial set is merged over the English defaults.
-	const LABELS: Record<string, Partial<CalendarLabels>> = {
-		"pl-PL": {
-			today: "Dziś", day: "Dzień", week: "Tydzień", month: "Miesiąc",
-			planner: "Plan", agenda: "Lista", scroll: "Tygodnie", allDay: "Cały dzień",
-			noEvents: "Brak wydarzeń", nothingScheduled: "Nic nie zaplanowano",
-			goToToday: "Przejdź do dziś", unavailable: "Niedostępne",
-			cancelled: "odwołane", full: "brak miejsc", nMore: (n) => `+${n} więcej`,
-		},
-		"de-DE": {
-			today: "Heute", day: "Tag", week: "Woche", month: "Monat",
-			planner: "Planer", agenda: "Liste", scroll: "Wochen", allDay: "Ganztägig",
-			noEvents: "Keine Termine", nothingScheduled: "Nichts geplant",
-			goToToday: "Zu heute", unavailable: "Nicht verfügbar",
-			cancelled: "abgesagt", full: "ausgebucht", nMore: (n) => `+${n} weitere`,
-		},
-		"fr-FR": {
-			today: "Aujourd’hui", day: "Jour", week: "Semaine", month: "Mois",
-			planner: "Planning", agenda: "Liste", scroll: "Semaines", allDay: "Toute la journée",
-			noEvents: "Aucun événement", nothingScheduled: "Rien de prévu",
-			goToToday: "Aller à aujourd’hui", unavailable: "Indisponible",
-			cancelled: "annulé", full: "complet", nMore: (n) => `+${n} de plus`,
-		},
-	};
-	const labels = $derived(LABELS[locale]);
-	const dir = $derived<"ltr" | "rtl">(settingsValues.rtl ? "rtl" : "ltr");
-	const phoneFrame = $derived(Boolean(settingsValues.phoneFrame));
-
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-
 	// ── Option applicability: which views actually read each option ──
 	// Grounded in what each view pulls from context (grep ctx.* per view dir).
 	// Inert controls disable with a reason instead of silently doing nothing.
@@ -338,6 +241,131 @@
 			disabledWhen: inViews(["week-planner", "week-agenda"], "week-planner and week-agenda only") },
 	];
 
+	// ── URL state: a link reproduces the screen ──
+	// `?setup=<slug>` picks a setup; every control that differs from it rides
+	// along under its prop name (`view`, `theme`, `locale`, `readOnly`, …),
+	// so `?setup=booking-page&view=month-grid&locale=pl-PL` reopens as is.
+	const PARAM: Record<string, string> = { activeView: "view", calendarPreset: "theme" };
+	const param = (key: string) => PARAM[key] ?? key.replace(/Enabled$/, "");
+	function fromUrl(params: Pick<URLSearchParams, "get">): Record<string, SettingValue> {
+		const recipe = recipes.find((r) => r.slug === params.get("setup"));
+		const out = { ...DEFAULT_SETTINGS, ...recipe?.values };
+		for (const f of settingsFields) {
+			const raw = params.get(param(f.key));
+			if (raw === null) continue;
+			if (f.type === "toggle") {
+				if (raw === "true" || raw === "false") out[f.key] = raw === "true";
+			} else if (f.type === "range") {
+				const n = Number(raw);
+				if (Number.isInteger(n) && n >= f.min && n <= f.max) out[f.key] = n;
+			} else if (f.options.some((o) => o.value === raw)) {
+				out[f.key] = raw;
+			}
+		}
+		return out;
+	}
+	let settingsValues = $state<Record<string, SettingValue>>(fromUrl(page.url.searchParams));
+
+	// Page-wide choices no setup defines: a setup stays chosen across them.
+	const AMBIENT = ["activeView", "calendarPreset", "locale", "timezone", "mobileMode", "phoneFrame", "rtl"];
+	// A recipe is on while every prop it sets (and every other prop it leaves
+	// at its default) still holds, so manual tweaks to those un-highlight it.
+	const activeRecipe = $derived(
+		recipes.find((r) =>
+			Object.entries({ ...DEFAULT_SETTINGS, ...r.values }).every(
+				([k, v]) => AMBIENT.includes(k) || settingsValues[k] === v,
+			),
+		),
+	);
+	// Bumped on every setup pick: the calendar remounts, so a new setup opens
+	// at its own first hour instead of the last one's scroll position.
+	let setupRun = $state(0);
+	function applyRecipe(recipe: (typeof recipes)[number]) {
+		const ambient = Object.fromEntries(AMBIENT.filter((k) => k !== "activeView").map((k) => [k, settingsValues[k]]));
+		settingsValues = { ...DEFAULT_SETTINGS, ...ambient, ...recipe.values };
+		setupRun++;
+	}
+
+	// Write the state back to the URL, without a history entry each.
+	$effect(() => {
+		const recipe = activeRecipe;
+		const base: Record<string, SettingValue> = { ...DEFAULT_SETTINGS, ...recipe?.values };
+		const q = new URLSearchParams();
+		if (recipe && recipe.slug !== "default") q.set("setup", recipe.slug);
+		for (const f of settingsFields) {
+			if (settingsValues[f.key] !== base[f.key]) q.set(param(f.key), String(settingsValues[f.key]));
+		}
+		// The host page only once the visitor picked one; else theirs follows the OS.
+		if (themeStore.chosen) q.set("host", themeStore.current);
+		const search = q.size ? `?${q}` : "";
+		if (search !== location.search) replaceState(`${location.pathname}${search}${location.hash}`, {});
+	});
+
+	const readOnly = $derived(Boolean(settingsValues.readOnly));
+	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
+	const showModePills = $derived(Boolean(settingsValues.showModePills));
+	const showNavigation = $derived(Boolean(settingsValues.showNavigation));
+	// With neither, the calendar's own header is gone (an empty `header`
+	// snippet) and the page owns Today and the arrows in the bar.
+	const ownHeader = $derived(!showModePills && !showNavigation);
+	const equalDays = $derived(Boolean(settingsValues.equalDays));
+	const showDates = $derived(Boolean(settingsValues.showDates ?? true));
+	const visibleHoursEnabled = $derived(Boolean(settingsValues.visibleHoursEnabled));
+	const visibleHours = $derived<[number, number] | undefined>(
+		createVisibleHours(
+			visibleHoursEnabled,
+			settingsValues.startHour,
+			settingsValues.endHour,
+		),
+	);
+	const mobileMode = $derived<"auto" | boolean>(toMobileMode(settingsValues.mobileMode));
+	const days = $derived(Math.max(1, Math.min(14, Number(settingsValues.days ?? 7))));
+	const compact = $derived(Boolean(settingsValues.compact));
+	const columns = $derived(Boolean(settingsValues.columns));
+	const blockedSlotsEnabled = $derived(Boolean(settingsValues.blockedSlotsEnabled));
+	const disabledDatesEnabled = $derived(Boolean(settingsValues.disabledDatesEnabled));
+	const activeView = $derived(
+		(settingsValues.activeView as CalendarView["id"]) ?? "week-planner",
+	);
+	const locale = $derived((settingsValues.locale as string) ?? "en-US");
+	const timezone = $derived((settingsValues.timezone as string) || undefined);
+	// The board clock in the header shows the zone the calendar shows.
+	$effect(() => {
+		boardStore.timezone = timezone ?? "";
+	});
+
+	// The calendar formats dates in `locale` by itself; its UI words come from
+	// `labels` — a partial set is merged over the English defaults.
+	const LABELS: Record<string, Partial<CalendarLabels>> = {
+		"pl-PL": {
+			today: "Dziś", day: "Dzień", week: "Tydzień", month: "Miesiąc",
+			planner: "Plan", agenda: "Lista", scroll: "Tygodnie", allDay: "Cały dzień",
+			noEvents: "Brak wydarzeń", nothingScheduled: "Nic nie zaplanowano",
+			goToToday: "Przejdź do dziś", unavailable: "Niedostępne",
+			cancelled: "odwołane", full: "brak miejsc", nMore: (n) => `+${n} więcej`,
+		},
+		"de-DE": {
+			today: "Heute", day: "Tag", week: "Woche", month: "Monat",
+			planner: "Planer", agenda: "Liste", scroll: "Wochen", allDay: "Ganztägig",
+			noEvents: "Keine Termine", nothingScheduled: "Nichts geplant",
+			goToToday: "Zu heute", unavailable: "Nicht verfügbar",
+			cancelled: "abgesagt", full: "ausgebucht", nMore: (n) => `+${n} weitere`,
+		},
+		"fr-FR": {
+			today: "Aujourd’hui", day: "Jour", week: "Semaine", month: "Mois",
+			planner: "Planning", agenda: "Liste", scroll: "Semaines", allDay: "Toute la journée",
+			noEvents: "Aucun événement", nothingScheduled: "Rien de prévu",
+			goToToday: "Aller à aujourd’hui", unavailable: "Indisponible",
+			cancelled: "annulé", full: "complet", nMore: (n) => `+${n} de plus`,
+		},
+	};
+	const labels = $derived(LABELS[locale]);
+	const dir = $derived<"ltr" | "rtl">(settingsValues.rtl ? "rtl" : "ltr");
+	const phoneFrame = $derived(Boolean(settingsValues.phoneFrame));
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+
 	// Under 768px of container the calendar renders the planners and the
 	// scroll as its touch list; the view select says so instead of naming a
 	// grid that isn't on screen.
@@ -362,18 +390,23 @@
 	let recurring = $state(createDemoRecurring());
 
 	// ── Adapter ────────────────────────────────────────────
-	// Composite: one-off events (memory) + recurring schedule. One-colour
-	// palette: every class is marked in ink (--dt-event); the all-day events
-	// name the accent themselves, so it keeps its three jobs — band, now
-	// line, today.
-	const INK = ["var(--dt-event, var(--dt-accent))"];
-	const adapter = $derived(
-		createCompositeAdapter([
-			createMemoryAdapter(seed, { palette: INK }),
+	// Composite: one-off events (memory) + recurring schedule. No colours:
+	// events without `color` are ink (--dt-event), as in the code drawer; the
+	// all-day events name the accent themselves.
+	// With disabledDates on, those days are closed: no classes on them, the
+	// way a host would cancel a closed day rather than book onto it.
+	const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+	const adapter = $derived.by(() => {
+		const closed = (disabledDates ?? []).map(ymd);
+		return createCompositeAdapter([
+			createMemoryAdapter(closed.length ? seed.filter((e) => e.allDay || !closed.includes(ymd(e.start))) : seed),
 			// movable: the demo handles the move itself (see handleMove)
-			createRecurringAdapter(recurring, { palette: INK, movable: true }),
-		]),
-	);
+			createRecurringAdapter(
+				closed.length ? recurring.map((r) => ({ ...r, excludeDates: [...(r.excludeDates ?? []), ...closed] })) : recurring,
+				{ movable: true },
+			),
+		]);
+	});
 
 	// ── Calendar preset theme (from Settings panel) ───────
 	const selectedPreset = $derived(
@@ -389,22 +422,48 @@
 	// ── Callbacks ──────────────────────────────────────────
 	let lastAction = $state("");
 	let hint = $state("");
-	const IDLE = "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
-	const IDLE_TOUCH = "Tap an event or a day: the calendar's callbacks report here.";
+	// Only the week planner, day planner and scroll take drags and drops, and
+	// not as the touch layouts they turn into in a narrow container.
+	const canEdit = $derived(TIMED.includes(activeView) && !mobileOn && !readOnly);
+	// The idle line says what this view does with a pointer (or a finger).
+	function idleFor(touch: boolean): string {
+		const tap = touch ? "Tap" : "Click";
+		if (TIMED.includes(activeView) && mobileOn) {
+			if (activeView !== "day-planner") return `${tap} a day to open it; swipe for the next week.`;
+			return readOnly
+				? `readOnly is on: nothing moves. ${tap} an event and its callback reports here.`
+				: `${tap} empty time to add a class, drag an event to move it, swipe for the next day.`;
+		}
+		if (TIMED.includes(activeView)) {
+			if (readOnly) return `readOnly is on: nothing moves. ${tap} an event and its callback reports here.`;
+			if (activeView === "week-scroll") return `Drag an event to another day or time; ${tap.toLowerCase()} empty space to add a class.`;
+			return touch
+				? "Drag an event to move it; long-press empty time to create one."
+				: "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
+		}
+		if (activeView === "month-grid") return `${tap} a day to open it in day-planner, or an event to report it here.`;
+		if (activeView === "week-agenda" && columns && !mobileOn)
+			return `Drag a class to another day to move it; ${tap.toLowerCase()} a day's name to open it.`;
+		if (activeView === "week-agenda") return `${tap} a day's name to open it in day-planner, or an event to report it here.`;
+		return `${tap} an event and the calendar's oneventclick reports here.`;
+	}
+	const idle = $derived(idleFor(false));
+	const idleTouch = $derived(idleFor(true));
 	/* Every message the line can show, stacked unseen in its one cell, so it is
 	   always as tall as the longest and nothing around it moves on hover. */
 	const messages = $derived(
-		[...new Set([IDLE, IDLE_TOUCH, lastAction, ...recipes.map((r) => r.hint), ...settingsFields.flatMap((f) => [
+		[...new Set([idle, idleTouch, lastAction, ...recipes.map((r) => r.hint), ...settingsFields.flatMap((f) => [
 			f.hint ?? "",
 			f.disabledWhen?.(settingsValues) || "",
 			f.enabledWhen ? `Needs ${f.enabledWhen}` : "",
 		])])].filter(Boolean),
 	);
-	// Times in the info line read like the calendar: its locale and zone, no seconds.
+	// Times in the info line read like the grid: the library's own formatter
+	// ("9:00a" in en-US, "9:00" in pl-PL), in the calendar's zone.
 	function when(start: Date, end?: Date) {
-		const hm = { hour: "numeric", minute: "2-digit", timeZone: timezone } as const;
-		const from = new Intl.DateTimeFormat(locale, { weekday: "short", ...hm }).format(start);
-		return end ? `${from}–${new Intl.DateTimeFormat(locale, hm).format(end)}` : from;
+		const zoned = (d: Date) => (timezone ? toZonedTime(d, timezone) : d);
+		const from = `${weekdayShort(zoned(start).getTime(), locale)} ${fmtTime(zoned(start), locale)}`;
+		return end ? `${from}–${fmtTime(zoned(end), locale)}` : from;
 	}
 	function handleClick(ev: TimelineEvent) {
 		lastAction = `Clicked ${ev.title}`;
@@ -421,7 +480,9 @@
 		seed = createDemoEvents(today);
 		recurring = createDemoRecurring();
 		edited = false;
-		lastAction = "";
+		lastAction = "Events reset to the sample week";
+		// The button goes with the edits: focus the page so Tab carries on from it.
+		document.getElementById("content")?.focus();
 	}
 
 	// Drag the pill under the calendar onto a day: the view hands back the
@@ -437,10 +498,6 @@
 	function addFromKeyboard(e: KeyboardEvent) {
 		if (e.key !== "Enter" && e.key !== " ") return;
 		e.preventDefault();
-		if (readOnly) {
-			lastAction = "readOnly is on: the calendar takes no new events";
-			return;
-		}
 		const start = new Date(Math.ceil(Date.now() / HOUR) * HOUR);
 		addEvent("Vinyasa Flow", start, new Date(start.getTime() + HOUR));
 		focusedDate = start;
@@ -601,6 +658,24 @@
 
 {#snippet blankHeader()}{/snippet}
 
+<!-- In the rail on desktop; at or below 1360px above the calendar instead,
+     since the rail folds under the page there. One is display:none at a time. -->
+{#snippet setups(where: string)}
+	<div class="setups setups--{where}" role="group" aria-label="Setups">
+		{#each recipes as r (r.name)}
+			<button
+				class="setup"
+				aria-pressed={activeRecipe === r}
+				onpointerenter={() => (hint = r.hint)}
+				onpointerleave={() => (hint = "")}
+				onfocus={() => (hint = r.hint)}
+				onblur={() => (hint = "")}
+				onclick={() => applyRecipe(r)}
+			>{r.name}</button>
+		{/each}
+	</div>
+{/snippet}
+
 <Shell>
 	{#snippet bar()}
 		{#if !showNavigation}
@@ -617,30 +692,20 @@
 		{/if}
 	{/snippet}
 	{#snippet rail()}
-		<div class="setups" role="group" aria-label="Setups">
-			{#each recipes as r (r.name)}
-				<button
-					class="setup"
-					aria-pressed={activeRecipe === r}
-					onpointerenter={() => (hint = r.hint)}
-					onpointerleave={() => (hint = "")}
-					onfocus={() => (hint = r.hint)}
-					onblur={() => (hint = "")}
-					onclick={() => applyRecipe(r)}
-				>{r.name}</button>
-			{/each}
-		</div>
+		{@render setups("rail")}
 
 		<Settings {fields} bind:values={settingsValues} bind:hint />
 	{/snippet}
 
 	<main id="content" tabindex="-1">
 		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
+		{@render setups("top")}
 
 		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
 			<div class="cal-frame" bind:clientHeight={frameH} bind:clientWidth={frameW}>
-				<!-- timezone is read when the calendar mounts; a new zone remounts it -->
-				{#key timezone}
+				<!-- timezone is read when the calendar mounts: a new zone remounts it,
+				     and so does a new setup, to open at its own first hour -->
+				{#key `${timezone}|${setupRun}`}
 					<Calendar
 						{adapter}
 						view={activeView}
@@ -681,7 +746,7 @@
 		<!-- The info line sits under the week, where the eye already is: what the
 		     hovered control does, else the last callback, else how to start. -->
 		<div class="info">
-			<div
+			{#if canEdit}<div
 				class="drag-source"
 				draggable="true"
 				ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
@@ -689,7 +754,7 @@
 				role="button"
 				tabindex="0"
 				aria-label="Vinyasa Flow: drag onto a day, or press Enter to add it at the next hour"
-			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
+			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>{/if}
 			<div class="msgs">
 				<p class="msg" aria-live="polite">
 					{#if hint}
@@ -697,7 +762,7 @@
 					{:else if lastAction}
 						<span class="live" aria-hidden="true"></span>{lastAction}
 					{:else}
-						<span class="idle-pointer">{IDLE}</span><span class="idle-touch">{IDLE_TOUCH}</span>
+						<span class="idle-pointer">{idle}</span><span class="idle-touch">{idleTouch}</span>
 					{/if}
 				</p>
 				{#each messages as m (m)}
@@ -802,6 +867,7 @@
 		border-bottom: 2px solid var(--dt-text, #111);
 	}
 	.setup {
+		min-height: 24px;
 		padding: 0 0 calc(6 * var(--u));
 		border: none;
 		border-radius: 0;
@@ -821,6 +887,20 @@
 	.setup:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
+	}
+	.setups--top {
+		display: none;
+	}
+	@media (max-width: 1360px) {
+		.setups--rail {
+			display: none;
+		}
+		.setups--top {
+			display: flex;
+			gap: 6px 22px;
+			padding: 14px 0 10px;
+			margin-bottom: 16px;
+		}
 	}
 
 	/* ── Info line under the week: one message at a time ── */
@@ -933,6 +1013,7 @@
 	.code-toggle {
 		display: flex;
 		align-items: center;
+		min-height: 24px;
 		gap: calc(12 * var(--u));
 		padding: 0;
 		border: none;
@@ -974,7 +1055,25 @@
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
+	/* The markup on one line; where it runs past the frame, its end fades
+	   until it is scrolled to (scroll-driven, so only when it overflows). */
+	@property --line-fade {
+		syntax: "<length>";
+		inherits: false;
+		initial-value: 0px;
+	}
+	@keyframes line-fade {
+		from {
+			--line-fade: 4em;
+		}
+		to {
+			--line-fade: 0px;
+		}
+	}
 	.code-line {
+		mask-image: linear-gradient(to right, #000 calc(100% - var(--line-fade)), transparent);
+		animation: line-fade linear both;
+		animation-timeline: scroll(self inline);
 		display: block;
 		padding: 0 calc(22 * var(--u)) calc(16 * var(--u));
 		overflow-x: auto;

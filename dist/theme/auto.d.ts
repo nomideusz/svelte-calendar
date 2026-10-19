@@ -14,6 +14,11 @@
  *
  * The Calendar component calls this automatically when theme is `auto` (empty string).
  */
+/**
+ * Text colour for an accent fill (all-day band, now plate): white when it
+ * reaches 4.5:1 on the accent, else whichever of white / dark ink contrasts more.
+ */
+export declare function accentTextFor(accent: [number, number, number]): '#ffffff' | '#0f0f0f';
 /** Options for fine-tuning auto-detection behavior. */
 export interface AutoThemeOptions {
     /**

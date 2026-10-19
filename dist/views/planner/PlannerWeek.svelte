@@ -123,6 +123,7 @@ const dayCols = $derived.by(() => {
 		cols.push({
 			ms,
 			isToday: ms === todayMs,
+			markToday: showDates && ms === todayMs,
 			isPast: equalDays ? false : ms < todayMs,
 			isWeekend: dow === 0 || dow === 6,
 			isDisabled: disabledSet.has(ms),
@@ -302,8 +303,12 @@ const weekIsEmpty = $derived(!events.some((ev) => ev.start.getTime() < weekEndMs
 // Week with today → current time minus ~1h of context; otherwise the
 // visibleHours start or 08:00, whichever is later. Lands on a whole hour,
 // with room for its label (centred on the line) below the sticky top.
+// An event running across that hour line would be sliced under the sticky
+// top, so the scroll starts at that event's hour instead.
 $effect(() => {
 	void weekStartMs;
+	void startHour;
+	void endHour;
 	const el = scrollEl;
 	if (!el) return;
 	untrack(() => {
@@ -314,7 +319,26 @@ $effect(() => {
 		} else {
 			targetHour = Math.max(startHour, Math.min(8, endHour - 1));
 		}
-		el.scrollTop = Math.max(0, (Math.floor(targetHour) - startHour) * HOUR_H - LABEL_ROOM);
+		let hour = Math.floor(targetHour);
+		// Moving up can slice an earlier event on another day, so repeat
+		// until no block crosses the line.
+		// ponytail: looks back at most 2 h, so a long block can't drag the view to dawn.
+		const floorY = (hour - 2 - startHour) * HOUR_H;
+		for (let moved = true; moved;) {
+			moved = false;
+			const line = (hour - startHour) * HOUR_H;
+			for (const day of layoutByDay.values()) {
+				for (const p of day) {
+					if (p.top < line && p.top + p.height > line && p.top >= floorY) {
+						hour = Math.floor(startHour + p.top / HOUR_H);
+						moved = true;
+						break;
+					}
+				}
+				if (moved) break;
+			}
+		}
+		el.scrollTop = Math.max(0, (hour - startHour) * HOUR_H - LABEL_ROOM);
 	});
 });
 // ── Pointer coalescing ─────────────────────────────
@@ -390,11 +414,12 @@ function clampToDayBand(ms, dayMs) {
 	return Math.max(atHour(dayMs, startHour), Math.min(atHour(dayMs, endHour), ms));
 }
 // ── Blocked slot helpers ───────────────────────────
+/** The blocked slot covering `hour` on the day, if any (truthy = blocked). */
 function isBlockedAt(dayMs, hour) {
-	if (!blockedSlots?.length) return false;
+	if (!blockedSlots?.length) return undefined;
 	const jsDay = new Date(dayMs).getDay();
 	const isoDay = jsDay === 0 ? 7 : jsDay;
-	return blockedSlots.some((slot) => {
+	return blockedSlots.find((slot) => {
 		if (slot.day && slot.day !== isoDay) return false;
 		return hour >= slot.start && hour < slot.end;
 	});
@@ -641,11 +666,14 @@ function onColKeydown(e, i) {
 	const day = dayCols[i];
 	if (e.key === "Enter" || e.key === " ") {
 		e.preventDefault();
-		if (!oneventcreate || readOnly || day.isDisabled) return;
+		if (!oneventcreate || readOnly) return;
+		// Say why nothing was created, through the calendar's status line.
+		if (day.isDisabled) return ctx.announce(`${dateLong(day.ms, locale)}, ${L.unavailable}`);
 		const step = Math.max(1, ctx.snapInterval) / 60;
 		const want = day.isToday ? snapHour(nowFracHour, "floor") + step : 9;
 		const hour = Math.min(Math.max(want, startHour), endHour - step);
-		if (isBlockedAt(day.ms, hour)) return;
+		const slot = isBlockedAt(day.ms, hour);
+		if (slot) return ctx.announce(`${slot.label || L.unavailable}, ${blockedRangeLabel(day.ms, slot.start, slot.end)}`);
 		const startMs = atHour(day.ms, hour);
 		oneventcreate({
 			start: new Date(startMs),
@@ -915,12 +943,12 @@ function onWindowKeydown(e) {
 					{#each dayCols as day (day.ms)}
 						<div
 							class="tw-hd"
-							class:tw-hd--today={day.isToday}
-							aria-current={day.isToday ? 'date' : undefined}
+							class:tw-hd--today={day.markToday}
+							aria-current={day.markToday ? 'date' : undefined}
 						>
 							<span class="tw-hd-wd">{singleDay ? weekdayLong(day.ms, locale) : weekdayShort(day.ms, locale)}</span>
 							{#if showDates}
-								<span class="tw-hd-num" class:tw-hd-num--today={day.isToday}>{day.dayNum}</span>
+								<span class="tw-hd-num" class:tw-hd-num--today={day.markToday}>{day.dayNum}</span>
 							{/if}
 							{#if dayHeaderSnippet}
 								<div class="tw-hd-custom">
@@ -941,7 +969,7 @@ function onWindowKeydown(e) {
 							{@const segs = allDayByDay.get(day.ms) ?? []}
 							{@const isExpanded = adExpanded[day.ms] ?? false}
 							{@const shown = isExpanded ? segs : segs.slice(0, ALLDAY_MAX)}
-							<div class="tw-ad-cell" class:tw-ad-cell--today={day.isToday}>
+							<div class="tw-ad-cell" class:tw-ad-cell--today={day.markToday}>
 								{#each shown as seg (seg.ev.id)}
 									{@render allDayChip(seg)}
 								{/each}
@@ -1014,14 +1042,14 @@ function onWindowKeydown(e) {
 						<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 						<div
 							class="tw-col"
-							class:tw-col--today={day.isToday}
+							class:tw-col--today={day.markToday}
 							class:tw-col--past={day.isPast}
 							class:tw-col--weekend={day.isWeekend}
 							class:tw-col--disabled={day.isDisabled}
 							data-day={day.ms}
 							role={colsCreate ? 'group' : undefined}
-							aria-label={colsCreate ? `${dateLong(day.ms, locale)}, ${L.createEvent}` : undefined}
-							aria-keyshortcuts={colsCreate ? 'Enter' : undefined}
+							aria-label={colsCreate ? `${dateLong(day.ms, locale)}, ${day.isDisabled ? L.unavailable : L.createEvent}` : undefined}
+							aria-keyshortcuts={colsCreate && !day.isDisabled ? 'Enter' : undefined}
 							tabindex={colsCreate ? (day.ms === tabbableColMs ? 0 : -1) : undefined}
 							onfocusin={() => (focusedColMs = day.ms)}
 							onkeydown={colsCreate ? (e) => onColKeydown(e, di) : undefined}
@@ -1125,8 +1153,8 @@ function onWindowKeydown(e) {
 									style:top="{ghost.top}px"
 									style:height="{ghost.height}px"
 									style:--ev-color={ghost.create
-										? 'var(--dt-accent, #2563eb)'
-										: (movingEvent?.color ?? 'var(--dt-accent, #2563eb)')}
+										? 'var(--dt-accent, #1d4fd7)'
+										: (movingEvent?.color ?? 'var(--dt-event, var(--dt-accent))')}
 									aria-hidden="true"
 								>
 									{#if ghost.showTime}
@@ -1169,7 +1197,7 @@ function onWindowKeydown(e) {
 		overflow: hidden;
 		user-select: none;
 		font-variant-numeric: tabular-nums;
-		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #efebe9);
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw--auto { overflow: visible; }
@@ -1186,12 +1214,12 @@ function onWindowKeydown(e) {
 		overscroll-behavior-x: contain;
 		overscroll-behavior-y: auto;
 		scrollbar-width: thin;
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;
 	}
 	.tw--auto .tw-scroll { overflow-y: visible; }
 	.tw-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
 	.tw-scroll::-webkit-scrollbar-thumb {
-		background: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));
+		background: var(--dt-scrollbar, rgba(15, 15, 15, 0.1));
 		border-radius: 4px;
 	}
 	.tw-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -1207,8 +1235,8 @@ function onWindowKeydown(e) {
 		position: sticky;
 		top: 0;
 		z-index: 30;
-		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-paper, none), var(--dt-bg, #efebe9);
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 
 	/* ─── Day header row ─────────────────────────────── */
@@ -1221,7 +1249,7 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #efebe9);
 	}
 
 	.tw-hd {
@@ -1232,17 +1260,17 @@ function onWindowKeydown(e) {
 		align-items: center;
 		gap: 4px;
 		padding: 14px 4px 12px;
-		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 
 	.tw-hd-wd {
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.tw-hd--today .tw-hd-wd {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 
 	/* The day number is the typography of the grid: large, regular weight. */
@@ -1253,11 +1281,11 @@ function onWindowKeydown(e) {
 		font: 400 40px/1 var(--dt-sans, system-ui, sans-serif);
 		font-stretch: 90%;
 		letter-spacing: -0.02em;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	/* Today: the numeral in the accent, nothing else. */
 	.tw-hd-num--today {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 
 	.tw-hd-custom {
@@ -1268,7 +1296,7 @@ function onWindowKeydown(e) {
 	/* ─── All-day strip ──────────────────────────────── */
 	.tw-allday {
 		display: flex;
-		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 
 	.tw-ad-gutter {
@@ -1279,7 +1307,7 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
+		background: var(--dt-paper, none), var(--dt-bg, #efebe9);
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-end;
@@ -1288,7 +1316,7 @@ function onWindowKeydown(e) {
 	.tw-ad-gutter-lb {
 		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		text-align: right;
 	}
 
@@ -1299,9 +1327,9 @@ function onWindowKeydown(e) {
 		flex-direction: column;
 		gap: 2px;
 		padding: 4px 0 5px;
-		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
-	.tw-ad-cell--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
+	.tw-ad-cell--today { background: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }
 
 	.tw-ad {
 		appearance: none;
@@ -1337,11 +1365,11 @@ function onWindowKeydown(e) {
 		text-decoration: line-through;
 	}
 	.tw-ad--cancelled {
-		background: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #fff));
+		background: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #efebe9));
 	}
 	.tw-ad:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	.tw-ad-title {
@@ -1384,19 +1412,19 @@ function onWindowKeydown(e) {
 		appearance: none;
 		background: none;
 		border: none;
-		border-radius: 3px;
+		border-radius: 0;
 		text-align: left;
 		align-self: flex-start;
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		padding: 2px 6px;
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
 	}
-	.tw-ad-more:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }
+	.tw-ad-more:hover { color: var(--dt-text, rgba(15, 15, 15, 0.87)); }
 	.tw-ad-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Grid body ──────────────────────────────────── */
@@ -1411,8 +1439,8 @@ function onWindowKeydown(e) {
 		position: sticky;
 		left: 0;
 		z-index: 20;
-		background: var(--dt-paper, none), var(--dt-bg, #ffffff);
-		border-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-paper, none), var(--dt-bg, #efebe9);
+		border-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 
 	/* Timetable hour: the numeral carries the rank, the suffix sits raised
@@ -1429,7 +1457,7 @@ function onWindowKeydown(e) {
 		font-stretch: 85%;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.02em;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 	}
 	.tw-gutter-lb::after {
@@ -1439,7 +1467,7 @@ function onWindowKeydown(e) {
 		height: 1px;
 		margin-left: 5px;
 		align-self: center;
-		background: var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		background: var(--dt-border-day, rgba(15, 15, 15, 0.3));
 	}
 	.tw-gutter-lb--under {
 		visibility: hidden;
@@ -1449,7 +1477,7 @@ function onWindowKeydown(e) {
 		font-weight: 500;
 		line-height: 1;
 		letter-spacing: 0;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	/* The clock beside the now line, and the drag's edges while it lasts —
@@ -1461,16 +1489,16 @@ function onWindowKeydown(e) {
 		transform: translateY(-50%);
 		padding: 2px 4px;
 		border-radius: 0;
-		background: var(--dt-surface, var(--dt-bg, #fff));
+		background: var(--dt-surface, var(--dt-bg, #efebe9));
 		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 		white-space: nowrap;
 		z-index: 2;
 	}
 	/* The clock is a reversed plate on the accent, like a board's live time. */
 	.tw-gutter-now {
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 		color: var(--dt-btn-text, #ffffff);
 	}
 
@@ -1495,7 +1523,7 @@ function onWindowKeydown(e) {
 		left: 0;
 		right: 0;
 		height: 1px;
-		background: var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.tw-line--half { opacity: 0.4; }
 	.tw-now-week {
@@ -1503,7 +1531,7 @@ function onWindowKeydown(e) {
 		left: 0;
 		right: 0;
 		height: 0;
-		border-top: 2px solid var(--dt-accent, #2563eb);
+		border-top: 2px solid var(--dt-accent, #1d4fd7);
 		opacity: 0.85;
 		transform: translateY(-1px);
 	}
@@ -1513,11 +1541,11 @@ function onWindowKeydown(e) {
 		flex: 1 1 0;
 		min-width: var(--tw-col-min, 110px);
 		position: relative;
-		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		box-sizing: border-box;
 	}
 	.tw-col:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: -2px;
 	}
 	/* The gutter's right border already bounds the first column */
@@ -1526,25 +1554,25 @@ function onWindowKeydown(e) {
 	/* --tw-col-wash: the column's ground, repeated under an event that the
 	   now line crosses (that event is opaque, so the line runs beneath it). */
 	.tw-col { background: var(--tw-col-wash, transparent); }
-	.tw-col--today { --tw-col-wash: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
+	.tw-col--today { --tw-col-wash: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }
 	/* Dim past days with a wash, never a subtree opacity (event contrast) */
 	.tw-col--past {
-		--tw-col-wash: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);
+		--tw-col-wash: color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent);
 	}
 	/* What has already happened steps back; a cancelled block keeps its own look. */
 	.tw-ev--past:not(.tw-ev--cancelled) {
 		opacity: 0.78;
 	}
 	.tw-col--weekend:not(.tw-col--today):not(.tw-col--past) {
-		--tw-col-wash: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
+		--tw-col-wash: var(--dt-weekend-bg, rgba(15, 15, 15, 0.012));
 	}
 	.tw-col--disabled {
 		background: repeating-linear-gradient(
 			45deg,
 			transparent,
 			transparent 6px,
-			var(--dt-border, rgba(0, 0, 0, 0.08)) 6px,
-			var(--dt-border, rgba(0, 0, 0, 0.08)) 7px
+			var(--dt-border, rgba(15, 15, 15, 0.08)) 6px,
+			var(--dt-border, rgba(15, 15, 15, 0.08)) 7px
 		) !important;
 	}
 
@@ -1556,8 +1584,8 @@ function onWindowKeydown(e) {
 		z-index: 2;
 		background: repeating-linear-gradient(
 			-45deg,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent),
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 4px,
 			transparent 4px,
 			transparent 8px
 		);
@@ -1569,7 +1597,7 @@ function onWindowKeydown(e) {
 	}
 	.tw-blocked-lb {
 		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		white-space: nowrap;
@@ -1584,7 +1612,7 @@ function onWindowKeydown(e) {
 		left: 0;
 		right: 0;
 		height: 0;
-		border-top: 2px solid var(--dt-accent, #2563eb);
+		border-top: 2px solid var(--dt-accent, #1d4fd7);
 		z-index: 5;
 		pointer-events: none;
 		transform: translateY(-1px);
@@ -1596,7 +1624,7 @@ function onWindowKeydown(e) {
 		height: 8px;
 		margin-top: -4px;
 		border-radius: 50%;
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 		z-index: 12;
 		pointer-events: none;
 	}
@@ -1619,7 +1647,7 @@ function onWindowKeydown(e) {
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw-ev:hover {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		z-index: 8;
 	}
 	/* Short blocks keep duration-proportional height, but get a 44px
@@ -1639,7 +1667,7 @@ function onWindowKeydown(e) {
 		z-index: 9;
 	}
 	.tw-ev--current {
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	/* An event the now line crosses lays its column's ground (and its own
 	   wash) over the paper, so the line passes beneath its text. */
@@ -1648,10 +1676,10 @@ function onWindowKeydown(e) {
 			linear-gradient(var(--tw-ev-wash, transparent), var(--tw-ev-wash, transparent)),
 			linear-gradient(var(--tw-col-wash, transparent), var(--tw-col-wash, transparent)),
 			var(--dt-paper, none),
-			var(--dt-bg, #ffffff);
+			var(--dt-bg, #efebe9);
 	}
-	.tw-ev--on-now.tw-ev--current { --tw-ev-wash: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)); }
-	.tw-ev--on-now:hover { --tw-ev-wash: var(--dt-hover, rgba(0, 0, 0, 0.04)); }
+	.tw-ev--on-now.tw-ev--current { --tw-ev-wash: var(--dt-accent-dim, rgba(29, 79, 215, 0.12)); }
+	.tw-ev--on-now:hover { --tw-ev-wash: var(--dt-hover, rgba(15, 15, 15, 0.04)); }
 	.tw-ev--resizing {
 		z-index: 50;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -1669,12 +1697,12 @@ function onWindowKeydown(e) {
 	   grid; a tentative one is set in grey with a dashed bar. */
 	.tw-ev--cancelled .tw-ev-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.tw-ev--cancelled .tw-ev-stripe { opacity: 0.45; /* decorative bar only */ }
 	.tw-ev--tentative .tw-ev-title,
 	.tw-ev--full .tw-ev-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.tw-ev--tentative .tw-ev-stripe,
 	.tw-ev--limited .tw-ev-stripe {
@@ -1723,7 +1751,7 @@ function onWindowKeydown(e) {
 		order: 1;
 		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -1735,7 +1763,7 @@ function onWindowKeydown(e) {
 	.tw-ev-title {
 		order: 0;
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1744,7 +1772,7 @@ function onWindowKeydown(e) {
 	.tw-ev-loc {
 		order: 2;
 		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1829,7 +1857,7 @@ function onWindowKeydown(e) {
 		right: 3px;
 		z-index: 40;
 		border-radius: 0;
-		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));
+		background: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #efebe9)));
 		outline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);
 		box-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));
 		display: flex;
@@ -1849,12 +1877,12 @@ function onWindowKeydown(e) {
 	.tw-ghost-time {
 		font: 500 12.5px/1.15 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--ev-color, var(--dt-accent, #2563eb));
+		color: var(--ev-color, var(--dt-accent, #1d4fd7));
 		white-space: nowrap;
 	}
 	.tw-ghost-title {
 		font: 500 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1876,7 +1904,7 @@ function onWindowKeydown(e) {
 	   overflow: hidden scroll container. */
 	.tw-ev:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		z-index: 9;
 	}
 

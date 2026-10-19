@@ -49,13 +49,13 @@ function handleKeydown(e) {
 		min-height: 24px;
 	}
 	.es:hover {
-		border-color: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		border-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
+		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	.es:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: 2px;
-		border-color: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		border-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 
 	.es-hint {
@@ -74,12 +74,12 @@ function handleKeydown(e) {
 
 	.es-plus {
 		font: 500 14px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 	.es-range {
 		font: 400 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	.es-v {

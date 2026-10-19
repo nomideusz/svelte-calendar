@@ -38,7 +38,11 @@
 
 	// Live clock in the zone the calendar is showing, ticking once a second.
 	let now = $state<Date | null>(null);
+	// The server can't know the visitor's host page: no swatch reads pressed
+	// until the client knows which one the head script applied.
+	let mounted = $state(false);
 	onMount(() => {
+		mounted = true;
 		now = new Date();
 		const id = setInterval(() => (now = new Date()), 1000);
 		return () => clearInterval(id);
@@ -70,20 +74,23 @@
 		<div class="rail-foot">
 			<!-- The host pages are the demo's business; the docs keep the install line. -->
 			{#if !long}
-			<div class="hosts" role="group" aria-label="Host page">
-				{#each demoThemeNames as name (name)}
-					{@const dt = demoThemes[name]}
-					<button
-						class="host"
-						title={dt.label}
-						aria-label={'Host page: ' + dt.label}
-						aria-pressed={themeStore.current === name}
-						style:--sw-bg={dt.stageBg}
-						style:--sw-ac={dt.accent}
-						style:--sw-ink={dt.dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
-						onclick={() => setTheme(name)}
-					></button>
-				{/each}
+			<div class="hosts-set">
+				<p class="hosts-hd"><span id="hosts-hd">Host page</span>{#if mounted}<span class="hosts-now" aria-hidden="true">{demoThemes[themeStore.current].label}</span>{/if}</p>
+				<div class="hosts" role="group" aria-labelledby="hosts-hd">
+					{#each demoThemeNames as name (name)}
+						{@const dt = demoThemes[name]}
+						<button
+							class="host"
+							title={dt.label}
+							aria-label={dt.label}
+							aria-pressed={mounted && themeStore.current === name}
+							style:--sw-bg={dt.stageBg}
+							style:--sw-ac={dt.accent}
+							style:--sw-ink={dt.dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
+							onclick={() => setTheme(name)}
+						></button>
+					{/each}
+				</div>
 			</div>
 			{/if}
 
@@ -164,6 +171,17 @@
 	}
 
 	/* A host swatch is a small page: its ground, and its accent as the all-day band. */
+	.hosts-hd {
+		display: flex;
+		justify-content: space-between;
+		gap: calc(12 * var(--u));
+		margin: 0 0 calc(16 * var(--u));
+		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+	}
+	.hosts-now {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+	}
 	.hosts {
 		display: flex;
 		justify-content: space-between;
@@ -351,6 +369,11 @@
 			border-bottom: none;
 			gap: 10px;
 		}
+		.hosts-hd {
+			justify-content: flex-start;
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
 		.main {
 			order: -1;
 			position: static;
@@ -387,7 +410,7 @@
 			min-height: 100vh;
 		}
 		.mark--bar {
-			font-size: 30px;
+			font-size: 32px;
 		}
 		/* Today ‹ › and the time share one row; the zone is the calendar's business here. */
 		.clock-zone {
@@ -417,6 +440,10 @@
 	}
 
 	@media (pointer: coarse) {
+		.host {
+			min-width: 44px;
+			min-height: 52px;
+		}
 		.nav a,
 		.install {
 			min-height: 44px;

@@ -26,7 +26,7 @@
 		}
 		active = id;
 		// Past the first screen, a Contents key (narrow screens: the rail list is hidden).
-		jump = scrollY > innerHeight;
+		jump = scrollY > innerHeight && scrollY + innerHeight < document.documentElement.scrollHeight - 64;
 		up = scrollY < lastY;
 		lastY = scrollY;
 	}
@@ -45,6 +45,8 @@
 	});
 
 	// Copy keys on every code block (rendered into the markdown by the server).
+	// Each key carries its own aria-label; the outcome is announced here.
+	let copied = $state('');
 	function copyKeys(node: HTMLElement) {
 		async function onclick(e: MouseEvent) {
 			const key = (e.target as HTMLElement).closest<HTMLButtonElement>('.doc-copy');
@@ -52,6 +54,7 @@
 			try {
 				await navigator.clipboard.writeText(key.nextElementSibling?.textContent ?? '');
 				key.textContent = 'Copied';
+				copied = 'Copied';
 			} catch {
 				// No clipboard: select the code so Ctrl/Cmd+C (or the phone's menu) copies it.
 				const range = document.createRange();
@@ -59,8 +62,12 @@
 				getSelection()?.removeAllRanges();
 				getSelection()?.addRange(range);
 				key.textContent = 'Selected';
+				copied = 'Code selected. Press Ctrl+C or Cmd+C to copy.';
 			}
-			setTimeout(() => (key.textContent = 'Copy'), 1600);
+			setTimeout(() => {
+				key.textContent = 'Copy';
+				copied = '';
+			}, 1600);
 		}
 		node.addEventListener('click', onclick);
 		return () => node.removeEventListener('click', onclick);
@@ -102,7 +109,18 @@
 			<figcaption>The code above, running. In a container under 768px wide it switches to the touch layout.</figcaption>
 		</figure>
 		{@html data.rest}
+		<nav class="doc-end" aria-label="The demo">
+			<h2><a href="/">Build your setup in the demo</a></h2>
+			<p>
+				Or start from one: <a href="/?setup=booking-page">Booking page</a>,
+				<a href="/?setup=class-timetable">Class timetable</a>,
+				<a href="/?setup=studio-timetable">Studio timetable</a>,
+				<a href="/?setup=embedded-schedule">Embedded schedule</a> or
+				<a href="/?setup=own-header">Own header</a>. The demo writes the markup for what you set.
+			</p>
+		</nav>
 	</main>
+	<p class="doc-sr" aria-live="polite">{copied}</p>
 	<button type="button" class="doc-jump" class:doc-jump--on={jump} class:doc-jump--up={up} onclick={openContents}>Contents</button>
 </Shell>
 
@@ -164,33 +182,6 @@
 		margin: 0 0 32px;
 		border: 2px solid var(--dt-text, #111);
 	}
-	.doc-toc--top summary {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		min-height: 44px;
-		padding: 0 16px;
-		font: 500 16px / 1 var(--dt-sans, system-ui, sans-serif);
-		cursor: pointer;
-		list-style: none;
-	}
-	.doc-toc--top summary::-webkit-details-marker {
-		display: none;
-	}
-	.doc-toc--top summary::after {
-		content: '';
-		width: 16px;
-		height: 16px;
-		background: currentColor;
-		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
-		transition: transform 140ms;
-	}
-	.doc-toc--top[open] summary::after {
-		transform: rotate(180deg);
-	}
-	.doc-toc--top[open] summary {
-		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
-	}
 	.doc-toc--top .toc-group {
 		padding: 16px 16px 0;
 	}
@@ -227,20 +218,32 @@
 	.doc-content:focus {
 		outline: none;
 	}
-	/* Prose at a reading measure, code and headings at 760px, and the tables
-	   (the props reference) and the live calendar take the whole column. */
+	/* One measure for prose, headings and code; only the tables (the props
+	   reference) and the live calendar break out to the whole column. */
 	.doc-content > :global(*) {
-		max-width: 760px;
+		max-width: 44rem;
 	}
 	.doc-content > :global(:is(table, details:has(table))),
 	.doc-content > .doc-live {
 		max-width: 1120px;
 	}
-	.doc-content :global(:is(p, ul, ol, blockquote)) {
-		max-width: 35em;
-	}
-	.doc-content :global(:is(h2, h3)) {
+	.doc-content :global(:is(h2, h3, tr[id])) {
 		scroll-margin-top: 24px;
+	}
+	/* A prop reached by its link. */
+	.doc-content :global(tr:target td) {
+		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+	}
+	.doc-content :global(.doc-nowrap) {
+		white-space: nowrap;
+	}
+	.doc-sr {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	/* A # after each heading, shown on hover or focus. */
@@ -287,7 +290,7 @@
 			min-height: 44px;
 			padding: 0 16px;
 			border: 2px solid var(--dt-text, #111);
-			border-radius: 6px;
+			border-radius: calc(6 * var(--u));
 			background: var(--dt-bg, #efebe9);
 			color: var(--dt-text, #111);
 			font: 500 16px / 1 var(--dt-sans, system-ui, sans-serif);
@@ -305,7 +308,25 @@
 			outline-offset: 2px;
 		}
 	}
-	/* On a phone the key would sit on the text: it comes back when the reader scrolls up. */
+	/* Where the text column has no margin beside it, the key is a bar across the
+	   bottom edge instead of a box on the text (and hides at the page's end). */
+	@media (max-width: 900px) {
+		.doc-jump {
+			left: 0;
+			right: 0;
+			bottom: 0;
+			min-height: calc(48px + env(safe-area-inset-bottom));
+			padding: 0 16px env(safe-area-inset-bottom);
+			border: none;
+			border-top: 2px solid var(--dt-text, #111);
+			border-radius: 0;
+			text-align: start;
+		}
+		.doc-jump:focus-visible {
+			outline-offset: -4px;
+		}
+	}
+	/* On a phone the bar comes back only when the reader scrolls up. */
 	@media (max-width: 640px) {
 		.doc-jump--on:not(.doc-jump--up) {
 			visibility: hidden;
@@ -314,7 +335,8 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.doc-jump,
-		.doc-content :global(.doc-anchor) {
+		.doc-content :global(.doc-anchor),
+		.doc-content :global(summary::after) {
 			transition: none;
 		}
 	}
@@ -336,7 +358,7 @@
 	}
 
 	.doc-content :global(h3) {
-		font: 500 20px/1.3 var(--dt-sans, system-ui, sans-serif);
+		font: 500 19px/1.3 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, #111);
 		margin: 36px 0 12px;
 	}
@@ -348,7 +370,7 @@
 	}
 
 	.doc-content :global(> p:first-of-type) {
-		font-size: 20px;
+		font-size: 19px;
 		line-height: 1.45;
 		color: var(--dt-text, #111);
 		margin-bottom: 32px;
@@ -420,10 +442,22 @@
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
-	@media (pointer: coarse) {
+	/* Phones and touch: the key is a tab on the frame above the code, never on it. */
+	@media (max-width: 640px), (pointer: coarse) {
+		.doc-content :global(.doc-pre) {
+			display: flex;
+			flex-direction: column;
+		}
 		.doc-content :global(.doc-copy) {
+			position: static;
+			align-self: flex-end;
 			min-height: 44px;
-			min-width: 44px;
+			min-width: 72px;
+			border: 2px solid var(--dt-text, #111);
+			border-bottom: none;
+		}
+		.doc-content :global(.doc-pre pre) {
+			padding-right: 14px;
 		}
 	}
 
@@ -486,6 +520,22 @@
 	.doc-content :global(tr:hover td) {
 		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
 	}
+	/* The props reference's groups share one set of columns, and the
+	   description keeps a reading measure (under ~60ch) at full width. */
+	@media (min-width: 769px) {
+		.doc-content :global(table:has(tr[id^='prop-'])) {
+			table-layout: fixed;
+		}
+		.doc-content :global(table:has(tr[id^='prop-']) th:nth-child(1)) {
+			width: 8.5rem;
+		}
+		.doc-content :global(table:has(tr[id^='prop-']) th:nth-child(2)) {
+			width: 12rem;
+		}
+		.doc-content :global(table:has(tr[id^='prop-']) th:nth-child(3)) {
+			width: 8rem;
+		}
+	}
 
 	/* ── Lists ── */
 	.doc-content :global(ul),
@@ -510,6 +560,55 @@
 	.doc-content :global(a:hover) {
 		border-bottom-width: 2px;
 	}
+	/* A prop named in the prose, linked to its row: ink, a quiet rule. */
+	.doc-content :global(a.doc-prop) {
+		color: inherit;
+		border-bottom-color: var(--dt-border-day, rgba(0, 0, 0, 0.6));
+	}
+	.doc-content :global(a.doc-prop:hover) {
+		border-bottom-color: var(--dt-accent, #111);
+	}
+
+	/* ── The way back to the demo, at the end ── */
+	.doc-end {
+		margin-top: 72px;
+	}
+	.doc-end h2 {
+		margin-top: 0;
+	}
+	.doc-end h2 a {
+		color: var(--dt-text, #111);
+		border-bottom: none;
+	}
+	.doc-end h2 a:hover {
+		color: var(--dt-accent, #111);
+	}
+
+	/* Touch: every link and key at least 44px tall. */
+	@media (pointer: coarse) {
+		.doc-toc a {
+			display: flex;
+			align-items: center;
+			min-height: 44px;
+			padding-block: 0;
+		}
+		.doc-toc a:hover,
+		.doc-toc a[aria-current] {
+			box-shadow: none;
+			text-decoration: underline 2px var(--dt-accent, #111);
+			text-underline-offset: 6px;
+		}
+		.doc-content :global(a.doc-try),
+		.doc-content :global(td:first-child a.doc-try) {
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
+			padding: 0;
+			border-bottom: none;
+			text-decoration: underline 1px var(--dt-border-day, rgba(0, 0, 0, 0.6));
+			text-underline-offset: 4px;
+		}
+	}
 
 	/* ── Details ── */
 	.doc-content :global(details) {
@@ -519,11 +618,37 @@
 		overflow: hidden;
 	}
 	.doc-content :global(summary) {
-		padding: 10px 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		min-height: 44px;
+		padding: 0 16px;
 		cursor: pointer;
-		font: 500 15px/1 var(--dt-sans, system-ui, sans-serif);
+		list-style: none;
+		font: 500 16px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, #111);
 		background: transparent;
+	}
+	.doc-content :global(summary::-webkit-details-marker) {
+		display: none;
+	}
+	/* The rail's chevron (Settings' More props), not the browser's triangle. */
+	.doc-content :global(summary::after) {
+		content: '';
+		flex: none;
+		width: 16px;
+		height: 16px;
+		background: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+		transition: transform 140ms;
+	}
+	.doc-content :global(details[open] > summary::after) {
+		transform: rotate(180deg);
+	}
+	.doc-content :global(summary:focus-visible) {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: -4px;
 	}
 	.doc-content :global(details[open] summary) {
 		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
@@ -553,7 +678,7 @@
 	/* ─── Responsive ─────────────────────────────────── */
 	@media (max-width: 768px) {
 		.doc-content {
-			padding: 24px 16px 64px;
+			padding: 24px 16px 96px;
 		}
 		.doc-content :global(h2) {
 			margin-top: 40px;

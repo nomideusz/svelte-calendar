@@ -2,25 +2,25 @@
  * In-memory adapter — the default for demos and testing.
  *
  * Events are stored in a plain array. No persistence across page loads.
- * Events without a `color` are auto-assigned one from a palette,
- * grouped by `category` or `title` so related events share a color.
+ * Events without a `color` stay uncoloured and draw in `--dt-event` (ink).
+ * Pass `palette` to auto-assign colours instead, grouped by `category` or
+ * `title` so related events share one.
  *
  * Usage:
  *   import { createMemoryAdapter } from '#lib/adapters';
  *   const adapter = createMemoryAdapter(initialEvents);
- *   const adapter = createMemoryAdapter(initialEvents, { palette: myColors });
+ *   const adapter = createMemoryAdapter(initialEvents, { palette: VIVID_PALETTE });
  */
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
-import { VIVID_PALETTE } from '../core/palette.js';
 import { overlapsRange } from '../core/time.js';
 import { EventNotFoundError } from './errors.js';
 
 export interface MemoryAdapterOptions {
 	/**
-	 * Custom color palette for auto-coloring events.
-	 * Defaults to VIVID_PALETTE. Pass `generatePalette(accent)` to
-	 * make event colors adapt to your theme.
+	 * Colour palette for auto-colouring events that have no `color`.
+	 * Off by default (events draw in `--dt-event`). Pass `VIVID_PALETTE`
+	 * for the pre-1.4 look, or `generatePalette(accent)` for theme-harmonious colours.
 	 */
 	palette?: readonly string[];
 }
@@ -35,14 +35,14 @@ export function createMemoryAdapter(
 	options?: MemoryAdapterOptions,
 ): CalendarAdapter {
 	const events: TimelineEvent[] = [...initial];
-	const palette = options?.palette ?? VIVID_PALETTE;
+	const palette = options?.palette;
 
-	// Auto-color: assign from vivid palette by category/title
+	// Opt-in auto-color: assign from the palette by category/title
 	const colorAssignments = new Map<string, string>();
 	let colorIndex = 0;
 
 	function resolveColor(ev: TimelineEvent): string | undefined {
-		if (ev.color) return ev.color;
+		if (ev.color || !palette?.length) return ev.color;
 		const key = ev.category ?? ev.title;
 		if (!colorAssignments.has(key)) {
 			colorAssignments.set(key, palette[colorIndex % palette.length]);

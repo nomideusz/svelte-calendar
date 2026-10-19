@@ -656,7 +656,7 @@
 						style:height="{p.height}px"
 						style:left={p.left}
 						style:width={p.width}
-						style:--ev-color={p.ev.color ?? 'var(--dt-accent)'}
+						style:--ev-color={p.ev.color ?? 'var(--dt-event, var(--dt-accent))'}
 						onclick={(e) => { e.stopPropagation(); if (suppressEventClick) { suppressEventClick = false; return; } oneventclick?.(p.ev); }}
 						onpointerenter={() => oneventhover?.(p.ev)}
 						aria-label="{p.ev.title}{statusText(p.ev)}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}{p.isCurrent ? `, ${L.inProgress}` : ''}{p.isNext ? `, ${L.upNext}` : ''}"
@@ -746,7 +746,7 @@
 		user-select: none;
 		font-variant-numeric: tabular-nums;
 		overflow: hidden;
-		background: var(--dt-bg, #fff);
+		background: var(--dt-bg, #efebe9);
 		-webkit-tap-highlight-color: transparent;
 		touch-action: pan-y pinch-zoom;
 	}
@@ -774,7 +774,7 @@
 		padding: 4px 8px;
 		overflow-x: auto;
 		scrollbar-width: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		flex-shrink: 0;
 		align-items: center;
 	}
@@ -820,7 +820,7 @@
 	}
 	.mb-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* The band is the colour; no dot. */
@@ -846,7 +846,7 @@
 
 	.mb-allday-more {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;
 		padding: 0 6px;
@@ -868,7 +868,7 @@
 	}
 	.mb-allday-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Grid ───────────────────────────────────────── */
@@ -879,14 +879,14 @@
 		overscroll-behavior: contain;
 		-webkit-overflow-scrolling: touch;
 		scrollbar-width: thin;
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;
 		position: relative;
 		padding-top: 8px;
 	}
 	.mb--auto .mb-grid { overflow-y: visible; }
 	.mb-grid:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	.mb-grid-inner {
@@ -906,7 +906,7 @@
 	}
 	.mb-empty-text {
 		font: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	/* ─── Hour row ───────────────────────────────────── */
@@ -927,7 +927,7 @@
 		vertical-align: top;
 		margin-left: 1px;
 		letter-spacing: 0;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mb-hour-label {
 		width: 40px;
@@ -939,7 +939,7 @@
 		font-stretch: 90%;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.02em;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		text-align: right;
 		padding-right: 8px;
 		padding-top: 0;
@@ -950,14 +950,14 @@
 	.mb-hour-line {
 		flex: 1;
 		height: 1px;
-		background: var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 
 	.mb-hour--blocked {
 		background: repeating-linear-gradient(
 			-45deg,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent),
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent) 4px,
 			transparent 4px,
 			transparent 8px
 		);
@@ -969,7 +969,7 @@
 		top: 50%;
 		transform: translateY(-50%);
 		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 	}
@@ -1007,13 +1007,13 @@
 		height: 8px;
 		margin-top: -4px;
 		border-radius: 50%;
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 	}
 	.mb-now-label span {
 		display: inline-block;
 		padding: 2px 3px;
 		border-radius: 0;
-		background: var(--dt-accent, #2563eb);
+		background: var(--dt-accent, #1d4fd7);
 		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-btn-text, #ffffff);
@@ -1022,7 +1022,7 @@
 	.mb-now-line {
 		flex: 1;
 		height: 0;
-		border-top: 2px solid var(--dt-accent, #2563eb);
+		border-top: 2px solid var(--dt-accent, #1d4fd7);
 		box-shadow: none;
 		position: relative;
 		z-index: 4;
@@ -1036,7 +1036,7 @@
 		cursor: pointer;
 		background: transparent;
 		border: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		box-sizing: border-box;
 		display: flex;
 		align-items: stretch;
@@ -1049,7 +1049,7 @@
 	}
 	.mb-event:hover,
 	.mb-event:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	/* Short blocks keep their duration-proportional height, but get a 44px
 	   transparent hit-slop so taps still land. */
@@ -1076,29 +1076,29 @@
 	   laid over the paper, opaque, so the line runs beneath its text. */
 	.mb-event.mb-event--current {
 		background:
-			linear-gradient(var(--dt-accent-dim, rgba(37, 99, 235, 0.12)), var(--dt-accent-dim, rgba(37, 99, 235, 0.12))),
+			linear-gradient(var(--dt-accent-dim, rgba(29, 79, 215, 0.12)), var(--dt-accent-dim, rgba(29, 79, 215, 0.12))),
 			var(--dt-paper, none),
-			var(--dt-bg, #ffffff);
+			var(--dt-bg, #efebe9);
 	}
 	.mb-event.mb-event--current:hover,
 	.mb-event.mb-event--current:active {
 		background:
-			linear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),
+			linear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),
 			var(--dt-paper, none),
-			var(--dt-bg, #ffffff);
+			var(--dt-bg, #efebe9);
 	}
 	/* Printed states: a cancelled class is struck through; a tentative or
 	   limited one is set in grey with a dashed bar — never a bare opacity. */
 	.mb-event--cancelled .mb-ev-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mb-event--cancelled .mb-ev-stripe {
 		opacity: 0.45; /* decorative bar only */
 	}
 	.mb-event--tentative .mb-ev-title,
 	.mb-event--full .mb-ev-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mb-event--tentative .mb-ev-stripe,
 	.mb-event--limited .mb-ev-stripe {
@@ -1178,8 +1178,8 @@
 		right: 4px;
 		z-index: 40;
 		border-radius: 0;
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);
-		border: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent);
+		border: 1px dashed color-mix(in srgb, var(--dt-accent, #1d4fd7) 55%, transparent);
 		display: flex;
 		align-items: flex-start;
 		overflow: hidden;
@@ -1188,7 +1188,7 @@
 	.mb-create-ghost-time {
 		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 		padding: 4px 8px;
 		white-space: nowrap;
 	}
@@ -1212,7 +1212,7 @@
 
 	.mb-ev-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1221,12 +1221,12 @@
 	.mb-ev-time {
 		font: 400 14px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	.mb-ev-sub {
 		font: 400 12.5px/1.1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1234,7 +1234,7 @@
 
 	.mb-ev-loc {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -1288,6 +1288,6 @@
 	/* ─── Focus ──────────────────────────────────────── */
 	.mb-event:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 </style>

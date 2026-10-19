@@ -4,7 +4,7 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect } from 'vitest';
-import { probeHostTheme, observeHostTheme } from './auto.js';
+import { probeHostTheme, observeHostTheme, accentTextFor } from './auto.js';
 
 describe('probeHostTheme', () => {
 	it('returns a string containing --dt-bg', () => {
@@ -112,6 +112,26 @@ describe('observeHostTheme', () => {
 		expect(called).toBe(true);
 
 		cleanup();
+		document.body.removeChild(el);
+	});
+});
+
+describe('accentTextFor (all-day band / now plate text)', () => {
+	it('keeps white on a dark enough accent', () => {
+		expect(accentTextFor([29, 79, 215])).toBe('#ffffff'); // #1d4fd7
+	});
+
+	it('flips to dark text when white falls under 4.5:1', () => {
+		expect(accentTextFor([139, 92, 246])).toBe('#0f0f0f'); // #8b5cf6, white 4.2:1
+		expect(accentTextFor([8, 145, 178])).toBe('#0f0f0f'); // #0891b2, white 3.7:1
+		expect(accentTextFor([250, 204, 21])).toBe('#0f0f0f'); // #facc15
+	});
+
+	it('flows into the probed --dt-btn-text', () => {
+		const el = document.createElement('div');
+		document.body.appendChild(el);
+		expect(probeHostTheme(el, { mode: 'light', accent: '#0891b2' })).toContain('--dt-btn-text: #0f0f0f');
+		expect(probeHostTheme(el, { mode: 'light', accent: '#1d4fd7' })).toContain('--dt-btn-text: #ffffff');
 		document.body.removeChild(el);
 	});
 });

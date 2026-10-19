@@ -69,7 +69,7 @@ export interface CalendarProps {
     mondayStart?: boolean;
     /** Total height. Use `'auto'` to let content determine height (ideal for Agenda views). */
     height?: number | 'auto';
-    /** Border radius in px (default: 12). Set to 0 for no rounding. */
+    /** Border radius in px (default: 0, square-cut). */
     borderRadius?: number;
     /** Text direction: 'ltr' (default), 'rtl', or 'auto' */
     dir?: 'ltr' | 'rtl' | 'auto';

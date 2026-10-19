@@ -105,7 +105,8 @@
 
 			if (hideSet.has(isoDay)) continue;
 
-			const isToday = ms === todayMs;
+			// A dateless weekly template (showDates=false) has no today to mark.
+			const isToday = showDates && ms === todayMs;
 			const isPast = equalDays ? false : ms < todayMs;
 			const isWeekend = jsDay === 0 || jsDay === 6;
 			const isDisabled = disabledSet.has(ms);
@@ -161,7 +162,9 @@
 	/** Visible time on a day row: the start, or "until 01:00" on the day an
 	 *  overnight event runs into. */
 	function evRowTime(ev: TimelineEvent, dayMs: number): string {
-		if (inAllDayStrip(ev)) return L.allDay;
+		// A multi-day band says "All day" once, on its first row this week;
+		// every row's aria-label still says it.
+		if (inAllDayStrip(ev)) return dayCells.find((c) => c.events.includes(ev))?.ms === dayMs ? L.allDay : '';
 		if (ev.start.getTime() < dayMs) return `${L.until} ${fmtTime(ev.end)}`;
 		return fmtTime(ev.start);
 	}
@@ -295,7 +298,7 @@
 								class:mw-ev--tentative={ev.status === 'tentative'}
 								class:mw-ev--full={ev.status === 'full'}
 								class:mw-ev--limited={ev.status === 'limited'}
-								style:--ev-color={ev.color ?? 'var(--dt-accent)'}
+								style:--ev-color={ev.color ?? (inAllDayStrip(ev) ? 'var(--dt-accent)' : 'var(--dt-event, var(--dt-accent))')}
 								onclick={(e) => { e.stopPropagation(); oneventclick?.(ev); }}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 								onpointerenter={() => oneventhover?.(ev)}
@@ -339,7 +342,7 @@
 		user-select: none;
 		font-variant-numeric: tabular-nums;
 		overflow: hidden;
-		background: var(--dt-bg, #fff);
+		background: var(--dt-bg, #efebe9);
 		-webkit-tap-highlight-color: transparent;
 		touch-action: pan-y pinch-zoom;
 	}
@@ -353,7 +356,7 @@
 		overscroll-behavior: contain;
 		-webkit-overflow-scrolling: touch;
 		scrollbar-width: thin;
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;
 	}
 	.mw--auto .mw-list { overflow-y: visible; }
 	.mw-list--animate {
@@ -379,34 +382,34 @@
 		text-align: left;
 		width: 100%;
 		-webkit-tap-highlight-color: transparent;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		min-height: 56px;
 	}
 	.mw-row:last-child {
 		border-bottom: none;
 	}
 	.mw-row:has(.mw-row-target:active) {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mw-row--today {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #1d4fd7) 4%, transparent);
 	}
 	/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */
 	.mw-row--past {
-		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);
+		background: color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent);
 	}
 	.mw-row--past :global(.mw-ev-title),
 	.mw-row--past :global(.mw-ev-time),
 	.mw-row--past .mw-day-num {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mw-row--disabled {
 		background-image: repeating-linear-gradient(
 			135deg,
 			transparent,
 			transparent 6px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 6px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 12px
 		);
 	}
 	.mw-row-target {
@@ -424,7 +427,7 @@
 	}
 	.mw-row-target:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Date column ────────────────────────────────── */
@@ -444,10 +447,10 @@
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mw-day-name--today {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 
 	/* The date is the typography: large and regular, narrowed like the planner's */
@@ -456,10 +459,10 @@
 		font-stretch: 90%;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.02em;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.mw-day-num--today {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Events column ──────────────────────────────── */
@@ -478,7 +481,7 @@
 
 	.mw-empty {
 		font: 400 13px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 
 	/* ─── Event chip ─────────────────────────────────── */
@@ -494,20 +497,20 @@
 		transition: background 120ms;
 		-webkit-tap-highlight-color: transparent;
 		border: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		text-align: left;
 		padding: 0;
 		pointer-events: auto;
 	}
 	.mw-ev:hover,
 	.mw-ev:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mw-ev--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.mw-ev--current {
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	/* All day: a solid band on the event colour, no tint. */
 	.mw-ev--allday {
@@ -531,14 +534,14 @@
 	   limited one is set in grey with a dashed bar — never a bare opacity. */
 	.mw-ev--cancelled .mw-ev-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mw-ev--cancelled .mw-ev-stripe {
 		opacity: 0.45; /* decorative bar only */
 	}
 	.mw-ev--tentative .mw-ev-title,
 	.mw-ev--full .mw-ev-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.mw-ev--tentative .mw-ev-stripe,
 	.mw-ev--limited .mw-ev-stripe {
@@ -571,7 +574,7 @@
 
 	.mw-ev-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -582,14 +585,14 @@
 	.mw-ev-time {
 		font: 400 14px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 
 	.mw-ev-more {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		padding: 2px 4px;
 		min-height: 32px;
 		border: none;
@@ -613,13 +616,13 @@
 	}
 	.mw-ev-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ─── Chevron ────────────────────────────────────── */
 	.mw-chevron {
 		flex-shrink: 0;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 		position: relative;
 		z-index: 1;
 		pointer-events: none;
@@ -628,6 +631,6 @@
 	/* ─── Focus ──────────────────────────────────────── */
 	.mw-ev:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 </style>

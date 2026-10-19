@@ -215,7 +215,7 @@ Monochrome ink on paper, one host accent; the dark presets keep the same roles i
 
 ### Primary
 - **Host Accent** (accent): the all-day band fill, the 2px now line with its dot and reversed clock plate, today's weekday and number, and in the chrome the ON state of a switch, the underline of the chosen setup, the pressed host swatch's border and the hover colour of Today ‹ ›. `neutral` reads it from `--asini-accent`, else blue; `auto` probes the host page and raises saturation to at least 0.5 for legibility.
-- **Accent Text** (accent-text): the only text on an accent fill (band title, now plate). `auto` flips it to dark when the accent is light.
+- **Accent Text** (accent-text): the only text on an accent fill (band title, now plate). `auto` keeps white while it holds 4.5:1 on the accent, else switches to ink `#0f0f0f`; demo hosts with mid-tone accents (Slate, Ocean) set ink.
 
 ### Neutral
 - **Paper** (paper): the page and every opaque calendar surface, with the grain plate over it via `--dt-paper` on the Paper host.
@@ -265,7 +265,7 @@ The page is drawn at a 1872px comp and scales with one unit: `--u = clamp(0.7px,
 
 Desktop (above 1360px; below that the 562u rail leaves the week too narrow, Sunday clipped or the container under 768px): a two-column grid, a sticky 562u rail on the left with the paper and one rule-day hairline on its right, the main column beside it. The rail is padded 34u/40u/32u and stacks: wordmark (36u below it), the page's controls (setups over a 2px ink rule, then selects at 22u gaps, toggles in two columns at 10u×20u, then a "More props" disclosure over a hairline holding the rarer switches and the ranges), then a foot over a 2px ink rule with the five host swatches spaced across a 2px-ruled row and the install line. The main column opens with a 74u bar (nav left at 44u gaps; Today ‹ › and the clock right at 40u gaps) under a rule-day hairline, then the page padded 40u/38u. The calendar fills the remaining height; the info line (the hovered control's hint, else the last callback, else how to start, beside the external drag source; always as tall as its longest message) sits 16u under it and the code drawer 16u under that, pinned to the bottom edge. On the docs the rail is the sticky column instead, its contents list grouped and marking the section in view; at or below 1360px that list moves into an "On this page" disclosure under the lede.
 
-At or below 1360px the calendar comes first: the bar carries the wordmark (40px, on its own row) and wraps at 10px/20px, the rail folds under the page behind a 2px ink rule (static, 24px/20px padding, its own wordmark hidden), its controls run in columns (selects and ranges at 280px minimum, switches at 190px) and its foot becomes a wrapping row. At or below 640px the bar's wordmark drops to 30px, the controls return to the rail's own stack, swatches to 44×52px, and the install line fills the width. The 390px phone preview is an 8px ink bezel with 28px corners on desktop and the screen itself on a phone.
+At or below 1360px the calendar comes first: the bar carries the wordmark (40px, on its own row) and wraps at 10px/20px, the rail folds under the page behind a 2px ink rule (static, 24px/20px padding, its own wordmark hidden), its controls run in columns (selects and ranges at 280px minimum, switches at 190px) and its foot becomes a wrapping row. The setups row moves above the calendar at this width, so a tap changes what is on screen. At or below 640px the bar's wordmark drops to 32px, the controls return to the rail's own stack, swatches to 44×52px, and the install line fills the width. The 390px phone preview is an 8px ink bezel with 28px corners on desktop and the screen itself on a phone.
 
 ## Elevation & Depth
 
@@ -302,15 +302,16 @@ The prop name (400 22u, ink) on a 108u column, the value in a 2px ink frame with
 A 22u pill, 40u tall, bordered 2px ink-2 with the prop name at 19u and a 44×26u track on the right (18% ink), knob in paper. ON: border, label and track turn accent and the knob (white) slides 18u (140ms). Two columns in the rail.
 
 ### Host swatches
-Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms).
+Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms). Over them a "Host page" heading with the pressed host's name; no swatch is pressed until hydration (a pre-paint script applies the stored host first).
 
 ### Code drawer
 A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 180° when open, Copy as a 1px rule-day box with 0 radius, the markup as one scrolling mono line (17u, ink-2) and the full code at mono 13px/1.6 within 30vh when expanded, ligatures off so `=>` and `!=` read as typed.
 
 ### Info line and setups state
-Times in the info line use the chosen locale. Creates, moves and drops really change the demo's events; a Reset events key undoes them. The setup, view, theme, locale and toggles live in the URL (`?setup=booking-page&view=month-grid`), so a link reproduces what is on screen.
+The info line's times use the grid's own format (`fmtTime`, e.g. "Mon 10:00a"); its idle line is per view, and the drag source shows only where a drop works (planners and scroll, not read-only, not touch). Creates, moves and drops really change the demo's events; a Reset events key undoes them. The setup plus every control that differs from it live in the URL under their prop names (`?setup=booking-page&view=month-grid&locale=pl-PL&host=slate`), so a link reproduces what is on screen; tweaking a control keeps the setup chosen.
 
 ### Event block (calendar)
+Adapters assign no colour unless given a `palette`, so an event without its own `color` is ink by default, exactly what the demo shows.
 - **Shape:** 0 radius, transparent, a 3px start bar in `--ev-color` (the event's colour, else `--dt-event`, else the accent), body padded 3px 7px, min height 24px; a narrow overlap column drops the end time; a short block gets a 44px hit-slop.
 - **Normal:** title 500 15px, time 400 14px tabular, location 12.5px, all ink.
 - **Past:** 0.78 opacity; the day column behind it takes a 4% ink wash.
@@ -328,7 +329,10 @@ Times in the info line use the chosen locale. Creates, moves and drops really ch
 Solid `--ev-color` (the accent by default) with accent-text, 36px tall, 0 radius, title 500 13.5px; a span is one continuous band across its days. Selected is a 2px inset ring in accent-text; cancelled fades the fill 55% into the paper and strikes the title; hover brightens 8%.
 
 ### Now and today (calendar)
-Now is a 2px accent line across the grid with an 8px dot at the gutter edge and the HH:MM on a reversed accent plate (500 11px, 0 radius) in the gutter. Today is the weekday and the day number in accent, with a 4% accent wash down its column. The same marks serve every view; the month grid underlines today's number in 2px accent.
+Now is a 2px accent line across the grid with an 8px dot at the gutter edge and the HH:MM on a reversed accent plate (500 11px, 0 radius) in the gutter. Today is the weekday and the day number in accent, with a 4% accent wash down its column. The same marks serve every view; the month grid underlines today's number in 2px accent. With `showDates` off (a weekly template) no column is today: the today marks are dropped and only the now line stays.
+
+### Month on a phone (calendar)
+The day number is 22px; the events are 7px ink dots and a "+N", both decoration. The whole cell (≥44px) is the one target and names the day and its count ("Monday, October 19, 7 events").
 
 ### Grid (calendar)
 Hour lines in rule, half-hours at 0.4 opacity, columns split by rule, the sticky header and gutter paint paper (with the grain plate when `--dt-paper` is set) so they cover what scrolls under. Weekend columns take the weekend wash, disabled days a 45° hatch of rule, blocked slots a −45° hatch of 4% ink with a 500 10px uppercase label in ink-2 (ink-3 fails contrast at 10px).

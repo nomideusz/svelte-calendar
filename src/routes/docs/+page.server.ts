@@ -37,11 +37,24 @@ export async function load() {
 		(_m, tag: string, inner: string) => `<${tag} id="${slugify(inner)}">${inner}</${tag}>`,
 	);
 
-	// The props reference is what readers come for: open, not folded.
-	html = html.replace(/(<h2 id="all-props">[\s\S]*?)<details>/, '$1<details open>');
+	// The package name breaks after its scope on a phone, and only there.
+	html = html.replace('<h1>@nomideusz/svelte-calendar</h1>', '<h1>@nomideusz/<wbr><span class="doc-nowrap">svelte-calendar</span></h1>');
 
-	// The package name breaks after its scope on a phone instead of overflowing.
-	html = html.replace('<h1>@nomideusz/', '<h1>@nomideusz/<wbr>');
+	// Each row of the props reference is a link target (#prop-name), and a prop
+	// named in the prose of the component's own sections links to its row.
+	const props = new Set<string>();
+	html = html.replace(/(<h2 id="all-props">[\s\S]*?)(?=<h2 |$)/, (section) =>
+		section.replace(/<tr>\n<td><code>(\w+)<\/code><\/td>/g, (_m, name: string) => {
+			props.add(name);
+			return `<tr id="prop-${name}">\n<td><code>${name}</code></td>`;
+		}),
+	);
+	html = html.replace(/(<h2 id="(?:quick-start|views|mobile|callbacks|themes|events|localization-i18n|timezone-support)">[\s\S]*?)(?=<h2 )/g, (section) =>
+		// Tables, code, links and headings stay as they are.
+		section.replace(/<(table|pre|a|h[1-6])\b[\s\S]*?<\/\1>|<code>(\w+)<\/code>/g, (m, tag?: string, name?: string) =>
+			!tag && name && props.has(name) ? `<a class="doc-prop" href="#prop-${name}"><code>${name}</code></a>` : m,
+		),
+	);
 
 	// Each view in the views table links to the demo showing it.
 	html = html.replace(/(<h2 id="views">[\s\S]*?)(?=<h2 )/, (section) =>
@@ -61,8 +74,23 @@ export async function load() {
 		return `<table>${rows}</table>`;
 	});
 
-	// Every code block gets a Copy key (the page wires the clicks).
-	html = html.replace(/<pre>/g, '<div class="doc-pre"><button type="button" class="doc-copy">Copy</button><pre>').replace(/<\/pre>/g, '</pre></div>');
+	// Every code block gets a Copy key named after its first meaningful line
+	// (the page wires the clicks).
+	html = html.replace(/<pre>([\s\S]*?)<\/pre>/g, (_m, code: string) => {
+		const text = code
+			.replace(/<[^>]+>/g, '')
+			.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+		const skip = /^(<\/?script\b.*>|\/\/.*|<!--.*-->|#.*)$/;
+		// A short opening line (`<Calendar`) takes the next ones with it; an import drops its source.
+		let line = '';
+		for (const l of text.split('\n').map((l) => l.trim().replace(/\s+/g, ' ').replace(/^(import\b.*?) from .*$/, '$1'))) {
+			if (line.length >= 24) break;
+			if (l && !skip.test(l)) line = line ? `${line} ${l}` : l;
+		}
+		if (line.length > 60) line = `${line.slice(0, 59)}…`;
+		const label = `Copy code: ${line}`.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+		return `<div class="doc-pre"><button type="button" class="doc-copy" aria-label="${label}">Copy</button><pre>${code}</pre></div>`;
+	});
 
 	// Extract TOC from h2 headings, grouped
 	const toc: { title: string; items: { id: string; label: string }[] }[] = [];

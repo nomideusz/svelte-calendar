@@ -112,7 +112,7 @@
 		height: 0;
 	}
 	.ni-line-bar {
-		background: var(--ni-color, var(--dt-accent, #2563eb));
+		background: var(--ni-color, var(--dt-accent, #1d4fd7));
 	}
 	.ni-line.vertical .ni-line-bar {
 		width: 2px;
@@ -130,8 +130,8 @@
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
-		background: var(--ni-color, var(--dt-accent, #2563eb));
-		box-shadow: 0 0 6px var(--ni-color, var(--dt-glow, rgba(37, 99, 235, 0.25)));
+		background: var(--ni-color, var(--dt-accent, #1d4fd7));
+		box-shadow: 0 0 6px var(--ni-color, var(--dt-glow, rgba(29, 79, 215, 0.25)));
 	}
 	.ni-dot.vertical .ni-dot-circle {
 		margin-left: -5px;
@@ -147,7 +147,7 @@
 		font: 600 10px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-btn-text, #fff);
-		background: var(--ni-color, var(--dt-accent, #2563eb));
+		background: var(--ni-color, var(--dt-accent, #1d4fd7));
 		padding: 3px 6px;
 		border-radius: 4px;
 	}
@@ -174,7 +174,7 @@
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-btn-text, #fff);
-		background: var(--ni-color, var(--dt-accent, #2563eb));
+		background: var(--ni-color, var(--dt-accent, #1d4fd7));
 		padding: 2px 7px;
 		border-radius: 3px;
 		animation: ni-pulse 2s ease-in-out infinite;

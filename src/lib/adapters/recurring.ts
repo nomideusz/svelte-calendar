@@ -40,7 +40,6 @@
 import type { TimelineEvent } from '../core/types.js';
 import type { CalendarAdapter, DateRange } from './types.js';
 import { startOfWeek, addDaysMs, diffDays, DAY_MS, overlapsRange } from '../core/time.js';
-import { VIVID_PALETTE } from '../core/palette.js';
 import { CalendarReadOnlyError, EventNotFoundError } from './errors.js';
 
 // ── Types ───────────────────────────────────────────────
@@ -130,10 +129,10 @@ export interface RecurringAdapterOptions {
 	/** Start weeks on Monday (default: true) */
 	mondayStart?: boolean;
 	/**
-	 * Custom color palette for auto-coloring events.
-	 * Pass `generatePalette('#yourAccent')` to get theme-harmonious colors,
-	 * or provide your own array of hex strings.
-	 * Defaults to the built-in vivid palette.
+	 * Colour palette for auto-colouring events that have no `color`.
+	 * Off by default (events draw in `--dt-event`). Pass `VIVID_PALETTE`
+	 * for the pre-1.4 look, `generatePalette('#yourAccent')` for
+	 * theme-harmonious colours, or your own array of colours.
 	 */
 	palette?: readonly string[];
 	/**
@@ -427,15 +426,12 @@ function projectMonthly(
 
 // ── Adapter factory ─────────────────────────────────────
 
-/** Default palette for auto-coloring */
-const PALETTE = VIVID_PALETTE;
-
 /**
  * Create a CalendarAdapter that projects recurring events onto concrete
  * dates for whatever range the calendar requests.
  *
- * Events without a `color` are auto-assigned one from a vivid palette,
- * grouped by `category` or `title` so related events share a color.
+ * Events without a `color` draw in `--dt-event` (ink) unless `palette` is
+ * given; then they are auto-assigned one, grouped by `category` or `title`.
  *
  * Read-only by default — create/update/delete throw.
  */
@@ -444,12 +440,12 @@ export function createRecurringAdapter(
 	options: RecurringAdapterOptions = {},
 ): CalendarAdapter {
 	const { mondayStart = true, palette, movable = false } = options;
-	const colors = palette?.length ? palette : PALETTE;
+	const colors = palette?.length ? palette : undefined;
 
 	// Auto-color: assign from palette by category/title
 	const colorAssignments = new Map<string, string>();
 	let colorIndex = 0;
-	for (const rec of schedule) {
+	if (colors) for (const rec of schedule) {
 		if (rec.color) continue;
 		const key = rec.category ?? rec.title;
 		if (!colorAssignments.has(key)) {

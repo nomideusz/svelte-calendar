@@ -246,7 +246,8 @@
 				month: monthLong(ms, locale),
 				num: dayNum(ms),
 				tier,
-				isToday: ms === todayMs,
+				// A dateless weekly template (showDates=false) has no today to mark.
+				isToday: showDates && ms === todayMs,
 				events: dayEvts,
 				allDayEvents: allDayEvts,
 				timedEvents: timedEvts,
@@ -280,7 +281,7 @@
 		class:ag-card--tentative={ev.status === 'tentative'}
 		class:ag-card--full={ev.status === 'full'}
 		class:ag-card--limited={ev.status === 'limited'}
-		style:--ev-color={ev.color || 'var(--dt-accent)'}
+		style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 		aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}, {duration(ev)}"
 		class:ag-card--drag={dragId === String(ev.id)}
 		draggable={canDrag(ev)}
@@ -337,7 +338,7 @@
 		class:ag-compact--tentative={ev.status === 'tentative'}
 		class:ag-compact--full={ev.status === 'full'}
 		class:ag-compact--limited={ev.status === 'limited'}
-		style:--ev-color={ev.color || 'var(--dt-accent)'}
+		style:--ev-color={ev.color || 'var(--dt-event, var(--dt-accent))'}
 		aria-label="{ev.title}{statusText(ev)}{done ? `, ${L.completed}` : ''}, {fmt(ev.start)}, {duration(ev)}"
 		onclick={() => handleClick(ev)}
 		onpointerenter={() => oneventhover?.(ev)}
@@ -468,7 +469,7 @@
 						{#if showDates}<span class="ag-wday-num">{day.num}</span>{/if}
 						{#if day.isToday}
 							<span class="ag-wday-badge">{L.today}</span>
-						{:else if day.tier === 'tomorrow'}
+						{:else if showDates && day.tier === 'tomorrow'}
 							<span class="ag-wday-badge ag-wday-badge--muted">{L.tomorrow}</span>
 						{/if}
 						<span class="ag-wday-name">{day.dayName}</span>
@@ -610,7 +611,7 @@
 		width: 100%;
 		min-width: 0;
 		box-sizing: border-box;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 	.ag--auto {
@@ -687,7 +688,7 @@
 	}
 	.ag-allday-chip:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-allday-chip--selected {
 		box-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);
@@ -720,7 +721,7 @@
 		border-radius: 0;
 		background: transparent;
 		border: none;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 150ms, box-shadow 150ms;
@@ -736,18 +737,18 @@
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-card--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.ag-card--cancelled .ag-card-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-card--cancelled::before,
 	.ag-card--full::before {
@@ -756,7 +757,7 @@
 	.ag-card--tentative .ag-card-title,
 	.ag-card--limited .ag-card-title,
 	.ag-card--full .ag-card-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-card--tentative::before,
 	.ag-card--limited::before {
@@ -775,7 +776,7 @@
 	}
 	.ag-card-title {
 		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		word-break: break-word;
 		flex: 1;
 		min-width: 0;
@@ -793,7 +794,7 @@
 		row-gap: 2px;
 		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-card-dur,
 	.ag-card-eta,
@@ -801,7 +802,7 @@
 	.ag-card-loc,
 	.ag-card-tag {
 		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-card-tags {
 		display: flex;
@@ -814,7 +815,7 @@
 	}
 	.ag-card-progress {
 		height: 3px;
-		background: var(--dt-border, rgba(0, 0, 0, 0.08));
+		background: var(--dt-border, rgba(15, 15, 15, 0.08));
 		border-radius: 0;
 		overflow: hidden;
 		margin-top: 2px;
@@ -835,17 +836,17 @@
 
 	/* ═══ Week day groups ═══ */
 	.ag-wday {
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 	}
 	.ag-wday:last-child {
 		border-bottom: none;
 	}
 	.ag-wday--today {
-		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
+		background: color-mix(in srgb, var(--dt-accent, #1d4fd7) 2%, transparent);
 	}
 	/* Past days: quieter ink from the text tokens, no subtree opacity */
 	.ag-wday--past .ag-wday-num {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-wday--past .ag-wday-head {
 		padding: 8px 20px 2px;
@@ -861,8 +862,8 @@
 			135deg,
 			transparent,
 			transparent 4px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,
-			color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 8%, transparent) 4px,
+			color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 8%, transparent) 8px
 		);
 		pointer-events: none;
 	}
@@ -876,7 +877,7 @@
 	}
 	.ag-wday-head--click:focus-visible,
 	.ag-wday-empty--click:focus-visible {
-		outline: 2px solid var(--dt-accent, #2563eb);
+		outline: 2px solid var(--dt-accent, #1d4fd7);
 		outline-offset: -2px;
 		border-radius: 4px;
 	}
@@ -887,7 +888,7 @@
 		padding: 8px 20px;
 		position: sticky;
 		top: 0;
-		background: var(--dt-bg, #fff);
+		background: var(--dt-bg, #efebe9);
 		z-index: 1;
 		/* Own compositor layer: without it, fast (async) scrolling repaints
 		   the pinned header a frame late and a gap flashes above it. */
@@ -906,7 +907,7 @@
 		font-stretch: 90%;
 		letter-spacing: -0.02em;
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		margin-inline-end: 4px;
 	}
 	.ag-wday-badge,
@@ -914,25 +915,25 @@
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-wday--today .ag-wday-num,
 	.ag-wday--today .ag-wday-name,
 	.ag-wday-badge {
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 	.ag-wday .ag-wday-badge--muted {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-wday-date {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	.ag-wday-empty {
 		padding: 2px 20px 8px;
 		font-size: 12.5px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	/* Expanded day */
@@ -952,7 +953,7 @@
 		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-accent, #2563eb);
+		color: var(--dt-accent, #1d4fd7);
 	}
 	.ag-wslot-cards {
 		display: flex;
@@ -966,7 +967,7 @@
 	}
 	.ag-wday-past-line {
 		font-size: 12.5px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		padding: 6px 0 0;
 	}
 	.ag-wday-past-line--summary {
@@ -984,11 +985,11 @@
 	}
 	.ag-past-toggle:hover,
 	.ag-past-toggle:active {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-past-toggle:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		border-radius: 4px;
 	}
 	.ag-past-chevron {
@@ -1004,7 +1005,7 @@
 	   is kept for cancelled only, so "done" and "called off" never read alike. */
 	.ag-compact--done .ag-compact-title,
 	.ag-compact--done .ag-compact-time {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.ag-compact--done::before {
 		opacity: 0.45;
@@ -1021,7 +1022,7 @@
 		align-items: baseline;
 		gap: 10px;
 		padding: 5px 0 5px 11px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		cursor: pointer;
 		min-width: 0;
 		width: 100%;
@@ -1044,16 +1045,16 @@
 	}
 	.ag-compact:hover,
 	.ag-compact:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-compact:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 	}
 	.ag-compact-time {
 		font: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		min-width: 4.4em;
 		flex-shrink: 0;
 		white-space: nowrap;
@@ -1088,7 +1089,7 @@
 	}
 	.ag-compact-title {
 		font: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		flex: 0 1 auto;
 		/* The title is the row's identity — never let subtitle/tags/duration
 		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
@@ -1103,7 +1104,7 @@
 	.ag-compact-loc,
 	.ag-compact-tag {
 		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 	}
 	.ag-compact-dur {
@@ -1126,7 +1127,7 @@
 	}
 	.ag-compact--cancelled .ag-compact-title {
 		text-decoration: line-through;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-compact--cancelled::before,
 	.ag-compact--full::before {
@@ -1135,7 +1136,7 @@
 	.ag-compact--tentative .ag-compact-title,
 	.ag-compact--limited .ag-compact-title,
 	.ag-compact--full .ag-compact-title {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 	}
 	.ag-compact--tentative::before,
 	.ag-compact--limited::before {
@@ -1150,18 +1151,18 @@
 	}
 	.ag-compact-more {
 		font-size: 12.5px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		padding: 4px 0 0 11px;
 		cursor: pointer;
 		display: block;
 	}
 	.ag-compact-more:hover,
 	.ag-compact-more:active {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 	.ag-compact-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
+		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		border-radius: 0;
 	}
 
@@ -1170,8 +1171,8 @@
 		opacity: 0.4;
 	}
 	.ag-wday--drop {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
-		box-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		box-shadow: inset 0 0 0 1px var(--dt-accent, #1d4fd7);
 	}
 
 	/* ═══ Timetable columns (desktop) ═══ */
@@ -1182,7 +1183,7 @@
 	/* Columns stretch to the tallest day, so the separator runs full height */
 	.ag--cols .ag-wday {
 		border-bottom: none;
-		border-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-inline-start: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		min-width: 0;
 	}
 	.ag--cols .ag-wday:first-child {

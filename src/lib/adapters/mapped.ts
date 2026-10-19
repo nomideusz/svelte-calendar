@@ -112,17 +112,17 @@ export interface MappedAdapterOptions<T = Record<string, unknown>> {
 	includeData?: string[] | '*';
 
 	/**
-	 * When true (default), ignore source colors and auto-assign from
-	 * the palette grouped by category / title.  This keeps the calendar
-	 * visually consistent regardless of the upstream source.
-	 * Set to `false` to preserve the original colors from the data.
-	 * @default true
+	 * When true, ignore source colors and auto-assign from the palette
+	 * (`VIVID_PALETTE` unless `palette` is given) grouped by category / title.
+	 * By default source colors are kept, and events without one draw in
+	 * `--dt-event` (ink) unless a `palette` is given to fill them.
+	 * @default false (since 1.4; was true)
 	 */
 	autoColor?: boolean;
 
 	/**
-	 * Color palette used for auto-coloring.
-	 * Defaults to VIVID_PALETTE.
+	 * Color palette used to fill events without a source color
+	 * (or every event when `autoColor: true`). Off by default.
 	 */
 	palette?: readonly string[];
 
@@ -292,8 +292,8 @@ export function createMappedAdapter<T extends object = Record<string, unknown>>(
 		fields,
 		mapEvent: customMapper,
 		includeData = '*',
-		autoColor = true,
-		palette = VIVID_PALETTE,
+		autoColor = false,
+		palette = autoColor ? VIVID_PALETTE : undefined,
 		readOnly = true,
 	} = options;
 
@@ -303,8 +303,10 @@ export function createMappedAdapter<T extends object = Record<string, unknown>>(
 	let colorIndex = 0;
 
 	function resolveColor(ev: TimelineEvent): string | undefined {
-		// When autoColor is on, always assign from palette (ignore source color)
+		// autoColor: always assign from the palette (ignore source color).
+		// Otherwise keep the source color; fill only when a palette is given.
 		if (!autoColor && ev.color) return ev.color;
+		if (!palette?.length) return ev.color;
 		const key = ev.category ?? ev.title;
 		if (!colorAssignments.has(key)) {
 			colorAssignments.set(key, palette[colorIndex % palette.length]);

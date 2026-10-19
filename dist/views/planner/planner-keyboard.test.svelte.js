@@ -66,4 +66,33 @@ describe('week-planner keyboard', () => {
         await settle();
         expect(oneventmove).toHaveBeenLastCalledWith(expect.anything(), new Date(2026, 9, 22, 9, 45), new Date(2026, 9, 22, 11));
     });
+    it('says why Enter cannot create on a disabled date or a blocked slot', async () => {
+        const { default: Calendar } = await import('../../calendar/Calendar.svelte');
+        const oneventcreate = vi.fn();
+        const target = document.body.appendChild(document.createElement('div'));
+        live.push(mount(Calendar, {
+            target,
+            props: {
+                adapter: createMemoryAdapter([]),
+                view: 'week-planner', mobile: false, currentDate: new Date(2026, 9, 21, 12), height: 700,
+                oneventcreate,
+                disabledDates: [new Date(2026, 9, 20)],
+                blockedSlots: [{ day: 3, start: 8, end: 10, label: 'Cleaning' }],
+            },
+        }));
+        await settle();
+        const cols = [...target.querySelectorAll('.tw-col')];
+        const status = () => target.querySelector('[role="status"]')?.textContent;
+        // Tuesday the 20th is disabled: no create offered.
+        expect(cols[1].getAttribute('aria-label')).toMatch(/Unavailable/);
+        expect(cols[1].getAttribute('aria-keyshortcuts')).toBeNull();
+        key(cols[1], 'Enter');
+        await settle();
+        expect(status()).toMatch(/October 20.*Unavailable/);
+        // Wednesday 09:00 sits in the blocked slot.
+        key(cols[2], 'Enter');
+        await settle();
+        expect(status()).toMatch(/^Cleaning, /);
+        expect(oneventcreate).not.toHaveBeenCalled();
+    });
 });

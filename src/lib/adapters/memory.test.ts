@@ -26,6 +26,24 @@ const MARCH_WEEK: DateRange = {
 // ─── fetchEvents ────────────────────────────────────────
 
 describe('createMemoryAdapter', () => {
+	describe('colour', () => {
+		it('leaves events without a color uncoloured by default (ink)', async () => {
+			const adapter = createMemoryAdapter([makeEvent('1', 9, 10, 1)]);
+			const [ev] = await adapter.fetchEvents(MARCH_1);
+			expect(ev.color).toBeUndefined();
+		});
+
+		it('auto-colours by category/title only when a palette is given', async () => {
+			const adapter = createMemoryAdapter(
+				[makeEvent('1', 9, 10, 1), { ...makeEvent('2', 11, 12, 1), color: '#123456' }],
+				{ palette: ['#aa0000', '#00aa00'] },
+			);
+			const [a, b] = await adapter.fetchEvents(MARCH_1);
+			expect(a.color).toBe('#aa0000');
+			expect(b.color).toBe('#123456');
+		});
+	});
+
 	describe('fetchEvents', () => {
 		it('returns events within range', async () => {
 			const adapter = createMemoryAdapter([

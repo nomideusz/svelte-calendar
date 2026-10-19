@@ -24,7 +24,7 @@ const slate = `
 	--dt-accent-dim: rgba(139, 92, 246, 0.15);
 	--dt-glow: rgba(139, 92, 246, 0.30);
 	--dt-today-bg: rgba(139, 92, 246, 0.03);
-	--dt-btn-text: #fff;
+	--dt-btn-text: #0f0f0f;
 	--dt-scrollbar: rgba(130, 148, 196, 0.10);
 	--dt-success: rgba(74, 222, 128, 0.7);
 `;
@@ -60,7 +60,7 @@ const ocean = `
 	--dt-accent-dim: rgba(8, 145, 178, 0.12);
 	--dt-glow: rgba(8, 145, 178, 0.25);
 	--dt-today-bg: rgba(8, 145, 178, 0.04);
-	--dt-btn-text: #fff;
+	--dt-btn-text: #0f0f0f;
 	--dt-scrollbar: rgba(0, 100, 180, 0.08);
 	--dt-success: rgba(22, 163, 74, 0.7);
 	--dt-sans: inherit;
@@ -112,26 +112,35 @@ export const demoThemeNames: DemoThemeName[] = ['slate', 'light', 'forest', 'oce
 
 // ── Persistent state ──────────────────────────────────────
 
-const STORAGE_KEY = 'svelte-calendar-theme';
+export const STORAGE_KEY = 'svelte-calendar-theme';
 
-function getStored(): DemoThemeName {
-	if (typeof localStorage !== 'undefined') {
-		const v = localStorage.getItem(STORAGE_KEY);
-		if (v && (v in demoThemes)) return v as DemoThemeName;
+const isTheme = (v: string | null): v is DemoThemeName => !!v && Object.hasOwn(demoThemes, v);
+
+/** A `?host=` link, else the stored pick, else the OS colour scheme. `chosen`
+ *  is false only for the OS fallback: then the URL leaves the host out.
+ *  The inline head script in +layout.svelte makes the same choice before paint. */
+function initial(): { current: DemoThemeName; chosen: boolean } {
+	if (typeof window === 'undefined') return { current: 'slate', chosen: false };
+	const linked = new URLSearchParams(location.search).get('host');
+	if (isTheme(linked)) return { current: linked, chosen: true };
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (isTheme(stored)) return { current: stored, chosen: true };
+	} catch {
+		// storage blocked: fall through to the OS preference
 	}
-	// First visit: seed from the OS color-scheme preference.
-	if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'light';
-	}
-	return 'slate';
+	return { current: matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'light', chosen: false };
 }
 
-export const themeStore = $state<{ current: DemoThemeName }>({ current: getStored() });
+export const themeStore = $state<{ current: DemoThemeName; chosen: boolean }>(initial());
 
 export function setTheme(name: DemoThemeName) {
 	themeStore.current = name;
-	if (typeof localStorage !== 'undefined') {
+	themeStore.chosen = true;
+	try {
 		localStorage.setItem(STORAGE_KEY, name);
+	} catch {
+		// storage blocked: the pick lasts this visit
 	}
 }
 

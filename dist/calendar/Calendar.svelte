@@ -376,6 +376,7 @@ setContext("calendar", {
 	get labels() {
 		return mergedLabels;
 	},
+	announce,
 	// Load range (read/write)
 	get loadRange() {
 		return viewLoadRange;
@@ -479,6 +480,17 @@ const dateLabel = $derived.by(() => {
 		year: "numeric"
 	});
 });
+// ── Polite announcements (views say why an action did nothing) ──
+// Shares the header's status line; a note lasts until the range changes.
+let note = $state(null);
+function announce(text) {
+	// A repeated message must change the text node to be read again.
+	note = {
+		text: note?.text === text ? `${text}\u00a0` : text,
+		label: dateLabel
+	};
+}
+const noteText = $derived(note && note.label === dateLabel ? note.text : "");
 // ── Period title (the built-in header's big line) ──
 // Names the month the user is looking at: "October 2026"; a week across two
 // months reads "Oct – Nov 2026"; a day gives its date. `dateLabel` keeps the
@@ -656,7 +668,7 @@ const navCtx = $derived({
 		<div class="cal-hd" class:cal-hd--mobile={useMobile} class:cal-hd--stack={stackHeader}>
 			<!-- The visible title names the month; the status line announces the exact range -->
 			<span class="cal-hd-title" aria-hidden="true">{periodTitle}</span>
-			<span class="cal-sr" role="status" aria-live="polite" aria-atomic="true">{dateLabel}</span>
+			<span class="cal-sr" role="status" aria-live="polite" aria-atomic="true">{noteText || dateLabel}</span>
 			{#if showModePills && !useMobile && labelsForMode.length > 1}
 				<!-- View-type switcher (e.g. Planner ↔ Agenda) for the current mode -->
 				<div class="cal-pills cal-pills--labels" role="radiogroup" aria-label={L.viewMode}>
@@ -715,6 +727,10 @@ const navCtx = $derived({
 		</div>
 	{/if}
 
+	{#if headerSnippet || !(showNavigation || (showModePills && modes.length > 1) || dateLabel)}
+		<span class="cal-sr" role="status" aria-live="polite" aria-atomic="true">{noteText}</span>
+	{/if}
+
 	<div class="cal-body">
 		{#if activeView}
 			{@const Comp = activeView.component}
@@ -755,7 +771,7 @@ const navCtx = $derived({
 		overflow: clip;
 		display: flex;
 		flex-direction: column;
-		border: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		box-sizing: border-box;
 	}
 	.cal--auto {
@@ -775,11 +791,11 @@ const navCtx = $derived({
 		align-items: center;
 		gap: 10px 24px;
 		padding: 14px 16px 12px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));
 		flex-shrink: 0;
 		box-sizing: border-box;
 		font-family: var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 	}
 
 	.cal-hd-title {
@@ -819,10 +835,10 @@ const navCtx = $derived({
 	.cal-hd-btn {
 		box-sizing: border-box;
 		height: var(--cal-ctl-h);
-		border: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));
+		border: 2px solid var(--dt-text, rgba(15, 15, 15, 0.87));
 		border-radius: var(--cal-ctl-r);
 		background: transparent;
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		cursor: pointer;
 		transition: background-color 120ms, opacity 120ms;
 		-webkit-tap-highlight-color: transparent;
@@ -848,7 +864,7 @@ const navCtx = $derived({
 	}
 	.cal-hd-today:active:not(:disabled),
 	.cal-hd-btn:active {
-		background: color-mix(in srgb, var(--dt-text, #000) 12%, transparent);
+		background: color-mix(in srgb, var(--dt-text, #0f0f0f) 12%, transparent);
 	}
 	/* Today is already in view: the frame stays, quietly */
 	.cal-hd-today:disabled {
@@ -859,7 +875,7 @@ const navCtx = $derived({
 	.cal-hd-today:focus-visible,
 	.cal-hd-btn:focus-visible,
 	.cal-pill:focus-visible {
-		outline: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));
+		outline: 2px solid var(--dt-text, rgba(15, 15, 15, 0.87));
 		outline-offset: 2px;
 	}
 
@@ -875,12 +891,12 @@ const navCtx = $derived({
 		align-self: stretch;
 		align-items: center;
 		padding-inline-start: 24px;
-		border-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.12));
+		border-inline-start: 1px solid var(--dt-border, rgba(15, 15, 15, 0.12));
 	}
 	.cal-pill {
 		border: none;
 		background: transparent;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.54));
 		cursor: pointer;
 		font: 400 15px/1 var(--dt-sans, system-ui, sans-serif);
 		min-height: var(--cal-ctl-h);
@@ -896,11 +912,11 @@ const navCtx = $derived({
 	}
 	/* :not(--active) — iOS keeps :hover stuck after a tap */
 	.cal-pill:hover:not(.cal-pill--active) {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		text-decoration-color: var(--dt-border-day, var(--dt-border, rgba(0, 0, 0, 0.3)));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
+		text-decoration-color: var(--dt-border-day, var(--dt-border, rgba(15, 15, 15, 0.3)));
 	}
 	.cal-pill--active {
-		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		color: var(--dt-text, rgba(15, 15, 15, 0.87));
 		text-decoration-color: currentColor;
 	}
 
@@ -962,7 +978,7 @@ const navCtx = $derived({
 		justify-content: center;
 		height: 100%;
 		font: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.38));
 	}
 
 	.cal-loading {
@@ -974,7 +990,7 @@ const navCtx = $derived({
 		background: linear-gradient(
 			90deg,
 			transparent 0%,
-			var(--dt-accent, #2563eb) 50%,
+			var(--dt-accent, #1d4fd7) 50%,
 			transparent 100%
 		);
 		animation: cal-slide 1.2s ease-in-out infinite;
@@ -988,7 +1004,7 @@ const navCtx = $derived({
 	@media (prefers-reduced-motion: reduce) {
 		.cal-loading {
 			animation: none;
-			background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+			background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 		}
 	}
 
