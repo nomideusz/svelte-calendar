@@ -1777,6 +1777,9 @@
 		z-index: 6;
 		border-radius: 0;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		display: flex;
 		align-items: stretch;
 		overflow: hidden;
@@ -1789,7 +1792,7 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 	.tw-ev:hover {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		z-index: 8;
 	}
 	/* Short blocks keep duration-proportional height, but get a 44px
@@ -1809,12 +1812,13 @@
 		z-index: 9;
 	}
 	.tw-ev--current {
-		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
+		background-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	/* An event the now line crosses lays its column's ground (and its own
 	   wash) over the paper, so the line passes beneath its text. */
 	.tw-ev.tw-ev--on-now {
 		background:
+			linear-gradient(var(--_fill), var(--_fill)),
 			linear-gradient(var(--tw-ev-wash, transparent), var(--tw-ev-wash, transparent)),
 			linear-gradient(var(--tw-col-wash, transparent), var(--tw-col-wash, transparent)),
 			var(--dt-paper, none),
@@ -1858,7 +1862,7 @@
 	.tw-ev--readonly { cursor: default; }
 
 	.tw-ev-stripe {
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color);
 		flex-shrink: 0;
 	}

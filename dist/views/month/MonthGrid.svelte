@@ -456,6 +456,9 @@ function chipTime(e) {
 		gap: 5px;
 		border: none;
 		background: none;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--mg-chip-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		padding: 1px 4px;
 		border-radius: 0;
 		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
@@ -465,14 +468,14 @@ function chipTime(e) {
 		text-align: left;
 	}
 	.mg-chip:hover {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mg-chip:focus-visible {
 		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
 		outline: none;
 	}
 	.mg-chip--selected {
-		background: var(--dt-accent-dim);
+		background-color: var(--dt-accent-dim);
 	}
 	.mg-chip--cancelled {
 		text-decoration: line-through;
@@ -486,7 +489,7 @@ function chipTime(e) {
 	.mg-chip-dot {
 		flex: none;
 		align-self: stretch;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		border-radius: 0;
 		background: var(--mg-chip-color);
 	}
@@ -558,6 +561,7 @@ function chipTime(e) {
 	}
 	.mg--dots .mg-chip {
 		padding: 3px;
+		background-image: none; /* a mark, not a chip: no eventFill wash */
 		min-height: 0;
 	}
 	.mg--dots .mg-chip-title,

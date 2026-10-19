@@ -720,6 +720,9 @@
 		align-items: stretch;
 		border-radius: 0;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		border: none;
 		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		overflow: hidden;
@@ -732,12 +735,12 @@
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color);
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
@@ -1020,6 +1023,9 @@
 	}
 	/* A compact row: 3px start bar, hairline beneath, ink text. */
 	.ag-compact {
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		position: relative;
 		display: flex;
 		align-items: baseline;
@@ -1036,7 +1042,7 @@
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color, var(--dt-accent));
 	}
 	.ag-compact--selected {
@@ -1048,7 +1054,7 @@
 	}
 	.ag-compact:hover,
 	.ag-compact:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-compact:focus-visible {
 		outline: none;

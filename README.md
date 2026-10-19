@@ -470,6 +470,8 @@ Component fallbacks use system fonts and a neutral blue accent, so the package s
 | `--dt-text-3` | Tertiary text |
 | `--dt-accent` | Accent color |
 | `--dt-accent-dim` | Accent at ~12% opacity (selection, highlights) |
+| `--dt-ev-fill` | Event wash, as a percentage of the event's colour (default `0%`; the `eventFill` prop sets it) |
+| `--dt-ev-bar` | Width of an event's colour bar (default `3px`; the `eventBar` prop sets it) |
 | `--dt-event` | Bar color of an event without its own `color` (the presets set it to the text color, so such events draw in ink) |
 | `--dt-accent-fg` | Text on the planner's today-number badge (default `#fff`; not set by the presets) |
 | `--dt-btn-text` | Text on accent-filled buttons and badges |
@@ -533,6 +535,14 @@ import { createMemoryAdapter, generatePalette } from '@nomideusz/svelte-calendar
 
 const palette = generatePalette('#e11d48'); // (accent?, count = 15)
 const adapter = createMemoryAdapter(events, { palette });
+```
+
+Events are transparent by default: a bar in the event's colour, ink text on the paper. To give them a background, or change the bar:
+
+```svelte
+<Calendar {adapter} eventFill={0.15} />            <!-- a light wash in each event's colour -->
+<Calendar {adapter} eventFill={0.15} eventBar={0} /> <!-- wash only, no bar -->
+<Calendar {adapter} eventBar={5} />                <!-- a heavier bar -->
 ```
 
 Related exports: `VIVID_PALETTE` (the vivid palette, the default before 1.4) and `extractAccent(themeString)` (the accent color of a `--dt-*` theme string).
@@ -1106,6 +1116,8 @@ Every `<Calendar>` prop (`CalendarProps`), grouped by what it controls.
 | `theme` | `string` | `auto` | CSS theme string of `--dt-*` properties. `auto` probes the host page. |
 | `autoTheme` | `AutoThemeOptions \| false` | `undefined` (probe) | Fine-tune auto-detection: `{ mode, accent, font }`. `false` disables probing. |
 | `borderRadius` | `number` | `0` | Corner radius in px (square by default) |
+| `eventFill` | `number` | `0` | Wash each event in its own colour, 0–1 (`0.15` = a light tint). Sets `--dt-ev-fill` |
+| `eventBar` | `number` | `3` | Width in px of the colour bar on an event's leading edge; `0` removes it. Sets `--dt-ev-bar` |
 
 ### Locale and timezone
 

@@ -1043,6 +1043,9 @@
 		border-radius: 0;
 		cursor: pointer;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		border: none;
 		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		box-sizing: border-box;
@@ -1057,7 +1060,7 @@
 	}
 	.mb-event:hover,
 	.mb-event:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	/* Short blocks keep their duration-proportional height, but get a 44px
 	   transparent hit-slop so taps still land. */
@@ -1084,6 +1087,7 @@
 	   laid over the paper, opaque, so the line runs beneath its text. */
 	.mb-event.mb-event--current {
 		background:
+			linear-gradient(var(--_fill), var(--_fill)),
 			linear-gradient(var(--dt-accent-dim, rgba(29, 79, 215, 0.12)), var(--dt-accent-dim, rgba(29, 79, 215, 0.12))),
 			var(--dt-paper, none),
 			var(--dt-bg, #efebe9);
@@ -1091,6 +1095,7 @@
 	.mb-event.mb-event--current:hover,
 	.mb-event.mb-event--current:active {
 		background:
+			linear-gradient(var(--_fill), var(--_fill)),
 			linear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),
 			var(--dt-paper, none),
 			var(--dt-bg, #efebe9);
@@ -1202,7 +1207,7 @@
 	}
 
 	.mb-ev-stripe {
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color);
 		flex-shrink: 0;
 		border-radius: 0;

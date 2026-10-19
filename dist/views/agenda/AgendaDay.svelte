@@ -600,6 +600,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		align-items: stretch;
 		border-radius: 0;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		border: none;
 		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		overflow: hidden;
@@ -612,12 +615,12 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color);
 	}
 	.ag-card:hover,
 	.ag-card:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-card:focus-visible {
 		outline: none;
@@ -859,6 +862,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		margin-bottom: 8px;
 		border-radius: 0;
 		background: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		border: none;
 		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		cursor: pointer;
@@ -870,12 +876,13 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color, var(--dt-accent));
 	}
 	.ag-q-now:hover,
 	.ag-q-now:active {
 		background:
+			linear-gradient(var(--_fill), var(--_fill)),
 			linear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),
 			var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));
 	}
@@ -998,6 +1005,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		display: none;
 	}
 	.ag-log-row {
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		display: flex;
 		align-items: baseline;
 		gap: 10px;
@@ -1016,7 +1026,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-log-row:hover,
 	.ag-log-row:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-log-row:focus-visible {
 		outline: none;
@@ -1042,7 +1052,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */
 	.ag-log-dot {
 		align-self: stretch;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		border-radius: 0;
 		flex-shrink: 0;
 		opacity: 0.45;
@@ -1080,6 +1090,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-compact-list::-webkit-scrollbar { display: none; }
 	/* A compact row: 3px start bar, hairline beneath, ink text. */
 	.ag-compact-row {
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		position: relative;
 		display: flex;
 		align-items: baseline;
@@ -1096,7 +1109,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color, var(--dt-accent));
 	}
 	.ag-compact-row--selected {
@@ -1106,7 +1119,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-compact-row:active .ag-compact-row-title { color: var(--dt-text); }
 	.ag-compact-row:hover,
 	.ag-compact-row:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.ag-compact-row:focus-visible {
 		outline: none;

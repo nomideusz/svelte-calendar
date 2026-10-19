@@ -95,7 +95,7 @@ import { wrapAdapterWithTimezone, toZonedTime, fromZonedTime } from "../core/tim
 import { isReadOnlyError, isNotFoundError } from "../adapters/errors.js";
 /** Breakpoint (px) at which auto-mobile activates */
 const MOBILE_BREAKPOINT = 768;
-let { adapter, views = defaultViews, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 0, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, onexternaldrop, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
+let { adapter, views = defaultViews, view: activeViewId, theme = auto, autoTheme, mondayStart = true, height: heightProp = 600, borderRadius = 0, eventFill, eventBar, dir, locale, labels: labelsProp, readOnly = false, visibleHours, initialDate, snapInterval = 15, minColumnWidth = 110, showModePills = true, showNavigation = true, equalDays = false, showDates = true, hideDays, currentDate, blockedSlots, days, minDuration, maxDuration, disabledDates, compact = false, columns = false, mobile: mobileProp = "auto", event: eventSnippet, empty: emptySnippet, dayHeader: dayHeaderSnippet, header: headerSnippet, navigation: navigationSnippet, oneventclick, oneventcreate, onexternaldrop, oneventmove, onviewchange, ondatechange, oneventhover, ondayclick, onerror, timezone } = $props();
 // In readOnly mode, suppress mutation callbacks. With a timezone, the
 // drag plane is zoned wall-clock — hosts always receive real instants.
 const unzone = (d) => timezone ? fromZonedTime(d, timezone) : d;
@@ -672,7 +672,7 @@ const navCtx = $derived({
 <div
 	class="cal"
 	bind:this={calEl}
-	style="{effectiveTheme}; {heightProp === 'auto' ? '' : `--cal-h: ${heightProp}px;`} --cal-r: {borderRadius}px"
+	style="{effectiveTheme}; {heightProp === 'auto' ? '' : `--cal-h: ${heightProp}px;`} --cal-r: {borderRadius}px;{eventFill == null ? '' : ` --dt-ev-fill: ${eventFill * 100}%;`}{eventBar == null ? '' : ` --dt-ev-bar: ${eventBar}px;`}"
 	class:cal--auto={heightProp === 'auto'}
 	role="region"
 	aria-label={L.calendar}

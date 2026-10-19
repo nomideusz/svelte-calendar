@@ -493,6 +493,9 @@
 		min-height: 44px;
 		border-radius: 0;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		overflow: hidden;
 		cursor: pointer;
 		transition: background 120ms;
@@ -505,13 +508,13 @@
 	}
 	.mw-ev:hover,
 	.mw-ev:active {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mw-ev--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 	.mw-ev--current {
-		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
+		background-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	/* All day: a solid band on the event colour, no tint. */
 	.mw-ev--allday {
@@ -557,7 +560,7 @@
 	}
 
 	.mw-ev-stripe {
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		align-self: stretch;
 		background: var(--ev-color, var(--dt-accent));
 		flex-shrink: 0;

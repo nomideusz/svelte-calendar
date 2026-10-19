@@ -1372,6 +1372,9 @@ function onCellKeydown(e, ms) {
 		padding: 0 3px 0 9px;
 		border-radius: 0;
 		background: transparent;
+		/* eventFill: a wash in the event's colour; hover/current set background-color under it */
+		--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);
+		background-image: linear-gradient(var(--_fill), var(--_fill));
 		cursor: pointer;
 		overflow: hidden;
 		transition: background 0.12s, box-shadow 0.12s;
@@ -1381,12 +1384,12 @@ function onCellKeydown(e, ms) {
 		content: '';
 		position: absolute;
 		inset: 0 auto 0 0;
-		width: 3px;
+		width: var(--dt-ev-bar, 3px);
 		background: var(--ev-color);
 	}
 
 	.wg-ev:hover {
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 
 	.wg-ev--drag-preview {
@@ -1396,7 +1399,7 @@ function onCellKeydown(e, ms) {
 		z-index: 8;
 		opacity: 0.95;
 		pointer-events: none;
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 		cursor: grabbing;
 	}
@@ -1406,7 +1409,7 @@ function onCellKeydown(e, ms) {
 	}
 
 	.wg-ev--current {
-		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
+		background-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 
 	/* Printed states: struck through, grey, or a dashed bar — never a tint */
@@ -1497,7 +1500,7 @@ function onCellKeydown(e, ms) {
 
 	.wg-ev--dragging {
 		cursor: grabbing;
-		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
+		background-color: var(--dt-hover, rgba(15, 15, 15, 0.04));
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
 </style>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+### Minor Changes
+
+- `eventFill` and `eventBar` props: wash events in their own colour (0–1) and set or remove the leading colour bar (px, 0 removes it). Both are sugar over the new `--dt-ev-fill` / `--dt-ev-bar` tokens, read by every view (planner, scroll, agenda, mobile, month); the wash is a background layer, so hover, selection and current states still paint beneath it. Unset, events stay transparent with a 3px bar.
+
 ## 1.4.3
 
 ### Patch Changes

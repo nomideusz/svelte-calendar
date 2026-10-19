@@ -1,6 +1,6 @@
 {
   "name": "@nomideusz/svelte-calendar",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "A themeable Svelte 5 calendar: day, week, scrolling-week and month views, agenda lists, touch-first mobile layouts, drag-and-drop, timezones, a headless API and an embeddable web component.",
   "type": "module",
   "sideEffects": [

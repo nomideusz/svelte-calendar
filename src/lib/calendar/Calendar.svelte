@@ -94,6 +94,13 @@
 		height?: number | 'auto';
 		/** Border radius in px (default: 0, square-cut). */
 		borderRadius?: number;
+		/**
+		 * Wash each event in its own colour, 0–1 (default 0: transparent). Text
+		 * stays the theme's ink, so a light tint (0.1–0.2) reads best.
+		 */
+		eventFill?: number;
+		/** Width in px of the colour bar on an event's leading edge (default 3). 0 removes it. */
+		eventBar?: number;
 		/** Text direction: 'ltr' (default), 'rtl', or 'auto' */
 		dir?: 'ltr' | 'rtl' | 'auto';
 		/** BCP 47 locale tag (e.g. 'en-US', 'ar-SA') — sets lang and locale for formatting */
@@ -265,6 +272,8 @@
 		mondayStart = true,
 		height: heightProp = 600,
 		borderRadius = 0,
+		eventFill,
+		eventBar,
 		dir,
 		locale,
 		labels: labelsProp,
@@ -880,7 +889,7 @@
 <div
 	class="cal"
 	bind:this={calEl}
-	style="{effectiveTheme}; {heightProp === 'auto' ? '' : `--cal-h: ${heightProp}px;`} --cal-r: {borderRadius}px"
+	style="{effectiveTheme}; {heightProp === 'auto' ? '' : `--cal-h: ${heightProp}px;`} --cal-r: {borderRadius}px;{eventFill == null ? '' : ` --dt-ev-fill: ${eventFill * 100}%;`}{eventBar == null ? '' : ` --dt-ev-bar: ${eventBar}px;`}"
 	class:cal--auto={heightProp === 'auto'}
 	role="region"
 	aria-label={L.calendar}
