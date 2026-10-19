@@ -283,7 +283,7 @@
 
 	/* ── Narrow: the calendar comes first, the rail folds under it, and the
 	   bar carries the wordmark so the brand is at the top of the page once. ── */
-	@media (max-width: 1100px) {
+	@media (max-width: 1360px) {
 		.shell {
 			grid-template-columns: minmax(0, 1fr);
 		}

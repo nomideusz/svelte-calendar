@@ -47,6 +47,11 @@
 	const toggles = $derived(fields.filter((f): f is ToggleField => f.type === 'toggle'));
 	const ranges = $derived(fields.filter((f): f is RangeField => f.type === 'range'));
 
+	const IDLE = 'Drag an event to move it, drag its edge to resize, drag on empty time to create.';
+	/* Every message the line can show, stacked unseen in its one cell, so it is
+	   always as tall as the longest and nothing below it moves on hover. */
+	const messages = $derived([...new Set([IDLE, status, ...fields.flatMap((f) => [f.hint ?? '', reasonOf(f)])])].filter(Boolean));
+
 	/* hover/focus feed the info line; the disabled reason wins over the hint */
 	function show(f: SettingsField) {
 		return {
@@ -120,15 +125,20 @@
 
 	<div class="ps-info">
 		{@render lead?.()}
-		<p class="ps-msg" aria-live="polite">
-			{#if hint}
-				{hint}
-			{:else if status}
-				<span class="ps-live" aria-hidden="true"></span>{status}
-			{:else}
-				Drag an event to move it, drag its edge to resize, drag on empty time to create.
-			{/if}
-		</p>
+		<div class="ps-msgs">
+			<p class="ps-msg" aria-live="polite">
+				{#if hint}
+					{hint}
+				{:else if status}
+					<span class="ps-live" aria-hidden="true"></span>{status}
+				{:else}
+					{IDLE}
+				{/if}
+			</p>
+			{#each messages as m (m)}
+				<p class="ps-msg ps-msg--sizer" aria-hidden="true"><span class="ps-live"></span>{m}</p>
+			{/each}
+		</div>
 	</div>
 </section>
 
@@ -295,6 +305,17 @@
 		margin-top: calc(24 * var(--u));
 		min-height: calc(36 * var(--u));
 	}
+	.ps-msgs {
+		display: grid;
+		flex: 1 1 calc(300 * var(--u));
+		min-width: 0;
+	}
+	.ps-msgs > .ps-msg {
+		grid-area: 1 / 1;
+	}
+	.ps-msg--sizer {
+		visibility: hidden;
+	}
 	.ps-msg {
 		margin: 0;
 		min-width: 0;
@@ -314,7 +335,7 @@
 
 	/* Folded under the calendar (tablet widths): the controls run in columns
 	   instead of stretching each select across the page. */
-	@media (min-width: 641px) and (max-width: 1100px) {
+	@media (min-width: 641px) and (max-width: 1360px) {
 		.ps-selects {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

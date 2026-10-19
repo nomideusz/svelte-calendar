@@ -642,7 +642,7 @@
 		border-color: var(--dt-accent, #111);
 	}
 
-	@media (max-width: 1100px) {
+	@media (max-width: 1360px) {
 		main {
 			padding: 0 20px 20px;
 		}
