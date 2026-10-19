@@ -1583,7 +1583,7 @@
 	}
 	.tw-blocked-lb {
 		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		white-space: nowrap;

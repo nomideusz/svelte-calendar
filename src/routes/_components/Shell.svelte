@@ -12,8 +12,11 @@
 		/** Page controls in the top bar, before the clock (the demo's Today / ‹ ›) */
 		bar?: Snippet;
 		children: Snippet;
+		/** A long page (the docs): the page scrolls and the rail stays put, instead
+		    of the main column holding still beside a scrolling rail. */
+		long?: boolean;
 	}
-	let { rail, bar, children }: Props = $props();
+	let { rail, bar, children, long = false }: Props = $props();
 
 	const INSTALL = 'pnpm add @nomideusz/svelte-calendar';
 	let copied = $state(false);
@@ -49,7 +52,8 @@
 	const path = $derived(page.url.pathname);
 </script>
 
-<div class="shell">
+<a class="skip" href="#content">Skip to content</a>
+<div class="shell" class:shell--long={long}>
 	<aside class="rail">
 		<a class="mark" href="/">svelte-calendar</a>
 
@@ -91,7 +95,7 @@
 			</nav>
 			<div class="bar-end">
 			{@render bar?.()}
-			<div class="clock" aria-label="Time shown by the calendar">
+			<div class="clock" aria-label={long ? 'Current time' : 'Time shown by the calendar'}>
 				{#if clock}
 					<span class="clock-hm">
 						{#key clock.hm}
@@ -281,6 +285,34 @@
 		white-space: nowrap;
 	}
 
+	/* Long page: the rail is the sticky column, the main column grows. */
+	.shell--long .rail {
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		min-height: 0;
+		overflow-y: auto;
+		scrollbar-width: thin;
+	}
+	.shell--long .main {
+		position: static;
+		height: auto;
+	}
+
+	.skip {
+		position: absolute;
+		left: 12px;
+		top: -100px;
+		z-index: 10;
+		padding: 10px 14px;
+		background: var(--dt-text, #111);
+		color: var(--dt-bg, #efebe9);
+		font: 500 16px / 1 var(--dt-sans, system-ui, sans-serif);
+	}
+	.skip:focus {
+		top: 12px;
+	}
+
 	/* ── Narrow: the calendar comes first, the rail folds under it, and the
 	   bar carries the wordmark so the brand is at the top of the page once. ── */
 	@media (max-width: 1360px) {
@@ -313,10 +345,18 @@
 			position: static;
 			height: auto;
 		}
+		.shell--long .rail {
+			position: static;
+			height: auto;
+		}
 		.bar {
 			flex-wrap: wrap;
 			gap: 8px 24px;
 			padding: 10px 20px;
+		}
+		.bar-end {
+			flex-wrap: wrap;
+			gap: 8px 24px;
 		}
 		.mark--bar {
 			display: block;
@@ -332,6 +372,10 @@
 		.mark--bar {
 			font-size: 30px;
 		}
+		/* Today ‹ › and the time share one row; the zone is the calendar's business here. */
+		.clock-zone {
+			display: none;
+		}
 		.host {
 			width: 44px;
 			height: 52px;
@@ -342,6 +386,21 @@
 		}
 		.install code {
 			font-size: 13px;
+		}
+	}
+
+	@media (pointer: coarse) {
+		.nav a,
+		.install {
+			min-height: 44px;
+			box-sizing: border-box;
+		}
+		.nav a {
+			display: inline-flex;
+			align-items: center;
+		}
+		.install-act {
+			padding: 10px 14px;
 		}
 	}
 

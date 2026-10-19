@@ -72,8 +72,8 @@
 		visibleHoursEnabled: false,
 		startHour: 6,
 		endHour: 21,
-		blockedSlotsEnabled: true,
-		disabledDatesEnabled: true,
+		blockedSlotsEnabled: false,
+		disabledDatesEnabled: false,
 		compact: false,
 		columns: false,
 		rtl: false,
@@ -254,7 +254,7 @@
 		},
 
 		{ key: "mondayStart", label: "mondayStart", type: "toggle",
-			hint: "Start weeks on Monday instead of Sunday",
+			hint: "Start weeks on Monday instead of Sunday", more: true,
 			disabledWhen: inViews([...WEEKS, "month-grid"], "Single-day view — no week start") },
 		{ key: "readOnly", label: "readOnly", type: "toggle",
 			hint: "Turns off drag, resize and drag-to-create",
@@ -264,13 +264,13 @@
 		{ key: "showNavigation", label: "showNavigation", type: "toggle",
 			hint: "Previous/next arrows and the Today button" },
 		{ key: "equalDays", label: "equalDays", type: "toggle",
-			hint: "No past-day dimming — for template schedules",
+			hint: "No past-day dimming — for template schedules", more: true,
 			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by month-grid") },
 		{ key: "showDates", label: "showDates", type: "toggle",
 			hint: "Off: headers show day names only (Mon, Tue, …)",
 			disabledWhen: inViews([...TIMED, ...AGENDAS], "Not used by month-grid") },
 		{ key: "rtl", label: 'dir="rtl"', type: "toggle",
-			hint: "Right-to-left layout" },
+			hint: "Right-to-left layout", more: true },
 		{ key: "compact", label: "compact", type: "toggle",
 			hint: "Minimal dot, time and title rows in agenda views",
 			disabledWhen: (v) =>
@@ -285,21 +285,21 @@
 		{ key: "disabledDatesEnabled", label: "disabledDates", type: "toggle",
 			hint: "Dates that refuse new events and moves" },
 		{ key: "visibleHoursEnabled", label: "visibleHours", type: "toggle",
-			hint: "Crop the grid to a start and end hour",
+			hint: "Crop the grid to a start and end hour", more: true,
 			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
 		{ key: "phoneFrame", label: "390px container", type: "toggle",
-			hint: "Not a prop: a 390px-wide host — the container-based mobile mode kicks in",
+			hint: "Not a prop: a 390px-wide host — the container-based mobile mode kicks in", more: true,
 			disabledWhen: (v) => v.mobileMode === "force" && "Mobile views already forced" },
 		{ key: "startHour", label: "visibleHours[0]", type: "range", min: 0, max: 22, step: 1,
-			hint: "First visible hour of the grid",
+			hint: "First visible hour of the grid", more: true,
 			enabledWhen: "visibleHoursEnabled",
 			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
 		{ key: "endHour", label: "visibleHours[1]", type: "range", min: 1, max: 24, step: 1,
-			hint: "Hour the grid ends at (exclusive)",
+			hint: "Hour the grid ends at (exclusive)", more: true,
 			enabledWhen: "visibleHoursEnabled",
 			disabledWhen: inViews(TIMED, "Planner and scroll views only") },
 		{ key: "days", label: "days", type: "range", min: 1, max: 14, step: 1,
-			hint: "Days per week view — 5 is a workweek, 3 a rolling window",
+			hint: "Days per week view — 5 is a workweek, 3 a rolling window", more: true,
 			disabledWhen: inViews(["week-planner", "week-agenda"], "week-planner and week-agenda only") },
 	];
 
@@ -336,10 +336,20 @@
 
 	// ── Callbacks ──────────────────────────────────────────
 	let lastAction = $state("");
-	function handleClick(ev: TimelineEvent, anchor?: DOMRect) {
-		lastAction = anchor
-			? `Clicked: ${ev.title} (at ${Math.round(anchor.left)}, ${Math.round(anchor.top)})`
-			: `Clicked: ${ev.title}`;
+	let hint = $state("");
+	const IDLE = "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
+	const IDLE_TOUCH = "Tap an event or a day: the calendar's callbacks report here.";
+	/* Every message the line can show, stacked unseen in its one cell, so it is
+	   always as tall as the longest and nothing around it moves on hover. */
+	const messages = $derived(
+		[...new Set([IDLE, IDLE_TOUCH, lastAction, ...settingsFields.flatMap((f) => [
+			f.hint ?? "",
+			f.disabledWhen?.(settingsValues) || "",
+			f.enabledWhen ? `Needs ${f.enabledWhen}` : "",
+		])])].filter(Boolean),
+	);
+	function handleClick(ev: TimelineEvent) {
+		lastAction = `Clicked: ${ev.title}`;
 	}
 
 	// Drag the pill above the calendar onto a day: the view hands back the
@@ -422,26 +432,35 @@
 	);
 
 	let codeOpen = $state(false);
-	let codeCopied = $state(false);
+	let copyLabel = $state("Copy");
 	async function copyCode() {
 		try {
 			await navigator.clipboard.writeText(codeSnippet);
-			codeCopied = true;
-			setTimeout(() => (codeCopied = false), 1600);
+			copyLabel = "Copied";
 		} catch {
-			/* clipboard blocked — the code stays selectable */
+			// clipboard blocked: open the code so it can be selected by hand
+			codeOpen = true;
+			copyLabel = "Select it";
 		}
+		setTimeout(() => (copyLabel = "Copy"), 1600);
 	}
 
 	// ── Live code snippet: the <Calendar> markup for the current settings ──
+	// A prop the current view ignores (its control is disabled) stays out of the code.
+	const inert = (key: string) => Boolean(settingsFields.find((f) => f.key === key)?.disabledWhen?.(settingsValues));
 	const codeSnippet = $derived.by(() => {
 		const extraImports = selectedPreset !== "auto" ? `, ${selectedPreset}` : "";
 		const script: string[] = [
 			`  import { Calendar, createMemoryAdapter${extraImports} } from '@nomideusz/svelte-calendar';`,
 			"",
-			"  const adapter = createMemoryAdapter(events);",
+			"  const today = new Date();",
+			"  const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);",
+			"  const adapter = createMemoryAdapter([",
+			"    { id: '1', title: 'Morning Flow', start: at(9), end: at(10) },",
+			"    { id: '2', title: 'Lunch talk', start: at(12), end: at(13) },",
+			"  ]);",
 		];
-		if (blockedSlotsEnabled) {
+		if (blockedSlotsEnabled && !inert("blockedSlotsEnabled")) {
 			script.push(
 				"  const blockedSlots = [",
 				"    { start: 12, end: 13, label: 'Lunch' },        // every day 12–13",
@@ -460,22 +479,22 @@
 		if (locale !== "en-US") props.push(`locale="${locale}"`, "labels={{ today: '…', week: '…' /* your language */ }}");
 		if (timezone) props.push(`timezone="${timezone}"`);
 		if (dir === "rtl") props.push(`dir="rtl"`);
-		if (readOnly) props.push("readOnly");
-		if (!mondayStart) props.push("mondayStart={false}");
+		if (readOnly && !inert("readOnly")) props.push("readOnly");
+		if (!mondayStart && !inert("mondayStart")) props.push("mondayStart={false}");
 		if (ownHeader) {
 			props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
 		} else {
 			if (!showModePills) props.push("showModePills={false}");
 			if (!showNavigation) props.push("showNavigation={false}");
 		}
-		if (equalDays) props.push("equalDays");
-		if (!showDates) props.push("showDates={false}");
-		if (compact) props.push("compact");
-		if (columns) props.push("columns");
-		if (days !== 7) props.push(`days={${days}}`);
-		if (visibleHours) props.push(`visibleHours={[${visibleHours[0]}, ${visibleHours[1]}]}`);
+		if (equalDays && !inert("equalDays")) props.push("equalDays");
+		if (!showDates && !inert("showDates")) props.push("showDates={false}");
+		if (compact && !inert("compact")) props.push("compact");
+		if (columns && !inert("columns")) props.push("columns");
+		if (days !== 7 && !inert("days")) props.push(`days={${days}}`);
+		if (visibleHours && !inert("visibleHoursEnabled")) props.push(`visibleHours={[${visibleHours[0]}, ${visibleHours[1]}]}`);
 		if (mobileMode !== "auto") props.push(`mobile={${mobileMode}}`);
-		if (blockedSlotsEnabled) props.push("{blockedSlots}");
+		if (blockedSlotsEnabled && !inert("blockedSlotsEnabled")) props.push("{blockedSlots}");
 		if (disabledDatesEnabled) props.push("{disabledDates}");
 
 		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
@@ -518,21 +537,10 @@
 			{/each}
 		</div>
 
-		<Settings fields={settingsFields} bind:values={settingsValues} status={lastAction}>
-			{#snippet lead()}
-				<div
-					class="drag-source"
-					draggable="true"
-					ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
-					role="button"
-					tabindex="0"
-					aria-label="Vinyasa Flow: drag onto a day in the calendar"
-				><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
-			{/snippet}
-		</Settings>
+		<Settings fields={settingsFields} bind:values={settingsValues} bind:hint />
 	{/snippet}
 
-	<main>
+	<main id="content" tabindex="-1">
 		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
 
 		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
@@ -577,13 +585,40 @@
 			</div>
 		</div>
 
+		<!-- The info line sits under the week, where the eye already is: what the
+		     hovered control does, else the last callback, else how to start. -->
+		<div class="info">
+			<div
+				class="drag-source"
+				draggable="true"
+				ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
+				role="button"
+				tabindex="0"
+				aria-label="Vinyasa Flow: drag onto a day in the calendar"
+			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
+			<div class="msgs">
+				<p class="msg" aria-live="polite">
+					{#if hint}
+						{hint}
+					{:else if lastAction}
+						<span class="live" aria-hidden="true"></span>{lastAction}
+					{:else}
+						<span class="idle-pointer">{IDLE}</span><span class="idle-touch">{IDLE_TOUCH}</span>
+					{/if}
+				</p>
+				{#each messages as m (m)}
+					<p class="msg msg--sizer" aria-hidden="true"><span class="live"></span>{m}</p>
+				{/each}
+			</div>
+		</div>
+
 		<section class="code" class:code--open={codeOpen} aria-labelledby="code-title">
 			<header class="code-hd">
 				<button class="code-toggle" aria-expanded={codeOpen} aria-controls="code-body" onclick={() => (codeOpen = !codeOpen)}>
 					<h2 id="code-title">This setup in code</h2>
 					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" /></svg>
 				</button>
-				<button class="code-copy" onclick={copyCode} aria-live="polite">{codeCopied ? "Copied" : "Copy"}</button>
+				<button class="code-copy" onclick={copyCode} aria-live="polite">{copyLabel}</button>
 			</header>
 			{#if codeOpen}
 				<pre id="code-body"><code>{codeSnippet}</code></pre>
@@ -595,6 +630,9 @@
 </Shell>
 
 <style>
+	main:focus {
+		outline: none;
+	}
 	main {
 		flex: 1;
 		min-height: 0;
@@ -690,6 +728,42 @@
 		outline-offset: 2px;
 	}
 
+	/* ── Info line under the week: one message at a time ── */
+	.info {
+		display: flex;
+		align-items: center;
+		gap: calc(12 * var(--u)) calc(20 * var(--u));
+		margin-top: calc(16 * var(--u));
+	}
+	.msgs {
+		display: grid;
+		flex: 1;
+		min-width: 0;
+	}
+	.msgs > .msg {
+		grid-area: 1 / 1;
+	}
+	.msg--sizer {
+		visibility: hidden;
+	}
+	.msg {
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font: 400 max(13px, calc(17 * var(--u))) / 1.4 var(--dt-sans, inherit);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+	}
+	.live {
+		flex: none;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--dt-accent, #1d4fd7);
+	}
+	.idle-touch {
+		display: none;
+	}
 	/* ── External drag source: a class waiting to be scheduled ── */
 	.drag-source {
 		flex: none;
@@ -748,7 +822,7 @@
 
 	/* ── Code: a drawer pinned under the week, hairline-ruled ── */
 	.code {
-		margin-top: calc(22 * var(--u));
+		margin-top: calc(16 * var(--u));
 		border: 2px solid var(--dt-text, #111);
 	}
 	.code-hd {
@@ -821,6 +895,30 @@
 			width: 100%;
 			border-width: 0;
 			border-radius: 0;
+		}
+	}
+
+	/* No HTML5 drag on touch screens: the drag source and its instruction go. */
+	@media (pointer: coarse) {
+		.drag-source,
+		.idle-pointer {
+			display: none;
+		}
+		.idle-touch {
+			display: inline;
+		}
+		.pager-today,
+		.pager-btn,
+		.code-toggle,
+		.code-copy {
+			min-height: 44px;
+		}
+		.pager-btn {
+			min-width: 44px;
+		}
+		.setup {
+			min-height: 44px;
+			padding-bottom: 0;
 		}
 	}
 </style>

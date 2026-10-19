@@ -24,9 +24,13 @@ Requirements:
 <script>
   import { Calendar, createMemoryAdapter } from '@nomideusz/svelte-calendar';
 
+  // Today at a given hour, so the events land in the week the calendar opens on
+  const today = new Date();
+  const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);
+
   const adapter = createMemoryAdapter([
-    { id: '1', title: 'Team Sync', start: new Date('2026-03-01T09:00'), end: new Date('2026-03-01T10:00') },
-    { id: '2', title: 'Lunch',     start: new Date('2026-03-01T12:00'), end: new Date('2026-03-01T13:00') },
+    { id: '1', title: 'Team Sync', start: at(9),  end: at(10) },
+    { id: '2', title: 'Lunch',     start: at(12), end: at(13) },
   ]);
 </script>
 

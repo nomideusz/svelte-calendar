@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-
+	
 	/* ─── Field definition types ─────────────────────── */
 	type BaseField = {
 		key: string;
@@ -12,6 +11,8 @@
 		enabledWhen?: string;
 		/** Return a reason to disable the field (the current view ignores it). */
 		disabledWhen?: (values: Record<string, string | number | boolean>) => string | false;
+		/** Rarely needed: kept behind the "More props" disclosure */
+		more?: boolean;
 	};
 	type RangeField = BaseField & { type: 'range'; min: number; max: number; step: number };
 	type ToggleField = BaseField & { type: 'toggle' };
@@ -22,15 +23,11 @@
 	interface Props {
 		fields: SettingsField[];
 		values: Record<string, string | number | boolean>;
-		/** Shown in the info line while no control is hovered or focused */
-		status?: string;
-		/** Rendered at the start of the info line (the external drag source) */
-		lead?: Snippet;
+		/** What the hovered or focused control does (or why it is off); the page shows it */
+		hint?: string;
 	}
 
-	let { fields, values = $bindable(), status = '', lead }: Props = $props();
-
-	let hint = $state('');
+	let { fields, values = $bindable(), hint = $bindable('') }: Props = $props();
 
 	function setVal(key: string, v: string | number | boolean) {
 		values = { ...values, [key]: v };
@@ -44,13 +41,9 @@
 	}
 
 	const selects = $derived(fields.filter((f): f is SelectField => f.type === 'select'));
-	const toggles = $derived(fields.filter((f): f is ToggleField => f.type === 'toggle'));
+	const toggles = $derived(fields.filter((f): f is ToggleField => f.type === 'toggle' && !f.more));
+	const moreToggles = $derived(fields.filter((f): f is ToggleField => f.type === 'toggle' && !!f.more));
 	const ranges = $derived(fields.filter((f): f is RangeField => f.type === 'range'));
-
-	const IDLE = 'Drag an event to move it, drag its edge to resize, drag on empty time to create.';
-	/* Every message the line can show, stacked unseen in its one cell, so it is
-	   always as tall as the longest and nothing below it moves on hover. */
-	const messages = $derived([...new Set([IDLE, status, ...fields.flatMap((f) => [f.hint ?? '', reasonOf(f)])])].filter(Boolean));
 
 	/* hover/focus feed the info line; the disabled reason wins over the hint */
 	function show(f: SettingsField) {
@@ -70,6 +63,7 @@
 			<label class="ps-sel" class:ps-off={!!reason} {...show(f)}>
 				<span class="ps-name">{f.label}:</span>
 				<select
+					name={f.key}
 					value={String(values[f.key] ?? '')}
 					disabled={!!reason}
 					onchange={(e) => setVal(f.key, e.currentTarget.value)}
@@ -82,27 +76,33 @@
 		{/each}
 	</div>
 
+	{#snippet toggle(f: ToggleField)}
+		{@const reason = reasonOf(f)}
+		<button
+			type="button"
+			class="ps-switch"
+			class:ps-switch--on={values[f.key] === true}
+			class:ps-off={!!reason}
+			role="switch"
+			aria-checked={values[f.key] === true}
+			aria-disabled={!!reason}
+			{...show(f)}
+			onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
+		>
+			<span class="ps-switch-lb">{f.label}</span>
+			<span class="ps-knob" aria-hidden="true"></span>
+		</button>
+	{/snippet}
+
 	<div class="ps-toggles">
-		{#each toggles as f (f.key)}
-			{@const reason = reasonOf(f)}
-			<button
-				type="button"
-				class="ps-switch"
-				class:ps-switch--on={values[f.key] === true}
-				class:ps-off={!!reason}
-				role="switch"
-				aria-checked={values[f.key] === true}
-				aria-disabled={!!reason}
-				{...show(f)}
-				onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
-			>
-				<span class="ps-switch-lb">{f.label}</span>
-				<span class="ps-knob" aria-hidden="true"></span>
-			</button>
-		{/each}
+		{#each toggles as f (f.key)}{@render toggle(f)}{/each}
 	</div>
 
-	{#if ranges.length}
+	<details class="ps-more">
+		<summary>More props</summary>
+		<div class="ps-toggles">
+			{#each moreToggles as f (f.key)}{@render toggle(f)}{/each}
+		</div>
 		<div class="ps-ranges">
 			{#each ranges as f (f.key)}
 				{@const reason = reasonOf(f)}
@@ -121,25 +121,7 @@
 				</label>
 			{/each}
 		</div>
-	{/if}
-
-	<div class="ps-info">
-		{@render lead?.()}
-		<div class="ps-msgs">
-			<p class="ps-msg" aria-live="polite">
-				{#if hint}
-					{hint}
-				{:else if status}
-					<span class="ps-live" aria-hidden="true"></span>{status}
-				{:else}
-					{IDLE}
-				{/if}
-			</p>
-			{#each messages as m (m)}
-				<p class="ps-msg ps-msg--sizer" aria-hidden="true"><span class="ps-live"></span>{m}</p>
-			{/each}
-		</div>
-	</div>
+	</details>
 </section>
 
 <style>
@@ -296,41 +278,55 @@
 		text-align: right;
 	}
 
-	/* ── Info line: one message at a time ── */
-	.ps-info {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: calc(12 * var(--u)) calc(16 * var(--u));
-		margin-top: calc(24 * var(--u));
-		min-height: calc(36 * var(--u));
+	/* ── More props: a plain disclosure over a hairline ── */
+	.ps-more {
+		margin-top: calc(18 * var(--u));
+		border-top: 1px solid var(--ps-rule);
 	}
-	.ps-msgs {
-		display: grid;
-		flex: 1 1 calc(300 * var(--u));
-		min-width: 0;
-	}
-	.ps-msgs > .ps-msg {
-		grid-area: 1 / 1;
-	}
-	.ps-msg--sizer {
-		visibility: hidden;
-	}
-	.ps-msg {
-		margin: 0;
-		min-width: 0;
+	.ps-more summary {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		font: 400 calc(17 * var(--u)) / 1.4 var(--dt-sans, inherit);
+		gap: calc(10 * var(--u));
+		min-height: calc(44 * var(--u));
+		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, inherit);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		cursor: pointer;
+		list-style: none;
 	}
-	.ps-live {
-		flex: none;
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: var(--dt-accent, #1d4fd7);
+	.ps-more summary::-webkit-details-marker {
+		display: none;
+	}
+	.ps-more summary::after {
+		content: '';
+		width: calc(16 * var(--u));
+		height: calc(16 * var(--u));
+		background: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+		transition: transform 140ms;
+	}
+	.ps-more[open] summary::after {
+		transform: rotate(180deg);
+	}
+	.ps-more summary:hover {
+		color: var(--dt-text, #111);
+	}
+	.ps-more summary:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
+	}
+	.ps-more .ps-toggles {
+		margin-top: calc(8 * var(--u));
+	}
+
+	/* Touch: every control at least 44px tall, whatever the unit has shrunk to. */
+	@media (pointer: coarse) {
+		.ps-switch,
+		.ps-more summary,
+		.ps-rng,
+		.ps-rng input,
+		.ps-sel select {
+			min-height: 44px;
+		}
 	}
 
 	/* Folded under the calendar (tablet widths): the controls run in columns
