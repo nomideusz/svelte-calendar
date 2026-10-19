@@ -925,8 +925,11 @@
 	.ag-wday .ag-wday-badge--muted {
 		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
+	/* Set like the weekday beside it, so the heading reads in one case */
 	.ag-wday-date {
-		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 

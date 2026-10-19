@@ -52,7 +52,7 @@
 	.hosts {
 		display: flex;
 		justify-content: space-between;
-		padding: 0 calc(4 * var(--u)) calc(28 * var(--u));
+		padding: 0 calc(4 * var(--u)) calc(18 * var(--u));
 		border-bottom: 2px solid var(--dt-text, #111);
 	}
 	.host {
@@ -121,12 +121,18 @@
 			width: 44px;
 			height: 52px;
 		}
+		/* Compact (the phone's quick row): square, one line beside the heading. */
+		.hosts-set--compact .host {
+			height: 44px;
+		}
 	}
 	@media (pointer: coarse) {
-		.host,
-		.hosts-set--compact .host {
+		.host {
 			min-width: 44px;
 			min-height: 52px;
+		}
+		.hosts-set--compact .host {
+			min-height: 44px;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

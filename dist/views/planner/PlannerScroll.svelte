@@ -1446,7 +1446,12 @@ function onCellKeydown(e, ms) {
 		text-overflow: ellipsis;
 		min-width: 0;
 		flex: 1 1 auto;
+		/* A Latin title in RTL keeps its own direction: the ellipsis cuts its end */
+		unicode-bidi: plaintext;
+		text-align: left;
 	}
+	/* …but it sits on the calendar's side, by the bar */
+	.wg-ev-title:dir(rtl) { text-align: right; }
 
 	.wg-ev-loc {
 		font: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);

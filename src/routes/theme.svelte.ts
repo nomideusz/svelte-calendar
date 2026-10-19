@@ -8,7 +8,10 @@
 import { neutral } from '#lib/theme/presets.js';
 
 // ── Demo-only theme CSS strings ───────────────────────────
-// --dt-text-2 alphas hold ≥4.5:1 on both --dt-stage-bg and --dt-bg.
+// --dt-text-2 alphas, and every accent as text, hold ≥4.5:1 on both
+// --dt-stage-bg and --dt-bg (today's 4% accent wash included). Each accent is
+// already what `auto` makes of it (lightness ≤0.48 on light pages, ≥0.45 on
+// dark), so the swatch, the chrome and the calendar show one colour.
 // Ocean and Rose bring their own type (a humanist sans, a serif; loaded in
 // +layout.svelte): the body sets --dt-sans, so `auto` has a host font to find.
 
@@ -22,10 +25,10 @@ const slate = `
 	--dt-text: rgba(210, 218, 235, 0.85);
 	--dt-text-2: rgba(150, 162, 196, 0.75);
 	--dt-text-3: rgba(100, 112, 148, 0.50);
-	--dt-accent: #8b5cf6;
-	--dt-accent-dim: rgba(139, 92, 246, 0.15);
-	--dt-glow: rgba(139, 92, 246, 0.30);
-	--dt-today-bg: rgba(139, 92, 246, 0.03);
+	--dt-accent: #9266f7;
+	--dt-accent-dim: rgba(146, 102, 247, 0.15);
+	--dt-glow: rgba(146, 102, 247, 0.30);
+	--dt-today-bg: rgba(146, 102, 247, 0.03);
 	--dt-btn-text: #0f0f0f;
 	--dt-scrollbar: rgba(130, 148, 196, 0.10);
 	--dt-success: rgba(74, 222, 128, 0.7);
@@ -40,11 +43,11 @@ const forest = `
 	--dt-text: rgba(200, 230, 210, 0.85);
 	--dt-text-2: rgba(134, 188, 160, 0.68);
 	--dt-text-3: rgba(90, 140, 115, 0.55);
-	--dt-accent: #10b981;
-	--dt-accent-dim: rgba(16, 185, 129, 0.15);
-	--dt-glow: rgba(16, 185, 129, 0.30);
-	--dt-today-bg: rgba(16, 185, 129, 0.03);
-	--dt-btn-text: #fff;
+	--dt-accent: #12d393;
+	--dt-accent-dim: rgba(18, 211, 147, 0.15);
+	--dt-glow: rgba(18, 211, 147, 0.30);
+	--dt-today-bg: rgba(18, 211, 147, 0.03);
+	--dt-btn-text: #0f0f0f;
 	--dt-scrollbar: rgba(74, 222, 128, 0.10);
 	--dt-success: rgba(74, 222, 128, 0.7);
 `;
@@ -58,11 +61,11 @@ const ocean = `
 	--dt-text: rgba(0, 30, 60, 0.87);
 	--dt-text-2: rgba(0, 50, 100, 0.68);
 	--dt-text-3: rgba(0, 60, 120, 0.35);
-	--dt-accent: #0891b2;
-	--dt-accent-dim: rgba(8, 145, 178, 0.12);
-	--dt-glow: rgba(8, 145, 178, 0.25);
-	--dt-today-bg: rgba(8, 145, 178, 0.04);
-	--dt-btn-text: #0f0f0f;
+	--dt-accent: #067590;
+	--dt-accent-dim: rgba(6, 117, 144, 0.12);
+	--dt-glow: rgba(6, 117, 144, 0.25);
+	--dt-today-bg: rgba(6, 117, 144, 0.04);
+	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(0, 100, 180, 0.08);
 	--dt-success: rgba(22, 163, 74, 0.7);
 	--dt-sans: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
@@ -77,10 +80,10 @@ const rose = `
 	--dt-text: rgba(60, 10, 20, 0.87);
 	--dt-text-2: rgba(120, 40, 60, 0.74);
 	--dt-text-3: rgba(140, 60, 80, 0.38);
-	--dt-accent: #e11d48;
-	--dt-accent-dim: rgba(225, 29, 72, 0.12);
-	--dt-glow: rgba(225, 29, 72, 0.25);
-	--dt-today-bg: rgba(225, 29, 72, 0.03);
+	--dt-accent: #d11b43;
+	--dt-accent-dim: rgba(209, 27, 67, 0.12);
+	--dt-glow: rgba(209, 27, 67, 0.25);
+	--dt-today-bg: rgba(209, 27, 67, 0.03);
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(180, 50, 80, 0.08);
 	--dt-success: rgba(22, 163, 74, 0.7);
@@ -102,12 +105,12 @@ export interface DemoTheme {
 }
 
 export const demoThemes: Record<DemoThemeName, DemoTheme> = {
-	slate:    { label: 'Slate',    vars: slate,    dark: true,  stageBg: '#0c0f17', accent: '#8b5cf6' },
+	slate:    { label: 'Slate',    vars: slate,    dark: true,  stageBg: '#0c0f17', accent: '#9266f7' },
 	light:    { label: 'Paper',    vars: neutral,  dark: false, stageBg: '#efebe9', accent: '#1d4fd7', paper: true },
 
-	forest:   { label: 'Forest',   vars: forest,    dark: true,  stageBg: '#060d09', accent: '#10b981' },
-	ocean:    { label: 'Ocean',    vars: ocean,     dark: false, stageBg: '#f0f7ff', accent: '#0891b2' },
-	rose:     { label: 'Rose',     vars: rose,      dark: false, stageBg: '#fff5f5', accent: '#e11d48' },
+	forest:   { label: 'Forest',   vars: forest,    dark: true,  stageBg: '#060d09', accent: '#12d393' },
+	ocean:    { label: 'Ocean',    vars: ocean,     dark: false, stageBg: '#f0f7ff', accent: '#067590' },
+	rose:     { label: 'Rose',     vars: rose,      dark: false, stageBg: '#fff5f5', accent: '#d11b43' },
 };
 
 export const demoThemeNames: DemoThemeName[] = ['slate', 'light', 'forest', 'ocean', 'rose'];

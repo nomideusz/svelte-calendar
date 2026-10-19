@@ -117,6 +117,7 @@
 					<span class="ps-name">{f.label}</span>
 					<input
 						type="range"
+						name={f.key}
 						aria-describedby={reason ? `ps-why-${f.key}` : undefined}
 						min={f.min}
 						max={f.max}
@@ -148,7 +149,7 @@
 	.ps-selects {
 		display: flex;
 		flex-direction: column;
-		gap: calc(22 * var(--u));
+		gap: calc(12 * var(--u));
 	}
 	.ps-sel {
 		display: grid;
@@ -207,7 +208,7 @@
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: calc(10 * var(--u)) calc(20 * var(--u));
-		margin-top: calc(28 * var(--u));
+		margin-top: calc(18 * var(--u));
 	}
 	.ps-switch {
 		display: flex;

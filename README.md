@@ -580,6 +580,168 @@ The calendar reads its events through an adapter. Which one:
 | [`createCompositeAdapter(adapters)`](#composite-adapter) | One calendar shows several sources, e.g. a recurring timetable plus one-off events. |
 | [Custom `CalendarAdapter`](#custom-adapter) | None of the above fits: implement `fetchEvents`, plus the writes you need. |
 
+### REST Adapter
+
+Connect to any REST API:
+
+```ts
+import { createRestAdapter } from '@nomideusz/svelte-calendar';
+
+type ApiItem = { id: string; name: string; startAt: string; endAt: string };
+
+const adapter = createRestAdapter({
+  baseUrl: 'https://api.example.com/v1',
+  headers: { Authorization: 'Bearer TOKEN' },
+  // Optional: map your API's list shape to TimelineEvent[]
+  mapEvents: (data) =>
+    (data as { items: ApiItem[] }).items.map((item) => ({
+      id: item.id,
+      title: item.name,
+      start: new Date(item.startAt),
+      end: new Date(item.endAt),
+    })),
+});
+```
+
+The adapter calls `GET {baseUrl}/events?start=…&end=…` (ISO strings), `POST /events`, `PATCH /events/:id` and `DELETE /events/:id`, sending JSON with your `headers`. By default a list response must be an array of events and a single response one event; `start`/`end` are parsed into `Date`s. Override with `mapEvents(data)` for lists and `mapEvent(data)` for single events. A non-2xx response or invalid JSON throws.
+
+### JMAP Adapter
+
+Read events from a [JMAP Calendars](https://jmap.io/) server (Fastmail, Stalwart, Cyrus):
+
+```ts
+import { createJmapAdapter, type JmapClient } from '@nomideusz/svelte-calendar';
+
+const client: JmapClient = {
+  request: (calls) =>
+    fetch('https://api.example.com/jmap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ using: ['urn:ietf:params:jmap:calendars'], methodCalls: calls }),
+    }).then((r) => r.json()),
+};
+
+const adapter = createJmapAdapter(client, {
+  getAccountId: () => accountId,
+  calendarId: 'primary',          // optional: restrict to one calendar
+  timeZone: 'Europe/Warsaw',      // optional: default Etc/UTC
+});
+```
+
+Read-only. Expands recurrences server-side and handles all-day events, ISO-duration ends and per-calendar colors (pass `calendars: [{ id, name, color }]`, or a function returning them).
+
+### Mapped Adapter
+
+Wrap any static array of external records (class schedules, appointments, timetables) without writing a custom adapter. Supply a declarative field mapping (or a `mapEvent` function for full control) and the adapter handles parsing, colors, tags and status:
+
+```ts
+import { createMappedAdapter } from '@nomideusz/svelte-calendar';
+
+const adapter = createMappedAdapter(rawClasses, {
+  fields: {
+    title: 'class_name',
+    start: 'starts_at_iso',
+    end: 'ends_at_iso',
+    subtitle: 'teacher',
+    location: 'room',
+    externalId: 'reference_id',
+    status: 'is_cancelled',           // boolean → 'cancelled' / 'confirmed'
+    tags: ['is_free', 'is_bookable_online'],
+  },
+});
+```
+
+- Works without options too: it looks for common keys (`id`, `title`/`name`, `start`/`end`, `starts_at_iso`/`ends_at_iso`, `date` + `start_time`/`end_time`, `room`/`location`, `is_cancelled`). A missing end defaults to one hour after the start.
+- `start`/`end` accept ISO strings, `Date`s or millisecond timestamps. When records split date and time (`date: "2026-03-03"`, `startTime: "07:00"`), map `date` + `startTime` / `endTime`; times may be `7:00`, `07:00` or `07:00:00`.
+- Source colors are kept. Records without one draw in ink, unless you pass a `palette` to fill them by category/title. `autoColor: true` ignores the source colors and colors every event from `palette` (default `VIVID_PALETTE`).
+- `includeData` (default `'*'`) copies unmapped source fields into `event.data`; pass a list of keys to limit it.
+
+For full control, pass `mapEvent(raw, index)` and skip `fields`:
+
+```ts
+const adapter = createMappedAdapter(rawData, {
+  mapEvent: (raw) => ({
+    id: raw.uid,
+    title: raw.procedure_name,
+    start: new Date(raw.scheduled_at),
+    end: new Date(raw.scheduled_end),
+    location: raw.office,
+    resourceId: raw.doctor_id,
+  }),
+});
+```
+
+Mapped adapters are read-only by default (writes throw a read-only error, so drags reach `oneventmove`). Set `readOnly: false` to allow writes; supply `onMutate: { onCreate, onUpdate, onDelete }` to persist them (each returns the stored source record, which is mapped again), or omit it to keep changes in memory.
+
+### Composite Adapter
+
+Merge several adapters into one, e.g. a recurring weekly schedule plus one-off events:
+
+```ts
+import { createMemoryAdapter, createRecurringAdapter, createCompositeAdapter } from '@nomideusz/svelte-calendar';
+
+const memory    = createMemoryAdapter(oneOffEvents);
+const recurring = createRecurringAdapter(weeklySchedule);
+
+const adapter = createCompositeAdapter([memory, recurring]);
+```
+
+- **Reads** query every child in parallel and merge the results (the first event with a given id wins).
+- **Creates** go to the primary child: the first by default, or `primaryIndex`.
+- **Updates and deletes** go to the child that returned the event. If that child can't write, the composite refuses with a read-only error (so `oneventmove` reaches the host). An id no fetch returned is offered to each writable child in turn.
+- **`onFetchError(error, adapterIndex)`**: with it, a failing child is reported to you and the others still load; without it, one failing child fails the whole load (surfacing through `onerror`).
+
+```ts
+const adapter = createCompositeAdapter([recurring, memory], {
+  primaryIndex: 1,
+  onFetchError: (error, i) => console.warn(`source ${i} failed`, error),
+});
+```
+
+### Custom Adapter
+
+Implement the `CalendarAdapter` interface to connect any data source. Only `fetchEvents` is required:
+
+```ts
+import type { CalendarAdapter, DateRange, TimelineEvent } from '@nomideusz/svelte-calendar';
+
+const adapter: CalendarAdapter = {
+  // Required: events overlapping the range
+  fetchEvents: async (range: DateRange) => { /* return TimelineEvent[] */ },
+  // Optional: the same answer synchronously, when the data is already in memory
+  fetchEventsSync: (range) => { /* return TimelineEvent[], or undefined to go async */ },
+  // Optional writes; omit them for a read-only source
+  createEvent: async (event) => { /* return the created TimelineEvent with its id */ },
+  updateEvent: async (id, patch) => { /* return the updated TimelineEvent */ },
+  deleteEvent: async (id) => { /* void */ },
+};
+```
+
+`WritableCalendarAdapter` is the same interface with all three write methods required.
+
+**`fetchEventsSync`** lets the first render (the server render too) hold the events instead of a loading state. The memory, recurring and seeded adapters implement it. To seed an async adapter with events you already loaded on the server, wrap it:
+
+```ts
+import { createRestAdapter, withInitialEvents } from '@nomideusz/svelte-calendar';
+
+// data.events: TimelineEvent[] for the range the page opens on
+const adapter = withInitialEvents(createRestAdapter({ baseUrl: '/api' }), data.events);
+```
+
+The first load is answered synchronously from the seed; every later load (navigation, refresh) goes to the wrapped adapter.
+
+#### Refusing a write
+
+The Calendar tells two refusals apart when `updateEvent` throws:
+
+| Throw | Meaning | What happens |
+|-------|---------|--------------|
+| `new CalendarReadOnlyError(message?)` | "I hold this event but can't store the change." | The block stays where it was dropped and `oneventmove` fires; the host stores the move and refreshes. |
+| `new EventNotFoundError(id)` | "Not my event." | A composite asks its next child; a drag ends quietly. |
+| any other error | A real failure | The block reverts and the error goes to `onerror` (or `console.warn`). |
+
+An adapter without `updateEvent` counts as read-only. Plain `Error`s whose message contains `read-only` (lower case) or `not found` (any case) are read the same way, so older adapters keep working. `isReadOnlyError(e)` and `isNotFoundError(e)` test both forms.
+
 ## Recurring Schedules
 
 For fixed repeating events (class timetables, office hours):
@@ -627,168 +789,6 @@ For fixed repeating events (class timetables, office hours):
 Options (`RecurringAdapterOptions`): `mondayStart` (default `true`), `palette` (colors rules without a `color`; off by default), `movable` (default `false`).
 
 Occurrences get the id `` `${rule.id}--YYYYMMDD` `` and `data.recurringId`. The adapter projects and stores nothing, so by default every occurrence carries `data.readOnly` and can't be dragged (it can still be clicked). With `movable: true` the views allow the drag and the adapter refuses the write with a read-only error, so `oneventmove` fires and the host stores the move: add the date to the rule's `excludeDates` and keep the moved occurrence with your one-off events (for example the memory side of a [composite adapter](#composite-adapter)).
-
-## REST Adapter
-
-Connect to any REST API:
-
-```ts
-import { createRestAdapter } from '@nomideusz/svelte-calendar';
-
-type ApiItem = { id: string; name: string; startAt: string; endAt: string };
-
-const adapter = createRestAdapter({
-  baseUrl: 'https://api.example.com/v1',
-  headers: { Authorization: 'Bearer TOKEN' },
-  // Optional: map your API's list shape to TimelineEvent[]
-  mapEvents: (data) =>
-    (data as { items: ApiItem[] }).items.map((item) => ({
-      id: item.id,
-      title: item.name,
-      start: new Date(item.startAt),
-      end: new Date(item.endAt),
-    })),
-});
-```
-
-The adapter calls `GET {baseUrl}/events?start=…&end=…` (ISO strings), `POST /events`, `PATCH /events/:id` and `DELETE /events/:id`, sending JSON with your `headers`. By default a list response must be an array of events and a single response one event; `start`/`end` are parsed into `Date`s. Override with `mapEvents(data)` for lists and `mapEvent(data)` for single events. A non-2xx response or invalid JSON throws.
-
-## JMAP Adapter
-
-Read events from a [JMAP Calendars](https://jmap.io/) server (Fastmail, Stalwart, Cyrus):
-
-```ts
-import { createJmapAdapter, type JmapClient } from '@nomideusz/svelte-calendar';
-
-const client: JmapClient = {
-  request: (calls) =>
-    fetch('https://api.example.com/jmap', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ using: ['urn:ietf:params:jmap:calendars'], methodCalls: calls }),
-    }).then((r) => r.json()),
-};
-
-const adapter = createJmapAdapter(client, {
-  getAccountId: () => accountId,
-  calendarId: 'primary',          // optional: restrict to one calendar
-  timeZone: 'Europe/Warsaw',      // optional: default Etc/UTC
-});
-```
-
-Read-only. Expands recurrences server-side and handles all-day events, ISO-duration ends and per-calendar colors (pass `calendars: [{ id, name, color }]`, or a function returning them).
-
-## Mapped Adapter
-
-Wrap any static array of external records (class schedules, appointments, timetables) without writing a custom adapter. Supply a declarative field mapping (or a `mapEvent` function for full control) and the adapter handles parsing, colors, tags and status:
-
-```ts
-import { createMappedAdapter } from '@nomideusz/svelte-calendar';
-
-const adapter = createMappedAdapter(rawClasses, {
-  fields: {
-    title: 'class_name',
-    start: 'starts_at_iso',
-    end: 'ends_at_iso',
-    subtitle: 'teacher',
-    location: 'room',
-    externalId: 'reference_id',
-    status: 'is_cancelled',           // boolean → 'cancelled' / 'confirmed'
-    tags: ['is_free', 'is_bookable_online'],
-  },
-});
-```
-
-- Works without options too: it looks for common keys (`id`, `title`/`name`, `start`/`end`, `starts_at_iso`/`ends_at_iso`, `date` + `start_time`/`end_time`, `room`/`location`, `is_cancelled`). A missing end defaults to one hour after the start.
-- `start`/`end` accept ISO strings, `Date`s or millisecond timestamps. When records split date and time (`date: "2026-03-03"`, `startTime: "07:00"`), map `date` + `startTime` / `endTime`; times may be `7:00`, `07:00` or `07:00:00`.
-- Source colors are kept. Records without one draw in ink, unless you pass a `palette` to fill them by category/title. `autoColor: true` ignores the source colors and colors every event from `palette` (default `VIVID_PALETTE`).
-- `includeData` (default `'*'`) copies unmapped source fields into `event.data`; pass a list of keys to limit it.
-
-For full control, pass `mapEvent(raw, index)` and skip `fields`:
-
-```ts
-const adapter = createMappedAdapter(rawData, {
-  mapEvent: (raw) => ({
-    id: raw.uid,
-    title: raw.procedure_name,
-    start: new Date(raw.scheduled_at),
-    end: new Date(raw.scheduled_end),
-    location: raw.office,
-    resourceId: raw.doctor_id,
-  }),
-});
-```
-
-Mapped adapters are read-only by default (writes throw a read-only error, so drags reach `oneventmove`). Set `readOnly: false` to allow writes; supply `onMutate: { onCreate, onUpdate, onDelete }` to persist them (each returns the stored source record, which is mapped again), or omit it to keep changes in memory.
-
-## Composite Adapter
-
-Merge several adapters into one, e.g. a recurring weekly schedule plus one-off events:
-
-```ts
-import { createMemoryAdapter, createRecurringAdapter, createCompositeAdapter } from '@nomideusz/svelte-calendar';
-
-const memory    = createMemoryAdapter(oneOffEvents);
-const recurring = createRecurringAdapter(weeklySchedule);
-
-const adapter = createCompositeAdapter([memory, recurring]);
-```
-
-- **Reads** query every child in parallel and merge the results (the first event with a given id wins).
-- **Creates** go to the primary child: the first by default, or `primaryIndex`.
-- **Updates and deletes** go to the child that returned the event. If that child can't write, the composite refuses with a read-only error (so `oneventmove` reaches the host). An id no fetch returned is offered to each writable child in turn.
-- **`onFetchError(error, adapterIndex)`**: with it, a failing child is reported to you and the others still load; without it, one failing child fails the whole load (surfacing through `onerror`).
-
-```ts
-const adapter = createCompositeAdapter([recurring, memory], {
-  primaryIndex: 1,
-  onFetchError: (error, i) => console.warn(`source ${i} failed`, error),
-});
-```
-
-## Custom Adapter
-
-Implement the `CalendarAdapter` interface to connect any data source. Only `fetchEvents` is required:
-
-```ts
-import type { CalendarAdapter, DateRange, TimelineEvent } from '@nomideusz/svelte-calendar';
-
-const adapter: CalendarAdapter = {
-  // Required: events overlapping the range
-  fetchEvents: async (range: DateRange) => { /* return TimelineEvent[] */ },
-  // Optional: the same answer synchronously, when the data is already in memory
-  fetchEventsSync: (range) => { /* return TimelineEvent[], or undefined to go async */ },
-  // Optional writes; omit them for a read-only source
-  createEvent: async (event) => { /* return the created TimelineEvent with its id */ },
-  updateEvent: async (id, patch) => { /* return the updated TimelineEvent */ },
-  deleteEvent: async (id) => { /* void */ },
-};
-```
-
-`WritableCalendarAdapter` is the same interface with all three write methods required.
-
-**`fetchEventsSync`** lets the first render (the server render too) hold the events instead of a loading state. The memory, recurring and seeded adapters implement it. To seed an async adapter with events you already loaded on the server, wrap it:
-
-```ts
-import { createRestAdapter, withInitialEvents } from '@nomideusz/svelte-calendar';
-
-// data.events: TimelineEvent[] for the range the page opens on
-const adapter = withInitialEvents(createRestAdapter({ baseUrl: '/api' }), data.events);
-```
-
-The first load is answered synchronously from the seed; every later load (navigation, refresh) goes to the wrapped adapter.
-
-### Refusing a write
-
-The Calendar tells two refusals apart when `updateEvent` throws:
-
-| Throw | Meaning | What happens |
-|-------|---------|--------------|
-| `new CalendarReadOnlyError(message?)` | "I hold this event but can't store the change." | The block stays where it was dropped and `oneventmove` fires; the host stores the move and refreshes. |
-| `new EventNotFoundError(id)` | "Not my event." | A composite asks its next child; a drag ends quietly. |
-| any other error | A real failure | The block reverts and the error goes to `onerror` (or `console.warn`). |
-
-An adapter without `updateEvent` counts as read-only. Plain `Error`s whose message contains `read-only` (lower case) or `not found` (any case) are read the same way, so older adapters keep working. `isReadOnlyError(e)` and `isNotFoundError(e)` test both forms.
 
 ## Headless API
 

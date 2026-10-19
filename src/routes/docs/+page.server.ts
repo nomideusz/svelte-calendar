@@ -36,13 +36,12 @@ export async function load() {
 		.replace(/<p><a href="https:\/\/www\.npmjs\.com[\s\S]*?<\/p>\n?/, '')
 		.replace(/<p><strong><a href="https:\/\/svelte-calendar\.xyz\/?">[\s\S]*?<\/p>\n?/, '');
 
-	// Add ids to h2/h3 so the TOC and deep links work
+	// Add ids to h2–h4 so the TOC and deep links work
 	html = html.replace(
-		/<(h[23])>([\s\S]*?)<\/\1>/gi,
+		/<(h[234])>([\s\S]*?)<\/\1>/gi,
 		(_m, tag: string, inner: string) => `<${tag} id="${slugify(inner)}">${inner}</${tag}>`,
 	);
 
-	// The package name breaks after its scope on a phone, and only there.
 	// The package name breaks after its scope on a phone, and only there; the
 	// version this page documents follows it.
 	const { version } = JSON.parse(readFileSync(resolve('package.json'), 'utf-8'));
@@ -90,7 +89,7 @@ export async function load() {
 	// the clicks).
 	const keys: { line: string; section: string }[] = [];
 	let section = '';
-	html = html.replace(/<(h[23]) id="[^"]*">([\s\S]*?)<\/\1>|<pre>([\s\S]*?)<\/pre>/g, (m, tag?: string, heading?: string, code?: string) => {
+	html = html.replace(/<(h[234]) id="[^"]*">([\s\S]*?)<\/\1>|<pre>([\s\S]*?)<\/pre>/g, (m, tag?: string, heading?: string, code?: string) => {
 		if (tag) {
 			section = heading!.replace(/<[^>]+>/g, '');
 			return m;
@@ -125,9 +124,9 @@ export async function load() {
 		toc[toc.length - 1].items.push({ id, label: match[2].replace(/<[^>]+>/g, '') });
 	}
 
-	// A visible # link on every h2/h3, after the contents list has read the labels.
+	// A visible # link on every h2–h4, after the contents list has read the labels.
 	html = html.replace(
-		/<(h[23]) id="([^"]*)">([\s\S]*?)<\/\1>/g,
+		/<(h[234]) id="([^"]*)">([\s\S]*?)<\/\1>/g,
 		(_m, tag: string, id: string, inner: string) =>
 			`<${tag} id="${id}">${inner}<a class="doc-anchor" href="#${id}" aria-label="Link to ${inner.replace(/<[^>]+>/g, '')}">#</a></${tag}>`,
 	);

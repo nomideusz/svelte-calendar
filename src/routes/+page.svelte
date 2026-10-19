@@ -359,6 +359,13 @@
 			goToToday: "Aller à aujourd’hui", unavailable: "Indisponible",
 			cancelled: "annulé", full: "complet", nMore: (n) => `+${n} de plus`,
 		},
+		"ar-SA": {
+			today: "اليوم", day: "يوم", week: "أسبوع", month: "شهر",
+			planner: "المخطط", agenda: "القائمة", scroll: "الأسابيع", allDay: "طوال اليوم",
+			noEvents: "لا توجد أحداث", nothingScheduled: "لا شيء مجدول",
+			goToToday: "الانتقال إلى اليوم", unavailable: "غير متاح",
+			cancelled: "ملغى", full: "مكتمل", nMore: (n) => `+${n} أخرى`,
+		},
 	};
 	const labels = $derived(LABELS[locale]);
 	// Only an explicit rtl: left unset, the calendar reads the direction from
@@ -435,9 +442,12 @@
 		if (TIMED.includes(activeView)) {
 			if (readOnly) return `readOnly is on: nothing moves. ${tap} an event and its callback reports here.`;
 			if (activeView === "week-scroll") return `Drag an event to another day or time; ${tap.toLowerCase()} empty space to add a class.`;
-			return touch
-				? "Drag an event to move it; long-press empty time to create one."
-				: "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
+			if (touch) return "Drag an event to move it; long-press empty time to create one.";
+			const drag = "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
+			// The planners take the same edits from the keyboard.
+			return activeView === "week-scroll"
+				? drag
+				: `${drag} Keys: Alt+arrows move the focused event, Alt+Shift+↑↓ resize it, Enter on a day creates.`;
 		}
 		if (activeView === "month-grid") return `${tap} a day to open it in day-planner, or an event to report it here.`;
 		if (activeView === "week-agenda" && columns && !mobileOn)
@@ -574,6 +584,16 @@
 	const disabledDates = $derived(disabledDatesEnabled ? closedDates(today) : undefined);
 
 	let codeOpen = $state(false);
+	let codeToggle = $state<HTMLButtonElement>();
+	let codeEl = $state<HTMLElement>();
+	// Esc closes the open drawer (it covers the calendar); focus that was in
+	// it goes back to its toggle. A key the calendar used (a drag cancel) is left alone.
+	function closeCode(e: KeyboardEvent) {
+		if (e.key !== "Escape" || !codeOpen || e.defaultPrevented) return;
+		const inside = codeEl?.contains(document.activeElement);
+		codeOpen = false;
+		if (inside) codeToggle?.focus();
+	}
 	let copyLabel = $state("Copy");
 	async function copyCode() {
 		try {
@@ -592,6 +612,9 @@
 	// the code. Editable setups keep their events in state and hand the
 	// Calendar a new adapter on each create and move, as the README shows.
 	const inert = (key: string) => Boolean(settingsFields.find((f) => f.key === key)?.disabledWhen?.(settingsValues));
+	// The page's own Today / ‹ › only where dates are on screen: a weekly
+	// template (showDates off) has no date to step to.
+	const pager = $derived(!showNavigation && (showDates || inert("showDates")));
 	const quote = (v: string) => `'${v.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
 	// nMore is a function: called with the text "${n}", it hands back its own
 	// template, which goes out as one.
@@ -667,7 +690,7 @@
 			);
 		}
 		if (labels) script.push("", "  const labels = {", ...labelsCode(labels), "  };");
-		if (!showNavigation) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
+		if (pager) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
 
 		const props: string[] = ["{adapter}", `view="${activeView}"`];
 		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
@@ -677,7 +700,7 @@
 		if (dir === "rtl") props.push(`dir="rtl"`);
 		if (readOnly && !inert("readOnly")) props.push("readOnly");
 		if (!mondayStart && !inert("mondayStart")) props.push("mondayStart={false}");
-		if (!showNavigation) props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
+		if (pager) props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
 		// With neither, an empty header snippet replaces both flags.
 		if (!ownHeader) {
 			if (!showModePills) props.push("showModePills={false}");
@@ -705,9 +728,12 @@
 			: `${tag}/>`;
 		return `<script>\n${script.join("\n")}\n</` + `script>\n\n${body}`;
 	});
+	const codeLines = $derived(codeSnippet.split("\n").length);
 	// The drawer's collapsed line: the <Calendar> tag on one line.
 	const codeLine = $derived(codeSnippet.slice(codeSnippet.indexOf("<Calendar")).replace(/\s+/g, " "));
 </script>
+
+<svelte:window onkeydown={closeCode} />
 
 {#snippet blankHeader(ctx: HeaderContext)}<span hidden {@attach () => { todayInView = ctx.isViewOnToday; }}></span>{/snippet}
 
@@ -731,7 +757,7 @@
 
 <Shell>
 	{#snippet bar()}
-		{#if !showNavigation}
+		{#if pager}
 			<div class="pager" role="group" aria-label="Calendar date">
 				{#if periodLabel}<span class="pager-label" role="status" aria-live="polite">{periodLabel}</span>{/if}
 				<button class="pager-today" disabled={todayInView} onclick={() => (focusedDate = new Date())}>Today</button>
@@ -761,6 +787,7 @@
 					<label class="quick-sel">
 						<span>{f.label}</span>
 						<select
+							name={f.key}
 							value={String(settingsValues[f.key])}
 							onchange={(e) => (settingsValues = { ...settingsValues, [f.key]: e.currentTarget.value })}
 						>
@@ -843,16 +870,27 @@
 			{#if edited}<button class="reset" onclick={resetEvents}>Reset events</button>{/if}
 		</div>
 
-		<section class="code" class:code--open={codeOpen} aria-labelledby="code-title">
+		<!-- Open, the code rises over the calendar (on a phone it opens in place). -->
+		<section class="code" class:code--open={codeOpen} aria-labelledby="code-title" bind:this={codeEl}>
 			<header class="code-hd">
-				<button class="code-toggle" aria-expanded={codeOpen} aria-controls="code-body" onclick={() => (codeOpen = !codeOpen)}>
+				<button class="code-toggle" bind:this={codeToggle} aria-expanded={codeOpen} aria-controls="code-body" onclick={() => (codeOpen = !codeOpen)}>
 					<h2 id="code-title">This setup in code</h2>
 					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" /></svg>
 				</button>
-				<button class="code-copy" onclick={copyCode} aria-live="polite">{copyLabel}</button>
+				<span class="code-acts">
+					<span class="code-count">{codeLines} lines</span>
+					<button class="code-copy" onclick={copyCode} aria-live="polite">{copyLabel}</button>
+					{#if codeOpen}<button class="code-copy" onclick={() => { codeOpen = false; codeToggle?.focus(); }}>Close<span class="sr-only"> code</span></button>{/if}
+				</span>
 			</header>
 			{#if codeOpen}
-				<pre id="code-body"><code>{codeSnippet}</code></pre>
+				<div class="code-panel" id="code-body">
+					{#if selectedPreset === "auto"}<p class="code-note">theme 'auto' reads your page: nothing to configure.</p>{/if}
+					<!-- Focused on open so the keys scroll it; Esc closes. A scrolling box
+				     must take focus to be scrolled without a pointer. -->
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+					<pre tabindex="0" aria-label="Code for this setup" {@attach (el) => el.focus({ preventScroll: true })}><code>{codeSnippet}</code></pre>
+				</div>
 			{:else}
 				<code class="code-line" id="code-body">{codeLine}</code>
 			{/if}
@@ -865,11 +903,15 @@
 		outline: none;
 	}
 	main {
+		--pad-r: calc(40 * var(--u));
+		--pad-b: calc(24 * var(--u));
+		--pad-l: calc(38 * var(--u));
+		position: relative;
 		flex: 1;
 		min-height: 0;
 		display: flex;
 		flex-direction: column;
-		padding: 0 calc(40 * var(--u)) calc(24 * var(--u)) calc(38 * var(--u));
+		padding: 0 var(--pad-r) var(--pad-b) var(--pad-l);
 		color: var(--dt-text, #111);
 	}
 
@@ -917,7 +959,9 @@
 
 	@media (max-width: 1360px) {
 		main {
-			padding: 0 20px 20px;
+			--pad-r: 20px;
+			--pad-b: 20px;
+			--pad-l: 20px;
 		}
 		.cal-frame {
 			min-height: 70vh;
@@ -937,8 +981,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: calc(18 * var(--u)) calc(30 * var(--u));
-		padding-bottom: calc(22 * var(--u));
-		margin-bottom: calc(30 * var(--u));
+		padding-bottom: calc(14 * var(--u));
+		margin-bottom: calc(20 * var(--u));
 		border-bottom: 2px solid var(--dt-text, #111);
 	}
 	.setup {
@@ -978,32 +1022,61 @@
 		}
 	}
 
-	/* ── Phone: view, theme and host above the calendar ── */
+	/* ── Phone: the setups one swiped row, so the calendar starts high ── */
+	@media (max-width: 640px) {
+		.setups--top {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			scroll-snap-type: x proximity;
+			scrollbar-width: none;
+			padding: 4px 0 0;
+			margin-bottom: 10px;
+		}
+		.setups--top::-webkit-scrollbar {
+			display: none;
+		}
+		.setups--top .setup {
+			flex: none;
+			min-height: 44px;
+			padding-bottom: 0;
+			white-space: nowrap;
+			scroll-snap-align: start;
+		}
+		/* the scroller clips anything outside it */
+		.setups--top .setup:focus-visible {
+			outline-offset: -2px;
+		}
+	}
+
+	/* ── Phone: view, theme and host above the calendar, two short lines ── */
 	.quick {
 		display: none;
 	}
 	@media (max-width: 640px) {
 		.quick {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			margin-bottom: 16px;
+			display: grid;
+			grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+			gap: 8px 10px;
+			margin-bottom: 12px;
+		}
+		.quick > :global(.hosts-set) {
+			grid-column: 1 / -1;
 		}
 		.quick-sel {
 			position: relative;
 			display: grid;
-			grid-template-columns: 3em minmax(0, 1fr);
+			grid-template-columns: auto minmax(0, 1fr);
 			align-items: center;
-			gap: 8px;
+			gap: 6px;
 			font: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);
 		}
 		.quick-sel select {
 			appearance: none;
 			width: 100%;
 			min-height: 44px;
-			padding: 0 32px 0 10px;
+			padding: 0 28px 0 8px;
 			border: 2px solid var(--dt-text, #111);
-			border-radius: 4px;
+			border-radius: calc(6 * var(--u));
 			background: transparent;
 			font: 400 15px / 1.2 var(--dt-sans, system-ui, sans-serif);
 			color: inherit;
@@ -1021,7 +1094,7 @@
 		.quick-sel::after {
 			content: "";
 			position: absolute;
-			right: 10px;
+			right: 8px;
 			top: 50%;
 			width: 18px;
 			height: 18px;
@@ -1108,6 +1181,8 @@
 		min-height: 0;
 		display: flex;
 		flex-direction: column;
+		/* the calendar's sticky layers stay under the open code drawer */
+		isolation: isolate;
 	}
 	.cal-frame {
 		flex: 1;
@@ -1131,6 +1206,42 @@
 	.code {
 		margin-top: calc(16 * var(--u));
 		border: 2px solid var(--dt-text, #111);
+	}
+	/* Open, the drawer rises over the calendar from where it sits, on the
+	   page's own ground: the week keeps its size and scroll behind it. */
+	.code--open {
+		position: absolute;
+		left: var(--pad-l);
+		right: var(--pad-r);
+		bottom: var(--pad-b);
+		z-index: 20;
+		display: flex;
+		flex-direction: column;
+		max-height: min(calc(100% - 16 * var(--u)), calc(100vh - 6rem));
+		background: var(--page-bg, #efebe9);
+		background-attachment: fixed;
+	}
+	.code-panel {
+		flex: 1 1 auto;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+	.code-note {
+		margin: 0;
+		padding: calc(4 * var(--u)) calc(22 * var(--u)) calc(8 * var(--u));
+		font: 400 max(13px, calc(17 * var(--u))) / 1.4 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
+	}
+	.code-acts {
+		display: flex;
+		align-items: center;
+		gap: calc(12 * var(--u));
+	}
+	.code-count {
+		font: 400 calc(17 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
+		white-space: nowrap;
 	}
 	.code-hd {
 		display: flex;
@@ -1213,16 +1324,19 @@
 		scrollbar-width: none;
 	}
 	.code pre {
+		flex: 1 1 auto;
+		min-height: 0;
 		margin: 0;
-		/* capped so the week above keeps six hours in view on a 900px screen:
-		   what the screen has past ~780px, at least 7.5rem, at most 30vh */
-		max-height: clamp(7.5rem, 100vh - 780px, 30vh);
 		padding: calc(6 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u));
 		overflow: auto;
 		font: 400 13px / 1.6 var(--dt-mono, ui-monospace, monospace);
 		font-variant-ligatures: none;
 		color: var(--dt-text, #111);
 		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.18)) transparent;
+	}
+	.code pre:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: -2px;
 	}
 
 	/* On a phone the 390px frame is the screen itself, and the calendar keeps
@@ -1242,6 +1356,15 @@
 			width: 100%;
 			border-width: 0;
 			border-radius: 0;
+		}
+		/* A phone opens the drawer in place, under the calendar. */
+		.code--open {
+			position: static;
+			max-height: none;
+		}
+		.code pre {
+			max-height: 70vh;
+			max-height: 70svh;
 		}
 	}
 

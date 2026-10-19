@@ -843,6 +843,8 @@ $effect(() => {
 		align-items: flex-start;
 	}
 
+	/* The first hour has no room above its line: it sits on it, unclipped */
+	.mb-hour:first-child .mb-hour-label { top: 0; }
 	.mb-hour-label--under {
 		visibility: hidden;
 	}

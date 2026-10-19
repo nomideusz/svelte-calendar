@@ -550,7 +550,12 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		/* A Latin title in RTL keeps its own direction: the ellipsis cuts its end */
+		unicode-bidi: plaintext;
+		text-align: left;
 	}
+	/* …but it sits on the calendar's side, by the bar */
+	.mg-chip-title:dir(rtl) { text-align: right; }
 	.mg-more {
 		align-self: flex-start;
 		border: none;

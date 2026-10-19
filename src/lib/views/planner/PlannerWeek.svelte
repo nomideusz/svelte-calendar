@@ -392,6 +392,9 @@
 	// with room for its label (centred on the line) below the sticky top.
 	// An event running across that hour line would be sliced under the sticky
 	// top, so the scroll starts at that event's hour instead.
+	// A server-rendered grid sits at midnight until this runs: it stays
+	// hidden until placed (.tw-body--unplaced), and shows anyway after 1.5s.
+	let placed = $state(false);
 	$effect(() => {
 		void weekStartMs; // re-run on week change
 		void startHour; // and when the visible hour range changes
@@ -426,6 +429,7 @@
 				}
 			}
 			el.scrollTop = Math.max(0, (hour - startHour) * HOUR_H - LABEL_ROOM);
+			placed = true;
 		});
 	});
 
@@ -536,6 +540,9 @@
 	const TITLE_LINE = 12 * 1.2;
 	const ROOM_LINE = 10 * 1.2;
 	const ROOM_AIR = 9;
+	/** Tall enough for two title lines over the time (.tw-ev--tall), in the
+	 *  CSS's own line boxes: title 15px/1.25, time 14px/1.2. */
+	const TWO_LINE_H = BODY_PAD_Y + 2 * 15 * 1.25 + LINE_GAP + 14 * 1.2;
 	function blockParts(ev: TimelineEvent, height: number): Record<string, boolean> {
 		return fitParts(
 			[
@@ -761,6 +768,21 @@
 	);
 	const colsCreate = $derived(!!oneventcreate && !readOnly);
 
+	// After Enter creates, the keyboard follows the new block once the host
+	// adds it: the first unseen event at that start, within two updates.
+	let createFocus: { startMs: number; known: Set<string>; tries: number } | null = null;
+	$effect(() => {
+		const list = events;
+		untrack(() => {
+			if (!createFocus) return;
+			const { startMs, known } = createFocus;
+			const ev = list.find((e) => !known.has(e.id) && e.start.getTime() === startMs);
+			const block = ev && colsEl?.querySelector<HTMLElement>(`.tw-ev[data-event-id="${CSS.escape(ev.id)}"]`);
+			if (block) block.focus();
+			if (block || --createFocus.tries <= 0) createFocus = null;
+		});
+	});
+
 	function onColKeydown(e: KeyboardEvent, i: number) {
 		if (e.target !== e.currentTarget) return;
 		const day = dayCols[i];
@@ -775,6 +797,7 @@
 			const slot = isBlockedAt(day.ms, hour);
 			if (slot) return ctx.announce(`${slot.label || L.unavailable}, ${blockedRangeLabel(day.ms, slot.start, slot.end)}`);
 			const startMs = atHour(day.ms, hour);
+			createFocus = { startMs, known: new Set(events.map((ev) => ev.id)), tries: 2 };
 			oneventcreate({ start: new Date(startMs), end: new Date(startMs + Math.max(60, minDuration ?? 0) * 60_000) });
 			return;
 		}
@@ -1106,18 +1129,16 @@
 			{/if}
 
 			<!-- Grid body -->
-			<div class="tw-body" style:height="{gridHeight}px">
+			<div class="tw-body" class:tw-body--unplaced={!placed} style:height="{gridHeight}px">
 				<!-- Time gutter -->
 				<div class="tw-gutter" style:width="{GUTTER_W}px" aria-hidden="true">
 					{#each { length: hourCount } as _, i}
-						{#if i > 0}
-							{@const [hNum, hSuf] = fmtHParts(startHour + i, locale)}
-							<!-- an hour the now plate would half-cover gives way to it -->
-							<span
-								class="tw-gutter-lb"
-								class:tw-gutter-lb--under={nowY !== null && weekHasToday && Math.abs(i * HOUR_H - nowY) < 18}
-								style:top="{i * HOUR_H}px">{hNum}<small>{hSuf}</small></span>
-						{/if}
+						{@const [hNum, hSuf] = fmtHParts(startHour + i, locale)}
+						<!-- an hour the now plate would half-cover gives way to it -->
+						<span
+							class="tw-gutter-lb"
+							class:tw-gutter-lb--under={nowY !== null && weekHasToday && Math.abs(i * HOUR_H - nowY) < 18}
+							style:top="{i * HOUR_H}px">{hNum}<small>{hSuf}</small></span>
 					{/each}
 					{#if axisGhost}
 						<!-- The axis reads the drag to the minute, at both edges. -->
@@ -1212,6 +1233,7 @@
 									class:tw-ev--past={p.ev.end.getTime() < clock.tick}
 									class:tw-ev--short={p.height < 44}
 									class:tw-ev--compact={p.height < 34}
+									class:tw-ev--tall={p.height >= TWO_LINE_H}
 									class:tw-ev--on-now={weekHasToday && nowY !== null && p.top < nowY && p.top + p.height > nowY}
 									style:top="{p.top}px"
 									style:height="{p.height}px"
@@ -1495,9 +1517,13 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		unicode-bidi: plaintext;
+		text-align: left;
 		flex: 1;
 		min-width: 0;
 	}
+	/* …but it sits on the calendar's side, by the bar */
+	.tw-ad-title:dir(rtl) { text-align: right; }
 	.tw-ad-span {
 		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
@@ -1549,6 +1575,11 @@
 		display: flex;
 		position: relative;
 	}
+	.tw-body--unplaced {
+		visibility: hidden;
+		animation: tw-reveal 0s 1.5s forwards;
+	}
+	@keyframes tw-reveal { to { visibility: visible; } }
 
 	/* ─── Time gutter ────────────────────────────────── */
 	.tw-gutter {
@@ -1586,6 +1617,10 @@
 		align-self: center;
 		background: var(--dt-border-day, rgba(15, 15, 15, 0.3));
 	}
+	/* The first hour has no room above its line: it hangs below it, the
+	   tick still on the line. */
+	.tw-gutter-lb:first-child { transform: none; }
+	.tw-gutter-lb:first-child::after { align-self: flex-start; }
 	.tw-gutter-lb--under {
 		visibility: hidden;
 	}
@@ -1884,6 +1919,30 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		/* A Latin title in an RTL calendar keeps its own direction, so the
+		   ellipsis cuts its end, not its start. */
+		unicode-bidi: plaintext;
+		text-align: left;
+	}
+	/* …but it sits on the calendar's side, by the bar */
+	:is(.tw-ev-title, .tw-ev-loc):dir(rtl) { text-align: right; }
+	/* A block tall enough for two title lines over the time wraps the title
+	   to two. The parts flow in a wrapping column, so a room that no longer
+	   fits under them moves into a second column the block clips: it gives
+	   way whole, before the title is cut, instead of being sliced. */
+	.tw-ev--tall .tw-ev-body {
+		flex-wrap: wrap;
+		column-gap: 16px;
+	}
+	.tw-ev--tall :is(.tw-ev-title, .tw-ev-time, .tw-ev-loc) { width: 100%; }
+	.tw-ev--tall .tw-ev-title {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		white-space: normal;
+		overflow-wrap: break-word; /* a word wider than an overlap lane breaks, not clips */
+		hyphens: auto; /* …and hyphenates where the host page declares a lang */
 	}
 
 	.tw-ev-loc {
@@ -1893,6 +1952,8 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		unicode-bidi: plaintext;
+		text-align: left;
 	}
 
 	.tw-ev-live {

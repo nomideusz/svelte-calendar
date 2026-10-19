@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.2
+
+### Patch Changes
+
+- Week planner: a block with room for two title lines (about an hour or longer) wraps the title to two lines instead of cutting it; the location drops out whole before the title is clipped.
+- RTL: event titles and locations use `unicode-bidi: plaintext`, so a Latin title in an RTL calendar is cut at its end ("Meditation C…") rather than its start, in the week planner, week scroll and month grid.
+- The first visible hour shows its numeral in the gutter (hung below its line), including with `visibleHours`.
+- Week planner no longer paints at midnight and then jumps: the grid stays hidden until its initial scroll is placed (shown after 1.5s regardless, without JS).
+- Week agenda: the month in the day heading is set like the weekday, so the heading reads in one case.
+- Week planner: after Enter creates an event, focus moves to the new event once the host adds it.
+
 ## 1.4.1
 
 ### Patch Changes

@@ -253,28 +253,24 @@
 		white-space: nowrap;
 	}
 
-	/* Long page: the rail is the sticky column, the main column grows. */
+	/* Long page: the rail is the sticky column, one viewport tall, the main
+	   column grows. The docs' contents scroll inside the rail, above a static
+	   foot (host page, install), so the foot never covers an entry. */
 	.shell--long .rail {
 		position: sticky;
 		top: 0;
 		height: 100vh;
 		min-height: 0;
+	}
+	.shell--long .rail-body {
+		min-height: 0;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		scrollbar-width: thin;
 	}
 	.shell--long .main {
 		position: static;
 		height: auto;
-	}
-	/* The docs' contents run long: the foot (host page, install) stays at the
-	   rail's bottom edge, on the page's own ground, so the host can be changed
-	   without scrolling the contents to their end. */
-	.shell--long .rail-foot {
-		position: sticky;
-		bottom: calc(-32 * var(--u));
-		padding-bottom: calc(32 * var(--u));
-		background: var(--page-bg, #efebe9);
-		background-attachment: fixed;
 	}
 
 	.skip {
@@ -322,9 +318,8 @@
 			position: static;
 			height: auto;
 		}
-		.shell--long .rail-foot {
-			position: static;
-			padding-bottom: 0;
+		.shell--long .rail-body {
+			overflow-y: visible;
 		}
 		/* The docs' rail holds only the host swatches and the install line
 		   here: one rule above them, not two. */
@@ -342,11 +337,14 @@
 			flex-wrap: wrap;
 			gap: 8px 24px;
 		}
+		/* At least 44px tall: a phone's tap target, with no extra ink. */
 		.mark--bar {
-			display: block;
+			display: flex;
+			align-items: center;
 			flex-basis: 100%;
+			min-height: 44px;
 			font-size: 40px;
-			margin: 6px 0 2px;
+			margin: 4px 0 0;
 		}
 	}
 	@media (max-width: 640px) {
@@ -388,9 +386,18 @@
 			min-height: 44px;
 			box-sizing: border-box;
 		}
+		/* 44px wide too: the hit area reaches 6px past the word, the underline stays on it. */
 		.nav a {
 			display: inline-flex;
 			align-items: center;
+			justify-content: center;
+			min-width: 44px;
+			padding-inline: 6px;
+			margin-inline: -6px;
+		}
+		.nav a[aria-current='page']::after {
+			left: 6px;
+			right: 6px;
 		}
 		.install-act {
 			padding: 10px 14px;

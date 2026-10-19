@@ -21,7 +21,10 @@
 	}
 	// The page is prerendered; "today" is the reader's, so the calendar mounts in the browser.
 	let mounted = $state(false);
-	onMount(() => (mounted = true));
+	onMount(() => {
+		mounted = true;
+		requestAnimationFrame(track); // a #hash load lands mid-page: mark it before any scroll
+	});
 
 	// The section being read: the last h2 above the top fifth of the screen.
 	let active = $state('');
@@ -51,19 +54,20 @@
 		if (active) document.querySelector(`.doc-toc a[href="#${active}"]`)?.scrollIntoView({ block: 'nearest' });
 	});
 
-	// All Props filter: hides the rows whose name and description miss the
-	// query, and the groups left empty.
+	// All Props filter: hides the rows that miss the query in every column
+	// (name, type, default, description), and the groups left empty. With no
+	// row left, it names the sections above that mention the query instead.
 	let content: HTMLElement;
 	let filter = $state('');
 	let matches = $state(0);
+	let mentions = $state<{ id: string; label: string }[]>([]);
 	$effect(() => {
 		const q = filter.trim().toLowerCase();
 		let n = 0;
 		for (const table of content.querySelectorAll<HTMLTableElement>('table:has(tr[id^="prop-"])')) {
 			let shown = 0;
 			for (const tr of table.querySelectorAll<HTMLTableRowElement>('tbody tr')) {
-				const text = `${tr.cells[0]?.textContent} ${tr.cells[tr.cells.length - 1]?.textContent}`.toLowerCase();
-				tr.hidden = !!q && !text.includes(q);
+				tr.hidden = !!q && !tr.textContent!.toLowerCase().includes(q);
 				if (!tr.hidden) shown++;
 			}
 			table.hidden = !shown;
@@ -72,7 +76,26 @@
 			n += shown;
 		}
 		matches = n;
+		mentions = q && !n ? mentioning(q) : [];
 	});
+	/** The h2–h4 sections before All Props whose heading or text contain q. */
+	function mentioning(q: string) {
+		const found: { id: string; label: string }[] = [];
+		let h: Element | null = null;
+		let hit = false;
+		const flush = () => h && hit && found.push({ id: h.id, label: h.textContent!.replace(/#$/, '') });
+		for (const el of content.children) {
+			if (el.id === 'all-props') break;
+			if (/^H[234]$/.test(el.tagName) && el.id) {
+				flush();
+				h = el;
+				hit = false;
+			}
+			if (!el.classList.contains('doc-toc') && el.textContent!.toLowerCase().includes(q)) hit = true;
+		}
+		flush();
+		return found;
+	}
 	// A link to a prop the filter hides clears the filter, then lands on the row.
 	async function revealTarget() {
 		const row = location.hash.startsWith('#prop-') && document.getElementById(location.hash.slice(1));
@@ -160,7 +183,15 @@
 						if (e.key === 'Escape') filter = '';
 					}}
 				/>
-				<p class="doc-filter-none" role="status">{filter.trim() && !matches ? `No prop matches “${filter.trim()}”.` : ''}</p>
+				<p class="doc-filter-none" role="status">
+					{#if filter.trim() && !matches}
+						No prop matches “{filter.trim()}”.{#if mentions.length}{' '}
+							Mentioned in:
+							{#each mentions as m, i (m.id)}<a href={`#${m.id}`}>{m.label}</a>{i < mentions.length - 1 ? ', ' : '.'}
+							{/each}
+						{/if}
+					{/if}
+				</p>
 			</div>
 			{@html data.props}
 		{/if}
@@ -202,12 +233,14 @@
 	}
 	.doc-toc a {
 		font: 400 calc(21 * var(--u)) / 1.35 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		text-decoration: none;
 		padding: calc(4 * var(--u)) 0;
 		box-shadow: inset 0 -2px 0 transparent;
 		transition: color 120ms, box-shadow 120ms;
 		width: fit-content;
+		/* Kept in view with a little air when the list scrolls in the rail. */
+		scroll-margin-block: calc(24 * var(--u));
 	}
 	.doc-toc a:hover,
 	.doc-toc a[aria-current] {
@@ -227,7 +260,7 @@
 		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	/* The contents as a disclosure under the lede, for screens where the rail
@@ -286,7 +319,11 @@
 	.doc-content > .doc-live {
 		max-width: 60rem;
 	}
-	.doc-content :global(:is(h2, h3, tr[id])) {
+	/* Prose reads at about 70 characters a line; code and tables keep the column. */
+	.doc-content :global(:is(p, li, blockquote)) {
+		max-width: 60ch;
+	}
+	.doc-content :global(:is(h2, h3, h4, tr[id])) {
 		scroll-margin-top: 24px;
 	}
 	.doc-content :global([hidden]) {
@@ -338,7 +375,7 @@
 		font: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.doc-filter input {
 		flex: 1 1 16rem;
@@ -375,7 +412,7 @@
 		white-space: nowrap;
 	}
 
-	/* A # after each heading, shown on hover or focus; faint where nothing hovers. */
+	/* A # after each heading, shown on hover or focus; in text-2 at rest where nothing hovers (5:1). */
 	.doc-content :global(.doc-anchor) {
 		display: inline-flex;
 		align-items: center;
@@ -384,12 +421,12 @@
 		min-height: 24px;
 		margin-left: 0.25em;
 		vertical-align: middle;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		border: none;
 		opacity: 0;
 		transition: opacity 120ms;
 	}
-	.doc-content :global(:is(h2, h3):hover .doc-anchor),
+	.doc-content :global(:is(h2, h3, h4):hover .doc-anchor),
 	.doc-content :global(.doc-anchor:focus-visible) {
 		opacity: 1;
 	}
@@ -399,7 +436,7 @@
 	}
 	@media (hover: none) {
 		.doc-content :global(.doc-anchor) {
-			opacity: 0.45;
+			opacity: 1;
 		}
 	}
 	@media (pointer: coarse) {
@@ -415,7 +452,7 @@
 		font: 400 16px / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		letter-spacing: 0;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 		vertical-align: middle;
 	}
@@ -433,8 +470,9 @@
 	}
 	.doc-live figcaption {
 		margin-top: 8px;
-		font-size: 13px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		font-size: 15px;
+		line-height: 1.45;
+		color: var(--dt-text, #111);
 	}
 
 	/* Back to the contents, past the first screen, where the rail list is hidden. */
@@ -523,6 +561,12 @@
 		margin: 36px 0 12px;
 	}
 
+	.doc-content :global(h4) {
+		font: 500 16px/1.3 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+		margin: 28px 0 10px;
+	}
+
 	.doc-content :global(p) {
 		font-size: 16px;
 		line-height: 1.55;
@@ -544,7 +588,7 @@
 		background: transparent;
 		border-radius: 0;
 		font-size: 15px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.doc-content :global(blockquote p) {
 		margin: 0;
@@ -582,45 +626,39 @@
 	.doc-content :global(.doc-pre) {
 		position: relative;
 	}
-	/* Room for the key, so it never sits on the first line of code. */
+	/* The key is notched into the frame's top-right corner, sharing its 2px
+	   border; the code starts under it, so a long first line never runs
+	   behind it. */
 	.doc-content :global(.doc-pre pre) {
-		padding-right: 76px;
+		padding-top: 36px;
 	}
 	.doc-content :global(.doc-copy) {
 		position: absolute;
-		top: 8px;
-		right: 8px;
-		padding: 6px 10px;
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		top: 0;
+		right: 0;
+		padding: 6px 12px;
+		border: 2px solid var(--dt-text, #111);
 		border-radius: 0;
-		background: var(--dt-bg, #efebe9);
+		background: transparent;
 		color: var(--dt-text, #111);
 		font: 500 13px / 1 var(--dt-sans, system-ui, sans-serif);
 		cursor: pointer;
 	}
 	.doc-content :global(.doc-copy:hover) {
-		border-color: var(--dt-text, #111);
+		background: var(--dt-hover, rgba(15, 15, 15, 0.05));
 	}
 	.doc-content :global(.doc-copy:focus-visible) {
 		outline: 2px solid var(--dt-text, #111);
-		outline-offset: 2px;
+		outline-offset: -6px;
 	}
-	/* Phones and touch: the key is a tab on the frame above the code, never on it. */
+	/* Phones and touch: a 44px key, the code a little lower. */
 	@media (max-width: 640px), (pointer: coarse) {
-		.doc-content :global(.doc-pre) {
-			display: flex;
-			flex-direction: column;
-		}
 		.doc-content :global(.doc-copy) {
-			position: static;
-			align-self: flex-end;
 			min-height: 44px;
 			min-width: 72px;
-			border: 2px solid var(--dt-text, #111);
-			border-bottom: none;
 		}
 		.doc-content :global(.doc-pre pre) {
-			padding-right: 14px;
+			padding-top: 52px;
 		}
 	}
 
@@ -647,13 +685,13 @@
 		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		border-bottom: 2px solid var(--dt-text, #111);
 	}
 
 	.doc-content :global(td) {
 		padding: 7px 12px;
-		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		color: var(--dt-text, #111);
 		vertical-align: top;
 	}
@@ -672,8 +710,8 @@
 		width: fit-content;
 		padding: 3px 0 2px;
 		font-size: 13px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
-		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
+		border-bottom: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.doc-content :global(a.doc-try:hover) {
 		color: var(--dt-text, #111);
@@ -681,7 +719,7 @@
 	}
 
 	.doc-content :global(tr:hover td) {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	/* The props reference's groups share one set of columns, and the
 	   description keeps a reading measure (under ~60ch) at full width. */
@@ -726,7 +764,7 @@
 	/* A prop named in the prose, linked to its row: ink, a quiet rule. */
 	.doc-content :global(a.doc-prop) {
 		color: inherit;
-		border-bottom-color: var(--dt-border-day, rgba(0, 0, 0, 0.6));
+		border-bottom-color: var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.doc-content :global(a.doc-prop:hover) {
 		border-bottom-color: var(--dt-accent, #111);
@@ -738,8 +776,12 @@
 	}
 	.doc-end h2 {
 		margin-top: 0;
+		padding-bottom: 4px;
 	}
+	/* 44px tall: the way back is a tap target on a phone. */
 	.doc-end h2 a {
+		display: inline-block;
+		padding-block: 6px;
 		color: var(--dt-text, #111);
 		border-bottom: none;
 	}
@@ -768,7 +810,7 @@
 			min-height: 44px;
 			padding: 0;
 			border-bottom: none;
-			text-decoration: underline 1px var(--dt-border-day, rgba(0, 0, 0, 0.6));
+			text-decoration: underline 1px var(--dt-border-day, rgba(15, 15, 15, 0.6));
 			text-underline-offset: 4px;
 		}
 	}
@@ -814,7 +856,7 @@
 		outline-offset: -4px;
 	}
 	.doc-content :global(details[open] summary) {
-		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
+		border-bottom: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.doc-content :global(details > :not(summary)) {
 		padding: 0 16px;
@@ -828,7 +870,7 @@
 	/* ── Horizontal rule ── */
 	.doc-content :global(hr) {
 		border: none;
-		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+		border-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		margin: 32px 0;
 	}
 
@@ -869,7 +911,7 @@
 		}
 		.doc-content :global(tr) {
 			padding: 10px 0;
-			border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
+			border-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));
 		}
 		.doc-content > :global(table tbody tr:first-child) {
 			border-top: 2px solid var(--dt-text, #111);
@@ -890,7 +932,7 @@
 			font: 500 12px / 1.2 var(--dt-sans, system-ui, sans-serif);
 			text-transform: uppercase;
 			letter-spacing: 0.06em;
-			color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+			color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		}
 		.doc-content :global(tr:hover td) {
 			background: none;
