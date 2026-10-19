@@ -164,7 +164,8 @@ const weekDays = $derived.by(() => {
 		out.push({
 			ms,
 			dayName: weekdayLong(ms, locale),
-			dateLabel: `${monthLong(ms, locale)} ${dayNum(ms)}`,
+			month: monthLong(ms, locale),
+			num: dayNum(ms),
 			tier,
 			isToday: ms === todayMs,
 			events: dayEvts,
@@ -210,12 +211,6 @@ const weekDays = $derived.by(() => {
 		<div class="ag-card-body">
 			<EventContent event={ev}>
 			<span class="ag-card-title">{ev.title}</span>
-			{#if ev.subtitle}
-				<span class="ag-card-sub">{ev.subtitle}</span>
-			{/if}
-			{#if ev.location}
-				<span class="ag-card-loc">{ev.location}</span>
-			{/if}
 			<span class="ag-card-meta">
 				{#if isNow}
 					{L.until} {fmt(ev.end)}
@@ -227,6 +222,12 @@ const weekDays = $derived.by(() => {
 					<span class="ag-card-eta">{eta}</span>
 				{/if}
 			</span>
+			{#if ev.subtitle}
+				<span class="ag-card-sub">{ev.subtitle}</span>
+			{/if}
+			{#if ev.location}
+				<span class="ag-card-loc">{ev.location}</span>
+			{/if}
 			{#if ev.tags?.length}
 				<div class="ag-card-tags">
 					{#each ev.tags as tag}
@@ -326,8 +327,9 @@ const weekDays = $derived.by(() => {
 						onkeydown={ondayclick ? (e) => dayKeydown(e, day.ms) : undefined}
 					>
 						<div class="ag-wday-head-left">
+							{#if showDates}<span class="ag-wday-num">{day.num}</span>{/if}
 							<span class="ag-wday-name">{day.dayName}</span>
-							{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
+							{#if showDates}<span class="ag-wday-date">{day.month}</span>{/if}
 						</div>
 						{#if dayHeaderSnippet}
 							<div class="ag-wday-custom-header">
@@ -382,13 +384,14 @@ const weekDays = $derived.by(() => {
 					onkeydown={ondayclick ? (e) => dayKeydown(e, day.ms) : undefined}
 				>
 					<div class="ag-wday-head-left">
+						{#if showDates}<span class="ag-wday-num">{day.num}</span>{/if}
 						{#if day.isToday}
-						<span class="ag-wday-badge">{L.today}</span>
-					{:else if day.tier === 'tomorrow'}
-						<span class="ag-wday-badge ag-wday-badge--muted">{L.tomorrow}</span>
+							<span class="ag-wday-badge">{L.today}</span>
+						{:else if day.tier === 'tomorrow'}
+							<span class="ag-wday-badge ag-wday-badge--muted">{L.tomorrow}</span>
 						{/if}
 						<span class="ag-wday-name">{day.dayName}</span>
-						{#if showDates}<span class="ag-wday-date">{day.dateLabel}</span>{/if}
+						{#if showDates}<span class="ag-wday-date">{day.month}</span>{/if}
 					</div>
 					{#if dayHeaderSnippet}
 						<div class="ag-wday-custom-header">
@@ -589,8 +592,8 @@ const weekDays = $derived.by(() => {
 	.ag-allday-chip {
 		display: flex;
 		align-items: center;
-		gap: 4px;
-		padding: 2px 8px;
+		gap: 6px;
+		padding: 4px 10px;
 		border-radius: 0;
 		border: none;
 		background: var(--ev-color);
@@ -612,15 +615,14 @@ const weekDays = $derived.by(() => {
 		display: none;
 	}
 	.ag-allday-title {
-		font: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: inherit;
 		white-space: nowrap;
 	}
 	.ag-allday-span {
-		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: inherit;
-		opacity: 0.8;
 		white-space: nowrap;
 	}
 
@@ -630,6 +632,9 @@ const weekDays = $derived.by(() => {
 	.ag-card {
 		position: relative;
 		display: flex;
+		/* A <button> shrinks to its content; the NOW card sits outside the
+		   stretching slot column, so it claims the row explicitly. */
+		width: 100%;
 		align-items: stretch;
 		border-radius: 0;
 		background: transparent;
@@ -676,19 +681,20 @@ const weekDays = $derived.by(() => {
 	.ag-card--limited::before {
 		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
+	/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.
+	   The body keeps a reading measure so meta never drifts across a wide row. */
 	.ag-card-body {
-		padding: 7px 10px 7px 13px;
+		padding: 8px 10px 8px 13px;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: 3px;
 		min-width: 0;
+		max-width: 44rem;
 		flex: 1;
 	}
 	.ag-card-title {
-		font-size: 13px;
-		font-weight: 500;
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		line-height: 1.3;
 		word-break: break-word;
 		flex: 1;
 		min-width: 0;
@@ -700,48 +706,29 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-card-meta {
 		display: flex;
-		align-items: center;
-		font-size: 11px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		align-items: baseline;
+		flex-wrap: wrap;
+		column-gap: 8px;
+		row-gap: 2px;
+		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		line-height: 1;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
-	.ag-card-dur {
-		margin-left: 6px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-	}
-	.ag-card-eta {
-		margin-left: auto;
-		font-size: 11px;
-		font-weight: 500;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		letter-spacing: 0.02em;
-	}
-	.ag-card-sub {
-		font-size: 11px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		line-height: 1;
-	}
-	.ag-card-loc {
-		font-size: 10px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		line-height: 1;
+	.ag-card-dur,
+	.ag-card-eta,
+	.ag-card-sub,
+	.ag-card-loc,
+	.ag-card-tag {
+		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag-card-tags {
 		display: flex;
-		gap: 4px;
+		column-gap: 10px;
+		row-gap: 2px;
 		flex-wrap: wrap;
 	}
 	.ag-card-tag {
-		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: transparent;
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
-		padding: 2px 5px;
-		border-radius: 0;
 		white-space: nowrap;
 	}
 	.ag-card-progress {
@@ -775,13 +762,9 @@ const weekDays = $derived.by(() => {
 	.ag-wday--today {
 		background: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);
 	}
-	.ag-wday--tomorrow .ag-card {
-		opacity: 0.82;
-	}
-	/* Past days: token-based text dim instead of subtree opacity (readability) */
-	.ag-wday--past .ag-wday-name {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		font-weight: 500;
+	/* Past days: quieter ink from the text tokens, no subtree opacity */
+	.ag-wday--past .ag-wday-num {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag-wday--past .ag-wday-head {
 		padding: 8px 20px 2px;
@@ -835,34 +818,40 @@ const weekDays = $derived.by(() => {
 		align-items: baseline;
 		gap: 8px;
 	}
-	.ag-wday-badge {
-		font-size: 10px;
-		font-weight: 500;
+	/* The planner's header type: the day number is the typography (40/400,
+	   narrowed), the weekday a tracked 12/500 label; today takes the accent. */
+	.ag-wday-num {
+		font: 400 40px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		margin-inline-end: 4px;
+	}
+	.ag-wday-badge,
+	.ag-wday-name {
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+	}
+	.ag-wday--today .ag-wday-num,
+	.ag-wday--today .ag-wday-name,
+	.ag-wday-badge {
 		color: var(--dt-accent, #2563eb);
 	}
-	.ag-wday-badge--muted {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-	}
-	.ag-wday-name {
-		font-size: 13px;
-		font-weight: 600;
-		line-height: 1.2;
+	.ag-wday .ag-wday-badge--muted {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag-wday-date {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
-		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		line-height: 1.2;
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 
 	.ag-wday-empty {
-		padding: 2px 20px 6px;
-		font-size: 11px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		font-style: italic;
+		padding: 2px 20px 8px;
+		font-size: 12.5px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 
 	/* Expanded day */
@@ -879,8 +868,7 @@ const weekDays = $derived.by(() => {
 		padding: 2px 0;
 	}
 	.ag-wslot-now {
-		font-size: 10px;
-		font-weight: 700;
+		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-accent, #2563eb);
@@ -896,8 +884,8 @@ const weekDays = $derived.by(() => {
 		gap: 4px;
 	}
 	.ag-wday-past-line {
-		font-size: 11px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font-size: 12.5px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		padding: 6px 0 0;
 	}
 	.ag-wday-past-line--summary {
@@ -915,7 +903,7 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-past-toggle:hover,
 	.ag-past-toggle:active {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.ag-past-toggle:focus-visible {
 		outline: none;
@@ -931,14 +919,14 @@ const weekDays = $derived.by(() => {
 	@media (prefers-reduced-motion: reduce) {
 		.ag-past-chevron { transition: none; }
 	}
-	/* Revealed completed events: dim + strike, single token layer */
-	.ag-compact--done .ag-compact-title {
-		text-decoration: line-through;
-		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-	}
+	/* Revealed completed events: quieter ink (single token layer). Strikethrough
+	   is kept for cancelled only, so "done" and "called off" never read alike. */
+	.ag-compact--done .ag-compact-title,
 	.ag-compact--done .ag-compact-time {
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		font-weight: 400;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+	}
+	.ag-compact--done::before {
+		opacity: 0.45;
 	}
 
 	/* Compact day events */
@@ -950,8 +938,8 @@ const weekDays = $derived.by(() => {
 		position: relative;
 		display: flex;
 		align-items: baseline;
-		gap: 6px;
-		padding: 3px 0 3px 9px;
+		gap: 10px;
+		padding: 5px 0 5px 11px;
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
 		min-width: 0;
@@ -982,26 +970,26 @@ const weekDays = $derived.by(() => {
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-compact-time {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-weight: 400;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		min-width: 40px;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		min-width: 4.4em;
 		flex-shrink: 0;
 		white-space: nowrap;
-		line-height: 1.4;
 	}
-	/* Title + location + subtitle + tags cluster. One line while it fits; on
-	   mobile the metadata wraps to a second line instead of crushing the title. */
+	/* Title + location + subtitle + tags cluster, sized to its content so the
+	   meta and duration sit beside the title instead of across a wide row.
+	   One line while it fits; on mobile the metadata wraps to a second line
+	   instead of crushing the title. */
 	.ag-compact-main {
 		display: flex;
 		align-items: baseline;
-		gap: 6px;
-		flex: 1;
+		gap: 10px;
+		flex: 0 1 auto;
 		min-width: 0;
 	}
 	.ag--mobile .ag-compact-main {
+		flex: 1;
 		flex-wrap: wrap;
 		row-gap: 2px;
 	}
@@ -1018,48 +1006,42 @@ const weekDays = $derived.by(() => {
 		max-width: 100%;
 	}
 	.ag-compact-title {
-		font-size: 12px;
-		font-weight: 500;
+		font: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		flex: 1;
+		flex: 0 1 auto;
 		/* The title is the row's identity — never let subtitle/tags/duration
 		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
-		min-width: 35%;
+		min-width: 6em;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
-		line-height: 1.4;
+	}
+	.ag-compact-dur,
+	.ag-compact-sub,
+	.ag-compact-loc,
+	.ag-compact-tag {
+		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		white-space: nowrap;
 	}
 	.ag-compact-dur {
-		font-size: 10px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
-		white-space: nowrap;
-		line-height: 1.4;
 	}
 	.ag-compact-sub {
-		font-size: 10px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 3;
 		min-width: 0;
-		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 120px;
-		line-height: 1.4;
+		max-width: 160px;
 	}
 	.ag-compact-loc {
-		font-size: 10px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 3;
 		min-width: 0;
-		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 100px;
+		max-width: 140px;
 	}
 	.ag-compact--cancelled .ag-compact-title {
 		text-decoration: line-through;
@@ -1079,25 +1061,16 @@ const weekDays = $derived.by(() => {
 		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	.ag-compact-tag {
-		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: transparent;
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
-		padding: 1px 4px;
-		border-radius: 0;
-		white-space: nowrap;
 		flex-shrink: 1;
 		min-width: 2.5em;
-		max-width: 80px;
+		max-width: 120px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 	.ag-compact-more {
-		font-size: 11px;
-		color: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);
-		padding: 2px 0 0 13px;
+		font-size: 12.5px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		padding: 4px 0 0 11px;
 		cursor: pointer;
 		display: block;
 	}
@@ -1181,66 +1154,15 @@ const weekDays = $derived.by(() => {
 	.ag--mobile .ag-wday-compact {
 		padding: 0 16px 12px;
 	}
+	/* Type is already on the planner scale; phones only get bigger targets. */
 	.ag--mobile .ag-card-body {
 		padding: 12px 14px;
 	}
-	.ag--mobile .ag-card-title {
-		font-size: 15px;
-	}
-	.ag--mobile .ag-card-meta {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-sub {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-loc {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-eta {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-tag {
-		font-size: 11px;
-	}
 	.ag--mobile .ag-compact {
-		padding: 8px 0;
-	}
-	.ag--mobile .ag-compact-title {
-		font-size: 15px;
-	}
-	.ag--mobile .ag-compact-time {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-compact-dur {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-compact-sub {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-compact-loc {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-compact-tag {
-		font-size: 11px;
+		padding: 8px 0 8px 11px;
 	}
 	.ag--mobile .ag-compact-more {
-		font-size: 12px;
 		padding-top: 6px;
-	}
-	.ag--mobile .ag-allday-span {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-wday-badge {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-wslot-now {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-wday-empty {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-wday-past-line {
-		font-size: 12px;
 	}
 	.ag--mobile .ag-wslot-cards--multi {
 		grid-template-columns: 1fr;

@@ -24,7 +24,8 @@
 	import { HOUR_MS, sod, addDaysMs, diffDays } from '../../core/time.js';
 	import { startOfWeek as sowFn, isAllDay, segmentForDay } from '../../core/time.js';
 	import type { DaySegment } from '../../core/time.js';
-	import { fmtHParts, fmtTime, fmtDuration, weekdayShort, weekdayLong } from '../../core/locale.js';
+	import { fmtHParts, fmtTime, fmtDuration, fmtWeekRange, weekdayShort, weekdayLong } from '../../core/locale.js';
+	import { dateLong } from '../shared/format.js';
 
 
 	interface Props {
@@ -1014,7 +1015,9 @@
 	style:--tw-col-min="{MIN_COL_W}px"
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
-	aria-label={L.weekAhead}
+	aria-label="{singleDay ? L.dayPlanner : L.weekAhead}{dayCols.length
+		? `, ${singleDay ? dateLong(dayCols[0].ms, locale) : fmtWeekRange(dayCols[0].ms, locale, dayCols[dayCols.length - 1].ms)}`
+		: ''}"
 >
 	<div class="tw-scroll" bind:this={scrollEl}>
 		<div class="tw-inner" style:min-width="{innerMinWidth}px">
@@ -1132,7 +1135,7 @@
 							class:tw-col--disabled={day.isDisabled}
 							data-day={day.ms}
 							role={colsCreate ? 'group' : undefined}
-							aria-label={colsCreate ? `${weekdayLong(day.ms, locale)} ${day.dayNum}, ${L.createEvent}` : undefined}
+							aria-label={colsCreate ? `${dateLong(day.ms, locale)}, ${L.createEvent}` : undefined}
 							aria-keyshortcuts={colsCreate ? 'Enter' : undefined}
 							tabindex={colsCreate ? (day.ms === tabbableColMs ? 0 : -1) : undefined}
 							onfocusin={() => (focusedColMs = day.ms)}
@@ -1179,6 +1182,7 @@
 									class:tw-ev--past={p.ev.end.getTime() < clock.tick}
 									class:tw-ev--short={p.height < 44}
 									class:tw-ev--compact={p.height < 34}
+									class:tw-ev--on-now={weekHasToday && nowY !== null && p.top < nowY && p.top + p.height > nowY}
 									style:top="{p.top}px"
 									style:height="{p.height}px"
 									style:left="calc({(p.col / p.totalCols) * 100}% + 1px)"
@@ -1253,9 +1257,8 @@
 
 							<!-- Now line (today's column only) -->
 							{#if day.isToday && nowY !== null}
-								<div class="tw-now" style:top="{nowY}px" aria-label={L.currentTime}>
-									<span class="tw-now-dot" aria-hidden="true"></span>
-								</div>
+								<div class="tw-now" style:top="{nowY}px" aria-label={L.currentTime}></div>
+								<span class="tw-now-dot" style:top="{nowY}px" aria-hidden="true"></span>
 							{/if}
 						</div>
 					{/each}
@@ -1398,8 +1401,9 @@
 		padding: 6px 8px 6px 0;
 	}
 	.tw-ad-gutter-lb {
-		font: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		text-align: right;
 	}
 
@@ -1465,7 +1469,7 @@
 		min-width: 0;
 	}
 	.tw-ad-span {
-		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: inherit;
 		opacity: 0.75;
@@ -1498,7 +1502,7 @@
 		border-radius: 3px;
 		text-align: left;
 		align-self: flex-start;
-		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		padding: 2px 6px;
 		cursor: pointer;
@@ -1634,17 +1638,20 @@
 	/* The gutter's right border already bounds the first column */
 	.tw-lines + .tw-col { border-left: none; }
 
-	.tw-col--today { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
+	/* --tw-col-wash: the column's ground, repeated under an event that the
+	   now line crosses (that event is opaque, so the line runs beneath it). */
+	.tw-col { background: var(--tw-col-wash, transparent); }
+	.tw-col--today { --tw-col-wash: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }
 	/* Dim past days with a wash, never a subtree opacity (event contrast) */
 	.tw-col--past {
-		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);
+		--tw-col-wash: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);
 	}
 	/* What has already happened steps back; a cancelled block keeps its own look. */
 	.tw-ev--past:not(.tw-ev--cancelled) {
 		opacity: 0.78;
 	}
 	.tw-col--weekend:not(.tw-col--today):not(.tw-col--past) {
-		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
+		--tw-col-wash: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));
 	}
 	.tw-col--disabled {
 		background: repeating-linear-gradient(
@@ -1676,7 +1683,7 @@
 		overflow: hidden;
 	}
 	.tw-blocked-lb {
-		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
@@ -1685,24 +1692,28 @@
 	}
 
 	/* ─── Now line ───────────────────────────────────── */
+	/* Under the events (z 6): the one it crosses is opaque (.tw-ev--on-now),
+	   so the line never strikes through a title. The dot stays on top. */
 	.tw-now {
 		position: absolute;
 		left: 0;
 		right: 0;
 		height: 0;
 		border-top: 2px solid var(--dt-accent, #2563eb);
-		z-index: 12;
+		z-index: 5;
 		pointer-events: none;
 		transform: translateY(-1px);
 	}
 	.tw-now-dot {
 		position: absolute;
 		left: -4px;
-		top: -5px;
 		width: 8px;
 		height: 8px;
+		margin-top: -4px;
 		border-radius: 50%;
 		background: var(--dt-accent, #2563eb);
+		z-index: 12;
+		pointer-events: none;
 	}
 
 	/* ─── Events ─────────────────────────────────────── */
@@ -1745,6 +1756,17 @@
 	.tw-ev--current {
 		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
 	}
+	/* An event the now line crosses lays its column's ground (and its own
+	   wash) over the paper, so the line passes beneath its text. */
+	.tw-ev.tw-ev--on-now {
+		background:
+			linear-gradient(var(--tw-ev-wash, transparent), var(--tw-ev-wash, transparent)),
+			linear-gradient(var(--tw-col-wash, transparent), var(--tw-col-wash, transparent)),
+			var(--dt-paper, none),
+			var(--dt-bg, #ffffff);
+	}
+	.tw-ev--on-now.tw-ev--current { --tw-ev-wash: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)); }
+	.tw-ev--on-now:hover { --tw-ev-wash: var(--dt-hover, rgba(0, 0, 0, 0.04)); }
 	.tw-ev--resizing {
 		z-index: 50;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -1796,14 +1818,20 @@
 		gap: 1px;
 		overflow: hidden;
 	}
-	/* Compact (< ~35min at default zoom): single inline line "9:00 Title" */
+	/* Compact (< ~35min at default zoom): one line, "Title 9:00". The title
+	   wins the room: the time wraps onto a second line, which the block
+	   clips, before the title is cut; a title too long alone ellipsizes. */
 	.tw-ev--compact .tw-ev-body {
 		flex-direction: row;
-		align-items: center;
-		gap: 4px;
-		padding-top: 1px;
-		padding-bottom: 1px;
+		flex-wrap: wrap;
+		align-content: flex-start;
+		align-items: baseline;
+		gap: 24px 5px;
+		padding-top: 2px;
+		padding-bottom: 0;
 	}
+	.tw-ev--compact .tw-ev-title { flex: 0 1 auto; min-width: 0; }
+	.tw-ev--compact .tw-ev-end { display: none; }
 
 	/* Title first, time under it; both one size, rank by weight and ink. */
 	.tw-ev-time {
@@ -1814,7 +1842,6 @@
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
-	.tw-ev--compact .tw-ev-time { order: 0; }
 	/* A narrow overlap column keeps the start time whole and drops the end. */
 	@container tw-ev (max-width: 104px) {
 		.tw-ev-end { display: none; }
@@ -1935,13 +1962,13 @@
 		box-shadow: none;
 	}
 	.tw-ghost-time {
-		font: 700 12px/1.15 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12.5px/1.15 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--ev-color, var(--dt-accent, #2563eb));
 		white-space: nowrap;
 	}
 	.tw-ghost-title {
-		font: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		overflow: hidden;

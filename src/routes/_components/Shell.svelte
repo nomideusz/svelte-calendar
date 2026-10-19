@@ -19,15 +19,21 @@
 	let { rail, bar, children, long = false }: Props = $props();
 
 	const INSTALL = 'pnpm add @nomideusz/svelte-calendar';
-	let copied = $state(false);
+	let copied = $state<'' | 'Copied' | 'Selected'>('');
+	let command: HTMLElement;
 	async function copyInstall() {
 		try {
 			await navigator.clipboard.writeText(INSTALL);
-			copied = true;
-			setTimeout(() => (copied = false), 1600);
+			copied = 'Copied';
 		} catch {
-			/* clipboard blocked — the command stays selectable */
+			// No clipboard: select the command so Ctrl/Cmd+C (or the phone's menu) copies it.
+			const range = document.createRange();
+			range.selectNodeContents(command);
+			getSelection()?.removeAllRanges();
+			getSelection()?.addRange(range);
+			copied = 'Selected';
 		}
+		setTimeout(() => (copied = ''), 1600);
 	}
 
 	// Live clock in the zone the calendar is showing, ticking once a second.
@@ -62,6 +68,8 @@
 		</div>
 
 		<div class="rail-foot">
+			<!-- The host pages are the demo's business; the docs keep the install line. -->
+			{#if !long}
 			<div class="hosts" role="group" aria-label="Host page">
 				{#each demoThemeNames as name (name)}
 					{@const dt = demoThemes[name]}
@@ -77,10 +85,11 @@
 					></button>
 				{/each}
 			</div>
+			{/if}
 
 			<button class="install" onclick={copyInstall} aria-label="Copy install command">
-				<code>{INSTALL}</code>
-				<span class="install-act" aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+				<code bind:this={command}>{INSTALL}</code>
+				<span class="install-act" aria-live="polite">{copied || 'Copy'}</span>
 			</button>
 		</div>
 	</aside>
@@ -95,7 +104,8 @@
 			</nav>
 			<div class="bar-end">
 			{@render bar?.()}
-			<div class="clock" aria-label={long ? 'Current time' : 'Time shown by the calendar'}>
+			{#if !long}
+			<div class="clock" aria-label="Time shown by the calendar">
 				{#if clock}
 					<span class="clock-hm">
 						{#key clock.hm}
@@ -105,6 +115,7 @@
 					<span class="clock-zone">{clock.zone}</span>
 				{/if}
 			</div>
+			{/if}
 			</div>
 		</header>
 
@@ -349,6 +360,12 @@
 			position: static;
 			height: auto;
 		}
+		/* The docs' rail holds only the install line here: one rule above it, not two. */
+		.shell--long .rail-foot {
+			margin-top: 0;
+			padding-top: 0;
+			border-top: none;
+		}
 		.bar {
 			flex-wrap: wrap;
 			gap: 8px 24px;
@@ -384,8 +401,18 @@
 			width: 100%;
 			box-sizing: border-box;
 		}
+		/* The key stays inside the frame: the command shrinks, and only on the
+		   narrowest phones breaks onto a second line. */
 		.install code {
-			font-size: 13px;
+			min-width: 0;
+			font-size: 12px;
+			line-height: 1.3;
+			white-space: normal;
+			overflow-wrap: anywhere;
+			text-align: left;
+		}
+		.install-act {
+			flex: none;
 		}
 	}
 

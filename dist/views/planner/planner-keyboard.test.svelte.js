@@ -51,6 +51,8 @@ describe('week-planner keyboard', () => {
         await settle();
         const cols = [...target.querySelectorAll('.tw-col')];
         expect(cols.filter((c) => c.tabIndex === 0)).toHaveLength(1);
+        // A screen reader hears the month, not just "Wednesday 21".
+        expect(cols[2].getAttribute('aria-label')).toMatch(/October/);
         key(cols[2], 'Enter');
         expect(oneventcreate).toHaveBeenCalledWith({ start: new Date(2026, 9, 21, 9), end: new Date(2026, 9, 21, 10) });
         const ev = () => target.querySelector('.tw-ev[data-event-id="a"]');

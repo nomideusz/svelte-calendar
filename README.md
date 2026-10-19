@@ -34,7 +34,7 @@ Requirements:
   ]);
 </script>
 
-<Calendar {adapter} />
+<Calendar {adapter} view="week-planner" />
 ```
 
 That's it — 8 built-in views, auto-coloring, drag-and-drop with live previews, all out of the box. The default `auto` theme probes your page's background, accent color and fonts, so the calendar adapts to any design.
@@ -151,7 +151,7 @@ When the calendar's **container** is narrower than 768px, it swaps to touch-firs
 
 ```svelte
 <!-- Auto-detect (default) — switches at a 768px container width -->
-<Calendar {adapter} />
+<Calendar {adapter} view="week-planner" />
 
 <!-- Force mobile layout -->
 <Calendar {adapter} mobile={true} />
@@ -564,7 +564,7 @@ For fixed repeating events (class timetables, office hours):
   ]);
 </script>
 
-<Calendar {adapter} />
+<Calendar {adapter} view="week-planner" />
 ```
 
 <details>

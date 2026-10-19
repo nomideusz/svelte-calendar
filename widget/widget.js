@@ -1,4 +1,4 @@
-globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\t/* Horizontal stays contained (a sideways swipe must not trigger the\n\t\t   browser's back navigation); vertical chains to the page, so a wheel\n\t\t   over a page-embedded calendar scrolls on once the grid ends. */\n\t\toverscroll-behavior-x: contain;\n\t\toverscroll-behavior-y: auto;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 14px 4px 12px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t/* The day number is the typography of the grid: large, regular weight. */\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t/* Today: the numeral in the accent, nothing else. */\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\t/* The padding sits inside the gutter's width, so the all-day cells\n\t\t   start where the day columns and headers start. */\n\t\tbox-sizing: border-box;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 6px 8px 6px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 4px 0 5px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 0 10px;\n\t\tmin-height: 36px;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\t/* The paper's grain runs through the band (multiply keeps the colour). */\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: filter 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\t/* A span continues across its days as one band: no edge between segments. */\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tmargin-left: -1px;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #fff));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad--mid.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp),\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: hidden;\n\t}\n\t.tw-ad-gutter.svelte-j4rvbp + .tw-ad-cell:where(.svelte-j4rvbp) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: visible;\n\t}\n\t.tw-ad-span.svelte-j4rvbp,\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* Timetable hour: the numeral carries the rank, the suffix sits raised\n\t   and small beside it. */\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 6px;\n\t\tright: 0;\n\t\ttransform: translateY(-50%);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 2px;\n\t\tfont: 400 26px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 85%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tmin-width: 6px;\n\t\theight: 1px;\n\t\tmargin-left: 5px;\n\t\talign-self: center;\n\t\tbackground: var(--dt-border-day, rgba(0, 0, 0, 0.3));\n\t}\n\t.tw-gutter-lb--under.svelte-j4rvbp {\n\t\tvisibility: hidden;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp small:where(.svelte-j4rvbp) {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tline-height: 1;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #fff));\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t/* The clock is a reversed plate on the accent, like a board's live time. */\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\t.tw-now-week.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\topacity: 0.85;\n\t\ttransform: translateY(-1px);\n\t}\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-col.svelte-j4rvbp:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t.tw-col--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -5px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t/* Printed states: a cancelled class is struck through and stays on the\n\t   grid; a tentative one is set in grey with a dashed bar. */\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp),\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp),\n\t.tw-ev--limited.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; }\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tcontainer: tw-ev / inline-size;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 7px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): single inline line \"9:00 Title\" */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding-top: 1px;\n\t\tpadding-bottom: 1px;\n\t}\n\n\t/* Title first, time under it; both one size, rank by weight and ink. */\n\t.tw-ev-time.svelte-j4rvbp {\n\t\torder: 1;\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-time:where(.svelte-j4rvbp) { order: 0; }\n\t/* A narrow overlap column keeps the start time whole and drops the end. */\n\t@container tw-ev (max-width: 104px) {\n\t\t.tw-ev-end.svelte-j4rvbp { display: none; }\n\t}\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\torder: 0;\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\torder: 2;\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 700 12px/1.15 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 600 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 0;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 0;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(37, 99, 235, 0.04));\n\t\t/* The current row's frame is a day rule, not the accent */\n\t\tborder-color: var(--dt-border-day, rgba(0, 0, 0, 0.3));\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t/* The inset is on the contents, not the cell's padding: flex adds padding\n\t   to a basis-0 cell, and that one column would come out wider. */\n\t.wg-cell--month.svelte-l8xuza .wg-cell-events:where(.svelte-l8xuza),\n\t.wg-cell--month.svelte-l8xuza .wg-allday:where(.svelte-l8xuza) { margin-left: var(--wg-month-inset, 22px); }\n\n\t/* ─── Month labels (vertical, read bottom-to-top) ─── */\n\t.wg-month.svelte-l8xuza {\n\t\tflex: 0 0 22px;\n\t\twriting-mode: vertical-rl;\n\t\ttransform: rotate(180deg);\n\t\ttext-align: end; /* the rotation puts the end at the top */\n\t\tpadding: 6px 0;\n\t\tfont: 700 11px / 22px var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-month:where(.svelte-l8xuza),\n\t.wg-month--start.svelte-l8xuza {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.wg-month--inset.svelte-l8xuza {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 2px;\n\t\tpointer-events: none;\n\t}\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.04)); }\n\n\t/* Non-current weeks sit on the same paper; only the header ink softens,\n\t   and past events print a shade lighter. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-cell--past.svelte-l8xuza .wg-ev:where(.svelte-l8xuza):not(.wg-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t/* A band on the time axis, behind the chips */\n\t.wg-blocked.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tbox-sizing: border-box;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\talign-self: flex-end;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 4px;\n\t\tpadding: 3px 7px;\n\t\tmargin: 1px 0 2px;\n\t\tborder-radius: 0;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.04em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* Today's pill — after the week rules above, which it must beat */\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza),\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);\n\t\tpadding-bottom: 2px;\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-top: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: filter 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\n\t.wg-ad.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 11px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t/* The day's time axis: chips carry their own margin-top (chipTops), and\n\t   the area fills the cell, so the all-day bars line up at the bottom. */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tflex: 1 0 auto;\n\t\tmin-height: var(--wg-time-h, 100px);\n\t}\n\n\t.wg-now.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpointer-events: none;\n\t}\n\t.wg-now.svelte-l8xuza::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t}\n\t.wg-now-time.svelte-l8xuza {\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t/* Where a dragged-in class would land: the now-line's shape, dashed */\n\t.wg-drop.svelte-l8xuza {\n\t\tz-index: 3;\n\t}\n\t.wg-drop.svelte-l8xuza::after {\n\t\tborder-top-style: dashed;\n\t}\n\t.wg-drop.svelte-l8xuza .wg-now-time:where(.svelte-l8xuza) {\n\t\tfont-weight: 600;\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tposition: relative; /* above the blocked bands */\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\t/* 3px bar + 6px, and 3px on the right: 12px in all (CHIP_PAD_X) */\n\t\tpadding: 0 3px 0 9px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s, box-shadow 0.12s;\n\t}\n\t/* The start bar on the leading edge */\n\t.wg-ev.svelte-l8xuza::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0 auto 0 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\n\t/* Printed states: struck through, grey, or a dashed bar — never a tint */\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza::before,\n\t.wg-ev--full.svelte-l8xuza::before {\n\t\topacity: 0.45;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza),\n\t.wg-ev--full.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-ev--tentative.svelte-l8xuza::before,\n\t.wg-ev--limited.svelte-l8xuza::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 15px / 1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t}\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\tmargin-top: 2px;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-day-head-badge--muted.svelte-n8lbn1 {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 600 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 10px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1::before,\n\t.ag-card--full.svelte-n8lbn1::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--limited.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--full.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--tentative.svelte-n8lbn1::before,\n\t.ag-card--limited.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px 10px 15px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: flex-start;\n\t\tgap: 8px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-sub.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\n\t.ag-card--q.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tgap: 3px;\n\t}\n\t.ag-card--q.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 500;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 500;\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t\tgap: 3px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\talign-items: baseline;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 14px;\n\t}\n\t.ag-card--first.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t\tfont-weight: 500;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 22px;\n\t\tmargin-top: 2px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: stack queue columns vertically — \"Up next\" (hero) first,\n\t   Now/Done status column second */\n\t/* Horizontal swipes are ours (day navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-n8lbn1,\n\t.ag--mobile.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\tborder-right: none;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tpadding-top: 10px;\n\t\tmargin-top: 8px;\n\t\toverflow-y: visible;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 1;\n\t\toverflow-y: visible;\n\t\tpadding-bottom: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1) {\n\t\tline-height: 1.3;\n\t\tpadding-bottom: 1px;\n\t}\n\t/* Mobile: larger touch targets */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--hero:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 16px 18px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card--plan:where(.svelte-n8lbn1) .ag-card-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t/* Mobile: Now/Done status subtree type scale */\n\t.ag--mobile.svelte-n8lbn1 .ag-q-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-clock:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-now-time:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-free-label:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 13px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-check:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-card-tag:where(.svelte-n8lbn1) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-time:where(.svelte-n8lbn1),\n\t.ag--mobile.svelte-n8lbn1 .ag-log-dur:where(.svelte-n8lbn1) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tfont-size: 15px;\n\t}\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-weight: 600;\n\t\tletter-spacing: 0.14em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 13px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 0;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3);\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text);\n\t\tborder-color: var(--dt-text-3);\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tcolor: var(--dt-text-2);\n\t\tmargin-top: 1px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 8px 10px 8px 13px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 6px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.25;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 3px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 6px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 300;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 3px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover,\n\t.ag-log-row.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\twidth: 64px;\n\t\tflex-shrink: 0;\n\t}\n\t/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\talign-self: stretch;\n\t\twidth: 3px;\n\t\tborder-radius: 0;\n\t\tflex-shrink: 0;\n\t\topacity: 0.45;\n\t}\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tline-height: 1.2;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tflex: 1;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0 4px 11px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:hover,\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-weight: 400;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tmin-width: 64px;\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + subtitle + tags cluster. One line while it fits; on mobile the\n\t   metadata wraps to a second line under the title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1::before { opacity: 0.45; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.ag-compact-row--tentative.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-time:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-dur:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-tag:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1) { font-size: 15px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-date:where(.svelte-n8lbn1) { font-size: 12px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head-badge:where(.svelte-n8lbn1) { font-size: 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-title:where(.svelte-n8lbn1) { font-size: 0.85rem; }\n\t.ag--mobile.svelte-n8lbn1 .ag-allday-label:where(.svelte-n8lbn1) { font-size: 11px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 2px 8px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 0.7rem/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 500 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.8;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-uhwfyj {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj::before,\n\t.ag-card--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--limited.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--full.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--tentative.svelte-uhwfyj::before,\n\t.ag-card--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 7px 10px 7px 13px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-width: 0;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tline-height: 1.3;\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tline-height: 1;\n\t}\n\t.ag-card-dur.svelte-uhwfyj {\n\t\tmargin-left: 6px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-card-eta.svelte-uhwfyj {\n\t\tmargin-left: auto;\n\t\tfont-size: 11px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tletter-spacing: 0.02em;\n\t}\n\t.ag-card-sub.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tline-height: 1;\n\t}\n\t.ag-card-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1;\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t.ag-wday--tomorrow.svelte-uhwfyj .ag-card:where(.svelte-uhwfyj) {\n\t\topacity: 0.82;\n\t}\n\t/* Past days: token-based text dim instead of subtree opacity (readability) */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tfont-weight: 500;\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head--click.svelte-uhwfyj:focus-visible,\n\t.ag-wday-empty--click.svelte-uhwfyj:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wday-badge--muted.svelte-uhwfyj {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont-size: 13px;\n\t\tfont-weight: 600;\n\t\tline-height: 1.2;\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tline-height: 1.2;\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 6px;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-style: italic;\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-weight: 700;\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: dim + strike, single token layer */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\ttext-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tfont-weight: 400;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact.svelte-uhwfyj {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tpadding: 3px 0 3px 9px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover,\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-weight: 400;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tmin-width: 40px;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t/* Title + location + subtitle + tags cluster. One line while it fits; on\n\t   mobile the metadata wraps to a second line instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont-size: 12px;\n\t\tfont-weight: 500;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex: 1;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 35%;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 120px;\n\t\tline-height: 1.4;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tfont-size: 10px;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 100px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj::before,\n\t.ag-compact--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--limited.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--full.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj::before,\n\t.ag-compact--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 80px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 11px;\n\t\tcolor: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 72%, transparent);\n\t\tpadding: 2px 0 0 13px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t/* Horizontal swipes are ours (week navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-uhwfyj,\n\t.ag--mobile.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-eta:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-card-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tfont-size: 15px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-dur:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-tag:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-allday-span:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-badge:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-now:where(.svelte-uhwfyj) {\n\t\tfont-size: 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-past-line:where(.svelte-uhwfyj) {\n\t\tfont-size: 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: filter 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:hover,\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* The band is the colour; no dot. */\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\tdisplay: none;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label--under.svelte-zbkzcp {\n\t\tvisibility: hidden;\n\t}\n\t.mb-hour-label.svelte-zbkzcp small:where(.svelte-zbkzcp) {\n\t\tfont-size: 9px;\n\t\tfont-weight: 600;\n\t\tvertical-align: top;\n\t\tmargin-left: 1px;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 700 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 10px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 10;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t/* The clock is a reversed plate on the accent, as in the desktop gutter. */\n\t.mb-now-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 4px 0 0;\n\t\ttext-align: right;\n\t}\n\t.mb-now-label.svelte-zbkzcp span:where(.svelte-zbkzcp) {\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tfont: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\tbox-shadow: none;\n\t\tposition: relative;\n\t}\n\n\t.mb-now-line.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\ttop: -4px;\n\t\twidth: 10px;\n\t\theight: 10px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tbox-sizing: border-box;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:hover,\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.mb-event--current.svelte-zbkzcp {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp),\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp),\n\t.mb-event--limited.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45;\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 700 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 600 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.06em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 700 18px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tfont-weight: 500;\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:hover,\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t/* All day: a solid band on the event colour, no tint. */\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf:hover,\n\t.mw-ev--allday.svelte-1d18hkf:active {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tfilter: brightness(1.08);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-time:where(.svelte-1d18hkf) {\n\t\tcolor: inherit;\n\t}\n\t.mw-ev--allday.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf),\n\t.mw-ev--limited.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45;\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 11px;\n\t\tfont-weight: 600;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.06em;\n\t\tcolor: var(--dt-text-3);\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay legible */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-3);\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t/* Starts where the weekday name above it starts (6px cell + 2px = the\n\t   header's 8px), and is only as wide as its digits, so today's rule is too. */\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: flex-start;\n\t\tpadding: 0 2px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-size: 22px;\n\t\tfont-weight: 400;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text);\n\t\theight: 26px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t}\n\t/* Today: accent numeral on a 2px rule — the same mark in every view. */\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tcolor: var(--dt-accent);\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tfont-family: var(--dt-sans);\n\t\tfont-size: 12px;\n\t\tline-height: 1.3;\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: stretch;\n\t\twidth: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 11px;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 10px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 0);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Desktop header ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 10px;\n\t\tmin-height: 44px;\n\t\tbox-sizing: border-box;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-hd-side.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-hd-side--end.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tfont: 500 16px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.01em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 28px;\n\t\theight: 28px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, var(--dt-border, rgba(0, 0, 0, 0.14)));\n\t\tpadding: 7px 10px;\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\tmargin-right: 2px;\n\t\ttransition: background 120ms, color 120ms, border-color 120ms;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\n\t/* View switch: plain text tabs; the chosen one carries an ink rule. */\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 8px 8px 7px;\n\t\tborder-radius: 0;\n\t\tbox-shadow: inset 0 -2px 0 transparent;\n\t\ttransition: box-shadow 100ms, color 100ms;\n\t}\n\n\t/* :not(--active) — the hover rule otherwise outranks the active color,\n\t   and iOS keeps :hover stuck after a tap (dark text on the accent). */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* Selected = ink text over an ink rule; the accent keeps its three jobs. */\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n\t/* ── Mobile header (flow layout) ── */\n\t.cal-m-hd.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 8px 8px 6px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tmin-height: 44px;\n\t}\n\n\t/* Narrow containers: the date label moves to its own row (.cal-m-titlebar),\n\t   so the controls row spreads pills and nav to the edges. */\n\t.cal-m-hd--stack.svelte-1b53e7w {\n\t\tjustify-content: space-between;\n\t}\n\t.cal-m-hd--titled.svelte-1b53e7w {\n\t\tborder-bottom: none;\n\t\tpadding-bottom: 2px;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tjustify-content: center;\n\t\tpadding: 0 8px 8px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-titlebar.svelte-1b53e7w .cal-m-title:where(.svelte-1b53e7w) {\n\t\tflex: 0 1 auto;\n\t}\n\n\t.cal-m-left.svelte-1b53e7w,\n\t.cal-m-right.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\n\t.cal-m-right.svelte-1b53e7w {\n\t\tjustify-content: flex-end;\n\t}\n\n\t.cal-m-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\twidth: 40px;\n\t\theight: 40px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tborder-radius: 50%;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-nav.svelte-1b53e7w:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent);\n\t}\n\t.cal-m-nav.svelte-1b53e7w:active {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t.cal-m-nav.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\toutline-offset: 2px;\n\t}\n\n\t.cal-m-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 2px;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 500 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tpadding: 11px 10px 9px;\n\t\tborder-radius: 0;\n\t\tbox-shadow: inset 0 -2px 0 transparent;\n\t\ttransition: box-shadow 100ms, color 100ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-m-pill.svelte-1b53e7w:hover:not(.cal-m-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.cal-m-pill--active.svelte-1b53e7w {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-m-title.svelte-1b53e7w {\n\t\tflex: 1;\n\t\ttext-align: center;\n\t\tfont: 600 14px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t}\n\n\t.cal-m-today.svelte-1b53e7w {\n\t\tfont: 600 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tbackground: transparent;\n\t\tborder: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.12));\n\t\tmin-height: 40px;\n\t\tpadding: 5px 12px;\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\twhite-space: nowrap;\n\t\ttransition: background 120ms, color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tflex-shrink: 0;\n\t}\n\t.cal-m-today.svelte-1b53e7w:hover:not(:disabled) {\n\t\tborder-color: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.cal-m-today.svelte-1b53e7w:active:not(:disabled) {\n\t\tbackground: color-mix(in srgb, var(--dt-text, #000) 8%, transparent);\n\t}\n\t.cal-m-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.45;\n\t\tcursor: default;\n\t}\n\t.cal-m-today.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\toutline-offset: 2px;\n\t}\n/*$vite$:1*/";
+globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\t/* Horizontal stays contained (a sideways swipe must not trigger the\n\t\t   browser's back navigation); vertical chains to the page, so a wheel\n\t\t   over a page-embedded calendar scrolls on once the grid ends. */\n\t\toverscroll-behavior-x: contain;\n\t\toverscroll-behavior-y: auto;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 4px;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 14px 4px 12px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t/* The day number is the typography of the grid: large, regular weight. */\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t/* Today: the numeral in the accent, nothing else. */\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\t/* The padding sits inside the gutter's width, so the all-day cells\n\t\t   start where the day columns and headers start. */\n\t\tbox-sizing: border-box;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 6px 8px 6px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 4px 0 5px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 0 10px;\n\t\tmin-height: 36px;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\t/* The paper's grain runs through the band (multiply keeps the colour). */\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: filter 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\t/* A span continues across its days as one band: no edge between segments. */\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tmargin-left: -1px;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #fff));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad--mid.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp),\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: hidden;\n\t}\n\t.tw-ad-gutter.svelte-j4rvbp + .tw-ad-cell:where(.svelte-j4rvbp) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: visible;\n\t}\n\t.tw-ad-span.svelte-j4rvbp,\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 3px;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(0, 0, 0, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #ffffff);\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t/* Timetable hour: the numeral carries the rank, the suffix sits raised\n\t   and small beside it. */\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 6px;\n\t\tright: 0;\n\t\ttransform: translateY(-50%);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 2px;\n\t\tfont: 400 26px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 85%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tmin-width: 6px;\n\t\theight: 1px;\n\t\tmargin-left: 5px;\n\t\talign-self: center;\n\t\tbackground: var(--dt-border-day, rgba(0, 0, 0, 0.3));\n\t}\n\t.tw-gutter-lb--under.svelte-j4rvbp {\n\t\tvisibility: hidden;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp small:where(.svelte-j4rvbp) {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tline-height: 1;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #fff));\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t/* The clock is a reversed plate on the accent, like a board's live time. */\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\t.tw-now-week.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\topacity: 0.85;\n\t\ttransform: translateY(-1px);\n\t}\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-col.svelte-j4rvbp:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t/* --tw-col-wash: the column's ground, repeated under an event that the\n\t   now line crosses (that event is opaque, so the line runs beneath it). */\n\t.tw-col.svelte-j4rvbp { background: var(--tw-col-wash, transparent); }\n\t.tw-col--today.svelte-j4rvbp { --tw-col-wash: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\t--tw-col-wash: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\t--tw-col-wash: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t/* Under the events (z 6): the one it crosses is opaque (.tw-ev--on-now),\n\t   so the line never strikes through a title. The dot stays on top. */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\tz-index: 5;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tmargin-top: -4px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t/* An event the now line crosses lays its column's ground (and its own\n\t   wash) over the paper, so the line passes beneath its text. */\n\t.tw-ev.tw-ev--on-now.svelte-j4rvbp {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--tw-ev-wash, transparent), var(--tw-ev-wash, transparent)),\n\t\t\tlinear-gradient(var(--tw-col-wash, transparent), var(--tw-col-wash, transparent)),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #ffffff);\n\t}\n\t.tw-ev--on-now.tw-ev--current.svelte-j4rvbp { --tw-ev-wash: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)); }\n\t.tw-ev--on-now.svelte-j4rvbp:hover { --tw-ev-wash: var(--dt-hover, rgba(0, 0, 0, 0.04)); }\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t/* Printed states: a cancelled class is struck through and stays on the\n\t   grid; a tentative one is set in grey with a dashed bar. */\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp),\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp),\n\t.tw-ev--limited.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; }\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tcontainer: tw-ev / inline-size;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 7px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): one line, \"Title 9:00\". The title\n\t   wins the room: the time wraps onto a second line, which the block\n\t   clips, before the title is cut; a title too long alone ellipsizes. */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-content: flex-start;\n\t\talign-items: baseline;\n\t\tgap: 24px 5px;\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { flex: 0 1 auto; min-width: 0; }\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-end:where(.svelte-j4rvbp) { display: none; }\n\n\t/* Title first, time under it; both one size, rank by weight and ink. */\n\t.tw-ev-time.svelte-j4rvbp {\n\t\torder: 1;\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t/* A narrow overlap column keeps the start time whole and drops the end. */\n\t@container tw-ev (max-width: 104px) {\n\t\t.tw-ev-end.svelte-j4rvbp { display: none; }\n\t}\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\torder: 0;\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\torder: 2;\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 6px;\n\t\theight: 6px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 2px;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #ffffff)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 500 12.5px/1.15 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--ev-color, var(--dt-accent, #2563eb));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 500 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(0, 0, 0, 0.1));\n\t\tborder-radius: 0;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 0;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(37, 99, 235, 0.04));\n\t\t/* The current row's frame is a day rule, not the accent */\n\t\tborder-color: var(--dt-border-day, rgba(0, 0, 0, 0.3));\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t/* The inset is on the contents, not the cell's padding: flex adds padding\n\t   to a basis-0 cell, and that one column would come out wider. */\n\t.wg-cell--month.svelte-l8xuza .wg-cell-events:where(.svelte-l8xuza),\n\t.wg-cell--month.svelte-l8xuza .wg-allday:where(.svelte-l8xuza) { margin-left: var(--wg-month-inset, 22px); }\n\n\t/* ─── Month labels (vertical, read bottom-to-top) ─── */\n\t.wg-month.svelte-l8xuza {\n\t\tflex: 0 0 22px;\n\t\twriting-mode: vertical-rl;\n\t\ttransform: rotate(180deg);\n\t\ttext-align: end; /* the rotation puts the end at the top */\n\t\tpadding: 6px 0;\n\t\tfont: 500 12px / 22px var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-month:where(.svelte-l8xuza),\n\t.wg-month--start.svelte-l8xuza {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.wg-month--inset.svelte-l8xuza {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 2px;\n\t\tpointer-events: none;\n\t}\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(37, 99, 235, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12)) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: var(--dt-hover, rgba(0, 0, 0, 0.04)); }\n\n\t/* Non-current weeks sit on the same paper; only the header ink softens,\n\t   and past events print a shade lighter. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-cell--past.svelte-l8xuza .wg-ev:where(.svelte-l8xuza):not(.wg-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(0, 0, 0, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t/* A band on the time axis, behind the chips */\n\t.wg-blocked.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tbox-sizing: border-box;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\talign-self: flex-end;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 4px;\n\t\tpadding: 3px 7px;\n\t\tmargin: 1px 0 2px;\n\t\tborder-radius: 0;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* Today's pill — after the week rules above, which it must beat */\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza),\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent, #2563eb);\n\t\tpadding-bottom: 2px;\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-top: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: filter 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\n\t.wg-ad.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 13.5px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t/* The day's time axis: chips carry their own margin-top (chipTops), and\n\t   the area fills the cell, so the all-day bars line up at the bottom. */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tflex: 1 0 auto;\n\t\tmin-height: var(--wg-time-h, 100px);\n\t}\n\n\t.wg-now.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpointer-events: none;\n\t}\n\t.wg-now.svelte-l8xuza::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t}\n\t.wg-now-time.svelte-l8xuza {\n\t\tfont: 500 11px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t/* Where a dragged-in class would land: the now-line's shape, dashed */\n\t.wg-drop.svelte-l8xuza {\n\t\tz-index: 3;\n\t}\n\t.wg-drop.svelte-l8xuza::after {\n\t\tborder-top-style: dashed;\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tposition: relative; /* above the blocked bands */\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\t/* 3px bar + 6px, and 3px on the right: 12px in all (CHIP_PAD_X) */\n\t\tpadding: 0 3px 0 9px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s, box-shadow 0.12s;\n\t}\n\t/* The start bar on the leading edge */\n\t.wg-ev.svelte-l8xuza::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0 auto 0 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\n\t/* Printed states: struck through, grey, or a dashed bar — never a tint */\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza::before,\n\t.wg-ev--full.svelte-l8xuza::before {\n\t\topacity: 0.45;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza),\n\t.wg-ev--full.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.wg-ev--tentative.svelte-l8xuza::before,\n\t.wg-ev--limited.svelte-l8xuza::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 15px / 1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t}\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t/* The planner's header type: the day number is the typography (40/400,\n\t   narrowed), the weekday a tracked 12/500 label; today takes the accent. */\n\t.ag-day-head-num.svelte-n8lbn1 {\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tmargin-inline-end: 4px;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1,\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-day-head--today.svelte-n8lbn1 .ag-day-head-num:where(.svelte-n8lbn1),\n\t.ag-day-head--today.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1),\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-day-head.svelte-n8lbn1 .ag-day-head-badge--muted:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 4px 10px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1::before,\n\t.ag-card--full.svelte-n8lbn1::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--limited.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--full.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--tentative.svelte-n8lbn1::before,\n\t.ag-card--limited.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.\n\t   The body keeps a reading measure so meta never drifts across a wide row. */\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px 10px 15px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tmin-width: 0;\n\t\tmax-width: 44rem;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 12px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tword-break: break-word;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-card-dur.svelte-n8lbn1,\n\t.ag-card-eta.svelte-n8lbn1,\n\t.ag-card-sub.svelte-n8lbn1,\n\t.ag-card-loc.svelte-n8lbn1,\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 8px;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tcolumn-gap: 10px;\n\t\trow-gap: 2px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t/* The next one up: its countdown in ink. Size stays on the scale — the\n\t   happening-now item is the largest thing in the queue. */\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tmin-width: 18px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\tgap: 10px;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 28px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: one column in reading order — what's happening now first, then\n\t   \"Up next\", then the finished ones. The status column dissolves\n\t   (display: contents) so its Now and Done parts can sit either side of\n\t   the queue. */\n\t/* Horizontal swipes are ours (day navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-n8lbn1,\n\t.ag--mobile.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t\tpadding-inline: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\tdisplay: contents;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\toverflow-y: visible;\n\t\tpadding: 12px 0 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-section:where(.svelte-n8lbn1) {\n\t\torder: 3;\n\t}\n\t/* Mobile: larger touch targets; type is already on the planner scale. */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-item:where(.svelte-n8lbn1) {\n\t\tpadding: 8px 0;\n\t}\n\t/* Section labels set like the planner's weekday: 12/500, tracked, ink-2. */\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 14px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 0;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-color: var(--dt-border-day, rgba(0, 0, 0, 0.6));\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tmargin-left: 4px;\n\t}\n\t/* The one happening now is the most prominent thing on the day: the\n\t   largest title in the view and the 12% accent wash the system reserves\n\t   for the current event. */\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 12px 12px 12px 15px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),\n\t\t\tvar(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tmargin-bottom: 8px;\n\t\tanimation: svelte-n8lbn1-ag-pulse 2.5s ease-in-out infinite;\n\t}\n\t@keyframes svelte-n8lbn1-ag-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\t\tanimation: none;\n\t\t}\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont: 500 20px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tmargin-bottom: 10px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #2563eb));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont: 400 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t/* Finished: quieter ink, no strike (strikethrough means cancelled). */\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover,\n\t.ag-log-row.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-success, rgba(22, 163, 74, 0.7));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tmin-width: 4.6em;\n\t\tflex-shrink: 0;\n\t}\n\t/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\talign-self: stretch;\n\t\twidth: 3px;\n\t\tborder-radius: 0;\n\t\tflex-shrink: 0;\n\t\topacity: 0.45;\n\t}\n\t/* A past day is over, not struck out: quieter ink, sized like the planner.\n\t   Strikethrough is kept for cancelled events only. */\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-row--cancelled.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 5px 0 5px 11px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:hover,\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tmin-width: 4.6em;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t/* Title + subtitle + tags cluster, sized to its content so the meta and\n\t   duration sit beside the title instead of across a wide row. One line\n\t   while it fits; on mobile the metadata wraps to a second line under the\n\t   title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex: 1;\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex: 0 1 auto;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 6em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1,\n\t.ag-compact-row-sub.svelte-n8lbn1,\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-variant-numeric: tabular-nums;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1::before { opacity: 0.45; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text-2, rgba(0, 0, 0, 0.54)); }\n\t.ag-compact-row--tentative.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0 8px 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 2px;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 6px;\n\t\tpadding: 4px 10px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-uhwfyj {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\t/* A <button> shrinks to its content; the NOW card sits outside the\n\t\t   stretching slot column, so it claims the row explicitly. */\n\t\twidth: 100%;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj::before,\n\t.ag-card--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--limited.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--full.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-card--tentative.svelte-uhwfyj::before,\n\t.ag-card--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.\n\t   The body keeps a reading measure so meta never drifts across a wide row. */\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 8px 10px 8px 13px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tmin-width: 0;\n\t\tmax-width: 44rem;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tflex-wrap: wrap;\n\t\tcolumn-gap: 8px;\n\t\trow-gap: 2px;\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-card-dur.svelte-uhwfyj,\n\t.ag-card-eta.svelte-uhwfyj,\n\t.ag-card-sub.svelte-uhwfyj,\n\t.ag-card-loc.svelte-uhwfyj,\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tcolumn-gap: 10px;\n\t\trow-gap: 2px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 2%, transparent);\n\t}\n\t/* Past days: quieter ink from the text tokens, no subtree opacity */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-num:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head--click.svelte-uhwfyj:focus-visible,\n\t.ag-wday-empty--click.svelte-uhwfyj:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t\tborder-radius: 4px;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #fff);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t/* The planner's header type: the day number is the typography (40/400,\n\t   narrowed), the weekday a tracked 12/500 label; today takes the accent. */\n\t.ag-wday-num.svelte-uhwfyj {\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tmargin-inline-end: 4px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj,\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-wday--today.svelte-uhwfyj .ag-wday-num:where(.svelte-uhwfyj),\n\t.ag-wday--today.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj),\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wday.svelte-uhwfyj .ag-wday-badge--muted:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 8px;\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 4px;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: quieter ink (single token layer). Strikethrough\n\t   is kept for cancelled only, so \"done\" and \"called off\" never read alike. */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.ag-compact--done.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact.svelte-uhwfyj {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 5px 0 5px 11px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover,\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tmin-width: 4.4em;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t/* Title + location + subtitle + tags cluster, sized to its content so the\n\t   meta and duration sit beside the title instead of across a wide row.\n\t   One line while it fits; on mobile the metadata wraps to a second line\n\t   instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex: 1;\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tflex: 0 1 auto;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 6em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj,\n\t.ag-compact-sub.svelte-uhwfyj,\n\t.ag-compact-loc.svelte-uhwfyj,\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-variant-numeric: tabular-nums;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 160px;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 140px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj::before,\n\t.ag-compact--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--limited.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--full.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj::before,\n\t.ag-compact--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 120px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t\tpadding: 4px 0 0 11px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\tborder-radius: 0;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t/* Horizontal swipes are ours (week navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-uhwfyj,\n\t.ag--mobile.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t/* Type is already on the planner scale; phones only get bigger targets. */\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0 8px 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: filter 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:hover,\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* The band is the colour; no dot. */\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\tdisplay: none;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 13.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t.mb-hour-label--under.svelte-zbkzcp {\n\t\tvisibility: hidden;\n\t}\n\t.mb-hour-label.svelte-zbkzcp small:where(.svelte-zbkzcp) {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tvertical-align: top;\n\t\tmargin-left: 1px;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(0, 0, 0, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t/* No stacking context of its own: the plate and the dot sit above the\n\t   events, the line under them (the event it crosses is opaque), so the\n\t   line never strikes through a title. */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t/* The clock is a reversed plate on the accent, as in the desktop gutter. */\n\t.mb-now-label.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tz-index: 10;\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 4px 0 0;\n\t\ttext-align: right;\n\t\twhite-space: nowrap;\n\t}\n\t.mb-now-label.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tright: -4px;\n\t\ttop: 50%;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tmargin-top: -4px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t}\n\t.mb-now-label.svelte-zbkzcp span:where(.svelte-zbkzcp) {\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #2563eb);\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #2563eb);\n\t\tbox-shadow: none;\n\t\tposition: relative;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\tbackground: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\tbox-sizing: border-box;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:hover,\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t/* The event in progress is the one the now line crosses: its wash is\n\t   laid over the paper, opaque, so the line runs beneath its text. */\n\t.mb-event.mb-event--current.svelte-zbkzcp {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--dt-accent-dim, rgba(37, 99, 235, 0.12)), var(--dt-accent-dim, rgba(37, 99, 235, 0.12))),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #ffffff);\n\t}\n\t.mb-event.mb-event--current.svelte-zbkzcp:hover,\n\t.mb-event.mb-event--current.svelte-zbkzcp:active {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #ffffff);\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp),\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp),\n\t.mb-event--limited.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45;\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #2563eb) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #2563eb);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: 3px;\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #fff);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #2563eb) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-ev-time,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t/* The date is the typography: large and regular, narrowed like the planner's */\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 400 22px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:hover,\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t}\n\t/* All day: a solid band on the event colour, no tint. */\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf:hover,\n\t.mw-ev--allday.svelte-1d18hkf:active {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tfilter: brightness(1.08);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-time:where(.svelte-1d18hkf) {\n\t\tcolor: inherit;\n\t}\n\t.mw-ev--allday.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf),\n\t.mw-ev--limited.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45;\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: 3px;\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mw-ev-more.svelte-1d18hkf::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay\n\t   legible. text-2, not text-3: a 22px numeral still needs 4.5:1. */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.66));\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-accent, #2563eb);\n\t\toutline-offset: -2px;\n\t}\n\n\t/* Starts where the weekday name above it starts (6px cell + 2px = the\n\t   header's 8px), and is only as wide as its digits, so today's rule is too. */\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: flex-start;\n\t\tpadding: 0 2px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-size: 22px;\n\t\tfont-weight: 400;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text);\n\t\theight: 26px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t}\n\t/* Today: accent numeral on a 2px rule — the same mark in every view. */\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tcolor: var(--dt-accent);\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: stretch;\n\t\twidth: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t}\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(0, 0, 0, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #2563eb);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down); dots keep their title/aria-label for a11y. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t/* Marks are circles, like every dot in the calendar */\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\talign-self: center;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 11px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 0);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Header: the period set large as the page's title, the view switch as\n\t   plain text, Today ‹ › in 2px ink frames, one rule to the grid. ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\t/* Controls take a small corner that follows the calendar's own radius */\n\t\t--cal-ctl-r: clamp(4px, calc(var(--cal-r, 0px) / 2), 8px);\n\t\t--cal-ctl-h: 36px;\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 10px 24px;\n\t\tpadding: 14px 16px 12px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));\n\t\tflex-shrink: 0;\n\t\tbox-sizing: border-box;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tflex: 1 1 auto;\n\t\tmin-width: 0;\n\t\tfont: 400 32px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-sr.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\twidth: 1px;\n\t\theight: 1px;\n\t\tmargin: -1px;\n\t\tpadding: 0;\n\t\toverflow: hidden;\n\t\tclip-path: inset(50%);\n\t\twhite-space: nowrap;\n\t\tborder: 0;\n\t}\n\n\t.cal-hd-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t}\n\t.cal-hd-nav.svelte-1b53e7w:empty {\n\t\tdisplay: none;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w,\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tbox-sizing: border-box;\n\t\theight: var(--cal-ctl-h);\n\t\tborder: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tborder-radius: var(--cal-ctl-r);\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\tcursor: pointer;\n\t\ttransition: background-color 120ms, opacity 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tpadding: 0 14px;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\twhite-space: nowrap;\n\t}\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: grid;\n\t\tplace-items: center;\n\t\twidth: var(--cal-ctl-h);\n\t\tpadding: 0;\n\t}\n\t/* The chevrons point along the reading direction */\n\t.cal-hd-btn.svelte-1b53e7w:dir(rtl) svg:where(.svelte-1b53e7w) {\n\t\ttransform: scaleX(-1);\n\t}\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled),\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tbackground: var(--dt-hover, color-mix(in srgb, currentColor 6%, transparent));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:active:not(:disabled),\n\t.cal-hd-btn.svelte-1b53e7w:active {\n\t\tbackground: color-mix(in srgb, var(--dt-text, #000) 12%, transparent);\n\t}\n\t/* Today is already in view: the frame stays, quietly */\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.4;\n\t\tcursor: default;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\toutline-offset: 2px;\n\t}\n\n\t/* View switch: plain text; the chosen one is ink over a 2px ink rule.\n\t   The accent keeps its three jobs. */\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 16px;\n\t\tflex-shrink: 0;\n\t}\n\t/* A hairline between the view-type and the day/week/month rows */\n\t.cal-pills--labels.svelte-1b53e7w + .cal-pills:where(.svelte-1b53e7w) {\n\t\talign-self: stretch;\n\t\talign-items: center;\n\t\tpadding-inline-start: 24px;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(0, 0, 0, 0.12));\n\t}\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(0, 0, 0, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tmin-height: var(--cal-ctl-h);\n\t\t/* 4px of air for the focus ring, given back so the row keeps its rhythm */\n\t\tpadding: 0 4px;\n\t\tmargin: 0 -4px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t\ttext-decoration: underline 2px transparent;\n\t\ttext-underline-offset: 7px;\n\t\ttransition: color 120ms, text-decoration-color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* :not(--active) — iOS keeps :hover stuck after a tap */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\ttext-decoration-color: var(--dt-border-day, var(--dt-border, rgba(0, 0, 0, 0.3)));\n\t}\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tcolor: var(--dt-text, rgba(0, 0, 0, 0.87));\n\t\ttext-decoration-color: currentColor;\n\t}\n\n\t/* Compact (mobile) header: same drawing, smaller title, tighter gaps */\n\t.cal-hd--mobile.svelte-1b53e7w {\n\t\t--cal-ctl-h: 40px;\n\t\tgap: 8px 12px;\n\t\tpadding: 10px 8px 8px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-title:where(.svelte-1b53e7w) {\n\t\tfont-size: 22px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-pills:where(.svelte-1b53e7w) {\n\t\tgap: 12px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-pill:where(.svelte-1b53e7w) {\n\t\tfont-size: 14px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-today:where(.svelte-1b53e7w) {\n\t\tpadding: 0 10px;\n\t\tfont-size: 14px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-nav:where(.svelte-1b53e7w) {\n\t\tgap: 6px;\n\t\tmargin-inline-start: auto;\n\t}\n\t/* Narrow containers: the title takes its own row above the controls */\n\t.cal-hd--stack.svelte-1b53e7w .cal-hd-title:where(.svelte-1b53e7w):not(:empty) {\n\t\tflex-basis: 100%;\n\t}\n\n\t@media (pointer: coarse) {\n\t\t.cal-hd.svelte-1b53e7w {\n\t\t\t--cal-ctl-h: 44px;\n\t\t}\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-hd-today.svelte-1b53e7w,\n\t\t.cal-hd-btn.svelte-1b53e7w,\n\t\t.cal-pill.svelte-1b53e7w {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(0, 0, 0, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #2563eb) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));\n\t\t}\n\t}\n\n/*$vite$:1*/";
 (function() {
 	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
 	var is_array = Array.isArray;
@@ -13056,6 +13056,57 @@ createHTML: (html) => {
 		return `${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
 	}
 	//#endregion
+	//#region src/lib/views/shared/format.ts
+	function fmtTime(d, locale) {
+		return fmtTime$1(d, locale);
+	}
+	function duration(ev) {
+		return fmtDuration(ev.start, ev.end);
+	}
+	function timeUntilMs(ms, now, labels) {
+		const L = labels ?? getLabels();
+		const diff = ms - now;
+		if (diff <= 0) return L.now;
+		const tMins = Math.floor(diff / 6e4);
+		if (tMins < 60) return L.inMinutes(tMins);
+		const hrs = Math.floor(tMins / 60);
+		const rm = tMins % 60;
+		if (hrs < 24) return L.inHours(hrs, rm);
+		const days = Math.floor(hrs / 24);
+		return L.inDays(days);
+	}
+	function progress(ev, now) {
+		const s = ev.start.getTime();
+		const e = ev.end.getTime();
+		if (e <= s) return now >= s ? 1 : 0;
+		return Math.min(1, Math.max(0, (now - s) / (e - s)));
+	}
+	function groupIntoSlots(evts) {
+		const sorted = [...evts].sort((a, b) => a.start.getTime() - b.start.getTime());
+		const slots = [];
+		for (const ev of sorted) {
+			const last = slots[slots.length - 1];
+			if (last && ev.start.getTime() < last.endMs) {
+				last.events.push(ev);
+				last.endMs = Math.max(last.endMs, ev.end.getTime());
+			} else slots.push({
+				startMs: ev.start.getTime(),
+				endMs: ev.end.getTime(),
+				events: [ev]
+			});
+		}
+		return slots;
+	}
+	/** A day in full, in the locale's own order: "Monday, October 19" (en-US),
+	*  "poniedziałek, 19 października" (pl-PL). For screen-reader names. */
+	function dateLong(ms, locale) {
+		return new Date(ms).toLocaleDateString(locale ?? getDefaultLocale(), {
+			weekday: "long",
+			month: "long",
+			day: "numeric"
+		});
+	}
+	//#endregion
 	//#region src/lib/views/planner/PlannerWeek.svelte
 	var root_1$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-cont svelte-j4rvbp" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8" class="svelte-j4rvbp"><path d="M5.5 1.5 2.5 4l3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="svelte-j4rvbp"></path></svg></span>`);
 	var root_2$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-span svelte-j4rvbp" aria-hidden="true"> </span>`);
@@ -13064,11 +13115,11 @@ createHTML: (html) => {
 	var root_5$7 = /* @__PURE__ */ from_html(`<span> </span>`);
 	var root_6$7 = /* @__PURE__ */ from_html(`<div class="tw-hd-custom svelte-j4rvbp"><!></div>`);
 	var root_7$7 = /* @__PURE__ */ from_html(`<div><span class="tw-hd-wd svelte-j4rvbp"> </span> <!> <!></div>`);
-	var root_8$6 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
-	var root_9$5 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
-	var root_10$5 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
-	var root_11$5 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
-	var root_12$5 = /* @__PURE__ */ from_html(`<div class="tw-top svelte-j4rvbp"><!> <!></div>`);
+	var root_8$5 = /* @__PURE__ */ from_html(`<div class="tw-head svelte-j4rvbp"><div class="tw-corner svelte-j4rvbp" aria-hidden="true"></div> <!></div>`);
+	var root_9$4 = /* @__PURE__ */ from_html(`<button type="button" class="tw-ad-more svelte-j4rvbp"> </button>`);
+	var root_10$4 = /* @__PURE__ */ from_html(`<div><!> <!></div>`);
+	var root_11$4 = /* @__PURE__ */ from_html(`<div class="tw-allday svelte-j4rvbp"><div class="tw-ad-gutter svelte-j4rvbp"><span class="tw-ad-gutter-lb svelte-j4rvbp"> </span></div> <!></div>`);
+	var root_12$4 = /* @__PURE__ */ from_html(`<div class="tw-top svelte-j4rvbp"><!> <!></div>`);
 	var root_13$4 = /* @__PURE__ */ from_html(`<span> <small class="svelte-j4rvbp"> </small></span>`);
 	var root_14$4 = /* @__PURE__ */ from_html(`<span class="tw-gutter-drag svelte-j4rvbp"> </span> <span class="tw-gutter-drag svelte-j4rvbp"> </span>`, 1);
 	var root_15$4 = /* @__PURE__ */ from_html(`<span class="tw-gutter-now svelte-j4rvbp"> </span>`);
@@ -13086,7 +13137,7 @@ createHTML: (html) => {
 	var root_27$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-title svelte-j4rvbp"> </span>`);
 	var root_28$2 = /* @__PURE__ */ from_html(`<span class="tw-ghost-time svelte-j4rvbp"> </span> <!>`, 1);
 	var root_29$2 = /* @__PURE__ */ from_html(`<div aria-hidden="true"><!></div>`);
-	var root_30$1 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"><span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span></div>`);
+	var root_30$1 = /* @__PURE__ */ from_html(`<div class="tw-now svelte-j4rvbp"></div> <span class="tw-now-dot svelte-j4rvbp" aria-hidden="true"></span>`, 1);
 	var root_31$1 = /* @__PURE__ */ from_html(`<div><!> <!> <!> <!></div>`);
 	var root_32$1 = /* @__PURE__ */ from_html(`<div class="tw-empty svelte-j4rvbp"><!></div>`);
 	var root_33$1 = /* @__PURE__ */ from_html(`<div role="region"><div class="tw-scroll svelte-j4rvbp"><div class="tw-inner svelte-j4rvbp"><!> <div class="tw-body svelte-j4rvbp"><div class="tw-gutter svelte-j4rvbp" aria-hidden="true"><!> <!> <!></div>  <div class="tw-cols svelte-j4rvbp" role="presentation"><div class="tw-lines svelte-j4rvbp" aria-hidden="true"><!> <!></div> <!></div></div></div></div> <!></div>`);
@@ -13859,10 +13910,10 @@ createHTML: (html) => {
 		let styles_2;
 		var node_3 = child(div_2);
 		var consequent_8 = ($$anchor) => {
-			var div_3 = root_12$5();
+			var div_3 = root_12$4();
 			var node_4 = child(div_3);
 			var consequent_5 = ($$anchor) => {
-				var div_4 = root_8$6();
+				var div_4 = root_8$5();
 				var div_5 = child(div_4);
 				set_style(div_5, "", {}, { width: "60px" });
 				each(sibling(div_5, 2), 17, () => get(dayCols), (day) => day.ms, ($$anchor, day) => {
@@ -13918,7 +13969,7 @@ createHTML: (html) => {
 			});
 			var node_9 = sibling(node_4, 2);
 			var consequent_7 = ($$anchor) => {
-				var div_8 = root_11$5();
+				var div_8 = root_11$4();
 				var div_9 = child(div_8);
 				set_style(div_9, "", {}, { width: "60px" });
 				var text_4 = only_child(child(div_9), true);
@@ -13927,7 +13978,7 @@ createHTML: (html) => {
 					const segs = /* @__PURE__ */ user_derived(() => get(allDayByDay).get(get(day).ms) ?? []);
 					const isExpanded = /* @__PURE__ */ user_derived(() => adExpanded[get(day).ms] ?? false);
 					const shown = /* @__PURE__ */ user_derived(() => get(isExpanded) ? get(segs) : get(segs).slice(0, ALLDAY_MAX));
-					var div_10 = root_10$5();
+					var div_10 = root_10$4();
 					let classes_4;
 					var node_11 = child(div_10);
 					each(node_11, 17, () => get(shown), (seg) => seg.ev.id, ($$anchor, seg) => {
@@ -13935,7 +13986,7 @@ createHTML: (html) => {
 					});
 					var node_12 = sibling(node_11, 2);
 					var consequent_6 = ($$anchor) => {
-						var button_1 = root_9$5();
+						var button_1 = root_9$4();
 						var text_5 = only_child(button_1, true);
 						template_effect(($0) => {
 							set_attribute(button_1, "aria-expanded", get(isExpanded));
@@ -14199,7 +14250,8 @@ createHTML: (html) => {
 						"tw-ev--limited": get(p).ev.status === "limited",
 						"tw-ev--past": $0,
 						"tw-ev--short": get(p).height < 44,
-						"tw-ev--compact": get(p).height < 34
+						"tw-ev--compact": get(p).height < 34,
+						"tw-ev--on-now": get(weekHasToday) && get(nowY) !== null && get(p).top < get(nowY) && get(p).top + get(p).height > get(nowY)
 					});
 					set_attribute(div_20, "data-event-id", get(p).ev.id);
 					set_attribute(div_20, "aria-keyshortcuts", !readOnly() && !get(p).ev.data?.readOnly ? "Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown" : void 0);
@@ -14266,13 +14318,17 @@ createHTML: (html) => {
 			});
 			var node_35 = sibling(node_32, 2);
 			var consequent_25 = ($$anchor) => {
-				var div_23 = root_30$1();
+				var fragment_10 = root_30$1();
+				var div_23 = first_child(fragment_10);
 				let styles_11;
+				var span_21 = sibling(div_23, 2);
+				let styles_12;
 				template_effect(() => {
 					set_attribute(div_23, "aria-label", get(L).currentTime);
 					styles_11 = set_style(div_23, "", styles_11, { top: `${get(nowY) ?? ""}px` });
+					styles_12 = set_style(span_21, "", styles_12, { top: `${get(nowY) ?? ""}px` });
 				});
-				append($$anchor, div_23);
+				append($$anchor, fragment_10);
 			};
 			if_block(node_35, ($$render) => {
 				if (get(day).isToday && get(nowY) !== null) $$render(consequent_25);
@@ -14290,7 +14346,7 @@ createHTML: (html) => {
 				set_attribute(div_18, "aria-label", $0);
 				set_attribute(div_18, "aria-keyshortcuts", get(colsCreate) ? "Enter" : void 0);
 				set_attribute(div_18, "tabindex", get(colsCreate) ? get(day).ms === get(tabbableColMs) ? 0 : -1 : void 0);
-			}, [() => get(colsCreate) ? `${weekdayLong(get(day).ms, $$props.locale)} ${get(day).dayNum}, ${get(L).createEvent}` : void 0]);
+			}, [() => get(colsCreate) ? `${dateLong(get(day).ms, $$props.locale)}, ${get(L).createEvent}` : void 0]);
 			delegated("focusin", div_18, () => set(focusedColMs, get(day).ms, true));
 			delegated("keydown", div_18, function(...$$args) {
 				(get(colsCreate) ? (e) => onColKeydown(e, get(di)) : void 0)?.apply(this, $$args);
@@ -14314,16 +14370,16 @@ createHTML: (html) => {
 			if (get(weekIsEmpty) && ctx.emptySnippet) $$render(consequent_26);
 		});
 		reset(div);
-		template_effect(() => {
+		template_effect(($0) => {
 			classes_1 = set_class(div, 1, "tw svelte-j4rvbp", null, classes_1, { "tw--auto": get(autoHeight) });
 			styles_1 = set_style(div, style() || void 0, styles_1, {
 				"--tw-col-min": `${get(MIN_COL_W) ?? ""}px`,
 				height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%"
 			});
-			set_attribute(div, "aria-label", get(L).weekAhead);
+			set_attribute(div, "aria-label", `${(get(singleDay) ? get(L).dayPlanner : get(L).weekAhead) ?? ""}${$0 ?? ""}`);
 			styles_2 = set_style(div_2, "", styles_2, { "min-width": `${get(innerMinWidth) ?? ""}px` });
 			styles_3 = set_style(div_11, "", styles_3, { height: `${get(gridHeight) ?? ""}px` });
-		});
+		}, [() => get(dayCols).length ? `, ${get(singleDay) ? dateLong(get(dayCols)[0].ms, $$props.locale) : fmtWeekRange(get(dayCols)[0].ms, $$props.locale, get(dayCols)[get(dayCols).length - 1].ms)}` : ""]);
 		delegated("click", div_13, handleColsClick);
 		delegated("pointerdown", div_13, onColsPointerDown);
 		event("dragover", div_13, onColsDragOver);
@@ -14619,11 +14675,11 @@ createHTML: (html) => {
 	var root_5$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-time svelte-l8xuza"> </span>`);
 	var root_6$6 = /* @__PURE__ */ from_html(`<span class="wg-ev-loc svelte-l8xuza"> </span>`);
 	var root_7$6 = /* @__PURE__ */ from_html(`<!> <span class="wg-ev-title svelte-l8xuza"> </span> <!>`, 1);
-	var root_8$5 = /* @__PURE__ */ from_html(`<div class="wg-month wg-month--start wg-month--inset svelte-l8xuza" aria-hidden="true"> </div>`);
-	var root_9$4 = /* @__PURE__ */ from_html(`<span class="wg-day-num svelte-l8xuza"> </span>`);
-	var root_10$4 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-l8xuza"><!></div>`);
-	var root_11$4 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-l8xuza"> </span>`);
-	var root_12$4 = /* @__PURE__ */ from_html(`<div class="wg-blocked svelte-l8xuza"><!></div>`);
+	var root_8$4 = /* @__PURE__ */ from_html(`<div class="wg-month wg-month--start wg-month--inset svelte-l8xuza" aria-hidden="true"> </div>`);
+	var root_9$3 = /* @__PURE__ */ from_html(`<span class="wg-day-num svelte-l8xuza"> </span>`);
+	var root_10$3 = /* @__PURE__ */ from_html(`<div class="wg-cell-custom-header svelte-l8xuza"><!></div>`);
+	var root_11$3 = /* @__PURE__ */ from_html(`<span class="wg-blocked-label svelte-l8xuza"> </span>`);
+	var root_12$3 = /* @__PURE__ */ from_html(`<div class="wg-blocked svelte-l8xuza"><!></div>`);
 	var root_13$3 = /* @__PURE__ */ from_html(`<div role="button" tabindex="0"><!></div>`);
 	var root_14$3 = /* @__PURE__ */ from_html(`<button type="button" class="wg-ev-more svelte-l8xuza"> </button>`);
 	var root_15$3 = /* @__PURE__ */ from_html(`<div class="wg-ev wg-ev--drag-preview svelte-l8xuza" aria-hidden="true"><!></div>`);
@@ -14699,6 +14755,7 @@ createHTML: (html) => {
 		const MAX_EVENTS_SHOWN = 5;
 		const CHIP_H = 22;
 		const CHIP_GAP = 3;
+		const NOW_H = 18;
 		function rowPitch() {
 			const rows = el?.querySelectorAll("[data-week]");
 			return rows && rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 132;
@@ -14744,26 +14801,31 @@ createHTML: (html) => {
 			return Math.min(Math.max(f, 0), 1) * 98;
 		}
 		/** Each chip at its start time, or just under the chip before it when that
-		*  one is in the way: the order is time, the height is time, nothing overlaps. */
-		function chipTops(list, dayMs) {
+		*  one is in the way: the order is time, the height is time, nothing overlaps.
+		*  On today the now line is one more item on the axis: at the clock's
+		*  height, under every chip that has started (pushed-down chips would read
+		*  as still to come), and it pushes the chips to come down by its plate,
+		*  so the plate never covers a chip's text. `end` is where the last item ends. */
+		function chipTops(list, dayMs, withNow = false) {
 			const tops = [];
 			let min = 0;
+			let nowY = null;
+			const placeNow = () => {
+				nowY = Math.max(timeTop(hourOf(clock.tick, dayMs)), min - CHIP_GAP + NOW_H / 2);
+				min = nowY + NOW_H / 2 + CHIP_GAP;
+			};
 			for (const ev of list) {
+				if (withNow && nowY === null && ev.start.getTime() > clock.tick) placeNow();
 				const top = Math.max(timeTop(hourOf(ev.start.getTime(), dayMs)), min);
 				tops.push(top);
 				min = top + CHIP_H + CHIP_GAP;
 			}
-			return tops;
-		}
-		/** The now-line: at the clock's height (pinned to the axis ends outside
-		*  it), but never above a chip that has already started — pushed-down
-		*  chips would read as still to come. */
-		function nowTop(list, tops, dayMs) {
-			let y = timeTop(hourOf(clock.tick, dayMs));
-			list.forEach((ev, i) => {
-				if (ev.start.getTime() <= clock.tick) y = Math.max(y, tops[i] + CHIP_H + CHIP_GAP / 2);
-			});
-			return y;
+			if (withNow && nowY === null) placeNow();
+			return {
+				tops,
+				nowY,
+				end: Math.max(0, min - CHIP_GAP)
+			};
 		}
 		const _initMs = untrack(() => sod($$props.focusDate?.getTime() ?? Date.now()));
 		let internalFocusMs = /* @__PURE__ */ state(proxy(_initMs));
@@ -15318,14 +15380,15 @@ createHTML: (html) => {
 				const previewTimedEvent = /* @__PURE__ */ user_derived(() => dragPreviewTimedForDay(get(day).ms));
 				const previewSegment = /* @__PURE__ */ user_derived(() => dragPreviewSegmentForDay(get(day).ms));
 				const shownTimed = /* @__PURE__ */ user_derived(() => get(visibleTimedEvents).slice(0, get(isExpanded) ? get(visibleTimedEvents).length : get(timedCap)));
-				const tops = /* @__PURE__ */ user_derived(() => chipTops(get(shownTimed), get(day).ms));
-				const nowY = /* @__PURE__ */ user_derived(() => get(day).isToday ? nowTop(get(shownTimed), get(tops), get(day).ms) : null);
+				const axis = /* @__PURE__ */ user_derived(() => chipTops(get(shownTimed), get(day).ms, get(day).isToday));
+				const tops = /* @__PURE__ */ user_derived(() => get(axis).tops);
+				const nowY = /* @__PURE__ */ user_derived(() => get(axis).nowY);
 				const inset = /* @__PURE__ */ user_derived(() => get(day).monthLabel ? MONTH_INSET : 0);
 				var div_6 = root_20$3();
 				let classes_3;
 				var node_5 = child(div_6);
 				var consequent_4 = ($$anchor) => {
-					var div_7 = root_8$5();
+					var div_7 = root_8$4();
 					var text_6 = only_child(div_7, true);
 					template_effect(() => set_text(text_6, get(day).monthLabel));
 					append($$anchor, div_7);
@@ -15339,7 +15402,7 @@ createHTML: (html) => {
 				var text_7 = only_child(span_6, true);
 				var node_6 = sibling(span_6, 2);
 				var consequent_5 = ($$anchor) => {
-					var span_7 = root_9$4();
+					var span_7 = root_9$3();
 					var text_8 = only_child(span_7, true);
 					template_effect(() => set_text(text_8, get(day).dayNum));
 					append($$anchor, span_7);
@@ -15350,7 +15413,7 @@ createHTML: (html) => {
 				reset(div_8);
 				var node_7 = sibling(div_8, 2);
 				var consequent_6 = ($$anchor) => {
-					var div_9 = root_10$4();
+					var div_9 = root_10$3();
 					var node_8 = child(div_9);
 					{
 						let $0 = /* @__PURE__ */ user_derived(() => ({
@@ -15380,11 +15443,11 @@ createHTML: (html) => {
 							const bandTop = /* @__PURE__ */ user_derived(() => timeTop(get(slot).start));
 							const bandH = /* @__PURE__ */ user_derived(() => Math.max(14, timeTop(get(slot).end) - get(bandTop)));
 							const covered = /* @__PURE__ */ user_derived(() => get(tops).some((t) => t < get(bandTop) + get(bandH) && t + CHIP_H > get(bandTop)));
-							var div_11 = root_12$4();
+							var div_11 = root_12$3();
 							let styles_1;
 							var node_12 = child(div_11);
 							var consequent_7 = ($$anchor) => {
-								var span_8 = root_11$4();
+								var span_8 = root_11$3();
 								var text_9 = only_child(span_8, true);
 								template_effect(() => set_text(text_9, get(slot).label));
 								append($$anchor, span_8);
@@ -15461,9 +15524,11 @@ createHTML: (html) => {
 				var node_15 = sibling(node_13, 2);
 				var consequent_10 = ($$anchor) => {
 					var button = root_14$3();
+					let styles_3;
 					var text_10 = only_child(button, true);
 					template_effect(($0) => {
 						set_attribute(button, "aria-expanded", get(isExpanded));
+						styles_3 = set_style(button, "", styles_3, { "margin-top": `${get(axis).end - (get(tops).length ? get(tops)[get(tops).length - 1] + CHIP_H : 0) + 2}px` });
 						set_text(text_10, $0);
 					}, [() => get(isExpanded) ? get(L).showLess : get(L).nMore(get(hiddenCount))]);
 					delegated("click", button, (e) => {
@@ -15478,11 +15543,11 @@ createHTML: (html) => {
 				var node_16 = sibling(node_15, 2);
 				var consequent_11 = ($$anchor) => {
 					var div_13 = root_15$3();
-					let styles_3;
+					let styles_4;
 					var node_17 = child(div_13);
 					timedEventContent(node_17, () => get(previewTimedEvent), () => get(inset));
 					reset(div_13);
-					template_effect(($0) => styles_3 = set_style(div_13, "", styles_3, {
+					template_effect(($0) => styles_4 = set_style(div_13, "", styles_4, {
 						"--ev-color": get(previewTimedEvent).color ?? "var(--dt-accent)",
 						top: $0
 					}), [() => `${timeTop(hourOf(get(previewTimedEvent).start.getTime(), get(day).ms)) ?? ""}px`]);
@@ -15496,11 +15561,11 @@ createHTML: (html) => {
 				var node_18 = sibling(node_16, 2);
 				var consequent_12 = ($$anchor) => {
 					var div_14 = root_16$3();
-					let styles_4;
+					let styles_5;
 					var text_11 = only_child(child(div_14), true);
 					reset(div_14);
 					template_effect(($0, $1) => {
-						styles_4 = set_style(div_14, "", styles_4, { top: $0 });
+						styles_5 = set_style(div_14, "", styles_5, { top: $0 });
 						set_text(text_11, $1);
 					}, [() => `${timeTop(get(drop).at / HOUR_MS) + CHIP_H / 2}px`, () => fmtAmPm(new Date(atHour(get(day).ms, get(drop).at / HOUR_MS)))]);
 					append($$anchor, div_14);
@@ -15511,11 +15576,11 @@ createHTML: (html) => {
 				var node_19 = sibling(node_18, 2);
 				var consequent_13 = ($$anchor) => {
 					var div_15 = root_17$3();
-					let styles_5;
+					let styles_6;
 					var text_12 = only_child(child(div_15), true);
 					reset(div_15);
 					template_effect(($0) => {
-						styles_5 = set_style(div_15, "", styles_5, { top: `${get(nowY) ?? ""}px` });
+						styles_6 = set_style(div_15, "", styles_6, { top: `${get(nowY) ?? ""}px` });
 						set_text(text_12, $0);
 					}, [() => fmtAmPm(new Date(clock.tick))]);
 					append($$anchor, div_15);
@@ -15531,7 +15596,7 @@ createHTML: (html) => {
 					each(node_21, 25, () => get(visibleAllDaySegments), (seg) => seg.ev.id, ($$anchor, seg) => {
 						var div_17 = root_13$3();
 						let classes_6;
-						let styles_6;
+						let styles_7;
 						allDaySegmentContent(child(div_17), () => get(seg));
 						reset(div_17);
 						template_effect(($0) => {
@@ -15542,7 +15607,7 @@ createHTML: (html) => {
 								"wg-ad--selected": selectedEventId() === get(seg).ev.id
 							});
 							set_attribute(div_17, "aria-label", `${get(seg).ev.title ?? ""}${$0 ?? ""}`);
-							styles_6 = set_style(div_17, "", styles_6, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
+							styles_7 = set_style(div_17, "", styles_7, { "--ev-color": get(seg).ev.color ?? "var(--dt-accent)" });
 						}, [() => get(seg).totalDays > 1 ? `, ${get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays)}` : `, ${get(L).allDay}`]);
 						delegated("pointerdown", div_17, (e) => onEventPointerDown(e, get(seg).ev));
 						delegated("keydown", div_17, (e) => {
@@ -15561,7 +15626,7 @@ createHTML: (html) => {
 					var consequent_14 = ($$anchor) => {
 						var div_18 = root_18$3();
 						let classes_7;
-						let styles_7;
+						let styles_8;
 						allDaySegmentContent(child(div_18), () => get(previewSegment));
 						reset(div_18);
 						template_effect(() => {
@@ -15570,7 +15635,7 @@ createHTML: (html) => {
 								"wg-ad--end": get(previewSegment).isEnd,
 								"wg-ad--mid": !get(previewSegment).isStart && !get(previewSegment).isEnd
 							});
-							styles_7 = set_style(div_18, "", styles_7, { "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)" });
+							styles_8 = set_style(div_18, "", styles_8, { "--ev-color": get(previewSegment).ev.color ?? "var(--dt-accent)" });
 						});
 						transition(1, div_18, () => previewReceive, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
 						transition(2, div_18, () => previewSend, () => ({ key: previewKeySnapshot.get(get(day).ms) ?? "" }));
@@ -15659,48 +15724,6 @@ createHTML: (html) => {
 		"keydown",
 		"pointerdown"
 	]);
-	//#endregion
-	//#region src/lib/views/shared/format.ts
-	function fmtTime(d, locale) {
-		return fmtTime$1(d, locale);
-	}
-	function duration(ev) {
-		return fmtDuration(ev.start, ev.end);
-	}
-	function timeUntilMs(ms, now, labels) {
-		const L = labels ?? getLabels();
-		const diff = ms - now;
-		if (diff <= 0) return L.now;
-		const tMins = Math.floor(diff / 6e4);
-		if (tMins < 60) return L.inMinutes(tMins);
-		const hrs = Math.floor(tMins / 60);
-		const rm = tMins % 60;
-		if (hrs < 24) return L.inHours(hrs, rm);
-		const days = Math.floor(hrs / 24);
-		return L.inDays(days);
-	}
-	function progress(ev, now) {
-		const s = ev.start.getTime();
-		const e = ev.end.getTime();
-		if (e <= s) return now >= s ? 1 : 0;
-		return Math.min(1, Math.max(0, (now - s) / (e - s)));
-	}
-	function groupIntoSlots(evts) {
-		const sorted = [...evts].sort((a, b) => a.start.getTime() - b.start.getTime());
-		const slots = [];
-		for (const ev of sorted) {
-			const last = slots[slots.length - 1];
-			if (last && ev.start.getTime() < last.endMs) {
-				last.events.push(ev);
-				last.endMs = Math.max(last.endMs, ev.end.getTime());
-			} else slots.push({
-				startMs: ev.start.getTime(),
-				endMs: ev.end.getTime(),
-				events: [ev]
-			});
-		}
-		return slots;
-	}
 	function createSwipe(cb) {
 		let startX = 0;
 		let startY = 0;
@@ -15767,17 +15790,17 @@ createHTML: (html) => {
 	//#region src/lib/views/agenda/AgendaDay.svelte
 	var root$4 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge svelte-n8lbn1"> </span>`);
 	var root_1$5 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge ag-day-head-badge--muted svelte-n8lbn1"> </span>`);
-	var root_2$5 = /* @__PURE__ */ from_html(`<div class="ag-day-head svelte-n8lbn1"><!> <span class="ag-day-head-name svelte-n8lbn1"> </span> <span class="ag-day-head-date svelte-n8lbn1"> </span></div>`);
+	var root_2$5 = /* @__PURE__ */ from_html(`<div><span class="ag-day-head-num svelte-n8lbn1"> </span> <!> <span class="ag-day-head-name svelte-n8lbn1"> </span> <span class="ag-day-head-date svelte-n8lbn1"> </span></div>`);
 	var root_3$5 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-n8lbn1"></span> <span class="ag-allday-title svelte-n8lbn1"> </span></button>`);
 	var root_4$5 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-n8lbn1"><div class="ag-allday-label svelte-n8lbn1"> </div> <div class="ag-allday-items svelte-n8lbn1"></div></div>`);
 	var root_5$5 = /* @__PURE__ */ from_html(`<div class="ag-q-empty svelte-n8lbn1"><!></div>`);
 	var root_6$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-sub svelte-n8lbn1"> </span>`);
 	var root_7$5 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-tag svelte-n8lbn1"> </span>`);
-	var root_8$4 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-time svelte-n8lbn1"> </span> <div class="ag-compact-row-main svelte-n8lbn1"><span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!></div> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
-	var root_9$3 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
-	var root_10$3 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
-	var root_11$3 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
-	var root_12$3 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <!> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></button>`);
+	var root_8$3 = /* @__PURE__ */ from_html(`<span class="ag-compact-row-time svelte-n8lbn1"> </span> <div class="ag-compact-row-main svelte-n8lbn1"><span class="ag-compact-row-title svelte-n8lbn1"> </span> <!> <!></div> <span class="ag-compact-row-dur svelte-n8lbn1"> </span>`, 1);
+	var root_9$2 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
+	var root_10$2 = /* @__PURE__ */ from_html(`<div class="ag-compact-list svelte-n8lbn1"><!></div>`);
+	var root_11$2 = /* @__PURE__ */ from_html(`<div class="ag-q-now-sub svelte-n8lbn1"> </div>`);
+	var root_12$2 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-q-now-dot svelte-n8lbn1"></div> <div class="ag-q-now-title svelte-n8lbn1"> </div> <!> <div class="ag-q-now-time svelte-n8lbn1"> </div> <div class="ag-q-now-track svelte-n8lbn1"><div class="ag-q-now-fill svelte-n8lbn1"></div></div></button>`);
 	var root_13$2 = /* @__PURE__ */ from_html(`<div class="ag-q-free svelte-n8lbn1"><div class="ag-q-free-label svelte-n8lbn1"> </div></div>`);
 	var root_14$2 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-q-done-check svelte-n8lbn1">✓</span> <span class="ag-q-done-title svelte-n8lbn1"> </span></button>`);
 	var root_15$2 = /* @__PURE__ */ from_html(`<button type="button" class="ag-q-done-toggle svelte-n8lbn1"> </button>`);
@@ -15786,13 +15809,13 @@ createHTML: (html) => {
 	var root_18$2 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-n8lbn1"> </span>`);
 	var root_19$2 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-n8lbn1"> </span>`);
 	var root_20$2 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-n8lbn1"></div>`);
-	var root_21$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+	var root_21$2 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-title svelte-n8lbn1"> </span> <span class="ag-card-eta svelte-n8lbn1"> </span></div> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!> <!>`, 1);
 	var root_22$2 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-n8lbn1"><!></div></button>`);
 	var root_23$2 = /* @__PURE__ */ from_html(`<div class="ag-q svelte-n8lbn1"><div class="ag-q-status svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> <span class="ag-q-clock svelte-n8lbn1"> </span></div> <!> <!></div> <div class="ag-q-queue svelte-n8lbn1"><div class="ag-q-label svelte-n8lbn1"> </div> <!></div></div>`);
 	var root_24$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-log-check svelte-n8lbn1">✓</span> <span class="ag-log-time svelte-n8lbn1"> </span> <span class="ag-log-dot svelte-n8lbn1"></span> <span class="ag-log-title svelte-n8lbn1"> </span> <span class="ag-log-dur svelte-n8lbn1"> </span></button>`);
 	var root_25$1 = /* @__PURE__ */ from_html(`<div class="ag-log svelte-n8lbn1"><!></div>`);
 	var root_26$1 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-n8lbn1"> </span>`);
-	var root_27$1 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <!> <!> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!>`, 1);
+	var root_27$1 = /* @__PURE__ */ from_html(`<div class="ag-card-top svelte-n8lbn1"><span class="ag-card-order svelte-n8lbn1"> </span> <span class="ag-card-title svelte-n8lbn1"> </span></div> <div class="ag-card-meta svelte-n8lbn1"> <span class="ag-card-dur svelte-n8lbn1"> </span></div> <!> <!> <!>`, 1);
 	var root_28$1 = /* @__PURE__ */ from_html(`<div class="ag-plan svelte-n8lbn1"><!></div>`);
 	var root_29$1 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-n8lbn1" role="group"><!> <!> <!></div></div>`);
 	function AgendaDay($$anchor, $$props) {
@@ -15903,34 +15926,39 @@ createHTML: (html) => {
 		var node = child(div_1);
 		var consequent_2 = ($$anchor) => {
 			var div_2 = root_2$5();
-			var node_1 = child(div_2);
+			let classes_1;
+			var span = child(div_2);
+			var text = only_child(span, true);
+			var node_1 = sibling(span, 2);
 			var consequent = ($$anchor) => {
-				var span = root$4();
-				var text = only_child(span, true);
-				template_effect(() => set_text(text, get(L).today));
-				append($$anchor, span);
+				var span_1 = root$4();
+				var text_1 = only_child(span_1, true);
+				template_effect(() => set_text(text_1, get(L).today));
+				append($$anchor, span_1);
 			};
 			var consequent_1 = ($$anchor) => {
-				var span_1 = root_1$5();
-				var text_1 = only_child(span_1, true);
-				template_effect(() => set_text(text_1, get(L).tomorrow));
-				append($$anchor, span_1);
+				var span_2 = root_1$5();
+				var text_2 = only_child(span_2, true);
+				template_effect(() => set_text(text_2, get(L).tomorrow));
+				append($$anchor, span_2);
 			};
 			if_block(node_1, ($$render) => {
 				if (!get(equalDays) && get(isToday)) $$render(consequent);
 				else if (!get(equalDays) && get(isTomorrow)) $$render(consequent_1, 1);
 			});
-			var span_2 = sibling(node_1, 2);
-			var text_2 = only_child(span_2, true);
-			var text_3 = only_child(sibling(span_2, 2));
+			var span_3 = sibling(node_1, 2);
+			var text_3 = only_child(span_3, true);
+			var text_4 = only_child(sibling(span_3, 2), true);
 			reset(div_2);
 			template_effect(($0, $1, $2) => {
-				set_text(text_2, $0);
-				set_text(text_3, `${$1 ?? ""} ${$2 ?? ""}`);
+				classes_1 = set_class(div_2, 1, "ag-day-head svelte-n8lbn1", null, classes_1, { "ag-day-head--today": !get(equalDays) && get(isToday) });
+				set_text(text, $0);
+				set_text(text_3, $1);
+				set_text(text_4, $2);
 			}, [
+				() => dayNum(get(dayMs)),
 				() => weekdayLong(get(dayMs), $$props.locale),
-				() => monthLong(get(dayMs), $$props.locale),
-				() => dayNum(get(dayMs))
+				() => monthLong(get(dayMs), $$props.locale)
 			]);
 			append($$anchor, div_2);
 		};
@@ -15941,19 +15969,19 @@ createHTML: (html) => {
 		var consequent_3 = ($$anchor) => {
 			var div_3 = root_4$5();
 			var div_4 = child(div_3);
-			var text_4 = only_child(div_4, true);
+			var text_5 = only_child(div_4, true);
 			var div_5 = sibling(div_4, 2);
 			each(div_5, 21, () => get(allDayBanner), (ev) => ev.id, ($$anchor, ev) => {
 				var button = root_3$5();
-				let classes_1;
+				let classes_2;
 				let styles_1;
-				var text_5 = only_child(sibling(child(button), 2), true);
+				var text_6 = only_child(sibling(child(button), 2), true);
 				reset(button);
 				template_effect(($0) => {
-					classes_1 = set_class(button, 1, "ag-allday-chip svelte-n8lbn1", null, classes_1, { "ag-allday-chip--selected": selectedEventId() === get(ev).id });
+					classes_2 = set_class(button, 1, "ag-allday-chip svelte-n8lbn1", null, classes_2, { "ag-allday-chip--selected": selectedEventId() === get(ev).id });
 					set_attribute(button, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${get(L).allDay ?? ""}`);
 					styles_1 = set_style(button, "", styles_1, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-					set_text(text_5, get(ev).title);
+					set_text(text_6, get(ev).title);
 				}, [() => statusText(get(ev))]);
 				delegated("click", button, () => handleClick(get(ev)));
 				event("pointerenter", button, () => get(oneventhover)?.(get(ev)));
@@ -15961,7 +15989,7 @@ createHTML: (html) => {
 			});
 			reset(div_5);
 			reset(div_3);
-			template_effect(() => set_text(text_4, get(L).allDay));
+			template_effect(() => set_text(text_5, get(L).allDay));
 			append($$anchor, div_3);
 		};
 		if_block(node_2, ($$render) => {
@@ -15969,7 +15997,7 @@ createHTML: (html) => {
 		});
 		var node_3 = sibling(node_2, 2);
 		var consequent_8 = ($$anchor) => {
-			var div_6 = root_10$3();
+			var div_6 = root_10$2();
 			var node_4 = child(div_6);
 			var consequent_5 = ($$anchor) => {
 				var div_7 = root_5$5();
@@ -15980,9 +16008,9 @@ createHTML: (html) => {
 					append($$anchor, fragment);
 				};
 				var alternate = ($$anchor) => {
-					var text_6 = text();
-					template_effect(() => set_text(text_6, get(L).nothingScheduledYet));
-					append($$anchor, text_6);
+					var text_7 = text();
+					template_effect(() => set_text(text_7, get(L).nothingScheduledYet));
+					append($$anchor, text_7);
 				};
 				if_block(node_5, ($$render) => {
 					if (get(emptySnippet)) $$render(consequent_4);
@@ -15994,26 +16022,26 @@ createHTML: (html) => {
 			var alternate_1 = ($$anchor) => {
 				var fragment_2 = comment();
 				each(first_child(fragment_2), 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor, ev) => {
-					var button_1 = root_9$3();
-					let classes_2;
+					var button_1 = root_9$2();
+					let classes_3;
 					let styles_2;
 					EventContent(child(button_1), {
 						get event() {
 							return get(ev);
 						},
 						children: ($$anchor, $$slotProps) => {
-							var fragment_3 = root_8$4();
-							var span_5 = first_child(fragment_3);
-							var text_7 = only_child(span_5, true);
-							var div_8 = sibling(span_5, 2);
-							var span_6 = child(div_8);
+							var fragment_3 = root_8$3();
+							var span_6 = first_child(fragment_3);
 							var text_8 = only_child(span_6, true);
-							var node_9 = sibling(span_6, 2);
+							var div_8 = sibling(span_6, 2);
+							var span_7 = child(div_8);
+							var text_9 = only_child(span_7, true);
+							var node_9 = sibling(span_7, 2);
 							var consequent_6 = ($$anchor) => {
-								var span_7 = root_6$5();
-								var text_9 = only_child(span_7, true);
-								template_effect(() => set_text(text_9, get(ev).subtitle));
-								append($$anchor, span_7);
+								var span_8 = root_6$5();
+								var text_10 = only_child(span_8, true);
+								template_effect(() => set_text(text_10, get(ev).subtitle));
+								append($$anchor, span_8);
 							};
 							if_block(node_9, ($$render) => {
 								if (get(ev).subtitle) $$render(consequent_6);
@@ -16022,10 +16050,10 @@ createHTML: (html) => {
 							var consequent_7 = ($$anchor) => {
 								var fragment_4 = comment();
 								each(first_child(fragment_4), 17, () => get(ev).tags, index, ($$anchor, tag) => {
-									var span_8 = root_7$5();
-									var text_10 = only_child(span_8, true);
-									template_effect(() => set_text(text_10, get(tag)));
-									append($$anchor, span_8);
+									var span_9 = root_7$5();
+									var text_11 = only_child(span_9, true);
+									template_effect(() => set_text(text_11, get(tag)));
+									append($$anchor, span_9);
 								});
 								append($$anchor, fragment_4);
 							};
@@ -16033,11 +16061,11 @@ createHTML: (html) => {
 								if (get(ev).tags?.length) $$render(consequent_7);
 							});
 							reset(div_8);
-							var text_11 = only_child(sibling(div_8, 2), true);
+							var text_12 = only_child(sibling(div_8, 2), true);
 							template_effect(($0, $1) => {
-								set_text(text_7, $0);
-								set_text(text_8, get(ev).title);
-								set_text(text_11, $1);
+								set_text(text_8, $0);
+								set_text(text_9, get(ev).title);
+								set_text(text_12, $1);
 							}, [() => fmt(get(ev).start), () => duration(get(ev))]);
 							append($$anchor, fragment_3);
 						},
@@ -16045,7 +16073,7 @@ createHTML: (html) => {
 					});
 					reset(button_1);
 					template_effect(($0, $1, $2) => {
-						classes_2 = set_class(button_1, 1, "ag-compact-row svelte-n8lbn1", null, classes_2, {
+						classes_3 = set_class(button_1, 1, "ag-compact-row svelte-n8lbn1", null, classes_3, {
 							"ag-compact-row--selected": selectedEventId() === get(ev).id,
 							"ag-compact-row--cancelled": get(ev).status === "cancelled",
 							"ag-compact-row--tentative": get(ev).status === "tentative"
@@ -16074,41 +16102,41 @@ createHTML: (html) => {
 			var div_9 = root_23$2();
 			var div_10 = child(div_9);
 			var div_11 = child(div_10);
-			var text_12 = child(div_11);
-			var text_13 = only_child(sibling(text_12), true);
+			var text_13 = child(div_11);
+			var text_14 = only_child(sibling(text_13), true);
 			reset(div_11);
 			var node_12 = sibling(div_11, 2);
 			var consequent_10 = ($$anchor) => {
 				var fragment_5 = comment();
 				each(first_child(fragment_5), 17, () => get(dayCat).current, (ev) => ev.id, ($$anchor, ev) => {
-					var button_2 = root_12$3();
-					let classes_3;
+					var button_2 = root_12$2();
+					let classes_4;
 					let styles_3;
 					var div_12 = sibling(child(button_2), 2);
-					var text_14 = only_child(div_12, true);
+					var text_15 = only_child(div_12, true);
 					var node_14 = sibling(div_12, 2);
 					var consequent_9 = ($$anchor) => {
-						var div_13 = root_11$3();
-						var text_15 = only_child(div_13, true);
-						template_effect(() => set_text(text_15, get(ev).subtitle));
+						var div_13 = root_11$2();
+						var text_16 = only_child(div_13, true);
+						template_effect(() => set_text(text_16, get(ev).subtitle));
 						append($$anchor, div_13);
 					};
 					if_block(node_14, ($$render) => {
 						if (get(ev).subtitle) $$render(consequent_9);
 					});
 					var div_14 = sibling(node_14, 2);
-					var text_16 = only_child(div_14);
+					var text_17 = only_child(div_14);
 					var div_15 = sibling(div_14, 2);
 					var div_16 = child(div_15);
 					let styles_4;
 					reset(div_15);
 					reset(button_2);
 					template_effect(($0, $1, $2) => {
-						classes_3 = set_class(button_2, 1, "ag-q-now svelte-n8lbn1", null, classes_3, { "ag-q-now--selected": selectedEventId() === get(ev).id });
+						classes_4 = set_class(button_2, 1, "ag-q-now svelte-n8lbn1", null, classes_4, { "ag-q-now--selected": selectedEventId() === get(ev).id });
 						set_attribute(button_2, "aria-label", `${get(ev).title ?? ""}, ${get(L).happeningNow ?? ""}, ${$0 ?? ""}`);
 						styles_3 = set_style(button_2, "", styles_3, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-						set_text(text_14, get(ev).title);
-						set_text(text_16, `${get(L).until ?? ""} ${$1 ?? ""}`);
+						set_text(text_15, get(ev).title);
+						set_text(text_17, `${get(L).until ?? ""} ${$1 ?? ""}`);
 						styles_4 = set_style(div_16, "", styles_4, { transform: $2 });
 					}, [
 						() => get(L).percentComplete(Math.round(prog(get(ev)) * 100)),
@@ -16123,9 +16151,9 @@ createHTML: (html) => {
 			};
 			var alternate_2 = ($$anchor) => {
 				var div_17 = root_13$2();
-				var text_17 = only_child(child(div_17), true);
+				var text_18 = only_child(child(div_17), true);
 				reset(div_17);
-				template_effect(() => set_text(text_17, get(L).free));
+				template_effect(() => set_text(text_18, get(L).free));
 				append($$anchor, div_17);
 			};
 			if_block(node_12, ($$render) => {
@@ -16136,17 +16164,17 @@ createHTML: (html) => {
 			var consequent_12 = ($$anchor) => {
 				var div_19 = root_16$2();
 				var div_20 = child(div_19);
-				var text_18 = only_child(div_20, true);
+				var text_19 = only_child(div_20, true);
 				var node_16 = sibling(div_20, 2);
 				each(node_16, 17, () => get(visibleDone), (ev) => ev.id, ($$anchor, ev) => {
 					var button_3 = root_14$2();
-					let classes_4;
-					var text_19 = only_child(sibling(child(button_3), 2), true);
+					let classes_5;
+					var text_20 = only_child(sibling(child(button_3), 2), true);
 					reset(button_3);
 					template_effect(($0) => {
-						classes_4 = set_class(button_3, 1, "ag-q-done-item svelte-n8lbn1", null, classes_4, { "ag-q-done-item--selected": selectedEventId() === get(ev).id });
+						classes_5 = set_class(button_3, 1, "ag-q-done-item svelte-n8lbn1", null, classes_5, { "ag-q-done-item--selected": selectedEventId() === get(ev).id });
 						set_attribute(button_3, "aria-label", `${get(ev).title ?? ""}, ${get(L).completed ?? ""}, ${$0 ?? ""}`);
-						set_text(text_19, get(ev).title);
+						set_text(text_20, get(ev).title);
 					}, [() => fmt(get(ev).start)]);
 					delegated("click", button_3, () => handleClick(get(ev)));
 					append($$anchor, button_3);
@@ -16154,8 +16182,8 @@ createHTML: (html) => {
 				var node_17 = sibling(node_16, 2);
 				var consequent_11 = ($$anchor) => {
 					var button_4 = root_15$2();
-					var text_20 = only_child(button_4, true);
-					template_effect(($0) => set_text(text_20, $0), [() => get(showAllDone) ? get(L).showLess : get(L).nCompleted(get(hiddenDoneCount))]);
+					var text_21 = only_child(button_4, true);
+					template_effect(($0) => set_text(text_21, $0), [() => get(showAllDone) ? get(L).showLess : get(L).nCompleted(get(hiddenDoneCount))]);
 					delegated("click", button_4, () => set(showAllDone, !get(showAllDone)));
 					append($$anchor, button_4);
 				};
@@ -16163,7 +16191,7 @@ createHTML: (html) => {
 					if (get(hiddenDoneCount) > 0) $$render(consequent_11);
 				});
 				reset(div_19);
-				template_effect(() => set_text(text_18, get(L).done));
+				template_effect(() => set_text(text_19, get(L).done));
 				append($$anchor, div_19);
 			};
 			if_block(node_15, ($$render) => {
@@ -16172,7 +16200,7 @@ createHTML: (html) => {
 			reset(div_10);
 			var div_21 = sibling(div_10, 2);
 			var div_22 = child(div_21);
-			var text_21 = only_child(div_22, true);
+			var text_22 = only_child(div_22, true);
 			var node_18 = sibling(div_22, 2);
 			var consequent_14 = ($$anchor) => {
 				var div_23 = root_5$5();
@@ -16183,9 +16211,9 @@ createHTML: (html) => {
 					append($$anchor, fragment_6);
 				};
 				var alternate_3 = ($$anchor) => {
-					var text_22 = text();
-					template_effect(() => set_text(text_22, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
-					append($$anchor, text_22);
+					var text_23 = text();
+					template_effect(() => set_text(text_23, get(dayCat).past.length > 0 ? get(L).allDoneForToday : get(L).nothingScheduled));
+					append($$anchor, text_23);
 				};
 				if_block(node_19, ($$render) => {
 					if (get(emptySnippet)) $$render(consequent_13);
@@ -16200,8 +16228,8 @@ createHTML: (html) => {
 					var fragment_9 = comment();
 					var node_22 = first_child(fragment_9);
 					var consequent_16 = ($$anchor) => {
-						var button_5 = root_9$3();
-						let classes_5;
+						var button_5 = root_9$2();
+						let classes_6;
 						let styles_5;
 						EventContent(child(button_5), {
 							get event() {
@@ -16209,25 +16237,25 @@ createHTML: (html) => {
 							},
 							children: ($$anchor, $$slotProps) => {
 								var fragment_10 = root_17$2();
-								var span_12 = first_child(fragment_10);
-								var text_23 = only_child(span_12, true);
-								var div_24 = sibling(span_12, 2);
-								var span_13 = child(div_24);
+								var span_13 = first_child(fragment_10);
 								var text_24 = only_child(span_13, true);
-								var node_24 = sibling(span_13, 2);
+								var div_24 = sibling(span_13, 2);
+								var span_14 = child(div_24);
+								var text_25 = only_child(span_14, true);
+								var node_24 = sibling(span_14, 2);
 								var consequent_15 = ($$anchor) => {
-									var span_14 = root_6$5();
-									var text_25 = only_child(span_14, true);
-									template_effect(() => set_text(text_25, get(ev).subtitle));
-									append($$anchor, span_14);
+									var span_15 = root_6$5();
+									var text_26 = only_child(span_15, true);
+									template_effect(() => set_text(text_26, get(ev).subtitle));
+									append($$anchor, span_15);
 								};
 								if_block(node_24, ($$render) => {
 									if (get(ev).subtitle) $$render(consequent_15);
 								});
 								reset(div_24);
 								template_effect(($0) => {
-									set_text(text_23, $0);
-									set_text(text_24, get(ev).title);
+									set_text(text_24, $0);
+									set_text(text_25, get(ev).title);
 								}, [() => fmt(get(ev).start)]);
 								append($$anchor, fragment_10);
 							},
@@ -16235,7 +16263,7 @@ createHTML: (html) => {
 						});
 						reset(button_5);
 						template_effect(($0, $1, $2) => {
-							classes_5 = set_class(button_5, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_5, { "ag-compact-row--selected": selectedEventId() === get(ev).id });
+							classes_6 = set_class(button_5, 1, "ag-compact-row ag-compact-row--queue svelte-n8lbn1", null, classes_6, { "ag-compact-row--selected": selectedEventId() === get(ev).id });
 							set_attribute(button_5, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""}, ${$2 ?? ""}`);
 							styles_5 = set_style(button_5, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
 						}, [
@@ -16249,7 +16277,7 @@ createHTML: (html) => {
 					};
 					var alternate_4 = ($$anchor) => {
 						var button_6 = root_22$2();
-						let classes_6;
+						let classes_7;
 						let styles_6;
 						var div_25 = child(button_6);
 						EventContent(child(div_25), {
@@ -16259,32 +16287,32 @@ createHTML: (html) => {
 							children: ($$anchor, $$slotProps) => {
 								var fragment_11 = root_21$2();
 								var div_26 = first_child(fragment_11);
-								var span_15 = child(div_26);
-								var text_26 = only_child(span_15, true);
-								var text_27 = only_child(sibling(span_15, 2), true);
+								var span_16 = child(div_26);
+								var text_27 = only_child(span_16, true);
+								var text_28 = only_child(sibling(span_16, 2), true);
 								reset(div_26);
-								var node_26 = sibling(div_26, 2);
+								var div_27 = sibling(div_26, 2);
+								var text_29 = child(div_27);
+								var text_30 = only_child(sibling(text_29), true);
+								reset(div_27);
+								var node_26 = sibling(div_27, 2);
 								var consequent_17 = ($$anchor) => {
-									var span_17 = root_18$2();
-									var text_28 = only_child(span_17, true);
-									template_effect(() => set_text(text_28, get(ev).subtitle));
-									append($$anchor, span_17);
+									var span_19 = root_18$2();
+									var text_31 = only_child(span_19, true);
+									template_effect(() => set_text(text_31, get(ev).subtitle));
+									append($$anchor, span_19);
 								};
 								if_block(node_26, ($$render) => {
 									if (get(ev).subtitle) $$render(consequent_17);
 								});
-								var div_27 = sibling(node_26, 2);
-								var text_29 = child(div_27);
-								var text_30 = only_child(sibling(text_29), true);
-								reset(div_27);
-								var node_27 = sibling(div_27, 2);
+								var node_27 = sibling(node_26, 2);
 								var consequent_18 = ($$anchor) => {
 									var div_28 = root_20$2();
 									each(div_28, 21, () => get(ev).tags, index, ($$anchor, tag) => {
-										var span_19 = root_19$2();
-										var text_31 = only_child(span_19, true);
-										template_effect(() => set_text(text_31, get(tag)));
-										append($$anchor, span_19);
+										var span_20 = root_19$2();
+										var text_32 = only_child(span_20, true);
+										template_effect(() => set_text(text_32, get(tag)));
+										append($$anchor, span_20);
 									});
 									reset(div_28);
 									append($$anchor, div_28);
@@ -16293,8 +16321,8 @@ createHTML: (html) => {
 									if (get(ev).tags?.length) $$render(consequent_18);
 								});
 								template_effect(($0, $1, $2, $3) => {
-									set_text(text_26, get(ev).title);
-									set_text(text_27, $0);
+									set_text(text_27, get(ev).title);
+									set_text(text_28, $0);
 									set_text(text_29, `${$1 ?? ""} – ${$2 ?? ""} `);
 									set_text(text_30, $3);
 								}, [
@@ -16310,7 +16338,7 @@ createHTML: (html) => {
 						reset(div_25);
 						reset(button_6);
 						template_effect(($0, $1, $2) => {
-							classes_6 = set_class(button_6, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_6, {
+							classes_7 = set_class(button_6, 1, "ag-card ag-card--q svelte-n8lbn1", null, classes_7, {
 								"ag-card--hero": get(i) === 0,
 								"ag-card--selected": selectedEventId() === get(ev).id
 							});
@@ -16340,9 +16368,9 @@ createHTML: (html) => {
 			reset(div_21);
 			reset(div_9);
 			template_effect(() => {
-				set_text(text_12, `${get(L).now ?? ""} `);
-				set_text(text_13, clock.hm);
-				set_text(text_21, get(L).upNext);
+				set_text(text_13, `${get(L).now ?? ""} `);
+				set_text(text_14, clock.hm);
+				set_text(text_22, get(L).upNext);
 			});
 			append($$anchor, div_9);
 		};
@@ -16358,9 +16386,9 @@ createHTML: (html) => {
 					append($$anchor, fragment_12);
 				};
 				var alternate_6 = ($$anchor) => {
-					var text_32 = text();
-					template_effect(() => set_text(text_32, get(L).nothingWasScheduled));
-					append($$anchor, text_32);
+					var text_33 = text();
+					template_effect(() => set_text(text_33, get(L).nothingWasScheduled));
+					append($$anchor, text_33);
 				};
 				if_block(node_29, ($$render) => {
 					if (get(emptySnippet)) $$render(consequent_20);
@@ -16373,24 +16401,27 @@ createHTML: (html) => {
 				var fragment_14 = comment();
 				each(first_child(fragment_14), 17, () => get(timedDayEvents), (ev) => ev.id, ($$anchor, ev) => {
 					var button_7 = root_24$1();
-					let classes_7;
+					let classes_8;
 					let styles_7;
-					var span_20 = sibling(child(button_7), 2);
-					var text_33 = only_child(span_20, true);
-					var span_21 = sibling(span_20, 2);
-					let styles_8;
+					var span_21 = sibling(child(button_7), 2);
+					var text_34 = only_child(span_21, true);
 					var span_22 = sibling(span_21, 2);
-					var text_34 = only_child(span_22, true);
-					var text_35 = only_child(sibling(span_22, 2), true);
+					let styles_8;
+					var span_23 = sibling(span_22, 2);
+					var text_35 = only_child(span_23, true);
+					var text_36 = only_child(sibling(span_23, 2), true);
 					reset(button_7);
 					template_effect(($0, $1, $2, $3, $4) => {
-						classes_7 = set_class(button_7, 1, "ag-log-row svelte-n8lbn1", null, classes_7, { "ag-log-row--selected": selectedEventId() === get(ev).id });
+						classes_8 = set_class(button_7, 1, "ag-log-row svelte-n8lbn1", null, classes_8, {
+							"ag-log-row--selected": selectedEventId() === get(ev).id,
+							"ag-log-row--cancelled": get(ev).status === "cancelled"
+						});
 						set_attribute(button_7, "aria-label", `${get(ev).title ?? ""}${$0 ?? ""}, ${$1 ?? ""} – ${$2 ?? ""}`);
 						styles_7 = set_style(button_7, "", styles_7, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-						set_text(text_33, $3);
-						styles_8 = set_style(span_21, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
-						set_text(text_34, get(ev).title);
-						set_text(text_35, $4);
+						set_text(text_34, $3);
+						styles_8 = set_style(span_22, "", styles_8, { background: get(ev).color || "var(--dt-accent)" });
+						set_text(text_35, get(ev).title);
+						set_text(text_36, $4);
 					}, [
 						() => statusText(get(ev)),
 						() => fmt(get(ev).start),
@@ -16423,9 +16454,9 @@ createHTML: (html) => {
 					append($$anchor, fragment_15);
 				};
 				var alternate_8 = ($$anchor) => {
-					var text_36 = text();
-					template_effect(() => set_text(text_36, get(L).nothingScheduledYet));
-					append($$anchor, text_36);
+					var text_37 = text();
+					template_effect(() => set_text(text_37, get(L).nothingScheduledYet));
+					append($$anchor, text_37);
 				};
 				if_block(node_33, ($$render) => {
 					if (get(emptySnippet)) $$render(consequent_23);
@@ -16438,7 +16469,7 @@ createHTML: (html) => {
 				var fragment_17 = comment();
 				each(first_child(fragment_17), 19, () => get(timedDayEvents), (ev) => ev.id, ($$anchor, ev, i) => {
 					var button_8 = root_22$2();
-					let classes_8;
+					let classes_9;
 					let styles_9;
 					var div_33 = child(button_8);
 					EventContent(child(div_33), {
@@ -16448,42 +16479,42 @@ createHTML: (html) => {
 						children: ($$anchor, $$slotProps) => {
 							var fragment_18 = root_27$1();
 							var div_34 = first_child(fragment_18);
-							var span_24 = child(div_34);
-							var text_37 = only_child(span_24, true);
-							var text_38 = only_child(sibling(span_24, 2), true);
+							var span_25 = child(div_34);
+							var text_38 = only_child(span_25, true);
+							var text_39 = only_child(sibling(span_25, 2), true);
 							reset(div_34);
-							var node_37 = sibling(div_34, 2);
+							var div_35 = sibling(div_34, 2);
+							var text_40 = child(div_35);
+							var text_41 = only_child(sibling(text_40), true);
+							reset(div_35);
+							var node_37 = sibling(div_35, 2);
 							var consequent_25 = ($$anchor) => {
-								var span_26 = root_18$2();
-								var text_39 = only_child(span_26, true);
-								template_effect(() => set_text(text_39, get(ev).subtitle));
-								append($$anchor, span_26);
+								var span_28 = root_18$2();
+								var text_42 = only_child(span_28, true);
+								template_effect(() => set_text(text_42, get(ev).subtitle));
+								append($$anchor, span_28);
 							};
 							if_block(node_37, ($$render) => {
 								if (get(ev).subtitle) $$render(consequent_25);
 							});
 							var node_38 = sibling(node_37, 2);
 							var consequent_26 = ($$anchor) => {
-								var span_27 = root_26$1();
-								var text_40 = only_child(span_27, true);
-								template_effect(() => set_text(text_40, get(ev).location));
-								append($$anchor, span_27);
+								var span_29 = root_26$1();
+								var text_43 = only_child(span_29, true);
+								template_effect(() => set_text(text_43, get(ev).location));
+								append($$anchor, span_29);
 							};
 							if_block(node_38, ($$render) => {
 								if (get(ev).location) $$render(consequent_26);
 							});
-							var div_35 = sibling(node_38, 2);
-							var text_41 = child(div_35);
-							var text_42 = only_child(sibling(text_41), true);
-							reset(div_35);
-							var node_39 = sibling(div_35, 2);
+							var node_39 = sibling(node_38, 2);
 							var consequent_27 = ($$anchor) => {
 								var div_36 = root_20$2();
 								each(div_36, 21, () => get(ev).tags, index, ($$anchor, tag) => {
-									var span_29 = root_19$2();
-									var text_43 = only_child(span_29, true);
-									template_effect(() => set_text(text_43, get(tag)));
-									append($$anchor, span_29);
+									var span_30 = root_19$2();
+									var text_44 = only_child(span_30, true);
+									template_effect(() => set_text(text_44, get(tag)));
+									append($$anchor, span_30);
 								});
 								reset(div_36);
 								append($$anchor, div_36);
@@ -16492,10 +16523,10 @@ createHTML: (html) => {
 								if (get(ev).tags?.length) $$render(consequent_27);
 							});
 							template_effect(($0, $1, $2) => {
-								set_text(text_37, get(i) + 1);
-								set_text(text_38, get(ev).title);
-								set_text(text_41, `${$0 ?? ""} – ${$1 ?? ""} `);
-								set_text(text_42, $2);
+								set_text(text_38, get(i) + 1);
+								set_text(text_39, get(ev).title);
+								set_text(text_40, `${$0 ?? ""} – ${$1 ?? ""} `);
+								set_text(text_41, $2);
 							}, [
 								() => fmt(get(ev).start),
 								() => fmt(get(ev).end),
@@ -16508,7 +16539,7 @@ createHTML: (html) => {
 					reset(div_33);
 					reset(button_8);
 					template_effect(($0, $1, $2, $3) => {
-						classes_8 = set_class(button_8, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_8, {
+						classes_9 = set_class(button_8, 1, "ag-card ag-card--plan svelte-n8lbn1", null, classes_9, {
 							"ag-card--first": get(i) === 0,
 							"ag-card--selected": selectedEventId() === get(ev).id,
 							"ag-card--cancelled": get(ev).status === "cancelled",
@@ -16577,40 +16608,41 @@ createHTML: (html) => {
 	]);
 	//#endregion
 	//#region src/lib/views/agenda/AgendaWeek.svelte
-	var root$3 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
-	var root_1$4 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
-	var root_2$4 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
+	var root$3 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
+	var root_1$4 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
+	var root_2$4 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
 	var root_3$4 = /* @__PURE__ */ from_html(`<span class="ag-card-tag svelte-uhwfyj"> </span>`);
 	var root_4$4 = /* @__PURE__ */ from_html(`<div class="ag-card-tags svelte-uhwfyj"></div>`);
-	var root_5$4 = /* @__PURE__ */ from_html(`<span class="ag-card-title svelte-uhwfyj"> </span> <!> <!> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!>`, 1);
+	var root_5$4 = /* @__PURE__ */ from_html(`<span class="ag-card-title svelte-uhwfyj"> </span> <span class="ag-card-meta svelte-uhwfyj"><!> <span class="ag-card-dur svelte-uhwfyj"> </span> <!></span> <!> <!> <!>`, 1);
 	var root_6$4 = /* @__PURE__ */ from_html(`<div class="ag-card-progress svelte-uhwfyj"><div class="ag-card-progress-fill svelte-uhwfyj"></div></div>`);
 	var root_7$4 = /* @__PURE__ */ from_html(`<button type="button"><div class="ag-card-body svelte-uhwfyj"><!> <!></div></button>`);
-	var root_8$3 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
-	var root_9$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
-	var root_10$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
-	var root_11$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-time svelte-uhwfyj"> </span> <div class="ag-compact-main svelte-uhwfyj"><span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!></div> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
-	var root_12$2 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
+	var root_8$2 = /* @__PURE__ */ from_html(`<span class="ag-compact-loc svelte-uhwfyj"> </span>`);
+	var root_9$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-sub svelte-uhwfyj"> </span>`);
+	var root_10$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-tag svelte-uhwfyj"> </span>`);
+	var root_11$1 = /* @__PURE__ */ from_html(`<span class="ag-compact-time svelte-uhwfyj"> </span> <div class="ag-compact-main svelte-uhwfyj"><span class="ag-compact-title svelte-uhwfyj"> </span> <!> <!> <!></div> <span class="ag-compact-dur svelte-uhwfyj"> </span>`, 1);
+	var root_12$1 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
 	var root_13$1 = /* @__PURE__ */ from_html(`<button type="button"> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></button>`);
-	var root_14$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
-	var root_15$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-custom-header svelte-uhwfyj"><!></div>`);
-	var root_16$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
-	var root_17$1 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
-	var root_18$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line ag-wday-past-line--summary svelte-uhwfyj"> </div>`);
-	var root_19$1 = /* @__PURE__ */ from_html(`<div role="listitem"><div><div class="ag-wday-head-left svelte-uhwfyj"><span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!></div>`);
-	var root_20$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
-	var root_21$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
-	var root_22$1 = /* @__PURE__ */ from_html(`<span class="ag-allday-span svelte-uhwfyj"> </span>`);
-	var root_23$1 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span> <!></button>`);
-	var root_24 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
-	var root_25 = /* @__PURE__ */ from_html(`<div> </div>`);
-	var root_26 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
-	var root_27 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
-	var root_28 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
-	var root_29 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
-	var root_30 = /* @__PURE__ */ from_html(`<button type="button" class="ag-compact-more svelte-uhwfyj"> </button>`);
-	var root_31 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
-	var root_32 = /* @__PURE__ */ from_html(`<div role="listitem"><div><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
-	var root_33 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
+	var root_14$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-num svelte-uhwfyj"> </span>`);
+	var root_15$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-date svelte-uhwfyj"> </span>`);
+	var root_16$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-custom-header svelte-uhwfyj"><!></div>`);
+	var root_17$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"></div>`);
+	var root_18$1 = /* @__PURE__ */ from_html(`<!> <!>`, 1);
+	var root_19$1 = /* @__PURE__ */ from_html(`<div class="ag-wday-past-line ag-wday-past-line--summary svelte-uhwfyj"> </div>`);
+	var root_20$1 = /* @__PURE__ */ from_html(`<div role="listitem"><div><div class="ag-wday-head-left svelte-uhwfyj"><!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!></div>`);
+	var root_21$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge svelte-uhwfyj"> </span>`);
+	var root_22$1 = /* @__PURE__ */ from_html(`<span class="ag-wday-badge ag-wday-badge--muted svelte-uhwfyj"> </span>`);
+	var root_23$1 = /* @__PURE__ */ from_html(`<span class="ag-allday-span svelte-uhwfyj"> </span>`);
+	var root_24 = /* @__PURE__ */ from_html(`<button type="button"><span class="ag-allday-dot svelte-uhwfyj"></span> <span class="ag-allday-title svelte-uhwfyj"> </span> <!></button>`);
+	var root_25 = /* @__PURE__ */ from_html(`<div class="ag-allday svelte-uhwfyj"></div>`);
+	var root_26 = /* @__PURE__ */ from_html(`<div> </div>`);
+	var root_27 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div></div></div>`);
+	var root_28 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"></div>`);
+	var root_29 = /* @__PURE__ */ from_html(`<div class="ag-wslot svelte-uhwfyj"><div class="ag-wslot-header svelte-uhwfyj"><span class="ag-wslot-now svelte-uhwfyj"> </span></div> <!></div>`);
+	var root_30 = /* @__PURE__ */ from_html(`<div class="ag-wday-expanded svelte-uhwfyj"><!> <!> <!></div>`);
+	var root_31 = /* @__PURE__ */ from_html(`<button type="button" class="ag-compact-more svelte-uhwfyj"> </button>`);
+	var root_32 = /* @__PURE__ */ from_html(`<div class="ag-wday-compact svelte-uhwfyj"><!> <!></div>`);
+	var root_33 = /* @__PURE__ */ from_html(`<div role="listitem"><div><div class="ag-wday-head-left svelte-uhwfyj"><!> <!> <span class="ag-wday-name svelte-uhwfyj"> </span> <!></div> <!></div> <!> <!></div>`);
+	var root_34 = /* @__PURE__ */ from_html(`<div><div class="ag-body svelte-uhwfyj" role="list"></div></div>`);
 	function AgendaWeek($$anchor, $$props) {
 		push($$props, true);
 		const eventCard = ($$anchor, ev = noop, isNow = noop, eta = noop) => {
@@ -16627,56 +16659,56 @@ createHTML: (html) => {
 					var fragment = root_5$4();
 					var span = first_child(fragment);
 					var text$1 = only_child(span, true);
-					var node_1 = sibling(span, 2);
+					var span_1 = sibling(span, 2);
+					var node_1 = child(span_1);
 					var consequent = ($$anchor) => {
-						var span_1 = root$3();
-						var text_1 = only_child(span_1, true);
-						template_effect(() => set_text(text_1, ev().subtitle));
-						append($$anchor, span_1);
-					};
-					if_block(node_1, ($$render) => {
-						if (ev().subtitle) $$render(consequent);
-					});
-					var node_2 = sibling(node_1, 2);
-					var consequent_1 = ($$anchor) => {
-						var span_2 = root_1$4();
-						var text_2 = only_child(span_2, true);
-						template_effect(() => set_text(text_2, ev().location));
-						append($$anchor, span_2);
-					};
-					if_block(node_2, ($$render) => {
-						if (ev().location) $$render(consequent_1);
-					});
-					var span_3 = sibling(node_2, 2);
-					var node_3 = child(span_3);
-					var consequent_2 = ($$anchor) => {
-						var text_3 = text();
-						template_effect(($0) => set_text(text_3, `${get(L).until ?? ""} ${$0 ?? ""}`), [() => fmt(ev().end)]);
-						append($$anchor, text_3);
+						var text_1 = text();
+						template_effect(($0) => set_text(text_1, `${get(L).until ?? ""} ${$0 ?? ""}`), [() => fmt(ev().end)]);
+						append($$anchor, text_1);
 					};
 					var alternate = ($$anchor) => {
-						var text_4 = text();
-						template_effect(($0, $1) => set_text(text_4, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmt(ev().start), () => fmt(ev().end)]);
-						append($$anchor, text_4);
+						var text_2 = text();
+						template_effect(($0, $1) => set_text(text_2, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmt(ev().start), () => fmt(ev().end)]);
+						append($$anchor, text_2);
 					};
-					if_block(node_3, ($$render) => {
-						if (isNow()) $$render(consequent_2);
+					if_block(node_1, ($$render) => {
+						if (isNow()) $$render(consequent);
 						else $$render(alternate, -1);
 					});
-					var span_4 = sibling(node_3, 2);
-					var text_5 = only_child(span_4, true);
-					var node_4 = sibling(span_4, 2);
+					var span_2 = sibling(node_1, 2);
+					var text_3 = only_child(span_2, true);
+					var node_2 = sibling(span_2, 2);
+					var consequent_1 = ($$anchor) => {
+						var span_3 = root$3();
+						var text_4 = only_child(span_3, true);
+						template_effect(() => set_text(text_4, eta()));
+						append($$anchor, span_3);
+					};
+					if_block(node_2, ($$render) => {
+						if (eta()) $$render(consequent_1);
+					});
+					reset(span_1);
+					var node_3 = sibling(span_1, 2);
+					var consequent_2 = ($$anchor) => {
+						var span_4 = root_1$4();
+						var text_5 = only_child(span_4, true);
+						template_effect(() => set_text(text_5, ev().subtitle));
+						append($$anchor, span_4);
+					};
+					if_block(node_3, ($$render) => {
+						if (ev().subtitle) $$render(consequent_2);
+					});
+					var node_4 = sibling(node_3, 2);
 					var consequent_3 = ($$anchor) => {
 						var span_5 = root_2$4();
 						var text_6 = only_child(span_5, true);
-						template_effect(() => set_text(text_6, eta()));
+						template_effect(() => set_text(text_6, ev().location));
 						append($$anchor, span_5);
 					};
 					if_block(node_4, ($$render) => {
-						if (eta()) $$render(consequent_3);
+						if (ev().location) $$render(consequent_3);
 					});
-					reset(span_3);
-					var node_5 = sibling(span_3, 2);
+					var node_5 = sibling(node_4, 2);
 					var consequent_4 = ($$anchor) => {
 						var div_1 = root_4$4();
 						each(div_1, 21, () => ev().tags, index, ($$anchor, tag) => {
@@ -16693,7 +16725,7 @@ createHTML: (html) => {
 					});
 					template_effect(($0) => {
 						set_text(text$1, ev().title);
-						set_text(text_5, $0);
+						set_text(text_3, $0);
 					}, [() => duration(ev())]);
 					append($$anchor, fragment);
 				},
@@ -16740,7 +16772,7 @@ createHTML: (html) => {
 			append($$anchor, button);
 		};
 		const compactRow = ($$anchor, ev = noop, showLoc = noop, done = noop) => {
-			var button_1 = root_12$2();
+			var button_1 = root_12$1();
 			let classes_1;
 			let styles_2;
 			EventContent(child(button_1), {
@@ -16748,7 +16780,7 @@ createHTML: (html) => {
 					return ev();
 				},
 				children: ($$anchor, $$slotProps) => {
-					var fragment_3 = root_11$2();
+					var fragment_3 = root_11$1();
 					var span_7 = first_child(fragment_3);
 					var text_8 = only_child(span_7, true);
 					var div_4 = sibling(span_7, 2);
@@ -16756,7 +16788,7 @@ createHTML: (html) => {
 					var text_9 = only_child(span_8, true);
 					var node_8 = sibling(span_8, 2);
 					var consequent_6 = ($$anchor) => {
-						var span_9 = root_8$3();
+						var span_9 = root_8$2();
 						var text_10 = only_child(span_9, true);
 						template_effect(() => set_text(text_10, ev().location));
 						append($$anchor, span_9);
@@ -16766,7 +16798,7 @@ createHTML: (html) => {
 					});
 					var node_9 = sibling(node_8, 2);
 					var consequent_7 = ($$anchor) => {
-						var span_10 = root_9$2();
+						var span_10 = root_9$1();
 						var text_11 = only_child(span_10, true);
 						template_effect(() => set_text(text_11, ev().subtitle));
 						append($$anchor, span_10);
@@ -16778,7 +16810,7 @@ createHTML: (html) => {
 					var consequent_8 = ($$anchor) => {
 						var fragment_4 = comment();
 						each(first_child(fragment_4), 17, () => ev().tags, index, ($$anchor, tag) => {
-							var span_11 = root_10$2();
+							var span_11 = root_10$1();
 							var text_12 = only_child(span_11, true);
 							template_effect(() => set_text(text_12, get(tag)));
 							append($$anchor, span_11);
@@ -16959,7 +16991,8 @@ createHTML: (html) => {
 				out.push({
 					ms,
 					dayName: weekdayLong(ms, $$props.locale),
-					dateLabel: `${monthLong(ms, $$props.locale)} ${dayNum(ms)}`,
+					month: monthLong(ms, $$props.locale),
+					num: dayNum(ms),
 					tier,
 					isToday: ms === todayMs,
 					events: dayEvts,
@@ -16978,7 +17011,7 @@ createHTML: (html) => {
 			});
 			return out;
 		});
-		var div_5 = root_33();
+		var div_5 = root_34();
 		let classes_4;
 		let styles_3;
 		var div_6 = child(div_5);
@@ -16987,28 +17020,38 @@ createHTML: (html) => {
 			const expanded = /* @__PURE__ */ user_derived(() => get(day).tier === "today" || get(day).tier === "tomorrow");
 			var fragment_5 = comment();
 			var node_12 = first_child(fragment_5);
-			var consequent_14 = ($$anchor) => {
-				var div_7 = root_19$1();
+			var consequent_15 = ($$anchor) => {
+				var div_7 = root_20$1();
 				let classes_5;
 				var div_8 = child(div_7);
 				let classes_6;
 				var div_9 = child(div_8);
-				var span_13 = child(div_9);
-				var text_15 = only_child(span_13, true);
-				var node_13 = sibling(span_13, 2);
+				var node_13 = child(div_9);
 				var consequent_9 = ($$anchor) => {
-					var span_14 = root_14$1();
-					var text_16 = only_child(span_14, true);
-					template_effect(() => set_text(text_16, get(day).dateLabel));
-					append($$anchor, span_14);
+					var span_13 = root_14$1();
+					var text_15 = only_child(span_13, true);
+					template_effect(() => set_text(text_15, get(day).num));
+					append($$anchor, span_13);
 				};
 				if_block(node_13, ($$render) => {
 					if (get(showDates)) $$render(consequent_9);
 				});
-				reset(div_9);
-				var node_14 = sibling(div_9, 2);
+				var span_14 = sibling(node_13, 2);
+				var text_16 = only_child(span_14, true);
+				var node_14 = sibling(span_14, 2);
 				var consequent_10 = ($$anchor) => {
-					var div_10 = root_15$1();
+					var span_15 = root_15$1();
+					var text_17 = only_child(span_15, true);
+					template_effect(() => set_text(text_17, get(day).month));
+					append($$anchor, span_15);
+				};
+				if_block(node_14, ($$render) => {
+					if (get(showDates)) $$render(consequent_10);
+				});
+				reset(div_9);
+				var node_15 = sibling(div_9, 2);
+				var consequent_11 = ($$anchor) => {
+					var div_10 = root_16$1();
 					snippet(child(div_10), () => get(dayHeaderSnippet), () => ({
 						date: new Date(get(day).ms),
 						isToday: false,
@@ -17017,18 +17060,18 @@ createHTML: (html) => {
 					reset(div_10);
 					append($$anchor, div_10);
 				};
-				if_block(node_14, ($$render) => {
-					if (get(dayHeaderSnippet)) $$render(consequent_10);
+				if_block(node_15, ($$render) => {
+					if (get(dayHeaderSnippet)) $$render(consequent_11);
 				});
 				reset(div_8);
-				var node_16 = sibling(div_8, 2);
-				var consequent_12 = ($$anchor) => {
-					var fragment_6 = root_17$1();
-					var node_17 = first_child(fragment_6);
-					pastToggle(node_17, () => get(day).ms, () => get(day).timedEvents.length, () => true);
-					var node_18 = sibling(node_17, 2);
-					var consequent_11 = ($$anchor) => {
-						var div_11 = root_16$1();
+				var node_17 = sibling(div_8, 2);
+				var consequent_13 = ($$anchor) => {
+					var fragment_6 = root_18$1();
+					var node_18 = first_child(fragment_6);
+					pastToggle(node_18, () => get(day).ms, () => get(day).timedEvents.length, () => true);
+					var node_19 = sibling(node_18, 2);
+					var consequent_12 = ($$anchor) => {
+						var div_11 = root_17$1();
 						each(div_11, 21, () => get(day).timedEvents, (ev) => ev.id, ($$anchor, ev) => {
 							compactRow($$anchor, () => get(ev), () => false, () => true);
 						});
@@ -17036,20 +17079,20 @@ createHTML: (html) => {
 						append($$anchor, div_11);
 					};
 					var d_1 = /* @__PURE__ */ user_derived(() => get(expandedPast).includes(get(day).ms));
-					if_block(node_18, ($$render) => {
-						if (get(d_1)) $$render(consequent_11);
+					if_block(node_19, ($$render) => {
+						if (get(d_1)) $$render(consequent_12);
 					});
 					append($$anchor, fragment_6);
 				};
-				var consequent_13 = ($$anchor) => {
-					var div_12 = root_18$1();
-					var text_17 = only_child(div_12, true);
-					template_effect(() => set_text(text_17, get(L).noEvents));
+				var consequent_14 = ($$anchor) => {
+					var div_12 = root_19$1();
+					var text_18 = only_child(div_12, true);
+					template_effect(() => set_text(text_18, get(L).noEvents));
 					append($$anchor, div_12);
 				};
-				if_block(node_16, ($$render) => {
-					if (get(day).timedEvents.length > 0) $$render(consequent_12);
-					else if (get(day).events.length === 0) $$render(consequent_13, 1);
+				if_block(node_17, ($$render) => {
+					if (get(day).timedEvents.length > 0) $$render(consequent_13);
+					else if (get(day).events.length === 0) $$render(consequent_14, 1);
 				});
 				reset(div_7);
 				template_effect(($0) => {
@@ -17058,7 +17101,7 @@ createHTML: (html) => {
 					classes_6 = set_class(div_8, 1, "ag-wday-head svelte-uhwfyj", null, classes_6, { "ag-wday-head--click": !!get(ondayclick) });
 					set_attribute(div_8, "role", get(ondayclick) ? "button" : void 0);
 					set_attribute(div_8, "tabindex", get(ondayclick) ? 0 : void 0);
-					set_text(text_15, get(day).dayName);
+					set_text(text_16, get(day).dayName);
 				}, [() => get(disabledSet).has(get(day).ms)]);
 				delegated("click", div_8, function(...$$args) {
 					(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
@@ -17069,44 +17112,54 @@ createHTML: (html) => {
 				append($$anchor, div_7);
 			};
 			var alternate_2 = ($$anchor) => {
-				var div_13 = root_32();
+				var div_13 = root_33();
 				let classes_7;
 				var div_14 = child(div_13);
 				let classes_8;
 				var div_15 = child(div_14);
-				var node_19 = child(div_15);
-				var consequent_15 = ($$anchor) => {
-					var span_15 = root_20$1();
-					var text_18 = only_child(span_15, true);
-					template_effect(() => set_text(text_18, get(L).today));
-					append($$anchor, span_15);
-				};
+				var node_20 = child(div_15);
 				var consequent_16 = ($$anchor) => {
-					var span_16 = root_21$1();
+					var span_16 = root_14$1();
 					var text_19 = only_child(span_16, true);
-					template_effect(() => set_text(text_19, get(L).tomorrow));
+					template_effect(() => set_text(text_19, get(day).num));
 					append($$anchor, span_16);
 				};
-				if_block(node_19, ($$render) => {
-					if (get(day).isToday) $$render(consequent_15);
-					else if (get(day).tier === "tomorrow") $$render(consequent_16, 1);
+				if_block(node_20, ($$render) => {
+					if (get(showDates)) $$render(consequent_16);
 				});
-				var span_17 = sibling(node_19, 2);
-				var text_20 = only_child(span_17, true);
-				var node_20 = sibling(span_17, 2);
+				var node_21 = sibling(node_20, 2);
 				var consequent_17 = ($$anchor) => {
-					var span_18 = root_14$1();
+					var span_17 = root_21$1();
+					var text_20 = only_child(span_17, true);
+					template_effect(() => set_text(text_20, get(L).today));
+					append($$anchor, span_17);
+				};
+				var consequent_18 = ($$anchor) => {
+					var span_18 = root_22$1();
 					var text_21 = only_child(span_18, true);
-					template_effect(() => set_text(text_21, get(day).dateLabel));
+					template_effect(() => set_text(text_21, get(L).tomorrow));
 					append($$anchor, span_18);
 				};
-				if_block(node_20, ($$render) => {
-					if (get(showDates)) $$render(consequent_17);
+				if_block(node_21, ($$render) => {
+					if (get(day).isToday) $$render(consequent_17);
+					else if (get(day).tier === "tomorrow") $$render(consequent_18, 1);
+				});
+				var span_19 = sibling(node_21, 2);
+				var text_22 = only_child(span_19, true);
+				var node_22 = sibling(span_19, 2);
+				var consequent_19 = ($$anchor) => {
+					var span_20 = root_15$1();
+					var text_23 = only_child(span_20, true);
+					template_effect(() => set_text(text_23, get(day).month));
+					append($$anchor, span_20);
+				};
+				if_block(node_22, ($$render) => {
+					if (get(showDates)) $$render(consequent_19);
 				});
 				reset(div_15);
-				var node_21 = sibling(div_15, 2);
-				var consequent_18 = ($$anchor) => {
-					var div_16 = root_15$1();
+				var node_23 = sibling(div_15, 2);
+				var consequent_20 = ($$anchor) => {
+					var div_16 = root_16$1();
 					snippet(child(div_16), () => get(dayHeaderSnippet), () => ({
 						date: new Date(get(day).ms),
 						isToday: get(day).tier === "today",
@@ -17115,37 +17168,37 @@ createHTML: (html) => {
 					reset(div_16);
 					append($$anchor, div_16);
 				};
-				if_block(node_21, ($$render) => {
-					if (get(dayHeaderSnippet)) $$render(consequent_18);
+				if_block(node_23, ($$render) => {
+					if (get(dayHeaderSnippet)) $$render(consequent_20);
 				});
 				reset(div_14);
-				var node_23 = sibling(div_14, 2);
-				var consequent_20 = ($$anchor) => {
-					var div_17 = root_24();
+				var node_25 = sibling(div_14, 2);
+				var consequent_22 = ($$anchor) => {
+					var div_17 = root_25();
 					each(div_17, 21, () => get(day).allDayEvents, (ev) => ev.id, ($$anchor, ev) => {
 						const seg = /* @__PURE__ */ user_derived(() => segmentForDay(get(ev), get(day).ms));
 						const isCont = /* @__PURE__ */ user_derived(() => get(seg) !== null && get(seg).totalDays > 1);
-						var button_3 = root_23$1();
+						var button_3 = root_24();
 						let classes_9;
 						let styles_5;
-						var span_19 = sibling(child(button_3), 2);
-						var text_22 = only_child(span_19, true);
-						var node_24 = sibling(span_19, 2);
-						var consequent_19 = ($$anchor) => {
-							var span_20 = root_22$1();
-							var text_23 = only_child(span_20);
-							template_effect(() => set_text(text_23, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
-							append($$anchor, span_20);
+						var span_21 = sibling(child(button_3), 2);
+						var text_24 = only_child(span_21, true);
+						var node_26 = sibling(span_21, 2);
+						var consequent_21 = ($$anchor) => {
+							var span_22 = root_23$1();
+							var text_25 = only_child(span_22);
+							template_effect(() => set_text(text_25, `${get(seg).dayIndex ?? ""}/${get(seg).totalDays ?? ""}`));
+							append($$anchor, span_22);
 						};
-						if_block(node_24, ($$render) => {
-							if (get(isCont) && get(seg)) $$render(consequent_19);
+						if_block(node_26, ($$render) => {
+							if (get(isCont) && get(seg)) $$render(consequent_21);
 						});
 						reset(button_3);
 						template_effect(($0) => {
 							classes_9 = set_class(button_3, 1, "ag-allday-chip svelte-uhwfyj", null, classes_9, { "ag-allday-chip--selected": selectedEventId() === get(ev).id });
 							set_attribute(button_3, "aria-label", `${get(ev).title ?? ""}, ${$0 ?? ""}`);
 							styles_5 = set_style(button_3, "", styles_5, { "--ev-color": get(ev).color || "var(--dt-accent)" });
-							set_text(text_22, get(ev).title);
+							set_text(text_24, get(ev).title);
 						}, [() => get(isCont) && get(seg) ? get(L).dayNOfTotal(get(seg).dayIndex, get(seg).totalDays) : get(L).allDay]);
 						delegated("click", button_3, () => handleClick(get(ev)));
 						event("pointerenter", button_3, () => get(oneventhover)?.(get(ev)));
@@ -17154,19 +17207,19 @@ createHTML: (html) => {
 					reset(div_17);
 					append($$anchor, div_17);
 				};
-				if_block(node_23, ($$render) => {
-					if (get(day).allDayEvents.length > 0) $$render(consequent_20);
+				if_block(node_25, ($$render) => {
+					if (get(day).allDayEvents.length > 0) $$render(consequent_22);
 				});
-				var node_25 = sibling(node_23, 2);
-				var consequent_21 = ($$anchor) => {
-					var div_18 = root_25();
+				var node_27 = sibling(node_25, 2);
+				var consequent_23 = ($$anchor) => {
+					var div_18 = root_26();
 					let classes_10;
-					var text_24 = only_child(div_18, true);
+					var text_26 = only_child(div_18, true);
 					template_effect(() => {
 						classes_10 = set_class(div_18, 1, "ag-wday-empty svelte-uhwfyj", null, classes_10, { "ag-wday-empty--click": !!get(ondayclick) });
 						set_attribute(div_18, "role", get(ondayclick) ? "button" : void 0);
 						set_attribute(div_18, "tabindex", get(ondayclick) ? 0 : void 0);
-						set_text(text_24, get(L).noEvents);
+						set_text(text_26, get(L).noEvents);
 					});
 					delegated("click", div_18, function(...$$args) {
 						(get(ondayclick) ? () => clickDay(get(day).ms) : void 0)?.apply(this, $$args);
@@ -17176,18 +17229,18 @@ createHTML: (html) => {
 					});
 					append($$anchor, div_18);
 				};
-				var consequent_22 = ($$anchor) => {
-					var div_19 = root_16$1();
+				var consequent_24 = ($$anchor) => {
+					var div_19 = root_17$1();
 					each(div_19, 21, () => get(day).timedEvents, (ev) => ev.id, ($$anchor, ev) => {
 						compactRow($$anchor, () => get(ev), () => false, () => false);
 					});
 					reset(div_19);
 					append($$anchor, div_19);
 				};
-				var consequent_23 = ($$anchor) => {
-					var div_20 = root_27();
+				var consequent_25 = ($$anchor) => {
+					var div_20 = root_28();
 					each(div_20, 21, () => groupIntoSlots(get(day).timedEvents), (slot) => slot.startMs, ($$anchor, slot) => {
-						var div_21 = root_26();
+						var div_21 = root_27();
 						var div_22 = child(div_21);
 						let classes_11;
 						each(div_22, 21, () => get(slot).events, (ev) => ev.id, ($$anchor, ev) => {
@@ -17201,30 +17254,30 @@ createHTML: (html) => {
 					reset(div_20);
 					append($$anchor, div_20);
 				};
-				var consequent_27 = ($$anchor) => {
-					var div_23 = root_29();
-					var node_26 = child(div_23);
-					var consequent_24 = ($$anchor) => {
+				var consequent_29 = ($$anchor) => {
+					var div_23 = root_30();
+					var node_28 = child(div_23);
+					var consequent_26 = ($$anchor) => {
 						var fragment_10 = comment();
 						each(first_child(fragment_10), 17, () => get(day).currentEvents, (ev) => ev.id, ($$anchor, ev) => {
-							var div_24 = root_28();
+							var div_24 = root_29();
 							var div_25 = child(div_24);
-							var text_25 = only_child(child(div_25), true);
+							var text_27 = only_child(child(div_25), true);
 							reset(div_25);
-							var node_28 = sibling(div_25, 2);
-							eventCard(node_28, () => get(ev), () => true);
+							var node_30 = sibling(div_25, 2);
+							eventCard(node_30, () => get(ev), () => true);
 							reset(div_24);
-							template_effect(() => set_text(text_25, get(L).now));
+							template_effect(() => set_text(text_27, get(L).now));
 							append($$anchor, div_24);
 						});
 						append($$anchor, fragment_10);
 					};
-					if_block(node_26, ($$render) => {
-						if (get(day).currentEvents.length > 0) $$render(consequent_24);
+					if_block(node_28, ($$render) => {
+						if (get(day).currentEvents.length > 0) $$render(consequent_26);
 					});
-					var node_29 = sibling(node_26, 2);
-					each(node_29, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor, slot) => {
-						var div_26 = root_26();
+					var node_31 = sibling(node_28, 2);
+					each(node_31, 17, () => groupIntoSlots(get(day).upcomingEvents), (slot) => slot.startMs, ($$anchor, slot) => {
+						var div_26 = root_27();
 						var div_27 = child(div_26);
 						let classes_12;
 						each(div_27, 21, () => get(slot).events, (ev) => ev.id, ($$anchor, ev) => {
@@ -17238,13 +17291,13 @@ createHTML: (html) => {
 						template_effect(() => classes_12 = set_class(div_27, 1, "ag-wslot-cards svelte-uhwfyj", null, classes_12, { "ag-wslot-cards--multi": get(slot).events.length > 1 }));
 						append($$anchor, div_26);
 					});
-					var node_30 = sibling(node_29, 2);
-					var consequent_26 = ($$anchor) => {
-						var fragment_12 = root_17$1();
-						var node_31 = first_child(fragment_12);
-						pastToggle(node_31, () => get(day).ms, () => get(day).pastEvents.length, () => false);
-						var node_32 = sibling(node_31, 2);
-						var consequent_25 = ($$anchor) => {
+					var node_32 = sibling(node_31, 2);
+					var consequent_28 = ($$anchor) => {
+						var fragment_12 = root_18$1();
+						var node_33 = first_child(fragment_12);
+						pastToggle(node_33, () => get(day).ms, () => get(day).pastEvents.length, () => false);
+						var node_34 = sibling(node_33, 2);
+						var consequent_27 = ($$anchor) => {
 							var fragment_13 = comment();
 							each(first_child(fragment_13), 17, () => get(day).pastEvents, (ev) => ev.id, ($$anchor, ev) => {
 								compactRow($$anchor, () => get(ev), () => false, () => true);
@@ -17252,46 +17305,46 @@ createHTML: (html) => {
 							append($$anchor, fragment_13);
 						};
 						var d_2 = /* @__PURE__ */ user_derived(() => get(expandedPast).includes(get(day).ms));
-						if_block(node_32, ($$render) => {
-							if (get(d_2)) $$render(consequent_25);
+						if_block(node_34, ($$render) => {
+							if (get(d_2)) $$render(consequent_27);
 						});
 						append($$anchor, fragment_12);
 					};
-					if_block(node_30, ($$render) => {
-						if (get(day).pastEvents.length > 0) $$render(consequent_26);
+					if_block(node_32, ($$render) => {
+						if (get(day).pastEvents.length > 0) $$render(consequent_28);
 					});
 					reset(div_23);
 					append($$anchor, div_23);
 				};
 				var alternate_1 = ($$anchor) => {
 					const dayExpanded = /* @__PURE__ */ user_derived(() => get(expandedDays).includes(get(day).ms));
-					var div_28 = root_31();
-					var node_34 = child(div_28);
-					each(node_34, 17, () => get(dayExpanded) ? get(day).timedEvents : get(day).timedEvents.slice(0, 4), (ev) => ev.id, ($$anchor, ev) => {
+					var div_28 = root_32();
+					var node_36 = child(div_28);
+					each(node_36, 17, () => get(dayExpanded) ? get(day).timedEvents : get(day).timedEvents.slice(0, 4), (ev) => ev.id, ($$anchor, ev) => {
 						compactRow($$anchor, () => get(ev), () => true, () => false);
 					});
-					var node_35 = sibling(node_34, 2);
-					var consequent_28 = ($$anchor) => {
-						var button_4 = root_30();
-						var text_26 = only_child(button_4, true);
+					var node_37 = sibling(node_36, 2);
+					var consequent_30 = ($$anchor) => {
+						var button_4 = root_31();
+						var text_28 = only_child(button_4, true);
 						template_effect(($0) => {
 							set_attribute(button_4, "aria-expanded", get(dayExpanded));
-							set_text(text_26, $0);
+							set_text(text_28, $0);
 						}, [() => get(dayExpanded) ? get(L).showLess : get(L).nMore(get(day).timedEvents.length - 4)]);
 						delegated("click", button_4, () => toggleDayExpand(get(day).ms));
 						append($$anchor, button_4);
 					};
-					if_block(node_35, ($$render) => {
-						if (get(day).timedEvents.length > 4) $$render(consequent_28);
+					if_block(node_37, ($$render) => {
+						if (get(day).timedEvents.length > 4) $$render(consequent_30);
 					});
 					reset(div_28);
 					append($$anchor, div_28);
 				};
-				if_block(node_25, ($$render) => {
-					if (get(day).events.length === 0) $$render(consequent_21);
-					else if (get(compact) && !get(cols)) $$render(consequent_22, 1);
-					else if (get(equalDays) || get(cols) && !get(expanded)) $$render(consequent_23, 2);
-					else if (get(expanded)) $$render(consequent_27, 3);
+				if_block(node_27, ($$render) => {
+					if (get(day).events.length === 0) $$render(consequent_23);
+					else if (get(compact) && !get(cols)) $$render(consequent_24, 1);
+					else if (get(equalDays) || get(cols) && !get(expanded)) $$render(consequent_25, 2);
+					else if (get(expanded)) $$render(consequent_29, 3);
 					else $$render(alternate_1, -1);
 				});
 				reset(div_13);
@@ -17307,7 +17360,7 @@ createHTML: (html) => {
 					classes_8 = set_class(div_14, 1, "ag-wday-head svelte-uhwfyj", null, classes_8, { "ag-wday-head--click": !!get(ondayclick) });
 					set_attribute(div_14, "role", get(ondayclick) ? "button" : void 0);
 					set_attribute(div_14, "tabindex", get(ondayclick) ? 0 : void 0);
-					set_text(text_20, get(day).dayName);
+					set_text(text_22, get(day).dayName);
 				}, [() => get(disabledSet).has(get(day).ms), () => get(dropDay) === get(day).ms && isDropDay(get(day))]);
 				event("dragover", div_13, (e) => {
 					if (!isDropDay(get(day))) return;
@@ -17328,7 +17381,7 @@ createHTML: (html) => {
 				append($$anchor, div_13);
 			};
 			if_block(node_12, ($$render) => {
-				if (get(day).tier === "past") $$render(consequent_14);
+				if (get(day).tier === "past") $$render(consequent_15);
 				else $$render(alternate_2, -1);
 			});
 			append($$anchor, fragment_5);
@@ -17400,11 +17453,11 @@ createHTML: (html) => {
 	var root_5$3 = /* @__PURE__ */ from_html(`<span class="mb-blocked-label svelte-zbkzcp"> </span>`);
 	var root_6$3 = /* @__PURE__ */ from_html(`<div><div> <small class="svelte-zbkzcp"> </small></div> <div class="mb-hour-line svelte-zbkzcp"></div> <!></div>`);
 	var root_7$3 = /* @__PURE__ */ from_html(`<div class="mb-now svelte-zbkzcp"><span class="mb-now-label svelte-zbkzcp"><span class="svelte-zbkzcp"> </span></span> <div class="mb-now-line svelte-zbkzcp"></div></div>`);
-	var root_8$2 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
-	var root_9$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-sub svelte-zbkzcp"> </span>`);
-	var root_10$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-loc svelte-zbkzcp"> </span>`);
-	var root_11$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
-	var root_12$1 = /* @__PURE__ */ from_html(`<div class="mb-ev-tags svelte-zbkzcp"></div>`);
+	var root_8$1 = /* @__PURE__ */ from_html(`<span class="mb-ev-time svelte-zbkzcp"> </span>`);
+	var root_9 = /* @__PURE__ */ from_html(`<span class="mb-ev-sub svelte-zbkzcp"> </span>`);
+	var root_10 = /* @__PURE__ */ from_html(`<span class="mb-ev-loc svelte-zbkzcp"> </span>`);
+	var root_11 = /* @__PURE__ */ from_html(`<span class="mb-ev-tag svelte-zbkzcp"> </span>`);
+	var root_12 = /* @__PURE__ */ from_html(`<div class="mb-ev-tags svelte-zbkzcp"></div>`);
 	var root_13 = /* @__PURE__ */ from_html(`<span class="mb-ev-title svelte-zbkzcp"> </span> <!> <!> <!> <!>`, 1);
 	var root_14 = /* @__PURE__ */ from_html(`<span class="mb-ev-live svelte-zbkzcp"></span>`);
 	var root_15 = /* @__PURE__ */ from_html(`<span class="mb-ev-next-badge svelte-zbkzcp"> </span>`);
@@ -17959,17 +18012,17 @@ createHTML: (html) => {
 					var text_7 = only_child(span_5, true);
 					var node_10 = sibling(span_5, 2);
 					var consequent_6 = ($$anchor) => {
-						var span_6 = root_8$2();
+						var span_6 = root_8$1();
 						var text_8 = only_child(span_6);
 						template_effect(($0, $1) => set_text(text_8, `${$0 ?? ""} – ${$1 ?? ""}`), [() => fmtTime$1(get(p).ev.start, $$props.locale), () => fmtTime$1(get(p).ev.end, $$props.locale)]);
 						append($$anchor, span_6);
 					};
 					if_block(node_10, ($$render) => {
-						if (get(p).height > 32) $$render(consequent_6);
+						if (get(p).height > 36) $$render(consequent_6);
 					});
 					var node_11 = sibling(node_10, 2);
 					var consequent_7 = ($$anchor) => {
-						var span_7 = root_9$1();
+						var span_7 = root_9();
 						var text_9 = only_child(span_7, true);
 						template_effect(() => set_text(text_9, get(p).ev.subtitle));
 						append($$anchor, span_7);
@@ -17979,7 +18032,7 @@ createHTML: (html) => {
 					});
 					var node_12 = sibling(node_11, 2);
 					var consequent_8 = ($$anchor) => {
-						var span_8 = root_10$1();
+						var span_8 = root_10();
 						var text_10 = only_child(span_8, true);
 						template_effect(() => set_text(text_10, get(p).ev.location));
 						append($$anchor, span_8);
@@ -17989,9 +18042,9 @@ createHTML: (html) => {
 					});
 					var node_13 = sibling(node_12, 2);
 					var consequent_9 = ($$anchor) => {
-						var div_9 = root_12$1();
+						var div_9 = root_12();
 						each(div_9, 21, () => get(p).ev.tags, index, ($$anchor, tag) => {
-							var span_9 = root_11$1();
+							var span_9 = root_11();
 							var text_11 = only_child(span_9, true);
 							template_effect(() => set_text(text_11, get(tag)));
 							append($$anchor, span_9);
@@ -18136,15 +18189,15 @@ createHTML: (html) => {
 		});
 		reset(div_1);
 		reset(div);
-		template_effect(() => {
+		template_effect(($0) => {
 			classes = set_class(div, 1, "mb svelte-zbkzcp", null, classes, { "mb--auto": get(autoHeight) });
 			styles = set_style(div, style() || void 0, styles, { height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%" });
-			set_attribute(div, "aria-label", get(L).dayPlanner);
+			set_attribute(div, "aria-label", `${get(L).dayPlanner ?? ""}, ${$0 ?? ""}`);
 			classes_1 = set_class(div_1, 1, "mb-swipe svelte-zbkzcp", null, classes_1, { "mb-swipe--animate": get(swipeAnimate) });
 			styles_1 = set_style(div_1, "", styles_1, { transform: get(swipeOffset) !== 0 ? `translateX(${get(swipeOffset)}px)` : void 0 });
 			set_attribute(div_3, "aria-label", get(L).scrollableDayPlanner);
 			styles_3 = set_style(div_4, "", styles_3, { height: `${get(gridHeight) ?? ""}px` });
-		});
+		}, [() => dateLong(get(dayMs), $$props.locale)]);
 		delegated("touchstart", div, function(...$$args) {
 			swipe.ontouchstart?.apply(this, $$args);
 		}, void 0, true);
@@ -18432,7 +18485,7 @@ createHTML: (html) => {
 			reset(div_4);
 			next(2);
 			reset(div_2);
-			template_effect(() => {
+			template_effect(($0) => {
 				classes_2 = set_class(div_2, 1, "mw-row svelte-1d18hkf", null, classes_2, {
 					"mw-row--today": get(cell).isToday,
 					"mw-row--past": get(cell).isPast,
@@ -18441,10 +18494,10 @@ createHTML: (html) => {
 				});
 				set_attribute(div_2, "aria-current", get(cell).isToday ? "date" : void 0);
 				button.disabled = get(cell).isDisabled;
-				set_attribute(button, "aria-label", `${get(cell).dayName ?? ""} ${get(cell).dayNum ?? ""}${get(cell).isToday ? `, ${get(L).today}` : ""}`);
+				set_attribute(button, "aria-label", `${$0 ?? ""}${get(cell).isToday ? `, ${get(L).today}` : ""}`);
 				classes_3 = set_class(span, 1, "mw-day-name svelte-1d18hkf", null, classes_3, { "mw-day-name--today": get(cell).isToday });
 				set_text(text, get(cell).dayName);
-			});
+			}, [() => dateLong(get(cell).ms, $$props.locale)]);
 			delegated("click", button, () => handleDayTap(get(cell).ms));
 			delegated("keydown", button, (e) => handleDayKeydown(e, get(cell).ms));
 			append($$anchor, div_2);
@@ -18452,13 +18505,13 @@ createHTML: (html) => {
 		reset(div_1);
 		bind_this(div_1, ($$value) => set(listEl, $$value), () => get(listEl));
 		reset(div);
-		template_effect(() => {
+		template_effect(($0) => {
 			classes = set_class(div, 1, "mw svelte-1d18hkf", null, classes, { "mw--auto": get(autoHeight) });
 			styles = set_style(div, style() || void 0, styles, { height: get(autoHeight) ? void 0 : height() ? `${height()}px` : "100%" });
-			set_attribute(div, "aria-label", get(L).weekAhead);
+			set_attribute(div, "aria-label", `${get(L).weekAhead ?? ""}${$0 ?? ""}`);
 			classes_1 = set_class(div_1, 1, "mw-list svelte-1d18hkf", null, classes_1, { "mw-list--animate": get(swipeAnimate) });
 			styles_1 = set_style(div_1, "", styles_1, { transform: get(swipeOffset) !== 0 ? `translateX(${get(swipeOffset)}px)` : void 0 });
-		});
+		}, [() => get(dayCells).length ? `, ${fmtWeekRange(get(dayCells)[0].ms, $$props.locale, get(dayCells)[get(dayCells).length - 1].ms)}` : ""]);
 		delegated("touchstart", div, function(...$$args) {
 			swipe.ontouchstart?.apply(this, $$args);
 		}, void 0, true);
@@ -18515,7 +18568,7 @@ createHTML: (html) => {
 	var root_5$1 = /* @__PURE__ */ from_html(`<button type="button" class="mg-more svelte-pvjuld" aria-expanded="true"> </button>`);
 	var root_6$1 = /* @__PURE__ */ from_html(`<div role="gridcell"><span> </span> <div class="mg-chips svelte-pvjuld"><!> <!></div></div>`);
 	var root_7$1 = /* @__PURE__ */ from_html(`<div class="mg-row svelte-pvjuld" role="row"></div>`);
-	var root_8$1 = /* @__PURE__ */ from_html(`<div role="grid"><div class="mg-head svelte-pvjuld" role="row"></div> <div class="mg-body svelte-pvjuld" role="rowgroup"></div></div>`);
+	var root_8 = /* @__PURE__ */ from_html(`<div role="grid"><div class="mg-head svelte-pvjuld" role="row"></div> <div class="mg-body svelte-pvjuld" role="rowgroup"></div></div>`);
 	function MonthGrid($$anchor, $$props) {
 		push($$props, true);
 		let events = prop($$props, "events", 19, () => []), style = prop($$props, "style", 3, ""), height = prop($$props, "height", 3, null), selectedEventId = prop($$props, "selectedEventId", 3, null);
@@ -18533,6 +18586,35 @@ createHTML: (html) => {
 		const todayMs = /* @__PURE__ */ user_derived(() => clock.today);
 		const dotsMode = /* @__PURE__ */ user_derived(() => get(isMobile));
 		const MAX_CHIPS = 3;
+		let fitAll = /* @__PURE__ */ state(MAX_CHIPS);
+		let fitMore = /* @__PURE__ */ state(MAX_CHIPS);
+		function measureFit() {
+			const cell = get(bodyEl)?.querySelector(".mg-cell");
+			const chip = get(bodyEl)?.querySelector(".mg-chip");
+			if (!cell || !chip) return;
+			const num = cell.querySelector(".mg-daynum");
+			const chips = cell.querySelector(".mg-chips");
+			const cs = getComputedStyle(cell);
+			const gap = chips ? parseFloat(getComputedStyle(chips).rowGap) || 0 : 0;
+			const room = cell.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - (num?.offsetHeight ?? 0) - (parseFloat(cs.rowGap) || 0);
+			const chipH = chip.offsetHeight;
+			const moreH = get(bodyEl)?.querySelector(".mg-more")?.offsetHeight ?? chipH;
+			if (!chipH) return;
+			set(fitAll, Math.min(MAX_CHIPS, Math.floor((room + gap) / (chipH + gap))), true);
+			set(fitMore, Math.max(0, Math.min(MAX_CHIPS, Math.floor((room - moreH) / (chipH + gap)))), true);
+		}
+		user_effect(() => {
+			if (!get(bodyEl) || get(autoHeight) || get(dotsMode)) {
+				set(fitAll, set(fitMore, MAX_CHIPS), true);
+				return;
+			}
+			events();
+			measureFit();
+			const ro = new ResizeObserver(measureFit);
+			ro.observe(get(bodyEl));
+			document.fonts?.ready.then(measureFit);
+			return () => ro.disconnect();
+		});
 		const range = /* @__PURE__ */ user_derived(() => get(viewState)?.range);
 		const focusMonth = /* @__PURE__ */ user_derived(() => ($$props.focusDate ?? /* @__PURE__ */ new Date()).getMonth());
 		user_effect(() => {
@@ -18636,6 +18718,7 @@ createHTML: (html) => {
 					const date = new Date(cellMs);
 					const jsDay = date.getDay();
 					const dayEvents = eventsForDay(cellMs);
+					const shown = dayEvents.length <= get(fitAll) ? dayEvents.length : get(fitMore);
 					row.push({
 						ms: cellMs,
 						date,
@@ -18644,9 +18727,9 @@ createHTML: (html) => {
 						isToday: cellMs === get(todayMs),
 						isWeekend: jsDay === 0 || jsDay === 6,
 						isDisabled: get(disabledSet).has(cellMs),
-						chips: dayEvents.slice(0, MAX_CHIPS),
+						chips: dayEvents.slice(0, shown),
 						all: dayEvents,
-						overflow: Math.max(0, dayEvents.length - MAX_CHIPS)
+						overflow: dayEvents.length - shown
 					});
 				}
 				rows.push(row);
@@ -18661,7 +18744,7 @@ createHTML: (html) => {
 		function chipTime(e) {
 			return isAllDay(e) ? "" : fmtTime$1(e.start, $$props.locale);
 		}
-		var div = root_8$1();
+		var div = root_8();
 		let classes;
 		let styles;
 		var div_1 = child(div);
@@ -19276,8 +19359,8 @@ createHTML: (html) => {
 	--dt-border: rgba(148, 163, 184, 0.07);
 	--dt-border-day: rgba(148, 163, 184, 0.14);
 	--dt-text: rgba(226, 232, 240, 0.85);
-	--dt-text-2: rgba(148, 163, 184, 0.55);
-	--dt-text-3: rgba(100, 116, 139, 0.55);
+	--dt-text-2: rgba(148, 163, 184, 0.75);
+	--dt-text-3: rgba(148, 163, 184, 0.65);
 	--dt-accent: #ef4444;
 	--dt-accent-dim: rgba(239, 68, 68, 0.18);
 	--dt-glow: rgba(239, 68, 68, 0.35);
@@ -19897,18 +19980,13 @@ createHTML: (html) => {
 		}
 	];
 	var root = /* @__PURE__ */ from_html(`<button type="button" role="radio"> </button>`);
-	var root_1 = /* @__PURE__ */ from_html(`<div class="cal-m-pills svelte-1b53e7w" role="radiogroup"></div>`);
-	var root_2 = /* @__PURE__ */ from_html(`<span class="cal-m-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span>`);
-	var root_3 = /* @__PURE__ */ from_html(`<button type="button" class="cal-m-today svelte-1b53e7w"> </button> <button type="button" class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button type="button" class="cal-m-nav svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
-	var root_4 = /* @__PURE__ */ from_html(`<div class="cal-m-titlebar svelte-1b53e7w"><span class="cal-m-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span></div>`);
-	var root_5 = /* @__PURE__ */ from_html(`<div><div class="cal-m-left svelte-1b53e7w"><!></div> <!> <div class="cal-m-right svelte-1b53e7w"><!></div></div> <!>`, 1);
-	var root_6 = /* @__PURE__ */ from_html(`<button type="button" class="cal-hd-today svelte-1b53e7w"> </button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
-	var root_7 = /* @__PURE__ */ from_html(`<div class="cal-pills cal-pills--labels svelte-1b53e7w" role="radiogroup"></div>`);
-	var root_8 = /* @__PURE__ */ from_html(`<div class="cal-pills svelte-1b53e7w" role="radiogroup"></div>`);
-	var root_9 = /* @__PURE__ */ from_html(`<div class="cal-hd svelte-1b53e7w"><div class="cal-hd-side svelte-1b53e7w"><!></div> <span class="cal-hd-title svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span> <div class="cal-hd-side cal-hd-side--end svelte-1b53e7w"><!> <!></div></div>`);
-	var root_10 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w"> </div>`);
-	var root_11 = /* @__PURE__ */ from_html(`<div class="cal-loading svelte-1b53e7w"></div>`);
-	var root_12 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="cal-body svelte-1b53e7w"><!></div> <!></div>`);
+	var root_1 = /* @__PURE__ */ from_html(`<div class="cal-pills cal-pills--labels svelte-1b53e7w" role="radiogroup"></div>`);
+	var root_2 = /* @__PURE__ */ from_html(`<div class="cal-pills svelte-1b53e7w" role="radiogroup"></div>`);
+	var root_3 = /* @__PURE__ */ from_html(`<button type="button" class="cal-hd-today svelte-1b53e7w"> </button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M10 3 5 8l5 5" class="svelte-1b53e7w"></path></svg></button> <button type="button" class="cal-hd-btn svelte-1b53e7w"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true" class="svelte-1b53e7w"><path d="M6 3l5 5-5 5" class="svelte-1b53e7w"></path></svg></button>`, 1);
+	var root_4 = /* @__PURE__ */ from_html(`<div><span class="cal-hd-title svelte-1b53e7w" aria-hidden="true"> </span> <span class="cal-sr svelte-1b53e7w" role="status" aria-live="polite" aria-atomic="true"> </span> <!> <!> <div class="cal-hd-nav svelte-1b53e7w"><!></div></div>`);
+	var root_5 = /* @__PURE__ */ from_html(`<div class="cal-empty svelte-1b53e7w"> </div>`);
+	var root_6 = /* @__PURE__ */ from_html(`<div class="cal-loading svelte-1b53e7w"></div>`);
+	var root_7 = /* @__PURE__ */ from_html(`<div role="region"><!> <div class="cal-body svelte-1b53e7w"><!></div> <!></div>`);
 	function Calendar($$anchor, $$props) {
 		push($$props, true);
 		/** Breakpoint (px) at which auto-mobile activates */
@@ -20197,6 +20275,26 @@ createHTML: (html) => {
 				year: "numeric"
 			});
 		});
+		const periodTitle = /* @__PURE__ */ user_derived(() => {
+			if (!showDates()) return "";
+			const loc = $$props.locale ?? getDefaultLocale();
+			if (viewState.mode === "day") return viewState.focusDate.toLocaleDateString(loc, {
+				weekday: get(useMobile) ? "short" : "long",
+				month: "long",
+				day: "numeric",
+				year: "numeric"
+			});
+			const s = viewState.mode === "week" ? viewState.range.start : viewState.focusDate;
+			const e = viewState.mode === "week" ? /* @__PURE__ */ new Date(viewState.range.end.getTime() - 1) : s;
+			if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) return s.toLocaleDateString(loc, {
+				month: "long",
+				year: "numeric"
+			});
+			return new Intl.DateTimeFormat(loc, {
+				month: "short",
+				year: "numeric"
+			}).formatRange(s, e).replace(/[  ]/g, " ");
+		});
 		const modes = /* @__PURE__ */ user_derived(() => {
 			const g = new Set(get(desktopViews).map((v) => v.mode));
 			return [
@@ -20301,7 +20399,7 @@ createHTML: (html) => {
 			focusDate: viewState.focusDate,
 			mode: viewState.mode
 		}));
-		var div = root_12();
+		var div = root_7();
 		let classes;
 		var node = child(div);
 		var consequent = ($$anchor) => {
@@ -20309,69 +20407,81 @@ createHTML: (html) => {
 			snippet(first_child(fragment), () => $$props.header, () => get(headerCtx));
 			append($$anchor, fragment);
 		};
-		var consequent_6 = ($$anchor) => {
-			const titleBelow = /* @__PURE__ */ user_derived(() => get(stackHeader) && !!get(dateLabel));
-			var fragment_1 = root_5();
-			var div_1 = first_child(fragment_1);
+		var consequent_5 = ($$anchor) => {
+			var div_1 = root_4();
 			let classes_1;
-			var div_2 = child(div_1);
-			var node_2 = child(div_2);
+			var span = child(div_1);
+			var text = only_child(span, true);
+			var span_1 = sibling(span, 2);
+			var text_1 = only_child(span_1, true);
+			var node_2 = sibling(span_1, 2);
 			var consequent_1 = ($$anchor) => {
-				var div_3 = root_1();
-				each(div_3, 20, () => get(modes), (g) => g, ($$anchor, g) => {
+				var div_2 = root_1();
+				each(div_2, 20, () => get(labelsForMode), (label) => label, ($$anchor, label) => {
 					var button = root();
 					let classes_2;
-					var text = only_child(button, true);
-					template_effect(() => {
-						classes_2 = set_class(button, 1, "cal-m-pill svelte-1b53e7w", null, classes_2, { "cal-m-pill--active": viewState.mode === g });
-						set_attribute(button, "aria-checked", viewState.mode === g);
-						set_text(text, g === "day" ? get(L).day : g === "week" ? get(L).week : get(L).month);
-					});
-					delegated("click", button, () => switchMode(g));
+					var text_2 = only_child(button, true);
+					template_effect(($0) => {
+						classes_2 = set_class(button, 1, "cal-pill svelte-1b53e7w", null, classes_2, { "cal-pill--active": get(activeView)?.label === label });
+						set_attribute(button, "aria-checked", get(activeView)?.label === label);
+						set_text(text_2, $0);
+					}, [() => viewLabel(label)]);
+					delegated("click", button, () => switchLabel(label));
 					append($$anchor, button);
+				});
+				reset(div_2);
+				template_effect(() => set_attribute(div_2, "aria-label", get(L).viewMode));
+				append($$anchor, div_2);
+			};
+			if_block(node_2, ($$render) => {
+				if (showModePills() && !get(useMobile) && get(labelsForMode).length > 1) $$render(consequent_1);
+			});
+			var node_3 = sibling(node_2, 2);
+			var consequent_2 = ($$anchor) => {
+				var div_3 = root_2();
+				each(div_3, 20, () => get(modes), (g) => g, ($$anchor, g) => {
+					var button_1 = root();
+					let classes_3;
+					var text_3 = only_child(button_1, true);
+					template_effect(() => {
+						classes_3 = set_class(button_1, 1, "cal-pill svelte-1b53e7w", null, classes_3, { "cal-pill--active": viewState.mode === g });
+						set_attribute(button_1, "aria-checked", viewState.mode === g);
+						set_text(text_3, g === "day" ? get(L).day : g === "week" ? get(L).week : get(L).month);
+					});
+					delegated("click", button_1, () => switchMode(g));
+					append($$anchor, button_1);
 				});
 				reset(div_3);
 				template_effect(() => set_attribute(div_3, "aria-label", get(L).viewMode));
 				append($$anchor, div_3);
 			};
-			if_block(node_2, ($$render) => {
-				if (showModePills() && get(modes).length > 1) $$render(consequent_1);
-			});
-			reset(div_2);
-			var node_3 = sibling(div_2, 2);
-			var consequent_2 = ($$anchor) => {
-				var span = root_2();
-				var text_1 = only_child(span, true);
-				template_effect(() => set_text(text_1, get(dateLabel)));
-				append($$anchor, span);
-			};
 			if_block(node_3, ($$render) => {
-				if (!get(titleBelow)) $$render(consequent_2);
+				if (showModePills() && get(modes).length > 1) $$render(consequent_2);
 			});
 			var div_4 = sibling(node_3, 2);
 			var node_4 = child(div_4);
 			var consequent_3 = ($$anchor) => {
-				var fragment_2 = comment();
-				snippet(first_child(fragment_2), () => $$props.navigation, () => get(navCtx));
-				append($$anchor, fragment_2);
+				var fragment_1 = comment();
+				snippet(first_child(fragment_1), () => $$props.navigation, () => get(navCtx));
+				append($$anchor, fragment_1);
 			};
 			var consequent_4 = ($$anchor) => {
-				var fragment_3 = root_3();
-				var button_1 = first_child(fragment_3);
-				var text_2 = only_child(button_1, true);
-				var button_2 = sibling(button_1, 2);
+				var fragment_2 = root_3();
+				var button_2 = first_child(fragment_2);
+				var text_4 = only_child(button_2, true);
 				var button_3 = sibling(button_2, 2);
+				var button_4 = sibling(button_3, 2);
 				template_effect(() => {
-					button_1.disabled = get(viewIncludesToday);
-					set_attribute(button_1, "title", get(L).goToToday);
-					set_text(text_2, get(L).today);
-					set_attribute(button_2, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
-					set_attribute(button_3, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
+					button_2.disabled = get(viewIncludesToday);
+					set_attribute(button_2, "title", get(L).goToToday);
+					set_text(text_4, get(L).today);
+					set_attribute(button_3, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
+					set_attribute(button_4, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
 				});
-				delegated("click", button_1, () => viewState.goToday());
-				delegated("click", button_2, () => viewState.prev());
-				delegated("click", button_3, () => viewState.next());
-				append($$anchor, fragment_3);
+				delegated("click", button_2, () => viewState.goToday());
+				delegated("click", button_3, () => viewState.prev());
+				delegated("click", button_4, () => viewState.next());
+				append($$anchor, fragment_2);
 			};
 			if_block(node_4, ($$render) => {
 				if ($$props.navigation) $$render(consequent_3);
@@ -20379,118 +20489,26 @@ createHTML: (html) => {
 			});
 			reset(div_4);
 			reset(div_1);
-			var node_6 = sibling(div_1, 2);
-			var consequent_5 = ($$anchor) => {
-				var div_5 = root_4();
-				var text_3 = only_child(child(div_5), true);
-				reset(div_5);
-				template_effect(() => set_text(text_3, get(dateLabel)));
-				append($$anchor, div_5);
-			};
-			if_block(node_6, ($$render) => {
-				if (get(titleBelow)) $$render(consequent_5);
-			});
-			template_effect(() => classes_1 = set_class(div_1, 1, "cal-m-hd svelte-1b53e7w", null, classes_1, {
-				"cal-m-hd--stack": get(stackHeader),
-				"cal-m-hd--titled": get(titleBelow)
-			}));
-			append($$anchor, fragment_1);
-		};
-		var consequent_11 = ($$anchor) => {
-			var div_6 = root_9();
-			var div_7 = child(div_6);
-			var node_7 = child(div_7);
-			var consequent_7 = ($$anchor) => {
-				var fragment_4 = comment();
-				snippet(first_child(fragment_4), () => $$props.navigation, () => get(navCtx));
-				append($$anchor, fragment_4);
-			};
-			var consequent_8 = ($$anchor) => {
-				var fragment_5 = root_6();
-				var button_4 = first_child(fragment_5);
-				var text_4 = only_child(button_4, true);
-				var button_5 = sibling(button_4, 2);
-				var button_6 = sibling(button_5, 2);
-				template_effect(() => {
-					button_4.disabled = get(viewIncludesToday);
-					set_attribute(button_4, "title", get(L).goToToday);
-					set_text(text_4, get(L).today);
-					set_attribute(button_5, "aria-label", viewState.mode === "day" ? get(L).previousDay : viewState.mode === "month" ? get(L).previousMonth : get(L).previousWeek);
-					set_attribute(button_6, "aria-label", viewState.mode === "day" ? get(L).nextDay : viewState.mode === "month" ? get(L).nextMonth : get(L).nextWeek);
+			template_effect(() => {
+				classes_1 = set_class(div_1, 1, "cal-hd svelte-1b53e7w", null, classes_1, {
+					"cal-hd--mobile": get(useMobile),
+					"cal-hd--stack": get(stackHeader)
 				});
-				delegated("click", button_4, () => viewState.goToday());
-				delegated("click", button_5, () => viewState.prev());
-				delegated("click", button_6, () => viewState.next());
-				append($$anchor, fragment_5);
-			};
-			if_block(node_7, ($$render) => {
-				if ($$props.navigation) $$render(consequent_7);
-				else if (showNavigation()) $$render(consequent_8, 1);
+				set_text(text, get(periodTitle));
+				set_text(text_1, get(dateLabel));
 			});
-			reset(div_7);
-			var span_2 = sibling(div_7, 2);
-			var text_5 = only_child(span_2, true);
-			var div_8 = sibling(span_2, 2);
-			var node_9 = child(div_8);
-			var consequent_9 = ($$anchor) => {
-				var div_9 = root_7();
-				each(div_9, 20, () => get(labelsForMode), (label) => label, ($$anchor, label) => {
-					var button_7 = root();
-					let classes_3;
-					var text_6 = only_child(button_7, true);
-					template_effect(($0) => {
-						classes_3 = set_class(button_7, 1, "cal-pill svelte-1b53e7w", null, classes_3, { "cal-pill--active": get(activeView)?.label === label });
-						set_attribute(button_7, "aria-checked", get(activeView)?.label === label);
-						set_text(text_6, $0);
-					}, [() => viewLabel(label)]);
-					delegated("click", button_7, () => switchLabel(label));
-					append($$anchor, button_7);
-				});
-				reset(div_9);
-				template_effect(() => set_attribute(div_9, "aria-label", get(L).viewMode));
-				append($$anchor, div_9);
-			};
-			if_block(node_9, ($$render) => {
-				if (showModePills() && get(labelsForMode).length > 1) $$render(consequent_9);
-			});
-			var node_10 = sibling(node_9, 2);
-			var consequent_10 = ($$anchor) => {
-				var div_10 = root_8();
-				each(div_10, 20, () => get(modes), (g) => g, ($$anchor, g) => {
-					var button_8 = root();
-					let classes_4;
-					var text_7 = only_child(button_8, true);
-					template_effect(() => {
-						classes_4 = set_class(button_8, 1, "cal-pill svelte-1b53e7w", null, classes_4, { "cal-pill--active": viewState.mode === g });
-						set_attribute(button_8, "aria-checked", viewState.mode === g);
-						set_text(text_7, g === "day" ? get(L).day : g === "week" ? get(L).week : get(L).month);
-					});
-					delegated("click", button_8, () => switchMode(g));
-					append($$anchor, button_8);
-				});
-				reset(div_10);
-				template_effect(() => set_attribute(div_10, "aria-label", get(L).viewMode));
-				append($$anchor, div_10);
-			};
-			if_block(node_10, ($$render) => {
-				if (showModePills() && get(modes).length > 1) $$render(consequent_10);
-			});
-			reset(div_8);
-			reset(div_6);
-			template_effect(() => set_text(text_5, get(dateLabel)));
-			append($$anchor, div_6);
+			append($$anchor, div_1);
 		};
 		if_block(node, ($$render) => {
 			if ($$props.header) $$render(consequent);
-			else if (get(useMobile) && (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel))) $$render(consequent_6, 1);
-			else if (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel)) $$render(consequent_11, 2);
+			else if (showNavigation() || showModePills() && get(modes).length > 1 || get(dateLabel)) $$render(consequent_5, 1);
 		});
-		var div_11 = sibling(node, 2);
-		var node_11 = child(div_11);
-		var consequent_12 = ($$anchor) => {
+		var div_5 = sibling(node, 2);
+		var node_6 = child(div_5);
+		var consequent_6 = ($$anchor) => {
 			const Comp = /* @__PURE__ */ user_derived(() => get(activeView).component);
-			var fragment_6 = comment();
-			component(first_child(fragment_6), () => get(Comp), ($$anchor, Comp_1) => {
+			var fragment_3 = comment();
+			component(first_child(fragment_3), () => get(Comp), ($$anchor, Comp_1) => {
 				Comp_1($$anchor, spread_props({
 					get events() {
 						return store.events;
@@ -20529,25 +20547,25 @@ createHTML: (html) => {
 					}
 				}, () => get(activeView).props ?? {}));
 			});
-			append($$anchor, fragment_6);
+			append($$anchor, fragment_3);
 		};
 		var alternate = ($$anchor) => {
-			var div_12 = root_10();
-			var text_8 = only_child(div_12, true);
-			template_effect(() => set_text(text_8, get(L).noViews));
-			append($$anchor, div_12);
+			var div_6 = root_5();
+			var text_5 = only_child(div_6, true);
+			template_effect(() => set_text(text_5, get(L).noViews));
+			append($$anchor, div_6);
 		};
-		if_block(node_11, ($$render) => {
-			if (get(activeView)) $$render(consequent_12);
+		if_block(node_6, ($$render) => {
+			if (get(activeView)) $$render(consequent_6);
 			else $$render(alternate, -1);
 		});
-		reset(div_11);
-		var node_13 = sibling(div_11, 2);
-		var consequent_13 = ($$anchor) => {
-			append($$anchor, root_11());
+		reset(div_5);
+		var node_8 = sibling(div_5, 2);
+		var consequent_7 = ($$anchor) => {
+			append($$anchor, root_6());
 		};
-		if_block(node_13, ($$render) => {
-			if (store.loading) $$render(consequent_13);
+		if_block(node_8, ($$render) => {
+			if (store.loading) $$render(consequent_7);
 		});
 		reset(div);
 		bind_this(div, ($$value) => set(calEl, $$value), () => get(calEl));

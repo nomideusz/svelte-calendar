@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- Redesigned built-in header. One row with the period title ("October 2026", "Oct – Nov 2026", or the full date in day view), the view pills as underlined text, and Today ‹ › in 2px frames whose corners follow the host's `--cal-r` (clamped to 4–8px). It compacts on mobile and stacks the title when space runs out; a hidden status line still announces the range to screen readers.
+- One type scale across views. Agenda, scroll and mobile views use the planner's sizes: weekday and all-day labels at 12px/500, month chips at 12.5px. In the agenda, the event happening now is the most prominent item, completed items get quieter ink, and only cancelled events are struck through.
+- Month grid: "+N more" is measured against the space the cell actually has, so it's always visible and no chip is cut off. Day numbers outside the month are ink-2, and phone dots are true circles.
+
+### Patch Changes
+
+- The now line runs under events instead of across their text.
+- Compact planner blocks read "Title time" on one line, and the title keeps the space.
+- The scroll view's now plate has its own row.
+- Day columns' accessible names include the month ("Wednesday, October 21").
+- The `midnight` preset's secondary text now meets 4.5:1 contrast.
+
 ## 1.2.0
 
 ### Minor Changes

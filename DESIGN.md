@@ -250,7 +250,9 @@ Monochrome ink on paper, one host accent; the dark presets keep the same roles i
 - **Event title** (500, 15px/1.25), **event time** (400, 14px/1.2, tabular), **event meta** (400, 12.5px): title first, time under it, location third; one family, ranked by weight only.
 - **All-day title** (500, 13.5px) on the band; **now plate** (500, 11px, tabular) reversed on the accent.
 - **Code** (mono 400, 13px/1.6 in blocks; 17–18u on the install and markup lines).
-- **Docs** (h1 500 36px, h2 500 26px over a 2px ink rule, body 16px/1.55, lede 19px/1.45, table heads 500 12px uppercase).
+- **Period title** (400, 32px; 22px compact): the calendar header's "October 2026", "Oct – Nov 2026" or the full date in day view.
+- **Labels** (500, 12px, ink-2): month weekday heads and the all-day gutter label; out-of-month day numbers are ink-2; month chips 12.5px; a blocked-slot label 11px.
+- **Docs** (h1 500 36px, h2 500 26px over a 2px ink rule, body 16px/1.55 at a 44rem measure, lede 19px/1.45, table heads 500 12px uppercase; every size on this scale).
 
 ### Named Rules
 **The Tabular Rule.** Every time and date figure sets tabular numerals in the sans; the calendar never uses mono for times.
@@ -274,11 +276,15 @@ Flat. The page is one sheet of paper; depth is drawn as rules and reversal, neve
 
 ## Shapes
 
-The calendar is square-cut: 0 radius on events, the all-day band, the now plate, headers and the ghost. Demo controls keep small, consistent corners: 6u on framed buttons and selects, 5u on host swatches, 8u on the install line, and the switch is a 22u pill with a 13u track and a round 20u knob. Circles exist only as dots: the now dot (8px), the live dot (7px), the month chip dot (7px) and the switch knob. Frames are 2px ink; the drag source is a 1px dashed ink-3 box; the tentative bar is a dashed 4/3 pattern of the event colour.
+The calendar is square-cut: 0 radius on events, the all-day band, the now plate, headers and the ghost. The one exception is the calendar header's controls: Today and ‹ › take `--cal-ctl-r`, half the host's `--cal-r` clamped to 4–8px, so they sit in the host's own shape. Demo controls keep small, consistent corners: 6u on framed buttons and selects, 5u on host swatches, 8u on the install line, and the switch is a 22u pill with a 13u track and a round 20u knob. Circles exist only as dots: the now dot (8px), the live dot (7px), the month chip dot (7px) and the switch knob. Frames are 2px ink; the drag source is a 1px dashed ink-3 box; the tentative bar is a dashed 4/3 pattern of the event colour.
 
 ## Components
 
-### Button frame (Today, ‹ ›)
+### Calendar header
+One row: the period title on the left, the view pills, then Today and ‹ › on the right; `--stack` puts the title on its own row, `--mobile` compacts it to 22px. Pills are ink-2 text with a 2px ink underline on the active one, no fill. Today and ‹ › are 2px ink frames with `--cal-ctl-r` corners, 36/40/44px tall (compact/default/coarse pointer); Today is disabled while today is in view. A visually hidden status line keeps announcing the range to screen readers.
+
+### Button frame (bar Today, ‹ ›)
+Only rendered when the calendar's own navigation is off (the Own header setup).
 - **Shape:** 2px ink border, 6u corners, 44u tall; the arrows are 44u squares.
 - **Default:** transparent, ink text at 22u.
 - **Hover / Focus:** text and border turn accent (120ms); focus is a 2px ink outline offset 2px.
@@ -299,7 +305,10 @@ A 22u pill, 40u tall, bordered 2px ink-2 with the prop name at 19u and a 44×26u
 Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms).
 
 ### Code drawer
-A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 180° when open, Copy as a 1px rule-day box with 0 radius, the markup as one scrolling mono line (17u, ink-2) and the full code at mono 13px/1.6 within 44vh when expanded.
+A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 180° when open, Copy as a 1px rule-day box with 0 radius, the markup as one scrolling mono line (17u, ink-2) and the full code at mono 13px/1.6 within 30vh when expanded, ligatures off so `=>` and `!=` read as typed.
+
+### Info line and setups state
+Times in the info line use the chosen locale. Creates, moves and drops really change the demo's events; a Reset events key undoes them. The setup, view, theme, locale and toggles live in the URL (`?setup=booking-page&view=month-grid`), so a link reproduces what is on screen.
 
 ### Event block (calendar)
 - **Shape:** 0 radius, transparent, a 3px start bar in `--ev-color` (the event's colour, else `--dt-event`, else the accent), body padded 3px 7px, min height 24px; a narrow overlap column drops the end time; a short block gets a 44px hit-slop.
@@ -308,7 +317,8 @@ A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 
 - **Cancelled:** title struck through in ink-2, bar at 0.45; the block stays on the grid.
 - **Tentative / limited:** title in ink-2, bar dashed (4px on, 3px off).
 - **Full:** title in ink-2, bar at 0.45.
-- **Current:** `--dt-accent-dim` wash (12% accent).
+- **Current:** `--dt-accent-dim` wash (12% accent); the now line runs under it, not across the text.
+- **Compact:** a block too short for two lines reads "Title time" on one line and the title wins the width.
 - **Hover:** hover-wash ground; the resize grips appear at 0.55.
 - **Selected:** a 1px inset ring in the event colour.
 - **Focus:** a 2px accent box-shadow ring (outline would be clipped).
@@ -324,7 +334,7 @@ Now is a 2px accent line across the grid with an 8px dot at the gutter edge and 
 Hour lines in rule, half-hours at 0.4 opacity, columns split by rule, the sticky header and gutter paint paper (with the grain plate when `--dt-paper` is set) so they cover what scrolls under. Weekend columns take the weekend wash, disabled days a 45° hatch of rule, blocked slots a −45° hatch of 4% ink with a 500 10px uppercase label in ink-2 (ink-3 fails contrast at 10px).
 
 ### Hosts
-A dark host keeps every rule: light ink at 0.85 on charcoal, rules at 0.07/0.14, the accent doing the band, the now line and today, event text in ink. The paper plate is the Paper host's only; other hosts set `--dt-paper: none`. `auto` derives border alphas 0.3/0.6 (light) or 0.16/0.32 (dark), text-2 at 0.66/0.62, and keeps the accent legible against the probed ground.
+A dark host keeps every rule: light ink at 0.85 on charcoal, rules at 0.07/0.14, the accent doing the band, the now line and today, event text in ink. The paper plate is the Paper host's only; other hosts set `--dt-paper: none`. `auto` derives border alphas 0.3/0.6 (light) or 0.16/0.32 (dark), text-2 at 0.66/0.62, and keeps the accent legible against the probed ground. Every host and preset holds text-2 at 4.5:1 or better on both its stage and its calendar ground.
 
 ### Motion
 The bar clock flips its minute: the new HH:MM flies in from 8px above over 260ms. Switches slide their knob in 140ms, frames recolour in 120ms, the body ground crossfades 300ms on a host change, the live dot pulses 2s. Every transition and the pulse are off under `prefers-reduced-motion`, and the clock flip runs at 0ms.
@@ -338,12 +348,12 @@ The bar clock flips its minute: the new HH:MM flies in from 8px above over 260ms
 - **Do** keep the calendar square-cut (0 radius) and the demo controls at 6u, with the switch as the only pill (22u).
 - **Do** set numerals large and regular: day numbers 40px, gutter hours 26px, both narrowed, both tabular.
 - **Do** paint the paper plate (`--dt-paper`) under every opaque calendar surface on the Paper host, and size the chrome in `--u`.
-- **Do** keep Today ‹ › in the page bar and let the week headers and the view select carry the date and the view.
+- **Do** let the calendar's own header carry the period, the views and Today ‹ ›; the page bar repeats them only when built-in navigation is off.
 
 ### Don't:
 - **Don't** fill a timed event with colour or draw it as a card; no tinted backgrounds, no card corners.
 - **Don't** add shadows at rest, to the chrome or the calendar; the only lifts are the in-flight resize and move ghost.
-- **Don't** add view pills, a date title or a second accent to the demo; the accent is the host's and there is one.
+- **Don't** add a second accent or a second header to the demo; the accent is the host's and the header is the calendar's.
 - **Don't** reverse a day, a header or a selected event; only the all-day band and the now plate sit on a fill.
 - **Don't** mark today with a disc or a pill; today is the accent numeral.
 - **Don't** use weights above 500 in text, or 600 anywhere but the wordmark.

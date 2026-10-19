@@ -12,6 +12,7 @@ import { createClock } from "../../core/clock.svelte.js";
 import { HOUR_MS, sod, addDaysMs, diffDays, isAllDay, segmentForDay } from "../../core/time.js";
 import { fmtHParts, fmtTime } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
+import { dateLong } from "../shared/format.js";
 let { height = null, events = [], style = "", locale, focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
 // ── Context ────────────────────────────────────────
 const ctx = useCalendarContext();
@@ -475,7 +476,7 @@ $effect(() => {
 	style={style || undefined}
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
-	aria-label={L.dayPlanner}
+	aria-label="{L.dayPlanner}, {dateLong(dayMs, locale)}"
 	ontouchstart={swipe.ontouchstart}
 	ontouchmove={swipe.ontouchmove}
 	ontouchend={swipe.ontouchend}
@@ -588,11 +589,11 @@ $effect(() => {
 						<div class="mb-ev-stripe"></div>
 						<div class="mb-ev-body">
 							<EventContent event={p.ev}>
-							<!-- Line thresholds must track real content height (title 18 +
-							     time 13 + sub 14 + loc 12 + tags 19 + padding 8) — showing
+							<!-- Line thresholds must track real content height (title 19 +
+							     time 14 + sub 14 + loc 13 + tags 19 + padding 8) — showing
 							     a line the block can't hold clips text at both ends. -->
 							<span class="mb-ev-title">{p.ev.title}</span>
-							{#if p.height > 32}
+							{#if p.height > 36}
 								<span class="mb-ev-time">{fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}</span>
 							{/if}
 							{#if p.ev.subtitle && p.height > 56}
@@ -753,7 +754,7 @@ $effect(() => {
 	}
 
 	.mb-allday-title {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 13.5px/1 var(--dt-sans, system-ui, sans-serif);
 		color: inherit;
 		white-space: nowrap;
 		max-width: 100px;
@@ -762,14 +763,14 @@ $effect(() => {
 	}
 
 	.mb-allday-span {
-		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: inherit;
 		opacity: 0.75;
 	}
 
 	.mb-allday-more {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		flex-shrink: 0;
@@ -846,8 +847,8 @@ $effect(() => {
 		visibility: hidden;
 	}
 	.mb-hour-label small {
-		font-size: 9px;
-		font-weight: 600;
+		font-size: 10px;
+		font-weight: 500;
 		vertical-align: top;
 		margin-left: 1px;
 		letter-spacing: 0;
@@ -859,7 +860,7 @@ $effect(() => {
 		   start at — content-box pushed digits flush under the event edge */
 		box-sizing: border-box;
 		flex-shrink: 0;
-		font: 700 15px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 15px/1 var(--dt-sans, system-ui, sans-serif);
 		font-stretch: 90%;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: -0.02em;
@@ -892,18 +893,20 @@ $effect(() => {
 		left: 44px;
 		top: 50%;
 		transform: translateY(-50%);
-		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 	}
 
 	/* ─── Now line ───────────────────────────────────── */
+	/* No stacking context of its own: the plate and the dot sit above the
+	   events, the line under them (the event it crosses is opaque), so the
+	   line never strikes through a title. */
 	.mb-now {
 		position: absolute;
 		left: 0;
 		right: 0;
-		z-index: 10;
 		display: flex;
 		align-items: center;
 		pointer-events: none;
@@ -911,18 +914,32 @@ $effect(() => {
 
 	/* The clock is a reversed plate on the accent, as in the desktop gutter. */
 	.mb-now-label {
+		position: relative;
+		z-index: 10;
 		width: 40px;
 		box-sizing: border-box;
 		flex-shrink: 0;
 		padding: 0 4px 0 0;
 		text-align: right;
+		white-space: nowrap;
+	}
+	.mb-now-label::after {
+		content: '';
+		position: absolute;
+		right: -4px;
+		top: 50%;
+		width: 8px;
+		height: 8px;
+		margin-top: -4px;
+		border-radius: 50%;
+		background: var(--dt-accent, #2563eb);
 	}
 	.mb-now-label span {
 		display: inline-block;
 		padding: 2px 3px;
 		border-radius: 0;
 		background: var(--dt-accent, #2563eb);
-		font: 700 10px/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-btn-text, #ffffff);
 	}
@@ -933,17 +950,7 @@ $effect(() => {
 		border-top: 2px solid var(--dt-accent, #2563eb);
 		box-shadow: none;
 		position: relative;
-	}
-
-	.mb-now-line::before {
-		content: '';
-		position: absolute;
-		left: -4px;
-		top: -4px;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--dt-accent, #2563eb);
+		z-index: 4;
 	}
 
 	/* ─── Events ─────────────────────────────────────── */
@@ -990,8 +997,20 @@ $effect(() => {
 	.mb-event--selected {
 		box-shadow: inset 0 0 0 1px var(--ev-color);
 	}
-	.mb-event--current {
-		background: var(--dt-accent-dim, rgba(37, 99, 235, 0.12));
+	/* The event in progress is the one the now line crosses: its wash is
+	   laid over the paper, opaque, so the line runs beneath its text. */
+	.mb-event.mb-event--current {
+		background:
+			linear-gradient(var(--dt-accent-dim, rgba(37, 99, 235, 0.12)), var(--dt-accent-dim, rgba(37, 99, 235, 0.12))),
+			var(--dt-paper, none),
+			var(--dt-bg, #ffffff);
+	}
+	.mb-event.mb-event--current:hover,
+	.mb-event.mb-event--current:active {
+		background:
+			linear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),
+			var(--dt-paper, none),
+			var(--dt-bg, #ffffff);
 	}
 	/* Printed states: a cancelled class is struck through; a tentative or
 	   limited one is set in grey with a dashed bar — never a bare opacity. */
@@ -1092,7 +1111,7 @@ $effect(() => {
 		pointer-events: none;
 	}
 	.mb-create-ghost-time {
-		font: 700 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		padding: 4px 8px;
@@ -1125,13 +1144,13 @@ $effect(() => {
 	}
 
 	.mb-ev-time {
-		font: 400 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
 	.mb-ev-sub {
-		font: 400 12px/1.1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1.1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1139,7 +1158,7 @@ $effect(() => {
 	}
 
 	.mb-ev-loc {
-		font: 400 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		white-space: nowrap;
 		overflow: hidden;
@@ -1178,7 +1197,7 @@ $effect(() => {
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--ev-color, var(--dt-accent));
 		background: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);
 		padding: 2px 5px;

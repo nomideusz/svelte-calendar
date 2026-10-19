@@ -135,14 +135,15 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	<div class="ag-body" role="group" aria-label={L.todaysLineup}>
 		<!-- ─── In-view date header (only when the chrome doesn't label the day) ─── -->
 		{#if !hideDayHead}
-		<div class="ag-day-head">
+		<div class="ag-day-head" class:ag-day-head--today={!equalDays && isToday}>
+			<span class="ag-day-head-num">{dayNum(dayMs)}</span>
 			{#if !equalDays && isToday}
 				<span class="ag-day-head-badge">{L.today}</span>
 			{:else if !equalDays && isTomorrow}
 				<span class="ag-day-head-badge ag-day-head-badge--muted">{L.tomorrow}</span>
 			{/if}
 			<span class="ag-day-head-name">{weekdayLong(dayMs, locale)}</span>
-			<span class="ag-day-head-date">{monthLong(dayMs, locale)} {dayNum(dayMs)}</span>
+			<span class="ag-day-head-date">{monthLong(dayMs, locale)}</span>
 		</div>
 		{/if}
 		{#if allDayBanner.length > 0}
@@ -310,13 +311,13 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 										<span class="ag-card-title">{ev.title}</span>
 										<span class="ag-card-eta">{eta(ev.start.getTime())}</span>
 									</div>
-									{#if ev.subtitle}
-										<span class="ag-card-sub">{ev.subtitle}</span>
-									{/if}
 									<div class="ag-card-meta">
 										{fmt(ev.start)} – {fmt(ev.end)}
 										<span class="ag-card-dur">{duration(ev)}</span>
 									</div>
+									{#if ev.subtitle}
+										<span class="ag-card-sub">{ev.subtitle}</span>
+									{/if}
 									{#if ev.tags?.length}
 										<div class="ag-card-tags">
 											{#each ev.tags as tag}
@@ -346,6 +347,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 							type="button"
 							class="ag-log-row"
 							class:ag-log-row--selected={selectedEventId === ev.id}
+							class:ag-log-row--cancelled={ev.status === 'cancelled'}
 							style:--ev-color={ev.color || 'var(--dt-accent)'}
 							aria-label="{ev.title}{statusText(ev)}, {fmt(ev.start)} – {fmt(ev.end)}"
 							onclick={() => handleClick(ev)}
@@ -390,16 +392,16 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 									<span class="ag-card-order">{i + 1}</span>
 									<span class="ag-card-title">{ev.title}</span>
 								</div>
+								<div class="ag-card-meta">
+									{fmt(ev.start)} – {fmt(ev.end)}
+									<span class="ag-card-dur">{duration(ev)}</span>
+								</div>
 								{#if ev.subtitle}
 									<span class="ag-card-sub">{ev.subtitle}</span>
 								{/if}
 								{#if ev.location}
 									<span class="ag-card-loc">{ev.location}</span>
 								{/if}
-								<div class="ag-card-meta">
-									{fmt(ev.start)} – {fmt(ev.end)}
-									<span class="ag-card-dur">{duration(ev)}</span>
-								</div>
 								{#if ev.tags?.length}
 									<div class="ag-card-tags">
 										{#each ev.tags as tag}
@@ -489,27 +491,34 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		padding: 0 16px 6px;
 		flex-shrink: 0;
 	}
-	.ag-day-head-badge {
-		font-size: 10px;
-		font-weight: 500;
+	/* The planner's header type: the day number is the typography (40/400,
+	   narrowed), the weekday a tracked 12/500 label; today takes the accent. */
+	.ag-day-head-num {
+		font: 400 40px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		margin-inline-end: 4px;
+	}
+	.ag-day-head-badge,
+	.ag-day-head-name {
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+	}
+	.ag-day-head--today .ag-day-head-num,
+	.ag-day-head--today .ag-day-head-name,
+	.ag-day-head-badge {
 		color: var(--dt-accent, #2563eb);
 	}
-	.ag-day-head-badge--muted {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-	}
-	.ag-day-head-name {
-		font-size: 13px;
-		font-weight: 600;
-		line-height: 1.2;
+	.ag-day-head .ag-day-head-badge--muted {
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag-day-head-date {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
-		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		line-height: 1.2;
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag--auto .ag-body { overflow-y: visible; min-height: auto; }
 	.ag-body::-webkit-scrollbar {
@@ -529,10 +538,10 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-allday-label {
-		font: 600 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		letter-spacing: 0.08em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -546,7 +555,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		display: flex;
 		align-items: center;
 		gap: 5px;
-		padding: 3px 10px;
+		padding: 4px 10px;
 		border-radius: 0;
 		border: none;
 		background: var(--ev-color);
@@ -568,7 +577,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		display: none;
 	}
 	.ag-allday-title {
-		font: 500 0.75rem/1.2 var(--dt-sans, system-ui, sans-serif);
+		font: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: inherit;
 		white-space: nowrap;
 	}
@@ -625,65 +634,52 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-card--limited::before {
 		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
+	/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.
+	   The body keeps a reading measure so meta never drifts across a wide row. */
 	.ag-card-body {
 		padding: 10px 12px 10px 15px;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 3px;
 		min-width: 0;
+		max-width: 44rem;
 		flex: 1;
 	}
 	.ag-card-top {
 		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		gap: 8px;
+		align-items: baseline;
+		gap: 12px;
 		min-width: 0;
 	}
 	.ag-card-title {
-		font-size: 13px;
-		font-weight: 500;
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		line-height: 1.3;
 		word-break: break-word;
-		flex: 1;
 		min-width: 0;
 	}
 	.ag-card-meta {
-		font-size: 11px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		line-height: 1;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+	}
+	.ag-card-dur,
+	.ag-card-eta,
+	.ag-card-sub,
+	.ag-card-loc,
+	.ag-card-tag {
+		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.ag-card-dur {
-		margin-left: 6px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-	}
-	.ag-card-sub {
-		font-size: 11px;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		line-height: 1;
-	}
-	.ag-card-loc {
-		font-size: 10px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		line-height: 1;
+		margin-left: 8px;
 	}
 	.ag-card-tags {
 		display: flex;
-		gap: 4px;
+		column-gap: 10px;
+		row-gap: 2px;
 		flex-wrap: wrap;
 	}
 	.ag-card-tag {
-		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: transparent;
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
-		padding: 2px 5px;
-		border-radius: 0;
 		white-space: nowrap;
 	}
 
@@ -694,67 +690,39 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag-compact-row--queue {
 		margin: 0;
 	}
-
-	.ag-card--q .ag-card-body {
-		gap: 3px;
-	}
-	.ag-card--q .ag-card-tags {
-		margin-top: 2px;
-	}
 	.ag-card-eta {
-		font-size: 11px;
-		font-weight: 500;
-		letter-spacing: 0.04em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		flex-shrink: 0;
 		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
 	}
-	.ag-card--hero .ag-card-title {
-		font-size: 16px;
-		font-weight: 500;
-	}
+	/* The next one up: its countdown in ink. Size stays on the scale — the
+	   happening-now item is the largest thing in the queue. */
 	.ag-card--hero .ag-card-eta {
-		font-size: 11px;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-	}
-	.ag-card--hero .ag-card-body {
-		padding: 14px 16px;
 	}
 
 	/* ── Plan card variant ── */
 
 	.ag-card--plan .ag-card-body {
 		padding: 12px 14px;
-		gap: 3px;
-	}
-	.ag-card--plan .ag-card-top {
-		align-items: baseline;
 	}
 	.ag-card-order {
-		font-size: 10px;
-		font-weight: 700;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		min-width: 18px;
 		flex-shrink: 0;
 	}
-	.ag-card--plan .ag-card-title {
-		font-size: 14px;
-	}
-	.ag-card--first .ag-card-title {
-		font-size: 16px;
-		font-weight: 500;
+	.ag-card--plan .ag-card-top {
+		gap: 10px;
 	}
 	/* Everything under the title aligns past the order number — the
 	   subtitle, location, time and tags share one left edge. */
 	.ag-card--plan .ag-card-sub,
 	.ag-card--plan .ag-card-loc,
-	.ag-card--plan .ag-card-meta {
-		padding-left: 22px;
-	}
+	.ag-card--plan .ag-card-meta,
 	.ag-card--plan .ag-card-tags {
-		padding-left: 22px;
-		margin-top: 2px;
+		padding-left: 28px;
 	}
 
 	/* ═══ The Queue: 2-column grid ═══ */
@@ -766,8 +734,10 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		padding: 8px 0 10px;
 		min-height: 0;
 	}
-	/* Mobile: stack queue columns vertically — "Up next" (hero) first,
-	   Now/Done status column second */
+	/* Mobile: one column in reading order — what's happening now first, then
+	   "Up next", then the finished ones. The status column dissolves
+	   (display: contents) so its Now and Done parts can sit either side of
+	   the queue. */
 	/* Horizontal swipes are ours (day navigation); the browser keeps
 	   vertical scrolling and pinch-zoom. */
 	.ag--mobile,
@@ -777,108 +747,45 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	.ag--mobile .ag-q {
 		grid-template-columns: 1fr;
 		min-height: auto;
+		padding-inline: 16px;
 	}
 	.ag--mobile .ag-q-status {
-		order: 2;
-		border-right: none;
-		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
-		padding-top: 10px;
-		margin-top: 8px;
-		overflow-y: visible;
+		display: contents;
 	}
 	.ag--mobile .ag-q-queue {
-		order: 1;
+		order: 2;
 		overflow-y: visible;
-		padding-bottom: 16px;
+		padding: 12px 0 16px;
 	}
-	.ag--mobile .ag-card-meta {
-		line-height: 1.3;
-		padding-bottom: 1px;
+	.ag--mobile .ag-q-done-section {
+		order: 3;
 	}
-	/* Mobile: larger touch targets */
+	/* Mobile: larger touch targets; type is already on the planner scale. */
 	.ag--mobile .ag-card-body {
 		padding: 14px 16px;
-	}
-	.ag--mobile .ag-card-title {
-		font-size: 15px;
-	}
-	.ag--mobile .ag-card--hero .ag-card-title {
-		font-size: 18px;
-	}
-	.ag--mobile .ag-card--hero .ag-card-body {
-		padding: 16px 18px;
 	}
 	.ag--mobile .ag-log-row {
 		padding: 12px 0;
 	}
-	.ag--mobile .ag-card--plan .ag-card-body {
-		padding: 14px 16px;
+	.ag--mobile .ag-q-done-item {
+		padding: 8px 0;
 	}
-	.ag--mobile .ag-card--plan .ag-card-title {
-		font-size: 15px;
-	}
-	/* Mobile: Now/Done status subtree type scale */
-	.ag--mobile .ag-q-label {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-q-clock {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-q-now-title {
-		font-size: 16px;
-	}
-	.ag--mobile .ag-q-now-sub {
-		font-size: 13px;
-	}
-	.ag--mobile .ag-q-now-time {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-q-free-label {
-		font-size: 13px;
-	}
-	.ag--mobile .ag-q-done-title {
-		font-size: 13px;
-	}
-	.ag--mobile .ag-q-done-check {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-eta {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-sub {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-loc {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-card-tag {
-		font-size: 11px;
-	}
-	.ag--mobile .ag-log-time,
-	.ag--mobile .ag-log-dur {
-		font-size: 12px;
-	}
-	.ag--mobile .ag-log-title {
-		font-size: 15px;
-	}
+	/* Section labels set like the planner's weekday: 12/500, tracked, ink-2. */
 	.ag-q-label {
-		font-size: 10px;
-		font-weight: 600;
-		letter-spacing: 0.14em;
+		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		margin-bottom: 8px;
 		padding: 0 12px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
 	}
 	.ag-q-empty {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex: 1;
-		font-size: 13px;
-		font-weight: 300;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font-size: 14px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 
 	/* ── NOW column (includes Done above) ── */
@@ -902,23 +809,23 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		background: none;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-size: 11px;
-		color: var(--dt-text-3);
+		font-size: 12.5px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		cursor: pointer;
 	}
 	.ag-q-done-toggle:hover,
 	.ag-q-done-toggle:active {
-		color: var(--dt-text);
-		border-color: var(--dt-text-3);
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		border-color: var(--dt-border-day, rgba(0, 0, 0, 0.6));
 	}
 	.ag-q-done-toggle:focus-visible {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-q-now-sub {
-		font-size: 12px;
-		color: var(--dt-text-2);
-		margin-top: 1px;
+		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		margin-bottom: 4px;
 	}
 	.ag-q-done-section {
 		margin-top: 12px;
@@ -926,21 +833,23 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		border-top: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 	}
 	.ag-q-clock {
-		font-size: 11px;
-		font-weight: 600;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0;
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-accent, #2563eb);
 		margin-left: 4px;
 	}
+	/* The one happening now is the most prominent thing on the day: the
+	   largest title in the view and the 12% accent wash the system reserves
+	   for the current event. */
 	.ag-q-now {
 		position: relative;
 		display: block;
 		width: 100%;
-		padding: 8px 10px 8px 13px;
+		padding: 12px 12px 12px 15px;
 		margin-bottom: 8px;
 		border-radius: 0;
-		background: transparent;
+		background: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));
 		border: none;
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
@@ -957,7 +866,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-q-now:hover,
 	.ag-q-now:active {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background:
+			linear-gradient(var(--dt-hover, rgba(0, 0, 0, 0.04)), var(--dt-hover, rgba(0, 0, 0, 0.04))),
+			var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #2563eb) 12%, transparent));
 	}
 	.ag-q-now:focus-visible {
 		outline: none;
@@ -967,11 +878,11 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		box-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));
 	}
 	.ag-q-now-dot {
-		width: 6px;
-		height: 6px;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent, #2563eb));
-		margin-bottom: 6px;
+		margin-bottom: 8px;
 		animation: ag-pulse 2.5s ease-in-out infinite;
 	}
 	@keyframes ag-pulse {
@@ -987,9 +898,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		}
 	}
 	.ag-q-now-title {
-		font-size: 12px;
-		font-weight: 500;
-		line-height: 1.25;
+		font: 500 20px/1.2 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
@@ -997,14 +906,13 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		line-clamp: 2;
 		overflow: hidden;
 		word-break: break-word;
-		margin-bottom: 3px;
+		margin-bottom: 4px;
 	}
 	.ag-q-now-time {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		margin-bottom: 6px;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		margin-bottom: 10px;
 	}
 	.ag-q-now-track {
 		height: 2px;
@@ -1025,9 +933,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		margin-right: 10px;
 	}
 	.ag-q-free-label {
-		font-size: 12px;
-		font-weight: 300;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		font: 400 15px/1.25 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		margin-bottom: 2px;
 	}
 
@@ -1047,9 +954,9 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 
 	.ag-q-done-item {
 		display: flex;
-		align-items: center;
-		gap: 5px;
-		padding: 3px 0;
+		align-items: baseline;
+		gap: 8px;
+		padding: 4px 0;
 		width: 100%;
 		cursor: pointer;
 	}
@@ -1064,19 +971,17 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		border-radius: 0;
 	}
 	.ag-q-done-check {
-		font-size: 11px;
+		font-size: 12.5px;
 		color: var(--dt-success, rgba(22, 163, 74, 0.7));
 		flex-shrink: 0;
 	}
+	/* Finished: quieter ink, no strike (strikethrough means cancelled). */
 	.ag-q-done-title {
-		font-size: 12px;
-		line-height: 1.2;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		text-decoration: line-through;
-		text-decoration-color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		transition: color 150ms;
 	}
 
@@ -1093,7 +998,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-log-row {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 10px;
 		padding: 8px 0;
 		width: 100%;
@@ -1122,16 +1027,15 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		border-radius: 0;
 	}
 	.ag-log-check {
-		font-size: 10px;
+		font-size: 12.5px;
 		color: var(--dt-success, rgba(22, 163, 74, 0.7));
 		flex-shrink: 0;
 	}
 	.ag-log-time {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
-		width: 64px;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		min-width: 4.6em;
 		flex-shrink: 0;
 	}
 	/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */
@@ -1142,25 +1046,26 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		flex-shrink: 0;
 		opacity: 0.45;
 	}
+	/* A past day is over, not struck out: quieter ink, sized like the planner.
+	   Strikethrough is kept for cancelled events only. */
 	.ag-log-title {
-		font-size: 13px;
-		font-weight: 500;
-		line-height: 1.2;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		flex: 1;
+		font: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		flex: 0 1 auto;
+		min-width: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		text-decoration: line-through;
-		text-decoration-color: var(--dt-border, rgba(0, 0, 0, 0.08));
 		transition: color 150ms;
 		text-align: left;
 	}
+	.ag-log-row--cancelled .ag-log-title {
+		text-decoration: line-through;
+	}
 	.ag-log-dur {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1.25 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		flex-shrink: 0;
 	}
 
@@ -1177,8 +1082,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		position: relative;
 		display: flex;
 		align-items: baseline;
-		gap: 8px;
-		padding: 4px 0 4px 11px;
+		gap: 10px;
+		padding: 5px 0 5px 11px;
 		border-bottom: 1px solid var(--dt-border, rgba(0, 0, 0, 0.3));
 		cursor: pointer;
 		min-width: 0;
@@ -1207,25 +1112,26 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		box-shadow: 0 0 0 2px var(--dt-accent, #2563eb);
 	}
 	.ag-compact-row-time {
-		font-size: 11px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-weight: 400;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		min-width: 64px;
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
+		min-width: 4.6em;
 		flex-shrink: 0;
-		line-height: 1.4;
+		white-space: nowrap;
 	}
-	/* Title + subtitle + tags cluster. One line while it fits; on mobile the
-	   metadata wraps to a second line under the title instead of crushing it. */
+	/* Title + subtitle + tags cluster, sized to its content so the meta and
+	   duration sit beside the title instead of across a wide row. One line
+	   while it fits; on mobile the metadata wraps to a second line under the
+	   title instead of crushing it. */
 	.ag-compact-row-main {
 		display: flex;
 		align-items: baseline;
-		gap: 8px;
-		flex: 1;
+		gap: 10px;
+		flex: 0 1 auto;
 		min-width: 0;
 	}
 	.ag--mobile .ag-compact-row-main {
+		flex: 1;
 		flex-wrap: wrap;
 		row-gap: 2px;
 	}
@@ -1240,49 +1146,37 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		max-width: 100%;
 	}
 	.ag-compact-row-title {
-		font-size: 12px;
-		font-weight: 500;
+		font: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
-		flex: 1;
+		flex: 0 1 auto;
 		/* The title is the row's identity — never let subtitle/tags/duration
-		   squeeze it out on narrow screens (flex: 1 alone resolves to 0px). */
-		min-width: 35%;
+		   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */
+		min-width: 6em;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		transition: color 150ms;
-		line-height: 1.4;
 		text-align: left;
 	}
+	.ag-compact-row-dur,
+	.ag-compact-row-sub,
+	.ag-compact-row-tag {
+		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		white-space: nowrap;
+	}
 	.ag-compact-row-dur {
-		font-size: 10px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 0;
-		line-height: 1.4;
 	}
 	.ag-compact-row-sub {
-		font-size: 10px;
-		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 		flex-shrink: 3;
 		min-width: 0;
 		max-width: 45%;
-		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		line-height: 1.4;
 	}
 	.ag-compact-row-tag {
-		font: 500 10.5px / 1 var(--dt-sans, system-ui, sans-serif);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
-		background: transparent;
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.6));
-		padding: 1px 4px;
-		border-radius: 0;
-		white-space: nowrap;
 		flex-shrink: 1;
 		min-width: 2.5em;
 		overflow: hidden;
@@ -1298,18 +1192,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		background: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);
 	}
 	/* Mobile: larger touch targets for compact rows */
-	.ag--mobile .ag-compact-row { padding: 8px 0; }
-	.ag--mobile .ag-compact-row-title { font-size: 15px; }
-	.ag--mobile .ag-compact-row-time { font-size: 12px; }
-	.ag--mobile .ag-compact-row-dur { font-size: 12px; }
-	.ag--mobile .ag-compact-row-sub { font-size: 12px; }
-	.ag--mobile .ag-compact-row-tag { font-size: 11px; }
+	.ag--mobile .ag-compact-row { padding: 8px 0 8px 11px; }
 	.ag--mobile .ag-day-head { padding: 0 16px 8px; }
-	.ag--mobile .ag-day-head-name { font-size: 15px; }
-	.ag--mobile .ag-day-head-date { font-size: 12px; }
-	.ag--mobile .ag-day-head-badge { font-size: 11px; }
-	.ag--mobile .ag-allday-title { font-size: 0.85rem; }
-	.ag--mobile .ag-allday-label { font-size: 11px; }
 
 	/* ═══ Future Day: "The Plan" ═══ */
 	.ag-plan {

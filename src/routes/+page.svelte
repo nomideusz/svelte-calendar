@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { page } from "$app/state";
+	import { replaceState } from "$app/navigation";
 	import {
 		Calendar,
 		createMemoryAdapter,
@@ -52,15 +54,18 @@
 		return "auto";
 	}
 
-	// The calendar fills the main area between the bar and the code drawer.
+	// The calendar fills the main area between the bar and the code drawer:
+	// always the frame's height (never less than 320), so an open drawer can
+	// shrink it but never be painted over. Before the first measure, a guess.
 	let frameH = $state(0);
-	const calendarHeight = $derived(frameH > 320 ? frameH : (isMobile ? 500 : 700));
+	let frameW = $state(0);
+	const calendarHeight = $derived(frameH ? Math.max(frameH, 320) : (isMobile ? 500 : 700));
 
 	const DEFAULT_SETTINGS: Record<string, SettingValue> = {
 		readOnly: false,
 		mondayStart: true,
-		showModePills: false,
-		showNavigation: false,
+		showModePills: true,
+		showNavigation: true,
 		equalDays: false,
 		activeView: "week-planner",
 		locale: "en-US",
@@ -80,13 +85,17 @@
 		phoneFrame: false,
 	};
 
-	let settingsValues = $state<Record<string, SettingValue>>({ ...DEFAULT_SETTINGS });
-
 	// ── Recipes: one-click prop bundles showing common setups ──
-	const recipes: { name: string; hint: string; values: Record<string, SettingValue> }[] = [
-		{ name: "Default", hint: "Week planner, editable; the page draws Today and the arrows in its own bar", values: {} },
+	// The slug is the shareable `?setup=` value (the docs link to these).
+	const recipes: { slug: string; name: string; hint: string; values: Record<string, SettingValue> }[] = [
+		{ slug: "default", name: "Default", hint: "Just the component: its own header with Today, the arrows and the view pills", values: {} },
 		{
-			name: "Booking page",
+			slug: "own-header", name: "Own header",
+			hint: "Built-in header hidden; the page's own Today and arrows drive currentDate",
+			values: { showModePills: false, showNavigation: false },
+		},
+		{
+			slug: "booking-page", name: "Booking page",
 			hint: "Editable week grid with business hours, blocked lunch slots, and disabled dates",
 			values: {
 				activeView: "week-planner", readOnly: false,
@@ -95,47 +104,74 @@
 			},
 		},
 		{
-			name: "Class timetable",
+			slug: "class-timetable", name: "Class timetable",
 			hint: "Fixed weekly template: day names only, no past-day dimming, read-only",
 			values: {
 				activeView: "week-planner", readOnly: true,
+				showModePills: false, showNavigation: false,
 				showDates: false, equalDays: true,
 				visibleHoursEnabled: true, startHour: 7, endHour: 21,
 				blockedSlotsEnabled: false, disabledDatesEnabled: false,
 			},
 		},
+		// Agenda views take no drag edits, so these leave readOnly alone
+		// rather than show it on and disabled.
 		{
-			name: "Studio timetable",
+			slug: "studio-timetable", name: "Studio timetable",
 			hint: "Week agenda as side-by-side day columns — classic class-schedule grid",
 			values: {
-				activeView: "week-agenda", readOnly: true, columns: true,
+				activeView: "week-agenda", columns: true,
 				showModePills: false, showNavigation: false,
 				showDates: false, equalDays: true,
 				blockedSlotsEnabled: false, disabledDatesEnabled: false,
 			},
 		},
 		{
-			name: "Embedded schedule",
+			slug: "embedded-schedule", name: "Embedded schedule",
 			hint: "Chromeless compact agenda for dropping into an existing page",
 			values: {
-				activeView: "week-agenda", readOnly: true, compact: true,
+				activeView: "week-agenda", compact: true,
 				showModePills: false, showNavigation: false, equalDays: true,
 				blockedSlotsEnabled: false, disabledDatesEnabled: false,
 			},
 		},
 	];
+	const VIEWS = ["week-planner", "week-scroll", "day-planner", "week-agenda", "day-agenda", "month-grid"];
 
-	// Active recipe derived by comparison, so manual tweaks un-highlight it.
+	// `?setup=<slug>&view=<id>` opens the page on that setup and view.
+	function fromUrl(params: Pick<URLSearchParams, "get">): Record<string, SettingValue> {
+		const recipe = recipes.find((r) => r.slug === params.get("setup"));
+		const view = params.get("view");
+		return {
+			...DEFAULT_SETTINGS,
+			...recipe?.values,
+			...(view && VIEWS.includes(view) ? { activeView: view } : {}),
+		};
+	}
+	let settingsValues = $state<Record<string, SettingValue>>(fromUrl(page.url.searchParams));
+
+	// A recipe is on while every prop it sets still holds, so manual tweaks
+	// un-highlight it. The view is its own axis: a setup stays on across views.
 	const activeRecipe = $derived(
 		recipes.find((r) =>
 			Object.entries({ ...DEFAULT_SETTINGS, ...r.values }).every(
-				([k, v]) => settingsValues[k] === v,
+				([k, v]) => k === "activeView" || settingsValues[k] === v,
 			),
-		)?.name ?? "",
+		),
 	);
 	function applyRecipe(recipe: (typeof recipes)[number]) {
 		settingsValues = { ...DEFAULT_SETTINGS, ...recipe.values };
 	}
+
+	// Write the setup and view back to the URL, without a history entry each.
+	$effect(() => {
+		const recipe = activeRecipe;
+		const q = new URLSearchParams();
+		if (recipe && recipe.slug !== "default") q.set("setup", recipe.slug);
+		if (activeView !== (recipe?.values.activeView ?? DEFAULT_SETTINGS.activeView)) q.set("view", activeView);
+		const search = q.size ? `?${q}` : "";
+		if (search !== location.search) replaceState(`${location.pathname}${search}${location.hash}`, {});
+	});
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
 	const mondayStart = $derived(Boolean(settingsValues.mondayStart));
@@ -218,8 +254,7 @@
 		{
 			key: "activeView", label: "view", type: "select",
 			hint: "Which built-in view renders: planners are time grids, agendas are lists",
-			options: ["week-planner", "week-scroll", "day-planner", "week-agenda", "day-agenda", "month-grid"]
-				.map((v) => ({ value: v, label: v })),
+			options: VIEWS.map((v) => ({ value: v, label: v })),
 		},
 		{
 			key: "calendarPreset", label: "theme", type: "select",
@@ -303,6 +338,23 @@
 			disabledWhen: inViews(["week-planner", "week-agenda"], "week-planner and week-agenda only") },
 	];
 
+	// Under 768px of container the calendar renders the planners and the
+	// scroll as its touch list; the view select says so instead of naming a
+	// grid that isn't on screen.
+	const mobileOn = $derived(mobileMode === true || (mobileMode === "auto" && frameW > 0 && frameW < 768));
+	const fields = $derived(
+		settingsFields.map((f) =>
+			f.key === "activeView" && f.type === "select" && mobileOn
+				? {
+						...f,
+						options: f.options.map((o) =>
+							TIMED.includes(o.value) ? { ...o, label: `${o.value} → mobile${mobileMode === "auto" ? " (auto)" : ""}` } : o,
+						),
+					}
+				: f,
+		),
+	);
+
 	// ── Seed data (auto-generated relative to today) ──────
 	// Both are state: moving a recurring occurrence takes that date out of its
 	// rule and files the result as a one-off, which is what a real host does.
@@ -342,27 +394,66 @@
 	/* Every message the line can show, stacked unseen in its one cell, so it is
 	   always as tall as the longest and nothing around it moves on hover. */
 	const messages = $derived(
-		[...new Set([IDLE, IDLE_TOUCH, lastAction, ...settingsFields.flatMap((f) => [
+		[...new Set([IDLE, IDLE_TOUCH, lastAction, ...recipes.map((r) => r.hint), ...settingsFields.flatMap((f) => [
 			f.hint ?? "",
 			f.disabledWhen?.(settingsValues) || "",
 			f.enabledWhen ? `Needs ${f.enabledWhen}` : "",
 		])])].filter(Boolean),
 	);
+	// Times in the info line read like the calendar: its locale and zone, no seconds.
+	function when(start: Date, end?: Date) {
+		const hm = { hour: "numeric", minute: "2-digit", timeZone: timezone } as const;
+		const from = new Intl.DateTimeFormat(locale, { weekday: "short", ...hm }).format(start);
+		return end ? `${from}–${new Intl.DateTimeFormat(locale, hm).format(end)}` : from;
+	}
 	function handleClick(ev: TimelineEvent) {
-		lastAction = `Clicked: ${ev.title}`;
+		lastAction = `Clicked ${ev.title}`;
 	}
 
-	// Drag the pill above the calendar onto a day: the view hands back the
+	// The demo is the host: what the calendar hands back is filed in `seed`, so
+	// it survives the adapter being rebuilt, until Reset events.
+	let edited = $state(false);
+	function addEvent(title: string, start: Date, end: Date) {
+		seed = [...seed, { id: `added-${start.getTime()}-${seed.length}`, title, start, end }];
+		edited = true;
+	}
+	function resetEvents() {
+		seed = createDemoEvents(today);
+		recurring = createDemoRecurring();
+		edited = false;
+		lastAction = "";
+	}
+
+	// Drag the pill under the calendar onto a day: the view hands back the
 	// dropped time and whatever the source put on the dataTransfer.
+	const HOUR = 3_600_000;
 	function handleExternalDrop(info: { start: Date; dataTransfer: DataTransfer }) {
 		const title = info.dataTransfer.getData('text/plain') || 'Dropped class';
-		lastAction = `Dropped ${title} on ${info.start.toLocaleString()}`;
+		addEvent(title, info.start, new Date(info.start.getTime() + HOUR));
+		lastAction = `Added ${title} → ${when(info.start)}`;
+	}
+	// The pill's keyboard path: Enter or Space files it at the next full hour
+	// today, the way a drop would, and brings today into view.
+	function addFromKeyboard(e: KeyboardEvent) {
+		if (e.key !== "Enter" && e.key !== " ") return;
+		e.preventDefault();
+		if (readOnly) {
+			lastAction = "readOnly is on: the calendar takes no new events";
+			return;
+		}
+		const start = new Date(Math.ceil(Date.now() / HOUR) * HOUR);
+		addEvent("Vinyasa Flow", start, new Date(start.getTime() + HOUR));
+		focusedDate = start;
+		lastAction = `Added Vinyasa Flow → ${when(start)}`;
 	}
 	function handleCreate(range: { start: Date; end: Date }) {
-		lastAction = `Create: ${range.start.toLocaleTimeString()} – ${range.end.toLocaleTimeString()}`;
+		addEvent("New class", range.start, range.end);
+		lastAction = `Created ${when(range.start, range.end)}`;
 	}
 	function handleMove(event: TimelineEvent, start: Date, end: Date) {
 		const ruleId = event.data?.recurringId as string | undefined;
+		edited = true;
+		lastAction = `Moved ${event.title} → ${when(start)}`;
 		if (ruleId) {
 			// A projected occurrence has no row of its own. Take this date out
 			// of the rule and keep the moved copy as a one-off — the pattern a
@@ -376,10 +467,9 @@
 				...seed,
 				{ ...event, id: `${event.id}--moved`, start, end, data: { ...event.data, recurringId: undefined } },
 			];
-			lastAction = `Moved ${event.title} out of its schedule → ${start.toLocaleString()}`;
 			return;
 		}
-		lastAction = `Moved: ${event.title} → ${start.toLocaleTimeString()} – ${end.toLocaleTimeString()}`;
+		seed = seed.map((e) => (e.id === event.id ? { ...e, start, end } : e));
 	}
 	function handleViewChange(viewId: CalendarView["id"]) {
 		if (activeView !== viewId) {
@@ -410,7 +500,7 @@
 		if (activeView !== "day-planner") {
 			settingsValues = { ...settingsValues, activeView: "day-planner" };
 		}
-		lastAction = `Day: ${date.toLocaleDateString()}`;
+		lastAction = `Opened ${new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric", month: "short", timeZone: timezone }).format(date)}`;
 	}
 
 	const blockedSlots = $derived(
@@ -472,7 +562,7 @@
 		if (disabledDatesEnabled) {
 			script.push("  const disabledDates = [/* Date objects to grey out */];");
 		}
-		if (ownHeader) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
+		if (!showNavigation) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
 
 		const props: string[] = ["{adapter}", `view="${activeView}"`];
 		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
@@ -481,9 +571,9 @@
 		if (dir === "rtl") props.push(`dir="rtl"`);
 		if (readOnly && !inert("readOnly")) props.push("readOnly");
 		if (!mondayStart && !inert("mondayStart")) props.push("mondayStart={false}");
-		if (ownHeader) {
-			props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
-		} else {
+		if (!showNavigation) props.push("currentDate={date}", "ondatechange={(d) => (date = d)}");
+		// With neither, an empty header snippet replaces both flags.
+		if (!ownHeader) {
 			if (!showModePills) props.push("showModePills={false}");
 			if (!showNavigation) props.push("showNavigation={false}");
 		}
@@ -498,7 +588,8 @@
 		if (disabledDatesEnabled) props.push("{disabledDates}");
 
 		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
-		const tag = `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n`;
+		// Two props fit on one line: the default reads as it would be typed.
+		const tag = props.length > 2 ? `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n` : `<Calendar ${props.join(" ")} `;
 		const body = ownHeader
 			? `${tag}>\n  <!-- an empty header snippet: no built-in title, pills or arrows -->\n  {#snippet header()}{/snippet}\n</Calendar>`
 			: `${tag}/>`;
@@ -530,21 +621,24 @@
 			{#each recipes as r (r.name)}
 				<button
 					class="setup"
-					aria-pressed={activeRecipe === r.name}
-					title={r.hint}
+					aria-pressed={activeRecipe === r}
+					onpointerenter={() => (hint = r.hint)}
+					onpointerleave={() => (hint = "")}
+					onfocus={() => (hint = r.hint)}
+					onblur={() => (hint = "")}
 					onclick={() => applyRecipe(r)}
 				>{r.name}</button>
 			{/each}
 		</div>
 
-		<Settings fields={settingsFields} bind:values={settingsValues} bind:hint />
+		<Settings {fields} bind:values={settingsValues} bind:hint />
 	{/snippet}
 
 	<main id="content" tabindex="-1">
 		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
 
 		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
-			<div class="cal-frame" bind:clientHeight={frameH}>
+			<div class="cal-frame" bind:clientHeight={frameH} bind:clientWidth={frameW}>
 				<!-- timezone is read when the calendar mounts; a new zone remounts it -->
 				{#key timezone}
 					<Calendar
@@ -553,7 +647,6 @@
 						theme={calendarTheme}
 						autoTheme={autoThemeProp}
 						height={phoneFrame ? 688 : calendarHeight}
-						borderRadius={0}
 						currentDate={focusedDate}
 						ondatechange={(d) => (focusedDate = d)}
 						header={ownHeader ? blankHeader : undefined}
@@ -592,9 +685,10 @@
 				class="drag-source"
 				draggable="true"
 				ondragstart={(e) => e.dataTransfer?.setData("text/plain", "Vinyasa Flow")}
+				onkeydown={addFromKeyboard}
 				role="button"
 				tabindex="0"
-				aria-label="Vinyasa Flow: drag onto a day in the calendar"
+				aria-label="Vinyasa Flow: drag onto a day, or press Enter to add it at the next hour"
 			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>
 			<div class="msgs">
 				<p class="msg" aria-live="polite">
@@ -610,6 +704,7 @@
 					<p class="msg msg--sizer" aria-hidden="true"><span class="live"></span>{m}</p>
 				{/each}
 			</div>
+			{#if edited}<button class="reset" onclick={resetEvents}>Reset events</button>{/if}
 		</div>
 
 		<section class="code" class:code--open={codeOpen} aria-labelledby="code-title">
@@ -731,13 +826,16 @@
 	/* ── Info line under the week: one message at a time ── */
 	.info {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: calc(12 * var(--u)) calc(20 * var(--u));
 		margin-top: calc(16 * var(--u));
 	}
+	/* Beside the drag source while there's room, under it on a narrow phone. */
 	.msgs {
 		display: grid;
-		flex: 1;
+		grid-template-columns: minmax(0, 1fr);
+		flex: 1 1 14em;
 		min-width: 0;
 	}
 	.msgs > .msg {
@@ -854,7 +952,8 @@
 		font: 400 calc(26 * var(--u)) / 1 var(--dt-sans, inherit);
 		letter-spacing: -0.01em;
 	}
-	.code-copy {
+	.code-copy,
+	.reset {
 		padding: calc(8 * var(--u)) calc(14 * var(--u));
 		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
 		border-radius: 0;
@@ -863,10 +962,15 @@
 		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, inherit);
 		cursor: pointer;
 	}
-	.code-copy:hover {
+	.reset {
+		flex: none;
+	}
+	.code-copy:hover,
+	.reset:hover {
 		border-color: var(--dt-text, #111);
 	}
-	.code-copy:focus-visible {
+	.code-copy:focus-visible,
+	.reset:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
 		outline-offset: 2px;
 	}
@@ -877,14 +981,17 @@
 		white-space: nowrap;
 		font: 400 calc(17 * var(--u)) / 1.5 var(--dt-mono, ui-monospace, monospace);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		font-variant-ligatures: none;
 		scrollbar-width: none;
 	}
 	.code pre {
 		margin: 0;
-		max-height: 44vh;
+		/* capped so the calendar above keeps ~420px on a 900px screen */
+		max-height: 30vh;
 		padding: calc(6 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u));
 		overflow: auto;
 		font: 400 13px / 1.6 var(--dt-mono, ui-monospace, monospace);
+		font-variant-ligatures: none;
 		color: var(--dt-text, #111);
 		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.18)) transparent;
 	}
@@ -910,7 +1017,8 @@
 		.pager-today,
 		.pager-btn,
 		.code-toggle,
-		.code-copy {
+		.code-copy,
+		.reset {
 			min-height: 44px;
 		}
 		.pager-btn {

@@ -104,6 +104,7 @@
 	// mount re-centres once the events have landed.
 	const CHIP_H = 22;           // one chip — these stay uniform
 	const CHIP_GAP = 3;
+	const NOW_H = 18;            // the now plate (.wg-now-time), its own row on the axis
 	/** The day's hours at their floor height — a quiet week is short, a busy
 	 *  day grows its row. Chips sit on this axis by start time. */
 	const TIME_H = 120;
@@ -173,27 +174,31 @@
 	}
 
 	/** Each chip at its start time, or just under the chip before it when that
-	 *  one is in the way: the order is time, the height is time, nothing overlaps. */
-	function chipTops(list: TimelineEvent[], dayMs: number): number[] {
+	 *  one is in the way: the order is time, the height is time, nothing overlaps.
+	 *  On today the now line is one more item on the axis: at the clock's
+	 *  height, under every chip that has started (pushed-down chips would read
+	 *  as still to come), and it pushes the chips to come down by its plate,
+	 *  so the plate never covers a chip's text. `end` is where the last item ends. */
+	function chipTops(
+		list: TimelineEvent[],
+		dayMs: number,
+		withNow = false,
+	): { tops: number[]; nowY: number | null; end: number } {
 		const tops: number[] = [];
 		let min = 0;
+		let nowY: number | null = null;
+		const placeNow = () => {
+			nowY = Math.max(timeTop(hourOf(clock.tick, dayMs)), min - CHIP_GAP + NOW_H / 2);
+			min = nowY + NOW_H / 2 + CHIP_GAP;
+		};
 		for (const ev of list) {
+			if (withNow && nowY === null && ev.start.getTime() > clock.tick) placeNow();
 			const top = Math.max(timeTop(hourOf(ev.start.getTime(), dayMs)), min);
 			tops.push(top);
 			min = top + CHIP_H + CHIP_GAP;
 		}
-		return tops;
-	}
-
-	/** The now-line: at the clock's height (pinned to the axis ends outside
-	 *  it), but never above a chip that has already started — pushed-down
-	 *  chips would read as still to come. */
-	function nowTop(list: TimelineEvent[], tops: number[], dayMs: number): number {
-		let y = timeTop(hourOf(clock.tick, dayMs));
-		list.forEach((ev, i) => {
-			if (ev.start.getTime() <= clock.tick) y = Math.max(y, tops[i] + CHIP_H + CHIP_GAP / 2);
-		});
-		return y;
+		if (withNow && nowY === null) placeNow();
+		return { tops, nowY, end: Math.max(0, min - CHIP_GAP) };
 	}
 
 	const _initMs = untrack(() => sod(focusDate?.getTime() ?? Date.now()));
@@ -918,8 +923,9 @@
 							{@const previewTimedEvent = dragPreviewTimedForDay(day.ms)}
 							{@const previewSegment = dragPreviewSegmentForDay(day.ms)}
 							{@const shownTimed = visibleTimedEvents.slice(0, isExpanded ? visibleTimedEvents.length : timedCap)}
-							{@const tops = chipTops(shownTimed, day.ms)}
-							{@const nowY = day.isToday ? nowTop(shownTimed, tops, day.ms) : null}
+							{@const axis = chipTops(shownTimed, day.ms, day.isToday)}
+							{@const tops = axis.tops}
+							{@const nowY = axis.nowY}
 							{@const inset = day.monthLabel ? MONTH_INSET : 0}
 							<div
 								class="wg-cell"
@@ -1017,6 +1023,7 @@
 										<button
 											type="button"
 											class="wg-ev-more"
+											style:margin-top="{axis.end - (tops.length ? tops[tops.length - 1] + CHIP_H : 0) + 2}px"
 											aria-expanded={isExpanded}
 											onclick={(e) => { e.stopPropagation(); expandedCells[day.ms] = !isExpanded; }}
 										>{isExpanded ? L.showLess : L.nMore(hiddenCount)}</button>
@@ -1194,7 +1201,7 @@
 		transform: rotate(180deg);
 		text-align: end; /* the rotation puts the end at the top */
 		padding: 6px 0;
-		font: 700 11px / 22px var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px / 22px var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: 0.08em;
 		white-space: nowrap;
 		overflow: hidden;
@@ -1266,7 +1273,7 @@
 	}
 
 	.wg-blocked-label {
-		font: 500 10px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
@@ -1290,8 +1297,8 @@
 	}
 
 	.wg-day-wd {
-		font: 400 11px / 1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.04em;
+		font: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-text-3, rgba(0, 0, 0, 0.38));
 	}
@@ -1301,7 +1308,8 @@
 	}
 
 	.wg-day-num {
-		font: 700 14px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 
@@ -1368,7 +1376,7 @@
 	}
 
 	.wg-ad-title {
-		font: 500 11px / 1.1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 13.5px / 1.1 var(--dt-sans, system-ui, sans-serif);
 		color: inherit;
 		white-space: nowrap;
 		overflow: hidden;
@@ -1417,7 +1425,8 @@
 		border-top: 2px solid var(--dt-accent, #2563eb);
 	}
 	.wg-now-time {
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 500 11px / 1.2 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
 		padding: 2px 4px;
 		border-radius: 0;
 		background: var(--dt-accent, #2563eb);
@@ -1429,9 +1438,6 @@
 	}
 	.wg-drop::after {
 		border-top-style: dashed;
-	}
-	.wg-drop .wg-now-time {
-		font-weight: 600;
 	}
 
 	.wg-ev {
@@ -1538,12 +1544,11 @@
 		border-radius: 0;
 		text-align: left;
 		align-self: flex-start;
-		font: 500 10px / 1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		padding: 2px 8px;
 		cursor: pointer;
 		flex-shrink: 0;
-		margin-top: 2px;
 	}
 
 	.wg-ev-more:hover {

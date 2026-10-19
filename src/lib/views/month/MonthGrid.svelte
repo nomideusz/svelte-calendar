@@ -56,6 +56,47 @@
 	const dotsMode = $derived(isMobile);
 	const MAX_CHIPS = 3;
 
+	// How many chips a cell has room for, measured, never more than MAX_CHIPS.
+	// A cell that overflows must also show its "+N more", so it gets one row
+	// fewer when that row would not fit beside its chips: a hidden event is
+	// always counted, never clipped away. Auto height and dots grow instead.
+	let fitAll = $state(MAX_CHIPS);
+	let fitMore = $state(MAX_CHIPS);
+
+	function measureFit() {
+		const cell = bodyEl?.querySelector<HTMLElement>('.mg-cell');
+		const chip = bodyEl?.querySelector<HTMLElement>('.mg-chip');
+		if (!cell || !chip) return;
+		const num = cell.querySelector<HTMLElement>('.mg-daynum');
+		const chips = cell.querySelector<HTMLElement>('.mg-chips');
+		const cs = getComputedStyle(cell);
+		const gap = chips ? parseFloat(getComputedStyle(chips).rowGap) || 0 : 0;
+		const room =
+			cell.clientHeight -
+			parseFloat(cs.paddingTop) -
+			parseFloat(cs.paddingBottom) -
+			(num?.offsetHeight ?? 0) -
+			(parseFloat(cs.rowGap) || 0);
+		const chipH = chip.offsetHeight;
+		const moreH = bodyEl?.querySelector<HTMLElement>('.mg-more')?.offsetHeight ?? chipH;
+		if (!chipH) return;
+		fitAll = Math.min(MAX_CHIPS, Math.floor((room + gap) / (chipH + gap)));
+		fitMore = Math.max(0, Math.min(MAX_CHIPS, Math.floor((room - moreH) / (chipH + gap))));
+	}
+
+	$effect(() => {
+		if (!bodyEl || autoHeight || dotsMode) {
+			fitAll = fitMore = MAX_CHIPS;
+			return;
+		}
+		void events; // a chip to measure may only arrive with the events
+		measureFit();
+		const ro = new ResizeObserver(measureFit);
+		ro.observe(bodyEl);
+		document.fonts?.ready.then(measureFit);
+		return () => ro.disconnect();
+	});
+
 	const range = $derived(viewState?.range);
 	const focusMonth = $derived((focusDate ?? new Date()).getMonth());
 
@@ -183,6 +224,7 @@
 				const date = new Date(cellMs);
 				const jsDay = date.getDay();
 				const dayEvents = eventsForDay(cellMs);
+				const shown = dayEvents.length <= fitAll ? dayEvents.length : fitMore;
 				row.push({
 					ms: cellMs,
 					date,
@@ -191,9 +233,9 @@
 					isToday: cellMs === todayMs,
 					isWeekend: jsDay === 0 || jsDay === 6,
 					isDisabled: disabledSet.has(cellMs),
-					chips: dayEvents.slice(0, MAX_CHIPS),
+					chips: dayEvents.slice(0, shown),
 					all: dayEvents,
-					overflow: Math.max(0, dayEvents.length - MAX_CHIPS),
+					overflow: dayEvents.length - shown,
 				});
 			}
 			rows.push(row);
@@ -342,13 +384,11 @@
 	}
 	.mg-head-cell {
 		padding: 6px 8px;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-size: 11px;
-		font-weight: 600;
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--dt-text-3);
+		letter-spacing: 0.08em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 
 	.mg-body {
@@ -384,12 +424,13 @@
 	.mg-cell--weekend {
 		background: var(--dt-weekend-bg, rgba(0, 0, 0, 0.02));
 	}
-	/* Dim only the day number for adjacent-month cells — their events stay legible */
+	/* Dim only the day number for adjacent-month cells — their events stay
+	   legible. text-2, not text-3: a 22px numeral still needs 4.5:1. */
 	.mg-cell--out {
 		background: var(--dt-surface, transparent);
 	}
 	.mg-cell--out .mg-daynum {
-		color: var(--dt-text-3);
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 	}
 	.mg-cell--today {
 		background: var(--dt-today-bg);
@@ -448,9 +489,7 @@
 		background: none;
 		padding: 2px 4px;
 		border-radius: 0;
-		font-family: var(--dt-sans);
-		font-size: 12px;
-		line-height: 1.3;
+		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text);
 		cursor: pointer;
 		min-width: 0;
@@ -484,9 +523,7 @@
 	}
 	.mg-chip-time {
 		flex: none;
-		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-size: 11px;
 		color: var(--dt-text-2);
 	}
 	.mg-chip-title {
@@ -500,9 +537,8 @@
 		background: none;
 		padding: 1px 4px;
 		border-radius: 0;
-		font-family: var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		font-size: 11px;
 		color: var(--dt-text-2);
 		cursor: pointer;
 	}
@@ -547,14 +583,17 @@
 	.mg--dots .mg-chip-time {
 		display: none;
 	}
+	/* Marks are circles, like every dot in the calendar */
 	.mg--dots .mg-chip-dot {
-		width: 8px;
-		height: 8px;
+		align-self: center;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
 	}
 	.mg--dots .mg-more {
 		padding: 0 3px;
 		min-height: 0;
 		align-self: center;
-		font-size: 10px;
+		font-size: 11px;
 	}
 </style>

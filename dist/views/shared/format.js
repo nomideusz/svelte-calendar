@@ -1,4 +1,4 @@
-import { fmtTime as _fmtTime, fmtDuration, getLabels } from '../../core/locale.js';
+import { fmtTime as _fmtTime, fmtDuration, getLabels, getDefaultLocale } from '../../core/locale.js';
 export function fmtTime(d, locale) {
     return _fmtTime(d, locale);
 }
@@ -46,4 +46,13 @@ export function groupIntoSlots(evts) {
         }
     }
     return slots;
+}
+/** A day in full, in the locale's own order: "Monday, October 19" (en-US),
+ *  "poniedziałek, 19 października" (pl-PL). For screen-reader names. */
+export function dateLong(ms, locale) {
+    return new Date(ms).toLocaleDateString(locale ?? getDefaultLocale(), {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+    });
 }

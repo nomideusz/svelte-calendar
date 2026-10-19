@@ -18,3 +18,6 @@ export interface TimeSlot {
     events: TimelineEvent[];
 }
 export declare function groupIntoSlots(evts: TimelineEvent[]): TimeSlot[];
+/** A day in full, in the locale's own order: "Monday, October 19" (en-US),
+ *  "poniedziałek, 19 października" (pl-PL). For screen-reader names. */
+export declare function dateLong(ms: number, locale?: string): string;

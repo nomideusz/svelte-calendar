@@ -177,7 +177,7 @@
 	/* ── Toggles: switches in two columns, on = the knob in the accent ── */
 	.ps-toggles {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: calc(10 * var(--u)) calc(20 * var(--u));
 		margin-top: calc(28 * var(--u));
 	}
@@ -344,6 +344,13 @@
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 			gap: calc(10 * var(--u)) calc(28 * var(--u));
+		}
+	}
+
+	/* The narrowest phones: one switch per row, so no prop name is cut. */
+	@media (max-width: 380px) {
+		.ps-toggles {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 

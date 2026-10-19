@@ -12,7 +12,8 @@
 	import type { TimelineEvent } from '../../core/types.js';
 	import { sod, addDaysMs, isAllDay } from '../../core/time.js';
 	import { startOfWeek as sowFn } from '../../core/time.js';
-	import { fmtTime as _fmtTime, weekdayShort } from '../../core/locale.js';
+	import { fmtTime as _fmtTime, fmtWeekRange, weekdayShort } from '../../core/locale.js';
+	import { dateLong } from '../shared/format.js';
 	import { createSwipe } from './swipe.js';
 
 
@@ -236,7 +237,9 @@
 	style={style || undefined}
 	style:height={autoHeight ? undefined : (height ? `${height}px` : '100%')}
 	role="region"
-	aria-label={L.weekAhead}
+	aria-label="{L.weekAhead}{dayCells.length
+		? `, ${fmtWeekRange(dayCells[0].ms, locale, dayCells[dayCells.length - 1].ms)}`
+		: ''}"
 	ontouchstart={swipe.ontouchstart}
 	ontouchmove={swipe.ontouchmove}
 	ontouchend={swipe.ontouchend}
@@ -266,7 +269,7 @@
 					disabled={cell.isDisabled}
 					onclick={() => handleDayTap(cell.ms)}
 					onkeydown={(e) => handleDayKeydown(e, cell.ms)}
-					aria-label="{cell.dayName} {cell.dayNum}{cell.isToday ? `, ${L.today}` : ''}"
+					aria-label="{dateLong(cell.ms, locale)}{cell.isToday ? `, ${L.today}` : ''}"
 				></button>
 				<!-- Date column -->
 				<div class="mw-date">
@@ -393,6 +396,7 @@
 		background: color-mix(in srgb, var(--dt-text, rgba(0, 0, 0, 0.87)) 3%, transparent);
 	}
 	.mw-row--past :global(.mw-ev-title),
+	.mw-row--past :global(.mw-ev-time),
 	.mw-row--past .mw-day-num {
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
@@ -437,8 +441,8 @@
 	}
 
 	.mw-day-name {
-		font: 600 11px/1 var(--dt-sans, system-ui, sans-serif);
-		letter-spacing: 0.06em;
+		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 	}
@@ -446,13 +450,16 @@
 		color: var(--dt-accent, #2563eb);
 	}
 
+	/* The date is the typography: large and regular, narrowed like the planner's */
 	.mw-day-num {
-		font: 700 18px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 22px/1 var(--dt-sans, system-ui, sans-serif);
+		font-stretch: 90%;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
 		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 	}
 	.mw-day-num--today {
 		color: var(--dt-accent, #2563eb);
-		font-weight: 500;
 	}
 
 	/* ─── Events column ──────────────────────────────── */
@@ -573,15 +580,15 @@
 	}
 
 	.mw-ev-time {
-		font: 400 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 14px/1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
+		color: var(--dt-text, rgba(0, 0, 0, 0.87));
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 
 	.mw-ev-more {
-		font: 500 12px/1 var(--dt-sans, system-ui, sans-serif);
+		font: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.54));
 		padding: 2px 4px;
 		min-height: 32px;

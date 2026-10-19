@@ -8,6 +8,7 @@
 import { neutral } from '#lib/theme/presets.js';
 
 // ── Demo-only theme CSS strings ───────────────────────────
+// --dt-text-2 alphas hold ≥4.5:1 on both --dt-stage-bg and --dt-bg.
 
 /** Slate — steel-blue dark page with violet accent (distinct from package midnight) */
 const slate = `
@@ -17,7 +18,7 @@ const slate = `
 	--dt-border: rgba(130, 148, 196, 0.08);
 	--dt-border-day: rgba(130, 148, 196, 0.14);
 	--dt-text: rgba(210, 218, 235, 0.85);
-	--dt-text-2: rgba(150, 162, 196, 0.55);
+	--dt-text-2: rgba(150, 162, 196, 0.75);
 	--dt-text-3: rgba(100, 112, 148, 0.50);
 	--dt-accent: #8b5cf6;
 	--dt-accent-dim: rgba(139, 92, 246, 0.15);
@@ -35,7 +36,7 @@ const forest = `
 	--dt-border: rgba(74, 222, 128, 0.07);
 	--dt-border-day: rgba(74, 222, 128, 0.14);
 	--dt-text: rgba(200, 230, 210, 0.85);
-	--dt-text-2: rgba(134, 188, 160, 0.55);
+	--dt-text-2: rgba(134, 188, 160, 0.68);
 	--dt-text-3: rgba(90, 140, 115, 0.55);
 	--dt-accent: #10b981;
 	--dt-accent-dim: rgba(16, 185, 129, 0.15);
@@ -53,7 +54,7 @@ const ocean = `
 	--dt-border: rgba(0, 100, 180, 0.08);
 	--dt-border-day: rgba(0, 100, 180, 0.14);
 	--dt-text: rgba(0, 30, 60, 0.87);
-	--dt-text-2: rgba(0, 50, 100, 0.50);
+	--dt-text-2: rgba(0, 50, 100, 0.68);
 	--dt-text-3: rgba(0, 60, 120, 0.35);
 	--dt-accent: #0891b2;
 	--dt-accent-dim: rgba(8, 145, 178, 0.12);
@@ -72,7 +73,7 @@ const rose = `
 	--dt-border: rgba(180, 50, 80, 0.07);
 	--dt-border-day: rgba(180, 50, 80, 0.13);
 	--dt-text: rgba(60, 10, 20, 0.87);
-	--dt-text-2: rgba(120, 40, 60, 0.50);
+	--dt-text-2: rgba(120, 40, 60, 0.74);
 	--dt-text-3: rgba(140, 60, 80, 0.38);
 	--dt-accent: #e11d48;
 	--dt-accent-dim: rgba(225, 29, 72, 0.12);

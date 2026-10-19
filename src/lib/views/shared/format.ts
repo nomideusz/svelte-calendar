@@ -3,7 +3,7 @@
  * Extracted from duplicated code in AgendaDay and AgendaWeek.
  */
 import type { TimelineEvent } from '../../core/types.js';
-import { fmtTime as _fmtTime, fmtDuration, getLabels, type CalendarLabels } from '../../core/locale.js';
+import { fmtTime as _fmtTime, fmtDuration, getLabels, getDefaultLocale, type CalendarLabels } from '../../core/locale.js';
 
 export function fmtTime(d: Date, locale?: string): string {
 	return _fmtTime(d, locale);
@@ -61,4 +61,14 @@ export function groupIntoSlots(evts: TimelineEvent[]): TimeSlot[] {
 		}
 	}
 	return slots;
+}
+
+/** A day in full, in the locale's own order: "Monday, October 19" (en-US),
+ *  "poniedziałek, 19 października" (pl-PL). For screen-reader names. */
+export function dateLong(ms: number, locale?: string): string {
+	return new Date(ms).toLocaleDateString(locale ?? getDefaultLocale(), {
+		weekday: 'long',
+		month: 'long',
+		day: 'numeric',
+	});
 }

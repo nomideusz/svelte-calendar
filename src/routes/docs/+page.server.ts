@@ -40,6 +40,27 @@ export async function load() {
 	// The props reference is what readers come for: open, not folded.
 	html = html.replace(/(<h2 id="all-props">[\s\S]*?)<details>/, '$1<details open>');
 
+	// The package name breaks after its scope on a phone instead of overflowing.
+	html = html.replace('<h1>@nomideusz/', '<h1>@nomideusz/<wbr>');
+
+	// Each view in the views table links to the demo showing it.
+	html = html.replace(/(<h2 id="views">[\s\S]*?)(?=<h2 )/, (section) =>
+		section.replace(
+			/<td><code>(week-planner|week-scroll|day-planner|week-agenda|day-agenda|month-grid)<\/code><\/td>/g,
+			'<td><code>$1</code><a class="doc-try" href="/?view=$1">Try in demo</a></td>',
+		),
+	);
+
+	// Every cell carries its column's name, so a phone can stack the rows.
+	html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_m, inner: string) => {
+		const heads = [...inner.matchAll(/<th(?:\s[^>]*)?>([\s\S]*?)<\/th>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
+		const rows = inner.replace(/<tr>([\s\S]*?)<\/tr>/g, (_r, row: string) => {
+			let i = 0;
+			return `<tr>${row.replace(/<td(\s[^>]*)?>/g, (_t, attrs = '') => `<td${attrs} data-label="${heads[i++] ?? ''}">`)}</tr>`;
+		});
+		return `<table>${rows}</table>`;
+	});
+
 	// Every code block gets a Copy key (the page wires the clicks).
 	html = html.replace(/<pre>/g, '<div class="doc-pre"><button type="button" class="doc-copy">Copy</button><pre>').replace(/<\/pre>/g, '</pre></div>');
 
@@ -53,7 +74,18 @@ export async function load() {
 		toc[toc.length - 1].items.push({ id, label: match[2].replace(/<[^>]+>/g, '') });
 	}
 
-	// Title and lede first, then the contents list on narrow screens, then the rest.
+	// A visible # link on every h2/h3, after the contents list has read the labels.
+	html = html.replace(
+		/<(h[23]) id="([^"]*)">([\s\S]*?)<\/\1>/g,
+		(_m, tag: string, id: string, inner: string) =>
+			`<${tag} id="${id}">${inner}<a class="doc-anchor" href="#${id}" aria-label="Link to ${inner.replace(/<[^>]+>/g, '')}">#</a></${tag}>`,
+	);
+
+	// Title and lede first, then the contents list on narrow screens, then the
+	// rest, cut after the Quick Start code so the page can run it live there.
 	const split = html.indexOf('</p>', html.indexOf('</h1>')) + 4;
-	return { head: html.slice(0, split), body: html.slice(split), toc };
+	const q = html.indexOf('id="quick-start"');
+	const qs = q < 0 ? -1 : html.indexOf('</pre></div>', q);
+	const cut = qs > split ? qs + '</pre></div>'.length : html.length;
+	return { head: html.slice(0, split), body: html.slice(split, cut), rest: html.slice(cut), toc };
 }

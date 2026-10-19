@@ -62,8 +62,8 @@ export const midnight = `
 	--dt-border: rgba(148, 163, 184, 0.07);
 	--dt-border-day: rgba(148, 163, 184, 0.14);
 	--dt-text: rgba(226, 232, 240, 0.85);
-	--dt-text-2: rgba(148, 163, 184, 0.55);
-	--dt-text-3: rgba(100, 116, 139, 0.55);
+	--dt-text-2: rgba(148, 163, 184, 0.75);
+	--dt-text-3: rgba(148, 163, 184, 0.65);
 	--dt-accent: #ef4444;
 	--dt-accent-dim: rgba(239, 68, 68, 0.18);
 	--dt-glow: rgba(239, 68, 68, 0.35);
