@@ -23,7 +23,16 @@ const GROUPS: Record<string, string> = {
 
 function splitProps(rest: string): { rest: string; props: string } {
 	const h = rest.indexOf('<h3 ', rest.indexOf('id="all-props"'));
-	return rest.includes('id="all-props"') && h > 0 ? { rest: rest.slice(0, h), props: rest.slice(h) } : { rest, props: '' };
+	if (!rest.includes('id="all-props"') || h < 0) return { rest, props: '' };
+	// Each group (an h3 and its table) folds behind its heading; the page closes
+	// them on a phone. The heading is the toggle, so it drops its # link.
+	const props = rest.slice(h).replace(/^[\s\S]*?(?=<h2 |$)/, (groups) =>
+		groups.replace(
+			/(<h3 [^>]*>[\s\S]*?)<a class="doc-anchor"[^>]*>#<\/a>(<\/h3>)\s*(<table>[\s\S]*?<\/table>)/g,
+			'<details class="doc-group" open><summary>$1$2</summary>$3</details>',
+		),
+	);
+	return { rest: rest.slice(0, h), props };
 }
 
 export async function load() {
@@ -106,7 +115,9 @@ export async function load() {
 		}
 		if (line.length > 60) line = `${line.slice(0, 59)}…`;
 		keys.push({ line, section });
-		return `<div class="doc-pre"><button type="button" class="doc-copy" aria-label="\0KEY${keys.length - 1}\0">Copy</button><pre>${code}</pre></div>`;
+		// A one-line block keeps its key at its end, not above the code.
+		const one = !text.trimEnd().includes('\n');
+		return `<div class="doc-pre${one ? ' doc-pre--line' : ''}"><button type="button" class="doc-copy" aria-label="\0KEY${keys.length - 1}\0">Copy</button><pre>${code}</pre></div>`;
 	});
 	html = html.replace(/\0KEY(\d+)\0/g, (_m, n: string) => {
 		const { line, section } = keys[+n];
@@ -137,12 +148,9 @@ export async function load() {
 	const q = html.indexOf('id="quick-start"');
 	const qs = q < 0 ? -1 : html.indexOf('</pre></div>', q);
 	const cut = qs > split ? qs + '</pre></div>'.length : html.length;
-	// The Quick Start code (the body's last block) shares the live calendar's wider measure.
-	const body = html.slice(split, cut);
-	const last = qs > split ? body.lastIndexOf('<div class="doc-pre">') : -1;
 	return {
 		head: html.slice(0, split),
-		body: last < 0 ? body : `${body.slice(0, last)}<div class="doc-pre doc-pre--live">${body.slice(last + '<div class="doc-pre">'.length)}`,
+		body: html.slice(split, cut),
 		// All Props' tables start at its first h3; the page puts its filter there.
 		...splitProps(html.slice(cut)),
 		toc,

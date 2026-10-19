@@ -2,7 +2,7 @@
 	MonthGrid — classic month overview.
 
 	Week-aligned grid (4–6 rows, driven by the view-state 'month' range).
-	Each cell lists up to MAX_CHIPS events plus a "+N more" overflow; clicking
+	Each cell lists as many events as fit plus a "+N more" overflow; clicking
 	an event fires oneventclick, clicking a day (or the overflow) fires
 	ondayclick — the natural month → day drill-down.
 -->
@@ -29,7 +29,7 @@ const todayMs = $derived(clock.today);
 // cell tap (day drill-down) carry the interaction.
 const dotsMode = $derived(isMobile);
 const MAX_CHIPS = 3;
-// How many chips a cell has room for, measured, never more than MAX_CHIPS.
+// How many chips a cell has room for, measured (MAX_CHIPS until then).
 // A cell that overflows must also show its "+N more", so it gets one row
 // fewer when that row would not fit beside its chips: a hidden event is
 // always counted, never clipped away. Auto height and dots grow instead.
@@ -47,8 +47,8 @@ function measureFit() {
 	const chipH = chip.offsetHeight;
 	const moreH = bodyEl?.querySelector(".mg-more")?.offsetHeight ?? chipH;
 	if (!chipH) return;
-	fitAll = Math.min(MAX_CHIPS, Math.floor((room + gap) / (chipH + gap)));
-	fitMore = Math.max(0, Math.min(MAX_CHIPS, Math.floor((room - moreH) / (chipH + gap))));
+	fitAll = Math.max(0, Math.floor((room + gap) / (chipH + gap)));
+	fitMore = Math.max(0, Math.floor((room - moreH) / (chipH + gap)));
 }
 $effect(() => {
 	if (!bodyEl || autoHeight || dotsMode) {
@@ -456,7 +456,7 @@ function chipTime(e) {
 		gap: 5px;
 		border: none;
 		background: none;
-		padding: 2px 4px;
+		padding: 1px 4px;
 		border-radius: 0;
 		font: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text);

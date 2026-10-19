@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import favicon from '../assets/favicon.svg';
 	import paperUrl from '../../assets/plates/paper.png';
-	import { themeStore, demoThemes, demoThemeNames, STORAGE_KEY } from './theme.svelte.js';
+	import { themeStore, demoThemes, demoThemeNames, STORAGE_KEY, THEME_ALIASES } from './theme.svelte.js';
 	import type { DemoThemeName } from './theme.svelte.js';
 
 	let { children } = $props();
@@ -62,7 +62,7 @@
 	const THEMES = Object.fromEntries(
 		demoThemeNames.map((n) => [n, { s: demoThemes[n].dark ? 'dark' : 'light', p: themeProps(n) }]),
 	);
-	const themeScript = `<script>(function(){try{var T=${JSON.stringify(THEMES)},d=document.documentElement,n=new URLSearchParams(location.search).get('host');if(!T.hasOwnProperty(n)){try{n=localStorage.getItem(${JSON.stringify(STORAGE_KEY)})}catch(e){}}if(!T.hasOwnProperty(n))n=matchMedia('(prefers-color-scheme: dark)').matches?'slate':'light';d.dataset.theme=n;d.dataset.scheme=T[n].s;for(var k in T[n].p)d.style.setProperty(k,T[n].p[k])}catch(e){}})()<\/script>`;
+	const themeScript = `<script>(function(){try{var T=${JSON.stringify(THEMES)},A=${JSON.stringify(THEME_ALIASES)},d=document.documentElement,a=function(v){return A.hasOwnProperty(v)?A[v]:v},n=a(new URLSearchParams(location.search).get('host'));if(!T.hasOwnProperty(n)){try{n=a(localStorage.getItem(${JSON.stringify(STORAGE_KEY)}))}catch(e){}}if(!T.hasOwnProperty(n))n=matchMedia('(prefers-color-scheme: dark)').matches?'slate':'paper';d.dataset.theme=n;d.dataset.scheme=T[n].s;for(var k in T[n].p)d.style.setProperty(k,T[n].p[k])}catch(e){}})()<\/script>`;
 
 	// Properties we set on <html> last time, so a theme switch can remove
 	// tokens the new theme doesn't define without clobbering unrelated

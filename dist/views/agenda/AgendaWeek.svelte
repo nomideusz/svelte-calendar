@@ -579,7 +579,7 @@ const weekDays = $derived.by(() => {
 	}
 	.ag-body::-webkit-scrollbar-thumb {
 		background: var(--dt-border);
-		border-radius: 2px;
+		border-radius: 0;
 	}
 
 	/* ═══ All-day chips ═══ */

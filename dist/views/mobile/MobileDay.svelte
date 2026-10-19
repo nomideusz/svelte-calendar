@@ -13,6 +13,7 @@ import { HOUR_MS, sod, addDaysMs, diffDays, isAllDay, segmentForDay } from "../.
 import { fmtHParts, fmtTime } from "../../core/locale.js";
 import { createSwipe } from "./swipe.js";
 import { dateLong } from "../shared/format.js";
+import { openingTop } from "../shared/opening-top.js";
 let { height = null, events = [], style = "", locale, focusDate, oneventclick, oneventcreate, selectedEventId = null, readOnly = false, visibleHours } = $props();
 // ── Context ────────────────────────────────────────
 const ctx = useCalendarContext();
@@ -459,13 +460,18 @@ function onResizeCancel() {
 	cleanupResize();
 }
 // ── Auto-scroll to now ─────────────────────────────
+// The hour before now, its label clear of the top, no event sliced there
+// (openingTop). The grid's 8px padding sits above hour 0.
 let gridEl;
 $effect(() => {
 	void dayMs;
 	const el = gridEl;
 	if (!el) return;
 	untrack(() => {
-		if (nowOffset >= 0) el.scrollTop = Math.max(0, nowOffset - 120);
+		if (nowOffset < 0) return;
+		const line = Math.max(0, Math.floor(nowOffset / HOUR_HEIGHT - 1)) * HOUR_HEIGHT;
+		const y = openingTop(positionedEvents, line, HOUR_HEIGHT, 8, nowOffset, el.clientHeight - 8);
+		el.scrollTop = y && y + 8;
 	});
 });
 </script>

@@ -23,7 +23,12 @@
 	let mounted = $state(false);
 	onMount(() => {
 		mounted = true;
-		requestAnimationFrame(track); // a #hash load lands mid-page: mark it before any scroll
+		// On a phone the All Props groups start closed (the server renders them open).
+		if (matchMedia('(max-width: 768px)').matches) for (const d of content.querySelectorAll<HTMLDetailsElement>('details.doc-group')) d.open = false;
+		// A #hash load lands mid-page: open its group, land on it again (the groups
+		// above it just closed), and mark it before any scroll.
+		revealTarget(true);
+		requestAnimationFrame(track);
 	});
 
 	// The section being read: the last h2 above the top fifth of the screen.
@@ -37,12 +42,8 @@
 		active = id;
 		// Past the first screen, a Contents key (narrow screens: the rail list is hidden).
 		jump = scrollY > innerHeight && scrollY + innerHeight < document.documentElement.scrollHeight - 64;
-		up = scrollY < lastY;
-		lastY = scrollY;
 	}
 	let jump = $state(false);
-	let up = $state(false);
-	let lastY = 0;
 	let toc: HTMLDetailsElement;
 	function openContents() {
 		toc.open = true;
@@ -55,8 +56,9 @@
 	});
 
 	// All Props filter: hides the rows that miss the query in every column
-	// (name, type, default, description), and the groups left empty. With no
-	// row left, it names the sections above that mention the query instead.
+	// (name, type, default, description), and the groups left empty; a closed
+	// group with a match opens until the query is cleared. With no row left,
+	// it names the sections above that mention the query instead.
 	let content: HTMLElement;
 	let filter = $state('');
 	let matches = $state(0);
@@ -64,26 +66,37 @@
 	$effect(() => {
 		const q = filter.trim().toLowerCase();
 		let n = 0;
-		for (const table of content.querySelectorAll<HTMLTableElement>('table:has(tr[id^="prop-"])')) {
+		for (const group of content.querySelectorAll<HTMLDetailsElement>('details.doc-group')) {
 			let shown = 0;
-			for (const tr of table.querySelectorAll<HTMLTableRowElement>('tbody tr')) {
+			for (const tr of group.querySelectorAll<HTMLTableRowElement>('tbody tr')) {
 				tr.hidden = !!q && !tr.textContent!.toLowerCase().includes(q);
 				if (!tr.hidden) shown++;
 			}
-			table.hidden = !shown;
-			const h = table.previousElementSibling;
-			if (h?.tagName === 'H3') (h as HTMLElement).hidden = !shown;
+			group.hidden = !shown;
+			if (q && shown && !group.open) {
+				group.open = true;
+				group.dataset.auto = '';
+			} else if (!q && group.dataset.auto != null) {
+				group.open = false;
+				delete group.dataset.auto;
+			}
 			n += shown;
 		}
 		matches = n;
 		mentions = q && !n ? mentioning(q) : [];
 	});
-	/** The h2–h4 sections before All Props whose heading or text contain q. */
+	/** The h2–h4 sections before All Props whose heading or text contain q,
+	    those named in their heading first. */
 	function mentioning(q: string) {
+		const titled: { id: string; label: string }[] = [];
 		const found: { id: string; label: string }[] = [];
 		let h: Element | null = null;
 		let hit = false;
-		const flush = () => h && hit && found.push({ id: h.id, label: h.textContent!.replace(/#$/, '') });
+		const flush = () => {
+			if (!h || !hit) return;
+			const label = h.textContent!.replace(/#$/, '');
+			(label.toLowerCase().includes(q) ? titled : found).push({ id: h.id, label });
+		};
 		for (const el of content.children) {
 			if (el.id === 'all-props') break;
 			if (/^H[234]$/.test(el.tagName) && el.id) {
@@ -94,15 +107,19 @@
 			if (!el.classList.contains('doc-toc') && el.textContent!.toLowerCase().includes(q)) hit = true;
 		}
 		flush();
-		return found;
+		return [...titled, ...found];
 	}
-	// A link to a prop the filter hides clears the filter, then lands on the row.
-	async function revealTarget() {
-		const row = location.hash.startsWith('#prop-') && document.getElementById(location.hash.slice(1));
-		if (!row || !row.hidden) return;
-		filter = '';
+	// A link into a closed group, or to a prop the filter hides, opens the
+	// group (clearing the filter), then lands on its target.
+	async function revealTarget(land = false) {
+		const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+		if (!el) return;
+		const group = el.closest('details');
+		if (!land && !el.hidden && (!group || group.open)) return;
+		if (el.hidden) filter = '';
 		await tick();
-		row.scrollIntoView();
+		if (group) group.open = true;
+		el.scrollIntoView();
 	}
 
 	// Copy keys on every code block (rendered into the markdown by the server).
@@ -135,7 +152,7 @@
 	}
 </script>
 
-<svelte:window onscroll={track} onhashchange={revealTarget} />
+<svelte:window onscroll={track} onhashchange={() => revealTarget()} />
 
 {#snippet contents()}
 	{#each data.toc as g (g.title)}
@@ -167,7 +184,10 @@
 			<div class="doc-live-frame">
 				{#if mounted}<Calendar {adapter} view="week-planner" oneventcreate={create} oneventmove={move} height={416} borderRadius={0} />{/if}
 			</div>
-			<figcaption>The code above, running: drag on empty time to add an event, drag one to move it. In a container under 768px wide it switches to the touch layout.</figcaption>
+			<figcaption>
+				<span class="doc-live-wide">The code above, running: drag on empty time to add an event, drag one to move it. In a container under 768px wide it switches to the touch layout.</span>
+				<span class="doc-live-touch">The code above, running in its touch layout (the container is under 768px wide): tap a day to open it, then tap empty time to add an event.</span>
+			</figcaption>
 		</figure>
 		{@html data.rest}
 		{#if data.props}
@@ -207,7 +227,7 @@
 		</nav>
 	</main>
 	<p class="doc-sr" aria-live="polite">{copied}</p>
-	<button type="button" class="doc-jump" class:doc-jump--on={jump} class:doc-jump--up={up} onclick={openContents}>Contents</button>
+	<button type="button" class="doc-jump" class:doc-jump--on={jump} onclick={openContents}>Contents</button>
 </Shell>
 
 <style>
@@ -306,22 +326,14 @@
 	.doc-content:focus {
 		outline: none;
 	}
-	/* One measure for prose, headings and code; only the tables (the props
-	   reference) and the live calendar break out to the whole column. */
+	/* One right edge for the heading rules, code, tables and the live
+	   calendar; prose keeps a narrower reading measure inside it. */
 	.doc-content > :global(*) {
-		max-width: 44rem;
-	}
-	.doc-content > :global(:is(table, details:has(table))) {
-		max-width: 1120px;
-	}
-	/* The Quick Start code and the calendar running it share one wider measure. */
-	.doc-content > :global(.doc-pre--live),
-	.doc-content > .doc-live {
 		max-width: 60rem;
 	}
-	/* Prose reads at about 70 characters a line; code and tables keep the column. */
+	/* Prose reads at about 70 characters a line. */
 	.doc-content :global(:is(p, li, blockquote)) {
-		max-width: 60ch;
+		max-width: 36rem;
 	}
 	.doc-content :global(:is(h2, h3, h4, tr[id])) {
 		scroll-margin-top: 24px;
@@ -387,6 +399,15 @@
 		color: var(--dt-text, #111);
 		font: 400 16px / 1 var(--dt-sans, system-ui, sans-serif);
 		caret-color: var(--dt-accent, #111);
+	}
+	/* The browser's clear key, in ink instead of its own blue. */
+	.doc-filter input::-webkit-search-cancel-button {
+		appearance: none;
+		width: 16px;
+		height: 16px;
+		background: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 3l10 10M13 3L3 13' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+		cursor: pointer;
 	}
 	.doc-filter input:focus-visible {
 		outline: 2px solid var(--dt-text, #111);
@@ -470,9 +491,26 @@
 	}
 	.doc-live figcaption {
 		margin-top: 8px;
+		max-width: 36rem;
 		font-size: 15px;
 		line-height: 1.45;
 		color: var(--dt-text, #111);
+	}
+	/* The caption follows the layout the calendar picked: it swaps under a
+	   768px container (the frame's 2px borders included here). */
+	.doc-live {
+		container-type: inline-size;
+	}
+	.doc-live-touch {
+		display: none;
+	}
+	@container (max-width: 771.98px) {
+		.doc-live-wide {
+			display: none;
+		}
+		.doc-live-touch {
+			display: inline;
+		}
 	}
 
 	/* Back to the contents, past the first screen, where the rail list is hidden. */
@@ -524,13 +562,6 @@
 			outline-offset: -4px;
 		}
 	}
-	/* On a phone the bar comes back only when the reader scrolls up. */
-	@media (max-width: 640px) {
-		.doc-jump--on:not(.doc-jump--up) {
-			visibility: hidden;
-			opacity: 0;
-		}
-	}
 	@media (prefers-reduced-motion: reduce) {
 		.doc-jump,
 		.doc-content :global(.doc-anchor),
@@ -545,6 +576,18 @@
 		letter-spacing: -0.015em;
 		color: var(--dt-text, #111);
 		margin: 0 0 10px;
+	}
+
+	/* On a phone the bar's wordmark already names it: the package line is a
+	   quiet kicker, so the lede and Installation reach the first screen. */
+	@media (max-width: 640px) {
+		.doc-content :global(h1) {
+			font-size: 16px;
+			line-height: 1.35;
+			letter-spacing: 0;
+			color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
+			margin-bottom: 8px;
+		}
 	}
 
 	.doc-content :global(h2) {
@@ -659,6 +702,23 @@
 		}
 		.doc-content :global(.doc-pre pre) {
 			padding-top: 52px;
+		}
+	}
+
+	/* A one-line block: the key is a cell at the frame's end, full height, and
+	   the code scrolls in its own box beside it. */
+	.doc-content :global(.doc-pre--line pre) {
+		padding-top: 16px;
+		margin-right: 72px;
+	}
+	.doc-content :global(.doc-pre--line .doc-copy) {
+		bottom: 0;
+		width: 72px;
+		border-left: none;
+	}
+	@media (max-width: 768px) {
+		.doc-content :global(.doc-pre--line pre) {
+			padding-top: 12px;
 		}
 	}
 
@@ -795,6 +855,7 @@
 			display: flex;
 			align-items: center;
 			min-height: 44px;
+			min-width: 44px;
 			padding-block: 0;
 		}
 		.doc-toc a:hover,
@@ -865,6 +926,32 @@
 		padding: 0;
 		margin: 12px 16px;
 		width: calc(100% - 32px);
+	}
+
+	/* All Props groups: the heading folds its table (closed by default on a
+	   phone); unframed, so the sticky column heads still work. */
+	.doc-content :global(details.doc-group) {
+		margin: 0;
+		border: none;
+		overflow: visible;
+	}
+	.doc-content :global(details.doc-group > summary) {
+		padding: 0;
+		border-bottom: none;
+	}
+	.doc-content :global(details.doc-group > table) {
+		margin: 0 0 20px;
+		padding: 0;
+		width: 100%;
+	}
+	@media (max-width: 768px) {
+		.doc-content :global(details.doc-group > summary) {
+			min-height: 52px;
+			border-bottom: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
+		}
+		.doc-content :global(details.doc-group > summary h3) {
+			margin: 0;
+		}
 	}
 
 	/* ── Horizontal rule ── */

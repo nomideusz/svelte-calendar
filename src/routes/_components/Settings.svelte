@@ -68,7 +68,7 @@
 				<span class="ps-name">{f.label}:</span>
 				<select
 					name={f.key}
-					aria-describedby={reason ? `ps-why-${f.key}` : undefined}
+					aria-describedby={reason || f.hint ? `ps-why-${f.key}` : undefined}
 					value={String(values[f.key] ?? '')}
 					disabled={!!reason}
 					onchange={(e) => setVal(f.key, e.currentTarget.value)}
@@ -91,7 +91,7 @@
 			role="switch"
 			aria-checked={values[f.key] === true}
 			aria-disabled={!!reason}
-			aria-describedby={reason ? `ps-why-${f.key}` : undefined}
+			aria-describedby={reason || f.hint ? `ps-why-${f.key}` : undefined}
 			title={reason || undefined}
 			{...show(f)}
 			onclick={() => { if (!reason) setVal(f.key, values[f.key] !== true); }}
@@ -118,7 +118,7 @@
 					<input
 						type="range"
 						name={f.key}
-						aria-describedby={reason ? `ps-why-${f.key}` : undefined}
+						aria-describedby={reason || f.hint ? `ps-why-${f.key}` : undefined}
 						min={f.min}
 						max={f.max}
 						step={f.step}
@@ -132,10 +132,11 @@
 		</div>
 	</details>
 
-	<!-- Why a control is off, read with the control (the info line is far away). -->
+	<!-- What a control does, or why it is off, read with the control: the
+	     info line shows it too, but is not announced (it is not live for hints). -->
 	{#each fields as f (f.key)}
-		{@const reason = reasonOf(f)}
-		{#if reason}<span class="ps-why" id="ps-why-{f.key}">{reason}</span>{/if}
+		{@const why = reasonOf(f) || f.hint}
+		{#if why}<span class="ps-why" id="ps-why-{f.key}">{why}</span>{/if}
 	{/each}
 </section>
 
@@ -276,6 +277,19 @@
 		opacity: 0.4;
 		cursor: not-allowed;
 	}
+	/* A disabled switch is neutral whatever its value: no accent, so an ON
+	   that does nothing doesn't read as on; the knob keeps its side. */
+	.ps-switch.ps-off {
+		opacity: 1;
+		color: var(--dt-text-3, rgba(15, 15, 15, 0.54));
+		border-color: var(--dt-text-3, rgba(15, 15, 15, 0.54));
+	}
+	.ps-switch.ps-off .ps-knob {
+		background: color-mix(in srgb, var(--dt-text, #111) 10%, transparent);
+	}
+	.ps-switch.ps-off .ps-knob::after {
+		background: var(--dt-bg, #efebe9);
+	}
 	.ps-off * {
 		cursor: not-allowed;
 	}
@@ -310,6 +324,7 @@
 	}
 	.ps-rng input {
 		width: 100%;
+		min-height: 24px;
 		accent-color: var(--dt-accent, #1d4fd7);
 	}
 	.ps-rng output {

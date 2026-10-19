@@ -7,7 +7,7 @@
  */
 import { describe, it, expect } from 'vitest';
 
-describe('headless exports', () => {
+describe('headless exports', { timeout: 20_000 }, () => { // cold module-graph imports; slow on a loaded machine
 	it('exports createCalendar from the headless module', async () => {
 		const mod = await import('./index.js');
 		expect(mod.createCalendar).toBeDefined();

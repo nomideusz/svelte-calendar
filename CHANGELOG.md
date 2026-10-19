@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.3
+
+### Patch Changes
+
+- Week planner and mobile day open without slicing an event at the top: when an event crosses the opening hour, the grid starts at that event (or the next hour after it ends) as long as the now line stays on screen. The placement is a shared, tested `openingTop` helper.
+- `mobile='auto'`: the calendar body stays hidden until the container is measured, so a phone no longer flashes the desktop grid first (shown after 1.5s regardless, without JS).
+- Month grid shows as many chips as fit the cell before "+N more" (was capped at 3), with tighter chip padding.
+- Square-cut everywhere: scrollbar thumbs and the resize grip have no radius.
+- Only the live dot pulses: the day agenda's now dot holds still. The week planner's live dot is 7px.
+
 ## 1.4.2
 
 ### Patch Changes

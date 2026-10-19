@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { page } from "$app/state";
-	import { replaceState } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import {
 		Calendar,
 		createMemoryAdapter,
@@ -91,7 +91,8 @@
 
 	// ── Recipes: one-click prop bundles showing common setups ──
 	// The slug is the shareable `?setup=` value (the docs link to these).
-	const recipes: { slug: string; name: string; hint: string; values: Record<string, SettingValue> }[] = [
+	// `weekly`: a template of repeating classes, so its code uses the recurring adapter.
+	const recipes: { slug: string; name: string; hint: string; weekly?: boolean; values: Record<string, SettingValue> }[] = [
 		{ slug: "default", name: "Default", hint: "Just the component: its own header with Today, the arrows and the view pills", values: {} },
 		{
 			slug: "own-header", name: "Own header",
@@ -108,7 +109,7 @@
 			},
 		},
 		{
-			slug: "class-timetable", name: "Class timetable",
+			slug: "class-timetable", name: "Class timetable", weekly: true,
 			hint: "Fixed weekly template: day names only, no past-day dimming, read-only",
 			values: {
 				activeView: "week-planner", readOnly: true,
@@ -121,7 +122,7 @@
 		// Agenda views take no drag edits, so these leave readOnly alone
 		// rather than show it on and disabled.
 		{
-			slug: "studio-timetable", name: "Studio timetable",
+			slug: "studio-timetable", name: "Studio timetable", weekly: true,
 			hint: "Week agenda as side-by-side day columns — classic class-schedule grid",
 			values: {
 				activeView: "week-agenda", columns: true,
@@ -131,7 +132,7 @@
 			},
 		},
 		{
-			slug: "embedded-schedule", name: "Embedded schedule",
+			slug: "embedded-schedule", name: "Embedded schedule", weekly: true,
 			hint: "Chromeless compact agenda for dropping into an existing page",
 			values: {
 				activeView: "week-agenda", compact: true,
@@ -299,7 +300,8 @@
 		// The host page only once the visitor picked one; else theirs follows the OS.
 		if (themeStore.chosen) q.set("host", themeStore.current);
 		const search = q.size ? `?${q}` : "";
-		if (search !== location.search) replaceState(`${location.pathname}${search}${location.hash}`, {});
+		// Shallow: no load, no scroll, focus stays where it is.
+		if (search !== location.search) goto(`${location.pathname}${search}${location.hash}`, { shallow: true, replace: true });
 	});
 
 	const readOnly = $derived(Boolean(settingsValues.readOnly));
@@ -343,6 +345,9 @@
 			planner: "Plan", agenda: "Lista", scroll: "Tygodnie", allDay: "Cały dzień",
 			noEvents: "Brak wydarzeń", nothingScheduled: "Nic nie zaplanowano",
 			goToToday: "Przejdź do dziś", unavailable: "Niedostępne",
+			previousDay: "Poprzedni dzień", nextDay: "Następny dzień",
+			previousWeek: "Poprzedni tydzień", nextWeek: "Następny tydzień",
+			previousMonth: "Poprzedni miesiąc", nextMonth: "Następny miesiąc",
 			cancelled: "odwołane", full: "brak miejsc", nMore: (n) => `+${n} więcej`,
 		},
 		"de-DE": {
@@ -350,6 +355,9 @@
 			planner: "Planer", agenda: "Liste", scroll: "Wochen", allDay: "Ganztägig",
 			noEvents: "Keine Termine", nothingScheduled: "Nichts geplant",
 			goToToday: "Zu heute", unavailable: "Nicht verfügbar",
+			previousDay: "Vorheriger Tag", nextDay: "Nächster Tag",
+			previousWeek: "Vorherige Woche", nextWeek: "Nächste Woche",
+			previousMonth: "Vorheriger Monat", nextMonth: "Nächster Monat",
 			cancelled: "abgesagt", full: "ausgebucht", nMore: (n) => `+${n} weitere`,
 		},
 		"fr-FR": {
@@ -357,6 +365,9 @@
 			planner: "Planning", agenda: "Liste", scroll: "Semaines", allDay: "Toute la journée",
 			noEvents: "Aucun événement", nothingScheduled: "Rien de prévu",
 			goToToday: "Aller à aujourd’hui", unavailable: "Indisponible",
+			previousDay: "Jour précédent", nextDay: "Jour suivant",
+			previousWeek: "Semaine précédente", nextWeek: "Semaine suivante",
+			previousMonth: "Mois précédent", nextMonth: "Mois suivant",
 			cancelled: "annulé", full: "complet", nMore: (n) => `+${n} de plus`,
 		},
 		"ar-SA": {
@@ -364,6 +375,9 @@
 			planner: "المخطط", agenda: "القائمة", scroll: "الأسابيع", allDay: "طوال اليوم",
 			noEvents: "لا توجد أحداث", nothingScheduled: "لا شيء مجدول",
 			goToToday: "الانتقال إلى اليوم", unavailable: "غير متاح",
+			previousDay: "اليوم السابق", nextDay: "اليوم التالي",
+			previousWeek: "الأسبوع السابق", nextWeek: "الأسبوع التالي",
+			previousMonth: "الشهر السابق", nextMonth: "الشهر التالي",
 			cancelled: "ملغى", full: "مكتمل", nMore: (n) => `+${n} أخرى`,
 		},
 	};
@@ -392,6 +406,11 @@
 				: f,
 		),
 	);
+
+	// The phone's quick row is narrow: "week → mobile" there, the rail says the rest.
+	const SHORT: Record<string, string> = { "week-planner": "week", "week-scroll": "scroll", "day-planner": "day" };
+	const quickLabel = (o: { value: string; label: string }) =>
+		mobileOn && SHORT[o.value] ? `${SHORT[o.value]} → mobile` : o.label;
 
 	// ── Seed data (auto-generated relative to today) ──────
 	// Both are state: moving a recurring occurrence takes that date out of its
@@ -443,11 +462,8 @@
 			if (readOnly) return `readOnly is on: nothing moves. ${tap} an event and its callback reports here.`;
 			if (activeView === "week-scroll") return `Drag an event to another day or time; ${tap.toLowerCase()} empty space to add a class.`;
 			if (touch) return "Drag an event to move it; long-press empty time to create one.";
-			const drag = "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
-			// The planners take the same edits from the keyboard.
-			return activeView === "week-scroll"
-				? drag
-				: `${drag} Keys: Alt+arrows move the focused event, Alt+Shift+↑↓ resize it, Enter on a day creates.`;
+			// The keyboard path is the legend beside the drag source (keysOn).
+			return "Drag an event to move it, drag its edge to resize, drag on empty time to create.";
 		}
 		if (activeView === "month-grid") return `${tap} a day to open it in day-planner, or an event to report it here.`;
 		if (activeView === "week-agenda" && columns && !mobileOn)
@@ -456,6 +472,8 @@
 		return `${tap} an event and the calendar's oneventclick reports here.`;
 	}
 	const idle = $derived(idleFor(false));
+	// The planners take the same edits from the keyboard: a standing legend.
+	const keysOn = $derived(canEdit && activeView !== "week-scroll");
 	const idleTouch = $derived(idleFor(true));
 	/* Every message the line can show, stacked unseen in its one cell, so it is
 	   always as tall as the longest and nothing around it moves on hover. */
@@ -625,26 +643,43 @@
 				: `    ${k}: ${quote(String(v))},`,
 		);
 	const codeSnippet = $derived.by(() => {
+		// A weekly template (the timetable setups, or day names only) shows
+		// repeating classes. Its occurrences are read-only, so it takes no edits.
+		const weekly = Boolean(activeRecipe?.weekly) || (!showDates && !inert("showDates"));
 		// The planners and the scroll take creates and moves; the week-agenda
 		// columns only a day-drag; the other views no edits at all.
-		const creates = !readOnly && TIMED.includes(activeView);
-		const moves = creates || (!readOnly && activeView === "week-agenda" && columns);
+		const creates = !weekly && !readOnly && TIMED.includes(activeView);
+		const moves = creates || (!weekly && !readOnly && activeView === "week-agenda" && columns);
 		const editable = creates || moves;
 		const extraImports = selectedPreset !== "auto" ? `, ${selectedPreset}` : "";
 		const script: string[] = [
-			`  import { Calendar, createMemoryAdapter${extraImports} } from '@nomideusz/svelte-calendar';`,
-			"",
-			"  // Today at a given hour, so the events land in the week the calendar opens on",
-			"  const today = new Date();",
-			"  const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);",
+			`  import { Calendar, ${weekly ? "createRecurringAdapter" : "createMemoryAdapter"}${extraImports} } from '@nomideusz/svelte-calendar';`,
 			"",
 		];
+		if (!weekly) {
+			script.push(
+				"  // Today at a given hour, so the events land in the week the calendar opens on",
+				"  const today = new Date();",
+				"  const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);",
+				"",
+			);
+		}
 		// The README's Quick Start, line for line.
 		const sample = [
 			"    { id: '1', title: 'Team Sync', start: at(9),  end: at(10) },",
 			"    { id: '2', title: 'Lunch',     start: at(12), end: at(13) },",
 		];
-		if (editable) {
+		if (weekly) {
+			script.push(
+				"  // Each class repeats on its weekday (1 = Monday … 7 = Sunday)",
+				"  const adapter = createRecurringAdapter([",
+				"    { id: '1', title: 'Morning Flow', dayOfWeek: 1, startTime: '07:00', endTime: '08:15', subtitle: 'Anna Szlęk', location: 'Studio A' },",
+				"    { id: '2', title: 'Core Strength', dayOfWeek: 2, startTime: '09:00', endTime: '10:00', subtitle: 'Marta Sawiuk', location: 'Studio A' },",
+				"    { id: '3', title: 'Hatha Basics', dayOfWeek: 3, startTime: '07:00', endTime: '08:00', subtitle: 'Denis Kolokol', location: 'Studio B' },",
+				"    { id: '4', title: 'Friday Flow', dayOfWeek: 5, startTime: '16:00', endTime: '17:15', subtitle: 'Anna Szlęk', location: 'Studio A' },",
+				"  ]);",
+			);
+		} else if (editable) {
 			script.push(
 				"  let events = $state([",
 				...sample,
@@ -684,6 +719,7 @@
 		if (disabledDatesEnabled) {
 			script.push(
 				"",
+				...(weekly ? ["  const today = new Date();"] : []),
 				"  // Closed on Sundays: last week's, this week's and next week's",
 				"  const sunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + ((7 - today.getDay()) % 7));",
 				"  const disabledDates = [-7, 0, 7].map((n) => new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate() + n));",
@@ -721,16 +757,19 @@
 		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
 		// A short tag stays on one line, as it would be typed (the default is
 		// the README's); a longer one takes a prop per line.
-		const oneLine = `<Calendar ${props.join(" ")} `;
-		const tag = oneLine.length <= 90 ? oneLine : `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n`;
+		const oneLine = `<Calendar ${props.join(" ")}`;
+		const short = oneLine.length < 90;
+		const tag = short ? oneLine : `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n`;
 		const body = ownHeader
 			? `${tag}>\n  <!-- an empty header snippet: no built-in title, pills or arrows -->\n  {#snippet header()}{/snippet}\n</Calendar>`
-			: `${tag}/>`;
+			: `${tag}${short ? " " : ""}/>`;
 		return `<script>\n${script.join("\n")}\n</` + `script>\n\n${body}`;
 	});
 	const codeLines = $derived(codeSnippet.split("\n").length);
 	// The drawer's collapsed line: the <Calendar> tag on one line.
-	const codeLine = $derived(codeSnippet.slice(codeSnippet.indexOf("<Calendar")).replace(/\s+/g, " "));
+	const codeLine = $derived(
+		codeSnippet.slice(codeSnippet.indexOf("<Calendar")).replace(/<!--[\s\S]*?-->/g, "").replace(/\s+>/g, ">").replace(/\s+/g, " "),
+	);
 </script>
 
 <svelte:window onkeydown={closeCode} />
@@ -740,11 +779,14 @@
 <!-- In the rail on desktop; at or below 1360px above the calendar instead,
      since the rail folds under the page there. One is display:none at a time. -->
 {#snippet setups(where: string)}
+	<!-- In the rail a heading, so the setups don't read as one more prop -->
+	{#if where === "rail"}<p class="setups-hd" aria-hidden="true">Setups</p>{/if}
 	<div class="setups setups--{where}" role="group" aria-label="Setups">
 		{#each recipes as r (r.name)}
 			<button
 				class="setup"
 				aria-pressed={activeRecipe === r}
+				aria-describedby="setup-hint-{r.slug}"
 				onpointerenter={() => (hint = r.hint)}
 				onpointerleave={() => (hint = "")}
 				onfocus={() => (hint = r.hint)}
@@ -754,6 +796,11 @@
 		{/each}
 	</div>
 {/snippet}
+
+<svelte:head>
+	<!-- The calendar waits for its frame's width (see .cal-frame--wait); without JS it shows at once. -->
+	<noscript><style>.cal-frame { visibility: visible !important; opacity: 1 !important; }</style></noscript>
+</svelte:head>
 
 <Shell>
 	{#snippet bar()}
@@ -778,6 +825,7 @@
 
 	<main id="content" tabindex="-1">
 		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
+		{#each recipes as r (r.slug)}<span class="sr-only" id="setup-hint-{r.slug}">{r.hint}</span>{/each}
 		{@render setups("top")}
 		<!-- On a phone the rail is far below: what changes the screen most
 		     (the view, the theme, the host page) sits with the setups. -->
@@ -791,7 +839,7 @@
 							value={String(settingsValues[f.key])}
 							onchange={(e) => (settingsValues = { ...settingsValues, [f.key]: e.currentTarget.value })}
 						>
-							{#each f.options as o (o.value)}<option value={o.value}>{o.label}</option>{/each}
+							{#each f.options as o (o.value)}<option value={o.value}>{quickLabel(o)}</option>{/each}
 						</select>
 					</label>
 				{/if}
@@ -800,7 +848,9 @@
 		</div>
 
 		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
-			<div class="cal-frame" bind:clientHeight={frameH} bind:clientWidth={frameW}>
+			<!-- Hidden (its box kept) until measured: a phone's first paint is the
+			     mobile layout, not the desktop grid it would swap out. -->
+			<div class="cal-frame" class:cal-frame--wait={!frameW} bind:clientHeight={frameH} bind:clientWidth={frameW}>
 				<!-- timezone is read when the calendar mounts: a new zone remounts it,
 				     and so does a new setup, to open at its own first hour -->
 				{#key `${timezone}|${setupRun}`}
@@ -853,20 +903,24 @@
 				tabindex="0"
 				aria-label="Vinyasa Flow: drag onto a day, or press Enter to add it at the next hour"
 			><span class="drag-grip" aria-hidden="true"></span>Vinyasa Flow<span class="drag-hint">drag onto a day</span></div>{/if}
+			<!-- One visible line, three layers: the hovered control's hint (each
+			     control carries it as its description, so it is hidden here),
+			     the last callback (the only live text), else the idle line. -->
 			<div class="msgs">
-				<p class="msg" aria-live="polite">
-					{#if hint}
-						{hint}
-					{:else if lastAction}
-						<span class="live" aria-hidden="true"></span>{lastAction}
-					{:else}
-						<span class="idle-pointer">{idle}</span><span class="idle-touch">{idleTouch}</span>
-					{/if}
+				<p class="msg" class:msg--under={hint} role="status">
+					{#if lastAction}<span class="live" aria-hidden="true"></span>{lastAction}{/if}
 				</p>
+				{#if !lastAction}
+					<p class="msg" class:msg--under={hint}><span class="idle-pointer">{idle}</span><span class="idle-touch">{idleTouch}</span></p>
+				{/if}
+				{#if hint}<p class="msg" aria-hidden="true">{hint}</p>{/if}
 				{#each messages as m (m)}
 					<p class="msg msg--sizer" aria-hidden="true"><span class="live"></span>{m}</p>
 				{/each}
 			</div>
+			{#if keysOn}
+				<p class="keys"><span class="sr-only">Keyboard: </span><kbd>Alt</kbd>+<kbd>arrows</kbd> move · <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↑↓</kbd> resize · <kbd>Enter</kbd> on a day creates</p>
+			{/if}
 			{#if edited}<button class="reset" onclick={resetEvents}>Reset events</button>{/if}
 		</div>
 
@@ -977,6 +1031,12 @@
 	}
 
 	/* ── Setups: a wrapped list; the chosen one over an ink rule ── */
+	/* The rail's heading, set as the host swatches' "Host page" is. */
+	.setups-hd {
+		margin: 0 0 calc(16 * var(--u));
+		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
+	}
 	.setups {
 		display: flex;
 		flex-wrap: wrap;
@@ -1011,6 +1071,7 @@
 		display: none;
 	}
 	@media (max-width: 1360px) {
+		.setups-hd,
 		.setups--rail {
 			display: none;
 		}
@@ -1126,6 +1187,10 @@
 	.msg--sizer {
 		visibility: hidden;
 	}
+	/* Under the hint: unseen, but the status stays in the accessibility tree. */
+	.msg--under {
+		opacity: 0;
+	}
 	.msg {
 		margin: 0;
 		display: flex;
@@ -1143,6 +1208,19 @@
 	}
 	.idle-touch {
 		display: none;
+	}
+	/* The planners' keyboard path, standing beside the drag source. */
+	.keys {
+		flex: none;
+		margin: 0;
+		font: 400 max(13px, calc(16 * var(--u))) / 1.4 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
+	}
+	.keys kbd {
+		padding: 0 0.3em;
+		border: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
+		font: 500 0.9em / 1.3 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text, #111);
 	}
 	/* ── External drag source: a class waiting to be scheduled ── */
 	.drag-source {
@@ -1187,6 +1265,11 @@
 	.cal-frame {
 		flex: 1;
 		min-height: 0;
+	}
+	/* opacity too: a descendant that sets visibility: visible would show through */
+	.cal-frame--wait {
+		visibility: hidden;
+		opacity: 0;
 	}
 	.cal-stage--phone {
 		align-items: center;
@@ -1371,6 +1454,7 @@
 	/* No HTML5 drag on touch screens: the drag source and its instruction go. */
 	@media (pointer: coarse) {
 		.drag-source,
+		.keys,
 		.idle-pointer {
 			display: none;
 		}

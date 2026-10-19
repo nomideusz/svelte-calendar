@@ -967,7 +967,8 @@
 		<span class="cal-sr" role="status" aria-live="polite" aria-atomic="true">{noteText}</span>
 	{/if}
 
-	<div class="cal-body">
+	<!-- mobile='auto' doesn't know phone vs desktop until measured: hidden till then (SSR), shown anyway after 1.5s -->
+	<div class="cal-body" class:cal-body--unmeasured={mobileProp === 'auto' && containerWidth === 0}>
 		{#if activeView}
 			{@const Comp = activeView.component}
 			<Comp
@@ -1210,6 +1211,11 @@
 	.cal--auto .cal-body {
 		overflow: visible;
 	}
+	.cal-body--unmeasured {
+		visibility: hidden;
+		animation: cal-reveal 0s 1.5s forwards;
+	}
+	@keyframes cal-reveal { to { visibility: visible; } }
 
 	.cal-empty {
 		display: flex;

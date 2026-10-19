@@ -526,7 +526,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-body::-webkit-scrollbar-thumb {
 		background: var(--dt-border);
-		border-radius: 2px;
+		border-radius: 0;
 	}
 
 	/* ═══ All-day strip ═══ */
@@ -892,16 +892,8 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent, #1d4fd7));
 		margin-bottom: 8px;
-		animation: ag-pulse 2.5s ease-in-out infinite;
-	}
-	@keyframes ag-pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.ag-q-now-dot {
-			animation: none;
-		}
 		.ag-q-now-fill {
 			transition: none;
 		}

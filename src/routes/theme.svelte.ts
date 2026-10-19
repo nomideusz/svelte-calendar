@@ -92,7 +92,7 @@ const rose = `
 
 // ── Demo theme registry ───────────────────────────────────
 
-export type DemoThemeName = 'slate' | 'light' | 'forest' | 'ocean' | 'rose';
+export type DemoThemeName = 'paper' | 'slate' | 'forest' | 'ocean' | 'rose';
 
 export interface DemoTheme {
 	label: string;
@@ -105,36 +105,40 @@ export interface DemoTheme {
 }
 
 export const demoThemes: Record<DemoThemeName, DemoTheme> = {
+	paper:    { label: 'Paper',    vars: neutral,  dark: false, stageBg: '#efebe9', accent: '#1d4fd7', paper: true },
 	slate:    { label: 'Slate',    vars: slate,    dark: true,  stageBg: '#0c0f17', accent: '#9266f7' },
-	light:    { label: 'Paper',    vars: neutral,  dark: false, stageBg: '#efebe9', accent: '#1d4fd7', paper: true },
-
 	forest:   { label: 'Forest',   vars: forest,    dark: true,  stageBg: '#060d09', accent: '#12d393' },
 	ocean:    { label: 'Ocean',    vars: ocean,     dark: false, stageBg: '#f0f7ff', accent: '#067590' },
 	rose:     { label: 'Rose',     vars: rose,      dark: false, stageBg: '#fff5f5', accent: '#d11b43' },
 };
 
-export const demoThemeNames: DemoThemeName[] = ['slate', 'light', 'forest', 'ocean', 'rose'];
+// Paper first: it is the default host.
+export const demoThemeNames: DemoThemeName[] = ['paper', 'slate', 'forest', 'ocean', 'rose'];
+
+/** Old ids still accepted from links and storage: Paper was `light`. */
+export const THEME_ALIASES: Record<string, DemoThemeName> = { light: 'paper' };
 
 // ── Persistent state ──────────────────────────────────────
 
 export const STORAGE_KEY = 'svelte-calendar-theme';
 
 const isTheme = (v: string | null): v is DemoThemeName => !!v && Object.hasOwn(demoThemes, v);
+const resolve = (v: string | null) => (v && Object.hasOwn(THEME_ALIASES, v) ? THEME_ALIASES[v] : v);
 
 /** A `?host=` link, else the stored pick, else the OS colour scheme. `chosen`
  *  is false only for the OS fallback: then the URL leaves the host out.
  *  The inline head script in +layout.svelte makes the same choice before paint. */
 function initial(): { current: DemoThemeName; chosen: boolean } {
 	if (typeof window === 'undefined') return { current: 'slate', chosen: false };
-	const linked = new URLSearchParams(location.search).get('host');
+	const linked = resolve(new URLSearchParams(location.search).get('host'));
 	if (isTheme(linked)) return { current: linked, chosen: true };
 	try {
-		const stored = localStorage.getItem(STORAGE_KEY);
+		const stored = resolve(localStorage.getItem(STORAGE_KEY));
 		if (isTheme(stored)) return { current: stored, chosen: true };
 	} catch {
 		// storage blocked: fall through to the OS preference
 	}
-	return { current: matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'light', chosen: false };
+	return { current: matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'paper', chosen: false };
 }
 
 export const themeStore = $state<{ current: DemoThemeName; chosen: boolean }>(initial());

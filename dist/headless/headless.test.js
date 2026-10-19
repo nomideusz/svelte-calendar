@@ -6,7 +6,7 @@
  * Full integration tests should be done in a Svelte component context.
  */
 import { describe, it, expect } from 'vitest';
-describe('headless exports', () => {
+describe('headless exports', { timeout: 20_000 }, () => {
     it('exports createCalendar from the headless module', async () => {
         const mod = await import('./index.js');
         expect(mod.createCalendar).toBeDefined();

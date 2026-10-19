@@ -26,6 +26,7 @@
 	import type { DaySegment } from '../../core/time.js';
 	import { fmtHParts, fmtTime, fmtDayNum, fmtDuration, fmtWeekRange, weekdayShort, weekdayLong } from '../../core/locale.js';
 	import { dateLong } from '../shared/format.js';
+	import { openingTop } from '../shared/opening-top.js';
 
 
 	interface Props {
@@ -389,9 +390,8 @@
 	// ── Auto-scroll (mount + week change) ──────────────
 	// Week with today → current time minus ~1h of context; otherwise the
 	// visibleHours start or 08:00, whichever is later. Lands on a whole hour,
-	// with room for its label (centred on the line) below the sticky top.
-	// An event running across that hour line would be sliced under the sticky
-	// top, so the scroll starts at that event's hour instead.
+	// with room for its label (centred on the line) below the sticky top,
+	// moved so no event is sliced under it (openingTop).
 	// A server-rendered grid sits at midnight until this runs: it stays
 	// hidden until placed (.tw-body--unplaced), and shows anyway after 1.5s.
 	let placed = $state(false);
@@ -403,32 +403,22 @@
 		if (!el) return;
 		untrack(() => {
 			let targetHour: number;
+			let anchorHour: number;
 			if (weekHasToday) {
-				const clamped = Math.min(Math.max(nowFracHour, startHour), endHour);
-				targetHour = Math.max(startHour, clamped - 1);
+				anchorHour = Math.min(Math.max(nowFracHour, startHour), endHour);
+				targetHour = Math.max(startHour, anchorHour - 1);
 			} else {
-				targetHour = Math.max(startHour, Math.min(8, endHour - 1));
+				targetHour = anchorHour = Math.max(startHour, Math.min(8, endHour - 1));
 			}
-			let hour = Math.floor(targetHour);
-			// Moving up can slice an earlier event on another day, so repeat
-			// until no block crosses the line.
-			// ponytail: looks back at most 2 h, so a long block can't drag the view to dawn.
-			const floorY = (hour - 2 - startHour) * HOUR_H;
-			for (let moved = true; moved; ) {
-				moved = false;
-				const line = (hour - startHour) * HOUR_H;
-				for (const day of layoutByDay.values()) {
-					for (const p of day) {
-						if (p.top < line && p.top + p.height > line && p.top >= floorY) {
-							hour = Math.floor(startHour + p.top / HOUR_H);
-							moved = true;
-							break;
-						}
-					}
-					if (moved) break;
-				}
-			}
-			el.scrollTop = Math.max(0, (hour - startHour) * HOUR_H - LABEL_ROOM);
+			const topH = el.querySelector<HTMLElement>('.tw-top')?.offsetHeight ?? 0;
+			el.scrollTop = openingTop(
+				[...layoutByDay.values()].flat(),
+				(Math.floor(targetHour) - startHour) * HOUR_H,
+				HOUR_H,
+				LABEL_ROOM,
+				(anchorHour - startHour) * HOUR_H,
+				el.clientHeight - topH,
+			);
 			placed = true;
 		});
 	});
@@ -1359,7 +1349,7 @@
 	.tw-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
 	.tw-scroll::-webkit-scrollbar-thumb {
 		background: var(--dt-scrollbar, rgba(15, 15, 15, 0.1));
-		border-radius: 4px;
+		border-radius: 0;
 	}
 	.tw-scroll::-webkit-scrollbar-track { background: transparent; }
 
@@ -1960,8 +1950,8 @@
 		position: absolute;
 		top: 4px;
 		right: 4px;
-		width: 6px;
-		height: 6px;
+		width: 7px;
+		height: 7px;
 		border-radius: 50%;
 		background: var(--ev-color, var(--dt-accent));
 		animation: tw-pulse 2s ease-in-out infinite;
@@ -2009,7 +1999,7 @@
 		transform: translateX(-50%);
 		width: 20px;
 		height: 3px;
-		border-radius: 2px;
+		border-radius: 0;
 		background: var(--ev-color);
 		opacity: 0;
 		transition: opacity 120ms;
