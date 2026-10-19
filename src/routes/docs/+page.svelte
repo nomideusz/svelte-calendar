@@ -1,17 +1,24 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { Calendar, createMemoryAdapter } from '#lib/index.js';
+	import { onMount, tick } from 'svelte';
+	import { Calendar, createMemoryAdapter, type TimelineEvent } from '#lib/index.js';
 	import Shell from '../_components/Shell.svelte';
 
 	let { data } = $props();
 
-	// The Quick Start, running: the same adapter, two events today.
+	// The Quick Start, running: the same code, two events today.
 	const today = new Date();
 	const at = (hour: number) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);
-	const adapter = createMemoryAdapter([
+	let events = $state<TimelineEvent[]>([
 		{ id: '1', title: 'Team Sync', start: at(9), end: at(10) },
 		{ id: '2', title: 'Lunch', start: at(12), end: at(13) },
 	]);
+	const adapter = $derived(createMemoryAdapter(events));
+	function create({ start, end }: { start: Date; end: Date }) {
+		events = [...events, { id: crypto.randomUUID(), title: 'New event', start, end }];
+	}
+	function move(event: TimelineEvent, start: Date, end: Date) {
+		events = events.map((e) => (e.id === event.id ? { ...e, start, end } : e));
+	}
 	// The page is prerendered; "today" is the reader's, so the calendar mounts in the browser.
 	let mounted = $state(false);
 	onMount(() => (mounted = true));
@@ -44,6 +51,37 @@
 		if (active) document.querySelector(`.doc-toc a[href="#${active}"]`)?.scrollIntoView({ block: 'nearest' });
 	});
 
+	// All Props filter: hides the rows whose name and description miss the
+	// query, and the groups left empty.
+	let content: HTMLElement;
+	let filter = $state('');
+	let matches = $state(0);
+	$effect(() => {
+		const q = filter.trim().toLowerCase();
+		let n = 0;
+		for (const table of content.querySelectorAll<HTMLTableElement>('table:has(tr[id^="prop-"])')) {
+			let shown = 0;
+			for (const tr of table.querySelectorAll<HTMLTableRowElement>('tbody tr')) {
+				const text = `${tr.cells[0]?.textContent} ${tr.cells[tr.cells.length - 1]?.textContent}`.toLowerCase();
+				tr.hidden = !!q && !text.includes(q);
+				if (!tr.hidden) shown++;
+			}
+			table.hidden = !shown;
+			const h = table.previousElementSibling;
+			if (h?.tagName === 'H3') (h as HTMLElement).hidden = !shown;
+			n += shown;
+		}
+		matches = n;
+	});
+	// A link to a prop the filter hides clears the filter, then lands on the row.
+	async function revealTarget() {
+		const row = location.hash.startsWith('#prop-') && document.getElementById(location.hash.slice(1));
+		if (!row || !row.hidden) return;
+		filter = '';
+		await tick();
+		row.scrollIntoView();
+	}
+
 	// Copy keys on every code block (rendered into the markdown by the server).
 	// Each key carries its own aria-label; the outcome is announced here.
 	let copied = $state('');
@@ -74,7 +112,7 @@
 	}
 </script>
 
-<svelte:window onscroll={track} />
+<svelte:window onscroll={track} onhashchange={revealTarget} />
 
 {#snippet contents()}
 	{#each data.toc as g (g.title)}
@@ -95,7 +133,7 @@
 		</nav>
 	{/snippet}
 
-	<main class="doc-content" id="content" tabindex="-1" {@attach copyKeys}>
+	<main class="doc-content" id="content" tabindex="-1" bind:this={content} {@attach copyKeys}>
 		{@html data.head}
 		<details class="doc-toc doc-toc--top" bind:this={toc}>
 			<summary>On this page</summary>
@@ -104,11 +142,28 @@
 		{@html data.body}
 		<figure class="doc-live">
 			<div class="doc-live-frame">
-				{#if mounted}<Calendar {adapter} view="week-planner" height={416} borderRadius={0} />{/if}
+				{#if mounted}<Calendar {adapter} view="week-planner" oneventcreate={create} oneventmove={move} height={416} borderRadius={0} />{/if}
 			</div>
-			<figcaption>The code above, running. In a container under 768px wide it switches to the touch layout.</figcaption>
+			<figcaption>The code above, running: drag on empty time to add an event, drag one to move it. In a container under 768px wide it switches to the touch layout.</figcaption>
 		</figure>
 		{@html data.rest}
+		{#if data.props}
+			<div class="doc-filter">
+				<label for="prop-filter">Filter props</label>
+				<input
+					id="prop-filter"
+					type="search"
+					autocomplete="off"
+					spellcheck="false"
+					bind:value={filter}
+					onkeydown={(e) => {
+						if (e.key === 'Escape') filter = '';
+					}}
+				/>
+				<p class="doc-filter-none" role="status">{filter.trim() && !matches ? `No prop matches “${filter.trim()}”.` : ''}</p>
+			</div>
+			{@html data.props}
+		{/if}
 		<nav class="doc-end" aria-label="The demo">
 			<h2><a href="/">Build your setup in the demo</a></h2>
 			<p>
@@ -223,16 +278,90 @@
 	.doc-content > :global(*) {
 		max-width: 44rem;
 	}
-	.doc-content > :global(:is(table, details:has(table))),
-	.doc-content > .doc-live {
+	.doc-content > :global(:is(table, details:has(table))) {
 		max-width: 1120px;
+	}
+	/* The Quick Start code and the calendar running it share one wider measure. */
+	.doc-content > :global(.doc-pre--live),
+	.doc-content > .doc-live {
+		max-width: 60rem;
 	}
 	.doc-content :global(:is(h2, h3, tr[id])) {
 		scroll-margin-top: 24px;
 	}
-	/* A prop reached by its link. */
+	.doc-content :global([hidden]) {
+		display: none !important;
+	}
+	/* A prop reached by its link: an ink bar at its start and a wash that
+	   settles after a moment. */
 	.doc-content :global(tr:target td) {
-		background: var(--dt-hover, rgba(0, 0, 0, 0.04));
+		background: color-mix(in srgb, var(--dt-accent, #111) 10%, transparent);
+		animation: doc-target 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+	.doc-content :global(tr:target td:first-child) {
+		box-shadow: inset 3px 0 0 var(--dt-text, #111);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.doc-content :global(tr:target td) {
+			animation: none;
+		}
+	}
+	@keyframes doc-target {
+		from {
+			background: color-mix(in srgb, var(--dt-accent, #111) 28%, transparent);
+		}
+	}
+	/* Its group's column heads stay above it. */
+	@media (min-width: 769px) {
+		.doc-content :global(tr[id^='prop-']) {
+			scroll-margin-top: 40px;
+		}
+		.doc-content :global(table:has(tr[id^='prop-']) th) {
+			position: sticky;
+			top: 0;
+			z-index: 1;
+			background: var(--dt-bg, #efebe9);
+			border-bottom: none;
+			box-shadow: inset 0 -2px 0 var(--dt-text, #111);
+		}
+	}
+
+	/* The All Props filter. */
+	.doc-filter {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 12px;
+		margin: 0 0 8px;
+	}
+	.doc-filter label {
+		font: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+	}
+	.doc-filter input {
+		flex: 1 1 16rem;
+		min-height: 44px;
+		padding: 0 12px;
+		border: 2px solid var(--dt-text, #111);
+		border-radius: 0;
+		background: transparent;
+		color: var(--dt-text, #111);
+		font: 400 16px / 1 var(--dt-sans, system-ui, sans-serif);
+		caret-color: var(--dt-accent, #111);
+	}
+	.doc-filter input:focus-visible {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
+	}
+	.doc-content .doc-filter-none {
+		flex-basis: 100%;
+		margin: 0;
+		font-size: 16px;
+	}
+	.doc-filter-none:empty {
+		display: none;
 	}
 	.doc-content :global(.doc-nowrap) {
 		white-space: nowrap;
@@ -246,10 +375,15 @@
 		white-space: nowrap;
 	}
 
-	/* A # after each heading, shown on hover or focus. */
+	/* A # after each heading, shown on hover or focus; faint where nothing hovers. */
 	.doc-content :global(.doc-anchor) {
-		margin-left: 0.35em;
-		padding: 0 0.15em;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 24px;
+		min-height: 24px;
+		margin-left: 0.25em;
+		vertical-align: middle;
 		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
 		border: none;
 		opacity: 0;
@@ -258,6 +392,32 @@
 	.doc-content :global(:is(h2, h3):hover .doc-anchor),
 	.doc-content :global(.doc-anchor:focus-visible) {
 		opacity: 1;
+	}
+	.doc-content :global(.doc-anchor:focus-visible) {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
+	}
+	@media (hover: none) {
+		.doc-content :global(.doc-anchor) {
+			opacity: 0.45;
+		}
+	}
+	@media (pointer: coarse) {
+		.doc-content :global(.doc-anchor) {
+			min-width: 44px;
+			min-height: 44px;
+			margin-block: -10px;
+		}
+	}
+
+	/* The version this page documents, after the package name. */
+	.doc-content :global(.doc-version) {
+		font: 400 16px / 1 var(--dt-sans, system-ui, sans-serif);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0;
+		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		white-space: nowrap;
+		vertical-align: middle;
 	}
 	.doc-content :global(.doc-anchor:hover) {
 		color: var(--dt-text, #111);
@@ -370,6 +530,7 @@
 	}
 
 	.doc-content :global(> p:first-of-type) {
+		max-width: 36em;
 		font-size: 19px;
 		line-height: 1.45;
 		color: var(--dt-text, #111);
@@ -411,6 +572,8 @@
 		border-radius: 0;
 		color: var(--dt-text, #111);
 		font-variant-ligatures: none;
+		/* A long call like $derived(createMemoryAdapter(events)) breaks instead of widening a phone page */
+		overflow-wrap: anywhere;
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
 	}

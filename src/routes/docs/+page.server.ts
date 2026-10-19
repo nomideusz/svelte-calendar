@@ -21,6 +21,11 @@ const GROUPS: Record<string, string> = {
 	'localization-i18n': 'Reference',
 };
 
+function splitProps(rest: string): { rest: string; props: string } {
+	const h = rest.indexOf('<h3 ', rest.indexOf('id="all-props"'));
+	return rest.includes('id="all-props"') && h > 0 ? { rest: rest.slice(0, h), props: rest.slice(h) } : { rest, props: '' };
+}
+
 export async function load() {
 	const md = readFileSync(resolve('README.md'), 'utf-8');
 	let html = await marked(md, { gfm: true });
@@ -38,7 +43,13 @@ export async function load() {
 	);
 
 	// The package name breaks after its scope on a phone, and only there.
-	html = html.replace('<h1>@nomideusz/svelte-calendar</h1>', '<h1>@nomideusz/<wbr><span class="doc-nowrap">svelte-calendar</span></h1>');
+	// The package name breaks after its scope on a phone, and only there; the
+	// version this page documents follows it.
+	const { version } = JSON.parse(readFileSync(resolve('package.json'), 'utf-8'));
+	html = html.replace(
+		'<h1>@nomideusz/svelte-calendar</h1>',
+		`<h1>@nomideusz/<wbr><span class="doc-nowrap">svelte-calendar</span> <span class="doc-version">v${version}</span></h1>`,
+	);
 
 	// Each row of the props reference is a link target (#prop-name), and a prop
 	// named in the prose of the component's own sections links to its row.
@@ -67,17 +78,24 @@ export async function load() {
 	// Every cell carries its column's name, so a phone can stack the rows.
 	html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_m, inner: string) => {
 		const heads = [...inner.matchAll(/<th(?:\s[^>]*)?>([\s\S]*?)<\/th>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
-		const rows = inner.replace(/<tr>([\s\S]*?)<\/tr>/g, (_r, row: string) => {
+		const rows = inner.replace(/<tr(\s[^>]*)?>([\s\S]*?)<\/tr>/g, (_r, attrs = '', row: string) => {
 			let i = 0;
-			return `<tr>${row.replace(/<td(\s[^>]*)?>/g, (_t, attrs = '') => `<td${attrs} data-label="${heads[i++] ?? ''}">`)}</tr>`;
+			return `<tr${attrs}>${row.replace(/<td(\s[^>]*)?>/g, (_t, attrs = '') => `<td${attrs} data-label="${heads[i++] ?? ''}">`)}</tr>`;
 		});
 		return `<table>${rows}</table>`;
 	});
 
-	// Every code block gets a Copy key named after its first meaningful line
-	// (the page wires the clicks).
-	html = html.replace(/<pre>([\s\S]*?)<\/pre>/g, (_m, code: string) => {
-		const text = code
+	// Every code block gets a Copy key named after its first meaningful line,
+	// plus its section's heading where two would share a name (the page wires
+	// the clicks).
+	const keys: { line: string; section: string }[] = [];
+	let section = '';
+	html = html.replace(/<(h[23]) id="[^"]*">([\s\S]*?)<\/\1>|<pre>([\s\S]*?)<\/pre>/g, (m, tag?: string, heading?: string, code?: string) => {
+		if (tag) {
+			section = heading!.replace(/<[^>]+>/g, '');
+			return m;
+		}
+		const text = code!
 			.replace(/<[^>]+>/g, '')
 			.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 		const skip = /^(<\/?script\b.*>|\/\/.*|<!--.*-->|#.*)$/;
@@ -88,8 +106,13 @@ export async function load() {
 			if (l && !skip.test(l)) line = line ? `${line} ${l}` : l;
 		}
 		if (line.length > 60) line = `${line.slice(0, 59)}…`;
-		const label = `Copy code: ${line}`.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-		return `<div class="doc-pre"><button type="button" class="doc-copy" aria-label="${label}">Copy</button><pre>${code}</pre></div>`;
+		keys.push({ line, section });
+		return `<div class="doc-pre"><button type="button" class="doc-copy" aria-label="\0KEY${keys.length - 1}\0">Copy</button><pre>${code}</pre></div>`;
+	});
+	html = html.replace(/\0KEY(\d+)\0/g, (_m, n: string) => {
+		const { line, section } = keys[+n];
+		const shared = keys.filter((k) => k.line === line).length > 1;
+		return `Copy code: ${line}${shared ? `, in ${section}` : ''}`.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 	});
 
 	// Extract TOC from h2 headings, grouped
@@ -115,5 +138,14 @@ export async function load() {
 	const q = html.indexOf('id="quick-start"');
 	const qs = q < 0 ? -1 : html.indexOf('</pre></div>', q);
 	const cut = qs > split ? qs + '</pre></div>'.length : html.length;
-	return { head: html.slice(0, split), body: html.slice(split, cut), rest: html.slice(cut), toc };
+	// The Quick Start code (the body's last block) shares the live calendar's wider measure.
+	const body = html.slice(split, cut);
+	const last = qs > split ? body.lastIndexOf('<div class="doc-pre">') : -1;
+	return {
+		head: html.slice(0, split),
+		body: last < 0 ? body : `${body.slice(0, last)}<div class="doc-pre doc-pre--live">${body.slice(last + '<div class="doc-pre">'.length)}`,
+		// All Props' tables start at its first h3; the page puts its filter there.
+		...splitProps(html.slice(cut)),
+		toc,
+	};
 }

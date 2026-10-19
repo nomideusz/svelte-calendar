@@ -646,7 +646,19 @@ export function observeHostTheme(
 		attributeFilter: ['class', 'style', 'data-theme', 'data-mode', 'color-scheme'],
 	});
 
-	// 3. Re-probe once the document settles. A probe during initial load can
+	// 3. Hosts often crossfade their ground (`body { transition: background 300ms }`),
+	//    so the rAF probe above reads a mid-transition colour and keeps the old
+	//    host's light/dark. Re-probe when a colour transition on <html>/<body> ends.
+	const onTransitionEnd = (e: Event) => {
+		const t = e.target;
+		if (t !== document.documentElement && t !== document.body) return;
+		const prop = (e as TransitionEvent).propertyName;
+		if (prop === undefined || /^(background|color)/.test(prop)) scheduleUpdate();
+	};
+	document.addEventListener('transitionend', onTransitionEnd);
+	document.addEventListener('animationend', onTransitionEnd);
+
+	// 4. Re-probe once the document settles. A probe during initial load can
 	//    read pre-stylesheet values (wrong background → wrong light/dark call);
 	//    late webfonts change computed font stacks. Both are one-shot events.
 	if (document.readyState !== 'complete') {
@@ -662,5 +674,7 @@ export function observeHostTheme(
 		mql?.removeEventListener('change', onScheme);
 		window.removeEventListener('load', scheduleUpdate);
 		observer.disconnect();
+		document.removeEventListener('transitionend', onTransitionEnd);
+		document.removeEventListener('animationend', onTransitionEnd);
 	};
 }

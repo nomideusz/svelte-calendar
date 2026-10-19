@@ -21,7 +21,7 @@ import { createClock } from "../../core/clock.svelte.js";
 import { fitParts } from "../../text-fit.js";
 import { HOUR_MS, sod, addDaysMs, diffDays } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, segmentForDay } from "../../core/time.js";
-import { fmtHParts, fmtTime, fmtDuration, fmtWeekRange, weekdayShort, weekdayLong } from "../../core/locale.js";
+import { fmtHParts, fmtTime, fmtDayNum, fmtDuration, fmtWeekRange, weekdayShort, weekdayLong } from "../../core/locale.js";
 import { dateLong } from "../shared/format.js";
 let { mode = "week", mondayStart = true, locale, height = 520, events = [], style = "", focusDate, oneventclick, oneventcreate, onexternaldrop, selectedEventId = null, readOnly = false, visibleHours } = $props();
 // ── Context ────────────────────────────────────────
@@ -948,7 +948,7 @@ function onWindowKeydown(e) {
 						>
 							<span class="tw-hd-wd">{singleDay ? weekdayLong(day.ms, locale) : weekdayShort(day.ms, locale)}</span>
 							{#if showDates}
-								<span class="tw-hd-num" class:tw-hd-num--today={day.markToday}>{day.dayNum}</span>
+								<span class="tw-hd-num" class:tw-hd-num--today={day.markToday}>{fmtDayNum(day.ms, locale)}</span>
 							{/if}
 							{#if dayHeaderSnippet}
 								<div class="tw-hd-custom">
@@ -1424,7 +1424,7 @@ function onWindowKeydown(e) {
 	.tw-ad-more:hover { color: var(--dt-text, rgba(15, 15, 15, 0.87)); }
 	.tw-ad-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	/* ─── Grid body ──────────────────────────────────── */
@@ -1545,7 +1545,7 @@ function onWindowKeydown(e) {
 		box-sizing: border-box;
 	}
 	.tw-col:focus-visible {
-		outline: 2px solid var(--dt-accent, #1d4fd7);
+		outline: 2px solid var(--dt-text, #0f0f0f);
 		outline-offset: -2px;
 	}
 	/* The gutter's right border already bounds the first column */

@@ -4,7 +4,8 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { themeStore, setTheme, demoThemes, demoThemeNames, boardStore } from '../theme.svelte.js';
+	import { boardStore } from '../theme.svelte.js';
+	import Hosts from './Hosts.svelte';
 
 	interface Props {
 		/** Page controls that live in the rail, between the wordmark and the host swatches */
@@ -38,11 +39,7 @@
 
 	// Live clock in the zone the calendar is showing, ticking once a second.
 	let now = $state<Date | null>(null);
-	// The server can't know the visitor's host page: no swatch reads pressed
-	// until the client knows which one the head script applied.
-	let mounted = $state(false);
 	onMount(() => {
-		mounted = true;
 		now = new Date();
 		const id = setInterval(() => (now = new Date()), 1000);
 		return () => clearInterval(id);
@@ -72,27 +69,12 @@
 		</div>
 
 		<div class="rail-foot">
-			<!-- The host pages are the demo's business; the docs keep the install line. -->
-			{#if !long}
-			<div class="hosts-set">
-				<p class="hosts-hd"><span id="hosts-hd">Host page</span>{#if mounted}<span class="hosts-now" aria-hidden="true">{demoThemes[themeStore.current].label}</span>{/if}</p>
-				<div class="hosts" role="group" aria-labelledby="hosts-hd">
-					{#each demoThemeNames as name (name)}
-						{@const dt = demoThemes[name]}
-						<button
-							class="host"
-							title={dt.label}
-							aria-label={dt.label}
-							aria-pressed={mounted && themeStore.current === name}
-							style:--sw-bg={dt.stageBg}
-							style:--sw-ac={dt.accent}
-							style:--sw-ink={dt.dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
-							onclick={() => setTheme(name)}
-						></button>
-					{/each}
-				</div>
+			<!-- The host page follows the visitor to the docs, so it can be changed
+			     there too (compact under the contents). On a phone the demo shows
+			     its swatches above the calendar instead. -->
+			<div class="foot-hosts" class:foot-hosts--demo={!long}>
+				<Hosts compact={long} />
 			</div>
-			{/if}
 
 			<button class="install" onclick={copyInstall} aria-label="Copy install command">
 				<code bind:this={command}>{INSTALL}</code>
@@ -143,7 +125,7 @@
 		flex-direction: column;
 		min-height: 100vh;
 		padding: calc(34 * var(--u)) calc(40 * var(--u)) calc(32 * var(--u));
-		border-right: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		border-right: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
 		box-sizing: border-box;
 	}
 	.mark {
@@ -168,49 +150,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: calc(26 * var(--u));
-	}
-
-	/* A host swatch is a small page: its ground, and its accent as the all-day band. */
-	.hosts-hd {
-		display: flex;
-		justify-content: space-between;
-		gap: calc(12 * var(--u));
-		margin: 0 0 calc(16 * var(--u));
-		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text, #111);
-	}
-	.hosts-now {
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
-	}
-	.hosts {
-		display: flex;
-		justify-content: space-between;
-		padding: 0 calc(4 * var(--u)) calc(28 * var(--u));
-		border-bottom: 2px solid var(--dt-text, #111);
-	}
-	.host {
-		width: calc(62 * var(--u));
-		height: calc(74 * var(--u));
-		padding: 0;
-		border: 2px solid var(--dt-text, #111);
-		border-radius: calc(5 * var(--u));
-		background:
-			linear-gradient(var(--sw-ac), var(--sw-ac)) 50% 22% / 80% 9% no-repeat,
-			repeating-linear-gradient(0deg, transparent 0 14%, var(--sw-ink) 14% calc(14% + 1px)) 50% 100% / 80% 62% no-repeat,
-			var(--sw-bg);
-		cursor: pointer;
-		transition: transform 120ms;
-	}
-	.host:hover {
-		transform: translateY(-1px);
-	}
-	.host[aria-pressed='true'] {
-		border-color: var(--dt-accent, #1d4fd7);
-		box-shadow: 0 0 0 1px var(--dt-accent, #1d4fd7);
-	}
-	.host:focus-visible {
-		outline: 2px solid var(--dt-text, #111);
-		outline-offset: 2px;
 	}
 
 	.install {
@@ -262,7 +201,7 @@
 		justify-content: space-between;
 		min-height: calc(74 * var(--u));
 		padding: 0 calc(40 * var(--u)) 0 calc(38 * var(--u));
-		border-bottom: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		border-bottom: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.nav {
 		display: flex;
@@ -272,7 +211,7 @@
 		position: relative;
 		padding: calc(10 * var(--u)) 0;
 		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		transition: color 120ms;
 	}
 	.nav a:hover,
@@ -310,7 +249,7 @@
 	}
 	.clock-zone {
 		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		white-space: nowrap;
 	}
 
@@ -326,6 +265,16 @@
 	.shell--long .main {
 		position: static;
 		height: auto;
+	}
+	/* The docs' contents run long: the foot (host page, install) stays at the
+	   rail's bottom edge, on the page's own ground, so the host can be changed
+	   without scrolling the contents to their end. */
+	.shell--long .rail-foot {
+		position: sticky;
+		bottom: calc(-32 * var(--u));
+		padding-bottom: calc(32 * var(--u));
+		background: var(--page-bg, #efebe9);
+		background-attachment: fixed;
 	}
 
 	.skip {
@@ -364,16 +313,6 @@
 			justify-content: space-between;
 			gap: 16px 24px;
 		}
-		.hosts {
-			padding: 0;
-			border-bottom: none;
-			gap: 10px;
-		}
-		.hosts-hd {
-			justify-content: flex-start;
-			margin-bottom: 10px;
-			font-size: 16px;
-		}
 		.main {
 			order: -1;
 			position: static;
@@ -383,7 +322,12 @@
 			position: static;
 			height: auto;
 		}
-		/* The docs' rail holds only the install line here: one rule above it, not two. */
+		.shell--long .rail-foot {
+			position: static;
+			padding-bottom: 0;
+		}
+		/* The docs' rail holds only the host swatches and the install line
+		   here: one rule above them, not two. */
 		.shell--long .rail-foot {
 			margin-top: 0;
 			padding-top: 0;
@@ -416,9 +360,8 @@
 		.clock-zone {
 			display: none;
 		}
-		.host {
-			width: 44px;
-			height: 52px;
+		.foot-hosts--demo {
+			display: none;
 		}
 		.install {
 			width: 100%;
@@ -440,10 +383,6 @@
 	}
 
 	@media (pointer: coarse) {
-		.host {
-			min-width: 44px;
-			min-height: 52px;
-		}
 		.nav a,
 		.install {
 			min-height: 44px;
@@ -455,12 +394,6 @@
 		}
 		.install-act {
 			padding: 10px 14px;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.host {
-			transition: none;
 		}
 	}
 </style>

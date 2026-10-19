@@ -9,6 +9,8 @@ import { neutral } from '#lib/theme/presets.js';
 
 // ── Demo-only theme CSS strings ───────────────────────────
 // --dt-text-2 alphas hold ≥4.5:1 on both --dt-stage-bg and --dt-bg.
+// Ocean and Rose bring their own type (a humanist sans, a serif; loaded in
+// +layout.svelte): the body sets --dt-sans, so `auto` has a host font to find.
 
 /** Slate — steel-blue dark page with violet accent (distinct from package midnight) */
 const slate = `
@@ -63,7 +65,7 @@ const ocean = `
 	--dt-btn-text: #0f0f0f;
 	--dt-scrollbar: rgba(0, 100, 180, 0.08);
 	--dt-success: rgba(22, 163, 74, 0.7);
-	--dt-sans: inherit;
+	--dt-sans: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
 `;
 
 const rose = `
@@ -82,7 +84,7 @@ const rose = `
 	--dt-btn-text: #fff;
 	--dt-scrollbar: rgba(180, 50, 80, 0.08);
 	--dt-success: rgba(22, 163, 74, 0.7);
-	--dt-sans: inherit;
+	--dt-sans: Newsreader, 'Iowan Old Style', Georgia, serif;
 `;
 
 // ── Demo theme registry ───────────────────────────────────

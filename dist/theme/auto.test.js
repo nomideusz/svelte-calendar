@@ -91,6 +91,29 @@ describe('observeHostTheme', () => {
         document.body.removeChild(el);
     });
 });
+describe('observeHostTheme re-probes after a host crossfade', () => {
+    it('probes again when a background transition on <body> ends', async () => {
+        const el = document.createElement('div');
+        document.body.appendChild(el);
+        const seen = [];
+        const cleanup = observeHostTheme(el, (vars) => seen.push(vars), { accent: '#1d4fd7' });
+        const before = seen.length;
+        // A stylesheet swap is invisible to the MutationObserver; only the
+        // transitionend that follows the crossfade tells us the ground changed.
+        const style = document.createElement('style');
+        style.textContent = 'body { background-color: rgb(12, 14, 20); }';
+        document.head.appendChild(style);
+        const ev = new Event('transitionend', { bubbles: true });
+        Object.defineProperty(ev, 'propertyName', { value: 'background-color' });
+        document.body.dispatchEvent(ev);
+        await new Promise((r) => setTimeout(r, 100));
+        expect(seen.length).toBe(before + 1);
+        expect(seen.at(-1)).not.toBe(seen[before - 1]);
+        cleanup();
+        style.remove();
+        el.remove();
+    });
+});
 describe('accentTextFor (all-day band / now plate text)', () => {
     it('keeps white on a dark enough accent', () => {
         expect(accentTextFor([29, 79, 215])).toBe('#ffffff'); // #1d4fd7

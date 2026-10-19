@@ -2,7 +2,7 @@
 
 [![npm](https://badgen.net/npm/v/@nomideusz/svelte-calendar)](https://www.npmjs.com/package/@nomideusz/svelte-calendar) [![license](https://badgen.net/badge/license/MIT/blue)](https://github.com/nomideusz/svelte-calendar/blob/main/LICENSE)
 
-A themeable **Svelte 5** calendar: day and week **Planner** time grids, a multi-week **Scroll** view, **Agenda** lists, a **Month** grid and touch-first **Mobile** layouts, with drag-and-drop, timezones, a headless API, an embeddable web component, and a smart auto-theme that adapts to any page.
+A themeable **Svelte 5** calendar: day and week **Planner** time grids, a multi-week **Scroll** view, **Agenda** lists, a **Month** grid and touch-first **Mobile** layouts, with drag to move, resize and create events, timezones, a headless API, an embeddable web component, and a smart auto-theme that adapts to any page.
 
 **[Live demo → svelte-calendar.xyz](https://svelte-calendar.xyz/)**
 
@@ -28,24 +28,37 @@ Requirements:
   const today = new Date();
   const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);
 
-  const adapter = createMemoryAdapter([
+  let events = $state([
     { id: '1', title: 'Team Sync', start: at(9),  end: at(10) },
     { id: '2', title: 'Lunch',     start: at(12), end: at(13) },
   ]);
+  // A new adapter whenever the events change; the calendar reloads without blanking
+  const adapter = $derived(createMemoryAdapter(events));
+
+  // Drag on empty time (or press Enter on a day column) to create
+  function create({ start, end }) {
+    events = [...events, { id: crypto.randomUUID(), title: 'New event', start, end }];
+  }
+  // Drag an event to move it, or its edge to resize it
+  function move(event, start, end) {
+    events = events.map((e) => (e.id === event.id ? { ...e, start, end } : e));
+  }
 </script>
 
-<Calendar {adapter} view="week-planner" />
+<Calendar {adapter} view="week-planner" oneventcreate={create} oneventmove={move} />
 ```
 
-That's it: eight built-in views and drag-and-drop with live previews, out of the box. The default `auto` theme probes your page's background, accent color and fonts, so the calendar adapts to any design. Events without a `color` draw in ink; to color them automatically, give the adapter a [`palette`](#event-colors).
+That's a working, editable calendar. The calendar stores nothing on create: without `oneventcreate`, dragging on empty time does nothing. Moves and resizes write to the adapter by themselves, and `oneventmove` keeps your own data in step, so a move survives the next new adapter. The default `auto` theme probes your page's background, accent color and fonts, so the calendar adapts to any design. Events without a `color` draw in ink; to color them automatically, give the adapter a [`palette`](#event-colors).
 
 ## Views
+
+Without `view` the calendar opens on `day-planner`, the first registered view. The Quick Start, the demo, the widget and `createCalendar` open on `week-planner`, so pass `view="week-planner"` for the week grid.
 
 The default registry (`defaultViews`) holds eight views. Six are the ones you choose with `view`; the two `*-mobile` views are what the others swap to in a narrow container (see [Mobile](#mobile)), so the demo's view list shows six.
 
 | View ID | Mode | What it is |
 |---------|------|------------|
-| `day-planner` | day | Vertical time grid, one column. Opens when `view` is unset (the first registered view). The examples here, the demo, the widget and `createCalendar` open on `week-planner`. |
+| `day-planner` | day | Vertical time grid, one column. The default when `view` is unset. |
 | `week-planner` | week | The same time grid, one column per day (`days`, default 7). |
 | `week-scroll` | week | Weeks stacked in one infinite vertical scroller (Hey-Calendar style): each chip sits at the height of its start time, month names run down the side. Drag to move, drop onto a day; it scrolls under a drag. |
 | `day-agenda` | day | Live list for one day: now / up next / done. |
@@ -112,7 +125,7 @@ The component receives `CalendarViewProps` (plus your `props`); declare only the
 |------|------|-------|
 | `events` | `TimelineEvent[]` | Everything loaded for the current range |
 | `style` | `string` | The active `--dt-*` theme string |
-| `height` | `number \| null` | Currently always `null`: size to the container |
+| `height` | `number \| null` | Always `null`: the view fills its container, sized by the Calendar's own [`height`](#display) (default `600`) |
 | `mode` | `'day' \| 'week' \| 'month'` | |
 | `mondayStart` | `boolean` | |
 | `locale` | `string \| undefined` | |
@@ -320,7 +333,7 @@ Disable specific dates:
 />
 ```
 
-Disabled dates refuse creating or moving events into those days. Existing events stay visible and clickable, which suits holidays or fully booked days.
+Disabled dates refuse creating or moving events into those days, which suits holidays or fully booked days. In the planner, agenda and mobile views their existing events stay visible and clickable; `month-grid` dims a disabled day, and its chips ignore clicks.
 
 Custom day headers and hover previews:
 
@@ -1057,7 +1070,7 @@ Every `<Calendar>` prop (`CalendarProps`), grouped by what it controls.
 | `minDuration` | `number` | — | Minimum duration in minutes; clamps creates and resizes |
 | `maxDuration` | `number` | — | Maximum duration in minutes; clamps creates and resizes |
 | `blockedSlots` | `BlockedSlot[]` | — | `{ day?, start, end, label? }` hour ranges that can't be booked (hatched in planner views) |
-| `disabledDates` | `Date[]` | — | Dates that refuse creates/moves; existing events stay visible and clickable |
+| `disabledDates` | `Date[]` | — | Dates that refuse creates/moves; existing events stay visible and clickable (dimmed and inert in `month-grid`) |
 
 ### View and navigation
 
@@ -1126,6 +1139,16 @@ Every `<Calendar>` prop (`CalendarProps`), grouped by what it controls.
 | `ondayclick` | `(date) => void` | open a day view | A month-grid day clicked |
 | `oneventhover` | `(event) => void` | — | Pointer enters an event |
 | `onerror` | `(error: Error) => void` | — | Load and commit failures |
+
+## Troubleshooting
+
+- **Dragging on empty time does nothing.** Creating needs an `oneventcreate` handler (and no `readOnly`); see the [Quick Start](#quick-start).
+- **A created event doesn't appear.** The calendar stores nothing on create: add the event to your data and hand the Calendar a new adapter (`$derived(createMemoryAdapter(events))`).
+- **Moved events jump back after the next change.** A new adapter is built from your array, so write each move into it in `oneventmove`.
+- **The `auto` theme picked the wrong colours.** It probes the host page around the calendar, and probes again when `<html>`/`<body>` change class, style or `data-theme`, when the system scheme flips and when a background transition ends. Steer it with [`autoTheme`](#smart-auto-theme), or set `theme` to a preset or your own tokens to opt out.
+- **Events are all one colour.** Since 1.4 events without a `color` draw in ink; give the adapter a [`palette`](#event-colors).
+- **The calendar stops at 600px.** That's the default `height`; pass a number, or `'auto'` to grow with the content.
+- **The phone layout shows on a wide page (or the desktop one in a narrow column).** The switch reads the calendar's container, not the window; force it with `mobile={false}` or `mobile={true}`.
 
 ## Versioning
 

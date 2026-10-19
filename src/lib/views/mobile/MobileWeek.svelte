@@ -12,7 +12,7 @@
 	import type { TimelineEvent } from '../../core/types.js';
 	import { sod, addDaysMs, isAllDay } from '../../core/time.js';
 	import { startOfWeek as sowFn } from '../../core/time.js';
-	import { fmtTime as _fmtTime, fmtWeekRange, weekdayShort } from '../../core/locale.js';
+	import { fmtTime as _fmtTime, fmtDayNum, fmtWeekRange, weekdayShort } from '../../core/locale.js';
 	import { dateLong } from '../shared/format.js';
 	import { createSwipe } from './swipe.js';
 
@@ -278,7 +278,7 @@
 				<div class="mw-date">
 					<span class="mw-day-name" class:mw-day-name--today={cell.isToday}>{cell.dayName}</span>
 					{#if showDates}
-						<span class="mw-day-num" class:mw-day-num--today={cell.isToday}>{cell.dayNum}</span>
+						<span class="mw-day-num" class:mw-day-num--today={cell.isToday}>{fmtDayNum(cell.ms, locale)}</span>
 					{/if}
 				</div>
 
@@ -302,7 +302,7 @@
 								onclick={(e) => { e.stopPropagation(); oneventclick?.(ev); }}
 								onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(ev); } }}
 								onpointerenter={() => oneventhover?.(ev)}
-								aria-label="{ev.title}{statusText(ev)}, {evTimeLabel(ev)}"
+								aria-label="{ev.title}{statusText(ev)}, {dateLong(cell.ms, locale)}, {evTimeLabel(ev)}"
 							>
 								<span class="mw-ev-stripe"></span>
 								<div class="mw-ev-body">
@@ -318,6 +318,7 @@
 								type="button"
 								class="mw-ev-more"
 								aria-expanded={expandedDays.has(cell.ms)}
+								aria-label="{expandedDays.has(cell.ms) ? L.showLess : L.nMore(cell.totalCount - MAX_EVENTS)}, {dateLong(cell.ms, locale)}"
 								onclick={() => toggleExpand(cell.ms)}
 							>
 								{expandedDays.has(cell.ms) ? L.showLess : L.nMore(cell.totalCount - MAX_EVENTS)}
@@ -427,7 +428,7 @@
 	}
 	.mw-row-target:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: inset 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	/* ─── Date column ────────────────────────────────── */
@@ -604,19 +605,15 @@
 		pointer-events: auto;
 		-webkit-tap-highlight-color: transparent;
 	}
-	/* Hit-slop: 44px effective touch target */
-	.mw-ev-more::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 50%;
-		transform: translateY(-50%);
-		height: 44px;
+	@media (pointer: coarse) {
+		.mw-ev-more {
+			min-height: 44px;
+			min-width: 44px;
+		}
 	}
 	.mw-ev-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	/* ─── Chevron ────────────────────────────────────── */

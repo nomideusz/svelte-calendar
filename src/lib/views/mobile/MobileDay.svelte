@@ -868,7 +868,7 @@
 	}
 	.mb-allday-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	/* ─── Grid ───────────────────────────────────────── */
@@ -886,7 +886,7 @@
 	.mb--auto .mb-grid { overflow-y: visible; }
 	.mb-grid:focus-visible {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: inset 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	.mb-grid-inner {

@@ -55,7 +55,6 @@ type Def = Omit<TimelineEvent, 'id'>;
 // ── Event factory ───────────────────────────────────────
 
 /**
-/**
  * Generate one-off demo events anchored around `today`.
  * Events span Mon-1 … Sun+1 of the current week.
  * Weekly recurring classes are in createDemoRecurring() instead.
@@ -67,7 +66,7 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 	// dayOffset: 0=Mon, 1=Tue, … 6=Sun, -1=prevSun, 7=nextMon
 	const defs: Def[] = [
 		// ──────────────────────────────────────────────────
-		// MONDAY (day 0) — overlapping yoga + work
+		// MONDAY (day 0) — classes around a staff meeting
 		// ──────────────────────────────────────────────────
 		{
 			title: 'NeuroJoga',
@@ -79,13 +78,13 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 			tags: ['All Levels'],
 		},
 		{
-			title: 'Sprint Planning',
+			title: 'Teacher Meeting',
 			start: at(mon, 0, 10, 0),
 			end: at(mon, 0, 11, 30),
-			category: 'work',
-			location: 'Room 4B',
-			subtitle: 'Engineering',
-			tags: ['Remote OK'],
+			category: 'admin',
+			location: 'Office',
+			subtitle: 'All teachers',
+			tags: ['Staff Only'],
 		},
 		{
 			title: 'Power Vinyasa',
@@ -98,15 +97,15 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 		},
 
 		// ──────────────────────────────────────────────────
-		// TUESDAY (day 1) — mixed work + wellness
+		// TUESDAY (day 1) — a private session + wellness
 		// ──────────────────────────────────────────────────
 		{
-			title: '1:1 Check-in',
+			title: 'Private Session',
 			start: at(mon, 1, 10, 0),
 			end: at(mon, 1, 10, 30),
-			category: 'work',
-			subtitle: 'Manager',
-			location: 'Room 2A',
+			category: 'yoga',
+			subtitle: 'Anna Szlęk',
+			location: 'Studio C',
 		},
 		{
 			title: 'Guided Nidra',
@@ -130,12 +129,12 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 			subtitle: 'Instructor unavailable',
 		},
 		{
-			title: 'Design Review',
+			title: 'Workshop Prep',
 			start: at(mon, 2, 11, 0),
 			end: at(mon, 2, 12, 0),
-			category: 'work',
-			location: 'Room 4B',
-			subtitle: 'Product Team',
+			category: 'admin',
+			location: 'Studio A',
+			subtitle: 'Denis Kolokol',
 		},
 		{
 			title: 'Sound Bath',
@@ -158,12 +157,12 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 			location: 'Studio B',
 		},
 		{
-			title: 'All-Hands',
+			title: 'Studio Cleaning',
 			start: at(mon, 3, 10, 30),
 			end: at(mon, 3, 11, 30),
-			category: 'work',
-			location: 'Main Hall',
-			tags: ['Mandatory'],
+			category: 'admin',
+			location: 'Studios A & B',
+			tags: ['Staff Only'],
 		},
 		{
 			title: 'Guest Workshop',
@@ -188,12 +187,12 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 			location: 'Studio A',
 		},
 		{
-			title: 'Retro',
+			title: 'Timetable Planning',
 			start: at(mon, 4, 14, 0),
 			end: at(mon, 4, 15, 0),
-			category: 'work',
-			subtitle: 'Engineering',
-			location: 'Room 4B',
+			category: 'admin',
+			subtitle: 'Studio manager',
+			location: 'Office',
 		},
 
 		// ──────────────────────────────────────────────────
@@ -209,25 +208,23 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 			tags: ['Advanced', 'Workshop'],
 		},
 
-		// ──────────────────────────────────────────────────
-		// SUNDAY (day 6) — rest day
-		// ──────────────────────────────────────────────────
 		{
 			title: 'Restorative Yoga',
-			start: at(mon, 6, 16, 0),
-			end: at(mon, 6, 17, 15),
+			start: at(mon, 5, 17, 0),
+			end: at(mon, 5, 18, 15),
 			category: 'wellness',
 			location: 'Studio A',
 			tags: ['All Levels'],
 		},
 
 		// ──────────────────────────────────────────────────
-		// PREVIOUS WEEK — so "yesterday" has content
+		// PREVIOUS WEEK — so the week before has content
+		// (Sundays are closed: see closedDates)
 		// ──────────────────────────────────────────────────
 		{
 			title: 'Gentle Morning',
-			start: at(mon, -1, 9, 30),
-			end: at(mon, -1, 10, 30),
+			start: at(mon, -2, 9, 30),
+			end: at(mon, -2, 10, 30),
 			category: 'yoga',
 			location: 'Studio B',
 		},
@@ -266,6 +263,15 @@ export function createDemoEvents(today: Date = new Date()): TimelineEvent[] {
 	];
 
 	return defs.map((d) => ({ ...d, id: uid() }));
+}
+
+/**
+ * The studio is closed on Sundays: nothing is seeded on one, so the demo's
+ * `disabledDates` (last week's, this week's and next week's Sunday) are days
+ * with no classes, and nothing has to be hidden to make them look closed.
+ */
+export function closedDates(today: Date = new Date()): Date[] {
+	return [-1, 6, 13].map((n) => at(mondayOf(today), n, 0));
 }
 
 // ── Recurring event definitions ─────────────────────────
@@ -407,16 +413,6 @@ export function createDemoRecurring(): RecurringEvent[] {
 			category: 'wellness',
 			location: 'Garden',
 			tags: ['Free'],
-		},
-		{
-			id: 'rec-slow',
-			title: 'Slow Flow',
-			dayOfWeek: 7, // Sunday
-			startTime: '10:00',
-			endTime: '11:00',
-			category: 'yoga',
-			subtitle: 'Monika Jaglarz',
-			location: 'Studio B',
 		},
 
 		// ── Biweekly deep dive ──

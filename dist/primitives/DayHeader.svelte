@@ -5,10 +5,10 @@
     - Relative labels ("Today", "Tomorrow") for day views via fmtDay
     - Short/long weekday + date number for week views
 -->
-<script lang="ts">import { weekdayShort, weekdayLong, monthShort, fmtDay } from "../core/locale.js";
+<script lang="ts">import { weekdayShort, weekdayLong, monthShort, fmtDay, fmtDayNum } from "../core/locale.js";
 import { sod } from "../core/time.js";
 let { dayMs, todayMs = sod(Date.now()), format = "short", isToday = false, isPast = false } = $props();
-const dayNum = $derived(new Date(dayMs).getDate());
+const dayNum = $derived(fmtDayNum(dayMs));
 </script>
 
 <div

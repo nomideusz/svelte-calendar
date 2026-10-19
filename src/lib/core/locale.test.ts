@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
 	fmtH,
+	fmtHParts,
+	fmtTime,
+	fmtDayNum,
 	weekdayShort,
 	monthShort,
 	monthLong,
@@ -214,5 +217,21 @@ describe('labels', () => {
 		expect(defaultLabels.today).toBe('Today');
 		expect(defaultLabels.now).toBe('now');
 		expect(defaultLabels.nMore(5)).toBe('+5 more');
+	});
+});
+
+describe('locale digits and day periods', () => {
+	const d = new Date(2026, 9, 19, 7, 5);
+	it('keeps the compact a/p style for Latin AM/PM locales', () => {
+		expect(fmtTime(d, 'en-US')).toBe('7:05a');
+		expect(fmtH(13, 'en-US')).toBe('1p');
+		expect(fmtTime(d, 'pl-PL')).toBe('7:05');
+	});
+	it("uses the locale's digits and day period in ar-SA", () => {
+		expect(fmtTime(d, 'ar-SA')).toBe(new Intl.DateTimeFormat('ar-SA', { hour: 'numeric', minute: '2-digit' }).format(d));
+		expect(fmtTime(d, 'ar-SA')).not.toMatch(/[0-9]|a$/);
+		expect(fmtHParts(13, 'ar-SA')[0]).toBe('١');
+		expect(fmtDayNum(d.getTime(), 'ar-SA')).toBe('١٩');
+		expect(fmtDayNum(d.getTime(), 'en-US')).toBe('19');
 	});
 });

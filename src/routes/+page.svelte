@@ -18,10 +18,11 @@
 	import type { PresetName, CalendarLabels } from "#lib/index.js";
 	import Shell from "./_components/Shell.svelte";
 	import Settings from "./_components/Settings.svelte";
+	import Hosts from "./_components/Hosts.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
-	import type { CalendarView, TimelineEvent } from "#lib/index.js";
+	import type { CalendarView, TimelineEvent, HeaderContext } from "#lib/index.js";
 	import { boardStore, themeStore } from "./theme.svelte.js";
-	import { createDemoEvents, createDemoRecurring } from "./demo-events.js";
+	import { createDemoEvents, createDemoRecurring, closedDates } from "./demo-events.js";
 
 	type SettingValue = string | number | boolean;
 
@@ -155,12 +156,12 @@
 	// Every control is named for the prop it drives; options read as values.
 	const settingsFields: SettingsField[] = [
 		{
-			key: "activeView", label: "view", type: "select",
+			key: "activeView", label: "view", type: "select", quick: true,
 			hint: "Which built-in view renders: planners are time grids, agendas are lists",
 			options: VIEWS.map((v) => ({ value: v, label: v })),
 		},
 		{
-			key: "calendarPreset", label: "theme", type: "select",
+			key: "calendarPreset", label: "theme", type: "select", quick: true,
 			hint: "auto reads the host page's colours and type; neutral and midnight are fixed presets",
 			options: [
 				{ value: "auto", label: "auto" },
@@ -360,7 +361,9 @@
 		},
 	};
 	const labels = $derived(LABELS[locale]);
-	const dir = $derived<"ltr" | "rtl">(settingsValues.rtl ? "rtl" : "ltr");
+	// Only an explicit rtl: left unset, the calendar reads the direction from
+	// the locale itself (ar-SA lays out right to left on its own).
+	const dir = $derived<"rtl" | undefined>(settingsValues.rtl ? "rtl" : undefined);
 	const phoneFrame = $derived(Boolean(settingsValues.phoneFrame));
 
 	const today = new Date();
@@ -392,21 +395,16 @@
 	// ── Adapter ────────────────────────────────────────────
 	// Composite: one-off events (memory) + recurring schedule. No colours:
 	// events without `color` are ink (--dt-event), as in the code drawer; the
-	// all-day events name the accent themselves.
-	// With disabledDates on, those days are closed: no classes on them, the
-	// way a host would cancel a closed day rather than book onto it.
-	const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-	const adapter = $derived.by(() => {
-		const closed = (disabledDates ?? []).map(ymd);
-		return createCompositeAdapter([
-			createMemoryAdapter(closed.length ? seed.filter((e) => e.allDay || !closed.includes(ymd(e.start))) : seed),
+	// all-day events name the accent themselves. Nothing is hidden for
+	// disabledDates: the seed has no classes on the closed Sundays, and an event
+	// dragged onto one stays visible, as the library draws it.
+	const adapter = $derived(
+		createCompositeAdapter([
+			createMemoryAdapter(seed),
 			// movable: the demo handles the move itself (see handleMove)
-			createRecurringAdapter(
-				closed.length ? recurring.map((r) => ({ ...r, excludeDates: [...(r.excludeDates ?? []), ...closed] })) : recurring,
-				{ movable: true },
-			),
-		]);
-	});
+			createRecurringAdapter(recurring, { movable: true }),
+		]),
+	);
 
 	// ── Calendar preset theme (from Settings panel) ───────
 	const selectedPreset = $derived(
@@ -455,7 +453,7 @@
 		[...new Set([idle, idleTouch, lastAction, ...recipes.map((r) => r.hint), ...settingsFields.flatMap((f) => [
 			f.hint ?? "",
 			f.disabledWhen?.(settingsValues) || "",
-			f.enabledWhen ? `Needs ${f.enabledWhen}` : "",
+			f.enabledWhen ? `Needs ${settingsFields.find((g) => g.key === f.enabledWhen)?.label}` : "",
 		])])].filter(Boolean),
 	);
 	// Times in the info line read like the grid: the library's own formatter
@@ -533,6 +531,9 @@
 			settingsValues = { ...settingsValues, activeView: viewId };
 		}
 	}
+	// The bar's Today is off while today is in view, as the calendar's own is:
+	// the empty header snippet still gets the calendar's context and reports it.
+	let todayInView = $state(true);
 	// Month → day drill-down: clicking a month cell (or "+N more") jumps to
 	// the day planner focused on that date, via the controlled currentDate prop.
 	let focusedDate = $state<Date | undefined>(undefined);
@@ -569,14 +570,8 @@
 				]
 			: undefined,
 	);
-	const disabledDates = $derived(
-		disabledDatesEnabled
-			? [
-					new Date(addDaysMs(today.getTime(), 2)),
-					new Date(addDaysMs(today.getTime(), 4)),
-				]
-			: undefined,
-	);
+	// The studio's closed Sundays: the seed books nothing on them.
+	const disabledDates = $derived(disabledDatesEnabled ? closedDates(today) : undefined);
 
 	let codeOpen = $state(false);
 	let copyLabel = $state("Copy");
@@ -592,38 +587,92 @@
 		setTimeout(() => (copyLabel = "Copy"), 1600);
 	}
 
-	// ── Live code snippet: the <Calendar> markup for the current settings ──
-	// A prop the current view ignores (its control is disabled) stays out of the code.
+	// ── Live code snippet: runnable code for the current settings ──
+	// A prop the current view ignores (its control is disabled) stays out of
+	// the code. Editable setups keep their events in state and hand the
+	// Calendar a new adapter on each create and move, as the README shows.
 	const inert = (key: string) => Boolean(settingsFields.find((f) => f.key === key)?.disabledWhen?.(settingsValues));
+	const quote = (v: string) => `'${v.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
+	// nMore is a function: called with the text "${n}", it hands back its own
+	// template, which goes out as one.
+	const labelsCode = (l: Partial<CalendarLabels>) =>
+		Object.entries(l).map(([k, v]) =>
+			typeof v === "function"
+				? `    ${k}: (n) => \`${(v as (n: unknown) => string)("${n}")}\`,`
+				: `    ${k}: ${quote(String(v))},`,
+		);
 	const codeSnippet = $derived.by(() => {
+		// The planners and the scroll take creates and moves; the week-agenda
+		// columns only a day-drag; the other views no edits at all.
+		const creates = !readOnly && TIMED.includes(activeView);
+		const moves = creates || (!readOnly && activeView === "week-agenda" && columns);
+		const editable = creates || moves;
 		const extraImports = selectedPreset !== "auto" ? `, ${selectedPreset}` : "";
 		const script: string[] = [
 			`  import { Calendar, createMemoryAdapter${extraImports} } from '@nomideusz/svelte-calendar';`,
 			"",
+			"  // Today at a given hour, so the events land in the week the calendar opens on",
 			"  const today = new Date();",
 			"  const at = (hour) => new Date(today.getFullYear(), today.getMonth(), today.getDate(), hour);",
-			"  const adapter = createMemoryAdapter([",
-			"    { id: '1', title: 'Morning Flow', start: at(9), end: at(10) },",
-			"    { id: '2', title: 'Lunch talk', start: at(12), end: at(13) },",
-			"  ]);",
+			"",
 		];
+		// The README's Quick Start, line for line.
+		const sample = [
+			"    { id: '1', title: 'Team Sync', start: at(9),  end: at(10) },",
+			"    { id: '2', title: 'Lunch',     start: at(12), end: at(13) },",
+		];
+		if (editable) {
+			script.push(
+				"  let events = $state([",
+				...sample,
+				"  ]);",
+				"  // A new adapter whenever the events change; the calendar reloads without blanking",
+				"  const adapter = $derived(createMemoryAdapter(events));",
+			);
+			if (creates) {
+				script.push(
+					"",
+					"  // Drag on empty time (or press Enter on a day column) to create",
+					"  function create({ start, end }) {",
+					"    events = [...events, { id: crypto.randomUUID(), title: 'New event', start, end }];",
+					"  }",
+				);
+			}
+			script.push(
+				"",
+				activeView === "week-agenda" ? "  // Drag a class to another day to move it" : "  // Drag an event to move it, or its edge to resize it",
+				"  function move(event, start, end) {",
+				"    events = events.map((e) => (e.id === event.id ? { ...e, start, end } : e));",
+				"  }",
+			);
+		} else {
+			script.push("  const adapter = createMemoryAdapter([", ...sample, "  ]);");
+		}
 		if (blockedSlotsEnabled && !inert("blockedSlotsEnabled")) {
 			script.push(
+				"",
 				"  const blockedSlots = [",
-				"    { start: 12, end: 13, label: 'Lunch' },        // every day 12–13",
+				"    { start: 12, end: 13, label: 'Lunch' }, // every day 12–13",
 				"    { day: 6, start: 0, end: 9, label: 'Sat morning' },",
 				"    { day: 7, start: 0, end: 9, label: 'Sun morning' },",
 				"  ];",
 			);
 		}
 		if (disabledDatesEnabled) {
-			script.push("  const disabledDates = [/* Date objects to grey out */];");
+			script.push(
+				"",
+				"  // Closed on Sundays: last week's, this week's and next week's",
+				"  const sunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + ((7 - today.getDay()) % 7));",
+				"  const disabledDates = [-7, 0, 7].map((n) => new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate() + n));",
+			);
 		}
+		if (labels) script.push("", "  const labels = {", ...labelsCode(labels), "  };");
 		if (!showNavigation) script.push("", "  let date = $state(new Date()); // your own Today / ‹ › buttons set this");
 
 		const props: string[] = ["{adapter}", `view="${activeView}"`];
 		if (selectedPreset !== "auto") props.push(`theme={${selectedPreset}}`);
-		if (locale !== "en-US") props.push(`locale="${locale}"`, "labels={{ today: '…', week: '…' /* your language */ }}");
+		if (locale !== "en-US") props.push(`locale="${locale}"`);
+		if (labels) props.push("{labels}");
 		if (timezone) props.push(`timezone="${timezone}"`);
 		if (dir === "rtl") props.push(`dir="rtl"`);
 		if (readOnly && !inert("readOnly")) props.push("readOnly");
@@ -643,10 +692,14 @@
 		if (mobileMode !== "auto") props.push(`mobile={${mobileMode}}`);
 		if (blockedSlotsEnabled && !inert("blockedSlotsEnabled")) props.push("{blockedSlots}");
 		if (disabledDatesEnabled) props.push("{disabledDates}");
+		if (creates) props.push("oneventcreate={create}");
+		if (moves) props.push("oneventmove={move}");
 
 		// '</' + 'script>' split so the Svelte compiler doesn't end this block early
-		// Two props fit on one line: the default reads as it would be typed.
-		const tag = props.length > 2 ? `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n` : `<Calendar ${props.join(" ")} `;
+		// A short tag stays on one line, as it would be typed (the default is
+		// the README's); a longer one takes a prop per line.
+		const oneLine = `<Calendar ${props.join(" ")} `;
+		const tag = oneLine.length <= 90 ? oneLine : `<Calendar\n${props.map((p) => `  ${p}`).join("\n")}\n`;
 		const body = ownHeader
 			? `${tag}>\n  <!-- an empty header snippet: no built-in title, pills or arrows -->\n  {#snippet header()}{/snippet}\n</Calendar>`
 			: `${tag}/>`;
@@ -656,7 +709,7 @@
 	const codeLine = $derived(codeSnippet.slice(codeSnippet.indexOf("<Calendar")).replace(/\s+/g, " "));
 </script>
 
-{#snippet blankHeader()}{/snippet}
+{#snippet blankHeader(ctx: HeaderContext)}<span hidden {@attach () => { todayInView = ctx.isViewOnToday; }}></span>{/snippet}
 
 <!-- In the rail on desktop; at or below 1360px above the calendar instead,
      since the rail folds under the page there. One is display:none at a time. -->
@@ -681,7 +734,7 @@
 		{#if !showNavigation}
 			<div class="pager" role="group" aria-label="Calendar date">
 				{#if periodLabel}<span class="pager-label" role="status" aria-live="polite">{periodLabel}</span>{/if}
-				<button class="pager-today" onclick={() => (focusedDate = new Date())}>Today</button>
+				<button class="pager-today" disabled={todayInView} onclick={() => (focusedDate = new Date())}>Today</button>
 				<button class="pager-btn" onclick={() => stepDate(-1)} aria-label={`Previous ${stepMode}`}>
 					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
 				</button>
@@ -700,6 +753,24 @@
 	<main id="content" tabindex="-1">
 		<h1 class="sr-only">svelte-calendar — a Svelte 5 calendar component, live demo</h1>
 		{@render setups("top")}
+		<!-- On a phone the rail is far below: what changes the screen most
+		     (the view, the theme, the host page) sits with the setups. -->
+		<div class="quick">
+			{#each fields.filter((f) => f.quick) as f (f.key)}
+				{#if f.type === "select"}
+					<label class="quick-sel">
+						<span>{f.label}</span>
+						<select
+							value={String(settingsValues[f.key])}
+							onchange={(e) => (settingsValues = { ...settingsValues, [f.key]: e.currentTarget.value })}
+						>
+							{#each f.options as o (o.value)}<option value={o.value}>{o.label}</option>{/each}
+						</select>
+					</label>
+				{/if}
+			{/each}
+			<Hosts compact />
+		</div>
 
 		<div class="cal-stage" class:cal-stage--phone={phoneFrame}>
 			<div class="cal-frame" bind:clientHeight={frameH} bind:clientWidth={frameW}>
@@ -834,7 +905,11 @@
 		width: calc(44 * var(--u));
 		padding: 0;
 	}
-	.pager-today:hover,
+	.pager-today:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+	.pager-today:hover:not(:disabled),
 	.pager-btn:hover {
 		color: var(--dt-accent, #111);
 		border-color: var(--dt-accent, #111);
@@ -872,14 +947,14 @@
 		border: none;
 		border-radius: 0;
 		background: transparent;
-		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 400 calc(24 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, #111);
 		box-shadow: inset 0 -3px 0 transparent;
 		cursor: pointer;
 		transition: color 120ms, box-shadow 120ms;
 	}
 	.setup:hover {
-		box-shadow: inset 0 -3px 0 var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		box-shadow: inset 0 -3px 0 var(--dt-border-day, rgba(15, 15, 15, 0.6));
 	}
 	.setup[aria-pressed='true'] {
 		box-shadow: inset 0 -3px 0 var(--dt-accent, #1d4fd7);
@@ -900,6 +975,60 @@
 			gap: 6px 22px;
 			padding: 14px 0 10px;
 			margin-bottom: 16px;
+		}
+	}
+
+	/* ── Phone: view, theme and host above the calendar ── */
+	.quick {
+		display: none;
+	}
+	@media (max-width: 640px) {
+		.quick {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-bottom: 16px;
+		}
+		.quick-sel {
+			position: relative;
+			display: grid;
+			grid-template-columns: 3em minmax(0, 1fr);
+			align-items: center;
+			gap: 8px;
+			font: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);
+		}
+		.quick-sel select {
+			appearance: none;
+			width: 100%;
+			min-height: 44px;
+			padding: 0 32px 0 10px;
+			border: 2px solid var(--dt-text, #111);
+			border-radius: 4px;
+			background: transparent;
+			font: 400 15px / 1.2 var(--dt-sans, system-ui, sans-serif);
+			color: inherit;
+			text-overflow: ellipsis;
+		}
+		.quick-sel select option {
+			color: initial;
+			background: initial;
+		}
+		.quick-sel select:focus-visible {
+			outline: 2px solid var(--dt-text, #111);
+			outline-offset: 2px;
+		}
+		/* The rail's chevron: a mask over currentColor, so it reads on dark hosts. */
+		.quick-sel::after {
+			content: "";
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			width: 18px;
+			height: 18px;
+			translate: 0 -50%;
+			background: currentColor;
+			mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E") center / contain no-repeat;
+			pointer-events: none;
 		}
 	}
 
@@ -929,8 +1058,8 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font: 400 max(13px, calc(17 * var(--u))) / 1.4 var(--dt-sans, inherit);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		font: 400 max(13px, calc(17 * var(--u))) / 1.4 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 	.live {
 		flex: none;
@@ -950,8 +1079,8 @@
 		gap: calc(10 * var(--u));
 		min-height: calc(36 * var(--u));
 		padding: 0 calc(12 * var(--u)) 0 calc(8 * var(--u));
-		border: 1px dashed var(--dt-text-3, rgba(0, 0, 0, 0.5));
-		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, inherit);
+		border: 1px dashed var(--dt-text-3, rgba(15, 15, 15, 0.54));
+		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, #111);
 		cursor: grab;
 		user-select: none;
@@ -971,7 +1100,7 @@
 	}
 	.drag-hint {
 		font-weight: 400;
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 	}
 
 	.cal-stage {
@@ -1030,17 +1159,17 @@
 	}
 	.code-hd h2 {
 		margin: 0;
-		font: 400 calc(26 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 400 calc(26 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		letter-spacing: -0.01em;
 	}
 	.code-copy,
 	.reset {
 		padding: calc(8 * var(--u)) calc(14 * var(--u));
-		border: 1px solid var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		border: 1px solid var(--dt-border-day, rgba(15, 15, 15, 0.6));
 		border-radius: 0;
 		background: transparent;
 		color: inherit;
-		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 500 calc(17 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		cursor: pointer;
 	}
 	.reset {
@@ -1079,25 +1208,37 @@
 		overflow-x: auto;
 		white-space: nowrap;
 		font: 400 calc(17 * var(--u)) / 1.5 var(--dt-mono, ui-monospace, monospace);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		font-variant-ligatures: none;
 		scrollbar-width: none;
 	}
 	.code pre {
 		margin: 0;
-		/* capped so the calendar above keeps ~420px on a 900px screen */
-		max-height: 30vh;
+		/* capped so the week above keeps six hours in view on a 900px screen:
+		   what the screen has past ~780px, at least 7.5rem, at most 30vh */
+		max-height: clamp(7.5rem, 100vh - 780px, 30vh);
 		padding: calc(6 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u));
 		overflow: auto;
 		font: 400 13px / 1.6 var(--dt-mono, ui-monospace, monospace);
 		font-variant-ligatures: none;
 		color: var(--dt-text, #111);
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.18)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.18)) transparent;
 	}
 
-	/* On a phone the 390px frame is the screen itself. */
+	/* On a phone the 390px frame is the screen itself, and the calendar keeps
+	   to 60% of the screen: its own scroll never takes the whole page. */
 	@media (max-width: 640px) {
+		.cal-stage {
+			flex: none;
+		}
+		.cal-frame {
+			flex: none;
+			height: 60vh;
+			height: 60svh;
+			min-height: 320px;
+		}
 		.cal-stage--phone .cal-frame {
+			height: auto;
 			width: 100%;
 			border-width: 0;
 			border-radius: 0;

@@ -22,7 +22,7 @@ import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
 import { HOUR_MS, sod, addDaysMs, diffDays } from "../../core/time.js";
 import { startOfWeek as sowFn, isAllDay, segmentForDay } from "../../core/time.js";
-import { weekdayShort, monthLong, fmtTime as _fmtTime } from "../../core/locale.js";
+import { weekdayShort, monthLong, fmtDayNum, fmtTime as _fmtTime } from "../../core/locale.js";
 import { createChipFit } from "../shared/chip-fit.svelte.js";
 let { mondayStart = true, locale, height = 520, events = [], style = "", focusDate, oneventclick, oneventcreate, onexternaldrop, selectedEventId = null, readOnly = false, visibleHours } = $props();
 const ctx = useCalendarContext();
@@ -873,7 +873,7 @@ function onCellKeydown(e, ms) {
 								<div class="wg-cell-hd" class:wg-cell-hd--today={day.isToday}>
 									<span class="wg-day-wd">{weekdayShort(day.ms, locale)}</span>
 									{#if showDates}
-										<span class="wg-day-num">{day.dayNum}</span>
+										<span class="wg-day-num">{fmtDayNum(day.ms, locale)}</span>
 									{/if}
 								</div>
 
@@ -1476,12 +1476,12 @@ function onCellKeydown(e, ms) {
 
 	.wg-ev-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 
 	/* ─── Focus-visible ──────────────────────────────── */
 	.wg-cell:focus-visible {
-		outline: 2px solid var(--dt-accent, #1d4fd7);
+		outline: 2px solid var(--dt-text, #0f0f0f);
 		outline-offset: -2px;
 	}
 

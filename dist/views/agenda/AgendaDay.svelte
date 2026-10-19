@@ -12,8 +12,8 @@
 *   Clean numbered schedule list.
 */
 import { createClock } from "../../core/clock.svelte.js";
-import { sod, addDaysMs, dayNum, isAllDay } from "../../core/time.js";
-import { weekdayLong, monthLong } from "../../core/locale.js";
+import { sod, addDaysMs, isAllDay } from "../../core/time.js";
+import { weekdayLong, monthLong, fmtDayNum } from "../../core/locale.js";
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from "../shared/format.js";
@@ -136,7 +136,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		<!-- ─── In-view date header (only when the chrome doesn't label the day) ─── -->
 		{#if !hideDayHead}
 		<div class="ag-day-head" class:ag-day-head--today={!equalDays && isToday}>
-			<span class="ag-day-head-num">{dayNum(dayMs)}</span>
+			<span class="ag-day-head-num">{fmtDayNum(dayMs, locale)}</span>
 			{#if !equalDays && isToday}
 				<span class="ag-day-head-badge">{L.today}</span>
 			{:else if !equalDays && isTomorrow}
@@ -562,6 +562,15 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 		color: var(--dt-btn-text, #fff);
 		cursor: pointer;
 	}
+	@media (pointer: coarse) {
+		.ag-allday-chip {
+			min-height: 44px;
+		}
+		.ag-q-done-item {
+			min-height: 44px;
+			align-items: center;
+		}
+	}
 	.ag-allday-chip:hover,
 	.ag-allday-chip:active {
 		filter: brightness(1.08);
@@ -820,7 +829,7 @@ const hiddenDoneCount = $derived(showAllDone ? 0 : Math.max(0, dayCat.past.lengt
 	}
 	.ag-q-done-toggle:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 	}
 	.ag-q-now-sub {
 		font: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);

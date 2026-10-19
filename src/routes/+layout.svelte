@@ -107,7 +107,7 @@
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wdth,wght@75..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wdth,wght@75..125,100..900&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400..600&family=Source+Sans+3:wght@400..600&display=swap" rel="stylesheet" />
 </svelte:head>
 
 {@render children()}
@@ -124,10 +124,11 @@
 		margin: 0;
 		background: var(--page-bg, #efebe9);
 		color: var(--dt-text, #0f0f0f);
-		font-family: 'Encode Sans', system-ui, sans-serif;
+		/* The host's face: Encode Sans, or the one a host theme sets on <html>.
+		   No crossfade on the ground: `auto` probes the page as it switches. */
+		font-family: var(--dt-sans);
 		font-variant-numeric: tabular-nums;
 		-webkit-font-smoothing: antialiased;
-		transition: background 300ms ease;
 	}
 	:global(a) {
 		color: inherit;
@@ -138,7 +139,7 @@
 		color: var(--dt-bg, #efebe9);
 	}
 	:global(html) {
-		scrollbar-color: var(--dt-scrollbar, rgba(0, 0, 0, 0.2)) transparent;
+		scrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.18)) transparent;
 	}
 	:global(:focus-visible) {
 		outline-color: var(--dt-text, #111);

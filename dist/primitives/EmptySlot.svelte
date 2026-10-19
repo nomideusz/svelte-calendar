@@ -53,7 +53,7 @@ function handleKeydown(e) {
 		background: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}
 	.es:focus-visible {
-		outline: 2px solid var(--dt-accent, #1d4fd7);
+		outline: 2px solid var(--dt-text, #0f0f0f);
 		outline-offset: 2px;
 		border-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));
 	}

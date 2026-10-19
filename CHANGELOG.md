@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.1
+
+### Patch Changes
+
+- `auto` theme re-probes when a background or colour transition on `<html>` or `<body>` ends, so a host page that crossfades its ground no longer leaves the calendar on the previous host's colours.
+- Header view pills are a radio group: one tab stop per group, with ←/→ (RTL-aware), ↑/↓, Home and End moving and selecting. On coarse pointers pills are at least 44px wide.
+- Focus rings on day columns, cells, "+more" buttons, empty slots and toggles are square 2px ink outlines; event focus stays accent.
+- Distinct accessible names: month chips and "+N more" (month grid and mobile week) include their day.
+- Locale digits throughout: day numbers, times and gutter hours use the locale's numbering (e.g. Arabic-Indic for `ar-SA`). The compact "7:00a" style applies only to 12-hour locales with Latin AM/PM; others use Intl's own day period.
+- Touch: mobile week "+N more", agenda all-day chips and completed items are at least 44px tall on coarse pointers.
+
 ## 1.4.0
 
 ### Minor Changes

@@ -623,6 +623,28 @@ function handleShortcuts(e) {
 		else viewState.prev();
 	}
 }
+// Each pill group is one tab stop (radio-group pattern): arrows (reading
+// direction), Home and End move the selection and focus with it.
+function pillKeys(e) {
+	const radios = [...e.currentTarget.querySelectorAll("[role=\"radio\"]")];
+	const i = radios.indexOf(e.target);
+	if (i < 0) return;
+	const rtl = getComputedStyle(e.currentTarget).direction === "rtl";
+	const step = {
+		ArrowRight: rtl ? -1 : 1,
+		ArrowLeft: rtl ? 1 : -1,
+		ArrowDown: 1,
+		ArrowUp: -1
+	};
+	let n;
+	if (e.key === "Home") n = 0;
+	else if (e.key === "End") n = radios.length - 1;
+	else if (e.key in step) n = (i + step[e.key] + radios.length) % radios.length;
+	else return;
+	e.preventDefault();
+	radios[n].focus();
+	radios[n].click();
+}
 /** Header context for custom header snippet */
 const headerCtx = $derived({
 	dateLabel,
@@ -671,7 +693,9 @@ const navCtx = $derived({
 			<span class="cal-sr" role="status" aria-live="polite" aria-atomic="true">{noteText || dateLabel}</span>
 			{#if showModePills && !useMobile && labelsForMode.length > 1}
 				<!-- View-type switcher (e.g. Planner ↔ Agenda) for the current mode -->
-				<div class="cal-pills cal-pills--labels" role="radiogroup" aria-label={L.viewMode}>
+				{@const activeLabel = labelsForMode.includes(activeView?.label ?? '') ? activeView?.label : labelsForMode[0]}
+				<!-- svelte-ignore a11y_interactive_supports_focus -- the checked radio is the tab stop; the group only routes its arrow keys -->
+				<div class="cal-pills cal-pills--labels" role="radiogroup" aria-label={L.viewMode} onkeydown={pillKeys}>
 					{#each labelsForMode as label (label)}
 						<button
 							type="button"
@@ -679,6 +703,7 @@ const navCtx = $derived({
 							class:cal-pill--active={activeView?.label === label}
 							role="radio"
 							aria-checked={activeView?.label === label}
+							tabindex={label === activeLabel ? 0 : -1}
 							onclick={() => switchLabel(label)}
 						>
 							{viewLabel(label)}
@@ -687,7 +712,9 @@ const navCtx = $derived({
 				</div>
 			{/if}
 			{#if showModePills && modes.length > 1}
-				<div class="cal-pills" role="radiogroup" aria-label={L.viewMode}>
+				{@const activeMode = modes.includes(viewState.mode) ? viewState.mode : modes[0]}
+				<!-- svelte-ignore a11y_interactive_supports_focus -- the checked radio is the tab stop; the group only routes its arrow keys -->
+				<div class="cal-pills" role="radiogroup" aria-label={L.viewMode} onkeydown={pillKeys}>
 					{#each modes as g (g)}
 						<button
 							type="button"
@@ -695,6 +722,7 @@ const navCtx = $derived({
 							class:cal-pill--active={viewState.mode === g}
 							role="radio"
 							aria-checked={viewState.mode === g}
+							tabindex={g === activeMode ? 0 : -1}
 							onclick={() => switchMode(g)}
 						>
 							{g === 'day' ? L.day : g === 'week' ? L.week : L.month}
@@ -951,6 +979,9 @@ const navCtx = $derived({
 	@media (pointer: coarse) {
 		.cal-hd {
 			--cal-ctl-h: 44px;
+		}
+		.cal-pill {
+			min-width: 44px;
 		}
 	}
 

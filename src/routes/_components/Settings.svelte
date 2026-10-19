@@ -13,6 +13,8 @@
 		disabledWhen?: (values: Record<string, string | number | boolean>) => string | false;
 		/** Rarely needed: kept behind the "More props" disclosure */
 		more?: boolean;
+		/** The page shows it above the calendar on a phone, so the rail leaves it out there */
+		quick?: boolean;
 	};
 	type RangeField = BaseField & { type: 'range'; min: number; max: number; step: number };
 	type ToggleField = BaseField & { type: 'toggle' };
@@ -36,7 +38,9 @@
 	function reasonOf(f: SettingsField): string {
 		const reason = f.disabledWhen?.(values);
 		if (reason) return reason;
-		if (f.enabledWhen && values[f.enabledWhen] !== true) return `Needs ${f.enabledWhen}`;
+		// Named as its control is: the prop (visibleHours), not the state key.
+		if (f.enabledWhen && values[f.enabledWhen] !== true)
+			return `Needs ${fields.find((g) => g.key === f.enabledWhen)?.label ?? f.enabledWhen}`;
 		return '';
 	}
 
@@ -60,7 +64,7 @@
 	<div class="ps-selects">
 		{#each selects as f (f.key)}
 			{@const reason = reasonOf(f)}
-			<label class="ps-sel" class:ps-off={!!reason} title={reason || undefined} {...show(f)}>
+			<label class="ps-sel" class:ps-off={!!reason} class:ps-quick={f.quick} title={reason || undefined} {...show(f)}>
 				<span class="ps-name">{f.label}:</span>
 				<select
 					name={f.key}
@@ -136,7 +140,7 @@
 
 <style>
 	.ps {
-		--ps-rule: var(--dt-border-day, rgba(0, 0, 0, 0.3));
+		--ps-rule: var(--dt-border-day, rgba(15, 15, 15, 0.6));
 		color: var(--dt-text, #111);
 	}
 
@@ -153,7 +157,7 @@
 		gap: calc(12 * var(--u));
 	}
 	.ps-name {
-		font: 400 calc(22 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 400 calc(22 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		color: var(--dt-text, #111);
 		white-space: nowrap;
 	}
@@ -165,7 +169,7 @@
 		border: 2px solid var(--dt-text, #111);
 		border-radius: calc(6 * var(--u));
 		background: transparent;
-		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, inherit);
+		font: 400 calc(22 * var(--u)) / 1.2 var(--dt-sans, system-ui, sans-serif);
 		color: inherit;
 		cursor: pointer;
 		text-overflow: ellipsis;
@@ -212,11 +216,11 @@
 		gap: calc(8 * var(--u));
 		min-height: calc(40 * var(--u));
 		padding: 0 calc(8 * var(--u)) 0 calc(16 * var(--u));
-		border: 2px solid var(--dt-text-2, rgba(0, 0, 0, 0.66));
+		border: 2px solid var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		border-radius: calc(22 * var(--u));
 		background: transparent;
 		color: inherit;
-		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		text-align: left;
 		cursor: pointer;
 		transition: border-color 120ms;
@@ -308,7 +312,7 @@
 		accent-color: var(--dt-accent, #1d4fd7);
 	}
 	.ps-rng output {
-		font: 400 calc(18 * var(--u)) / 1 var(--dt-sans, inherit);
+		font: 400 calc(18 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
 		font-variant-numeric: tabular-nums;
 		text-align: right;
 	}
@@ -323,8 +327,8 @@
 		align-items: center;
 		gap: calc(10 * var(--u));
 		min-height: calc(44 * var(--u));
-		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, inherit);
-		color: var(--dt-text-2, rgba(0, 0, 0, 0.6));
+		font: 400 calc(19 * var(--u)) / 1 var(--dt-sans, system-ui, sans-serif);
+		color: var(--dt-text-2, rgba(15, 15, 15, 0.66));
 		cursor: pointer;
 		list-style: none;
 	}
@@ -379,6 +383,12 @@
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 			gap: calc(10 * var(--u)) calc(28 * var(--u));
+		}
+	}
+
+	@media (max-width: 640px) {
+		.ps-quick {
+			display: none;
 		}
 	}
 

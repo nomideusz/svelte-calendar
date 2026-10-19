@@ -37,3 +37,60 @@ describe('Calendar header title', () => {
         unmount(cal);
     });
 });
+describe('Calendar header view pills', () => {
+    async function mountCal(props = {}) {
+        const Calendar = (await import('./Calendar.svelte')).default;
+        const target = document.createElement('div');
+        document.body.appendChild(target);
+        const cal = mount(Calendar, {
+            target,
+            props: { adapter: createMemoryAdapter([]), view: 'week-planner', locale: 'en-US', ...props },
+        });
+        flushSync();
+        const groups = [...target.querySelectorAll('[role="radiogroup"]')];
+        const radios = (g) => [...g.querySelectorAll('[role="radio"]')];
+        const key = (el, k) => {
+            el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+            flushSync();
+        };
+        return { groups, radios, key, done: () => { unmount(cal); target.remove(); } };
+    }
+    it('makes each group one tab stop: the checked radio', async () => {
+        const { groups, radios, done } = await mountCal();
+        expect(groups.length).toBe(2);
+        for (const g of groups) {
+            const stops = radios(g).filter((r) => r.tabIndex === 0);
+            expect(stops.length).toBe(1);
+            expect(stops[0].getAttribute('aria-checked')).toBe('true');
+        }
+        done();
+    });
+    it('moves selection and focus with arrows, Home and End', async () => {
+        const { groups, radios, key, done } = await mountCal();
+        const modes = groups[1];
+        const [day, week, month] = radios(modes);
+        expect(week.getAttribute('aria-checked')).toBe('true');
+        week.focus();
+        key(week, 'ArrowRight');
+        expect(month.getAttribute('aria-checked')).toBe('true');
+        expect(document.activeElement).toBe(month);
+        expect(month.tabIndex).toBe(0);
+        expect(week.tabIndex).toBe(-1);
+        key(month, 'ArrowRight'); // wraps
+        expect(day.getAttribute('aria-checked')).toBe('true');
+        key(day, 'End');
+        expect(month.getAttribute('aria-checked')).toBe('true');
+        key(month, 'Home');
+        expect(day.getAttribute('aria-checked')).toBe('true');
+        expect(document.activeElement).toBe(day);
+        done();
+    });
+    it('follows the reading direction in RTL', async () => {
+        const { groups, radios, key, done } = await mountCal({ dir: 'rtl' });
+        const [, week, month] = radios(groups[1]);
+        week.focus();
+        key(week, 'ArrowLeft');
+        expect(month.getAttribute('aria-checked')).toBe('true');
+        done();
+    });
+});

@@ -98,6 +98,10 @@ export declare function setDefaultLocale(tag: string): void;
 /** Get the current default locale */
 export declare function getDefaultLocale(): string;
 export declare function is24HourLocale(locale?: string): boolean;
+/** A number in the locale's own digits ("٧" in ar-SA), optionally zero-padded. */
+export declare function fmtNum(n: number, locale?: string, minDigits?: number): string;
+/** Day-of-month in the locale's digits: "19", "١٩". */
+export declare function fmtDayNum(ms: number, locale?: string): string;
 /** Format hour index (0-23) as compact label: 12h ("12a", "1p") or 24h ("0", "13") */
 export declare function fmtH(h: number, locale?: string): string;
 /**
@@ -137,6 +141,7 @@ export declare function fmtWeekRange(weekStartMs: number, locale?: string, weekE
  *
  * 12-hour locales → "9a", "12:30p"
  * 24-hour locales → "9:00", "14:30"
+ * other 12-hour locales → Intl's own, in the locale's digits ("٧:٠٠ ص")
  */
 export declare function fmtTime(d: Date, locale?: string): string;
 /**

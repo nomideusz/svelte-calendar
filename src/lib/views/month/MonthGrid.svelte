@@ -11,7 +11,8 @@
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
 	import { DAY_MS, sod, addDaysMs, isAllDay } from '../../core/time.js';
-	import { fmtTime, weekdayShort } from '../../core/locale.js';
+	import { fmtTime, fmtDayNum, weekdayShort } from '../../core/locale.js';
+	import { dateLong } from '../shared/format.js';
 
 
 	interface Props {
@@ -299,7 +300,7 @@
 					onkeydown={(e) => cellKeydown(e, cell)}
 				>
 					<span class="mg-daynum" class:mg-daynum--today={cell.isToday}>
-						{cell.dayNum}
+						{fmtDayNum(cell.ms, locale)}
 					</span>
 					<!-- Phones: dots are a picture of the day; the cell (its label counts
 					     the events) is the one tap and tab target. -->
@@ -333,7 +334,7 @@
 									class:mg-chip--cancelled={ev.status === 'cancelled'}
 									style:--mg-chip-color={ev.color ?? (isAllDay(ev) ? 'var(--dt-accent)' : 'var(--dt-event, var(--dt-accent))')}
 									title={ev.title}
-									aria-label="{ev.title}{chipTime(ev) ? `, ${chipTime(ev)}` : ''}"
+									aria-label="{ev.title}, {dateLong(cell.ms, locale)}{chipTime(ev) ? `, ${chipTime(ev)}` : ''}"
 									onclick={(e) => {
 										e.stopPropagation();
 										oneventclick?.(ev, e.currentTarget.getBoundingClientRect());
@@ -355,7 +356,7 @@
 								type="button"
 								class="mg-more"
 								aria-expanded={ondayclick ? undefined : false}
-								aria-label={L.nMore(cell.overflow)}
+								aria-label="{L.nMore(cell.overflow)}, {dateLong(cell.ms, locale)}"
 								onclick={(e) => overflowClick(e, cell)}
 							>
 								{L.nMore(cell.overflow)}
@@ -468,7 +469,7 @@
 		background: var(--dt-hover, rgba(15, 15, 15, 0.04));
 	}
 	.mg-cell:focus-visible {
-		outline: 2px solid var(--dt-accent, #1d4fd7);
+		outline: 2px solid var(--dt-text, #0f0f0f);
 		outline-offset: -2px;
 	}
 
@@ -566,7 +567,7 @@
 		color: var(--dt-text);
 	}
 	.mg-more:focus-visible {
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 		outline: none;
 	}
 

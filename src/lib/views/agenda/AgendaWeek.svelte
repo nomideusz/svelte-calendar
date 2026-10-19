@@ -11,8 +11,8 @@
 	 */
 	import { createClock } from '../../core/clock.svelte.js';
 	import type { TimelineEvent } from '../../core/types.js';
-	import { sod, addDaysMs, startOfWeek, dayNum, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
-	import { weekdayLong, monthLong } from '../../core/locale.js';
+	import { sod, addDaysMs, startOfWeek, isAllDay, isMultiDay, segmentForDay } from '../../core/time.js';
+	import { weekdayLong, monthLong, fmtDayNum } from '../../core/locale.js';
 	import { useCalendarContext } from '../shared/context.svelte.js';
 	import EventContent from '../shared/EventContent.svelte';
 	import { fmtTime, duration, timeUntilMs, progress, groupIntoSlots } from '../shared/format.js';
@@ -176,7 +176,7 @@
 		ms: number;
 		dayName: string;
 		month: string;
-		num: number;
+		num: string;
 		tier: DayTier;
 		/** True calendar-today, independent of tier (equalDays forces tier 'upcoming') */
 		isToday: boolean;
@@ -244,7 +244,7 @@
 				ms,
 				dayName: weekdayLong(ms, locale),
 				month: monthLong(ms, locale),
-				num: dayNum(ms),
+				num: fmtDayNum(ms, locale),
 				tier,
 				// A dateless weekly template (showDates=false) has no today to mark.
 				isToday: showDates && ms === todayMs,
@@ -877,9 +877,9 @@
 	}
 	.ag-wday-head--click:focus-visible,
 	.ag-wday-empty--click:focus-visible {
-		outline: 2px solid var(--dt-accent, #1d4fd7);
+		outline: 2px solid var(--dt-text, #0f0f0f);
 		outline-offset: -2px;
-		border-radius: 4px;
+		border-radius: 0;
 	}
 	.ag-wday-head {
 		display: flex;
@@ -989,8 +989,8 @@
 	}
 	.ag-past-toggle:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
-		border-radius: 4px;
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
+		border-radius: 0;
 	}
 	.ag-past-chevron {
 		transition: transform 120ms;
@@ -1162,7 +1162,7 @@
 	}
 	.ag-compact-more:focus-visible {
 		outline: none;
-		box-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);
+		box-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);
 		border-radius: 0;
 	}
 

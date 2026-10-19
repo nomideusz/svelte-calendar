@@ -214,14 +214,63 @@ export function is24HourLocale(locale?: string): boolean {
 	return is24;
 }
 
+// ─── Numerals ───────────────────────────────────────────
+
+const numCache = new Map<string, Intl.NumberFormat>();
+/** A number in the locale's own digits ("٧" in ar-SA), optionally zero-padded. */
+export function fmtNum(n: number, locale?: string, minDigits = 1): string {
+	const loc = locale ?? defaultLocale;
+	const key = `${loc}|${minDigits}`;
+	let f = numCache.get(key);
+	if (!f) {
+		f = new Intl.NumberFormat(loc, { useGrouping: false, minimumIntegerDigits: minDigits });
+		numCache.set(key, f);
+	}
+	return f.format(n);
+}
+
+/** Day-of-month in the locale's digits: "19", "١٩". */
+export function fmtDayNum(ms: number, locale?: string): string {
+	return fmtNum(new Date(ms).getDate(), locale);
+}
+
+/**
+ * Whether the compact "9a" / "12:30p" style fits the locale: a 12-hour clock
+ * whose day periods are Latin AM/PM. Other 12-hour locales (ar "ص"/"م")
+ * get Intl's own day period instead.
+ */
+const compactCache = new Map<string, boolean>();
+function isCompact12h(locale?: string): boolean {
+	const loc = locale ?? defaultLocale;
+	if (is24HourLocale(loc)) return false;
+	let c = compactCache.get(loc);
+	if (c === undefined) {
+		const period = new Intl.DateTimeFormat(loc, { hour: 'numeric', hour12: true })
+			.formatToParts(new Date(2000, 0, 1, 9))
+			.find((p) => p.type === 'dayPeriod')?.value ?? '';
+		c = /^a\W*m\W*$/i.test(period);
+		compactCache.set(loc, c);
+	}
+	return c;
+}
+
+const dtfCache = new Map<string, Intl.DateTimeFormat>();
+function dtf(locale: string | undefined, withMinutes: boolean): Intl.DateTimeFormat {
+	const loc = locale ?? defaultLocale;
+	const key = `${loc}|${withMinutes}`;
+	let f = dtfCache.get(key);
+	if (!f) {
+		f = new Intl.DateTimeFormat(loc, withMinutes ? { hour: 'numeric', minute: '2-digit' } : { hour: 'numeric' });
+		dtfCache.set(key, f);
+	}
+	return f;
+}
+
 /** Format hour index (0-23) as compact label: 12h ("12a", "1p") or 24h ("0", "13") */
 export function fmtH(h: number, locale?: string): string {
-	if (is24HourLocale(locale)) {
-		return String(h);
-	}
-	if (h === 0) return '12a';
-	if (h === 12) return '12p';
-	return h < 12 ? h + 'a' : h - 12 + 'p';
+	if (is24HourLocale(locale)) return fmtNum(h, locale);
+	if (!isCompact12h(locale)) return dtf(locale, false).format(new Date(2000, 0, 1, h));
+	return fmtNum(h % 12 || 12, locale) + (h < 12 ? 'a' : 'p');
 }
 
 /**
@@ -229,8 +278,15 @@ export function fmtH(h: number, locale?: string): string {
  * part set beside it — `['13', '00']` in 24h locales, `['1', 'pm']` in 12h.
  */
 export function fmtHParts(h: number, locale?: string): [string, string] {
-	if (is24HourLocale(locale)) return [String(h), '00'];
-	return [String(h % 12 || 12), h < 12 ? 'am' : 'pm'];
+	if (is24HourLocale(locale)) return [fmtNum(h, locale), fmtNum(0, locale, 2)];
+	if (!isCompact12h(locale)) {
+		const parts = dtf(locale, false).formatToParts(new Date(2000, 0, 1, h));
+		return [
+			parts.find((p) => p.type === 'hour')?.value ?? fmtNum(h % 12 || 12, locale),
+			parts.find((p) => p.type === 'dayPeriod')?.value ?? '',
+		];
+	}
+	return [fmtNum(h % 12 || 12, locale), h < 12 ? 'am' : 'pm'];
 }
 
 /** Short weekday name for a timestamp: "Mon", "Tue", etc. */
@@ -318,18 +374,15 @@ export function fmtWeekRange(weekStartMs: number, locale?: string, weekEndMs?: n
  *
  * 12-hour locales → "9a", "12:30p"
  * 24-hour locales → "9:00", "14:30"
+ * other 12-hour locales → Intl's own, in the locale's digits ("٧:٠٠ ص")
  */
 export function fmtTime(d: Date, locale?: string): string {
-	if (is24HourLocale(locale)) {
-		const h = d.getHours();
-		const m = d.getMinutes();
-		return `${h}:${String(m).padStart(2, '0')}`;
-	}
 	const h = d.getHours();
 	const m = d.getMinutes();
+	if (is24HourLocale(locale)) return `${fmtNum(h, locale)}:${fmtNum(m, locale, 2)}`;
+	if (!isCompact12h(locale)) return dtf(locale, true).format(d);
 	const suffix = h >= 12 ? 'p' : 'a';
-	const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-	return `${h12}:${String(m).padStart(2, '0')}${suffix}`;
+	return `${fmtNum(h % 12 || 12, locale)}:${fmtNum(m, locale, 2)}${suffix}`;
 }
 
 /**

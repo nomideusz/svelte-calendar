@@ -237,7 +237,7 @@ Monochrome ink on paper, one host accent; the dark presets keep the same roles i
 
 ## Typography
 
-**Display/Body Font:** Encode Sans (variable, wdth 75–125, wght 100–900, from Google Fonts), with system-ui as the fallback; the calendar reads it as `--dt-sans`, so a host that sets `--dt-sans` or is probed by `auto` swaps the face.
+**Display/Body Font:** Encode Sans (variable, wdth 75–125, wght 100–900, from Google Fonts), with system-ui as the fallback; the calendar reads it as `--dt-sans`, so a host that sets `--dt-sans` or is probed by `auto` swaps the face. The page body sets `--dt-sans`, so the demo hosts show it: Ocean is Source Sans 3, Rose is Newsreader, the rest Encode Sans. A host font is always a real stack, never `inherit` (invalid inside the `font:` shorthand).
 **Mono Font:** JetBrains Mono (400, 500), `--dt-mono`; only for the install command, the markup line and code blocks.
 
 **Character:** One grotesque at regular weight, narrowed where it becomes a numeral. Rank comes from size and ink, not from weight: the biggest figures on the page are the dates and hours at 400.
@@ -302,7 +302,7 @@ The prop name (400 22u, ink) on a 108u column, the value in a 2px ink frame with
 A 22u pill, 40u tall, bordered 2px ink-2 with the prop name at 19u and a 44×26u track on the right (18% ink), knob in paper. ON: border, label and track turn accent and the knob (white) slides 18u (140ms). Two columns in the rail.
 
 ### Host swatches
-Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms). Over them a "Host page" heading with the pressed host's name; no swatch is pressed until hydration (a pre-paint script applies the stored host first).
+Five 62×74u pages with 5u corners and a 2px ink border: the host's ground, a short bar of its accent as the all-day band and ruled lines in half-ink. Pressed: accent border plus a 1px accent ring. Hover lifts 1px (120ms). The swatches also sit compact in the docs rail foot and, on a phone, in the quick row above the calendar. Over them a "Host page" heading with the pressed host's name; no swatch is pressed until hydration (a pre-paint script applies the stored host first).
 
 ### Code drawer
 A 2px ink frame under the calendar: title (400 26u) with a chevron that rotates 180° when open, Copy as a 1px rule-day box with 0 radius, the markup as one scrolling mono line (17u, ink-2) and the full code at mono 13px/1.6 within 30vh when expanded, ligatures off so `=>` and `!=` read as typed.
@@ -322,7 +322,7 @@ Adapters assign no colour unless given a `palette`, so an event without its own 
 - **Compact:** a block too short for two lines reads "Title time" on one line and the title wins the width.
 - **Hover:** hover-wash ground; the resize grips appear at 0.55.
 - **Selected:** a 1px inset ring in the event colour.
-- **Focus:** a 2px accent box-shadow ring (outline would be clipped).
+- **Focus:** a 2px accent box-shadow ring (outline would be clipped). Every other calendar focus (day columns, cells, "+more", empty slots, toggles) is a square 2px ink outline. The header's view pills are a radio group: one tab stop per group, arrows (RTL-aware), Home and End move and select.
 - **Moving:** origin at 0.3; the ghost is a 12% event-colour tint with a 1px outline.
 
 ### All-day band (calendar)
@@ -341,7 +341,7 @@ Hour lines in rule, half-hours at 0.4 opacity, columns split by rule, the sticky
 A dark host keeps every rule: light ink at 0.85 on charcoal, rules at 0.07/0.14, the accent doing the band, the now line and today, event text in ink. The paper plate is the Paper host's only; other hosts set `--dt-paper: none`. `auto` derives border alphas 0.3/0.6 (light) or 0.16/0.32 (dark), text-2 at 0.66/0.62, and keeps the accent legible against the probed ground. Every host and preset holds text-2 at 4.5:1 or better on both its stage and its calendar ground.
 
 ### Motion
-The bar clock flips its minute: the new HH:MM flies in from 8px above over 260ms. Switches slide their knob in 140ms, frames recolour in 120ms, the body ground crossfades 300ms on a host change, the live dot pulses 2s. Every transition and the pulse are off under `prefers-reduced-motion`, and the clock flip runs at 0ms.
+The bar clock flips its minute: the new HH:MM flies in from 8px above over 260ms. Switches slide their knob in 140ms, frames recolour in 120ms, a host change swaps the ground at once (a crossfade made `auto` probe the old colours; the library also re-probes on `transitionend` for hosts that do fade), the live dot pulses 2s. Every transition and the pulse are off under `prefers-reduced-motion`, and the clock flip runs at 0ms.
 
 ## Do's and Don'ts
 
