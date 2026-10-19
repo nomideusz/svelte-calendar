@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- Planner keyboard editing. The day columns are one tab stop: `←` / `→` move between days, `Enter` / `Space` creates an event (`oneventcreate`) at the next slot today, or 09:00. A focused event moves with `Alt+↑` / `Alt+↓` (one `snapInterval`) and `Alt+←` / `Alt+→` (one shown day), and `Alt+Shift+↑` / `Alt+Shift+↓` move its end. Each key is a one-step drag through the same validation as a pointer drag and fires `oneventmove`; focus stays on the moved event.
+
+### Patch Changes
+
+- Week planner opens on a whole hour with room for its label, so the top hour is no longer cut under the all-day strip.
+- Month grid: day numbers start under their weekday name instead of stretching across the cell, and today's rule is only as wide as the digits.
+- Blocked-slot labels are set in `--dt-text-2`, readable on the hatched ground.
+
 ## 1.1.1
 
 ### Patch Changes
