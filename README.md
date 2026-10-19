@@ -84,6 +84,7 @@ When focus is inside the calendar:
 - `t` — go to today.
 - `←` / `→` — previous / next period (mirrored in RTL). Ignored while typing in a field or inside a pill group, where arrows move between pills.
 - In `month-grid`: arrow keys move between days, `Enter` / `Space` opens the focused day (`ondayclick`).
+- In `week-planner` / `day-planner`: the day columns are one tab stop; `←` / `→` move between days, `Enter` / `Space` creates an event (`oneventcreate`) at the next slot today, or 09:00. On a focused event, `Alt+↑` / `Alt+↓` move it one `snapInterval`, `Alt+←` / `Alt+→` move it a day, and `Alt+Shift+↑` / `Alt+Shift+↓` move its end; each goes through the same validation as a drag and fires `oneventmove`.
 
 ### Custom Views
 

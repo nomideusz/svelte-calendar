@@ -14,7 +14,7 @@
     disabled) applies on drop.
   • Now-line across today's column only; auto-scrolls to the current time.
 -->
-<script lang="ts">import { untrack } from "svelte";
+<script lang="ts">import { tick, untrack } from "svelte";
 import { useCalendarContext } from "../shared/context.svelte.js";
 import EventContent from "../shared/EventContent.svelte";
 import { createClock } from "../../core/clock.svelte.js";
@@ -79,6 +79,8 @@ function inAllDayStrip(ev) {
 }
 // ── Config ─────────────────────────────────────────
 const HOUR_H = 64;
+/** Half a gutter label plus a gap: what a scroll needs above an hour line */
+const LABEL_ROOM = 18;
 const GUTTER_W = 60;
 const MIN_COL_W = $derived(ctx.minColumnWidth);
 const ALLDAY_MAX = 3;
@@ -297,7 +299,8 @@ const nowY = $derived.by(() => {
 const weekIsEmpty = $derived(!events.some((ev) => ev.start.getTime() < weekEndMs && ev.end.getTime() > weekStartMs));
 // ── Auto-scroll (mount + week change) ──────────────
 // Week with today → current time minus ~1h of context; otherwise the
-// visibleHours start or 08:00, whichever is later.
+// visibleHours start or 08:00, whichever is later. Lands on a whole hour,
+// with room for its label (centred on the line) below the sticky top.
 $effect(() => {
 	void weekStartMs;
 	const el = scrollEl;
@@ -310,7 +313,7 @@ $effect(() => {
 		} else {
 			targetHour = Math.max(startHour, Math.min(8, endHour - 1));
 		}
-		el.scrollTop = (targetHour - startHour) * HOUR_H;
+		el.scrollTop = Math.max(0, (Math.floor(targetHour) - startHour) * HOUR_H - LABEL_ROOM);
 	});
 });
 // ── Pointer coalescing ─────────────────────────────
@@ -623,6 +626,79 @@ function handleColsClick(e) {
 		end: new Date(startMs + durMin * 6e4)
 	});
 }
+// ── Keyboard ───────────────────────────────────────
+// The day columns are one tab stop (roving): ←/→ walk the days, Enter or
+// Space adds an event at the next slot (today) or 09:00. A focused event
+// moves with Alt+↑/↓ (one snap) and Alt+←/→ (one shown day); Alt+Shift+↑/↓
+// moves its end. Each key is a one-step drag through ctx.commitDrag, so
+// Calendar validates it exactly as it does a pointer drag.
+let focusedColMs = $state(null);
+const tabbableColMs = $derived((dayCols.find((d) => d.ms === focusedColMs) ?? dayCols.find((d) => d.isToday) ?? dayCols[0])?.ms);
+const colsCreate = $derived(!!oneventcreate && !readOnly);
+function onColKeydown(e, i) {
+	if (e.target !== e.currentTarget) return;
+	const day = dayCols[i];
+	if (e.key === "Enter" || e.key === " ") {
+		e.preventDefault();
+		if (!oneventcreate || readOnly || day.isDisabled) return;
+		const step = Math.max(1, ctx.snapInterval) / 60;
+		const want = day.isToday ? snapHour(nowFracHour, "floor") + step : 9;
+		const hour = Math.min(Math.max(want, startHour), endHour - step);
+		if (isBlockedAt(day.ms, hour)) return;
+		const startMs = atHour(day.ms, hour);
+		oneventcreate({
+			start: new Date(startMs),
+			end: new Date(startMs + Math.max(60, minDuration ?? 0) * 6e4)
+		});
+		return;
+	}
+	const dir = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+	if (!dir) return;
+	e.preventDefault();
+	const next = dayCols[i + (isRtl() ? -dir : dir)];
+	if (!next) return;
+	focusedColMs = next.ms;
+	colsEl?.querySelector(`.tw-col[data-day="${next.ms}"]`)?.focus();
+}
+async function onEventKeydown(e, ev) {
+	if (e.key === "Enter" || e.key === " ") {
+		e.preventDefault();
+		e.stopPropagation();
+		oneventclick?.(ev, e.currentTarget.getBoundingClientRect());
+		return;
+	}
+	if (!e.altKey || !drag || readOnly || ev.data?.readOnly) return;
+	const vert = e.key === "ArrowUp" ? -1 : e.key === "ArrowDown" ? 1 : 0;
+	const horiz = e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0;
+	if (!vert && (!horiz || e.shiftKey)) return;
+	let start = ev.start.getTime();
+	let end = ev.end.getTime();
+	// Up lands on the snap line above (or the one before, when already on
+	// one); down on the line below.
+	const nudge = (ms) => vert < 0 ? snapMs(ms - 1, "floor") : snapMs(ms, "floor") + SNAP_MS;
+	if (e.shiftKey) end = nudge(end);
+	else if (vert) {
+		start = nudge(start);
+		end = start + (ev.end.getTime() - ev.start.getTime());
+	} else {
+		const fromDay = sod(start);
+		const i = dayCols.findIndex((d) => d.ms === fromDay);
+		const to = dayCols[i + (isRtl() ? -horiz : horiz)];
+		if (i < 0 || !to) return;
+		start = atHour(to.ms, hourOf(start, fromDay));
+		end = start + (ev.end.getTime() - ev.start.getTime());
+	}
+	e.preventDefault();
+	e.stopPropagation();
+	if (e.shiftKey) drag.beginResize(ev.id, "end", ev.start, ev.end);
+	else drag.beginMove(ev.id, ev.start, ev.end);
+	drag.updatePointer(new Date(start), new Date(end));
+	await commitDragCtx?.();
+	// A move to another day re-creates the block: keep the keyboard on it,
+	// or on its day when the host re-ids it (a recurring copy made one-off).
+	await tick();
+	(colsEl?.querySelector(`.tw-ev[data-event-id="${CSS.escape(ev.id)}"]`) ?? colsEl?.querySelector(`.tw-col[data-day="${sod(start)}"]`))?.focus();
+}
 // ── Drag-to-move (vertical = time, horizontal = day) ──
 const DRAG_THRESHOLD = 5;
 let evDragStartX = 0;
@@ -929,9 +1005,10 @@ function onWindowKeydown(e) {
 						{/if}
 					</div>
 
-					{#each dayCols as day (day.ms)}
+					{#each dayCols as day, di (day.ms)}
 						{@const positioned = layoutByDay.get(day.ms) ?? []}
 						{@const ghost = ghostForDay(day.ms)}
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 						<div
 							class="tw-col"
 							class:tw-col--today={day.isToday}
@@ -939,6 +1016,12 @@ function onWindowKeydown(e) {
 							class:tw-col--weekend={day.isWeekend}
 							class:tw-col--disabled={day.isDisabled}
 							data-day={day.ms}
+							role={colsCreate ? 'group' : undefined}
+							aria-label={colsCreate ? `${weekdayLong(day.ms, locale)} ${day.dayNum}, ${L.createEvent}` : undefined}
+							aria-keyshortcuts={colsCreate ? 'Enter' : undefined}
+							tabindex={colsCreate ? (day.ms === tabbableColMs ? 0 : -1) : undefined}
+							onfocusin={() => (focusedColMs = day.ms)}
+							onkeydown={colsCreate ? (e) => onColKeydown(e, di) : undefined}
 						>
 							<!-- Blocked slot overlays -->
 							{#if blockedSlots?.length}
@@ -988,11 +1071,13 @@ function onWindowKeydown(e) {
 									style:--ev-color={p.ev.color ?? 'var(--dt-event, var(--dt-accent))'}
 									role="button"
 									tabindex="0"
+									data-event-id={p.ev.id}
+									aria-keyshortcuts={!readOnly && !p.ev.data?.readOnly ? 'Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown' : undefined}
 									title={p.ev.title}
 									aria-label="{p.ev.title}, {fmtTime(p.ev.start, locale)} – {fmtTime(p.ev.end, locale)}, {fmtDuration(p.ev.start, p.ev.end)}{statusText(p.ev)}{isCurrent ? ` (${L.inProgress})` : ''}"
 									onpointerdown={(e) => onEventPointerDown(e, p.ev)}
 									onpointerenter={() => oneventhover?.(p.ev)}
-									onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); oneventclick?.(p.ev, e.currentTarget.getBoundingClientRect()); } }}
+									onkeydown={(e) => onEventKeydown(e, p.ev)}
 
 								>
 									<div class="tw-ev-stripe" aria-hidden="true"></div>
@@ -1426,6 +1511,10 @@ function onWindowKeydown(e) {
 		position: relative;
 		border-left: 1px solid var(--dt-border, rgba(0, 0, 0, 0.08));
 		box-sizing: border-box;
+	}
+	.tw-col:focus-visible {
+		outline: 2px solid var(--dt-accent, #2563eb);
+		outline-offset: -2px;
 	}
 	/* The gutter's right border already bounds the first column */
 	.tw-lines + .tw-col { border-left: none; }

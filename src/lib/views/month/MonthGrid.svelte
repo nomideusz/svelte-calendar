@@ -412,18 +412,20 @@
 		outline-offset: -2px;
 	}
 
+	/* Starts where the weekday name above it starts (6px cell + 2px = the
+	   header's 8px), and is only as wide as its digits, so today's rule is too. */
 	.mg-daynum {
 		flex: none;
+		align-self: flex-start;
+		padding: 0 2px;
 		font-family: var(--dt-sans, system-ui, sans-serif);
 		font-size: 22px;
 		font-weight: 400;
 		font-variant-numeric: tabular-nums;
 		color: var(--dt-text);
-		min-width: 26px;
 		height: 26px;
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
 	}
 	/* Today: accent numeral on a 2px rule — the same mark in every view. */
 	.mg-daynum--today {
