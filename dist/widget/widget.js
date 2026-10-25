@@ -49,6 +49,7 @@ function injectStyles(root) {
 const WIDGET_ATTRS = [
     'api', 'events', 'theme', 'view', 'height', 'locale', 'dir', 'mondaystart',
     'headers', 'readonly', 'pills', 'nav', 'mobile', 'days', 'compact', 'timezone',
+    'mincolumnwidth',
 ];
 /**
  * Attribute values as reactive props for `mount()`. A plain .ts module has

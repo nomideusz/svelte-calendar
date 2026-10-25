@@ -54,6 +54,8 @@
 		compact?: string;
 		/** IANA timezone, e.g. "Europe/Warsaw" */
 		timezone?: string;
+		/** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
+		mincolumnwidth?: string;
 	}
 
 	let {
@@ -73,6 +75,7 @@
 		days,
 		compact,
 		timezone,
+		mincolumnwidth,
 	}: Props = $props();
 
 	// ── Parse attributes ──
@@ -98,6 +101,11 @@
 		if (!days) return undefined;
 		const n = parseInt(days, 10);
 		return Number.isNaN(n) || n < 1 || n > 7 ? undefined : n;
+	});
+	const minColumnWidthValue = $derived.by(() => {
+		if (!mincolumnwidth) return undefined;
+		const n = parseInt(mincolumnwidth, 10);
+		return Number.isNaN(n) || n < 0 ? undefined : n;
 	});
 
 	// ── Parse static events from JSON attribute ──
@@ -204,4 +212,5 @@
 	days={daysValue}
 	compact={compact === 'true'}
 	timezone={timezone || undefined}
+	minColumnWidth={minColumnWidthValue}
 />

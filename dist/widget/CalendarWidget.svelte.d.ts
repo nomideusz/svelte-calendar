@@ -31,6 +31,8 @@ interface Props {
     compact?: string;
     /** IANA timezone, e.g. "Europe/Warsaw" */
     timezone?: string;
+    /** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
+    mincolumnwidth?: string;
 }
 declare const CalendarWidget: import("svelte").Component<Props, {}, "">;
 type CalendarWidget = ReturnType<typeof CalendarWidget>;

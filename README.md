@@ -1063,6 +1063,7 @@ The widget renders inside shadow DOM: host-page CSS cannot affect the calendar a
 | `days` | `7` | Days in week views, `1`–`7` |
 | `compact` | `false` | `"true"` for compact agenda rows |
 | `timezone` | viewer's zone | IANA zone, e.g. `Europe/Warsaw` (read when the element mounts) |
+| `mincolumnwidth` | `110` | Minimum day-column width in px for the week grid; a container narrower than the days need scrolls sideways |
 
 Each event in `api` responses and `events` needs `start` and `end` as date strings (ISO 8601) and may carry `id`, `title`, `color`, `allDay`, `subtitle` and `location`; other fields are ignored, as are events with an invalid or empty range. Changing an attribute updates the calendar in place.
 

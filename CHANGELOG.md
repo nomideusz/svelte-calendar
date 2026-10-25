@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.0
+
+### Minor Changes
+
+- `<day-calendar mincolumnwidth="…">` — the widget passes `minColumnWidth` through (px, default 110), so a page whose column is a few pixels short of seven 110 px days plus the hour labels can lower it instead of scrolling the week sideways.
+
 ## 1.5.0
 
 ### Minor Changes

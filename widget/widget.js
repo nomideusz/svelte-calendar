@@ -20894,6 +20894,7 @@ createHTML: (html) => {
 		/** Days shown in week mode, e.g. "3" or "5" */
 		/** Compact agenda rendering: "true" */
 		/** IANA timezone, e.g. "Europe/Warsaw" */
+		/** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
 		let theme = prop($$props, "theme", 3, "auto"), view = prop($$props, "view", 3, "week-planner"), height = prop($$props, "height", 3, "600"), mondaystart = prop($$props, "mondaystart", 3, "true");
 		const heightValue = /* @__PURE__ */ user_derived(() => {
 			const trimmed = height().trim();
@@ -20910,6 +20911,11 @@ createHTML: (html) => {
 			if (!$$props.days) return void 0;
 			const n = parseInt($$props.days, 10);
 			return Number.isNaN(n) || n < 1 || n > 7 ? void 0 : n;
+		});
+		const minColumnWidthValue = /* @__PURE__ */ user_derived(() => {
+			if (!$$props.mincolumnwidth) return void 0;
+			const n = parseInt($$props.mincolumnwidth, 10);
+			return Number.isNaN(n) || n < 0 ? void 0 : n;
 		});
 		function parseHeaders(json) {
 			if (!json) return void 0;
@@ -21024,6 +21030,9 @@ createHTML: (html) => {
 				},
 				get timezone() {
 					return get($4);
+				},
+				get minColumnWidth() {
+					return get(minColumnWidthValue);
 				}
 			});
 		}
@@ -21086,7 +21095,8 @@ createHTML: (html) => {
 		"mobile",
 		"days",
 		"compact",
-		"timezone"
+		"timezone",
+		"mincolumnwidth"
 	];
 	/**
 	* Attribute values as reactive props for `mount()`. A plain .ts module has

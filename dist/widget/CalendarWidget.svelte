@@ -16,7 +16,7 @@
 <script lang="ts">import Calendar from "../calendar/Calendar.svelte";
 import { createMemoryAdapter } from "../adapters/memory.js";
 import { presets } from "../theme/presets.js";
-let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone } = $props();
+let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone, mincolumnwidth } = $props();
 // ── Parse attributes ──
 const heightValue = $derived.by(() => {
 	const trimmed = height.trim();
@@ -34,6 +34,11 @@ const daysValue = $derived.by(() => {
 	if (!days) return undefined;
 	const n = parseInt(days, 10);
 	return Number.isNaN(n) || n < 1 || n > 7 ? undefined : n;
+});
+const minColumnWidthValue = $derived.by(() => {
+	if (!mincolumnwidth) return undefined;
+	const n = parseInt(mincolumnwidth, 10);
+	return Number.isNaN(n) || n < 0 ? undefined : n;
 });
 // ── Parse static events from JSON attribute ──
 function parseHeaders(json) {
@@ -126,4 +131,5 @@ const adapter = $derived.by(() => {
 	days={daysValue}
 	compact={compact === 'true'}
 	timezone={timezone || undefined}
+	minColumnWidth={minColumnWidthValue}
 />

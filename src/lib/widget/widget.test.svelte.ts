@@ -64,3 +64,23 @@ describe('CalendarWidget api', () => {
 		unmount(w);
 	});
 });
+
+describe('CalendarWidget mincolumnwidth', () => {
+	it.each([
+		[undefined, '110px'],
+		['96', '96px'],
+		['wide', '110px'],
+	])('mincolumnwidth=%s sets the week grid column minimum to %s', async (mincolumnwidth, expected) => {
+		const { default: CalendarWidget } = await import('./CalendarWidget.svelte');
+		const target = document.createElement('div');
+		document.body.appendChild(target);
+		const w = mount(CalendarWidget, {
+			target,
+			props: { events: '[]', view: 'week-planner', mobile: 'false', mincolumnwidth },
+		});
+		await settle();
+		const grid = target.querySelector<HTMLElement>('[style*="--tw-col-min"]');
+		expect(grid?.style.getPropertyValue('--tw-col-min')).toBe(expected);
+		await unmount(w);
+	});
+});
