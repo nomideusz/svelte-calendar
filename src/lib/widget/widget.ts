@@ -78,12 +78,14 @@ type WidgetProps = {
 	compact?: string;
 	timezone?: string;
 	mincolumnwidth?: string;
+	hours?: string;
+	labels?: string;
 };
 
 const WIDGET_ATTRS = [
 	'api', 'events', 'theme', 'view', 'height', 'locale', 'dir', 'mondaystart',
 	'headers', 'readonly', 'pills', 'nav', 'mobile', 'days', 'compact', 'timezone',
-	'mincolumnwidth',
+	'mincolumnwidth', 'hours', 'labels',
 ] as const;
 
 type WidgetAttr = (typeof WIDGET_ATTRS)[number];

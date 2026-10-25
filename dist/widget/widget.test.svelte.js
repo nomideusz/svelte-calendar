@@ -82,3 +82,41 @@ describe('CalendarWidget mincolumnwidth', () => {
         await unmount(w);
     });
 });
+describe('CalendarWidget hours and labels', () => {
+    async function render(props) {
+        const { default: CalendarWidget } = await import('./CalendarWidget.svelte');
+        const target = document.createElement('div');
+        document.body.appendChild(target);
+        const w = mount(CalendarWidget, {
+            target,
+            props: { events: '[]', view: 'week-planner', mobile: 'false', ...props },
+        });
+        await settle();
+        return { target, w };
+    }
+    it.each([
+        [undefined, 24],
+        ['6-22', 16],
+        ['22-6', 24],
+        ['morning', 24],
+    ])('hours=%s draws %i hour rows', async (hours, rows) => {
+        const { target, w } = await render(hours ? { hours } : {});
+        expect(target.querySelectorAll('.tw-gutter-lb')).toHaveLength(rows);
+        await unmount(w);
+    });
+    it('labels replace the words they name and keep the rest', async () => {
+        const { target, w } = await render({ labels: '{"today":"Dziś"}' });
+        const today = target.querySelector('.cal-hd-today');
+        expect(today?.textContent?.trim()).toBe('Dziś');
+        expect(today?.getAttribute('title')).toBe('Go to today');
+        await unmount(w);
+    });
+    it('bad labels JSON leaves the defaults', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => { });
+        const { target, w } = await render({ labels: '{oops' });
+        expect(target.querySelector('.cal-hd-today')?.textContent?.trim()).toBe('Today');
+        expect(warn).toHaveBeenCalled();
+        warn.mockRestore();
+        await unmount(w);
+    });
+});

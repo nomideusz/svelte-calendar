@@ -16,7 +16,7 @@
 <script lang="ts">import Calendar from "../calendar/Calendar.svelte";
 import { createMemoryAdapter } from "../adapters/memory.js";
 import { presets } from "../theme/presets.js";
-let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone, mincolumnwidth } = $props();
+let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone, mincolumnwidth, hours, labels } = $props();
 // ── Parse attributes ──
 const heightValue = $derived.by(() => {
 	const trimmed = height.trim();
@@ -39,6 +39,21 @@ const minColumnWidthValue = $derived.by(() => {
 	if (!mincolumnwidth) return undefined;
 	const n = parseInt(mincolumnwidth, 10);
 	return Number.isNaN(n) || n < 0 ? undefined : n;
+});
+const hoursValue = $derived.by(() => {
+	const m = hours?.trim().match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+	if (!m) return undefined;
+	const [from, to] = [Number(m[1]), Number(m[2])];
+	return from < to && to <= 24 ? [from, to] : undefined;
+});
+const labelsValue = $derived.by(() => {
+	if (!labels) return undefined;
+	try {
+		const parsed = JSON.parse(labels);
+		if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed;
+	} catch {}
+	console.warn("[day-calendar] Failed to parse labels JSON:", labels);
+	return undefined;
 });
 // ── Parse static events from JSON attribute ──
 function parseHeaders(json) {
@@ -132,4 +147,6 @@ const adapter = $derived.by(() => {
 	compact={compact === 'true'}
 	timezone={timezone || undefined}
 	minColumnWidth={minColumnWidthValue}
+	visibleHours={hoursValue}
+	labels={labelsValue}
 />

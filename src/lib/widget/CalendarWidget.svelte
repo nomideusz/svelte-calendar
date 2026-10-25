@@ -20,6 +20,7 @@
 	import { presets } from '../theme/presets.js';
 	import type { PresetName } from '../theme/presets.js';
 	import type { TimelineEvent } from '../core/types.js';
+	import type { CalendarLabels } from '../core/locale.js';
 
 	interface Props {
 		/** Events endpoint — fetched as `GET {api}?start=…&end=…` (ISO instants); answers an array of events or `{ events: [...] }` */
@@ -56,6 +57,10 @@
 		timezone?: string;
 		/** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
 		mincolumnwidth?: string;
+		/** Visible hours of the time grids, "start-end" in whole hours (e.g. "6-22") */
+		hours?: string;
+		/** UI words as a JSON object over the English defaults, e.g. '{"today":"Dziś"}' */
+		labels?: string;
 	}
 
 	let {
@@ -76,6 +81,8 @@
 		compact,
 		timezone,
 		mincolumnwidth,
+		hours,
+		labels,
 	}: Props = $props();
 
 	// ── Parse attributes ──
@@ -106,6 +113,23 @@
 		if (!mincolumnwidth) return undefined;
 		const n = parseInt(mincolumnwidth, 10);
 		return Number.isNaN(n) || n < 0 ? undefined : n;
+	});
+	const hoursValue = $derived.by((): [number, number] | undefined => {
+		const m = hours?.trim().match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+		if (!m) return undefined;
+		const [from, to] = [Number(m[1]), Number(m[2])];
+		return from < to && to <= 24 ? [from, to] : undefined;
+	});
+	const labelsValue = $derived.by((): Partial<CalendarLabels> | undefined => {
+		if (!labels) return undefined;
+		try {
+			const parsed: unknown = JSON.parse(labels);
+			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as Partial<CalendarLabels>;
+		} catch {
+			// falls through to the warning
+		}
+		console.warn('[day-calendar] Failed to parse labels JSON:', labels);
+		return undefined;
 	});
 
 	// ── Parse static events from JSON attribute ──
@@ -213,4 +237,6 @@
 	compact={compact === 'true'}
 	timezone={timezone || undefined}
 	minColumnWidth={minColumnWidthValue}
+	visibleHours={hoursValue}
+	labels={labelsValue}
 />

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0
+
+### Minor Changes
+
+- `<day-calendar hours>` and `<day-calendar labels>`: the widget passes `visibleHours` (`hours="6-22"`) and per-instance UI words (`labels='{"today":"Dziś"}'`, JSON over the English defaults) through to the calendar. Found embedding the widget on a real school's site: a 24-hour grid at `height="auto"` opens on the night, and the pills and Today stayed English under `locale="pl-PL"`.
+
 ## 1.6.0
 
 ### Minor Changes

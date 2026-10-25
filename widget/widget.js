@@ -20895,6 +20895,8 @@ createHTML: (html) => {
 		/** Compact agenda rendering: "true" */
 		/** IANA timezone, e.g. "Europe/Warsaw" */
 		/** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
+		/** Visible hours of the time grids, "start-end" in whole hours (e.g. "6-22") */
+		/** UI words as a JSON object over the English defaults, e.g. '{"today":"Dziś"}' */
 		let theme = prop($$props, "theme", 3, "auto"), view = prop($$props, "view", 3, "week-planner"), height = prop($$props, "height", 3, "600"), mondaystart = prop($$props, "mondaystart", 3, "true");
 		const heightValue = /* @__PURE__ */ user_derived(() => {
 			const trimmed = height().trim();
@@ -20916,6 +20918,20 @@ createHTML: (html) => {
 			if (!$$props.mincolumnwidth) return void 0;
 			const n = parseInt($$props.mincolumnwidth, 10);
 			return Number.isNaN(n) || n < 0 ? void 0 : n;
+		});
+		const hoursValue = /* @__PURE__ */ user_derived(() => {
+			const m = $$props.hours?.trim().match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+			if (!m) return void 0;
+			const [from, to] = [Number(m[1]), Number(m[2])];
+			return from < to && to <= 24 ? [from, to] : void 0;
+		});
+		const labelsValue = /* @__PURE__ */ user_derived(() => {
+			if (!$$props.labels) return void 0;
+			try {
+				const parsed = JSON.parse($$props.labels);
+				if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) return parsed;
+			} catch {}
+			console.warn("[day-calendar] Failed to parse labels JSON:", $$props.labels);
 		});
 		function parseHeaders(json) {
 			if (!json) return void 0;
@@ -21033,6 +21049,12 @@ createHTML: (html) => {
 				},
 				get minColumnWidth() {
 					return get(minColumnWidthValue);
+				},
+				get visibleHours() {
+					return get(hoursValue);
+				},
+				get labels() {
+					return get(labelsValue);
 				}
 			});
 		}
@@ -21096,7 +21118,9 @@ createHTML: (html) => {
 		"days",
 		"compact",
 		"timezone",
-		"mincolumnwidth"
+		"mincolumnwidth",
+		"hours",
+		"labels"
 	];
 	/**
 	* Attribute values as reactive props for `mount()`. A plain .ts module has

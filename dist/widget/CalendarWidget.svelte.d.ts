@@ -33,6 +33,10 @@ interface Props {
     timezone?: string;
     /** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
     mincolumnwidth?: string;
+    /** Visible hours of the time grids, "start-end" in whole hours (e.g. "6-22") */
+    hours?: string;
+    /** UI words as a JSON object over the English defaults, e.g. '{"today":"Dziś"}' */
+    labels?: string;
 }
 declare const CalendarWidget: import("svelte").Component<Props, {}, "">;
 type CalendarWidget = ReturnType<typeof CalendarWidget>;
