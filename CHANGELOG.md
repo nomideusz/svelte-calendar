@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.1
+
+### Patch Changes
+
+- The calendar is its own stacking context (`isolation: isolate` on `.cal`): the week grid's sticky heads, now-line and drag ghosts (z-index up to 30) stayed above a host page's sticky header while scrolling. Found on zaur.app.
+
 ## 1.7.0
 
 ### Minor Changes

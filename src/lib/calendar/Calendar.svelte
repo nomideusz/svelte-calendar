@@ -1009,6 +1009,10 @@
 <style>
 	.cal {
 		position: relative;
+		/* Its own stacking context: the grid's z-indexes (sticky heads, the
+		   now-line, drag ghosts — up to 30) stay inside the calendar instead
+		   of rising over a host page's sticky header. */
+		isolation: isolate;
 		width: 100%;
 		min-width: 0;
 		height: var(--cal-h, 600px);
