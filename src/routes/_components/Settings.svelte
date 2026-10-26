@@ -192,9 +192,11 @@
 		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E") center / contain no-repeat;
 		pointer-events: none;
 	}
+	/* The open list is painted by the browser: give it the host's own ground
+	   and ink, or a dark host gets light text on the default light popup. */
 	.ps-sel select option {
-		color: initial;
-		background: initial;
+		color: var(--dt-text, CanvasText);
+		background: var(--dt-bg, Canvas);
 	}
 	.ps-sel select:hover:not(:disabled) {
 		border-color: var(--dt-text, #111);
