@@ -176,4 +176,19 @@ class DayCalendarElement extends HTMLElement {
 
 if (!customElements.get('day-calendar')) {
 	customElements.define('day-calendar', DayCalendarElement);
+	// Safari 26: an element cloned from a <template> by `document.importNode`
+	// (Svelte 5 renders custom elements that way) before this define has no
+	// registry, so define skips it and `upgrade()` alone can't reach it — the
+	// lazy-loaded widget stayed a 0px empty tag on iPhones (ASI-3).
+	// `initialize()` hands it the global registry first.
+	const registry = customElements as CustomElementRegistry & { initialize?(root: Node): void };
+	for (const el of document.querySelectorAll('day-calendar')) {
+		if (el instanceof DayCalendarElement) continue;
+		try {
+			registry.initialize?.(el);
+		} catch {
+			// Already has a registry — upgrade() below is all it needs.
+		}
+		customElements.upgrade(el);
+	}
 }

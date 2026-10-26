@@ -50,10 +50,14 @@ export declare function fontOf(el: Element): string;
  * that does not come from its own text (block, or a flex item with min-width: 0).
  */
 export declare function fitLabel(candidates: readonly string[], lines?: number): Attachment<HTMLElement>;
+/** The badness of the loosest line but the last, were `lines` justified at `width`. */
+export declare function looseness(lines: readonly string[], font: string, width: number): number;
 export declare function breakLines(text: string, font: string, width: number): string[];
 /**
  * `<p {@attach typeset(text)}>` — sets the paragraph as justified Knuth-Plass
  * lines, one block span per line, re-done on resize and after webfonts load.
+ * A paragraph that cannot be justified without gaps (`TOLERANCE`) goes back to
+ * the browser as plain text, set however the element sets it (ragged).
  * Progressive: the server-rendered text is what crawlers and no-JS get; if the
  * browser's own measure disagrees with ours (a line overflows), the plain
  * text goes back and the browser breaks it. Pass the text, not the DOM — the

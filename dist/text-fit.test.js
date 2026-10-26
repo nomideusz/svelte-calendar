@@ -9,7 +9,7 @@ vi.mock('@chenglou/pretext', () => ({
         return { lineCount, height: lineCount * lineHeight };
     },
 }));
-const { fits, pickFit, textHeight, breakLines, fitParts } = await import('./text-fit.js');
+const { fits, pickFit, textHeight, breakLines, fitParts, looseness } = await import('./text-fit.js');
 describe('fitParts', () => {
     // 6px per character (the mock above); `f` is any font.
     const title = { key: 'title', text: 'Morning Flow', font: 'f', priority: 0 }; // 72px
@@ -85,5 +85,17 @@ describe('text-fit', () => {
         const lines = breakLines('aaaaaa bb ccccc ddddddd', 'f', 54); // 9 chars
         expect(lines.every((l) => l.length <= 9)).toBe(true);
         expect(lines.join(' ')).toBe('aaaaaa bb ccccc ddddddd');
+    });
+});
+describe('looseness', () => {
+    // 6px a character, so a space is 6px and may stretch by 3px at badness 100.
+    it('is 0 for lines that fill the width, whatever the last line does', () => {
+        expect(looseness(['aaa bbb', 'c'], 'f', 42)).toBe(0);
+    });
+    it('scores the loosest line but the last, TeX-style', () => {
+        // "aa bb" is 30px in 42: 12px over one space = r 4 → 100·4³
+        expect(looseness(['aa bb', 'ccccccc', 'd'], 'f', 42)).toBe(6400);
+        // 3px over one space = r 1 → badness 100
+        expect(looseness(['aaa bb', 'c'], 'f', 39)).toBe(100);
     });
 });

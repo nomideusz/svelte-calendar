@@ -21198,6 +21198,16 @@ createHTML: (html) => {
 			return props;
 		}
 	};
-	if (!customElements.get("day-calendar")) customElements.define("day-calendar", DayCalendarElement);
+	if (!customElements.get("day-calendar")) {
+		customElements.define("day-calendar", DayCalendarElement);
+		const registry = customElements;
+		for (const el of document.querySelectorAll("day-calendar")) {
+			if (el instanceof DayCalendarElement) continue;
+			try {
+				registry.initialize?.(el);
+			} catch {}
+			customElements.upgrade(el);
+		}
+	}
 	//#endregion
 })();

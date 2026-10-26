@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.8.2
+
+### Patch Changes
+
+- 1386f5a: `typeset` hands a paragraph back to the browser (ragged, as the element sets it) when justifying it would stretch a line's spaces past TeX's default tolerance (badness 200, each space about 1.6× its width) — on a phone's narrow column justified lines opened holes.
+
+## 1.8.1
+
+### Patch Changes
+
+- 0616d94: `<day-calendar>` shows on iPhones when the page renders the tag before loading the widget. Safari 26 never upgrades an element a framework cloned from a `<template>` (Svelte 5 does, through `document.importNode`) before its `customElements.define` — the tag stayed an empty 0px box. The widget now hands such elements the global registry (`customElements.initialize`) and upgrades them when it registers. Found on zaur.app.
+
 ## 1.8.0
 
 ### Minor Changes

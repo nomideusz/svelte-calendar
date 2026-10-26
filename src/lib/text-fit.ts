@@ -135,6 +135,24 @@ export function fitLabel(candidates: readonly string[], lines = 1): Attachment<H
 // above did too. ponytail: no fitness classes, no shrink; O(n·k).
 const SHY = '­';
 
+const badness = (slackPx: number, spaces: number, space: number) => {
+	const r = slackPx / (Math.max(spaces, 1) * space * 0.5);
+	return Math.min(10000, 100 * r * r * r);
+};
+// TeX's default \tolerance. A narrow column (a phone) sometimes has no set of
+// breaks that keeps every space under ~1.6× its width; justified, those lines
+// read as holes, so typeset leaves that paragraph to the browser, ragged.
+const TOLERANCE = 200;
+
+/** The badness of the loosest line but the last, were `lines` justified at `width`. */
+export function looseness(lines: readonly string[], font: string, width: number): number {
+	const measure = (s: string) => measureNaturalWidth(prepareWithSegments(s, font));
+	const space = measure('a a') - measure('aa');
+	let worst = 0;
+	for (const l of lines.slice(0, -1)) worst = Math.max(worst, badness(width - measure(l), l.split(' ').length - 1, space));
+	return worst;
+}
+
 export function breakLines(text: string, font: string, width: number): string[] {
 	const measure = (s: string) => measureNaturalWidth(prepareWithSegments(s, font));
 	const boxes: string[] = [];
@@ -155,10 +173,6 @@ export function breakLines(text: string, font: string, width: number): string[] 
 	const bw = boxes.map(measure);
 	const space = measure('a a') - measure('aa');
 	const hyphen = measure('-');
-	const badness = (slackPx: number, spaces: number) => {
-		const r = slackPx / (Math.max(spaces, 1) * space * 0.5);
-		return Math.min(10000, 100 * r * r * r);
-	};
 
 	// best[h][k]: cheapest way to set boxes[0..k) with a break after, h = 1 when
 	// that last line ended inside a word; prev[h][k]: [start of that line, its h].
@@ -179,7 +193,7 @@ export function breakLines(text: string, font: string, width: number): string[] 
 					if (w > width) break;
 					continue; // only the hyphen overflows — try the next box
 				}
-				const b = last ? 0 : badness(width - lineW, spaces);
+				const b = last ? 0 : badness(width - lineW, spaces, space);
 				const cost = last ? 0 : (10 + b) ** 2 + (h ? 50 ** 2 : 0) + (h && ph ? 10000 : 0);
 				if (best[ph][i] + cost < best[h][j + 1]) {
 					best[h][j + 1] = best[ph][i] + cost;
@@ -211,6 +225,8 @@ export function breakLines(text: string, font: string, width: number): string[] 
 /**
  * `<p {@attach typeset(text)}>` — sets the paragraph as justified Knuth-Plass
  * lines, one block span per line, re-done on resize and after webfonts load.
+ * A paragraph that cannot be justified without gaps (`TOLERANCE`) goes back to
+ * the browser as plain text, set however the element sets it (ragged).
  * Progressive: the server-rendered text is what crawlers and no-JS get; if the
  * browser's own measure disagrees with ours (a line overflows), the plain
  * text goes back and the browser breaks it. Pass the text, not the DOM — the
@@ -237,6 +253,10 @@ export function typeset(text: string): Attachment<HTMLElement> {
 			'position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
 		const set = (w: number) => {
 			const lines = breakLines(text, font, w);
+			if (looseness(lines, font, w) > TOLERANCE) {
+				el.textContent = text;
+				return true;
+			}
 			const spans = lines.map((l, i) => {
 				const s = document.createElement('span');
 				s.setAttribute('aria-hidden', 'true');
