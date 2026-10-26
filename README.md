@@ -585,6 +585,7 @@ The calendar reads its events through an adapter. Which one:
 | `createMemoryAdapter(events)` | The events are already in the page (a fixed list, your own state). Writes stay in memory. See [Quick Start](#quick-start). |
 | [`createRecurringAdapter(rules)`](#recurring-schedules) | The schedule repeats by rule: class timetables, office hours. Read-only. |
 | [`createRestAdapter(options)`](#rest-adapter) | The events live behind your own HTTP API, which also stores creates and moves. |
+| [`createIcsAdapter(source)`](#icalendar-ics) | The events come from Google Calendar, Apple Calendar, Outlook or any other calendar app: an imported `.ics` file or a subscription URL. Read-only. |
 | [`createJmapAdapter(client, options)`](#jmap-adapter) | The events are in a JMAP Calendars server (Fastmail, Stalwart, Cyrus). Read-only. |
 | [`createMappedAdapter(records, options)`](#mapped-adapter) | You have records from another system with their own field names: map the fields instead of writing an adapter. |
 | [`createCompositeAdapter(adapters)`](#composite-adapter) | One calendar shows several sources, e.g. a recurring timetable plus one-off events. |
@@ -639,6 +640,67 @@ const adapter = createJmapAdapter(client, {
 ```
 
 Read-only. Expands recurrences server-side and handles all-day events, ISO-duration ends and per-calendar colors (pass `calendars: [{ id, name, color }]`, or a function returning them).
+
+### iCalendar (.ics)
+
+Every calendar app speaks iCalendar: Google Calendar, Apple Calendar / iCloud, Outlook / Microsoft 365, Thunderbird, Proton, Fastmail, Nextcloud. One adapter reads all of them, from a file or a feed:
+
+```svelte
+<script>
+  import { Calendar, createIcsAdapter } from '@nomideusz/svelte-calendar';
+
+  let adapter = $state(createIcsAdapter(''));
+  async function importFile(e) {
+    const file = e.currentTarget.files?.[0];
+    if (file) adapter = createIcsAdapter(await file.text());
+  }
+</script>
+
+<input type="file" accept=".ics,.ical,.ifb,text/calendar" onchange={importFile} />
+<Calendar {adapter} />
+```
+
+A subscription URL loads on the first fetch (`webcal://` reads as `https://`); `refreshInterval` refetches once the copy is older than that many ms:
+
+```ts
+// Google: Settings → your calendar → "Secret address in iCal format"
+// Outlook: Settings → Calendar → Shared calendars → Publish → ICS link
+// iCloud: share the calendar as "Public Calendar" → webcal:// link
+const adapter = createIcsAdapter({ url: '/api/calendar-feed', refreshInterval: 15 * 60_000 });
+```
+
+Google, Outlook and iCloud send no CORS headers, so a browser can't fetch their feeds directly: serve them through a route of your own (the feed URL is a secret, so keep it on the server anyway):
+
+```ts
+// src/routes/api/calendar-feed/+server.ts
+export const GET = async ({ fetch }) => new Response(await (await fetch(FEED_URL)).text(), {
+  headers: { 'content-type': 'text/calendar; charset=utf-8' },
+});
+```
+
+- Recurrence is expanded per viewed range: `RRULE` (daily, weekly, monthly, yearly; `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` with ordinals like `-1FR`, `BYMONTHDAY`, `BYMONTH`, `BYSETPOS`, `WKST`), `RDATE`, `EXDATE`, and moved or edited occurrences (`RECURRENCE-ID`).
+- Times keep their zone: UTC, IANA `TZID`s, and the `VTIMEZONE` blocks Outlook writes under Windows zone names. Floating times read in the calendar's `X-WR-TIMEZONE`, else the browser's. All-day dates are local midnights, end exclusive.
+- `SUMMARY` → `title`, `LOCATION` → `location`, `STATUS` → `status`, the first of `CATEGORIES` → `category`, `COLOR` → `color`, `UID` → `externalId`, `DESCRIPTION` / `URL` → `data.description` / `data.url`. Events without a colour take `options.color`, else the calendar's own (`X-APPLE-CALENDAR-COLOR`).
+- Read-only: each occurrence carries `data.readOnly`, and a write throws `CalendarReadOnlyError`, so in a composite a drag reaches `oneventmove`.
+- The source may also be a function returning the text: `createIcsAdapter(() => loadIt())`.
+
+To use the events outside an adapter (copy an import into your own store), parse once and expand any range:
+
+```ts
+import { parseIcs } from '@nomideusz/svelte-calendar';
+
+const cal = parseIcs(text);           // { name, color, events(range) }
+const imported = cal.events({ start, end });
+```
+
+**Export.** `toIcs(events, { name })` writes an `.ics` file that Google, Apple and Outlook import, or subscribe to when you serve it from a URL. For a single event, `googleCalendarUrl(event)` and `outlookCalendarUrl(event, { work })` (personal outlook.live.com, or Microsoft 365) open the app's "add event" page:
+
+```ts
+import { toIcs, googleCalendarUrl, outlookCalendarUrl } from '@nomideusz/svelte-calendar';
+
+const file = new Blob([toIcs(events, { name: 'Studio' })], { type: 'text/calendar' });
+const href = URL.createObjectURL(file);   // <a {href} download="studio.ics">
+```
 
 ### Mapped Adapter
 

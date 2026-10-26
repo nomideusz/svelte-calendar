@@ -43,6 +43,7 @@ export type {
 
 // ─── Adapters ───────────────────────────────────────────
 export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter, withInitialEvents } from './adapters/index.js';
+export { createIcsAdapter, parseIcs, toIcs, googleCalendarUrl, outlookCalendarUrl } from './adapters/index.js';
 export { CalendarReadOnlyError, EventNotFoundError, isReadOnlyError, isNotFoundError } from './adapters/index.js';
 export type {
 	CalendarAdapter,
@@ -58,6 +59,10 @@ export type {
 	CompositeAdapterOptions,
 	JmapClient,
 	JmapCalendarAdapterOptions,
+	IcsCalendar,
+	IcsSource,
+	IcsAdapterOptions,
+	ToIcsOptions,
 } from './adapters/index.js';
 
 // ─── Core: clock, time, locale, types ───────────────────

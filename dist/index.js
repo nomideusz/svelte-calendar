@@ -11,6 +11,7 @@ export { useCalendarContext } from './views/shared/context.svelte.js';
 export { createEventStore, createViewState, createSelection, createDragState, } from './engine/index.js';
 // ─── Adapters ───────────────────────────────────────────
 export { createMemoryAdapter, createRestAdapter, createRecurringAdapter, createMappedAdapter, createCompositeAdapter, createJmapAdapter, withInitialEvents } from './adapters/index.js';
+export { createIcsAdapter, parseIcs, toIcs, googleCalendarUrl, outlookCalendarUrl } from './adapters/index.js';
 export { CalendarReadOnlyError, EventNotFoundError, isReadOnlyError, isNotFoundError } from './adapters/index.js';
 // ─── Core: clock, time, locale, types ───────────────────
 export { createClock, sod, startOfWeek, addDaysMs, diffDays, fmtH, fmtHParts, fmtTime, fmtDuration, weekdayShort, weekdayLong, monthShort, monthLong, dateShort, dateWithWeekday, fmtDay, fmtWeekRange, setDefaultLocale, getDefaultLocale, is24HourLocale, defaultLabels, setLabels, resetLabels, getLabels, toZonedTime, fromZonedTime, nowInZone, formatInTimeZone, generatePalette, extractAccent, VIVID_PALETTE, isMultiDay, isAllDay, segmentForDay, } from './core/index.js';

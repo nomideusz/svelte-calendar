@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.8.0
+
+### Minor Changes
+
+- iCalendar (.ics) in and out — the format Google Calendar, Apple Calendar / iCloud and Outlook / Microsoft 365 all import, export and publish:
+  
+  - `createIcsAdapter(source)` reads a `.ics` file's text, a subscription URL (`webcal://` too, optional `refreshInterval`) or a loader function. Read-only, like the recurring adapter: occurrences carry `data.readOnly`, writes throw `CalendarReadOnlyError`.
+  - `parseIcs(text)` → `{ name, color, events(range) }` for using the events outside an adapter.
+  - Recurrence is expanded per range: `RRULE` (daily/weekly/monthly/yearly, `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` with ordinals, `BYMONTHDAY`, `BYMONTH`, `BYSETPOS`, `WKST`), `RDATE`, `EXDATE`, `RECURRENCE-ID` overrides. Zones: UTC, IANA `TZID`s, Outlook's Windows-named `VTIMEZONE`s, `X-WR-TIMEZONE` for floating times.
+  - `toIcs(events, { name })` writes a file the calendar apps import or subscribe to; `googleCalendarUrl(event)` and `outlookCalendarUrl(event, { work })` open their "add event" pages.
+  - The demo imports an `.ics` file next to the sample week and exports the weeks on screen.
+
+### Patch Changes
+
+- 90f3edc: `typeset` keeps the paragraph readable to assistive tech and find/copy: line spans are `aria-hidden` (their break hyphens no longer read as "co- dzienne"), a visually hidden copy carries the text whole, and each line keeps the space it broke at.
+
 ## 1.7.1
 
 ### Patch Changes

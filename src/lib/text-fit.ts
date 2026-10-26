@@ -227,21 +227,29 @@ export function typeset(text: string): Attachment<HTMLElement> {
 		// hole in the paragraph. Set as nowrap, a misfit is plain overflow, which
 		// is measurable: re-break a touch narrower, and only then hand the text
 		// back to the browser.
+		// The lines are for the eye: their break hyphens ("co-" / "dzienne") are
+		// hidden from assistive tech, which reads the text whole from a visually
+		// hidden copy. Each line keeps the space it broke at (a trailing space
+		// is dropped at a nowrap line's end), so find and copy see words.
+		const whole = document.createElement('span');
+		whole.textContent = text;
+		whole.style.cssText =
+			'position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap';
 		const set = (w: number) => {
 			const lines = breakLines(text, font, w);
-			el.replaceChildren(
-				...lines.map((l, i) => {
-					const s = document.createElement('span');
-					s.style.display = 'block';
-					s.style.whiteSpace = 'nowrap';
-					s.style.hyphens = 'manual';
-					s.style.textAlign = 'justify';
-					s.style.textAlignLast = i === lines.length - 1 ? 'auto' : 'justify';
-					s.textContent = l;
-					return s;
-				}),
-			);
-			for (const s of el.children) if (s.scrollWidth > s.clientWidth + 1) return false;
+			const spans = lines.map((l, i) => {
+				const s = document.createElement('span');
+				s.setAttribute('aria-hidden', 'true');
+				s.style.display = 'block';
+				s.style.whiteSpace = 'nowrap';
+				s.style.hyphens = 'manual';
+				s.style.textAlign = 'justify';
+				s.style.textAlignLast = i === lines.length - 1 ? 'auto' : 'justify';
+				s.textContent = i < lines.length - 1 && !l.endsWith('-') ? l + ' ' : l;
+				return s;
+			});
+			el.replaceChildren(whole, ...spans);
+			for (const s of spans) if (s.scrollWidth > s.clientWidth + 1) return false;
 			return true;
 		};
 		const apply = () => {

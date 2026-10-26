@@ -7,6 +7,9 @@
 		createMemoryAdapter,
 		createRecurringAdapter,
 		createCompositeAdapter,
+		createIcsAdapter,
+		parseIcs,
+		toIcs,
 		auto,
 		neutral,
 		presets,
@@ -20,7 +23,7 @@
 	import Settings from "./_components/Settings.svelte";
 	import Hosts from "./_components/Hosts.svelte";
 	import type { SettingsField } from "./_components/Settings.svelte";
-	import type { CalendarView, TimelineEvent, HeaderContext } from "#lib/index.js";
+	import type { CalendarView, TimelineEvent, HeaderContext, CalendarAdapter } from "#lib/index.js";
 	import { boardStore, themeStore } from "./theme.svelte.js";
 	import { createDemoEvents, createDemoRecurring, closedDates } from "./demo-events.js";
 
@@ -424,11 +427,14 @@
 	// all-day events name the accent themselves. Nothing is hidden for
 	// disabledDates: the seed has no classes on the closed Sundays, and an event
 	// dragged onto one stays visible, as the library draws it.
+	// An imported .ics file joins as a third, read-only source.
+	let imported = $state<CalendarAdapter | null>(null);
 	const adapter = $derived(
 		createCompositeAdapter([
 			createMemoryAdapter(seed),
 			// movable: the demo handles the move itself (see handleMove)
 			createRecurringAdapter(recurring, { movable: true }),
+			...(imported ? [imported] : []),
 		]),
 	);
 
@@ -505,10 +511,42 @@
 	function resetEvents() {
 		seed = createDemoEvents(today);
 		recurring = createDemoRecurring();
+		imported = null;
 		edited = false;
 		lastAction = "Events reset to the sample week";
 		// The button goes with the edits: focus the page so Tab carries on from it.
 		document.getElementById("content")?.focus();
+	}
+
+	// ── iCalendar: any calendar app's export (Google, Apple, Outlook) in, the
+	// sample weeks out. The file's events join read-only; the calendar opens
+	// on the first of them from today on, so the import shows at once.
+	async function importIcs(e: Event & { currentTarget: HTMLInputElement }) {
+		const input = e.currentTarget;
+		const file = input.files?.[0];
+		input.value = "";
+		if (!file) return;
+		const text = await file.text();
+		const cal = parseIcs(text);
+		const all = cal.events({ start: new Date(addDaysMs(today.getTime(), -366 * 5)), end: new Date(addDaysMs(today.getTime(), 366 * 5)) });
+		if (!all.length) {
+			lastAction = `No events in ${file.name}`;
+			return;
+		}
+		all.sort((a, b) => a.start.getTime() - b.start.getTime());
+		imported = createIcsAdapter(text);
+		edited = true;
+		focusedDate = (all.find((ev) => ev.end >= today) ?? all[all.length - 1]).start;
+		lastAction = `Imported ${cal.name ?? file.name}`;
+	}
+	async function exportIcs() {
+		const range = { start: new Date(addDaysMs(today.getTime(), -28)), end: new Date(addDaysMs(today.getTime(), 56)) };
+		const events = await adapter.fetchEvents(range);
+		const href = URL.createObjectURL(new Blob([toIcs(events, { name: "svelte-calendar demo" })], { type: "text/calendar" }));
+		const a = Object.assign(document.createElement("a"), { href, download: "svelte-calendar-demo.ics" });
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(href), 1000);
+		lastAction = `Exported ${events.length} events to .ics`;
 	}
 
 	// Drag the pill under the calendar onto a day: the view hands back the
@@ -921,6 +959,10 @@
 			{#if keysOn}
 				<p class="keys"><span class="sr-only">Keyboard: </span><kbd>Alt</kbd>+<kbd>arrows</kbd> move · <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↑↓</kbd> resize · <kbd>Enter</kbd> on a day creates</p>
 			{/if}
+			<div class="ics" role="group" aria-label="iCalendar file">
+				<label class="reset ics-import">Import .ics<input type="file" accept=".ics,.ical,.ifb,text/calendar" onchange={importIcs} /></label>
+				<button class="reset" onclick={exportIcs}>Export .ics</button>
+			</div>
 			{#if edited}<button class="reset" onclick={resetEvents}>Reset events</button>{/if}
 		</div>
 
@@ -1368,6 +1410,26 @@
 	}
 	.reset {
 		flex: none;
+	}
+	.ics {
+		display: flex;
+		flex: none;
+		gap: calc(8 * var(--u));
+	}
+	/* The label is the button; the file input inside it stays focusable. */
+	.ics-import {
+		position: relative;
+	}
+	.ics-import input {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		width: 100%;
+		cursor: pointer;
+	}
+	.ics-import:has(input:focus-visible) {
+		outline: 2px solid var(--dt-text, #111);
+		outline-offset: 2px;
 	}
 	.code-copy:hover,
 	.reset:hover {
