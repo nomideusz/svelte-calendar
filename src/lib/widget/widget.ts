@@ -150,7 +150,10 @@ class DayCalendarElement extends HTMLElement {
 			this.stylesInjected = true;
 		}
 		const attrs = createReactiveProps(this.readProps());
-		const component = mount(CalendarWidget, { target: root, props: attrs.props });
+		// A click or a committed drag reaches the page as a DOM event on the
+		// element: `eventclick` { event, anchor }, `eventmove` { event, start, end }.
+		const emit = (type: string, detail: object) => this.dispatchEvent(new CustomEvent(type, { detail, bubbles: true }));
+		const component = mount(CalendarWidget, { target: root, props: Object.assign(attrs.props, { emit }) });
 		this.instance = { component, attrs };
 	}
 

@@ -37,6 +37,8 @@ interface Props {
     hours?: string;
     /** UI words as a JSON object over the English defaults, e.g. '{"today":"Dziś"}' */
     labels?: string;
+    /** Set by the <day-calendar> element: fires its `eventclick` / `eventmove` DOM events */
+    emit?: (type: 'eventclick' | 'eventmove', detail: object) => void;
 }
 declare const CalendarWidget: import("svelte").Component<Props, {}, "">;
 type CalendarWidget = ReturnType<typeof CalendarWidget>;

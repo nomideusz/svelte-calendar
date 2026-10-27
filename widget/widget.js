@@ -20897,6 +20897,7 @@ createHTML: (html) => {
 		/** Minimum day-column width in px for the week grid (default: 110) — a narrower container scrolls sideways */
 		/** Visible hours of the time grids, "start-end" in whole hours (e.g. "6-22") */
 		/** UI words as a JSON object over the English defaults, e.g. '{"today":"Dziś"}' */
+		/** Set by the <day-calendar> element: fires its `eventclick` / `eventmove` DOM events */
 		let theme = prop($$props, "theme", 3, "auto"), view = prop($$props, "view", 3, "week-planner"), height = prop($$props, "height", 3, "600"), mondaystart = prop($$props, "mondaystart", 3, "true");
 		const heightValue = /* @__PURE__ */ user_derived(() => {
 			const trimmed = height().trim();
@@ -21055,7 +21056,16 @@ createHTML: (html) => {
 				},
 				get labels() {
 					return get(labelsValue);
-				}
+				},
+				oneventclick: (event, anchor) => $$props.emit?.("eventclick", {
+					event,
+					anchor
+				}),
+				oneventmove: (event, start, end) => $$props.emit?.("eventmove", {
+					event,
+					start,
+					end
+				})
 			});
 		}
 		pop();
@@ -21172,9 +21182,13 @@ createHTML: (html) => {
 				this.stylesInjected = true;
 			}
 			const attrs = createReactiveProps(this.readProps());
+			const emit = (type, detail) => this.dispatchEvent(new CustomEvent(type, {
+				detail,
+				bubbles: true
+			}));
 			const component = mount(CalendarWidget, {
 				target: root,
-				props: attrs.props
+				props: Object.assign(attrs.props, { emit })
 			});
 			this.instance = {
 				component,

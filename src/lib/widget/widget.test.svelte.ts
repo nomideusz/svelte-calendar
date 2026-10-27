@@ -11,6 +11,7 @@ beforeAll(() => {
 		addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {},
 		dispatchEvent: () => false,
 	})) as typeof window.matchMedia;
+	globalThis.CSS ??= { escape: (s: string) => s } as unknown as typeof CSS;
 	globalThis.ResizeObserver ??= class { observe() {} unobserve() {} disconnect() {} } as unknown as typeof ResizeObserver;
 });
 
@@ -123,6 +124,32 @@ describe('CalendarWidget hours and labels', () => {
 		expect(target.querySelector('.cal-hd-today')?.textContent?.trim()).toBe('Today');
 		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
+		await unmount(w);
+	});
+});
+
+describe('CalendarWidget emit', () => {
+	it('hands a click and a committed move to emit, which the element fires as DOM events', async () => {
+		const { default: CalendarWidget } = await import('./CalendarWidget.svelte');
+		const target = document.body.appendChild(document.createElement('div'));
+		const s = new Date();
+		s.setHours(10, 0, 0, 0);
+		const events = JSON.stringify([{ id: 'a', title: 'Hatha', start: s, end: new Date(+s + 3_600_000) }]);
+		const emit = vi.fn();
+		const w = mount(CalendarWidget, { target, props: { events, view: 'week-planner', mobile: 'false', readonly: 'false', emit } });
+		await settle();
+
+		const ev = () => target.querySelector<HTMLElement>('.tw-ev[data-event-id="a"]')!;
+		ev().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+		expect(emit).toHaveBeenCalledWith('eventclick', expect.objectContaining({ event: expect.objectContaining({ id: 'a' }) }));
+
+		ev().dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', altKey: true, bubbles: true }));
+		await settle();
+		expect(emit).toHaveBeenLastCalledWith('eventmove', {
+			event: expect.objectContaining({ id: 'a' }),
+			start: new Date(+s - 15 * 60_000),
+			end: new Date(+s + 45 * 60_000),
+		});
 		await unmount(w);
 	});
 });

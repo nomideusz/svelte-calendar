@@ -16,7 +16,7 @@
 <script lang="ts">import Calendar from "../calendar/Calendar.svelte";
 import { createMemoryAdapter } from "../adapters/memory.js";
 import { presets } from "../theme/presets.js";
-let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone, mincolumnwidth, hours, labels } = $props();
+let { api, events, theme = "auto", view = "week-planner", height = "600", locale, dir, mondaystart = "true", headers, readonly, pills, nav, mobile, days, compact, timezone, mincolumnwidth, hours, labels, emit } = $props();
 // ── Parse attributes ──
 const heightValue = $derived.by(() => {
 	const trimmed = height.trim();
@@ -149,4 +149,6 @@ const adapter = $derived.by(() => {
 	minColumnWidth={minColumnWidthValue}
 	visibleHours={hoursValue}
 	labels={labelsValue}
+	oneventclick={(event, anchor) => emit?.('eventclick', { event, anchor })}
+	oneventmove={(event, start, end) => emit?.('eventmove', { event, start, end })}
 />

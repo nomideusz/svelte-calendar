@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.0
+
+### Minor Changes
+
+- `<day-calendar>` fires `eventclick` (`{ event, anchor }`) and `eventmove` (`{ event, start, end }`) DOM events, so a page embedding the widget can open its own details for a clicked event ("add to Google Calendar", a booking form) and keep a drag. Before, the widget's clicks and drags never left it. Asked for by zaur.app's calendar demo.
+
 ## 1.8.2
 
 ### Patch Changes

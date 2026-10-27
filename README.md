@@ -1112,7 +1112,7 @@ The widget renders inside shadow DOM: host-page CSS cannot affect the calendar a
 | `api` | — | Events endpoint, fetched as `GET {api}?start=…&end=…` (ISO instants; appended with `&` if `api` already has a query). It must answer JSON: an array of events, or `{ "events": [...] }`. |
 | `events` | — | Inline JSON array of events, used when there is no `api` |
 | `headers` | — | JSON object of extra request headers for `api`. Without it the GET is a simple CORS request (no preflight). |
-| `readonly` | read-only | The widget is read-only unless `readonly="false"`. There is no write endpoint: with `api`, drags are only visual; with `events`, they are kept in memory. |
+| `readonly` | read-only | The widget is read-only unless `readonly="false"`. There is no write endpoint: with `api`, drags are only visual; with `events`, they are kept in memory. Either way each committed drag fires `eventmove`. |
 | `view` | `week-planner` | Initial view ID (`week-planner`, `day-agenda`, `month-grid`, …) |
 | `theme` | `auto` | `auto`, `neutral` or `midnight` (unknown names fall back to `neutral`) |
 | `height` | `600` | Height in px (`"600"` or `"600px"`), or `auto` |
@@ -1130,6 +1130,21 @@ The widget renders inside shadow DOM: host-page CSS cannot affect the calendar a
 | `labels` | — | UI words as a JSON object over the English defaults, e.g. `'{"today":"Dziś","week":"Tydzień"}'` (keys: `CalendarLabels`) |
 
 Each event in `api` responses and `events` needs `start` and `end` as date strings (ISO 8601) and may carry `id`, `title`, `color`, `allDay`, `subtitle` and `location`; other fields are ignored, as are events with an invalid or empty range. Changing an attribute updates the calendar in place.
+
+The element fires two DOM events (they bubble), with the event as the calendar holds it (`start` and `end` as `Date`s):
+
+| Event | `detail` | When |
+|-------|----------|------|
+| `eventclick` | `{ event, anchor }` | An event is clicked or activated with Enter; `anchor` is its block's viewport rect |
+| `eventmove` | `{ event, start, end }` | A drag or resize committed (only with `readonly="false"`); `event` is the one before the move |
+
+```js
+const cal = document.querySelector('day-calendar');
+cal.addEventListener('eventclick', (e) => open(e.detail.event.id));
+cal.addEventListener('eventmove', (e) => save(e.detail.event.id, e.detail.start, e.detail.end));
+```
+
+Keep your own copy in step with `eventmove` if you later set `events` again: a new `events` value replaces what the calendar holds.
 
 ## All Props
 
