@@ -10,7 +10,6 @@ This repository is synced from a private monorepo, where primary development hap
 
 ```bash
 pnpm install
-pnpm dev              # demo site at localhost:5173
 pnpm check            # svelte-check (types) — must report 0 errors
 pnpm test             # vitest
 pnpm package          # build the library into dist/

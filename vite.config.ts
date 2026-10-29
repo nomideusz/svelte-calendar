@@ -10,8 +10,6 @@ export default defineConfig({
 		// preprocessor (svelte-loader, bundlephobia, plain rollup) can compile them
 		preprocess: vitePreprocess({ script: true, style: false })
 	})],
-	// The demo's paper plate lives beside src/ (assets/plates); dev serves it.
-	server: { fs: { allow: ['.'] } },
 	test: {
 		// *.test.svelte.ts files get rune compilation from the svelte plugin
 		include: ['src/**/*.{test,spec}.{js,ts}', 'src/**/*.{test,spec}.svelte.{js,ts}'],

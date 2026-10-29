@@ -4,7 +4,7 @@
 
 A themeable **Svelte 5** calendar: day and week **Planner** time grids, a multi-week **Scroll** view, **Agenda** lists, a **Month** grid and touch-first **Mobile** layouts, with drag to move, resize and create events, timezones, a headless API, an embeddable web component, and a smart auto-theme that adapts to any page.
 
-**[Live demo → svelte-calendar.xyz](https://svelte-calendar.xyz/)**
+**[Live demo → svelte.zaur.app/calendar](https://svelte.zaur.app/calendar)**
 
 ## Installation
 
@@ -1255,7 +1255,6 @@ The package follows [semver](https://semver.org/) from 1.0:
 
 ```bash
 pnpm install
-pnpm dev              # demo site
 pnpm check            # svelte-check
 pnpm test             # vitest
 pnpm run package      # build the library into dist/

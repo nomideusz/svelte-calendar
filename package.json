@@ -56,7 +56,6 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@types/node": "^22.20.0",
     "jsdom": "^29.1.1",
-    "marked": "^17.0.6",
     "svelte": "^5.57.1",
     "svelte-check": "^4.7.1",
     "typescript": "^6.0.3",
@@ -92,5 +91,5 @@
   "bugs": {
     "url": "https://github.com/nomideusz/svelte-calendar/issues"
   },
-  "homepage": "https://svelte-calendar.xyz/"
+  "homepage": "https://svelte.zaur.app/calendar"
 }

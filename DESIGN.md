@@ -195,7 +195,7 @@ components:
 
 **Creative North Star: "Stendig on paper"**
 
-A wall calendar printed on good paper. Lineage: Vignelli's Stendig calendar (the numerals are the design) crossed with engraved score paper (ruled lines, one coloured beam). The date numbers in the headers and the hour numerals in the gutter are the typography of the page; events are text set on a rule with a short bar at their start; the host page's accent is the only colour and it does three jobs. Everything else is black ink and one mid grey on warm white engraving paper with a visible grain, a raster plate (`assets/plates/paper.png`) and never CSS noise.
+A wall calendar printed on good paper. Lineage: Vignelli's Stendig calendar (the numerals are the design) crossed with engraved score paper (ruled lines, one coloured beam). The date numbers in the headers and the hour numerals in the gutter are the typography of the page; events are text set on a rule with a short bar at their start; the host page's accent is the only colour and it does three jobs. Everything else is black ink and one mid grey on warm white engraving paper with a visible grain, a raster plate (`packages/demo/src/lib/assets/paper.png`) and never CSS noise.
 
 The system has two layers. The **calendar** (`src/lib/**`) is themed only through the `--dt-*` contract; its `neutral` preset is this paper, its `midnight` preset is the same drawing in light ink on charcoal, and `auto` derives the same ratios from the host page. The **demo chrome** (`src/routes/**`) sits on the same paper: a left rail of controls drawn in 2px ink frames, a thin bar, and a code drawer. The chrome has no colour of its own; when a host swatch changes the page, the band, the now line and today take the host's colour and the paper stays.
 

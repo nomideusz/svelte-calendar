@@ -7,7 +7,7 @@
 web
 
 ## Users
-Svelte developers evaluating whether to install `@nomideusz/svelte-calendar`. On svelte-calendar.xyz they want to see the views, try the props against their own use case (booking page, class timetable, embedded schedule), check that the calendar adapts to their page's theme, and copy the markup for the setup they landed on.
+Svelte developers evaluating whether to install `@nomideusz/svelte-calendar`. On the demo (svelte.zaur.app/calendar) they want to see the views, try the props against their own use case (booking page, class timetable, embedded schedule), check that the calendar adapts to their page's theme, and copy the markup for the setup they landed on.
 
 ## Product Purpose
 A themeable Svelte 5 calendar component: day/week Planner time grids, a multi-week Scroll view, Agenda lists, a Month grid and touch-first Mobile layouts, with drag-and-drop, recurring events, timezones, localized labels, RTL, a headless API and a web-component widget. Success on the demo = a developer reaches "this fits my case" and leaves with working code.
@@ -16,7 +16,7 @@ A themeable Svelte 5 calendar component: day/week Planner time grids, a multi-we
 The `auto` theme probes the host page (background, fonts, accent, light/dark) and generates matching `--dt-*` tokens, so the calendar looks native on any page without a theme file. Views are built for schedules people read (studios, classes, bookings), not only for meeting grids.
 
 ## Operating Context
-- Demo site: `src/routes` (`/` interactive demo, `/docs` reference), deployed on Vercel at svelte-calendar.xyz.
+- Demo site: the package hub, `packages/demo/src/routes/calendar` (`/calendar` interactive demo, `/calendar/docs` reference), at svelte.zaur.app; svelte-calendar.xyz redirects there.
 - The library is consumed in production by `apps/yoga` (szkolyjogi.pl), `apps/thebest` and `packages/svelte-scheduler`; yoga sets its own `--dt-*` tokens.
 - Published on npm (1.0.x), MIT.
 
