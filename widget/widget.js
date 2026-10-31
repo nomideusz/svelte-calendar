@@ -1,6 +1,6 @@
 globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Container ──────────────────────────────────── */\n\t.tw.svelte-j4rvbp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #efebe9);\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp { overflow: visible; }\n\n\t/* ─── Scroll container ───────────────────────────── */\n\t.tw-scroll.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: auto;\n\t\t/* Horizontal stays contained (a sideways swipe must not trigger the\n\t\t   browser's back navigation); vertical chains to the page, so a wheel\n\t\t   over a page-embedded calendar scrolls on once the grid ends. */\n\t\toverscroll-behavior-x: contain;\n\t\toverscroll-behavior-y: auto;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;\n\t}\n\t.tw--auto.svelte-j4rvbp .tw-scroll:where(.svelte-j4rvbp) { overflow-y: visible; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar { width: 5px; height: 5px; }\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(15, 15, 15, 0.1));\n\t\tborder-radius: 0;\n\t}\n\t.tw-scroll.svelte-j4rvbp::-webkit-scrollbar-track { background: transparent; }\n\n\t.tw-inner.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\twidth: 100%;\n\t}\n\n\t/* ─── Sticky top (header + all-day) ──────────────── */\n\t.tw-top.svelte-j4rvbp {\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tz-index: 30;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #efebe9);\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\n\t/* ─── Day header row ─────────────────────────────── */\n\t.tw-head.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t}\n\n\t.tw-corner.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #efebe9);\n\t}\n\n\t.tw-hd.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 14px 4px 12px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\n\t.tw-hd-wd.svelte-j4rvbp {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.tw-hd--today.svelte-j4rvbp .tw-hd-wd:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* The day number is the typography of the grid: large, regular weight. */\n\t.tw-hd-num.svelte-j4rvbp {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t/* Today: the numeral in the accent, nothing else. */\n\t.tw-hd-num--today.svelte-j4rvbp {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\n\t.tw-hd-custom.svelte-j4rvbp {\n\t\tmax-width: 100%;\n\t\toverflow: hidden;\n\t}\n\n\t/* ─── All-day strip ──────────────────────────────── */\n\t.tw-allday.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tborder-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\n\t.tw-ad-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\t/* The padding sits inside the gutter's width, so the all-day cells\n\t\t   start where the day columns and headers start. */\n\t\tbox-sizing: border-box;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 2;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #efebe9);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: flex-end;\n\t\tpadding: 6px 8px 6px 0;\n\t}\n\t.tw-ad-gutter-lb.svelte-j4rvbp {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\ttext-align: right;\n\t}\n\n\t.tw-ad-cell.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tpadding: 4px 0 5px;\n\t\tborder-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\t.tw-ad-cell--today.svelte-j4rvbp { background: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }\n\n\t.tw-ad.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 0 10px;\n\t\tmin-height: 36px;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\t/* The paper's grain runs through the band (multiply keeps the colour). */\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t\ttransition: filter 0.12s;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad.svelte-j4rvbp:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\t/* A span continues across its days as one band: no edge between segments. */\n\t.tw-ad--mid.svelte-j4rvbp,\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) {\n\t\tmargin-left: -1px;\n\t}\n\t.tw-ad--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t}\n\t.tw-ad--cancelled.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 55%, var(--dt-bg, #efebe9));\n\t}\n\t.tw-ad.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t.tw-ad-title.svelte-j4rvbp {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tunicode-bidi: plaintext;\n\t\ttext-align: left;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\t/* …but it sits on the calendar's side, by the bar */\n\t.tw-ad-title.svelte-j4rvbp:dir(rtl) { text-align: right; }\n\t.tw-ad-span.svelte-j4rvbp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad--mid.svelte-j4rvbp .tw-ad-title:where(.svelte-j4rvbp),\n\t.tw-ad--end.svelte-j4rvbp:not(.tw-ad--start) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: hidden;\n\t}\n\t.tw-ad-gutter.svelte-j4rvbp + .tw-ad-cell:where(.svelte-j4rvbp) .tw-ad-title:where(.svelte-j4rvbp) {\n\t\tvisibility: visible;\n\t}\n\t.tw-ad-span.svelte-j4rvbp,\n\t.tw-ad-cont.svelte-j4rvbp,\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp {\n\t\tdisplay: none;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t\tflex-shrink: 0;\n\t}\n\t.tw-ad-arrow.svelte-j4rvbp { margin-left: auto; }\n\n\t.tw-ad-more.svelte-j4rvbp {\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\tpadding: 2px 6px;\n\t\tcursor: pointer;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ad-more.svelte-j4rvbp:hover { color: var(--dt-text, rgba(15, 15, 15, 0.87)); }\n\t.tw-ad-more.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t/* ─── Grid body ──────────────────────────────────── */\n\t.tw-body.svelte-j4rvbp {\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t}\n\t.tw-body--unplaced.svelte-j4rvbp {\n\t\tvisibility: hidden;\n\t\tanimation: svelte-j4rvbp-tw-reveal 0s 1.5s forwards;\n\t}\n\t@keyframes svelte-j4rvbp-tw-reveal { to { visibility: visible; } }\n\n\t/* ─── Time gutter ────────────────────────────────── */\n\t.tw-gutter.svelte-j4rvbp {\n\t\tflex-shrink: 0;\n\t\tposition: sticky;\n\t\tleft: 0;\n\t\tz-index: 20;\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, #efebe9);\n\t\tborder-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\n\t/* Timetable hour: the numeral carries the rank, the suffix sits raised\n\t   and small beside it. */\n\t.tw-gutter-lb.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 6px;\n\t\tright: 0;\n\t\ttransform: translateY(-50%);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 2px;\n\t\tfont: 400 26px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 85%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tmin-width: 6px;\n\t\theight: 1px;\n\t\tmargin-left: 5px;\n\t\talign-self: center;\n\t\tbackground: var(--dt-border-day, rgba(15, 15, 15, 0.3));\n\t}\n\t/* The first hour has no room above its line: it hangs below it, the\n\t   tick still on the line. */\n\t.tw-gutter-lb.svelte-j4rvbp:first-child { transform: none; }\n\t.tw-gutter-lb.svelte-j4rvbp:first-child::after { align-self: flex-start; }\n\t.tw-gutter-lb--under.svelte-j4rvbp {\n\t\tvisibility: hidden;\n\t}\n\t.tw-gutter-lb.svelte-j4rvbp small:where(.svelte-j4rvbp) {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tline-height: 1;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\n\t/* The clock beside the now line, and the drag's edges while it lasts —\n\t   both sit on the surface so they cover the hour label beneath. */\n\t.tw-gutter-now.svelte-j4rvbp,\n\t.tw-gutter-drag.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tright: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-surface, var(--dt-bg, #efebe9));\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t\twhite-space: nowrap;\n\t\tz-index: 2;\n\t}\n\t/* The clock is a reversed plate on the accent, like a board's live time. */\n\t.tw-gutter-now.svelte-j4rvbp {\n\t\tbackground: var(--dt-accent, #1d4fd7);\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t/* ─── Columns wrapper ────────────────────────────── */\n\t.tw-cols.svelte-j4rvbp {\n\t\tflex: 1;\n\t\tdisplay: flex;\n\t\tposition: relative;\n\t\tmin-width: 0;\n\t}\n\n\t/* ─── Guide lines ────────────────────────────────── */\n\t.tw-lines.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tpointer-events: none;\n\t\t/* Above the columns' background washes, below blocked/events/now */\n\t\tz-index: 1;\n\t}\n\t.tw-line.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\t.tw-line--half.svelte-j4rvbp { opacity: 0.4; }\n\t.tw-now-week.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #1d4fd7);\n\t\topacity: 0.85;\n\t\ttransform: translateY(-1px);\n\t}\n\n\t/* ─── Day column ─────────────────────────────────── */\n\t.tw-col.svelte-j4rvbp {\n\t\tflex: 1 1 0;\n\t\tmin-width: var(--tw-col-min, 110px);\n\t\tposition: relative;\n\t\tborder-left: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-col.svelte-j4rvbp:focus-visible {\n\t\toutline: 2px solid var(--dt-text, #0f0f0f);\n\t\toutline-offset: -2px;\n\t}\n\t/* The gutter's right border already bounds the first column */\n\t.tw-lines.svelte-j4rvbp + .tw-col:where(.svelte-j4rvbp) { border-left: none; }\n\n\t/* --tw-col-wash: the column's ground, repeated under an event that the\n\t   now line crosses (that event is opaque, so the line runs beneath it). */\n\t.tw-col.svelte-j4rvbp { background: var(--tw-col-wash, transparent); }\n\t.tw-col--today.svelte-j4rvbp { --tw-col-wash: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }\n\t/* Dim past days with a wash, never a subtree opacity (event contrast) */\n\t.tw-col--past.svelte-j4rvbp {\n\t\t--tw-col-wash: color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent);\n\t}\n\t/* What has already happened steps back; a cancelled block keeps its own look. */\n\t.tw-ev--past.svelte-j4rvbp:not(.tw-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\t.tw-col--weekend.svelte-j4rvbp:not(.tw-col--today):not(.tw-col--past) {\n\t\t--tw-col-wash: var(--dt-weekend-bg, rgba(15, 15, 15, 0.012));\n\t}\n\t.tw-col--disabled.svelte-j4rvbp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(15, 15, 15, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(15, 15, 15, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot overlay ───────────────────────── */\n\t.tw-blocked.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t\tpointer-events: none;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tjustify-content: center;\n\t\toverflow: hidden;\n\t}\n\t.tw-blocked-lb.svelte-j4rvbp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t\tpadding-top: 4px;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t/* Under the events (z 6): the one it crosses is opaque (.tw-ev--on-now),\n\t   so the line never strikes through a title. The dot stays on top. */\n\t.tw-now.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #1d4fd7);\n\t\tz-index: 5;\n\t\tpointer-events: none;\n\t\ttransform: translateY(-1px);\n\t}\n\t.tw-now-dot.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: -4px;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tmargin-top: -4px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #1d4fd7);\n\t\tz-index: 12;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.tw-ev.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tz-index: 6;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\tcursor: grab;\n\t\t/* Pointer drags move the event, never scroll the grid */\n\t\ttouch-action: none;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\tbox-sizing: border-box;\n\t\tmin-height: 24px;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.tw-ev.svelte-j4rvbp:hover {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t\tz-index: 8;\n\t}\n\t/* Short blocks keep duration-proportional height, but get a 44px\n\t   transparent hit-slop so clicks/taps still land. */\n\t.tw-ev--short.svelte-j4rvbp { overflow: visible; }\n\t.tw-ev--short.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.tw-ev--selected.svelte-j4rvbp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tz-index: 9;\n\t}\n\t.tw-ev--current.svelte-j4rvbp {\n\t\tbackground-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));\n\t}\n\t/* An event the now line crosses lays its column's ground (and its own\n\t   wash) over the paper, so the line passes beneath its text. */\n\t.tw-ev.tw-ev--on-now.svelte-j4rvbp {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--_fill), var(--_fill)),\n\t\t\tlinear-gradient(var(--tw-ev-wash, transparent), var(--tw-ev-wash, transparent)),\n\t\t\tlinear-gradient(var(--tw-col-wash, transparent), var(--tw-col-wash, transparent)),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #efebe9);\n\t}\n\t.tw-ev--on-now.tw-ev--current.svelte-j4rvbp { --tw-ev-wash: var(--dt-accent-dim, rgba(29, 79, 215, 0.12)); }\n\t.tw-ev--on-now.svelte-j4rvbp:hover { --tw-ev-wash: var(--dt-hover, rgba(15, 15, 15, 0.04)); }\n\t.tw-ev--resizing.svelte-j4rvbp {\n\t\tz-index: 50;\n\t\tbox-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);\n\t\tcursor: ns-resize;\n\t}\n\t/* Origin of an in-flight move: still there, clearly no longer the subject. */\n\t.tw-ev--moving.svelte-j4rvbp {\n\t\topacity: 0.3;\n\t\tpointer-events: none;\n\t\tbox-shadow: none;\n\t}\n\t/* Status treatments: token-level dims + a non-opacity signal\n\t   (strikethrough / border style) — consistent with the other views. */\n\t/* Printed states: a cancelled class is struck through and stays on the\n\t   grid; a tentative one is set in grey with a dashed bar. */\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.tw-ev--cancelled.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; /* decorative bar only */ }\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp),\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.tw-ev--tentative.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp),\n\t.tw-ev--limited.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.tw-ev--full.svelte-j4rvbp .tw-ev-stripe:where(.svelte-j4rvbp) { opacity: 0.45; }\n\t.tw-ev--readonly.svelte-j4rvbp { cursor: default; }\n\n\t.tw-ev-stripe.svelte-j4rvbp {\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t}\n\n\t.tw-ev-body.svelte-j4rvbp {\n\t\tcontainer: tw-ev / inline-size;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 3px 7px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\toverflow: hidden;\n\t}\n\t/* Compact (< ~35min at default zoom): one line, \"Title 9:00\". The title\n\t   wins the room: the time wraps onto a second line, which the block\n\t   clips, before the title is cut; a title too long alone ellipsizes. */\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-content: flex-start;\n\t\talign-items: baseline;\n\t\tgap: 24px 5px;\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 0;\n\t}\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) { flex: 0 1 auto; min-width: 0; }\n\t.tw-ev--compact.svelte-j4rvbp .tw-ev-end:where(.svelte-j4rvbp) { display: none; }\n\n\t/* Title first, time under it; both one size, rank by weight and ink. */\n\t.tw-ev-time.svelte-j4rvbp {\n\t\torder: 1;\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t/* A narrow overlap column keeps the start time whole and drops the end. */\n\t@container tw-ev (max-width: 104px) {\n\t\t.tw-ev-end.svelte-j4rvbp { display: none; }\n\t}\n\n\t.tw-ev-title.svelte-j4rvbp {\n\t\torder: 0;\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\t/* A Latin title in an RTL calendar keeps its own direction, so the\n\t\t   ellipsis cuts its end, not its start. */\n\t\tunicode-bidi: plaintext;\n\t\ttext-align: left;\n\t}\n\t/* …but it sits on the calendar's side, by the bar */\n\t.svelte-j4rvbp:is(.tw-ev-title:where(.svelte-j4rvbp), .tw-ev-loc:where(.svelte-j4rvbp)):dir(rtl) { text-align: right; }\n\t/* A block tall enough for two title lines over the time wraps the title\n\t   to two. The parts flow in a wrapping column, so a room that no longer\n\t   fits under them moves into a second column the block clips: it gives\n\t   way whole, before the title is cut, instead of being sliced. */\n\t.tw-ev--tall.svelte-j4rvbp .tw-ev-body:where(.svelte-j4rvbp) {\n\t\tflex-wrap: wrap;\n\t\tcolumn-gap: 16px;\n\t}\n\t.tw-ev--tall.svelte-j4rvbp :is(.tw-ev-title:where(.svelte-j4rvbp), .tw-ev-time:where(.svelte-j4rvbp), .tw-ev-loc:where(.svelte-j4rvbp)) { width: 100%; }\n\t.tw-ev--tall.svelte-j4rvbp .tw-ev-title:where(.svelte-j4rvbp) {\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\twhite-space: normal;\n\t\toverflow-wrap: break-word; /* a word wider than an overlap lane breaks, not clips */\n\t\thyphens: auto; /* …and hyphenates where the host page declares a lang */\n\t}\n\n\t.tw-ev-loc.svelte-j4rvbp {\n\t\torder: 2;\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tunicode-bidi: plaintext;\n\t\ttext-align: left;\n\t}\n\n\t.tw-ev-live.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-j4rvbp-tw-pulse 2s ease-in-out infinite;\n\t}\n\t@keyframes svelte-j4rvbp-tw-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (12–20px of inward slop each) covered short events\n\t   entirely — min block height is 24px, so every grab meant to move\n\t   started a resize instead. The grip is the visible affordance;\n\t   everything else on the block drags to move. */\n\t.tw-ev-handle.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 44px;\n\t\theight: 8px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp { bottom: 0; }\n\t/* Hit-slop: ≥20px effective, extending inward so overflow clipping\n\t   can't cut it off. */\n\t.tw-ev-handle.svelte-j4rvbp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 20px;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::before { top: 0; }\n\t.tw-ev-handle--end.svelte-j4rvbp::before { bottom: 0; }\n\t/* Short events: shrink the slop so a move-grab area survives */\n\t.tw-ev--short.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::before { height: 12px; }\n\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 20px;\n\t\theight: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.tw-ev-handle--start.svelte-j4rvbp::after { top: 1px; }\n\t.tw-ev-handle--end.svelte-j4rvbp::after { bottom: 1px; }\n\t.tw-ev.svelte-j4rvbp:hover .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-within .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev.svelte-j4rvbp:focus-visible .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--resizing.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after,\n\t.tw-ev--selected.svelte-j4rvbp .tw-ev-handle:where(.svelte-j4rvbp)::after { opacity: 0.55; }\n\t/* Pointer on the grip column itself: brighten so the hit zone reads */\n\t.tw-ev-handle.svelte-j4rvbp:hover::after { opacity: 0.9; }\n\t/* Coarse pointers can't hover — show the grips persistently */\n\t@media (hover: none) {\n\t\t.tw-ev-handle.svelte-j4rvbp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Move / create ghost ────────────────────────── */\n\t.tw-ghost.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tleft: 1px;\n\t\tright: 3px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, var(--dt-surface, var(--dt-bg, #efebe9)));\n\t\toutline: 1px solid color-mix(in srgb, var(--ev-color) 45%, transparent);\n\t\tbox-shadow: 0 6px 18px color-mix(in srgb, var(--ev-color) 24%, rgba(0, 0, 0, 0.22));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tpadding: 3px 6px;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t\tbox-sizing: border-box;\n\t}\n\t.tw-ghost--create.svelte-j4rvbp {\n\t\tbackground: color-mix(in srgb, var(--ev-color) 12%, transparent);\n\t\toutline: 1px dashed color-mix(in srgb, var(--ev-color) 60%, transparent);\n\t\tbox-shadow: none;\n\t}\n\t.tw-ghost-time.svelte-j4rvbp {\n\t\tfont: 500 12.5px/1.15 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--ev-color, var(--dt-accent, #1d4fd7));\n\t\twhite-space: nowrap;\n\t}\n\t.tw-ghost-title.svelte-j4rvbp {\n\t\tfont: 500 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t/* ─── Empty overlay ──────────────────────────────── */\n\t.tw-empty.svelte-j4rvbp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t/* box-shadow instead of outline: outlines get clipped by the\n\t   overflow: hidden scroll container. */\n\t.tw-ev.svelte-j4rvbp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t\tz-index: 9;\n\t}\n\n\t/* ─── Reduced motion ─────────────────────────────── */\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.tw-ev.svelte-j4rvbp,\n\t\t.tw-ad.svelte-j4rvbp,\n\t\t.tw-ev-handle.svelte-j4rvbp::after {\n\t\t\ttransition: none;\n\t\t}\n\t\t.tw-ev-live.svelte-j4rvbp { animation: none; }\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.wg.svelte-l8xuza {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t.wg--auto.svelte-l8xuza { overflow: visible; }\n\n\t/* ─── Scrollable body ────────────────────────────── */\n\t.wg-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\t/* The prepend is compensated by hand (handleUserScroll); the browser's\n\t\t   anchoring on top of it moved the content twice. */\n\t\toverflow-anchor: none;\n\t\t/* Seven columns scroll horizontally at narrow widths instead of squishing */\n\t\toverflow-x: auto;\n\t\tbox-sizing: border-box;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;\n\t}\n\t.wg--auto.svelte-l8xuza .wg-body:where(.svelte-l8xuza) { overflow-y: visible; }\n\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar { width: 4px; }\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-scrollbar, rgba(15, 15, 15, 0.1));\n\t\tborder-radius: 0;\n\t}\n\t.wg-body.svelte-l8xuza::-webkit-scrollbar-track { background: transparent; }\n\n\t.wg-probe.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tvisibility: hidden;\n\t\theight: 0;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Week row ───────────────────────────────────── */\n\t.wg-week.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tborder-radius: 0;\n\t\tmargin: var(--wg-row-margin, 12px) 8px;\n\t\tborder: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\toverflow: hidden;\n\t}\n\n\t.wg-week--current.svelte-l8xuza {\n\t\tbackground: var(--dt-today-bg, rgba(29, 79, 215, 0.04));\n\t\t/* The current row's frame is a day rule, not the accent */\n\t\tborder-color: var(--dt-border-day, rgba(15, 15, 15, 0.3));\n\t}\n\n\t/* ─── Week body ──────────────────────────────────── */\n\t.wg-week-body.svelte-l8xuza {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t}\n\n\t/* ─── Day columns ────────────────────────────────── */\n\t.wg-days.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex: 1;\n\t}\n\n\t.wg-cell.svelte-l8xuza {\n\t\tflex: 1;\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tmin-width: 90px;\n\t\tbox-sizing: border-box;\n\t\tpadding: 4px 4px 8px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tcursor: pointer;\n\t\ttransition: background 0.15s;\n\t}\n\n\t.wg-cell.svelte-l8xuza:last-child { border-right: none; }\n\t/* The inset is on the contents, not the cell's padding: flex adds padding\n\t   to a basis-0 cell, and that one column would come out wider. */\n\t.wg-cell--month.svelte-l8xuza .wg-cell-events:where(.svelte-l8xuza),\n\t.wg-cell--month.svelte-l8xuza .wg-allday:where(.svelte-l8xuza) { margin-left: var(--wg-month-inset, 22px); }\n\n\t/* ─── Month labels (vertical, read bottom-to-top) ─── */\n\t.wg-month.svelte-l8xuza {\n\t\tflex: 0 0 22px;\n\t\twriting-mode: vertical-rl;\n\t\ttransform: rotate(180deg);\n\t\ttext-align: end; /* the rotation puts the end at the top */\n\t\tpadding: 6px 0;\n\t\tfont: 500 12px / 22px var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\tcolor: var(--dt-text-3, rgba(15, 15, 15, 0.38));\n\t}\n\t.wg-week--current.svelte-l8xuza .wg-month:where(.svelte-l8xuza),\n\t.wg-month--start.svelte-l8xuza {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.wg-month--inset.svelte-l8xuza {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 2px;\n\t\tpointer-events: none;\n\t}\n\t.wg-cell.svelte-l8xuza:hover { background: var(--dt-hover, rgba(15, 15, 15, 0.015)); }\n\n\t.wg-cell--today.svelte-l8xuza { background: var(--dt-today-bg, rgba(29, 79, 215, 0.04)); }\n\t.wg-cell--drop.svelte-l8xuza {\n\t\tbackground: var(--dt-accent-dim, rgba(29, 79, 215, 0.12)) !important;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.wg-cell--today.svelte-l8xuza:hover { background: var(--dt-hover, rgba(15, 15, 15, 0.04)); }\n\n\t/* Non-current weeks sit on the same paper; only the header ink softens,\n\t   and past events print a shade lighter. */\n\t.wg-week.svelte-l8xuza:not(.wg-week--current) .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.wg-cell--past.svelte-l8xuza .wg-ev:where(.svelte-l8xuza):not(.wg-ev--cancelled) {\n\t\topacity: 0.78;\n\t}\n\n\t/* equalDays: when no cells are marked past, all are full brightness */\n\n\t.wg-cell--weekend.svelte-l8xuza { background: var(--dt-weekend-bg, rgba(15, 15, 15, 0.012)); }\n\n\t/* ─── Disabled cell ──────────────────────────────── */\n\t.wg-cell--disabled.svelte-l8xuza {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tvar(--dt-border, rgba(15, 15, 15, 0.08)) 6px,\n\t\t\tvar(--dt-border, rgba(15, 15, 15, 0.08)) 7px\n\t\t) !important;\n\t}\n\n\t/* ─── Blocked slot indicator ─────────────────────── */\n\t/* A band on the time axis, behind the chips */\n\t.wg-blocked.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tbox-sizing: border-box;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\tgap: 3px;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 3px,\n\t\t\ttransparent 3px,\n\t\t\ttransparent 6px\n\t\t);\n\t}\n\n\t.wg-blocked-label.svelte-l8xuza {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ─── Custom day header ──────────────────────────── */\n\t.wg-cell-custom-header.svelte-l8xuza {\n\t\tpadding: 0 4px 2px;\n\t}\n\n\t/* ─── Cell header (day label top-right) ──────────── */\n\t.wg-cell-hd.svelte-l8xuza {\n\t\talign-self: flex-end;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 4px;\n\t\tpadding: 3px 7px;\n\t\tmargin: 1px 0 2px;\n\t\tborder-radius: 0;\n\t}\n\n\t.wg-day-wd.svelte-l8xuza {\n\t\tfont: 500 12px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-3, rgba(15, 15, 15, 0.38));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\n\t.wg-day-num.svelte-l8xuza {\n\t\tfont: 400 15px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t.wg-week--current.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t/* Today's pill — after the week rules above, which it must beat */\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-wd:where(.svelte-l8xuza),\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\t.wg-cell-hd--today.svelte-l8xuza .wg-day-num:where(.svelte-l8xuza) {\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent, #1d4fd7);\n\t\tpadding-bottom: 2px;\n\t}\n\n\t/* ─── All-day / multi-day events ─────────────────── */\n\t.wg-allday.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: var(--wg-chip-gap, 3px);\n\t\tmargin-top: var(--wg-chip-gap, 3px);\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\tpadding: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: filter 0.12s;\n\t\tmin-height: 18px;\n\t}\n\n\t.wg-ad--drag-preview.svelte-l8xuza {\n\t\tposition: relative;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ad.svelte-l8xuza:hover {\n\t\tfilter: brightness(1.08);\n\t}\n\n\t.wg-ad--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\n\t.wg-ad.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t.wg-ad-title.svelte-l8xuza {\n\t\tfont: 500 13.5px / 1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t}\n\n\t.wg-ad-cont.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ad-arrow.svelte-l8xuza {\n\t\tdisplay: flex;\n\t\tcolor: inherit;\n\t\tflex-shrink: 0;\n\t\tmargin-left: auto;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t/* The day's time axis: chips carry their own margin-top (chipTops), and\n\t   the area fills the cell, so the all-day bars line up at the bottom. */\n\t.wg-cell-events.svelte-l8xuza {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tflex: 1 0 auto;\n\t\tmin-height: var(--wg-time-h, 100px);\n\t}\n\n\t.wg-now.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 2;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t\ttransform: translateY(-50%);\n\t\tpointer-events: none;\n\t}\n\t.wg-now.svelte-l8xuza::after {\n\t\tcontent: '';\n\t\tflex: 1;\n\t\tborder-top: 2px solid var(--dt-accent, #1d4fd7);\n\t}\n\t.wg-now-time.svelte-l8xuza {\n\t\tfont: 500 11px / 1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tpadding: 2px 4px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #1d4fd7);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t/* Where a dragged-in class would land: the now-line's shape, dashed */\n\t.wg-drop.svelte-l8xuza {\n\t\tz-index: 3;\n\t}\n\t.wg-drop.svelte-l8xuza::after {\n\t\tborder-top-style: dashed;\n\t}\n\n\t.wg-ev.svelte-l8xuza {\n\t\tposition: relative; /* above the blocked bands */\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tflex-wrap: nowrap;\n\t\tgap: 0 5px;\n\t\theight: var(--wg-chip-h, 22px);\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\t/* 3px bar + 6px, and 3px on the right: 12px in all (CHIP_PAD_X) */\n\t\tpadding: 0 3px 0 9px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tcursor: pointer;\n\t\toverflow: hidden;\n\t\ttransition: background 0.12s, box-shadow 0.12s;\n\t}\n\t/* The start bar on the leading edge */\n\t.wg-ev.svelte-l8xuza::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0 auto 0 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color);\n\t}\n\n\t.wg-ev.svelte-l8xuza:hover {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\n\t.wg-ev--drag-preview.svelte-l8xuza {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tz-index: 8;\n\t\topacity: 0.95;\n\t\tpointer-events: none;\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: grabbing;\n\t}\n\n\t.wg-ev--selected.svelte-l8xuza {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t.wg-ev--current.svelte-l8xuza {\n\t\tbackground-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));\n\t}\n\n\t/* Printed states: struck through, grey, or a dashed bar — never a tint */\n\t.wg-ev--cancelled.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.wg-ev--cancelled.svelte-l8xuza::before,\n\t.wg-ev--full.svelte-l8xuza::before {\n\t\topacity: 0.45;\n\t}\n\t.wg-ev--tentative.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza),\n\t.wg-ev--full.svelte-l8xuza .wg-ev-title:where(.svelte-l8xuza) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.wg-ev--tentative.svelte-l8xuza::before,\n\t.wg-ev--limited.svelte-l8xuza::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.wg-ev--readonly.svelte-l8xuza {\n\t\tcursor: default;\n\t}\n\n\t.wg-ev-time.svelte-l8xuza {\n\t\tfont: 400 14px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.wg-ev-title.svelte-l8xuza {\n\t\tfont: 500 15px / 1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmin-width: 0;\n\t\tflex: 1 1 auto;\n\t\t/* A Latin title in RTL keeps its own direction: the ellipsis cuts its end */\n\t\tunicode-bidi: plaintext;\n\t\ttext-align: left;\n\t}\n\t/* …but it sits on the calendar's side, by the bar */\n\t.wg-ev-title.svelte-l8xuza:dir(rtl) { text-align: right; }\n\n\t.wg-ev-loc.svelte-l8xuza {\n\t\tfont: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0; /* shown only when measured to fit — never squeezed */\n\t}\n\n\t.wg-ev-more.svelte-l8xuza {\n\t\t/* Real button — reset chrome, keep the quiet-link look */\n\t\tappearance: none;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tborder-radius: 0;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tfont: 400 12.5px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\tpadding: 2px 8px;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:hover {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t.wg-ev-more.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t/* ─── Focus-visible ──────────────────────────────── */\n\t.wg-cell.svelte-l8xuza:focus-visible {\n\t\toutline: 2px solid var(--dt-text, #0f0f0f);\n\t\toutline-offset: -2px;\n\t}\n\n\t.wg-ev.svelte-l8xuza:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t.wg-ev--dragging.svelte-l8xuza {\n\t\tcursor: grabbing;\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\n\t.ag--auto.svelte-n8lbn1 { height: auto; overflow: visible; }\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it.\n\t   user-select is scoped here (not on .ag) so event text stays copyable. */\n\t.ag-card.svelte-n8lbn1,\n\t.ag-allday-chip.svelte-n8lbn1,\n\t.ag-compact-row.svelte-n8lbn1,\n\t.ag-q-now.svelte-n8lbn1,\n\t.ag-q-done-item.svelte-n8lbn1,\n\t.ag-log-row.svelte-n8lbn1,\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t\tuser-select: none;\n\t}\n\n\t.ag--disabled.svelte-n8lbn1 {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\tpadding-top: 8px;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\n\t/* ═══ In-view date header ═══ */\n\t.ag-day-head.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 0 16px 6px;\n\t\tflex-shrink: 0;\n\t}\n\t/* The planner's header type: the day number is the typography (40/400,\n\t   narrowed), the weekday a tracked 12/500 label; today takes the accent. */\n\t.ag-day-head-num.svelte-n8lbn1 {\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tmargin-inline-end: 4px;\n\t}\n\t.ag-day-head-badge.svelte-n8lbn1,\n\t.ag-day-head-name.svelte-n8lbn1 {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-day-head--today.svelte-n8lbn1 .ag-day-head-num:where(.svelte-n8lbn1),\n\t.ag-day-head--today.svelte-n8lbn1 .ag-day-head-name:where(.svelte-n8lbn1),\n\t.ag-day-head-badge.svelte-n8lbn1 {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-day-head.svelte-n8lbn1 .ag-day-head-badge--muted:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-day-head-date.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag--auto.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) { overflow-y: visible; min-height: auto; }\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-n8lbn1::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 0;\n\t}\n\n\t/* ═══ All-day strip ═══ */\n\t.ag-allday.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t\tpadding: 6px 16px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\t.ag-allday-label.svelte-n8lbn1 {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-allday-items.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tpadding: 4px 10px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t@media (pointer: coarse) {\n\t\t.ag-allday-chip.svelte-n8lbn1 {\n\t\t\tmin-height: 44px;\n\t\t}\n\t\t.ag-q-done-item.svelte-n8lbn1 {\n\t\t\tmin-height: 44px;\n\t\t\talign-items: center;\n\t\t}\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:hover,\n\t.ag-allday-chip.svelte-n8lbn1:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-allday-chip--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-n8lbn1 {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-n8lbn1 {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-n8lbn1:hover,\n\t.ag-card.svelte-n8lbn1:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.ag-card.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-card--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-n8lbn1::before,\n\t.ag-card--full.svelte-n8lbn1::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--limited.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1),\n\t.ag-card--full.svelte-n8lbn1 .ag-card-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-card--tentative.svelte-n8lbn1::before,\n\t.ag-card--limited.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.\n\t   The body keeps a reading measure so meta never drifts across a wide row. */\n\t.ag-card-body.svelte-n8lbn1 {\n\t\tpadding: 10px 12px 10px 15px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tmin-width: 0;\n\t\tmax-width: 44rem;\n\t\tflex: 1;\n\t}\n\t.ag-card-top.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 12px;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tword-break: break-word;\n\t\tmin-width: 0;\n\t}\n\t.ag-card-meta.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-card-dur.svelte-n8lbn1,\n\t.ag-card-eta.svelte-n8lbn1,\n\t.ag-card-sub.svelte-n8lbn1,\n\t.ag-card-loc.svelte-n8lbn1,\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-card-dur.svelte-n8lbn1 {\n\t\tmargin-left: 8px;\n\t}\n\t.ag-card-tags.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\tcolumn-gap: 10px;\n\t\trow-gap: 2px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-n8lbn1 {\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ── Queue card variant ── */\n\t.ag-card--q.svelte-n8lbn1 {\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-compact-row--queue.svelte-n8lbn1 {\n\t\tmargin: 0;\n\t}\n\t.ag-card-eta.svelte-n8lbn1 {\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t\tfont-variant-numeric: tabular-nums;\n\t}\n\t/* The next one up: its countdown in ink. Size stays on the scale — the\n\t   happening-now item is the largest thing in the queue. */\n\t.ag-card--hero.svelte-n8lbn1 .ag-card-eta:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t/* ── Plan card variant ── */\n\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag-card-order.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tmin-width: 18px;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-top:where(.svelte-n8lbn1) {\n\t\tgap: 10px;\n\t}\n\t/* Everything under the title aligns past the order number — the\n\t   subtitle, location, time and tags share one left edge. */\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-sub:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-loc:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-meta:where(.svelte-n8lbn1),\n\t.ag-card--plan.svelte-n8lbn1 .ag-card-tags:where(.svelte-n8lbn1) {\n\t\tpadding-left: 28px;\n\t}\n\n\t/* ═══ The Queue: 2-column grid ═══ */\n\t.ag-q.svelte-n8lbn1 {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: 1fr 1.8fr;\n\t\tgap: 0;\n\t\tflex: 1;\n\t\tpadding: 8px 0 10px;\n\t\tmin-height: 0;\n\t}\n\t/* Mobile: one column in reading order — what's happening now first, then\n\t   \"Up next\", then the finished ones. The status column dissolves\n\t   (display: contents) so its Now and Done parts can sit either side of\n\t   the queue. */\n\t/* Horizontal swipes are ours (day navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-n8lbn1,\n\t.ag--mobile.svelte-n8lbn1 .ag-body:where(.svelte-n8lbn1) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q:where(.svelte-n8lbn1) {\n\t\tgrid-template-columns: 1fr;\n\t\tmin-height: auto;\n\t\tpadding-inline: 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-status:where(.svelte-n8lbn1) {\n\t\tdisplay: contents;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-queue:where(.svelte-n8lbn1) {\n\t\torder: 2;\n\t\toverflow-y: visible;\n\t\tpadding: 12px 0 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-section:where(.svelte-n8lbn1) {\n\t\torder: 3;\n\t}\n\t/* Mobile: larger touch targets; type is already on the planner scale. */\n\t.ag--mobile.svelte-n8lbn1 .ag-card-body:where(.svelte-n8lbn1) {\n\t\tpadding: 14px 16px;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-log-row:where(.svelte-n8lbn1) {\n\t\tpadding: 12px 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-q-done-item:where(.svelte-n8lbn1) {\n\t\tpadding: 8px 0;\n\t}\n\t/* Section labels set like the planner's weekday: 12/500, tracked, ink-2. */\n\t.ag-q-label.svelte-n8lbn1 {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tmargin-bottom: 8px;\n\t\tpadding: 0 12px;\n\t}\n\t.ag-q-empty.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tflex: 1;\n\t\tfont-size: 14px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\n\t/* ── NOW column (includes Done above) ── */\n\t.ag-q-status.svelte-n8lbn1 {\n\t\tpadding: 0 10px 0 14px;\n\t\tborder-right: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-q-status.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1 {\n\t\talign-self: flex-start;\n\t\tmargin-top: 2px;\n\t\tpadding: 3px 8px;\n\t\tborder: 1px solid var(--dt-border);\n\t\tborder-radius: 0;\n\t\tbackground: none;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:hover,\n\t.ag-q-done-toggle.svelte-n8lbn1:active {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tborder-color: var(--dt-border-day, rgba(15, 15, 15, 0.6));\n\t}\n\t.ag-q-done-toggle.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\t.ag-q-now-sub.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-q-done-section.svelte-n8lbn1 {\n\t\tmargin-top: 12px;\n\t\tpadding-top: 10px;\n\t\tborder-top: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\t.ag-q-clock.svelte-n8lbn1 {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t\tmargin-left: 4px;\n\t}\n\t/* The one happening now is the most prominent thing on the day: the\n\t   largest title in the view and the 12% accent wash the system reserves\n\t   for the current event. */\n\t.ag-q-now.svelte-n8lbn1 {\n\t\tposition: relative;\n\t\tdisplay: block;\n\t\twidth: 100%;\n\t\tpadding: 12px 12px 12px 15px;\n\t\tmargin-bottom: 8px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-q-now.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now.svelte-n8lbn1:hover,\n\t.ag-q-now.svelte-n8lbn1:active {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--_fill), var(--_fill)),\n\t\t\tlinear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),\n\t\t\tvar(--dt-accent-dim, color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent));\n\t}\n\t.ag-q-now.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-q-now--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-q-now-dot.svelte-n8lbn1 {\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #1d4fd7));\n\t\tmargin-bottom: 8px;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\t.ag-q-now-title.svelte-n8lbn1 {\n\t\tfont: 500 20px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t\tword-break: break-word;\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-q-now-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tmargin-bottom: 10px;\n\t}\n\t.ag-q-now-track.svelte-n8lbn1 {\n\t\theight: 2px;\n\t\tbackground: var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t}\n\t.ag-q-now-fill.svelte-n8lbn1 {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent, #1d4fd7));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t.ag-q-free.svelte-n8lbn1 {\n\t\tpadding: 8px 10px;\n\t\tmargin-right: 10px;\n\t}\n\t.ag-q-free-label.svelte-n8lbn1 {\n\t\tfont: 400 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tmargin-bottom: 2px;\n\t}\n\n\t/* ── NEXT: hero center column ── */\n\t.ag-q-queue.svelte-n8lbn1 {\n\t\tpadding: 0 16px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 8px;\n\t}\n\t.ag-q-queue.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\n\t.ag-q-done-item.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 4px 0;\n\t\twidth: 100%;\n\t\tcursor: pointer;\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:hover .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item.svelte-n8lbn1:active .ag-q-done-title:where(.svelte-n8lbn1),\n\t.ag-q-done-item--selected.svelte-n8lbn1 .ag-q-done-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-q-done-item.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t\tborder-radius: 0;\n\t}\n\t.ag-q-done-check.svelte-n8lbn1 {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tflex-shrink: 0;\n\t}\n\t/* Finished: quieter ink, no strike (strikethrough means cancelled). */\n\t.ag-q-done-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t}\n\n\t/* ═══ Past Day: \"The Log\" ═══\n\t   Dim comes from text tokens only (single layer) — no subtree opacity. */\n\t.ag-log.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-log.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1 {\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 8px 0;\n\t\twidth: 100%;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tcursor: pointer;\n\t}\n\t.ag-log-row.svelte-n8lbn1:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row.svelte-n8lbn1:active .ag-log-title:where(.svelte-n8lbn1),\n\t.ag-log-row--selected.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-log-row.svelte-n8lbn1:hover,\n\t.ag-log-row.svelte-n8lbn1:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.ag-log-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tborder-radius: 0;\n\t}\n\t.ag-log-check.svelte-n8lbn1 {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tflex-shrink: 0;\n\t}\n\t.ag-log-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tmin-width: 4.6em;\n\t\tflex-shrink: 0;\n\t}\n\t/* The colour dot of a past row becomes its 3px start bar (dimmed: it is over). */\n\t.ag-log-dot.svelte-n8lbn1 {\n\t\talign-self: stretch;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tborder-radius: 0;\n\t\tflex-shrink: 0;\n\t\topacity: 0.45;\n\t}\n\t/* A past day is over, not struck out: quieter ink, sized like the planner.\n\t   Strikethrough is kept for cancelled events only. */\n\t.ag-log-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-log-row--cancelled.svelte-n8lbn1 .ag-log-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t}\n\t.ag-log-dur.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tflex-shrink: 0;\n\t}\n\n\t/* ═══ Compact Day ═══ */\n\t.ag-compact-list.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t}\n\t.ag-compact-list.svelte-n8lbn1::-webkit-scrollbar { display: none; }\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact-row.svelte-n8lbn1 {\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 5px 0 5px 11px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact-row.svelte-n8lbn1::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact-row--selected.svelte-n8lbn1 {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact-row.svelte-n8lbn1:hover .ag-compact-row-title:where(.svelte-n8lbn1),\n\t.ag-compact-row.svelte-n8lbn1:active .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text); }\n\t.ag-compact-row.svelte-n8lbn1:hover,\n\t.ag-compact-row.svelte-n8lbn1:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.ag-compact-row.svelte-n8lbn1:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-compact-row-time.svelte-n8lbn1 {\n\t\tfont: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tmin-width: 4.6em;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t/* Title + subtitle + tags cluster, sized to its content so the meta and\n\t   duration sit beside the title instead of across a wide row. One line\n\t   while it fits; on mobile the metadata wraps to a second line under the\n\t   title instead of crushing it. */\n\t.ag-compact-row-main.svelte-n8lbn1 {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-main:where(.svelte-n8lbn1) {\n\t\tflex: 1;\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\tflex-basis: auto;\n\t}\n\t/* On its own wrapped line the subtitle gets the full width */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row-sub:where(.svelte-n8lbn1) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-row-title.svelte-n8lbn1 {\n\t\tfont: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tflex: 0 1 auto;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 6em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t\ttext-align: left;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1,\n\t.ag-compact-row-sub.svelte-n8lbn1,\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-compact-row-dur.svelte-n8lbn1 {\n\t\tfont-variant-numeric: tabular-nums;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-compact-row-sub.svelte-n8lbn1 {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\tmax-width: 45%;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row-tag.svelte-n8lbn1 {\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-compact-row--cancelled.svelte-n8lbn1::before { opacity: 0.45; }\n\t.ag-compact-row--tentative.svelte-n8lbn1 .ag-compact-row-title:where(.svelte-n8lbn1) { color: var(--dt-text-2, rgba(15, 15, 15, 0.54)); }\n\t.ag-compact-row--tentative.svelte-n8lbn1::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Mobile: larger touch targets for compact rows */\n\t.ag--mobile.svelte-n8lbn1 .ag-compact-row:where(.svelte-n8lbn1) { padding: 8px 0 8px 11px; }\n\t.ag--mobile.svelte-n8lbn1 .ag-day-head:where(.svelte-n8lbn1) { padding: 0 16px 8px; }\n\n\t/* ═══ Future Day: \"The Plan\" ═══ */\n\t.ag-plan.svelte-n8lbn1 {\n\t\tflex: 1;\n\t\tpadding: 8px 20px 12px;\n\t\toverflow-y: auto;\n\t\tscrollbar-width: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 6px;\n\t}\n\t.ag-plan.svelte-n8lbn1::-webkit-scrollbar {\n\t\tdisplay: none;\n\t}\n\n\t/* ═══ Container ═══ */\n\t.ag.svelte-uhwfyj {\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t\tuser-select: none;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\tbox-sizing: border-box;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t}\n\t.ag--auto.svelte-uhwfyj {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\t/* Button UA reset for interactive cards/rows (real <button>s for a11y).\n\t   Placed first so later component rules override it. */\n\t.ag-card.svelte-uhwfyj,\n\t.ag-allday-chip.svelte-uhwfyj,\n\t.ag-compact.svelte-uhwfyj,\n\t.ag-compact-more.svelte-uhwfyj,\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tfont: inherit;\n\t\tcolor: inherit;\n\t\ttext-align: left;\n\t\tbackground: none;\n\t\tborder: none;\n\t\tpadding: 0;\n\t\tmargin: 0;\n\t\tbox-sizing: border-box;\n\t}\n\n\t/* ═══ Body ═══ */\n\t.ag-body.svelte-uhwfyj {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\tbox-sizing: border-box;\n\t\t/* No padding-top here: the sticky day headers pin at the scrollport\n\t\t   edge, and container padding would leave a see-through band above\n\t\t   them where scrolled cards bleed out. */\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-border) transparent;\n\t}\n\t.ag-wday.svelte-uhwfyj:first-child .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding-top: 12px;\n\t}\n\t.ag--auto.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\toverflow-y: visible;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar {\n\t\twidth: 4px;\n\t}\n\t.ag-body.svelte-uhwfyj::-webkit-scrollbar-thumb {\n\t\tbackground: var(--dt-border);\n\t\tborder-radius: 0;\n\t}\n\n\t/* ═══ All-day chips ═══ */\n\t.ag-allday.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\tgap: 4px;\n\t\tpadding: 4px 14px 6px;\n\t}\n\t/* An all-day event is a solid band in its colour — no tint, no dot, no pill. */\n\t.ag-allday-chip.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 6px;\n\t\tpadding: 4px 10px;\n\t\tborder-radius: 0;\n\t\tborder: none;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tcursor: pointer;\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:hover,\n\t.ag-allday-chip.svelte-uhwfyj:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.ag-allday-chip.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-allday-chip--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.ag-allday-dot.svelte-uhwfyj {\n\t\tdisplay: none;\n\t}\n\t.ag-allday-title.svelte-uhwfyj {\n\t\tfont: 500 13.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\t.ag-allday-span.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t}\n\n\t/* ═══ Shared: event card ═══ */\n\t/* Paper, not a tinted card: a 3px start bar in the event colour, a\n\t   hairline rule beneath, ink text. Hover is a wash, selection a ring. */\n\t.ag-card.svelte-uhwfyj {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\t/* A <button> shrinks to its content; the NOW card sits outside the\n\t\t   stretching slot column, so it claims the row explicitly. */\n\t\twidth: 100%;\n\t\talign-items: stretch;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 150ms, box-shadow 150ms;\n\t}\n\t.ag-card.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color);\n\t}\n\t.ag-card.svelte-uhwfyj:hover,\n\t.ag-card.svelte-uhwfyj:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.ag-card.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-card--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-card--cancelled.svelte-uhwfyj::before,\n\t.ag-card--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-card--tentative.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--limited.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj),\n\t.ag-card--full.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-card--tentative.svelte-uhwfyj::before,\n\t.ag-card--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t/* Planner scale: title 15/500, time 14 tabular in ink, meta 12.5 in ink-2.\n\t   The body keeps a reading measure so meta never drifts across a wide row. */\n\t.ag-card-body.svelte-uhwfyj {\n\t\tpadding: 8px 10px 8px 13px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tmin-width: 0;\n\t\tmax-width: 44rem;\n\t\tflex: 1;\n\t}\n\t.ag-card-title.svelte-uhwfyj {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tword-break: break-word;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: -webkit-box;\n\t\t-webkit-box-orient: vertical;\n\t\t-webkit-line-clamp: 2;\n\t\tline-clamp: 2;\n\t\toverflow: hidden;\n\t}\n\t.ag-card-meta.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tflex-wrap: wrap;\n\t\tcolumn-gap: 8px;\n\t\trow-gap: 2px;\n\t\tfont: 400 14px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-card-dur.svelte-uhwfyj,\n\t.ag-card-eta.svelte-uhwfyj,\n\t.ag-card-sub.svelte-uhwfyj,\n\t.ag-card-loc.svelte-uhwfyj,\n\t.ag-card-tag.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-card-tags.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tcolumn-gap: 10px;\n\t\trow-gap: 2px;\n\t\tflex-wrap: wrap;\n\t}\n\t.ag-card-tag.svelte-uhwfyj {\n\t\twhite-space: nowrap;\n\t}\n\t.ag-card-progress.svelte-uhwfyj {\n\t\theight: 3px;\n\t\tbackground: var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tborder-radius: 0;\n\t\toverflow: hidden;\n\t\tmargin-top: 2px;\n\t}\n\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\theight: 100%;\n\t\twidth: 100%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tborder-radius: 0;\n\t\ttransform-origin: left;\n\t\ttransition: transform 1s linear;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-card-progress-fill.svelte-uhwfyj {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t/* ═══ Week day groups ═══ */\n\t.ag-wday.svelte-uhwfyj {\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\t.ag-wday.svelte-uhwfyj:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.ag-wday--today.svelte-uhwfyj {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #1d4fd7) 2%, transparent);\n\t}\n\t/* Past days: quieter ink from the text tokens, no subtree opacity */\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-num:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-wday--past.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 20px 2px;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj {\n\t\tposition: relative;\n\t}\n\t.ag-wday--disabled.svelte-uhwfyj::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tbackground: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 8%, transparent) 4px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 8%, transparent) 8px\n\t\t);\n\t\tpointer-events: none;\n\t}\n\t.ag-wday-custom-header.svelte-uhwfyj {\n\t\tpadding: 2px 0 4px;\n\t}\n\n\t.ag-wday-head--click.svelte-uhwfyj,\n\t.ag-wday-empty--click.svelte-uhwfyj {\n\t\tcursor: pointer;\n\t}\n\t.ag-wday-head--click.svelte-uhwfyj:focus-visible,\n\t.ag-wday-empty--click.svelte-uhwfyj:focus-visible {\n\t\toutline: 2px solid var(--dt-text, #0f0f0f);\n\t\toutline-offset: -2px;\n\t\tborder-radius: 0;\n\t}\n\t.ag-wday-head.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tpadding: 8px 20px;\n\t\tposition: sticky;\n\t\ttop: 0;\n\t\tbackground: var(--dt-bg, #efebe9);\n\t\tz-index: 1;\n\t\t/* Own compositor layer: without it, fast (async) scrolling repaints\n\t\t   the pinned header a frame late and a gap flashes above it. */\n\t\ttransform: translateZ(0);\n\t\twill-change: transform;\n\t}\n\t.ag-wday-head-left.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t}\n\t/* The planner's header type: the day number is the typography (40/400,\n\t   narrowed), the weekday a tracked 12/500 label; today takes the accent. */\n\t.ag-wday-num.svelte-uhwfyj {\n\t\tfont: 400 40px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tletter-spacing: -0.02em;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tmargin-inline-end: 4px;\n\t}\n\t.ag-wday-badge.svelte-uhwfyj,\n\t.ag-wday-name.svelte-uhwfyj {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-wday--today.svelte-uhwfyj .ag-wday-num:where(.svelte-uhwfyj),\n\t.ag-wday--today.svelte-uhwfyj .ag-wday-name:where(.svelte-uhwfyj),\n\t.ag-wday-badge.svelte-uhwfyj {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-wday.svelte-uhwfyj .ag-wday-badge--muted:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t/* Set like the weekday beside it, so the heading reads in one case */\n\t.ag-wday-date.svelte-uhwfyj {\n\t\tfont: 400 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\n\t.ag-wday-empty.svelte-uhwfyj {\n\t\tpadding: 2px 20px 8px;\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\n\t/* Expanded day */\n\t.ag-wday-expanded.svelte-uhwfyj {\n\t\tpadding: 0 20px 10px;\n\t}\n\t.ag-wslot.svelte-uhwfyj {\n\t\tmargin-bottom: 4px;\n\t}\n\t.ag-wslot-header.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 8px;\n\t\tpadding: 2px 0;\n\t}\n\t.ag-wslot-now.svelte-uhwfyj {\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-wslot-cards.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t}\n\t.ag-wslot-cards--multi.svelte-uhwfyj {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n\t\tgap: 4px;\n\t}\n\t.ag-wday-past-line.svelte-uhwfyj {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tpadding: 6px 0 0;\n\t}\n\t.ag-wday-past-line--summary.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* \"✓ N completed\" is a disclosure — tap to reveal the finished events */\n\t.ag-past-toggle.svelte-uhwfyj {\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tcursor: pointer;\n\t\tmin-height: 32px;\n\t\ttransition: color 150ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:hover,\n\t.ag-past-toggle.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-past-toggle.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t\tborder-radius: 0;\n\t}\n\t.ag-past-chevron.svelte-uhwfyj {\n\t\ttransition: transform 120ms;\n\t}\n\t.ag-past-chevron--open.svelte-uhwfyj {\n\t\ttransform: rotate(180deg);\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.ag-past-chevron.svelte-uhwfyj { transition: none; }\n\t}\n\t/* Revealed completed events: quieter ink (single token layer). Strikethrough\n\t   is kept for cancelled only, so \"done\" and \"called off\" never read alike. */\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--done.svelte-uhwfyj .ag-compact-time:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.ag-compact--done.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\n\t/* Compact day events */\n\t.ag-wday-compact.svelte-uhwfyj {\n\t\tpadding: 0 20px 8px;\n\t}\n\t/* A compact row: 3px start bar, hairline beneath, ink text. */\n\t.ag-compact.svelte-uhwfyj {\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tpadding: 5px 0 5px 11px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\twidth: 100%;\n\t}\n\t.ag-compact.svelte-uhwfyj::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\ttop: 0;\n\t\tbottom: 0;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t}\n\t.ag-compact--selected.svelte-uhwfyj {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact.svelte-uhwfyj:active .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text);\n\t}\n\t.ag-compact.svelte-uhwfyj:hover,\n\t.ag-compact.svelte-uhwfyj:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.ag-compact.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\t.ag-compact-time.svelte-uhwfyj {\n\t\tfont: 400 14px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tmin-width: 4.4em;\n\t\tflex-shrink: 0;\n\t\twhite-space: nowrap;\n\t}\n\t/* Title + location + subtitle + tags cluster, sized to its content so the\n\t   meta and duration sit beside the title instead of across a wide row.\n\t   One line while it fits; on mobile the metadata wraps to a second line\n\t   instead of crushing the title. */\n\t.ag-compact-main.svelte-uhwfyj {\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 10px;\n\t\tflex: 0 1 auto;\n\t\tmin-width: 0;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-main:where(.svelte-uhwfyj) {\n\t\tflex: 1;\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t/* Mobile: size the title by its content when deciding line breaks — a long\n\t   title claims the first line whole (ellipsizing only against the full row)\n\t   and pushes location/subtitle/tags down instead of truncating at 35%. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tflex-basis: auto;\n\t}\n\t/* On their own wrapped line the metadata gets the full width — the tight\n\t   desktop caps would truncate it beside empty space. */\n\t.ag--mobile.svelte-uhwfyj .ag-compact-loc:where(.svelte-uhwfyj),\n\t.ag--mobile.svelte-uhwfyj .ag-compact-sub:where(.svelte-uhwfyj) {\n\t\tmax-width: 100%;\n\t}\n\t.ag-compact-title.svelte-uhwfyj {\n\t\tfont: 500 15px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tflex: 0 1 auto;\n\t\t/* The title is the row's identity — never let subtitle/tags/duration\n\t\t   squeeze it out on narrow screens (min-width: 0 resolves to 0px). */\n\t\tmin-width: 6em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\ttransition: color 150ms;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj,\n\t.ag-compact-sub.svelte-uhwfyj,\n\t.ag-compact-loc.svelte-uhwfyj,\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\twhite-space: nowrap;\n\t}\n\t.ag-compact-dur.svelte-uhwfyj {\n\t\tfont-variant-numeric: tabular-nums;\n\t\tflex-shrink: 0;\n\t}\n\t.ag-compact-sub.svelte-uhwfyj {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 160px;\n\t}\n\t.ag-compact-loc.svelte-uhwfyj {\n\t\tflex-shrink: 3;\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tmax-width: 140px;\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-compact--cancelled.svelte-uhwfyj::before,\n\t.ag-compact--full.svelte-uhwfyj::before {\n\t\topacity: 0.45;\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--limited.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj),\n\t.ag-compact--full.svelte-uhwfyj .ag-compact-title:where(.svelte-uhwfyj) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.ag-compact--tentative.svelte-uhwfyj::before,\n\t.ag-compact--limited.svelte-uhwfyj::before {\n\t\tbackground: repeating-linear-gradient(180deg, var(--ev-color) 0 4px, transparent 4px 7px);\n\t}\n\t.ag-compact-tag.svelte-uhwfyj {\n\t\tflex-shrink: 1;\n\t\tmin-width: 2.5em;\n\t\tmax-width: 120px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\t.ag-compact-more.svelte-uhwfyj {\n\t\tfont-size: 12.5px;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t\tpadding: 4px 0 0 11px;\n\t\tcursor: pointer;\n\t\tdisplay: block;\n\t}\n\t.ag-compact-more.svelte-uhwfyj:hover,\n\t.ag-compact-more.svelte-uhwfyj:active {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.ag-compact-more.svelte-uhwfyj:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t\tborder-radius: 0;\n\t}\n\n\t/* ═══ Day-drop drag ═══ */\n\t.ag-card--drag.svelte-uhwfyj {\n\t\topacity: 0.4;\n\t}\n\t.ag-wday--drop.svelte-uhwfyj {\n\t\tbackground: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t\tbox-shadow: inset 0 0 0 1px var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* ═══ Timetable columns (desktop) ═══ */\n\t.ag--cols.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(var(--ag-cols, 7), minmax(0, 1fr));\n\t}\n\t/* Columns stretch to the tallest day, so the separator runs full height */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) {\n\t\tborder-bottom: none;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tmin-width: 0;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj):first-child {\n\t\tborder-inline-start: none;\n\t}\n\t/* Uniform head padding — the :first-child top bump would misalign columns.\n\t   Also overrides the past-day head variant (extra class = higher specificity). */\n\t.ag--cols.svelte-uhwfyj .ag-wday:where(.svelte-uhwfyj) .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 10px 8px;\n\t}\n\t/* Badge + name + date won't fit one line in a ~160px column */\n\t.ag--cols.svelte-uhwfyj .ag-wday-head-left:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 2px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-empty:where(.svelte-uhwfyj),\n\t.ag--cols.svelte-uhwfyj .ag-wday-past-line--summary:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-allday:where(.svelte-uhwfyj) {\n\t\tpadding-left: 10px;\n\t\tpadding-right: 10px;\n\t}\n\t/* Narrow cards: long titles get a third line, meta wraps instead of clipping */\n\t.ag--cols.svelte-uhwfyj .ag-card-title:where(.svelte-uhwfyj) {\n\t\t-webkit-line-clamp: 3;\n\t\tline-clamp: 3;\n\t}\n\t.ag--cols.svelte-uhwfyj .ag-card-meta:where(.svelte-uhwfyj) {\n\t\tflex-wrap: wrap;\n\t\trow-gap: 3px;\n\t}\n\n\t/* ═══ Mobile adaptations ═══ */\n\t/* Horizontal swipes are ours (week navigation); the browser keeps\n\t   vertical scrolling and pinch-zoom. */\n\t.ag--mobile.svelte-uhwfyj,\n\t.ag--mobile.svelte-uhwfyj .ag-body:where(.svelte-uhwfyj) {\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-head:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 16px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-expanded:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wday-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 0 16px 12px;\n\t}\n\t/* Type is already on the planner scale; phones only get bigger targets. */\n\t.ag--mobile.svelte-uhwfyj .ag-card-body:where(.svelte-uhwfyj) {\n\t\tpadding: 12px 14px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact:where(.svelte-uhwfyj) {\n\t\tpadding: 8px 0 8px 11px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-compact-more:where(.svelte-uhwfyj) {\n\t\tpadding-top: 6px;\n\t}\n\t.ag--mobile.svelte-uhwfyj .ag-wslot-cards--multi:where(.svelte-uhwfyj) {\n\t\tgrid-template-columns: 1fr;\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mb.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #efebe9);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mb--auto.svelte-zbkzcp { overflow: visible; }\n\n\t/* ─── Swipe wrapper (follows the finger) ─────────── */\n\t.mb-swipe.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tposition: relative;\n\t}\n\t.mb-swipe--animate.svelte-zbkzcp {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-swipe--animate.svelte-zbkzcp { transition: none; }\n\t}\n\n\t/* ─── All-day bar ────────────────────────────────── */\n\t.mb-allday.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\toverflow-x: auto;\n\t\tscrollbar-width: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tflex-shrink: 0;\n\t\talign-items: center;\n\t}\n\t.mb-allday.svelte-zbkzcp::-webkit-scrollbar { display: none; }\n\t.mb-allday--expanded.svelte-zbkzcp {\n\t\tflex-wrap: wrap;\n\t\toverflow-x: visible;\n\t}\n\n\t.mb-allday-chip.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 4px;\n\t\tpadding: 4px 8px;\n\t\tmin-height: 32px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\tcolor: var(--dt-btn-text, #fff);\n\t\tborder: none;\n\t\tcursor: pointer;\n\t\tflex-shrink: 0;\n\t\ttransition: filter 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmax-width: 160px;\n\t\tposition: relative;\n\t}\n\t/* Hit-slop: 44px effective touch target */\n\t.mb-allday-chip.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:hover,\n\t.mb-allday-chip.svelte-zbkzcp:active {\n\t\tfilter: brightness(1.08);\n\t}\n\t.mb-allday-chip--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t.mb-allday-chip.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff), 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* The band is the colour; no dot. */\n\t.mb-allday-dot.svelte-zbkzcp {\n\t\tdisplay: none;\n\t}\n\n\t.mb-allday-title.svelte-zbkzcp {\n\t\tfont: 500 13.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: inherit;\n\t\twhite-space: nowrap;\n\t\tmax-width: 100px;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-allday-span.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: inherit;\n\t\topacity: 0.75;\n\t}\n\n\t.mb-allday-more.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 6px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tposition: relative;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mb-allday-more.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-allday-more.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t/* ─── Grid ───────────────────────────────────────── */\n\t.mb-grid.svelte-zbkzcp {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;\n\t\tposition: relative;\n\t\tpadding-top: 8px;\n\t}\n\t.mb--auto.svelte-zbkzcp .mb-grid:where(.svelte-zbkzcp) { overflow-y: visible; }\n\t.mb-grid.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t.mb-grid-inner.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tmin-width: 100%;\n\t}\n\n\t/* ─── Empty state ────────────────────────────────── */\n\t.mb-empty.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\tpointer-events: none;\n\t\tz-index: 4;\n\t}\n\t.mb-empty-text.svelte-zbkzcp {\n\t\tfont: 500 13px/1.4 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\n\t/* ─── Hour row ───────────────────────────────────── */\n\t.mb-hour.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t}\n\n\t/* The first hour has no room above its line: it sits on it, unclipped */\n\t.mb-hour.svelte-zbkzcp:first-child .mb-hour-label:where(.svelte-zbkzcp) { top: 0; }\n\t.mb-hour-label--under.svelte-zbkzcp {\n\t\tvisibility: hidden;\n\t}\n\t.mb-hour-label.svelte-zbkzcp small:where(.svelte-zbkzcp) {\n\t\tfont-size: 10px;\n\t\tfont-weight: 500;\n\t\tvertical-align: top;\n\t\tmargin-left: 1px;\n\t\tletter-spacing: 0;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mb-hour-label.svelte-zbkzcp {\n\t\twidth: 40px;\n\t\t/* border-box keeps the label inside the 40px gutter that events\n\t\t   start at — content-box pushed digits flush under the event edge */\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\ttext-align: right;\n\t\tpadding-right: 8px;\n\t\tpadding-top: 0;\n\t\tposition: relative;\n\t\ttop: -6px;\n\t}\n\n\t.mb-hour-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 1px;\n\t\tbackground: var(--dt-border, rgba(15, 15, 15, 0.08));\n\t}\n\n\t.mb-hour--blocked.svelte-zbkzcp {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t-45deg,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent),\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent) 4px,\n\t\t\ttransparent 4px,\n\t\t\ttransparent 8px\n\t\t);\n\t}\n\n\t.mb-blocked-label.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 44px;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.04em;\n\t}\n\n\t/* ─── Now line ───────────────────────────────────── */\n\t/* No stacking context of its own: the plate and the dot sit above the\n\t   events, the line under them (the event it crosses is opaque), so the\n\t   line never strikes through a title. */\n\t.mb-now.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tpointer-events: none;\n\t}\n\n\t/* The clock is a reversed plate on the accent, as in the desktop gutter. */\n\t.mb-now-label.svelte-zbkzcp {\n\t\tposition: relative;\n\t\tz-index: 10;\n\t\twidth: 40px;\n\t\tbox-sizing: border-box;\n\t\tflex-shrink: 0;\n\t\tpadding: 0 4px 0 0;\n\t\ttext-align: right;\n\t\twhite-space: nowrap;\n\t}\n\t.mb-now-label.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tright: -4px;\n\t\ttop: 50%;\n\t\twidth: 8px;\n\t\theight: 8px;\n\t\tmargin-top: -4px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--dt-accent, #1d4fd7);\n\t}\n\t.mb-now-label.svelte-zbkzcp span:where(.svelte-zbkzcp) {\n\t\tdisplay: inline-block;\n\t\tpadding: 2px 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--dt-accent, #1d4fd7);\n\t\tfont: 500 11px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-btn-text, #ffffff);\n\t}\n\n\t.mb-now-line.svelte-zbkzcp {\n\t\tflex: 1;\n\t\theight: 0;\n\t\tborder-top: 2px solid var(--dt-accent, #1d4fd7);\n\t\tbox-shadow: none;\n\t\tposition: relative;\n\t\tz-index: 4;\n\t}\n\n\t/* ─── Events ─────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tz-index: 5;\n\t\tborder-radius: 0;\n\t\tcursor: pointer;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\tbox-sizing: border-box;\n\t\tdisplay: flex;\n\t\talign-items: stretch;\n\t\toverflow: hidden;\n\t\ttransition: box-shadow 120ms, background 120ms;\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tmin-height: 24px;\n\t}\n\t.mb-event.svelte-zbkzcp:hover,\n\t.mb-event.svelte-zbkzcp:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t/* Short blocks keep their duration-proportional height, but get a 44px\n\t   transparent hit-slop so taps still land. */\n\t.mb-event--short.svelte-zbkzcp {\n\t\toverflow: visible;\n\t}\n\t.mb-event--short.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\ttop: 50%;\n\t\ttransform: translateY(-50%);\n\t\theight: 44px;\n\t}\n\t.mb-event--short.svelte-zbkzcp .mb-ev-body:where(.svelte-zbkzcp) {\n\t\tpadding-top: 2px;\n\t\tpadding-bottom: 2px;\n\t}\n\t.mb-event--selected.svelte-zbkzcp {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t/* The event in progress is the one the now line crosses: its wash is\n\t   laid over the paper, opaque, so the line runs beneath its text. */\n\t.mb-event.mb-event--current.svelte-zbkzcp {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--_fill), var(--_fill)),\n\t\t\tlinear-gradient(var(--dt-accent-dim, rgba(29, 79, 215, 0.12)), var(--dt-accent-dim, rgba(29, 79, 215, 0.12))),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #efebe9);\n\t}\n\t.mb-event.mb-event--current.svelte-zbkzcp:hover,\n\t.mb-event.mb-event--current.svelte-zbkzcp:active {\n\t\tbackground:\n\t\t\tlinear-gradient(var(--_fill), var(--_fill)),\n\t\t\tlinear-gradient(var(--dt-hover, rgba(15, 15, 15, 0.04)), var(--dt-hover, rgba(15, 15, 15, 0.04))),\n\t\t\tvar(--dt-paper, none),\n\t\t\tvar(--dt-bg, #efebe9);\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mb-event--cancelled.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp),\n\t.mb-event--full.svelte-zbkzcp .mb-ev-title:where(.svelte-zbkzcp) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mb-event--tentative.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp),\n\t.mb-event--limited.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mb-event--full.svelte-zbkzcp .mb-ev-stripe:where(.svelte-zbkzcp) {\n\t\topacity: 0.45;\n\t}\n\t.mb-event--resizing.svelte-zbkzcp {\n\t\tz-index: 50;\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t\tcursor: ns-resize;\n\t}\n\n\t/* ─── Resize handles ─────────────────────────────── */\n\t/* Resizing lives only on the centered grip column. The old full-width\n\t   edge bands (24px of inward slop each) covered short events entirely —\n\t   min block height is 24px, so any tap near an edge risked starting a\n\t   resize. The grip is persistently visible on touch (hover:none below),\n\t   so the smaller target stays discoverable; taps elsewhere open. */\n\t.mb-ev-handle.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 56px;\n\t\theight: 10px;\n\t\tz-index: 2;\n\t\tcursor: ns-resize;\n\t\ttouch-action: none;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp { bottom: 0; }\n\t/* Hit-slop: ≥24px effective, extending inward so the block's\n\t   overflow clipping can't cut it off. */\n\t.mb-ev-handle.svelte-zbkzcp::before {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 24px;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::before { top: 0; }\n\t.mb-ev-handle--end.svelte-zbkzcp::before { bottom: 0; }\n\t.mb-ev-handle.svelte-zbkzcp::after {\n\t\tcontent: '';\n\t\tposition: absolute;\n\t\tleft: 50%;\n\t\ttransform: translateX(-50%);\n\t\twidth: 24px;\n\t\theight: 3px;\n\t\tborder-radius: 0;\n\t\tbackground: var(--ev-color);\n\t\topacity: 0;\n\t\ttransition: opacity 120ms;\n\t}\n\t.mb-ev-handle--start.svelte-zbkzcp::after { top: 2px; }\n\t.mb-ev-handle--end.svelte-zbkzcp::after { bottom: 2px; }\n\t.mb-event.svelte-zbkzcp:hover .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event.svelte-zbkzcp:focus-within .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--resizing.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after,\n\t.mb-event--selected.svelte-zbkzcp .mb-ev-handle:where(.svelte-zbkzcp)::after { opacity: 0.55; }\n\t/* Finger on the grip column itself: brighten so the hit zone reads */\n\t.mb-ev-handle.svelte-zbkzcp:hover::after { opacity: 0.9; }\n\t/* Touch devices have no hover — show the handles persistently. */\n\t@media (hover: none) {\n\t\t.mb-ev-handle.svelte-zbkzcp::after { opacity: 0.55; }\n\t}\n\n\t/* ─── Drag-to-create ghost ───────────────────────── */\n\t.mb-create-ghost.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\tleft: 40px;\n\t\tright: 4px;\n\t\tz-index: 40;\n\t\tborder-radius: 0;\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #1d4fd7) 12%, transparent);\n\t\tborder: 1px dashed color-mix(in srgb, var(--dt-accent, #1d4fd7) 55%, transparent);\n\t\tdisplay: flex;\n\t\talign-items: flex-start;\n\t\toverflow: hidden;\n\t\tpointer-events: none;\n\t}\n\t.mb-create-ghost-time.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t\tpadding: 4px 8px;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-stripe.svelte-zbkzcp {\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tbackground: var(--ev-color);\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mb-ev-body.svelte-zbkzcp {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 4px 8px;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 1px;\n\t\tjustify-content: center;\n\t}\n\n\t.mb-ev-title.svelte-zbkzcp {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-time.svelte-zbkzcp {\n\t\tfont: 400 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t.mb-ev-sub.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-loc.svelte-zbkzcp {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.mb-ev-tags.svelte-zbkzcp {\n\t\tdisplay: flex;\n\t\tgap: 4px;\n\t\tmargin-top: 2px;\n\t}\n\n\t.mb-ev-tag.svelte-zbkzcp {\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t.mb-ev-live.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 6px;\n\t\tright: 6px;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tanimation: svelte-zbkzcp-mb-pulse 2s ease-in-out infinite;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mb-ev-live.svelte-zbkzcp { animation: none; }\n\t}\n\t.mb-ev-next-badge.svelte-zbkzcp {\n\t\tposition: absolute;\n\t\ttop: 4px;\n\t\tright: 4px;\n\t\tfont: 500 11px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--ev-color, var(--dt-accent));\n\t\tbackground: color-mix(in srgb, var(--ev-color, var(--dt-accent)) 15%, transparent);\n\t\tpadding: 2px 5px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t}\n\n\t@keyframes svelte-zbkzcp-mb-pulse {\n\t\t0%, 100% { opacity: 1; }\n\t\t50% { opacity: 0.4; }\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mb-event.svelte-zbkzcp:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* ─── Container ──────────────────────────────────── */\n\t.mw.svelte-1d18hkf {\n\t\tposition: relative;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tuser-select: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\toverflow: hidden;\n\t\tbackground: var(--dt-bg, #efebe9);\n\t\t-webkit-tap-highlight-color: transparent;\n\t\ttouch-action: pan-y pinch-zoom;\n\t}\n\t.mw--auto.svelte-1d18hkf { overflow: visible; }\n\n\t/* ─── Scrollable day list ────────────────────────── */\n\t.mw-list.svelte-1d18hkf {\n\t\tflex: 1;\n\t\toverflow-y: auto;\n\t\toverflow-x: hidden;\n\t\toverscroll-behavior: contain;\n\t\t-webkit-overflow-scrolling: touch;\n\t\tscrollbar-width: thin;\n\t\tscrollbar-color: var(--dt-scrollbar, rgba(15, 15, 15, 0.1)) transparent;\n\t}\n\t.mw--auto.svelte-1d18hkf .mw-list:where(.svelte-1d18hkf) { overflow-y: visible; }\n\t.mw-list--animate.svelte-1d18hkf {\n\t\ttransition: transform 180ms ease;\n\t}\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.mw-list--animate.svelte-1d18hkf { transition: none; }\n\t}\n\n\t/* ─── Day row ────────────────────────────────────── */\n\t.mw-row.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 12px;\n\t\tposition: relative;\n\t\t/* border-box: width 100% + padding otherwise overflows the list by\n\t\t   24px, which iOS turns into a horizontal pan that clips the date\n\t\t   column off the left edge */\n\t\tbox-sizing: border-box;\n\t\tpadding: 10px 12px;\n\t\tbackground: transparent;\n\t\ttransition: background 120ms;\n\t\ttext-align: left;\n\t\twidth: 100%;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tmin-height: 56px;\n\t}\n\t.mw-row.svelte-1d18hkf:last-child {\n\t\tborder-bottom: none;\n\t}\n\t.mw-row.svelte-1d18hkf:has(.mw-row-target:where(.svelte-1d18hkf):active) {\n\t\tbackground: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.mw-row--today.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-accent, #1d4fd7) 4%, transparent);\n\t}\n\t/* Token-based dim (not subtree opacity) so past rows stay legible/tappable */\n\t.mw-row--past.svelte-1d18hkf {\n\t\tbackground: color-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 3%, transparent);\n\t}\n\t.mw-row--past.svelte-1d18hkf .mw-ev-title,\n\t.mw-row--past.svelte-1d18hkf .mw-ev-time,\n\t.mw-row--past.svelte-1d18hkf .mw-day-num:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mw-row--disabled.svelte-1d18hkf {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t135deg,\n\t\t\ttransparent,\n\t\t\ttransparent 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 6px,\n\t\t\tcolor-mix(in srgb, var(--dt-text, rgba(15, 15, 15, 0.87)) 4%, transparent) 12px\n\t\t);\n\t}\n\t.mw-row-target.svelte-1d18hkf {\n\t\tposition: absolute;\n\t\tinset: 0;\n\t\tz-index: 0;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\tpadding: 0;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.mw-row-target.svelte-1d18hkf:disabled {\n\t\tcursor: default;\n\t}\n\t.mw-row-target.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t/* ─── Date column ────────────────────────────────── */\n\t.mw-date.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\talign-items: center;\n\t\twidth: 40px;\n\t\tflex-shrink: 0;\n\t\tgap: 2px;\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-day-name.svelte-1d18hkf {\n\t\tfont: 500 12px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tletter-spacing: 0.08em;\n\t\ttext-transform: uppercase;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mw-day-name--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* The date is the typography: large and regular, narrowed like the planner's */\n\t.mw-day-num.svelte-1d18hkf {\n\t\tfont: 400 22px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\t.mw-day-num--today.svelte-1d18hkf {\n\t\tcolor: var(--dt-accent, #1d4fd7);\n\t}\n\n\t/* ─── Events column ──────────────────────────────── */\n\t/* pointer-events pass through to the full-row target underneath;\n\t   only the chips (and \"+N more\") re-capture them. */\n\t.mw-events.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 4px;\n\t\tposition: relative;\n\t\tz-index: 2;\n\t\tpointer-events: none;\n\t}\n\n\t.mw-empty.svelte-1d18hkf {\n\t\tfont: 400 13px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\n\t/* ─── Event chip ─────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 0;\n\t\tmin-height: 44px;\n\t\tborder-radius: 0;\n\t\tbackground: transparent;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--ev-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\toverflow: hidden;\n\t\tcursor: pointer;\n\t\ttransition: background 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t\tborder: none;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.3));\n\t\ttext-align: left;\n\t\tpadding: 0;\n\t\tpointer-events: auto;\n\t}\n\t.mw-ev.svelte-1d18hkf:hover,\n\t.mw-ev.svelte-1d18hkf:active {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 1px var(--ev-color);\n\t}\n\t.mw-ev--current.svelte-1d18hkf {\n\t\tbackground-color: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));\n\t}\n\t/* All day: a solid band on the event colour, no tint. */\n\t.mw-ev--allday.svelte-1d18hkf {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tbackground-blend-mode: multiply;\n\t\tcolor: var(--dt-btn-text, #fff);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf:hover,\n\t.mw-ev--allday.svelte-1d18hkf:active {\n\t\tbackground: var(--dt-paper, none) var(--ev-color);\n\t\tfilter: brightness(1.08);\n\t}\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--allday.svelte-1d18hkf .mw-ev-time:where(.svelte-1d18hkf) {\n\t\tcolor: inherit;\n\t}\n\t.mw-ev--allday.mw-ev--selected.svelte-1d18hkf {\n\t\tbox-shadow: inset 0 0 0 2px var(--dt-btn-text, #fff);\n\t}\n\t/* Printed states: a cancelled class is struck through; a tentative or\n\t   limited one is set in grey with a dashed bar — never a bare opacity. */\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\ttext-decoration: line-through;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mw-ev--cancelled.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45; /* decorative bar only */\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf),\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-title:where(.svelte-1d18hkf) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t}\n\t.mw-ev--tentative.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf),\n\t.mw-ev--limited.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\tbackground: repeating-linear-gradient(\n\t\t\t180deg,\n\t\t\tvar(--ev-color) 0 4px,\n\t\t\ttransparent 4px 7px\n\t\t);\n\t}\n\t.mw-ev--full.svelte-1d18hkf .mw-ev-stripe:where(.svelte-1d18hkf) {\n\t\topacity: 0.45;\n\t}\n\n\t.mw-ev-stripe.svelte-1d18hkf {\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\talign-self: stretch;\n\t\tbackground: var(--ev-color, var(--dt-accent));\n\t\tflex-shrink: 0;\n\t\tborder-radius: 0;\n\t}\n\n\t.mw-ev-body.svelte-1d18hkf {\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t\tpadding: 5px 8px;\n\t\tdisplay: flex;\n\t\talign-items: baseline;\n\t\tgap: 6px;\n\t}\n\n\t.mw-ev-title.svelte-1d18hkf {\n\t\tfont: 500 15px/1.25 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\tflex: 1;\n\t\tmin-width: 0;\n\t}\n\n\t.mw-ev-time.svelte-1d18hkf {\n\t\tfont: 400 14px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\twhite-space: nowrap;\n\t\tflex-shrink: 0;\n\t}\n\n\t.mw-ev-more.svelte-1d18hkf {\n\t\tfont: 400 12.5px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\tpadding: 2px 4px;\n\t\tmin-height: 32px;\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcursor: pointer;\n\t\ttext-align: left;\n\t\talign-self: flex-start;\n\t\tposition: relative;\n\t\tpointer-events: auto;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t@media (pointer: coarse) {\n\t\t.mw-ev-more.svelte-1d18hkf {\n\t\t\tmin-height: 44px;\n\t\t\tmin-width: 44px;\n\t\t}\n\t}\n\t.mw-ev-more.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t}\n\n\t/* ─── Chevron ────────────────────────────────────── */\n\t.mw-chevron.svelte-1d18hkf {\n\t\tflex-shrink: 0;\n\t\tcolor: var(--dt-text-3, rgba(15, 15, 15, 0.38));\n\t\tposition: relative;\n\t\tz-index: 1;\n\t\tpointer-events: none;\n\t}\n\n\t/* ─── Focus ──────────────────────────────────────── */\n\t.mw-ev.svelte-1d18hkf:focus-visible {\n\t\toutline: none;\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t}\n\n\t.mg.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tbackground: var(--dt-bg);\n\t\tcolor: var(--dt-text);\n\t\tfont-family: var(--dt-sans);\n\t\toverflow: hidden;\n\t\tcontainer-type: inline-size;\n\t}\n\t.mg--auto.svelte-pvjuld {\n\t\theight: auto;\n\t}\n\n\t.mg-head.svelte-pvjuld {\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\tborder-bottom: 1px solid var(--dt-border);\n\t\tflex: none;\n\t}\n\t.mg-head-cell.svelte-pvjuld {\n\t\tpadding: 6px 8px;\n\t\tfont: 500 12px/1.2 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\ttext-transform: uppercase;\n\t\tletter-spacing: 0.08em;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\n\t.mg-body.svelte-pvjuld {\n\t\tflex: 1;\n\t\tdisplay: grid;\n\t\tgrid-template-columns: repeat(7, 1fr);\n\t\t/* 56px floor + scroll backstop: a 6-row month compresses instead of clipping its last week */\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(56px, 1fr));\n\t\tmin-height: 0;\n\t\toverflow-y: auto;\n\t}\n\t.mg--auto.svelte-pvjuld .mg-body:where(.svelte-pvjuld) {\n\t\tgrid-template-rows: repeat(var(--mg-rows, 5), minmax(88px, auto));\n\t}\n\t.mg-row.svelte-pvjuld {\n\t\tdisplay: contents;\n\t}\n\n\t.mg-cell.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 3px;\n\t\tpadding: 6px;\n\t\tborder-right: 1px solid var(--dt-border-day);\n\t\tborder-bottom: 1px solid var(--dt-border-day);\n\t\tmin-width: 0;\n\t\toverflow: hidden;\n\t\ttext-align: left;\n\t}\n\t.mg-cell.svelte-pvjuld:nth-child(7n) {\n\t\tborder-right: none;\n\t}\n\t.mg-cell--weekend.svelte-pvjuld {\n\t\tbackground: var(--dt-weekend-bg, rgba(15, 15, 15, 0.02));\n\t}\n\t/* Dim only the day number for adjacent-month cells — their events stay\n\t   legible. text-2, not text-3: a 22px numeral still needs 4.5:1. */\n\t.mg-cell--out.svelte-pvjuld {\n\t\tbackground: var(--dt-surface, transparent);\n\t}\n\t.mg-cell--out.svelte-pvjuld .mg-daynum:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.66));\n\t}\n\t.mg-cell--today.svelte-pvjuld {\n\t\tbackground: var(--dt-today-bg);\n\t}\n\t.mg-cell--expanded.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\toverflow-y: auto;\n\t}\n\t.mg-cell--disabled.svelte-pvjuld {\n\t\topacity: 0.35;\n\t\tpointer-events: none;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld {\n\t\tcursor: pointer;\n\t}\n\t.mg-cell--clickable.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.mg-cell.svelte-pvjuld:focus-visible {\n\t\toutline: 2px solid var(--dt-text, #0f0f0f);\n\t\toutline-offset: -2px;\n\t}\n\n\t/* Starts where the weekday name above it starts (6px cell + 2px = the\n\t   header's 8px), and is only as wide as its digits, so today's rule is too. */\n\t.mg-daynum.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: flex-start;\n\t\tpadding: 0 2px;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tfont-size: 22px;\n\t\tfont-weight: 400;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text);\n\t\theight: 26px;\n\t\tdisplay: inline-flex;\n\t\talign-items: center;\n\t}\n\t/* Today: accent numeral on a 2px rule — the same mark in every view. */\n\t.mg-daynum--today.svelte-pvjuld {\n\t\tcolor: var(--dt-accent);\n\t\tbox-shadow: inset 0 -2px 0 var(--dt-accent);\n\t}\n\n\t.mg-chips.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 2px;\n\t\tmin-height: 0;\n\t\toverflow: hidden;\n\t}\n\t.mg-chip.svelte-pvjuld {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 5px;\n\t\tborder: none;\n\t\tbackground: none;\n\t\t/* eventFill: a wash in the event's colour; hover/current set background-color under it */\n\t\t--_fill: color-mix(in srgb, var(--mg-chip-color) var(--dt-ev-fill, 0%), transparent);\n\t\tbackground-image: linear-gradient(var(--_fill), var(--_fill));\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text);\n\t\tcursor: pointer;\n\t\tmin-width: 0;\n\t\ttext-align: left;\n\t}\n\t.mg-chip.svelte-pvjuld:hover {\n\t\tbackground-color: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t}\n\t.mg-chip.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-accent, #1d4fd7);\n\t\toutline: none;\n\t}\n\t.mg-chip--selected.svelte-pvjuld {\n\t\tbackground-color: var(--dt-accent-dim);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld {\n\t\ttext-decoration: line-through;\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld) {\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip--cancelled.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\topacity: 0.5;\n\t}\n\t.mg-chip-dot.svelte-pvjuld {\n\t\tflex: none;\n\t\talign-self: stretch;\n\t\twidth: var(--dt-ev-bar, 3px);\n\t\tborder-radius: 0;\n\t\tbackground: var(--mg-chip-color);\n\t}\n\t.mg-chip-time.svelte-pvjuld {\n\t\tflex: none;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2);\n\t}\n\t.mg-chip-title.svelte-pvjuld {\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t\twhite-space: nowrap;\n\t\t/* A Latin title in RTL keeps its own direction: the ellipsis cuts its end */\n\t\tunicode-bidi: plaintext;\n\t\ttext-align: left;\n\t}\n\t/* …but it sits on the calendar's side, by the bar */\n\t.mg-chip-title.svelte-pvjuld:dir(rtl) { text-align: right; }\n\t.mg-more.svelte-pvjuld {\n\t\talign-self: flex-start;\n\t\tborder: none;\n\t\tbackground: none;\n\t\tpadding: 1px 4px;\n\t\tborder-radius: 0;\n\t\tfont: 400 12.5px/1.3 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-variant-numeric: tabular-nums;\n\t\tcolor: var(--dt-text-2);\n\t\tcursor: pointer;\n\t}\n\t.mg-more.svelte-pvjuld:hover {\n\t\tbackground: var(--dt-hover, rgba(15, 15, 15, 0.04));\n\t\tcolor: var(--dt-text);\n\t}\n\t.mg-more.svelte-pvjuld:focus-visible {\n\t\tbox-shadow: 0 0 0 2px var(--dt-text, #0f0f0f);\n\t\toutline: none;\n\t}\n\n\t/* Container-based (the calendar adapts to its box, not the viewport) */\n\t@container (max-width: 640px) {\n\t\t.mg-chip-time.svelte-pvjuld {\n\t\t\tdisplay: none;\n\t\t}\n\t}\n\n\t@media (hover: none) {\n\t\t.mg-chip.svelte-pvjuld,\n\t\t.mg-more.svelte-pvjuld {\n\t\t\tmin-height: 30px;\n\t\t}\n\t}\n\n\t/* ── Dots mode (mobile) ─────────────────────────────\n\t   Cells are too narrow for text chips, so events render as colored\n\t   dots in a wrapping row. The cell itself stays the tap target\n\t   (day drill-down) and its label counts the events; dots are aria-hidden. */\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tflex-direction: row;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 3px;\n\t}\n\t/* The cell is the target: at least a 44px tap, dots never take the hit. */\n\t.mg--dots.svelte-pvjuld .mg-cell:where(.svelte-pvjuld) {\n\t\tmin-height: 44px;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chips:where(.svelte-pvjuld) {\n\t\tpointer-events: none;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip:where(.svelte-pvjuld) {\n\t\tpadding: 3px;\n\t\tbackground-image: none; /* a mark, not a chip: no eventFill wash */\n\t\tmin-height: 0;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-chip-title:where(.svelte-pvjuld),\n\t.mg--dots.svelte-pvjuld .mg-chip-time:where(.svelte-pvjuld) {\n\t\tdisplay: none;\n\t}\n\t/* Marks are circles, like every dot in the calendar */\n\t.mg--dots.svelte-pvjuld .mg-chip-dot:where(.svelte-pvjuld) {\n\t\talign-self: center;\n\t\twidth: 7px;\n\t\theight: 7px;\n\t\tborder-radius: 50%;\n\t}\n\t.mg--dots.svelte-pvjuld .mg-more:where(.svelte-pvjuld) {\n\t\tpadding: 0 3px;\n\t\tmin-height: 0;\n\t\talign-self: center;\n\t\tfont-size: 11px;\n\t}\n\n\t.cal.svelte-1b53e7w {\n\t\tposition: relative;\n\t\t/* Its own stacking context: the grid's z-indexes (sticky heads, the\n\t\t   now-line, drag ghosts — up to 30) stay inside the calendar instead\n\t\t   of rising over a host page's sticky header. */\n\t\tisolation: isolate;\n\t\twidth: 100%;\n\t\tmin-width: 0;\n\t\theight: var(--cal-h, 600px);\n\t\tbackground: var(--dt-paper, none), var(--dt-bg, inherit);\n\t\tborder-radius: var(--cal-r, 0);\n\t\toverflow: clip;\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tborder: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tbox-sizing: border-box;\n\t}\n\t.cal--auto.svelte-1b53e7w {\n\t\theight: auto;\n\t\toverflow: visible;\n\t}\n\n\n\t/* ── Header: the period set large as the page's title, the view switch as\n\t   plain text, Today ‹ › in 2px ink frames, one rule to the grid. ── */\n\t.cal-hd.svelte-1b53e7w {\n\t\t/* Controls take a small corner that follows the calendar's own radius */\n\t\t--cal-ctl-r: clamp(4px, calc(var(--cal-r, 0px) / 2), 8px);\n\t\t--cal-ctl-h: 36px;\n\t\tdisplay: flex;\n\t\tflex-wrap: wrap;\n\t\talign-items: center;\n\t\tgap: 10px 24px;\n\t\tpadding: 14px 16px 12px;\n\t\tborder-bottom: 1px solid var(--dt-border, rgba(15, 15, 15, 0.08));\n\t\tflex-shrink: 0;\n\t\tbox-sizing: border-box;\n\t\tfont-family: var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t}\n\n\t.cal-hd-title.svelte-1b53e7w {\n\t\tflex: 1 1 auto;\n\t\tmin-width: 0;\n\t\tfont: 400 32px/1.1 var(--dt-sans, system-ui, sans-serif);\n\t\tfont-stretch: 90%;\n\t\tfont-variant-numeric: tabular-nums;\n\t\tletter-spacing: -0.02em;\n\t\twhite-space: nowrap;\n\t\toverflow: hidden;\n\t\ttext-overflow: ellipsis;\n\t}\n\n\t.cal-sr.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\twidth: 1px;\n\t\theight: 1px;\n\t\tmargin: -1px;\n\t\tpadding: 0;\n\t\toverflow: hidden;\n\t\tclip-path: inset(50%);\n\t\twhite-space: nowrap;\n\t\tborder: 0;\n\t}\n\n\t.cal-hd-nav.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tgap: 8px;\n\t}\n\t.cal-hd-nav.svelte-1b53e7w:empty {\n\t\tdisplay: none;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w,\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tbox-sizing: border-box;\n\t\theight: var(--cal-ctl-h);\n\t\tborder: 2px solid var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tborder-radius: var(--cal-ctl-r);\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\tcursor: pointer;\n\t\ttransition: background-color 120ms, opacity 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t.cal-hd-today.svelte-1b53e7w {\n\t\tpadding: 0 14px;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\twhite-space: nowrap;\n\t}\n\t.cal-hd-btn.svelte-1b53e7w {\n\t\tdisplay: grid;\n\t\tplace-items: center;\n\t\twidth: var(--cal-ctl-h);\n\t\tpadding: 0;\n\t}\n\t/* The chevrons point along the reading direction */\n\t.cal-hd-btn.svelte-1b53e7w:dir(rtl) svg:where(.svelte-1b53e7w) {\n\t\ttransform: scaleX(-1);\n\t}\n\t.cal-hd-today.svelte-1b53e7w:hover:not(:disabled),\n\t.cal-hd-btn.svelte-1b53e7w:hover {\n\t\tbackground: var(--dt-hover, color-mix(in srgb, currentColor 6%, transparent));\n\t}\n\t.cal-hd-today.svelte-1b53e7w:active:not(:disabled),\n\t.cal-hd-btn.svelte-1b53e7w:active {\n\t\tbackground: color-mix(in srgb, var(--dt-text, #0f0f0f) 12%, transparent);\n\t}\n\t/* Today is already in view: the frame stays, quietly */\n\t.cal-hd-today.svelte-1b53e7w:disabled {\n\t\topacity: 0.4;\n\t\tcursor: default;\n\t}\n\n\t.cal-hd-today.svelte-1b53e7w:focus-visible,\n\t.cal-hd-btn.svelte-1b53e7w:focus-visible,\n\t.cal-pill.svelte-1b53e7w:focus-visible {\n\t\toutline: 2px solid var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\toutline-offset: 2px;\n\t}\n\n\t/* View switch: plain text; the chosen one is ink over a 2px ink rule.\n\t   The accent keeps its three jobs. */\n\t.cal-pills.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\tgap: 16px;\n\t\tflex-shrink: 0;\n\t}\n\t/* A hairline between the view-type and the day/week/month rows */\n\t.cal-pills--labels.svelte-1b53e7w + .cal-pills:where(.svelte-1b53e7w) {\n\t\talign-self: stretch;\n\t\talign-items: center;\n\t\tpadding-inline-start: 24px;\n\t\tborder-inline-start: 1px solid var(--dt-border, rgba(15, 15, 15, 0.12));\n\t}\n\t.cal-pill.svelte-1b53e7w {\n\t\tborder: none;\n\t\tbackground: transparent;\n\t\tcolor: var(--dt-text-2, rgba(15, 15, 15, 0.54));\n\t\tcursor: pointer;\n\t\tfont: 400 15px/1 var(--dt-sans, system-ui, sans-serif);\n\t\tmin-height: var(--cal-ctl-h);\n\t\t/* 4px of air for the focus ring, given back so the row keeps its rhythm */\n\t\tpadding: 0 4px;\n\t\tmargin: 0 -4px;\n\t\tborder-radius: 0;\n\t\twhite-space: nowrap;\n\t\ttext-decoration: underline 2px transparent;\n\t\ttext-underline-offset: 7px;\n\t\ttransition: color 120ms, text-decoration-color 120ms;\n\t\t-webkit-tap-highlight-color: transparent;\n\t}\n\t/* :not(--active) — iOS keeps :hover stuck after a tap */\n\t.cal-pill.svelte-1b53e7w:hover:not(.cal-pill--active) {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\ttext-decoration-color: var(--dt-border-day, var(--dt-border, rgba(15, 15, 15, 0.3)));\n\t}\n\t.cal-pill--active.svelte-1b53e7w {\n\t\tcolor: var(--dt-text, rgba(15, 15, 15, 0.87));\n\t\ttext-decoration-color: currentColor;\n\t}\n\n\t/* Compact (mobile) header: same drawing, smaller title, tighter gaps */\n\t.cal-hd--mobile.svelte-1b53e7w {\n\t\t--cal-ctl-h: 40px;\n\t\tgap: 8px 12px;\n\t\tpadding: 10px 8px 8px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-title:where(.svelte-1b53e7w) {\n\t\tfont-size: 22px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-pills:where(.svelte-1b53e7w) {\n\t\tgap: 12px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-pill:where(.svelte-1b53e7w) {\n\t\tfont-size: 14px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-today:where(.svelte-1b53e7w) {\n\t\tpadding: 0 10px;\n\t\tfont-size: 14px;\n\t}\n\t.cal-hd--mobile.svelte-1b53e7w .cal-hd-nav:where(.svelte-1b53e7w) {\n\t\tgap: 6px;\n\t\tmargin-inline-start: auto;\n\t}\n\t/* Narrow containers: the title takes its own row above the controls */\n\t.cal-hd--stack.svelte-1b53e7w .cal-hd-title:where(.svelte-1b53e7w):not(:empty) {\n\t\tflex-basis: 100%;\n\t}\n\n\t@media (pointer: coarse) {\n\t\t.cal-hd.svelte-1b53e7w {\n\t\t\t--cal-ctl-h: 44px;\n\t\t}\n\t\t.cal-pill.svelte-1b53e7w {\n\t\t\tmin-width: 44px;\n\t\t}\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-hd-today.svelte-1b53e7w,\n\t\t.cal-hd-btn.svelte-1b53e7w,\n\t\t.cal-pill.svelte-1b53e7w {\n\t\t\ttransition: none;\n\t\t}\n\t}\n\n\t.cal-body.svelte-1b53e7w {\n\t\tflex: 1;\n\t\tmin-height: 0;\n\t\tposition: relative;\n\t\toverflow: hidden;\n\t}\n\t.cal--auto.svelte-1b53e7w .cal-body:where(.svelte-1b53e7w) {\n\t\toverflow: visible;\n\t}\n\t.cal-body--unmeasured.svelte-1b53e7w {\n\t\tvisibility: hidden;\n\t\tanimation: svelte-1b53e7w-cal-reveal 0s 1.5s forwards;\n\t}\n\t@keyframes svelte-1b53e7w-cal-reveal { to { visibility: visible; } }\n\n\t.cal-empty.svelte-1b53e7w {\n\t\tdisplay: flex;\n\t\talign-items: center;\n\t\tjustify-content: center;\n\t\theight: 100%;\n\t\tfont: 400 13px / 1 var(--dt-sans, system-ui, sans-serif);\n\t\tcolor: var(--dt-text-3, rgba(15, 15, 15, 0.38));\n\t}\n\n\t.cal-loading.svelte-1b53e7w {\n\t\tposition: absolute;\n\t\ttop: 0;\n\t\tleft: 0;\n\t\tright: 0;\n\t\theight: 2px;\n\t\tbackground: linear-gradient(\n\t\t\t90deg,\n\t\t\ttransparent 0%,\n\t\t\tvar(--dt-accent, #1d4fd7) 50%,\n\t\t\ttransparent 100%\n\t\t);\n\t\tanimation: svelte-1b53e7w-cal-slide 1.2s ease-in-out infinite;\n\t}\n\n\t@keyframes svelte-1b53e7w-cal-slide {\n\t\t0% { transform: translateX(-100%); }\n\t\t100% { transform: translateX(100%); }\n\t}\n\n\t@media (prefers-reduced-motion: reduce) {\n\t\t.cal-loading.svelte-1b53e7w {\n\t\t\tanimation: none;\n\t\t\tbackground: var(--dt-accent-dim, rgba(29, 79, 215, 0.12));\n\t\t}\n\t}\n\n/*$vite$:1*/";
 (function() {
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/utils.js
 	var is_array = Array.isArray;
 	var index_of = Array.prototype.indexOf;
 	var includes = Array.prototype.includes;
@@ -42,8 +42,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			reject
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/constants.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/constants.js
 	/**
 	* An effect that does not destroy its child effects when it reruns.
 	* Runs as part of render effects, i.e. not eagerly as part of tree traversal or effect flushing.
@@ -84,8 +83,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		message = "The reaction that called `getAbortSignal()` was re-run or destroyed";
 	}();
 	var IS_XHTML = !!globalThis.document?.contentType && /* @__PURE__ */ globalThis.document.contentType.includes("xml");
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/constants.js
 	var HYDRATION_ERROR = {};
 	var UNINITIALIZED = Symbol("uninitialized");
 	var NAMESPACE_HTML = "http://www.w3.org/1999/xhtml";
@@ -108,8 +106,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function svelte_boundary_reset_noop() {
 		console.warn(`https://svelte.dev/e/svelte_boundary_reset_noop`);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/hydration.js
 	/** @import { TemplateNode } from '#client' */
 	/**
 	* Use this variable to guard everything related to hydration code so it can be treeshaken out
@@ -187,8 +184,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 		return node.data;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/equality.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/equality.js
 	/** @import { Equals } from '#client' */
 	/** @type {Equals} */
 	function equals(value) {
@@ -221,8 +217,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function set_context_after_init() {
 		throw new Error(`https://svelte.dev/e/set_context_after_init`);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/errors.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/errors.js
 	/**
 	* Cannot create a `$derived(...)` with an `await` expression outside of an effect tree
 	* @returns {never}
@@ -306,14 +301,12 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function svelte_boundary_reset_onerror() {
 		throw new Error(`https://svelte.dev/e/svelte_boundary_reset_onerror`);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/flags/index.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/flags/index.js
 	/** True if experimental.async=true */
 	var async_mode_flag = false;
 	/** True if we're not certain that we only have Svelte 5 code in the compilation */
 	var legacy_mode_flag = false;
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/context.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/context.js
 	/**
 	* @typedef {{ p: Context | null, c: Map<unknown, unknown> | null }} Context
 	*/
@@ -335,8 +328,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		if (context === null) lifecycle_outside_component(name);
 		return context.c ??= new Map(get_parent_context(context) || void 0);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/context.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/context.js
 	/** @import { ComponentContext, DevStackEntry, Effect } from '#client' */
 	/** @type {ComponentContext | null} */
 	var component_context = null;
@@ -356,7 +348,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @param {any} key
 	* @returns {T}
 	*/
-	function getContext(key) {
+	function getContext$1(key) {
 		return get_or_init_context_map(component_context, "getContext").get(key);
 	}
 	/**
@@ -433,8 +425,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function is_runes() {
 		return !legacy_mode_flag || component_context !== null && component_context.l === null;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/task.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/task.js
 	/** @type {Array<() => void>} */
 	var micro_tasks = [];
 	function run_micro_tasks() {
@@ -460,8 +451,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function flush_tasks() {
 		while (micro_tasks.length > 0) run_micro_tasks();
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/status.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/status.js
 	/** @import { Derived, Signal } from '#client' */
 	var STATUS_MASK = ~(DIRTY | MAYBE_DIRTY | CLEAN);
 	/**
@@ -479,21 +469,18 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		if ((derived.f & 512) !== 0 || derived.deps === null) set_signal_status(derived, CLEAN);
 		else set_signal_status(derived, MAYBE_DIRTY);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/utils.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/utils.js
 	/** @import { Effect } from '#client' */
 	/**
 	* @param {Effect} effect
-	* @param {Set<Effect>} dirty_effects
-	* @param {Set<Effect>} maybe_dirty_effects
+	* @param {Map<Effect, number>} dirty_reactions
 	*/
-	function defer_effect(effect, dirty_effects, maybe_dirty_effects) {
-		if ((effect.f & 2048) !== 0) dirty_effects.add(effect);
-		else if ((effect.f & 4096) !== 0) maybe_dirty_effects.add(effect);
+	function defer_effect(effect, dirty_reactions) {
+		if ((effect.f & 2048) !== 0) dirty_reactions.set(effect, DIRTY);
+		else if ((effect.f & 4096) !== 0 && dirty_reactions.get(effect) !== 2048) dirty_reactions.set(effect, MAYBE_DIRTY);
 		set_signal_status(effect, CLEAN);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/shared.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/shared.js
 	/**
 	* @template T
 	* @param {() => T} fn
@@ -510,8 +497,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			set_active_effect(previous_effect);
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/async.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/async.js
 	/** @import { Blocker, Effect, Source, Value } from '#client' */
 	/**
 	* @param {Blocker[]} blockers
@@ -552,6 +538,10 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			Promise.all(async.map((expression) => /* @__PURE__ */ async_derived(expression))).then(finish).catch((error) => invoke_error_boundary(error, parent)).finally(decrement_pending);
 		}
 		if (blocker_promise) blocker_promise.then(() => {
+			if ((parent.f & 16384) !== 0) {
+				decrement_pending();
+				return;
+			}
 			restore();
 			run();
 			unset_context();
@@ -798,8 +788,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		if (derived.effects === null) return;
 		for (const e of derived.effects) if (e.teardown && e.fn !== null) update_effect(e);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/batch.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/batch.js
 	/** @import { Fork } from 'svelte' */
 	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
 	/** @type {Batch | null} */
@@ -844,24 +833,24 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	var Batch = class Batch {
 		id = uid$1++;
 		/** True as soon as `#process` was called */
-		#started = false;
+		started = false;
 		linked = true;
 		/** @type {Batch | null} */
-		#prev = null;
+		prev = null;
 		/** @type {Batch | null} */
-		#next = null;
+		next = null;
 		/** @type {Map<Effect, ReturnType<typeof deferred<any>>>} */
 		async_deriveds = /* @__PURE__ */ new Map();
 		/**
 		* The current values of any signals that are updated in this batch.
 		* Tuple format: [value, is_derived] (note: is_derived is false for deriveds, too, if they were overridden via assignment)
-		* They keys of this map are identical to `this.#previous`
+		* The keys of this map are identical to `this.previous`
 		* @type {Map<Value, [any, boolean]>}
 		*/
 		current = /* @__PURE__ */ new Map();
 		/**
 		* The values of any signals (sources and deriveds) that are updated in this batch _before_ those updates took place.
-		* They keys of this map are identical to `this.#current`
+		* The keys of this map are identical to `this.current`
 		* @type {Map<Value, any>}
 		*/
 		previous = /* @__PURE__ */ new Map();
@@ -909,15 +898,10 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		*/
 		#new_effects = [];
 		/**
-		* Deferred effects (which run after async work has completed) that are DIRTY
-		* @type {Set<Effect>}
+		* Deferred effects (which run after async work has completed) and their status (DIRTY or MAYBE_DIRTY)
+		* @type {Map<Effect, number>}
 		*/
-		#dirty_effects = /* @__PURE__ */ new Set();
-		/**
-		* Deferred effects that are MAYBE_DIRTY
-		* @type {Set<Effect>}
-		*/
-		#maybe_dirty_effects = /* @__PURE__ */ new Set();
+		#dirty_reactions = /* @__PURE__ */ new Map();
 		/**
 		* A map of branches that still exist, but will be destroyed when this batch
 		* is committed — we skip over these during `process`.
@@ -936,25 +920,22 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		constructor() {
 			if (last_batch === null) first_batch = last_batch = this;
 			else {
-				last_batch.#next = this;
-				this.#prev = last_batch;
+				last_batch.next = this;
+				this.prev = last_batch;
 			}
 			last_batch = this;
 		}
 		#is_deferred() {
 			if (this.is_fork) return true;
-			for (const effect of this.#blocking_pending.keys()) {
-				var e = effect;
-				var skipped = false;
-				while (e.parent !== null) {
-					if (this.#skipped_branches.has(e)) {
-						skipped = true;
-						break;
-					}
-					e = e.parent;
-				}
-				if (!skipped) return true;
-			}
+			for (const effect of this.#blocking_pending.keys()) if (!this.#is_skipped(effect)) return true;
+			return false;
+		}
+		/**
+		* Whether `effect` is inside a branch that this batch skips
+		* @param {Effect} effect
+		*/
+		#is_skipped(effect) {
+			for (var e = effect; e !== null; e = e.parent) if (this.#skipped_branches.has(e)) return true;
 			return false;
 		}
 		/**
@@ -1022,14 +1003,9 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			return roots;
 		}
 		#process() {
-			this.#started = true;
-			for (const e of this.#dirty_effects) {
-				this.#maybe_dirty_effects.delete(e);
-				set_signal_status(e, DIRTY);
-				this.schedule(e);
-			}
-			for (const e of this.#maybe_dirty_effects) {
-				set_signal_status(e, MAYBE_DIRTY);
+			this.started = true;
+			for (const [e, status] of this.#dirty_reactions) {
+				set_signal_status(e, status);
 				this.schedule(e);
 			}
 			this.apply();
@@ -1077,8 +1053,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 				earlier_batch.#merge(this);
 				return;
 			}
-			this.#dirty_effects.clear();
-			this.#maybe_dirty_effects.clear();
+			this.#dirty_reactions.clear();
 			for (const fn of this.#commit_callbacks) fn(this);
 			this.#commit_callbacks.clear();
 			previous_batch = this;
@@ -1093,12 +1068,6 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 					this.#commit();
 					current_batch = next_batch;
 				}
-			}
-			if (this.#scheduled.length > 0) {
-				if (next_batch !== null) {
-					for (const e of this.#scheduled) next_batch.#scheduled.push(e);
-					this.#scheduled = [];
-				} else next_batch = this;
 			}
 			if (next_batch !== null) {
 				old_values.clear();
@@ -1123,7 +1092,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 					else if ((flags & 4) !== 0) effects.push(effect);
 					else if (async_mode_flag && (flags & 16777224) !== 0) render_effects.push(effect);
 					else if (is_dirty(effect)) {
-						if ((flags & 16) !== 0) this.#maybe_dirty_effects.add(effect);
+						if ((flags & 16) !== 0) this.add_dirty_reaction(effect, MAYBE_DIRTY);
 						update_effect(effect);
 					}
 					var child = effect.first;
@@ -1143,14 +1112,16 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			}
 		}
 		#find_earlier_batch() {
-			var batch = this.#prev;
-			while (batch !== null) {
-				if (!batch.is_fork) {
-					for (const [value, [, is_derived]] of this.current) if (batch.current.has(value) && !is_derived) return batch;
-				}
-				batch = batch.#prev;
-			}
+			for (var batch = this.prev; batch !== null; batch = batch.prev) if (!batch.is_fork && this.#intersects(batch)) return batch;
 			return null;
+		}
+		/** @param {Batch} batch */
+		#intersects(batch) {
+			for (const [source, [, is_derived]] of this.current) {
+				if (is_derived) continue;
+				if (batch.current.has(source)) return true;
+			}
+			return false;
 		}
 		/**
 		* @param {Batch} batch
@@ -1165,7 +1136,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 				if (d) deferred.promise.then(d.resolve).catch(d.reject);
 			}
 			batch.async_deriveds.clear();
-			this.transfer_effects(batch.#dirty_effects, batch.#maybe_dirty_effects);
+			this.transfer_reactions(batch.#dirty_reactions);
 			/**
 			* mark all effects that depend on `batch.current`, except the
 			* async effects that we just resolved (TODO unless they depend
@@ -1184,7 +1155,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 					else {
 						var effect = reaction;
 						if (flags & 4194320 && !this.async_deriveds.has(effect)) {
-							this.#maybe_dirty_effects.delete(effect);
+							this.#dirty_reactions.delete(effect);
 							set_signal_status(effect, DIRTY);
 							this.schedule(effect);
 						}
@@ -1201,7 +1172,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		* @param {Effect[]} effects
 		*/
 		#defer_effects(effects) {
-			for (var i = 0; i < effects.length; i += 1) defer_effect(effects[i], this.#dirty_effects, this.#maybe_dirty_effects);
+			for (var i = 0; i < effects.length; i += 1) defer_effect(effects[i], this.#dirty_reactions);
 		}
 		/**
 		* Associate a change to a given source with the current
@@ -1255,7 +1226,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			this.#new_effects.push(effect);
 		}
 		#commit() {
-			for (let batch = first_batch; batch !== null; batch = batch.#next) {
+			for (let batch = first_batch; batch !== null; batch = batch.next) {
 				var is_earlier = batch.id < this.id;
 				/** @type {Source[]} */
 				var sources = [];
@@ -1272,7 +1243,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 					if (d) deferred.promise.then(d.resolve).catch(d.reject);
 				}
 				var current = [...batch.current.keys()].filter((source) => !batch.current.get(source)[1]);
-				if (!batch.#started || current.length === 0) continue;
+				if (!batch.started || current.length === 0) continue;
 				var others = current.filter((source) => !this.current.has(source));
 				if (others.length === 0) {
 					if (is_earlier) batch.discard();
@@ -1298,7 +1269,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 							if ((effect.f & 4194320) !== 0) {
 								set_signal_status(effect, DIRTY);
 								batch.schedule(effect);
-							} else batch.#dirty_effects.add(effect);
+							} else batch.add_dirty_reaction(effect, DIRTY);
 						}
 					}
 					if (batch.#scheduled.length > 0 && !batch.#decrement_queued) {
@@ -1339,14 +1310,18 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			});
 		}
 		/**
-		* @param {Set<Effect>} dirty_effects
-		* @param {Set<Effect>} maybe_dirty_effects
+		* @param {Map<Effect, number>} dirty_reactions
 		*/
-		transfer_effects(dirty_effects, maybe_dirty_effects) {
-			for (const e of dirty_effects) this.#dirty_effects.add(e);
-			for (const e of maybe_dirty_effects) this.#maybe_dirty_effects.add(e);
-			dirty_effects.clear();
-			maybe_dirty_effects.clear();
+		transfer_reactions(dirty_reactions) {
+			for (const [effect, status] of dirty_reactions) this.add_dirty_reaction(effect, status);
+			dirty_reactions.clear();
+		}
+		/**
+		* @param {Effect} effect
+		* @param {number} status
+		*/
+		add_dirty_reaction(effect, status) {
+			if (status === 2048 || this.#dirty_reactions.get(effect) !== 2048) this.#dirty_reactions.set(effect, status);
 		}
 		/** @param {(batch: Batch) => void} fn */
 		oncommit(fn) {
@@ -1363,29 +1338,21 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			if (current_batch === null) {
 				const batch = current_batch = new Batch();
 				if (!is_processing && !is_flushing_sync) queue_micro_task(() => {
-					if (!batch.#started) batch.flush();
+					if (!batch.started) batch.flush();
 				});
 			}
 			return current_batch;
 		}
 		apply() {
-			if (!async_mode_flag || !this.is_fork && this.#prev === null && this.#next === null) {
+			if (!async_mode_flag || !this.is_fork && this.prev === null && this.next === null) {
 				batch_values = null;
 				return;
 			}
 			batch_values = /* @__PURE__ */ new Map();
 			for (const [source, [value]] of this.current) batch_values.set(source, value);
-			for (let batch = first_batch; batch !== null; batch = batch.#next) {
+			for (let batch = first_batch; batch !== null; batch = batch.next) {
 				if (batch === this || batch.is_fork) continue;
-				var intersects = false;
-				if (batch.id < this.id) for (const [source, [, is_derived]] of batch.current) {
-					if (is_derived) continue;
-					if (this.current.has(source)) {
-						intersects = true;
-						break;
-					}
-				}
-				if (!intersects) {
+				if (batch.id >= this.id || !batch.#intersects(this)) {
 					for (const [source, previous] of batch.previous) if (!batch_values.has(source)) batch_values.set(source, previous);
 				}
 			}
@@ -1404,12 +1371,12 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 		#unlink() {
 			if (!this.linked) return;
-			var prev = this.#prev;
-			var next = this.#next;
+			var prev = this.prev;
+			var next = this.next;
 			if (prev === null) first_batch = next;
-			else prev.#next = next;
+			else prev.next = next;
 			if (next === null) last_batch = prev;
-			else next.#prev = prev;
+			else next.prev = prev;
 			this.linked = false;
 		}
 	};
@@ -1422,11 +1389,13 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	*/
 	function flushSync(fn) {
 		var was_flushing_sync = is_flushing_sync;
+		var prev_previous_batch = previous_batch;
+		previous_batch = null;
 		is_flushing_sync = true;
 		try {
 			var result;
 			if (fn) {
-				if (current_batch !== null && !current_batch.is_fork) current_batch.flush();
+				flushSync();
 				result = fn();
 			}
 			while (true) {
@@ -1436,6 +1405,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			}
 		} finally {
 			is_flushing_sync = was_flushing_sync;
+			previous_batch = prev_previous_batch;
 		}
 	}
 	function infinite_loop_guard() {
@@ -1563,12 +1533,11 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			e = e.next;
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/sources.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/sources.js
 	/** @import { Derived, Effect, Source, Value } from '#client' */
 	/** @type {Set<Effect>} */
 	var eager_effects = /* @__PURE__ */ new Set();
-	/** @type {Map<Source, any>} */
+	/** @type {Map<Value, any>} */
 	var old_values = /* @__PURE__ */ new Map();
 	var eager_effects_deferred = false;
 	/**
@@ -1613,7 +1582,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	}
 	/**
 	* @template V
-	* @param {Source<V>} source
+	* @param {Value<V>} source
 	* @param {V} value
 	* @param {boolean} [should_proxy]
 	* @returns {V}
@@ -1634,7 +1603,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	var count_deps = 0;
 	/**
 	* @template V
-	* @param {Source<V>} source
+	* @param {Value<V>} source
 	* @param {V} value
 	* @param {Effect[] | null} [updated_during_traversal]
 	* @returns {V}
@@ -1831,7 +1800,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 				if (prop === STATE_SYMBOL) return true;
 				var s = sources.get(prop);
 				var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop);
-				if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop)?.writable)) {
+				if (s !== void 0 || (active_effect !== null || active_reaction !== null) && (!has || get_descriptor(target, prop)?.writable)) {
 					if (s === void 0) {
 						s = with_parent(() => {
 							return /* @__PURE__ */ state(has ? proxy(target[prop]) : UNINITIALIZED, stack);
@@ -1890,8 +1859,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			}
 		});
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/operations.js
 	/** @import { Effect, TemplateNode } from '#client' */
 	/** @type {Window} */
 	var $window;
@@ -2100,6 +2068,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	* @param {Effect | null} effect
 	*/
 	function invoke_error_boundary(error, effect) {
+		if (error === HYDRATION_ERROR) throw error;
 		if (effect !== null && (effect.f & 16384) !== 0) return;
 		while (effect !== null) {
 			if ((effect.f & 128) !== 0 && (effect.f & 33570816) === 0) {
@@ -2115,8 +2084,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		}
 		throw error;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/effects.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/effects.js
 	/** @import { Blocker, ComponentContext, ComponentContextLegacy, Derived, Effect, TemplateNode, TransitionManager } from '#client' */
 	/**
 	* @param {'$effect' | '$effect.pre' | '$inspect'} rune
@@ -2502,20 +2470,14 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			node = next;
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/legacy.js
 	/**
 	* @type {Set<Value> | null}
 	* @deprecated
 	*/
 	var captured_signals = null;
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/runtime.js
 	/** @import { Derived, Effect, Reaction, Source, Value } from '#client' */
-	/**
-	* True if updating in an effect context that is reactive (i.e. not branch/root effects)
-	*/
-	var is_updating_effect = false;
 	var is_destroying_effect = false;
 	/** @param {boolean} value */
 	function set_is_destroying_effect(value) {
@@ -2537,7 +2499,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	/**
 	* When sources are created within a reaction, reading and writing
 	* them within that reaction should not cause a re-run
-	* @type {null | Set<Source>}
+	* @type {null | Set<Value>}
 	*/
 	var current_sources = null;
 	/** @param {Value} value */
@@ -2555,10 +2517,10 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	/**
 	* Tracks writes that the effect it's executed in doesn't listen to yet,
 	* so that the dependency can be added to the effect later on if it then reads it
-	* @type {null | Source[]}
+	* @type {null | Value[]}
 	*/
 	var untracked_writes = null;
-	/** @param {null | Source[]} value */
+	/** @param {null | Value[]} value */
 	function set_untracked_writes(value) {
 		untracked_writes = value;
 	}
@@ -2746,9 +2708,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		if ((flags & 16384) !== 0) return;
 		set_signal_status(effect, CLEAN);
 		var previous_effect = active_effect;
-		var was_updating_effect = is_updating_effect;
 		active_effect = effect;
-		is_updating_effect = (flags & 96) === 0;
 		try {
 			if ((flags & 16777232) !== 0) destroy_block_effect_children(effect);
 			else destroy_effect_children(effect);
@@ -2757,7 +2717,6 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			effect.teardown = typeof teardown === "function" ? teardown : null;
 			effect.wv = write_version;
 		} finally {
-			is_updating_effect = was_updating_effect;
 			active_effect = previous_effect;
 		}
 	}
@@ -2809,7 +2768,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 				old_values.set(derived, value);
 				return value;
 			}
-			var should_connect = (derived.f & 512) === 0 && !untracking && active_reaction !== null && (is_updating_effect || (active_reaction.f & 512) !== 0);
+			var should_connect = (derived.f & 512) === 0 && !untracking && active_reaction !== null && (active_reaction.f & 512) !== 0;
 			var is_new = (derived.f & REACTION_RAN) === 0;
 			if (is_dirty(derived)) {
 				if (should_connect) derived.f |= 512;
@@ -2833,7 +2792,9 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 		derived.f |= 512;
 		if (derived.deps === null) return;
 		for (const dep of derived.deps) {
-			(dep.reactions ??= []).push(derived);
+			var reactions = dep.reactions;
+			if (reactions === null) dep.reactions = [derived];
+			else if (!includes.call(reactions, derived)) reactions.push(derived);
 			if ((dep.f & 2) !== 0 && (dep.f & 512) === 0) {
 				unfreeze_derived_effects(dep);
 				reconnect(dep);
@@ -2892,8 +2853,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 	function is_passive_event(name) {
 		return PASSIVE_EVENTS.includes(name);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/events.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/events.js
 	/**
 	* Used on elements, as a map of event type -> event handler,
 	* and on events themselves to track which element handled an event
@@ -3060,8 +3020,7 @@ globalThis.__DAY_CALENDAR_CSS__ = ":host{display:block}\n\t/* ─── Containe
 			set_active_effect(previous_effect);
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/reconciler.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/reconciler.js
 	var policy = globalThis?.window?.trustedTypes && /* @__PURE__ */ globalThis.window.trustedTypes.createPolicy("svelte-trusted-html", { 
 	/** @param {string} html */
 createHTML: (html) => {
@@ -3079,8 +3038,7 @@ createHTML: (html) => {
 		elem.innerHTML = create_trusted_html(html.replaceAll("<!>", "<!---->"));
 		return elem.content;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/template.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/template.js
 	/** @import { Effect, EffectNodes, TemplateNode } from '#client' */
 	/** @import { TemplateStructure } from './types' */
 	/**
@@ -3179,8 +3137,7 @@ createHTML: (html) => {
 		if (anchor === null) return;
 		anchor.before(dom);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/create-subscriber.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/create-subscriber.js
 	/**
 	* Returns a `subscribe` function that integrates external event-based systems with Svelte's reactivity.
 	* It's particularly useful for integrating with web APIs like `MediaQuery`, `IntersectionObserver`, or `WebSocket`.
@@ -3252,8 +3209,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/boundary.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/boundary.js
 	/** @import { Effect, Source, TemplateNode, } from '#client' */
 	/**
 	* @typedef {{
@@ -3304,10 +3260,8 @@ createHTML: (html) => {
 		#local_pending_count = 0;
 		#pending_count = 0;
 		#pending_count_update_queued = false;
-		/** @type {Set<Effect>} */
-		#dirty_effects = /* @__PURE__ */ new Set();
-		/** @type {Set<Effect>} */
-		#maybe_dirty_effects = /* @__PURE__ */ new Set();
+		/** @type {Map<Effect, number>} */
+		#dirty_reactions = /* @__PURE__ */ new Map();
 		/**
 		* A source containing the number of pending async deriveds/expressions.
 		* Only created if `$effect.pending()` is used inside the boundary,
@@ -3341,11 +3295,11 @@ createHTML: (html) => {
 			this.transform_error = transform_error ?? this.parent?.transform_error ?? ((e) => e);
 			this.#effect = block(() => {
 				if (hydrating) {
-					const comment = this.#hydrate_open;
+					const comment_data = read_hydration_instruction(this.#hydrate_open);
 					hydrate_next();
-					const server_rendered_pending = comment.data === "[!";
-					if (comment.data.startsWith("[?")) {
-						const serialized_error = JSON.parse(comment.data.slice(2));
+					const server_rendered_pending = comment_data === "[!";
+					if (comment_data.startsWith("[?")) {
+						const serialized_error = JSON.parse(comment_data.slice(2));
 						this.#hydrate_failed_content(serialized_error);
 					} else if (server_rendered_pending) this.#hydrate_pending_content();
 					else this.#hydrate_resolved_content();
@@ -3382,6 +3336,7 @@ createHTML: (html) => {
 			var did_reset = false;
 			var calling_on_error = false;
 			const reset = () => {
+				if (this.#is_destroyed()) return;
 				if (did_reset) {
 					svelte_boundary_reset_noop();
 					return;
@@ -3396,6 +3351,7 @@ createHTML: (html) => {
 				});
 			};
 			const invoke_onerror = () => {
+				if (this.#is_destroyed()) return;
 				try {
 					calling_on_error = true;
 					this.#props.onerror?.(error, reset);
@@ -3409,12 +3365,16 @@ createHTML: (html) => {
 				invoke_onerror
 			};
 		}
+		#is_destroyed() {
+			return (this.#effect.f & (DESTROYED | DESTROYING)) !== 0;
+		}
 		#hydrate_pending_content() {
 			const pending = this.#props.pending;
 			if (!pending) return;
 			this.is_pending = true;
 			this.#pending_effect = branch(() => pending(this.#anchor));
 			queue_micro_task(() => {
+				if (this.#is_destroyed()) return;
 				var fragment = this.#offscreen_fragment = document.createDocumentFragment();
 				var anchor = create_text();
 				var handled = false;
@@ -3470,14 +3430,14 @@ createHTML: (html) => {
 		*/
 		#resolve(batch) {
 			this.is_pending = false;
-			batch.transfer_effects(this.#dirty_effects, this.#maybe_dirty_effects);
+			batch.transfer_reactions(this.#dirty_reactions);
 		}
 		/**
 		* Defer an effect inside a pending boundary until the boundary resolves
 		* @param {Effect} effect
 		*/
 		defer_effect(effect) {
-			defer_effect(effect, this.#dirty_effects, this.#maybe_dirty_effects);
+			defer_effect(effect, this.#dirty_reactions);
 		}
 		/**
 		* Returns `false` if the effect exists inside a boundary whose pending snippet is shown
@@ -3555,13 +3515,14 @@ createHTML: (html) => {
 		}
 		/** @param {unknown} error */
 		error(error) {
+			if (error === HYDRATION_ERROR) throw error;
 			if (!this.#props.onerror && !this.#props.failed) throw error;
 			if (current_batch?.is_fork) {
 				if (this.#main_effect) current_batch.skip_effect(this.#main_effect);
 				if (this.#pending_effect) current_batch.skip_effect(this.#pending_effect);
 				if (this.#failed_effect) current_batch.skip_effect(this.#failed_effect);
 				current_batch.oncommit(() => {
-					this.#handle_error(error);
+					if (!this.#is_destroyed()) this.#handle_error(error);
 				});
 			} else this.#handle_error(error);
 		}
@@ -3589,9 +3550,10 @@ createHTML: (html) => {
 			let failed = this.#props.failed;
 			/** @param {unknown} transformed_error */
 			const handle_error_result = (transformed_error) => {
+				if (this.#is_destroyed()) return;
 				const { reset, invoke_onerror } = this.#create_reset(transformed_error);
 				invoke_onerror();
-				if (failed) this.#failed_effect = this.#run(() => {
+				if (failed && !this.#is_destroyed()) this.#failed_effect = this.#run(() => {
 					try {
 						return branch(() => {
 							var effect = active_effect;
@@ -3606,6 +3568,7 @@ createHTML: (html) => {
 				});
 			};
 			queue_micro_task(() => {
+				if (this.#is_destroyed()) return;
 				/** @type {unknown} */
 				var result;
 				try {
@@ -3624,8 +3587,7 @@ createHTML: (html) => {
 			});
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/render.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/render.js
 	/** @import { ComponentContext, Effect, EffectNodes, TemplateNode } from '#client' */
 	/** @import { Component, ComponentType, SvelteComponent, MountOptions } from '../../index.js' */
 	/**
@@ -3767,8 +3729,7 @@ createHTML: (html) => {
 		}
 		return Promise.resolve();
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/branches.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/branches.js
 	/** @import { Effect, TemplateNode } from '#client' */
 	/**
 	* @typedef {{ effect: Effect, fragment: DocumentFragment }} Branch
@@ -3915,8 +3876,7 @@ createHTML: (html) => {
 			}
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/if.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/if.js
 	/** @import { TemplateNode } from '#client' */
 	/**
 	* @param {TemplateNode} node
@@ -3961,9 +3921,8 @@ createHTML: (html) => {
 			if (!has_branch) update_branch(-1, null);
 		}, flags);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/each.js
-	/** @import { EachItem, EachOutroGroup, EachState, Effect, EffectNodes, MaybeSource, Source, TemplateNode, TransitionManager, Value } from '#client' */
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/each.js
+	/** @import { EachItem, EachOutroGroup, EachState, Effect, EffectNodes, MaybeSource, TemplateNode, TransitionManager } from '#client' */
 	/** @import { Batch } from '../../reactivity/batch.js'; */
 	/**
 	* @param {any} _
@@ -4069,8 +4028,6 @@ createHTML: (html) => {
 			var collection = get_collection();
 			return is_array(collection) ? collection : collection == null ? [] : array_from(collection);
 		});
-		/** @type {V[]} */
-		var array;
 		/** @type {Map<Batch, Set<any>>} */
 		var pending = /* @__PURE__ */ new Map();
 		var first_run = true;
@@ -4080,6 +4037,7 @@ createHTML: (html) => {
 		function commit(batch) {
 			if ((state.effect.f & 16384) !== 0) return;
 			state.pending.delete(batch);
+			var array = get(each_array);
 			state.fallback = fallback;
 			reconcile(state, array, anchor, flags, get_key);
 			if (fallback !== null) {
@@ -4103,7 +4061,7 @@ createHTML: (html) => {
 		/** @type {EachState} */
 		var state = {
 			effect: block(() => {
-				array = get(each_array);
+				var array = get(each_array);
 				var length = array.length;
 				/** `true` if there was a hydration mismatch. Needs to be a `let` or else it isn't treeshaken out */
 				let mismatch = false;
@@ -4331,7 +4289,7 @@ createHTML: (html) => {
 	* @param {V} value
 	* @param {unknown} key
 	* @param {number} index
-	* @param {(anchor: Node, item: V | Source<V>, index: number | Value<number>, collection: () => V[]) => void} render_fn
+	* @param {(anchor: Node, item: MaybeSource<V>, index: MaybeSource<number>, collection: () => V[]) => void} render_fn
 	* @param {number} flags
 	* @param {() => V[]} get_collection
 	* @returns {EachItem}
@@ -4378,8 +4336,7 @@ createHTML: (html) => {
 		if (next === null) state.effect.last = prev;
 		else next.prev = prev;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/snippet.js
 	/** @import { Snippet } from 'svelte' */
 	/** @import { TemplateNode } from '#client' */
 	/** @import { Getters } from '#shared' */
@@ -4397,8 +4354,7 @@ createHTML: (html) => {
 			branches.ensure(snippet, snippet && ((anchor) => snippet(anchor, ...args)));
 		}, EFFECT_TRANSPARENT);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/svelte-component.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/blocks/svelte-component.js
 	/** @import { TemplateNode, Dom } from '#client' */
 	/**
 	* @template P
@@ -4432,8 +4388,7 @@ createHTML: (html) => {
 			branches.ensure(component, component && ((target) => render_fn(target, component)));
 		}, EFFECT_TRANSPARENT);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/timing.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/timing.js
 	/** @import { Raf } from '#client' */
 	var now = () => performance.now();
 	/** @type {Raf} */
@@ -4442,8 +4397,7 @@ createHTML: (html) => {
 		now: () => now(),
 		tasks: /* @__PURE__ */ new Set()
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/loop.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/loop.js
 	/** @import { TaskCallback, Task, TaskEntry } from '#client' */
 	/**
 	* @returns {void}
@@ -4480,8 +4434,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/transitions.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/transitions.js
 	/** @import { AnimateFn, Animation, AnimationConfig, EachItem, Effect, EffectNodes, TransitionFn, TransitionManager } from '#client' */
 	/**
 	* @param {Element} element
@@ -4713,9 +4666,9 @@ createHTML: (html) => {
 					aborted = true;
 					a?.abort();
 				},
-				deactivate: () => a.deactivate(),
-				reset: () => a.reset(),
-				t: () => a.t()
+				deactivate: () => a?.deactivate(),
+				reset: () => a?.reset(),
+				t: () => a?.t() ?? 1 - t2
 			};
 		}
 		counterpart?.deactivate();
@@ -4813,8 +4766,7 @@ createHTML: (html) => {
 			t: () => get_t()
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attachments.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attachments.js
 	/** @import { Effect } from '#client' */
 	/**
 	* @param {Element} node
@@ -4837,8 +4789,7 @@ createHTML: (html) => {
 			}
 		});
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/attributes.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/shared/attributes.js
 	var whitespace = [..." 	\n\r\f\xA0\v﻿"];
 	/**
 	* @param {any} value
@@ -4947,8 +4898,7 @@ createHTML: (html) => {
 		}
 		return value == null ? null : String(value);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/class.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/class.js
 	/**
 	* @param {Element} dom
 	* @param {boolean | number} is_html
@@ -4974,8 +4924,7 @@ createHTML: (html) => {
 		}
 		return next_classes;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/style.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/style.js
 	/**
 	* @param {Element & ElementCSSInlineStyle} dom
 	* @param {Record<string, any>} prev
@@ -5014,8 +4963,7 @@ createHTML: (html) => {
 		}
 		return next_styles;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attributes.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/attributes.js
 	/** @import { Blocker, Effect } from '#client' */
 	var IS_CUSTOM_ELEMENT = Symbol("is custom element");
 	var IS_HTML = Symbol("is html");
@@ -5035,11 +4983,12 @@ createHTML: (html) => {
 				return;
 			}
 		}
-		if (attributes[attribute] === (attributes[attribute] = value)) return;
+		var previous = attributes[attribute];
+		if (previous === (attributes[attribute] = value)) return;
 		if (attribute === "loading") element[LOADING_ATTR_SYMBOL] = value;
 		if (value == null) element.removeAttribute(attribute);
 		else if (typeof value !== "string" && get_setters(element).has(attribute)) element[attribute] = value;
-		else element.setAttribute(attribute, value);
+		else if (!(hydrating && (typeof value === "number" || typeof value === "boolean") && previous === String(value))) element.setAttribute(attribute, value);
 	}
 	/**
 	*
@@ -5069,8 +5018,7 @@ createHTML: (html) => {
 		}
 		return setters;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/this.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/dom/elements/bindings/this.js
 	/** @import { ComponentContext, Effect } from '#client' */
 	/**
 	* @param {any} bound_value
@@ -5121,8 +5069,7 @@ createHTML: (html) => {
 		});
 		return element_or_component;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/store.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/store.js
 	/**
 	* Whether or not the prop currently being read is a store binding, as in
 	* `<Child bind:x={$y} />`. If it is, we treat the prop as mutable even in
@@ -5146,8 +5093,7 @@ createHTML: (html) => {
 			is_store_binding = previous_is_store_binding;
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/props.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/client/reactivity/props.js
 	/** @import { Derived, Effect, Source } from './types.js' */
 	/**
 	* The proxy handler for rest props (i.e. `const { x, ...rest } = $props()`).
@@ -5383,8 +5329,7 @@ createHTML: (html) => {
 			m: []
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/map.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/map.js
 	/** @import { Source } from '#client' */
 	/**
 	* A reactive version of the built-in [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object.
@@ -5593,8 +5538,7 @@ createHTML: (html) => {
 			return super.size;
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/reactive-value.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/reactive-value.js
 	/**
 	* @template T
 	*/
@@ -5615,8 +5559,7 @@ createHTML: (html) => {
 			return this.#fn();
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/media-query.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/reactivity/media-query.js
 	var parenthesis_regex = /\(.+\)/;
 	var non_parenthesized_keywords = /* @__PURE__ */ new Set([
 		"all",
@@ -5656,25 +5599,8 @@ createHTML: (html) => {
 			super(() => q.matches, (update) => on(q, "change", update));
 		}
 	};
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/internal/disclose-version.js
 	if (typeof window !== "undefined") ((window.__svelte ??= {}).v ??= /* @__PURE__ */ new Set()).add("5");
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/constants.js
-	/**
-	* @constant
-	* @name daysInYear
-	* @summary Days in 1 year.
-	*
-	* @description
-	* How many days in a year.
-	*
-	* One years equals 365.2425 days according to the formula:
-	*
-	* > Leap year occurs every 4 years, except for years that are divisible by 100 and not divisible by 400.
-	* > 1 mean year = (365+1/4-1/100+1/400) days = 365.2425 days
-	*/
-	var daysInYear = 365.2425;
 	-(Math.pow(10, 8) * 24 * 60 * 60 * 1e3);
 	/**
 	* @constant
@@ -5682,14 +5608,6 @@ createHTML: (html) => {
 	* @summary Milliseconds in 1 day.
 	*/
 	var millisecondsInDay = 864e5;
-	/**
-	* @constant
-	* @name secondsInDay
-	* @summary Seconds in 1 day.
-	*/
-	var secondsInDay = 86400;
-	secondsInDay * 7;
-	secondsInDay * daysInYear / 12 * 3;
 	/**
 	* @constant
 	* @name constructFromSymbol
@@ -5702,8 +5620,7 @@ createHTML: (html) => {
 	* a constructor argument.
 	*/
 	var constructFromSymbol = Symbol.for("constructDateFrom");
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/constructFrom.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/constructFrom.js
 	/**
 	* @name constructFrom
 	* @category Generic Helpers
@@ -5745,8 +5662,7 @@ createHTML: (html) => {
 		if (date instanceof Date) return new date.constructor(value);
 		return new Date(value);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/toDate.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/toDate.js
 	/**
 	* @name toDate
 	* @category Common Helpers
@@ -5788,8 +5704,7 @@ createHTML: (html) => {
 	function toDate$1(argument, context) {
 		return constructFrom(context || argument, argument);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/addDays.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/addDays.js
 	/**
 	* The {@link addDays} function options.
 	*/
@@ -5841,14 +5756,12 @@ createHTML: (html) => {
 		_date.setDate(_date.getDate() + amount);
 		return _date;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/defaultOptions.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/defaultOptions.js
 	var defaultOptions = {};
 	function getDefaultOptions() {
 		return defaultOptions;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/startOfWeek.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/startOfWeek.js
 	/**
 	* The {@link startOfWeek} function options.
 	*/
@@ -5889,8 +5802,7 @@ createHTML: (html) => {
 		_date.setHours(0, 0, 0, 0);
 		return _date;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/getTimezoneOffsetInMilliseconds.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/getTimezoneOffsetInMilliseconds.js
 	/**
 	* Google Chrome as of 67.0.3396.87 introduced timezones with offset that includes seconds.
 	* They usually appear for dates that denote time before the timezones were introduced
@@ -5908,14 +5820,12 @@ createHTML: (html) => {
 		utcDate.setUTCFullYear(_date.getFullYear());
 		return +date - +utcDate;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/normalizeDates.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/_lib/normalizeDates.js
 	function normalizeDates(context, ...dates) {
 		const normalize = constructFrom.bind(null, context || dates.find((date) => typeof date === "object"));
 		return dates.map(normalize);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/startOfDay.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/startOfDay.js
 	/**
 	* The {@link startOfDay} function options.
 	*/
@@ -5946,8 +5856,7 @@ createHTML: (html) => {
 		_date.setHours(0, 0, 0, 0);
 		return _date;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/differenceInCalendarDays.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/differenceInCalendarDays.js
 	/**
 	* The {@link differenceInCalendarDays} function options.
 	*/
@@ -5990,8 +5899,7 @@ createHTML: (html) => {
 		const earlierTimestamp = +earlierStartOfDay - getTimezoneOffsetInMilliseconds$1(earlierStartOfDay);
 		return Math.round((laterTimestamp - earlierTimestamp) / millisecondsInDay);
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getHours.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getHours.js
 	/**
 	* The {@link getHours} function options.
 	*/
@@ -6016,8 +5924,7 @@ createHTML: (html) => {
 	function getHours(date, options) {
 		return toDate$1(date, options?.in).getHours();
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getMinutes.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getMinutes.js
 	/**
 	* The {@link getMinutes} function options.
 	*/
@@ -6042,8 +5949,7 @@ createHTML: (html) => {
 	function getMinutes(date, options) {
 		return toDate$1(date, options?.in).getMinutes();
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getSeconds.js
+	// ../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/getSeconds.js
 	/**
 	* @name getSeconds
 	* @category Second Helpers
@@ -6064,8 +5970,7 @@ createHTML: (html) => {
 	function getSeconds(date) {
 		return toDate$1(date).getSeconds();
 	}
-	//#endregion
-	//#region src/lib/core/time.ts
+	// src/lib/core/time.ts
 	/**
 	* Core time constants and pure date-math utilities.
 	*
@@ -6368,10 +6273,9 @@ createHTML: (html) => {
 		const m = mins % 60;
 		return m > 0 ? `${h}h ${m}m` : `${h}h`;
 	}
-	//#endregion
-	//#region src/lib/views/shared/context.svelte.ts
+	// src/lib/views/shared/context.svelte.ts
 	function useCalendarContext() {
-		const raw = getContext("calendar");
+		const raw = getContext$1("calendar");
 		const disabledSet = /* @__PURE__ */ user_derived(() => new Set(raw?.disabledDates?.map((d) => sod(d.getTime())) ?? []));
 		const loadRange = raw ? {
 			get current() {
@@ -6464,8 +6368,7 @@ createHTML: (html) => {
 			announce: (text) => raw?.announce(text)
 		};
 	}
-	//#endregion
-	//#region src/lib/views/shared/EventContent.svelte
+	// src/lib/views/shared/EventContent.svelte
 	function EventContent($$anchor, $$props) {
 		push($$props, true);
 		const ctx = useCalendarContext();
@@ -6489,8 +6392,7 @@ createHTML: (html) => {
 		append($$anchor, fragment);
 		pop();
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzTokenizeDate/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzTokenizeDate/index.js
 	/**
 	* Returns the [year, month, day, hour, minute, seconds] tokens of the provided
 	* `date` as it will be rendered in the `timeZone`.
@@ -6567,8 +6469,7 @@ createHTML: (html) => {
 		});
 		return dtfCache[timeZone];
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/newDateUTC/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/newDateUTC/index.js
 	/**
 	* Use instead of `new Date(Date.UTC(...))` to support years below 100 which doesn't work
 	* otherwise due to the nature of the
@@ -6582,8 +6483,7 @@ createHTML: (html) => {
 		utcDate.setUTCHours(hour, minute, second, millisecond);
 		return utcDate;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzParseTimezone/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzParseTimezone/index.js
 	var MILLISECONDS_IN_HOUR$1 = 36e5;
 	var MILLISECONDS_IN_MINUTE$1 = 6e4;
 	var patterns$1 = {
@@ -6653,8 +6553,7 @@ createHTML: (html) => {
 			return false;
 		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/getTimezoneOffsetInMilliseconds/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/getTimezoneOffsetInMilliseconds/index.js
 	/**
 	* Google Chrome as of 67.0.3396.87 introduced timezones with offset that includes seconds.
 	* They usually appear for dates that denote time before the timezones were introduced
@@ -6671,12 +6570,10 @@ createHTML: (html) => {
 		utcDate.setUTCFullYear(date.getFullYear());
 		return +date - +utcDate;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzPattern/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/_lib/tzPattern/index.js
 	/** Regex to identify the presence of a time zone specifier in a date string */
 	var tzPattern = /(Z|[+-]\d{2}(?::?\d{2})?| UTC| [a-zA-Z]+\/[a-zA-Z_]+(?:\/[a-zA-Z_]+)?)$/;
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/toDate/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/toDate/index.js
 	var MILLISECONDS_IN_HOUR = 36e5;
 	var MILLISECONDS_IN_MINUTE = 6e4;
 	var DEFAULT_ADDITIONAL_DIGITS = 2;
@@ -6972,8 +6869,7 @@ createHTML: (html) => {
 		if (seconds != null && (seconds < 0 || seconds >= 60)) return false;
 		return true;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/toZonedTime/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/toZonedTime/index.js
 	/**
 	* @name toZonedTime
 	* @category Time Zone Helpers
@@ -7007,8 +6903,7 @@ createHTML: (html) => {
 		resultDate.setHours(d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
 		return resultDate;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/fromZonedTime/index.js
+	// ../../node_modules/.pnpm/date-fns-tz@3.2.0_date-fns@4.4.0/node_modules/date-fns-tz/dist/esm/fromZonedTime/index.js
 	/**
 	* @name fromZonedTime
 	* @category Time Zone Helpers
@@ -7042,8 +6937,7 @@ createHTML: (html) => {
 		const offsetMilliseconds = tzParseTimezone(timeZone, new Date(utc));
 		return new Date(utc + offsetMilliseconds);
 	}
-	//#endregion
-	//#region src/lib/core/timezone.ts
+	// src/lib/core/timezone.ts
 	/**
 	* Timezone utilities — convert between IANA timezones and local time.
 	*
@@ -7109,8 +7003,7 @@ createHTML: (html) => {
 		if (adapter.deleteEvent) wrapped.deleteEvent = (id) => adapter.deleteEvent(id);
 		return wrapped;
 	}
-	//#endregion
-	//#region src/lib/core/clock.svelte.ts
+	// src/lib/core/clock.svelte.ts
 	function createClock(timezone) {
 		const now = () => timezone ? toZonedTime(Date.now(), timezone).getTime() : Date.now();
 		const t0 = now();
@@ -7155,3975 +7048,2308 @@ createHTML: (html) => {
 			destroy
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/generated/bidi-data.js
-	var latin1BidiTypes = [
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"S",
-		"B",
-		"S",
-		"WS",
-		"B",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"B",
-		"B",
-		"B",
-		"S",
-		"WS",
-		"ON",
-		"ON",
-		"ET",
-		"ET",
-		"ET",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ES",
-		"CS",
-		"ES",
-		"CS",
-		"CS",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"EN",
-		"CS",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"B",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"BN",
-		"CS",
-		"ON",
-		"ET",
-		"ET",
-		"ET",
-		"ET",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"L",
-		"ON",
-		"ON",
-		"BN",
-		"ON",
-		"ON",
-		"ET",
-		"ET",
-		"EN",
-		"EN",
-		"ON",
-		"L",
-		"ON",
-		"ON",
-		"ON",
-		"EN",
-		"L",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"ON",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"ON",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"ON",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L",
-		"L"
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/generated/engine-break-data.js
+	var classMaps = {
+		"chromium/line_normal": [0, 182],
+		"chromium/line_normal_cj": [1, 182],
+		"apple/line_normal": [2, 183],
+		"apple/line": [3, 183],
+		"apple/line_cj": [4, 183],
+		"chromium/char": [5, 148],
+		"apple/char": [6, 149],
+		"gecko/line": [7, 196],
+		"gecko/east_asian_width": [8, 38],
+		"chromium/script": [9, 80]
+	};
+	var classRunsVarints = "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AAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoDAAIaAwACGgMAAhoD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";
+	var classRemapsPacked = "sBPUAQsLMzQDCwMLKgQLIiIqEw4LC0ALCz8wFAMqKjstAwM/BBcMCx8NA0AsA0AfKgMWKgsaIisYCwkLKywDPgoMIQMyFSoDDg4NEwsLLxMUCRADCQ0tCwsMFwMVGQMLFSAhGSssLQ8rISotCxMVAxMNCQsOFEAXBB4LCwsLKSI5DhQDBAYTEAM/GxwdBAMmJx4oLDIDAyoLNTU3LCwqLCwgExUhCwUHCA8REg8UBgsLAwMVEBADCwwEHgQVExUjCwMXJAMlFhgVBAspLgkEFBQZBDErAyoEAF4kFA4sMjYVMik3MissMioyLTgnGQQ5FR8gOToyLRMDPD0LCzQ1CvgBBEELC0AB+AEFPC0DA0AD+AEEQSwDQQz4AQE/MvgBAUEF+AEBOgT4AQFABvgBATMA+AEDNjY4JvgBAg4UFPgBBTcVMik4A/gBCjknGQQ6FR8gOjsA+AECPT5y8AMEAy0qMhbwAwMsNjY58AMEDDE1KwD4AQE1GfADABT4AQEyxgH4AQEy0AH4AQAO6AUAIPgBCgYGEhMIBgoGBwYAAwUGBgcLCAAGCQYIBgYHBwgICwENAAAOBQwKCwYDAiQAAgEBCAAMAggGAD0AAAEBAwEbAQgEHQcIBggJBgwGAj8BCwIUAQkBBwEMBUINCQMDCAMDCQYICg0ODwFyAQMAOgAGZAcICQMGDgQFAg0AARwFCAYGAwkAcgEDAGMFCgYDEBEDHAAHmgEABkAACwkECAsMCQALAwgUCHL4AQEQffgB1AE0AxUWDgMOARkIAxkZGSMlAwMuAwMuEQ0OGQwaAw40LggJKAECJg4uDQ4uAhkOLBoBFxkkKwMTNCQNDhoqKAYOIg4ZNCUlJyM0NBE0DRMcDhMmAzQaKQkOFAgOAxQyGQgkDQENJDQ0AxkjFA4jJhMDJQ0uCTQiNDQ0NCk0BSUNDggKIxw0Lh0fHgg0BxsiMw0iDg4ZNBMTJw0NGQ0NMiMUNDQgEC8PGDAPDSEBAw4UFBwcDgMoCCIIFC40MTQOCTUONiwrFAgDKAQTAw0NCAgIJA40CABeGQ0lHBwbDiIpJyIkDSIMIgMLGzQ0BRQ0NDQABAsOLRIAAAUFAAAAAAYFAAMJAgUFBg8AAxsBAwIHAAIrAQUEGAICAAoBAQUKDgQFBQADBS4ACAEBAxA0AQUAAQMABQMBAQICACUBAAQrAgMFBWsAAUkEBQUDAgEBAAmRAQQAAAUHAAEZAAcAAAcQAAAHBwEABwcDDgcAAgsABwcAEAMbBAAKBwAAJwAAWQAABwYPBwATFA8AFAMVBwsBGQIQEAAOBQAACRAHAdEBBAgLBxIBWgUWAgACFgI8CA0AEBERExQHASsBBwMFAAA7ARAACgIRCwBfAABSAAEWBwIAAwQHBwcEDQsABAQABQYMCwoHEQEwDxAQBwsHDwAOAAsLAAADDgE7BBcYAw8AhQEBAwFPBREAAAAPABgCExQBRQQHBxAHAwEEAA4AAA==";
+	var scriptClassFacts = [
+		1055,
+		5151,
+		25631,
+		8,
+		42015,
+		12,
+		10,
+		1,
+		479,
+		351,
+		287,
+		31,
+		415,
+		159,
+		4,
+		2,
+		2064,
+		16,
+		543,
+		4097,
+		24577,
+		63,
+		5121,
+		-7137,
+		58399
 	];
-	var nonLatin1BidiRanges = [
-		[
-			697,
-			698,
-			"ON"
-		],
-		[
-			706,
-			719,
-			"ON"
-		],
-		[
-			722,
-			735,
-			"ON"
-		],
-		[
-			741,
-			749,
-			"ON"
-		],
-		[
-			751,
-			767,
-			"ON"
-		],
-		[
-			768,
-			879,
-			"NSM"
-		],
-		[
-			884,
-			885,
-			"ON"
-		],
-		[
-			894,
-			894,
-			"ON"
-		],
-		[
-			900,
-			901,
-			"ON"
-		],
-		[
-			903,
-			903,
-			"ON"
-		],
-		[
-			1014,
-			1014,
-			"ON"
-		],
-		[
-			1155,
-			1161,
-			"NSM"
-		],
-		[
-			1418,
-			1418,
-			"ON"
-		],
-		[
-			1421,
-			1422,
-			"ON"
-		],
-		[
-			1423,
-			1423,
-			"ET"
-		],
-		[
-			1424,
-			1424,
-			"R"
-		],
-		[
-			1425,
-			1469,
-			"NSM"
-		],
-		[
-			1470,
-			1470,
-			"R"
-		],
-		[
-			1471,
-			1471,
-			"NSM"
-		],
-		[
-			1472,
-			1472,
-			"R"
-		],
-		[
-			1473,
-			1474,
-			"NSM"
-		],
-		[
-			1475,
-			1475,
-			"R"
-		],
-		[
-			1476,
-			1477,
-			"NSM"
-		],
-		[
-			1478,
-			1478,
-			"R"
-		],
-		[
-			1479,
-			1479,
-			"NSM"
-		],
-		[
-			1480,
-			1535,
-			"R"
-		],
-		[
-			1536,
-			1541,
-			"AN"
-		],
-		[
-			1542,
-			1543,
-			"ON"
-		],
-		[
-			1544,
-			1544,
-			"AL"
-		],
-		[
-			1545,
-			1546,
-			"ET"
-		],
-		[
-			1547,
-			1547,
-			"AL"
-		],
-		[
-			1548,
-			1548,
-			"CS"
-		],
-		[
-			1549,
-			1549,
-			"AL"
-		],
-		[
-			1550,
-			1551,
-			"ON"
-		],
-		[
-			1552,
-			1562,
-			"NSM"
-		],
-		[
-			1563,
-			1610,
-			"AL"
-		],
-		[
-			1611,
-			1631,
-			"NSM"
-		],
-		[
-			1632,
-			1641,
-			"AN"
-		],
-		[
-			1642,
-			1642,
-			"ET"
-		],
-		[
-			1643,
-			1644,
-			"AN"
-		],
-		[
-			1645,
-			1647,
-			"AL"
-		],
-		[
-			1648,
-			1648,
-			"NSM"
-		],
-		[
-			1649,
-			1749,
-			"AL"
-		],
-		[
-			1750,
-			1756,
-			"NSM"
-		],
-		[
-			1757,
-			1757,
-			"AN"
-		],
-		[
-			1758,
-			1758,
-			"ON"
-		],
-		[
-			1759,
-			1764,
-			"NSM"
-		],
-		[
-			1765,
-			1766,
-			"AL"
-		],
-		[
-			1767,
-			1768,
-			"NSM"
-		],
-		[
-			1769,
-			1769,
-			"ON"
-		],
-		[
-			1770,
-			1773,
-			"NSM"
-		],
-		[
-			1774,
-			1775,
-			"AL"
-		],
-		[
-			1776,
-			1785,
-			"EN"
-		],
-		[
-			1786,
-			1808,
-			"AL"
-		],
-		[
-			1809,
-			1809,
-			"NSM"
-		],
-		[
-			1810,
-			1839,
-			"AL"
-		],
-		[
-			1840,
-			1866,
-			"NSM"
-		],
-		[
-			1867,
-			1957,
-			"AL"
-		],
-		[
-			1958,
-			1968,
-			"NSM"
-		],
-		[
-			1969,
-			1983,
-			"AL"
-		],
-		[
-			1984,
-			2026,
-			"R"
-		],
-		[
-			2027,
-			2035,
-			"NSM"
-		],
-		[
-			2036,
-			2037,
-			"R"
-		],
-		[
-			2038,
-			2041,
-			"ON"
-		],
-		[
-			2042,
-			2044,
-			"R"
-		],
-		[
-			2045,
-			2045,
-			"NSM"
-		],
-		[
-			2046,
-			2069,
-			"R"
-		],
-		[
-			2070,
-			2073,
-			"NSM"
-		],
-		[
-			2074,
-			2074,
-			"R"
-		],
-		[
-			2075,
-			2083,
-			"NSM"
-		],
-		[
-			2084,
-			2084,
-			"R"
-		],
-		[
-			2085,
-			2087,
-			"NSM"
-		],
-		[
-			2088,
-			2088,
-			"R"
-		],
-		[
-			2089,
-			2093,
-			"NSM"
-		],
-		[
-			2094,
-			2136,
-			"R"
-		],
-		[
-			2137,
-			2139,
-			"NSM"
-		],
-		[
-			2140,
-			2143,
-			"R"
-		],
-		[
-			2144,
-			2191,
-			"AL"
-		],
-		[
-			2192,
-			2193,
-			"AN"
-		],
-		[
-			2194,
-			2198,
-			"AL"
-		],
-		[
-			2199,
-			2207,
-			"NSM"
-		],
-		[
-			2208,
-			2249,
-			"AL"
-		],
-		[
-			2250,
-			2273,
-			"NSM"
-		],
-		[
-			2274,
-			2274,
-			"AN"
-		],
-		[
-			2275,
-			2306,
-			"NSM"
-		],
-		[
-			2362,
-			2362,
-			"NSM"
-		],
-		[
-			2364,
-			2364,
-			"NSM"
-		],
-		[
-			2369,
-			2376,
-			"NSM"
-		],
-		[
-			2381,
-			2381,
-			"NSM"
-		],
-		[
-			2385,
-			2391,
-			"NSM"
-		],
-		[
-			2402,
-			2403,
-			"NSM"
-		],
-		[
-			2433,
-			2433,
-			"NSM"
-		],
-		[
-			2492,
-			2492,
-			"NSM"
-		],
-		[
-			2497,
-			2500,
-			"NSM"
-		],
-		[
-			2509,
-			2509,
-			"NSM"
-		],
-		[
-			2530,
-			2531,
-			"NSM"
-		],
-		[
-			2546,
-			2547,
-			"ET"
-		],
-		[
-			2555,
-			2555,
-			"ET"
-		],
-		[
-			2558,
-			2558,
-			"NSM"
-		],
-		[
-			2561,
-			2562,
-			"NSM"
-		],
-		[
-			2620,
-			2620,
-			"NSM"
-		],
-		[
-			2625,
-			2626,
-			"NSM"
-		],
-		[
-			2631,
-			2632,
-			"NSM"
-		],
-		[
-			2635,
-			2637,
-			"NSM"
-		],
-		[
-			2641,
-			2641,
-			"NSM"
-		],
-		[
-			2672,
-			2673,
-			"NSM"
-		],
-		[
-			2677,
-			2677,
-			"NSM"
-		],
-		[
-			2689,
-			2690,
-			"NSM"
-		],
-		[
-			2748,
-			2748,
-			"NSM"
-		],
-		[
-			2753,
-			2757,
-			"NSM"
-		],
-		[
-			2759,
-			2760,
-			"NSM"
-		],
-		[
-			2765,
-			2765,
-			"NSM"
-		],
-		[
-			2786,
-			2787,
-			"NSM"
-		],
-		[
-			2801,
-			2801,
-			"ET"
-		],
-		[
-			2810,
-			2815,
-			"NSM"
-		],
-		[
-			2817,
-			2817,
-			"NSM"
-		],
-		[
-			2876,
-			2876,
-			"NSM"
-		],
-		[
-			2879,
-			2879,
-			"NSM"
-		],
-		[
-			2881,
-			2884,
-			"NSM"
-		],
-		[
-			2893,
-			2893,
-			"NSM"
-		],
-		[
-			2901,
-			2902,
-			"NSM"
-		],
-		[
-			2914,
-			2915,
-			"NSM"
-		],
-		[
-			2946,
-			2946,
-			"NSM"
-		],
-		[
-			3008,
-			3008,
-			"NSM"
-		],
-		[
-			3021,
-			3021,
-			"NSM"
-		],
-		[
-			3059,
-			3064,
-			"ON"
-		],
-		[
-			3065,
-			3065,
-			"ET"
-		],
-		[
-			3066,
-			3066,
-			"ON"
-		],
-		[
-			3072,
-			3072,
-			"NSM"
-		],
-		[
-			3076,
-			3076,
-			"NSM"
-		],
-		[
-			3132,
-			3132,
-			"NSM"
-		],
-		[
-			3134,
-			3136,
-			"NSM"
-		],
-		[
-			3142,
-			3144,
-			"NSM"
-		],
-		[
-			3146,
-			3149,
-			"NSM"
-		],
-		[
-			3157,
-			3158,
-			"NSM"
-		],
-		[
-			3170,
-			3171,
-			"NSM"
-		],
-		[
-			3192,
-			3198,
-			"ON"
-		],
-		[
-			3201,
-			3201,
-			"NSM"
-		],
-		[
-			3260,
-			3260,
-			"NSM"
-		],
-		[
-			3276,
-			3277,
-			"NSM"
-		],
-		[
-			3298,
-			3299,
-			"NSM"
-		],
-		[
-			3328,
-			3329,
-			"NSM"
-		],
-		[
-			3387,
-			3388,
-			"NSM"
-		],
-		[
-			3393,
-			3396,
-			"NSM"
-		],
-		[
-			3405,
-			3405,
-			"NSM"
-		],
-		[
-			3426,
-			3427,
-			"NSM"
-		],
-		[
-			3457,
-			3457,
-			"NSM"
-		],
-		[
-			3530,
-			3530,
-			"NSM"
-		],
-		[
-			3538,
-			3540,
-			"NSM"
-		],
-		[
-			3542,
-			3542,
-			"NSM"
-		],
-		[
-			3633,
-			3633,
-			"NSM"
-		],
-		[
-			3636,
-			3642,
-			"NSM"
-		],
-		[
-			3647,
-			3647,
-			"ET"
-		],
-		[
-			3655,
-			3662,
-			"NSM"
-		],
-		[
-			3761,
-			3761,
-			"NSM"
-		],
-		[
-			3764,
-			3772,
-			"NSM"
-		],
-		[
-			3784,
-			3790,
-			"NSM"
-		],
-		[
-			3864,
-			3865,
-			"NSM"
-		],
-		[
-			3893,
-			3893,
-			"NSM"
-		],
-		[
-			3895,
-			3895,
-			"NSM"
-		],
-		[
-			3897,
-			3897,
-			"NSM"
-		],
-		[
-			3898,
-			3901,
-			"ON"
-		],
-		[
-			3953,
-			3966,
-			"NSM"
-		],
-		[
-			3968,
-			3972,
-			"NSM"
-		],
-		[
-			3974,
-			3975,
-			"NSM"
-		],
-		[
-			3981,
-			3991,
-			"NSM"
-		],
-		[
-			3993,
-			4028,
-			"NSM"
-		],
-		[
-			4038,
-			4038,
-			"NSM"
-		],
-		[
-			4141,
-			4144,
-			"NSM"
-		],
-		[
-			4146,
-			4151,
-			"NSM"
-		],
-		[
-			4153,
-			4154,
-			"NSM"
-		],
-		[
-			4157,
-			4158,
-			"NSM"
-		],
-		[
-			4184,
-			4185,
-			"NSM"
-		],
-		[
-			4190,
-			4192,
-			"NSM"
-		],
-		[
-			4209,
-			4212,
-			"NSM"
-		],
-		[
-			4226,
-			4226,
-			"NSM"
-		],
-		[
-			4229,
-			4230,
-			"NSM"
-		],
-		[
-			4237,
-			4237,
-			"NSM"
-		],
-		[
-			4253,
-			4253,
-			"NSM"
-		],
-		[
-			4957,
-			4959,
-			"NSM"
-		],
-		[
-			5008,
-			5017,
-			"ON"
-		],
-		[
-			5120,
-			5120,
-			"ON"
-		],
-		[
-			5760,
-			5760,
-			"WS"
-		],
-		[
-			5787,
-			5788,
-			"ON"
-		],
-		[
-			5906,
-			5908,
-			"NSM"
-		],
-		[
-			5938,
-			5939,
-			"NSM"
-		],
-		[
-			5970,
-			5971,
-			"NSM"
-		],
-		[
-			6002,
-			6003,
-			"NSM"
-		],
-		[
-			6068,
-			6069,
-			"NSM"
-		],
-		[
-			6071,
-			6077,
-			"NSM"
-		],
-		[
-			6086,
-			6086,
-			"NSM"
-		],
-		[
-			6089,
-			6099,
-			"NSM"
-		],
-		[
-			6107,
-			6107,
-			"ET"
-		],
-		[
-			6109,
-			6109,
-			"NSM"
-		],
-		[
-			6128,
-			6137,
-			"ON"
-		],
-		[
-			6144,
-			6154,
-			"ON"
-		],
-		[
-			6155,
-			6157,
-			"NSM"
-		],
-		[
-			6158,
-			6158,
-			"BN"
-		],
-		[
-			6159,
-			6159,
-			"NSM"
-		],
-		[
-			6277,
-			6278,
-			"NSM"
-		],
-		[
-			6313,
-			6313,
-			"NSM"
-		],
-		[
-			6432,
-			6434,
-			"NSM"
-		],
-		[
-			6439,
-			6440,
-			"NSM"
-		],
-		[
-			6450,
-			6450,
-			"NSM"
-		],
-		[
-			6457,
-			6459,
-			"NSM"
-		],
-		[
-			6464,
-			6464,
-			"ON"
-		],
-		[
-			6468,
-			6469,
-			"ON"
-		],
-		[
-			6622,
-			6655,
-			"ON"
-		],
-		[
-			6679,
-			6680,
-			"NSM"
-		],
-		[
-			6683,
-			6683,
-			"NSM"
-		],
-		[
-			6742,
-			6742,
-			"NSM"
-		],
-		[
-			6744,
-			6750,
-			"NSM"
-		],
-		[
-			6752,
-			6752,
-			"NSM"
-		],
-		[
-			6754,
-			6754,
-			"NSM"
-		],
-		[
-			6757,
-			6764,
-			"NSM"
-		],
-		[
-			6771,
-			6780,
-			"NSM"
-		],
-		[
-			6783,
-			6783,
-			"NSM"
-		],
-		[
-			6832,
-			6877,
-			"NSM"
-		],
-		[
-			6880,
-			6891,
-			"NSM"
-		],
-		[
-			6912,
-			6915,
-			"NSM"
-		],
-		[
-			6964,
-			6964,
-			"NSM"
-		],
-		[
-			6966,
-			6970,
-			"NSM"
-		],
-		[
-			6972,
-			6972,
-			"NSM"
-		],
-		[
-			6978,
-			6978,
-			"NSM"
-		],
-		[
-			7019,
-			7027,
-			"NSM"
-		],
-		[
-			7040,
-			7041,
-			"NSM"
-		],
-		[
-			7074,
-			7077,
-			"NSM"
-		],
-		[
-			7080,
-			7081,
-			"NSM"
-		],
-		[
-			7083,
-			7085,
-			"NSM"
-		],
-		[
-			7142,
-			7142,
-			"NSM"
-		],
-		[
-			7144,
-			7145,
-			"NSM"
-		],
-		[
-			7149,
-			7149,
-			"NSM"
-		],
-		[
-			7151,
-			7153,
-			"NSM"
-		],
-		[
-			7212,
-			7219,
-			"NSM"
-		],
-		[
-			7222,
-			7223,
-			"NSM"
-		],
-		[
-			7376,
-			7378,
-			"NSM"
-		],
-		[
-			7380,
-			7392,
-			"NSM"
-		],
-		[
-			7394,
-			7400,
-			"NSM"
-		],
-		[
-			7405,
-			7405,
-			"NSM"
-		],
-		[
-			7412,
-			7412,
-			"NSM"
-		],
-		[
-			7416,
-			7417,
-			"NSM"
-		],
-		[
-			7616,
-			7679,
-			"NSM"
-		],
-		[
-			8125,
-			8125,
-			"ON"
-		],
-		[
-			8127,
-			8129,
-			"ON"
-		],
-		[
-			8141,
-			8143,
-			"ON"
-		],
-		[
-			8157,
-			8159,
-			"ON"
-		],
-		[
-			8173,
-			8175,
-			"ON"
-		],
-		[
-			8189,
-			8190,
-			"ON"
-		],
-		[
-			8192,
-			8202,
-			"WS"
-		],
-		[
-			8203,
-			8205,
-			"BN"
-		],
-		[
-			8207,
-			8207,
-			"R"
-		],
-		[
-			8208,
-			8231,
-			"ON"
-		],
-		[
-			8232,
-			8232,
-			"WS"
-		],
-		[
-			8233,
-			8233,
-			"B"
-		],
-		[
-			8234,
-			8238,
-			"BN"
-		],
-		[
-			8239,
-			8239,
-			"CS"
-		],
-		[
-			8240,
-			8244,
-			"ET"
-		],
-		[
-			8245,
-			8259,
-			"ON"
-		],
-		[
-			8260,
-			8260,
-			"CS"
-		],
-		[
-			8261,
-			8286,
-			"ON"
-		],
-		[
-			8287,
-			8287,
-			"WS"
-		],
-		[
-			8288,
-			8303,
-			"BN"
-		],
-		[
-			8304,
-			8304,
-			"EN"
-		],
-		[
-			8308,
-			8313,
-			"EN"
-		],
-		[
-			8314,
-			8315,
-			"ES"
-		],
-		[
-			8316,
-			8318,
-			"ON"
-		],
-		[
-			8320,
-			8329,
-			"EN"
-		],
-		[
-			8330,
-			8331,
-			"ES"
-		],
-		[
-			8332,
-			8334,
-			"ON"
-		],
-		[
-			8352,
-			8399,
-			"ET"
-		],
-		[
-			8400,
-			8432,
-			"NSM"
-		],
-		[
-			8448,
-			8449,
-			"ON"
-		],
-		[
-			8451,
-			8454,
-			"ON"
-		],
-		[
-			8456,
-			8457,
-			"ON"
-		],
-		[
-			8468,
-			8468,
-			"ON"
-		],
-		[
-			8470,
-			8472,
-			"ON"
-		],
-		[
-			8478,
-			8483,
-			"ON"
-		],
-		[
-			8485,
-			8485,
-			"ON"
-		],
-		[
-			8487,
-			8487,
-			"ON"
-		],
-		[
-			8489,
-			8489,
-			"ON"
-		],
-		[
-			8494,
-			8494,
-			"ET"
-		],
-		[
-			8506,
-			8507,
-			"ON"
-		],
-		[
-			8512,
-			8516,
-			"ON"
-		],
-		[
-			8522,
-			8525,
-			"ON"
-		],
-		[
-			8528,
-			8543,
-			"ON"
-		],
-		[
-			8585,
-			8587,
-			"ON"
-		],
-		[
-			8592,
-			8721,
-			"ON"
-		],
-		[
-			8722,
-			8722,
-			"ES"
-		],
-		[
-			8723,
-			8723,
-			"ET"
-		],
-		[
-			8724,
-			9013,
-			"ON"
-		],
-		[
-			9083,
-			9108,
-			"ON"
-		],
-		[
-			9110,
-			9257,
-			"ON"
-		],
-		[
-			9280,
-			9290,
-			"ON"
-		],
-		[
-			9312,
-			9351,
-			"ON"
-		],
-		[
-			9352,
-			9371,
-			"EN"
-		],
-		[
-			9450,
-			9899,
-			"ON"
-		],
-		[
-			9901,
-			10239,
-			"ON"
-		],
-		[
-			10496,
-			11123,
-			"ON"
-		],
-		[
-			11126,
-			11263,
-			"ON"
-		],
-		[
-			11493,
-			11498,
-			"ON"
-		],
-		[
-			11503,
-			11505,
-			"NSM"
-		],
-		[
-			11513,
-			11519,
-			"ON"
-		],
-		[
-			11647,
-			11647,
-			"NSM"
-		],
-		[
-			11744,
-			11775,
-			"NSM"
-		],
-		[
-			11776,
-			11869,
-			"ON"
-		],
-		[
-			11904,
-			11929,
-			"ON"
-		],
-		[
-			11931,
-			12019,
-			"ON"
-		],
-		[
-			12032,
-			12245,
-			"ON"
-		],
-		[
-			12272,
-			12287,
-			"ON"
-		],
-		[
-			12288,
-			12288,
-			"WS"
-		],
-		[
-			12289,
-			12292,
-			"ON"
-		],
-		[
-			12296,
-			12320,
-			"ON"
-		],
-		[
-			12330,
-			12333,
-			"NSM"
-		],
-		[
-			12336,
-			12336,
-			"ON"
-		],
-		[
-			12342,
-			12343,
-			"ON"
-		],
-		[
-			12349,
-			12351,
-			"ON"
-		],
-		[
-			12441,
-			12442,
-			"NSM"
-		],
-		[
-			12443,
-			12444,
-			"ON"
-		],
-		[
-			12448,
-			12448,
-			"ON"
-		],
-		[
-			12539,
-			12539,
-			"ON"
-		],
-		[
-			12736,
-			12773,
-			"ON"
-		],
-		[
-			12783,
-			12783,
-			"ON"
-		],
-		[
-			12829,
-			12830,
-			"ON"
-		],
-		[
-			12880,
-			12895,
-			"ON"
-		],
-		[
-			12924,
-			12926,
-			"ON"
-		],
-		[
-			12977,
-			12991,
-			"ON"
-		],
-		[
-			13004,
-			13007,
-			"ON"
-		],
-		[
-			13175,
-			13178,
-			"ON"
-		],
-		[
-			13278,
-			13279,
-			"ON"
-		],
-		[
-			13311,
-			13311,
-			"ON"
-		],
-		[
-			19904,
-			19967,
-			"ON"
-		],
-		[
-			42128,
-			42182,
-			"ON"
-		],
-		[
-			42509,
-			42511,
-			"ON"
-		],
-		[
-			42607,
-			42610,
-			"NSM"
-		],
-		[
-			42611,
-			42611,
-			"ON"
-		],
-		[
-			42612,
-			42621,
-			"NSM"
-		],
-		[
-			42622,
-			42623,
-			"ON"
-		],
-		[
-			42654,
-			42655,
-			"NSM"
-		],
-		[
-			42736,
-			42737,
-			"NSM"
-		],
-		[
-			42752,
-			42785,
-			"ON"
-		],
-		[
-			42888,
-			42888,
-			"ON"
-		],
-		[
-			43010,
-			43010,
-			"NSM"
-		],
-		[
-			43014,
-			43014,
-			"NSM"
-		],
-		[
-			43019,
-			43019,
-			"NSM"
-		],
-		[
-			43045,
-			43046,
-			"NSM"
-		],
-		[
-			43048,
-			43051,
-			"ON"
-		],
-		[
-			43052,
-			43052,
-			"NSM"
-		],
-		[
-			43064,
-			43065,
-			"ET"
-		],
-		[
-			43124,
-			43127,
-			"ON"
-		],
-		[
-			43204,
-			43205,
-			"NSM"
-		],
-		[
-			43232,
-			43249,
-			"NSM"
-		],
-		[
-			43263,
-			43263,
-			"NSM"
-		],
-		[
-			43302,
-			43309,
-			"NSM"
-		],
-		[
-			43335,
-			43345,
-			"NSM"
-		],
-		[
-			43392,
-			43394,
-			"NSM"
-		],
-		[
-			43443,
-			43443,
-			"NSM"
-		],
-		[
-			43446,
-			43449,
-			"NSM"
-		],
-		[
-			43452,
-			43453,
-			"NSM"
-		],
-		[
-			43493,
-			43493,
-			"NSM"
-		],
-		[
-			43561,
-			43566,
-			"NSM"
-		],
-		[
-			43569,
-			43570,
-			"NSM"
-		],
-		[
-			43573,
-			43574,
-			"NSM"
-		],
-		[
-			43587,
-			43587,
-			"NSM"
-		],
-		[
-			43596,
-			43596,
-			"NSM"
-		],
-		[
-			43644,
-			43644,
-			"NSM"
-		],
-		[
-			43696,
-			43696,
-			"NSM"
-		],
-		[
-			43698,
-			43700,
-			"NSM"
-		],
-		[
-			43703,
-			43704,
-			"NSM"
-		],
-		[
-			43710,
-			43711,
-			"NSM"
-		],
-		[
-			43713,
-			43713,
-			"NSM"
-		],
-		[
-			43756,
-			43757,
-			"NSM"
-		],
-		[
-			43766,
-			43766,
-			"NSM"
-		],
-		[
-			43882,
-			43883,
-			"ON"
-		],
-		[
-			44005,
-			44005,
-			"NSM"
-		],
-		[
-			44008,
-			44008,
-			"NSM"
-		],
-		[
-			44013,
-			44013,
-			"NSM"
-		],
-		[
-			64285,
-			64285,
-			"R"
-		],
-		[
-			64286,
-			64286,
-			"NSM"
-		],
-		[
-			64287,
-			64296,
-			"R"
-		],
-		[
-			64297,
-			64297,
-			"ES"
-		],
-		[
-			64298,
-			64335,
-			"R"
-		],
-		[
-			64336,
-			64450,
-			"AL"
-		],
-		[
-			64451,
-			64466,
-			"ON"
-		],
-		[
-			64467,
-			64829,
-			"AL"
-		],
-		[
-			64830,
-			64847,
-			"ON"
-		],
-		[
-			64848,
-			64911,
-			"AL"
-		],
-		[
-			64912,
-			64913,
-			"ON"
-		],
-		[
-			64914,
-			64967,
-			"AL"
-		],
-		[
-			64968,
-			64975,
-			"ON"
-		],
-		[
-			64976,
-			65007,
-			"BN"
-		],
-		[
-			65008,
-			65020,
-			"AL"
-		],
-		[
-			65021,
-			65023,
-			"ON"
-		],
-		[
-			65024,
-			65039,
-			"NSM"
-		],
-		[
-			65040,
-			65049,
-			"ON"
-		],
-		[
-			65056,
-			65071,
-			"NSM"
-		],
-		[
-			65072,
-			65103,
-			"ON"
-		],
-		[
-			65104,
-			65104,
-			"CS"
-		],
-		[
-			65105,
-			65105,
-			"ON"
-		],
-		[
-			65106,
-			65106,
-			"CS"
-		],
-		[
-			65108,
-			65108,
-			"ON"
-		],
-		[
-			65109,
-			65109,
-			"CS"
-		],
-		[
-			65110,
-			65118,
-			"ON"
-		],
-		[
-			65119,
-			65119,
-			"ET"
-		],
-		[
-			65120,
-			65121,
-			"ON"
-		],
-		[
-			65122,
-			65123,
-			"ES"
-		],
-		[
-			65124,
-			65126,
-			"ON"
-		],
-		[
-			65128,
-			65128,
-			"ON"
-		],
-		[
-			65129,
-			65130,
-			"ET"
-		],
-		[
-			65131,
-			65131,
-			"ON"
-		],
-		[
-			65136,
-			65278,
-			"AL"
-		],
-		[
-			65279,
-			65279,
-			"BN"
-		],
-		[
-			65281,
-			65282,
-			"ON"
-		],
-		[
-			65283,
-			65285,
-			"ET"
-		],
-		[
-			65286,
-			65290,
-			"ON"
-		],
-		[
-			65291,
-			65291,
-			"ES"
-		],
-		[
-			65292,
-			65292,
-			"CS"
-		],
-		[
-			65293,
-			65293,
-			"ES"
-		],
-		[
-			65294,
-			65295,
-			"CS"
-		],
-		[
-			65296,
-			65305,
-			"EN"
-		],
-		[
-			65306,
-			65306,
-			"CS"
-		],
-		[
-			65307,
-			65312,
-			"ON"
-		],
-		[
-			65339,
-			65344,
-			"ON"
-		],
-		[
-			65371,
-			65381,
-			"ON"
-		],
-		[
-			65504,
-			65505,
-			"ET"
-		],
-		[
-			65506,
-			65508,
-			"ON"
-		],
-		[
-			65509,
-			65510,
-			"ET"
-		],
-		[
-			65512,
-			65518,
-			"ON"
-		],
-		[
-			65520,
-			65528,
-			"BN"
-		],
-		[
-			65529,
-			65533,
-			"ON"
-		],
-		[
-			65534,
-			65535,
-			"BN"
-		],
-		[
-			65793,
-			65793,
-			"ON"
-		],
-		[
-			65856,
-			65932,
-			"ON"
-		],
-		[
-			65936,
-			65948,
-			"ON"
-		],
-		[
-			65952,
-			65952,
-			"ON"
-		],
-		[
-			66045,
-			66045,
-			"NSM"
-		],
-		[
-			66272,
-			66272,
-			"NSM"
-		],
-		[
-			66273,
-			66299,
-			"EN"
-		],
-		[
-			66422,
-			66426,
-			"NSM"
-		],
-		[
-			67584,
-			67870,
-			"R"
-		],
-		[
-			67871,
-			67871,
-			"ON"
-		],
-		[
-			67872,
-			68096,
-			"R"
-		],
-		[
-			68097,
-			68099,
-			"NSM"
-		],
-		[
-			68100,
-			68100,
-			"R"
-		],
-		[
-			68101,
-			68102,
-			"NSM"
-		],
-		[
-			68103,
-			68107,
-			"R"
-		],
-		[
-			68108,
-			68111,
-			"NSM"
-		],
-		[
-			68112,
-			68151,
-			"R"
-		],
-		[
-			68152,
-			68154,
-			"NSM"
-		],
-		[
-			68155,
-			68158,
-			"R"
-		],
-		[
-			68159,
-			68159,
-			"NSM"
-		],
-		[
-			68160,
-			68324,
-			"R"
-		],
-		[
-			68325,
-			68326,
-			"NSM"
-		],
-		[
-			68327,
-			68408,
-			"R"
-		],
-		[
-			68409,
-			68415,
-			"ON"
-		],
-		[
-			68416,
-			68863,
-			"R"
-		],
-		[
-			68864,
-			68899,
-			"AL"
-		],
-		[
-			68900,
-			68903,
-			"NSM"
-		],
-		[
-			68904,
-			68911,
-			"AL"
-		],
-		[
-			68912,
-			68921,
-			"AN"
-		],
-		[
-			68922,
-			68927,
-			"AL"
-		],
-		[
-			68928,
-			68937,
-			"AN"
-		],
-		[
-			68938,
-			68968,
-			"R"
-		],
-		[
-			68969,
-			68973,
-			"NSM"
-		],
-		[
-			68974,
-			68974,
-			"ON"
-		],
-		[
-			68975,
-			69215,
-			"R"
-		],
-		[
-			69216,
-			69246,
-			"AN"
-		],
-		[
-			69247,
-			69290,
-			"R"
-		],
-		[
-			69291,
-			69292,
-			"NSM"
-		],
-		[
-			69293,
-			69311,
-			"R"
-		],
-		[
-			69312,
-			69327,
-			"AL"
-		],
-		[
-			69328,
-			69336,
-			"ON"
-		],
-		[
-			69337,
-			69369,
-			"AL"
-		],
-		[
-			69370,
-			69375,
-			"NSM"
-		],
-		[
-			69376,
-			69423,
-			"R"
-		],
-		[
-			69424,
-			69445,
-			"AL"
-		],
-		[
-			69446,
-			69456,
-			"NSM"
-		],
-		[
-			69457,
-			69487,
-			"AL"
-		],
-		[
-			69488,
-			69505,
-			"R"
-		],
-		[
-			69506,
-			69509,
-			"NSM"
-		],
-		[
-			69510,
-			69631,
-			"R"
-		],
-		[
-			69633,
-			69633,
-			"NSM"
-		],
-		[
-			69688,
-			69702,
-			"NSM"
-		],
-		[
-			69714,
-			69733,
-			"ON"
-		],
-		[
-			69744,
-			69744,
-			"NSM"
-		],
-		[
-			69747,
-			69748,
-			"NSM"
-		],
-		[
-			69759,
-			69761,
-			"NSM"
-		],
-		[
-			69811,
-			69814,
-			"NSM"
-		],
-		[
-			69817,
-			69818,
-			"NSM"
-		],
-		[
-			69826,
-			69826,
-			"NSM"
-		],
-		[
-			69888,
-			69890,
-			"NSM"
-		],
-		[
-			69927,
-			69931,
-			"NSM"
-		],
-		[
-			69933,
-			69940,
-			"NSM"
-		],
-		[
-			70003,
-			70003,
-			"NSM"
-		],
-		[
-			70016,
-			70017,
-			"NSM"
-		],
-		[
-			70070,
-			70078,
-			"NSM"
-		],
-		[
-			70089,
-			70092,
-			"NSM"
-		],
-		[
-			70095,
-			70095,
-			"NSM"
-		],
-		[
-			70191,
-			70193,
-			"NSM"
-		],
-		[
-			70196,
-			70196,
-			"NSM"
-		],
-		[
-			70198,
-			70199,
-			"NSM"
-		],
-		[
-			70206,
-			70206,
-			"NSM"
-		],
-		[
-			70209,
-			70209,
-			"NSM"
-		],
-		[
-			70367,
-			70367,
-			"NSM"
-		],
-		[
-			70371,
-			70378,
-			"NSM"
-		],
-		[
-			70400,
-			70401,
-			"NSM"
-		],
-		[
-			70459,
-			70460,
-			"NSM"
-		],
-		[
-			70464,
-			70464,
-			"NSM"
-		],
-		[
-			70502,
-			70508,
-			"NSM"
-		],
-		[
-			70512,
-			70516,
-			"NSM"
-		],
-		[
-			70587,
-			70592,
-			"NSM"
-		],
-		[
-			70606,
-			70606,
-			"NSM"
-		],
-		[
-			70608,
-			70608,
-			"NSM"
-		],
-		[
-			70610,
-			70610,
-			"NSM"
-		],
-		[
-			70625,
-			70626,
-			"NSM"
-		],
-		[
-			70712,
-			70719,
-			"NSM"
-		],
-		[
-			70722,
-			70724,
-			"NSM"
-		],
-		[
-			70726,
-			70726,
-			"NSM"
-		],
-		[
-			70750,
-			70750,
-			"NSM"
-		],
-		[
-			70835,
-			70840,
-			"NSM"
-		],
-		[
-			70842,
-			70842,
-			"NSM"
-		],
-		[
-			70847,
-			70848,
-			"NSM"
-		],
-		[
-			70850,
-			70851,
-			"NSM"
-		],
-		[
-			71090,
-			71093,
-			"NSM"
-		],
-		[
-			71100,
-			71101,
-			"NSM"
-		],
-		[
-			71103,
-			71104,
-			"NSM"
-		],
-		[
-			71132,
-			71133,
-			"NSM"
-		],
-		[
-			71219,
-			71226,
-			"NSM"
-		],
-		[
-			71229,
-			71229,
-			"NSM"
-		],
-		[
-			71231,
-			71232,
-			"NSM"
-		],
-		[
-			71264,
-			71276,
-			"ON"
-		],
-		[
-			71339,
-			71339,
-			"NSM"
-		],
-		[
-			71341,
-			71341,
-			"NSM"
-		],
-		[
-			71344,
-			71349,
-			"NSM"
-		],
-		[
-			71351,
-			71351,
-			"NSM"
-		],
-		[
-			71453,
-			71453,
-			"NSM"
-		],
-		[
-			71455,
-			71455,
-			"NSM"
-		],
-		[
-			71458,
-			71461,
-			"NSM"
-		],
-		[
-			71463,
-			71467,
-			"NSM"
-		],
-		[
-			71727,
-			71735,
-			"NSM"
-		],
-		[
-			71737,
-			71738,
-			"NSM"
-		],
-		[
-			71995,
-			71996,
-			"NSM"
-		],
-		[
-			71998,
-			71998,
-			"NSM"
-		],
-		[
-			72003,
-			72003,
-			"NSM"
-		],
-		[
-			72148,
-			72151,
-			"NSM"
-		],
-		[
-			72154,
-			72155,
-			"NSM"
-		],
-		[
-			72160,
-			72160,
-			"NSM"
-		],
-		[
-			72193,
-			72198,
-			"NSM"
-		],
-		[
-			72201,
-			72202,
-			"NSM"
-		],
-		[
-			72243,
-			72248,
-			"NSM"
-		],
-		[
-			72251,
-			72254,
-			"NSM"
-		],
-		[
-			72263,
-			72263,
-			"NSM"
-		],
-		[
-			72273,
-			72278,
-			"NSM"
-		],
-		[
-			72281,
-			72283,
-			"NSM"
-		],
-		[
-			72330,
-			72342,
-			"NSM"
-		],
-		[
-			72344,
-			72345,
-			"NSM"
-		],
-		[
-			72544,
-			72544,
-			"NSM"
-		],
-		[
-			72546,
-			72548,
-			"NSM"
-		],
-		[
-			72550,
-			72550,
-			"NSM"
-		],
-		[
-			72752,
-			72758,
-			"NSM"
-		],
-		[
-			72760,
-			72765,
-			"NSM"
-		],
-		[
-			72850,
-			72871,
-			"NSM"
-		],
-		[
-			72874,
-			72880,
-			"NSM"
-		],
-		[
-			72882,
-			72883,
-			"NSM"
-		],
-		[
-			72885,
-			72886,
-			"NSM"
-		],
-		[
-			73009,
-			73014,
-			"NSM"
-		],
-		[
-			73018,
-			73018,
-			"NSM"
-		],
-		[
-			73020,
-			73021,
-			"NSM"
-		],
-		[
-			73023,
-			73029,
-			"NSM"
-		],
-		[
-			73031,
-			73031,
-			"NSM"
-		],
-		[
-			73104,
-			73105,
-			"NSM"
-		],
-		[
-			73109,
-			73109,
-			"NSM"
-		],
-		[
-			73111,
-			73111,
-			"NSM"
-		],
-		[
-			73459,
-			73460,
-			"NSM"
-		],
-		[
-			73472,
-			73473,
-			"NSM"
-		],
-		[
-			73526,
-			73530,
-			"NSM"
-		],
-		[
-			73536,
-			73536,
-			"NSM"
-		],
-		[
-			73538,
-			73538,
-			"NSM"
-		],
-		[
-			73562,
-			73562,
-			"NSM"
-		],
-		[
-			73685,
-			73692,
-			"ON"
-		],
-		[
-			73693,
-			73696,
-			"ET"
-		],
-		[
-			73697,
-			73713,
-			"ON"
-		],
-		[
-			78912,
-			78912,
-			"NSM"
-		],
-		[
-			78919,
-			78933,
-			"NSM"
-		],
-		[
-			90398,
-			90409,
-			"NSM"
-		],
-		[
-			90413,
-			90415,
-			"NSM"
-		],
-		[
-			92912,
-			92916,
-			"NSM"
-		],
-		[
-			92976,
-			92982,
-			"NSM"
-		],
-		[
-			94031,
-			94031,
-			"NSM"
-		],
-		[
-			94095,
-			94098,
-			"NSM"
-		],
-		[
-			94178,
-			94178,
-			"ON"
-		],
-		[
-			94180,
-			94180,
-			"NSM"
-		],
-		[
-			113821,
-			113822,
-			"NSM"
-		],
-		[
-			113824,
-			113827,
-			"BN"
-		],
-		[
-			117760,
-			117973,
-			"ON"
-		],
-		[
-			118e3,
-			118009,
-			"EN"
-		],
-		[
-			118010,
-			118012,
-			"ON"
-		],
-		[
-			118016,
-			118451,
-			"ON"
-		],
-		[
-			118458,
-			118480,
-			"ON"
-		],
-		[
-			118496,
-			118512,
-			"ON"
-		],
-		[
-			118528,
-			118573,
-			"NSM"
-		],
-		[
-			118576,
-			118598,
-			"NSM"
-		],
-		[
-			119143,
-			119145,
-			"NSM"
-		],
-		[
-			119155,
-			119162,
-			"BN"
-		],
-		[
-			119163,
-			119170,
-			"NSM"
-		],
-		[
-			119173,
-			119179,
-			"NSM"
-		],
-		[
-			119210,
-			119213,
-			"NSM"
-		],
-		[
-			119273,
-			119274,
-			"ON"
-		],
-		[
-			119296,
-			119361,
-			"ON"
-		],
-		[
-			119362,
-			119364,
-			"NSM"
-		],
-		[
-			119365,
-			119365,
-			"ON"
-		],
-		[
-			119552,
-			119638,
-			"ON"
-		],
-		[
-			120513,
-			120513,
-			"ON"
-		],
-		[
-			120539,
-			120539,
-			"ON"
-		],
-		[
-			120571,
-			120571,
-			"ON"
-		],
-		[
-			120597,
-			120597,
-			"ON"
-		],
-		[
-			120629,
-			120629,
-			"ON"
-		],
-		[
-			120655,
-			120655,
-			"ON"
-		],
-		[
-			120687,
-			120687,
-			"ON"
-		],
-		[
-			120713,
-			120713,
-			"ON"
-		],
-		[
-			120745,
-			120745,
-			"ON"
-		],
-		[
-			120771,
-			120771,
-			"ON"
-		],
-		[
-			120782,
-			120831,
-			"EN"
-		],
-		[
-			121344,
-			121398,
-			"NSM"
-		],
-		[
-			121403,
-			121452,
-			"NSM"
-		],
-		[
-			121461,
-			121461,
-			"NSM"
-		],
-		[
-			121476,
-			121476,
-			"NSM"
-		],
-		[
-			121499,
-			121503,
-			"NSM"
-		],
-		[
-			121505,
-			121519,
-			"NSM"
-		],
-		[
-			122880,
-			122886,
-			"NSM"
-		],
-		[
-			122888,
-			122904,
-			"NSM"
-		],
-		[
-			122907,
-			122913,
-			"NSM"
-		],
-		[
-			122915,
-			122916,
-			"NSM"
-		],
-		[
-			122918,
-			122922,
-			"NSM"
-		],
-		[
-			123023,
-			123023,
-			"NSM"
-		],
-		[
-			123184,
-			123190,
-			"NSM"
-		],
-		[
-			123566,
-			123566,
-			"NSM"
-		],
-		[
-			123628,
-			123631,
-			"NSM"
-		],
-		[
-			123647,
-			123647,
-			"ET"
-		],
-		[
-			124140,
-			124143,
-			"NSM"
-		],
-		[
-			124398,
-			124399,
-			"NSM"
-		],
-		[
-			124643,
-			124643,
-			"NSM"
-		],
-		[
-			124646,
-			124646,
-			"NSM"
-		],
-		[
-			124654,
-			124655,
-			"NSM"
-		],
-		[
-			124661,
-			124661,
-			"NSM"
-		],
-		[
-			124928,
-			125135,
-			"R"
-		],
-		[
-			125136,
-			125142,
-			"NSM"
-		],
-		[
-			125143,
-			125251,
-			"R"
-		],
-		[
-			125252,
-			125258,
-			"NSM"
-		],
-		[
-			125259,
-			126063,
-			"R"
-		],
-		[
-			126064,
-			126143,
-			"AL"
-		],
-		[
-			126144,
-			126207,
-			"R"
-		],
-		[
-			126208,
-			126287,
-			"AL"
-		],
-		[
-			126288,
-			126463,
-			"R"
-		],
-		[
-			126464,
-			126703,
-			"AL"
-		],
-		[
-			126704,
-			126705,
-			"ON"
-		],
-		[
-			126706,
-			126719,
-			"AL"
-		],
-		[
-			126720,
-			126975,
-			"R"
-		],
-		[
-			126976,
-			127019,
-			"ON"
-		],
-		[
-			127024,
-			127123,
-			"ON"
-		],
-		[
-			127136,
-			127150,
-			"ON"
-		],
-		[
-			127153,
-			127167,
-			"ON"
-		],
-		[
-			127169,
-			127183,
-			"ON"
-		],
-		[
-			127185,
-			127221,
-			"ON"
-		],
-		[
-			127232,
-			127242,
-			"EN"
-		],
-		[
-			127243,
-			127247,
-			"ON"
-		],
-		[
-			127279,
-			127279,
-			"ON"
-		],
-		[
-			127338,
-			127343,
-			"ON"
-		],
-		[
-			127405,
-			127405,
-			"ON"
-		],
-		[
-			127584,
-			127589,
-			"ON"
-		],
-		[
-			127744,
-			128728,
-			"ON"
-		],
-		[
-			128732,
-			128748,
-			"ON"
-		],
-		[
-			128752,
-			128764,
-			"ON"
-		],
-		[
-			128768,
-			128985,
-			"ON"
-		],
-		[
-			128992,
-			129003,
-			"ON"
-		],
-		[
-			129008,
-			129008,
-			"ON"
-		],
-		[
-			129024,
-			129035,
-			"ON"
-		],
-		[
-			129040,
-			129095,
-			"ON"
-		],
-		[
-			129104,
-			129113,
-			"ON"
-		],
-		[
-			129120,
-			129159,
-			"ON"
-		],
-		[
-			129168,
-			129197,
-			"ON"
-		],
-		[
-			129200,
-			129211,
-			"ON"
-		],
-		[
-			129216,
-			129217,
-			"ON"
-		],
-		[
-			129232,
-			129240,
-			"ON"
-		],
-		[
-			129280,
-			129623,
-			"ON"
-		],
-		[
-			129632,
-			129645,
-			"ON"
-		],
-		[
-			129648,
-			129660,
-			"ON"
-		],
-		[
-			129664,
-			129674,
-			"ON"
-		],
-		[
-			129678,
-			129734,
-			"ON"
-		],
-		[
-			129736,
-			129736,
-			"ON"
-		],
-		[
-			129741,
-			129756,
-			"ON"
-		],
-		[
-			129759,
-			129770,
-			"ON"
-		],
-		[
-			129775,
-			129784,
-			"ON"
-		],
-		[
-			129792,
-			129938,
-			"ON"
-		],
-		[
-			129940,
-			130031,
-			"ON"
-		],
-		[
-			130032,
-			130041,
-			"EN"
-		],
-		[
-			130042,
-			130042,
-			"ON"
-		],
-		[
-			131070,
-			131071,
-			"BN"
-		],
-		[
-			196606,
-			196607,
-			"BN"
-		],
-		[
-			262142,
-			262143,
-			"BN"
-		],
-		[
-			327678,
-			327679,
-			"BN"
-		],
-		[
-			393214,
-			393215,
-			"BN"
-		],
-		[
-			458750,
-			458751,
-			"BN"
-		],
-		[
-			524286,
-			524287,
-			"BN"
-		],
-		[
-			589822,
-			589823,
-			"BN"
-		],
-		[
-			655358,
-			655359,
-			"BN"
-		],
-		[
-			720894,
-			720895,
-			"BN"
-		],
-		[
-			786430,
-			786431,
-			"BN"
-		],
-		[
-			851966,
-			851967,
-			"BN"
-		],
-		[
-			917502,
-			917759,
-			"BN"
-		],
-		[
-			917760,
-			917999,
-			"NSM"
-		],
-		[
-			918e3,
-			921599,
-			"BN"
-		],
-		[
-			983038,
-			983039,
-			"BN"
-		],
-		[
-			1048574,
-			1048575,
-			"BN"
-		],
-		[
-			1114110,
-			1114111,
-			"BN"
+	var ruleTables = {
+		"chromium/line_normal": [
+			65,
+			63,
+			11,
+			365,
+			null,
+			"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"
+		],
+		"chromium/line_normal_cj": [
+			66,
+			64,
+			11,
+			367,
+			null,
+			"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"
+		],
+		"apple/line_normal": [
+			65,
+			63,
+			11,
+			365,
+			"chromium/line_normal",
+			"BgACOAAAKicAAjgAACoLAAI4AAAqDgACOAAAKi0AAjh2APMBAQACOAAAKhtnARumAVq2AQEAAw=="
+		],
+		"apple/line": [
+			65,
+			63,
+			11,
+			365,
+			"apple/line_normal",
+			""
+		],
+		"apple/line_cj": [
+			65,
+			63,
+			11,
+			365,
+			"apple/line_normal",
+			""
+		],
+		"chromium/char": [
+			21,
+			21,
+			3,
+			16,
+			null,
+			"AQASBgIAAgADAAQABQAEAAYABAAHAAQACAAJAAoABAAEAAkACgALAAABAAEAAQEHAgACBQsEAQQBBAMEAAQAAQQLBQMFAwUADAAFBAABBQAAAAAAAAMDCwcDDQQHAAQEEAgACQMJAAoABQIRCQAKAAEBEQAABwEXDgAIAQoFAAYDCw0CBwUNAAMCAQIVDwAAAQAC"
+		],
+		"apple/char": [
+			21,
+			21,
+			3,
+			16,
+			"chromium/char",
+			""
 		]
+	};
+	var blinkLinePairsPacked = "5DAIgAAACAAAAAQDBAYA/+v/+/8CAQF/DBwACAEADhwCCAAUAQQfgAlAFDgAGBwAGFQAJAEANHAAKDgACBwM9hYAuP///+////9vACsAJDgADAEACIgDAA4eABiYAgDmARwANKQDAChUACQcBLyW/7kH+AMAoQLAAwDqAxwBAFm4BwCeBhwAFYAHAYAY9BMAGpAUAK4BmAIB/xYBAX/wBYwIABgBAZgC5gcBDBCMDwBQHAC2AbQCAAeIGAGGBYgYAScM3AoANIwBAH7QAgEA2wH0BQDAAXAAlg0cAA==";
+	var webkitLinePairsPacked = "5DAIgAAACAAAAAQDBAYA/+v/+/8CAQF/DBwACAEADhwCCAAUAQQfgAlAFDgAGBwAGFQAJAEANHAAKDgACBwE/1cA/gTAAgAAKwQfgAnAAxAB/xg4AAwBAAiIAwAOHgAYmAIA5gEcADSkAwAoVAAkHAy8lv+5////7////2+kAsADAOoDHAEAWbgHAJ4GHAAVgAcBgBj0EwAakBQArgGYAgH/FgEBf/AFjAgAGAEBmALmBwEMEIwPAFAcALYBtAIAB4gYAYYFiBgBJwzcCgA0jAEAftACAQDbAfQFAMABcACWDRwA";
+	var appleQuoteRemaps = {
+		"": [
+			8220,
+			0,
+			8221,
+			1,
+			8216,
+			0
+		],
+		"agq": [8221, 1],
+		"am": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"ar": [],
+		"ast": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"bas": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"be": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"bg": [
+			8221,
+			1,
+			8221,
+			1
+		],
+		"blo": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"bm": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"br": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"bs": [
+			8221,
+			1,
+			8216,
+			0
+		],
+		"bua": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"ca": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"cs": [8221, 1],
+		"cv": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"da": [],
+		"de": [8221, 1],
+		"dsb": [8221, 1],
+		"dua": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"dyo": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"el": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"eo": [
+			8220,
+			0,
+			8221,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"et": [8221, 1],
+		"eu": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ewo": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"fa": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"ff": [8221, 1],
+		"fi": [],
+		"fr": [
+			171,
+			0,
+			187,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"fur": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"gsw": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"he": [],
+		"hr": [8221, 1],
+		"hsb": [8221, 1],
+		"hu": [
+			8221,
+			1,
+			187,
+			0,
+			171,
+			1
+		],
+		"hy": [
+			171,
+			0,
+			187,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"ia": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ie": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"is": [8221, 1],
+		"it": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ja": [],
+		"jgo": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"ka": [
+			8221,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"kab": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"kk": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"kkj": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"ksf": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"ksh": [8221, 1],
+		"ky": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"lag": [],
+		"lb": [8221, 1],
+		"lij": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"lt": [
+			8221,
+			1,
+			8221,
+			1
+		],
+		"luy": [8221, 1],
+		"mg": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"mk": [8221, 1],
+		"mua": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"mzn": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"nb": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"nds": [8221, 1],
+		"nl": [
+			8216,
+			0,
+			8216,
+			0
+		],
+		"nmg": [
+			8221,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"nn": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"nnh": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"no": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"oc": [
+			171,
+			0,
+			187,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"os": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"pl": [
+			8221,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"pms": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"prg": [
+			8221,
+			1,
+			8221,
+			1
+		],
+		"rm": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"rn": [],
+		"ro": [
+			8221,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"ru": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"rw": [
+			171,
+			0,
+			187,
+			1,
+			8216,
+			0
+		],
+		"sah": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"sc": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"se": [],
+		"sg": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"shi": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"sk": [8221, 1],
+		"sl": [8221, 1],
+		"sn": [],
+		"sr": [8221, 1],
+		"ss": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"st": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"sv": [],
+		"syr": [],
+		"szl": [
+			8221,
+			1,
+			187,
+			0,
+			171,
+			1
+		],
+		"ti": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"tk": [
+			8220,
+			0,
+			8221,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"tn": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ts": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"tyv": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"ug": [
+			187,
+			0,
+			171,
+			1,
+			8250,
+			0,
+			8249,
+			1
+		],
+		"uk": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"ur": [],
+		"uz": [
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ve": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"wae": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"yav": [
+			171,
+			0,
+			187,
+			1,
+			171,
+			0,
+			187,
+			1
+		],
+		"yi": [],
+		"yue": [],
+		"zgh": [
+			171,
+			0,
+			187,
+			1,
+			8221,
+			1
+		],
+		"az_Cyrl": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"bs_Cyrl": [8221, 1],
+		"ff_Adlm": [
+			8220,
+			0,
+			8221,
+			1,
+			8216,
+			0
+		],
+		"fr_CA": [
+			171,
+			0,
+			187,
+			1
+		],
+		"fr_CH": [
+			171,
+			0,
+			187,
+			1,
+			8249,
+			0,
+			8250,
+			1
+		],
+		"kk_Arab": [
+			187,
+			0,
+			171,
+			1,
+			8250,
+			0,
+			8249,
+			1
+		],
+		"ms_Arab": [],
+		"pt_AO": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_CH": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_CV": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_FR": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_GQ": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_GW": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_LU": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_MO": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_MZ": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_PT": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_ST": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"pt_TL": [
+			171,
+			0,
+			187,
+			1,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"ti_ER": [
+			8216,
+			0,
+			8220,
+			0,
+			8221,
+			1
+		],
+		"uz_Arab": [
+			8220,
+			0,
+			8221,
+			1,
+			8216,
+			0
+		],
+		"uz_Cyrl": [
+			8220,
+			0,
+			8221,
+			1,
+			8216,
+			0
+		],
+		"zh_Hant": []
+	};
+	var geckoLineBreakStatesPacked = "kCQB/QMBAf8AAgABAwABBAH9BQgAAQYB/QQKAAEEAf0EEwAHPQH/DkQB/wdEAf8BBQT///8qBEgADEQC/T8BAgAgiAEBKgEPAT5SiAEE/z//QA6IAQAWRAL/Pg/MAQH/BgIAIMwBABDUAgBAkAIABCEAIkQBPBKIAQAOoAQB/SvMAQH/BgEACAwAEQEBKhIXAf1KAQH/BKwEAAa+AQH9Bw0D/f+yFpgDACawBgA6RAAE5AQC/TtV9AYAIEQABYgBAv87ErgHAB3qAgAnLAAEiAEB/xGQAgBA1AIAPkQAJewFADQBABuIAQAEJAA4zAEB/yKQAgADoAQBPQugBAE9KdgLAB3ACAH/RLAGACpEAf9xoAQAIvQGAAREACbUAgABiwMAAiwAZqAEAEeoBQCEAQEAXdwDABuwBgArrAgBNxDACABARAAgzAEAArwBADrgDAAtRAAVswoAWkQAQNgLAAoPASs/RAEsHDABOC7gDAAL7AUBQVj0FwAOkBMB/RGQEwP9Of0qhAkB/07gDABeRAAoiQQAFagWAEyYAwAPxBMACzABNRIlAGmMCgErQ4wKABGwBgH+BQEB/wADAf8ABgH/BhIABg0C/v8EHAT//v/+CAEASZgUAf0LzBIABrAGAAUPArH9FLgYAAfxBgAb9AYAAEQBPFbQGwACVwA4sAYB/iwBAf8OEwATogIB/xAOASoFtwIAVsAIAHwBAA==";
+	function getBreakLanguage(tag) {
+		if (tag === null || tag.length < 2) return "root";
+		if (tag.length > 2 && tag.charCodeAt(2) !== 45 && tag.charCodeAt(2) !== 95) return "root";
+		const first = tag.charCodeAt(0) | 32;
+		const second = tag.charCodeAt(1) | 32;
+		if (first === 106 && second === 97) return "ja";
+		if (first === 107 && second === 111) return "ko";
+		if (first === 122 && second === 104) return "zh";
+		return "root";
+	}
+	function unpackTable(packed) {
+		const input = atob(packed);
+		let at = 0;
+		const varint = () => {
+			let value = 0;
+			let scale = 1;
+			let byte;
+			do {
+				byte = input.charCodeAt(at++);
+				value += (byte & 127) * scale;
+				scale *= 128;
+			} while (byte >= 128);
+			return value;
+		};
+		const bytes = new Uint8Array(varint());
+		let out = 0;
+		while (at < input.length) {
+			for (let n = varint(); n > 0; n--) bytes[out++] = input.charCodeAt(at++);
+			if (at >= input.length) break;
+			const length = varint() + 4;
+			const from = out - varint();
+			if (from + length <= out) bytes.copyWithin(out, from, from + length);
+			else for (let k = 0; k < length; k++) bytes[out + k] = bytes[from + k];
+			out += length;
+		}
+		if (out !== bytes.length) throw new Error("A packed table unpacked to the wrong length");
+		return bytes;
+	}
+	function unpackVarints(base64) {
+		const input = atob(base64);
+		const values = new Int32Array(input.length);
+		let count = 0;
+		for (let i = 0; i < input.length;) {
+			let byte = input.charCodeAt(i++);
+			let value = byte & 127;
+			for (let shift = 7; byte >= 128; shift += 7) {
+				byte = input.charCodeAt(i++);
+				value |= (byte & 127) << shift;
+			}
+			values[count++] = value;
+		}
+		return values.subarray(0, count);
+	}
+	function getClass(table, c) {
+		return table.values[table.index[c >> 8] << 8 | c & 255];
+	}
+	function unpackClassRuns(runs, remap, blocks) {
+		const index = /* @__PURE__ */ new Uint16Array(4352);
+		const values = new Uint8Array(blocks << 8);
+		const whole = (/* @__PURE__ */ new Int32Array(256)).fill(-1);
+		let count = 0;
+		let c = 0;
+		let end = 0;
+		let value = -1;
+		for (let r = 0; r <= runs.length; r += 2) {
+			const following = r < runs.length ? remap[runs[r + 1]] : -1;
+			if (following !== value) {
+				while (c < end) {
+					const block = c >> 8;
+					if ((c & 255) === 0 && end - c >= 256) {
+						if (whole[value] < 0) {
+							whole[value] = count;
+							values.fill(value, count << 8, ++count << 8);
+						}
+						index.fill(whole[value], block, end >> 8);
+						c = end & -256;
+					} else {
+						if ((c & 255) === 0) index[block] = count++;
+						const stop = Math.min(end, block + 1 << 8);
+						const shift = index[block] - block << 8;
+						values.fill(value, c + shift, stop + shift);
+						c = stop;
+					}
+				}
+				value = following;
+			}
+			if (r < runs.length) end += runs[r] + 1;
+		}
+		if (end !== 1114112) throw new Error("The class runs don't cover U+0000..U+10FFFF");
+		return {
+			index,
+			values
+		};
+	}
+	var classRuns = null;
+	var classRemaps = null;
+	function unpackClasses(map) {
+		const [row, blocks] = classMaps[map];
+		classRuns ??= unpackVarints(classRunsVarints);
+		classRemaps ??= unpackTable(classRemapsPacked);
+		return unpackClassRuns(classRuns, classRemaps.subarray(row * 248), blocks);
+	}
+	function lazyRegExp(source, flags) {
+		let built = null;
+		return () => built ??= new RegExp(source, flags);
+	}
+	var PROPERTY_TESTS = [
+		lazyRegExp(String.raw`^[\p{L}\p{N}]$`, "u"),
+		lazyRegExp(String.raw`^\p{M}$`, "u"),
+		lazyRegExp(String.raw`^\p{P}$`, "u"),
+		lazyRegExp(String.raw`^[\p{Ps}\p{Pe}\p{Pi}\p{Pf}\p{Po}]$`, "u"),
+		lazyRegExp(String.raw`^\p{Default_Ignorable_Code_Point}$`, "u"),
+		lazyRegExp(String.raw`^\p{Emoji}$`, "u"),
+		lazyRegExp(String.raw`^\p{sc=Hangul}$`, "u")
 	];
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/bidi.js
-	function classifyCodePoint(codePoint) {
-		if (codePoint <= 255) return latin1BidiTypes[codePoint];
-		let lo = 0;
-		let hi = nonLatin1BidiRanges.length - 1;
-		while (lo <= hi) {
-			const mid = lo + hi >> 1;
-			const range = nonLatin1BidiRanges[mid];
-			if (codePoint < range[0]) {
-				hi = mid - 1;
-				continue;
-			}
-			if (codePoint > range[1]) {
-				lo = mid + 1;
-				continue;
-			}
-			return range[2];
+	var bmpProperties = null;
+	var astralProperties = /* @__PURE__ */ new Map();
+	function hasProperty(cp, property) {
+		const bmp = bmpProperties ??= /* @__PURE__ */ new Uint16Array(65536);
+		const has = 1 << property * 2;
+		let bits = cp < 65536 ? bmp[cp] : astralProperties.get(cp) ?? 0;
+		if ((bits & has << 1) === 0) {
+			bits |= has << 1 | (PROPERTY_TESTS[property]().test(String.fromCodePoint(cp)) ? has : 0);
+			if (cp < 65536) bmp[cp] = bits;
+			else astralProperties.set(cp, bits);
 		}
-		return "L";
+		return (bits & has) !== 0;
 	}
-	function computeBidiLevels(str) {
-		const len = str.length;
-		if (len === 0) return null;
-		const types = new Array(len);
-		let paragraphHasBidi = false;
-		let paragraphStart = 0;
-		let levels = null;
-		for (let i = 0; i < len;) {
-			const first = str.charCodeAt(i);
-			let codePoint = first;
-			let codeUnitLength = 1;
-			if (first >= 55296 && first <= 56319 && i + 1 < len) {
-				const second = str.charCodeAt(i + 1);
-				if (second >= 56320 && second <= 57343) {
-					codePoint = (first - 55296 << 10) + (second - 56320) + 65536;
-					codeUnitLength = 2;
+	var wordSegmenter = null;
+	function getWordSegmenter() {
+		return wordSegmenter ??= new Intl.Segmenter(void 0, { granularity: "word" });
+	}
+	var STOP_STATE = 0;
+	var ACCEPTING_UNCONDITIONAL = 1;
+	function unpackStateRows(width, states, base, differences) {
+		const rows = new Uint16Array(states * width);
+		if (base !== null) rows.set(base);
+		for (let i = 0, row = -width; i < differences.length;) {
+			row += (differences[i++] + 1) * width;
+			const back = differences[i++] * width;
+			if (back > 0) rows.copyWithin(row, row - back, row - back + width);
+			let at = row - 1;
+			for (let n = differences[i++]; n > 0; n--) {
+				at += 1 + differences[i++];
+				rows[at] = differences[i++];
+			}
+		}
+		return rows;
+	}
+	function unpackTableRows(table) {
+		const [catCount, , , states, base, differences] = ruleTables[table];
+		return unpackStateRows(catCount + 3, states, base === null ? null : unpackTableRows(base), unpackVarints(differences));
+	}
+	var breakRules = {};
+	function getBreakRules(table) {
+		let rules = breakRules[table];
+		if (rules === void 0) {
+			const [catCount, dictCategoriesStart, lookAheadResultsSize] = ruleTables[table];
+			rules = breakRules[table] = {
+				catCount,
+				dictCategoriesStart,
+				rowWidth: catCount + 3,
+				rows: unpackTableRows(table),
+				lookAheadResultsSize,
+				classes: unpackClasses(table)
+			};
+		}
+		return rules;
+	}
+	var NO_OVERRIDES = {
+		chars: [],
+		categories: []
+	};
+	function markRuleBoundaries(r, text, flags, overrides = NO_OVERRIDES) {
+		const rows = r.rows;
+		const width = r.rowWidth;
+		const dictionaryStart = r.dictCategoriesStart;
+		const length = text.length;
+		const matches = new Int32Array(r.lookAheadResultsSize).fill(-1);
+		const overrideChars = overrides.chars;
+		const overrideCount = overrideChars.length;
+		for (let start = 0; start < length;) {
+			let dictionaryCharCount = 0;
+			let result = start;
+			let boundary = -1;
+			let pos = start;
+			let c = text.charCodeAt(pos++);
+			if ((c & 64512) === 55296 && pos < length) {
+				const trail = text.charCodeAt(pos);
+				if ((trail & 64512) === 56320) {
+					pos++;
+					c = (c - 55296 << 10) + trail - 56320 + 65536;
 				}
 			}
-			const t = classifyCodePoint(codePoint);
-			if (t === "R" || t === "AL" || t === "AN") paragraphHasBidi = true;
-			for (let j = 0; j < codeUnitLength; j++) types[i + j] = t;
-			if (t === "B") {
-				if (paragraphHasBidi) {
-					levels ??= new Int8Array(len);
-					levels[i] = resolveParagraphLevels(types, levels, paragraphStart, i);
+			let atEnd = false;
+			let ended = false;
+			let row = 1 * width;
+			let category = 0;
+			for (;;) {
+				if (atEnd) {
+					if (ended) break;
+					ended = true;
+					category = 1;
+				} else {
+					let overridden = false;
+					for (let i = 0; i < overrideCount; i++) if (c === overrideChars[i]) {
+						category = overrides.categories[i];
+						overridden = true;
+						break;
+					}
+					if (!overridden) {
+						category = getClass(r.classes, c);
+						if (category >= dictionaryStart) dictionaryCharCount++;
+					}
 				}
-				paragraphStart = i + codeUnitLength;
-				paragraphHasBidi = false;
+				const state = rows[row + 3 + category];
+				row = state * width;
+				const accepting = rows[row];
+				if (accepting === ACCEPTING_UNCONDITIONAL) result = pos;
+				else if (accepting > ACCEPTING_UNCONDITIONAL && matches[accepting] >= 0) {
+					boundary = matches[accepting];
+					break;
+				}
+				const rule = rows[row + 1];
+				if (rule > ACCEPTING_UNCONDITIONAL) matches[rule] = pos;
+				if (state === STOP_STATE) break;
+				if (!ended) {
+					if (pos >= length) atEnd = true;
+					else {
+						c = text.charCodeAt(pos++);
+						if ((c & 64512) === 55296 && pos < length) {
+							const trail = text.charCodeAt(pos);
+							if ((trail & 64512) === 56320) {
+								pos++;
+								c = (c - 55296 << 10) + trail - 56320 + 65536;
+							}
+						}
+					}
+				}
 			}
-			i += codeUnitLength;
-		}
-		if (paragraphHasBidi) {
-			levels ??= new Int8Array(len);
-			resolveParagraphLevels(types, levels, paragraphStart, len);
-		}
-		return levels;
-	}
-	function resolveParagraphLevels(types, levels, start, end) {
-		let startLevel = 0;
-		for (let i = start; i < end; i++) {
-			const t = types[i];
-			if (t === "L") {
-				startLevel = 0;
-				break;
+			if (boundary < 0) {
+				boundary = result;
+				if (result === start) {
+					boundary = start + 1;
+					if ((text.charCodeAt(start) & 64512) === 55296 && boundary < length && (text.charCodeAt(boundary) & 64512) === 56320) boundary++;
+				}
 			}
-			if (t === "R" || t === "AL") {
-				startLevel = 1;
-				break;
+			flags[boundary] = 1;
+			if (dictionaryCharCount > 0) markDictionaryWords(r, text, start, boundary, flags);
+			start = boundary;
+		}
+	}
+	function isComplexContext(rules, c) {
+		return getClass(rules.classes, c) >= rules.dictCategoriesStart;
+	}
+	function markDictionaryWords(rules, text, start, end, flags) {
+		let runStart = -1;
+		for (let i = start; i <= end;) {
+			let dictionary = false;
+			let size = 1;
+			if (i < end) {
+				let c = text.charCodeAt(i);
+				if ((c & 64512) === 55296 && i + 1 < text.length && (text.charCodeAt(i + 1) & 64512) === 56320) {
+					c = (c - 55296 << 10) + text.charCodeAt(i + 1) - 56320 + 65536;
+					size = 2;
+				}
+				dictionary = isComplexContext(rules, c);
+			}
+			if (dictionary) {
+				if (runStart < 0) runStart = i;
+			} else if (runStart >= 0) {
+				if (i - runStart > 1) {
+					for (const segment of getWordSegmenter().segment(text.slice(runStart, i))) if (segment.index > 0) flags[runStart + segment.index] = 1;
+				}
+				runStart = -1;
+			}
+			i += size;
+		}
+	}
+	var SPACE$1 = 32;
+	var TAB$1 = 9;
+	var LF$1 = 10;
+	var ZWSP = 8203;
+	var LINE_SEPARATOR = 8232;
+	var PARAGRAPH_SEPARATOR = 8233;
+	var IDEOGRAPHIC_SPACE = 12288;
+	var blinkPairs = null;
+	var blinkDefaultLocale;
+	function getBlinkDefaultLocale() {
+		return blinkDefaultLocale ??= new Intl.DateTimeFormat().resolvedOptions().locale;
+	}
+	var NO_BREAK = 0;
+	var CAN_BREAK = 1;
+	var UNKNOWN = 2;
+	function isBlinkBreakableSpace(c) {
+		return c === SPACE$1 || c === TAB$1 || c === LF$1;
+	}
+	function shouldBreakFast(pairs, lastLast, last, ch) {
+		if (last < 33 || ch < 33) return NO_BREAK;
+		if (last === 45) {
+			if (ch <= 127) {
+				if (ch >= 48 && ch <= 57) {
+					const lower = lastLast | 32;
+					return lastLast >= 48 && lastLast <= 57 || lower >= 97 && lower <= 122 ? CAN_BREAK : NO_BREAK;
+				}
+			} else return UNKNOWN;
+		}
+		if (last <= 255 && ch <= 255) {
+			const x = ch - 33;
+			return (pairs[(last - 33) * 28 + (x >> 3)] & 1 << (x & 7)) !== 0 ? CAN_BREAK : NO_BREAK;
+		}
+		return UNKNOWN;
+	}
+	function shouldKeepAfterKeepAll(rules, lastLast, last, ch) {
+		const pre = hasProperty(last, 1) ? lastLast : last;
+		return hasProperty(pre, 0) && !isComplexContext(rules, pre) && hasProperty(ch, 0) && !isComplexContext(rules, ch);
+	}
+	function getBlinkLineBreaks(text, keepAll, language) {
+		const length = text.length;
+		const breaks = new Uint8Array(length + 1);
+		if (length < 2) return breaks;
+		const pairs = blinkPairs ??= unpackTable(blinkLinePairsPacked);
+		const rules = getBreakRules(`chromium/${getBreakLanguage(language) === "zh" ? "line_normal_cj" : "line_normal"}`);
+		let icu = null;
+		let lastLast = 0;
+		let last = text.charCodeAt(0);
+		for (let i = 1; i < length; lastLast = last, last = text.charCodeAt(i), i++) {
+			const ch = text.charCodeAt(i);
+			if (isBlinkBreakableSpace(ch)) continue;
+			if (isBlinkBreakableSpace(last)) {
+				breaks[i] = 1;
+				continue;
+			}
+			const fast = shouldBreakFast(pairs, lastLast, last, ch);
+			if (fast === CAN_BREAK) {
+				breaks[i] = 1;
+				continue;
+			}
+			if (keepAll && shouldKeepAfterKeepAll(rules, lastLast, last, ch)) continue;
+			if (fast === NO_BREAK) continue;
+			if (icu === null) {
+				icu = new Uint8Array(length + 1);
+				markRuleBoundaries(rules, text, icu);
+			}
+			if (icu[i] === 1) breaks[i] = 1;
+		}
+		return breaks;
+	}
+	var AL$1 = 1;
+	var ID$1 = 2;
+	var CM$1 = 4;
+	var OP = 8;
+	var CP = 16;
+	var CL = 32;
+	var GL = 64;
+	var QU = 128;
+	var SP$1 = 256;
+	var PI = 512;
+	var PF = 1024;
+	var WEIRD = 32768;
+	var webkitPairs = null;
+	var webkitLineRules = /* @__PURE__ */ new Map();
+	function isWebKitBreakableSpace(c) {
+		return c === SPACE$1 || c === LF$1 || c === TAB$1 || c === LINE_SEPARATOR || c === PARAGRAPH_SEPARATOR;
+	}
+	function isASCIIDigit(c) {
+		return c >= 48 && c <= 57;
+	}
+	function isASCIIAlpha(c) {
+		const lower = c | 32;
+		return lower >= 97 && lower <= 122;
+	}
+	function classify(c) {
+		switch (c >> 7) {
+			case 0: switch (c >> 4) {
+				case 0: return WEIRD;
+				case 1: return CM$1;
+				case 2: return c === 32 ? SP$1 : c === 34 || c === 39 ? QU : c === 40 ? OP : c === 41 ? CP : WEIRD;
+				case 3: return c <= 57 ? AL$1 : WEIRD;
+				case 4: return AL$1;
+				case 5: return c <= 90 ? AL$1 : c === 91 ? OP : c === 93 ? CP : WEIRD;
+				case 6: return AL$1;
+				default: return c <= 122 ? AL$1 : c === 123 ? OP : c === 125 ? CL : WEIRD;
+			}
+			case 1:
+				if (c === 160) return GL;
+				if (c > 192) return AL$1;
+				if (c === 161 || c === 191) return OP;
+				if (c === 171) return 640;
+				if (c === 187) return 1152;
+				return WEIRD;
+			case 2:
+			case 3:
+			case 4: return AL$1;
+			case 5: return c === 712 || c === 716 || c === 735 ? WEIRD : AL$1;
+			case 6:
+				if (c === 847 || c >= 860 && c <= 866) return GL;
+				if (c < 880) return CM$1;
+				if (c === 894) return WEIRD;
+				return AL$1;
+			case 7:
+			case 8:
+			case 10: return AL$1;
+			case 9: return c >= 1155 && c <= 1161 ? CM$1 : AL$1;
+			case 11:
+				if (c <= 1416 || c >= 1480) return AL$1;
+				if (c >= 1425 && c <= 1469) return CM$1;
+				return c === 1471 || c === 1473 || c === 1474 || c === 1476 || c === 1477 || c === 1479 ? CM$1 : WEIRD;
+			case 64:
+				if (c === 8216 || c === 8220) return 640;
+				if (c === 8217 || c === 8221) return 1152;
+				return WEIRD;
+			default:
+				if (c >= 11904 && c <= 42191) {
+					if ((c & 65280) === 12288) {
+						if (c <= 12351) switch (c & 31) {
+							case 1:
+							case 2:
+							case 9:
+							case 11:
+							case 13:
+							case 15:
+							case 17:
+							case 21:
+							case 23:
+							case 25:
+							case 27:
+							case 30:
+							case 31: return CL;
+							case 8:
+							case 10:
+							case 12:
+							case 14:
+							case 16:
+							case 22:
+							case 20:
+							case 24:
+							case 26:
+							case 29: return OP;
+							default: return WEIRD;
+						}
+						return WEIRD;
+					}
+					if ((c & 65520) === 12784) return WEIRD;
+					if ((c & 65528) === 12872) return AL$1;
+					if ((c & 65472) === 19904) return AL$1;
+					if (c === 40981) return WEIRD;
+					return ID$1;
+				}
+				if (c >= 44032 && c <= 55215) return ID$1;
+				if (c >= 63744 && c <= 64255) return ID$1;
+				return WEIRD;
+		}
+	}
+	function createFactory(text, line) {
+		return {
+			text,
+			secondToLast: 0,
+			last: 0,
+			priorLength: 0,
+			line,
+			nextBoundary: null
+		};
+	}
+	function following(f, location) {
+		let next = f.nextBoundary;
+		if (next === null) {
+			const text = (f.priorLength === 2 ? String.fromCharCode(f.secondToLast, f.last) : f.priorLength === 1 ? String.fromCharCode(f.last) : "") + f.text;
+			const flags = new Uint8Array(text.length + 1);
+			markRuleBoundaries(f.line.rules, text, flags, f.line.overrides);
+			next = new Int32Array(text.length + 2);
+			next[text.length + 1] = -1;
+			for (let p = text.length; p >= 0; p--) next[p] = flags[p] === 1 ? p : next[p + 1];
+			f.nextBoundary = next;
+		}
+		const o = location + f.priorLength + 1;
+		if (o >= next.length) return -1;
+		const b = next[o];
+		return b < 0 ? -1 : b - f.priorLength;
+	}
+	function nextBreakablePosition(pairs, f, startPosition) {
+		const s = f.text;
+		const length = s.length;
+		if (startPosition === 0 && f.priorLength === 0) {
+			if (length <= 1) return length;
+			startPosition++;
+		}
+		let beforeBefore = startPosition > 1 ? s.charCodeAt(startPosition - 2) : f.secondToLast;
+		let before = startPosition > 0 ? s.charCodeAt(startPosition - 1) : f.last;
+		let beforeType = 0;
+		let after = 0;
+		let afterType = 0;
+		let nextBreak = -1;
+		for (let i = startPosition; i < length; beforeBefore = before, before = after, beforeType = afterType, i++) {
+			after = s.charCodeAt(i);
+			afterType = 0;
+			if (isWebKitBreakableSpace(after)) return i;
+			if (before === 45 && isASCIIDigit(after)) {
+				if (isASCIIDigit(beforeBefore) || isASCIIAlpha(beforeBefore)) return i;
+				continue;
+			}
+			if (before <= 255 && after <= 255) {
+				if (before >= 33 && after >= 33) {
+					const x = after - 33;
+					if ((pairs[(before - 33) * 28 + (x >> 3)] & 1 << (x & 7)) !== 0) return i;
+				}
+				continue;
+			}
+			if (beforeType === 0) beforeType = classify(before);
+			afterType = classify(after);
+			const pair = beforeType | afterType;
+			if ((pair & -1922) === 0) continue;
+			if ((pair | AL$1) === 3) return i;
+			if ((pair & 192) !== 0 && (pair & WEIRD) === 0) {
+				if ((pair & ID$1) !== 0 && (pair & QU) !== 0 && ((afterType & PI) !== 0 || (beforeType & PF) !== 0)) return i;
+				continue;
+			}
+			if (afterType === CM$1) {
+				afterType = beforeType;
+				continue;
+			}
+			if ((pair & WEIRD) === 0 && (pair & 56) !== 0) {
+				if (afterType === CL || afterType === CP || beforeType === OP) continue;
+				if ((pair & ID$1) !== 0) return i;
+			}
+			if (nextBreak < i) nextBreak = following(f, i - 1);
+			if (nextBreak >= 0 && i < nextBreak) for (const max = Math.min(nextBreak, length - 1); i < max; beforeBefore = before, before = after, beforeType = afterType, i++) {
+				const lookahead = s.charCodeAt(i + 1);
+				if (lookahead <= 255 && !isASCIIAlpha(lookahead)) break;
+			}
+			if (i === nextBreak && !isWebKitBreakableSpace(before)) return i;
+		}
+		return length;
+	}
+	function nextBreakableSpace(s, startPosition, punctuationBreaks) {
+		for (let i = startPosition; i < s.length; i++) {
+			const c = s.charCodeAt(i);
+			if (isWebKitBreakableSpace(c) || c === ZWSP) return i;
+			if (c === IDEOGRAPHIC_SPACE) return i + 1;
+			if (punctuationBreaks && hasProperty(c, 3) && i + 1 < s.length) return i + 1;
+		}
+		return s.length;
+	}
+	function getWebKitLineRules(language) {
+		const locale = language ?? "";
+		let line = webkitLineRules.get(locale);
+		if (line !== void 0) return line;
+		const breakLanguage = getBreakLanguage(locale);
+		const rules = getBreakRules(breakLanguage === "ja" || breakLanguage === "ko" ? "apple/line_normal" : breakLanguage === "zh" ? "apple/line_cj" : "apple/line");
+		const subtags = locale.split(/[-_]/);
+		let name = subtags[0].toLowerCase();
+		for (let k = 1; k < subtags.length; k++) {
+			const subtag = subtags[k];
+			name += "_" + (subtag.length === 4 ? subtag[0].toUpperCase() + subtag.slice(1).toLowerCase() : subtag.toUpperCase());
+		}
+		let remap = appleQuoteRemaps[name];
+		while (remap === void 0) {
+			const cut = name.lastIndexOf("_");
+			name = cut < 0 ? "" : name.slice(0, cut);
+			remap = appleQuoteRemaps[name];
+		}
+		const chars = [];
+		const categories = [];
+		for (let k = 0; k < remap.length; k += 2) {
+			chars.push(remap[k]);
+			categories.push(getClass(rules.classes, remap[k + 1] === 0 ? 123 : 125));
+		}
+		line = {
+			rules,
+			overrides: {
+				chars,
+				categories
+			}
+		};
+		webkitLineRules.set(locale, line);
+		return line;
+	}
+	var TEXT$1 = 0;
+	var WHITESPACE = 1;
+	var SOFT_LINE_BREAK = 2;
+	function getWebKitLineBreaks(source, preserveNewlines, keepAll, language) {
+		const pairs = webkitPairs ??= unpackTable(webkitLinePairsPacked);
+		const f = createFactory(source, getWebKitLineRules(language));
+		const length = source.length;
+		const breaks = new Uint8Array(length + 1);
+		let sixteenBit = false;
+		for (let i = 0; keepAll && i < length && !sixteenBit; i++) sixteenBit = source.charCodeAt(i) > 255;
+		let previousKind = -1;
+		for (let position = 0; position < length;) {
+			let kind = WHITESPACE;
+			let end = position;
+			const c = source.charCodeAt(position);
+			if (c === LINE_SEPARATOR || c === PARAGRAPH_SEPARATOR || preserveNewlines && c === LF$1) {
+				kind = SOFT_LINE_BREAK;
+				end++;
+				if (c !== LF$1) breaks[end] = 4;
+			} else {
+				for (; end < length; end++) {
+					const c = source.charCodeAt(end);
+					if (c !== SPACE$1 && c !== TAB$1 && (preserveNewlines || c !== LF$1)) break;
+				}
+				if (end === position) {
+					kind = TEXT$1;
+					end = length;
+					for (let p = position; p < length; p++) {
+						const next = keepAll ? nextBreakableSpace(source, p, sixteenBit) : nextBreakablePosition(pairs, f, p);
+						if (next !== position) {
+							end = next;
+							break;
+						}
+					}
+				}
+			}
+			if (previousKind >= 0 && previousKind !== SOFT_LINE_BREAK && kind !== SOFT_LINE_BREAK) breaks[position] = 1;
+			previousKind = kind;
+			position = end;
+		}
+		return breaks;
+	}
+	function getWebKitBreakBetweenItems(previous, next, keepAll, language) {
+		const last = previous.charCodeAt(previous.length - 1);
+		const first = next.charCodeAt(0);
+		if (first === LF$1 || first === LINE_SEPARATOR || first === PARAGRAPH_SEPARATOR) return false;
+		if (last === SPACE$1 || last === TAB$1 || first === SPACE$1 || first === TAB$1) return true;
+		if (keepAll) return nextBreakableSpace(next, 0, false) === 0;
+		const pairs = webkitPairs ??= unpackTable(webkitLinePairsPacked);
+		const f = createFactory(next, getWebKitLineRules(language));
+		const n = previous.length;
+		f.secondToLast = n > 1 ? previous.charCodeAt(n - 2) : 0;
+		f.last = n > 0 ? previous.charCodeAt(n - 1) : 0;
+		f.priorLength = f.last === 0 ? 0 : f.secondToLast === 0 ? 1 : 2;
+		return nextBreakablePosition(pairs, f, 0) === 0;
+	}
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/graphemes.js
+	var CLUSTER_END = 128;
+	function parseGraphemeRules(table) {
+		const rules = getBreakRules(table === "gecko/char" ? "chromium/char" : table);
+		const width = rules.rowWidth;
+		const rows = rules.rows;
+		const states = rows.length / width;
+		const transitions = new Uint8Array(states * rules.catCount);
+		for (let state = 0; state < states; state++) for (let category = 0; category < rules.catCount; category++) {
+			const next = rows[state * width + 3 + category];
+			transitions[state * rules.catCount + category] = next === 0 || rows[next * width] > 1 ? CLUSTER_END | rows[1 * width + 3 + category] : next;
+		}
+		return {
+			rules,
+			transitions,
+			skipped: table === "gecko/char" ? getClass(rules.classes, 173) : -1
+		};
+	}
+	var graphemeRules = {};
+	function isBidiControl(cp) {
+		return (cp & 65280) === 8192 && (cp >= 8234 && cp <= 8238 || cp >= 8294 && cp <= 8297 || (cp & -2) === 8206) || cp === 1564;
+	}
+	function findGraphemeEnds(table, text, start, end, ends) {
+		const { rules, transitions, skipped } = graphemeRules[table] ?? (graphemeRules[table] = parseGraphemeRules(table));
+		const catCount = rules.catCount;
+		let state = 1;
+		let count = 0;
+		for (let i = start; i < end;) {
+			let c = text.charCodeAt(i);
+			let next = i + 1;
+			if ((c & 64512) === 55296 && next < end) {
+				const trail = text.charCodeAt(next);
+				if ((trail & 64512) === 56320) {
+					next++;
+					c = (c - 55296 << 10) + trail - 56320 + 65536;
+				}
+			}
+			const category = getClass(rules.classes, c);
+			if (category === skipped && (c === 173 || isBidiControl(c))) {
+				i = next;
+				continue;
+			}
+			const transition = transitions[state * catCount + category];
+			if ((transition & CLUSTER_END) !== 0) {
+				if (ends !== null) ends[count] = i;
+				count++;
+			}
+			state = transition & -129;
+			i = next;
+		}
+		if (state !== 1) {
+			if (ends !== null) ends[count] = end;
+			count++;
+		}
+		return count;
+	}
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/gecko-line-breaks.js
+	var CH_SHY = 173;
+	var isSurrogatePair = (a, b) => (a & 64512) === 55296 && (b & 64512) === 56320;
+	var combine = (a, b) => 65536 + (a - 55296 << 10) + (b - 56320);
+	var eastAsianWidths = null;
+	function isClusterExtender(cp) {
+		return cp >= 768 && (hasProperty(cp, 1) || cp === 8204 || cp === 8205 || cp >= 65438 && cp <= 65439 || cp >= 127995 && cp <= 127999 || cp >= 917536 && cp <= 917631);
+	}
+	function isClusterExtenderExcludingJoiners(cp) {
+		return cp >= 768 && (hasProperty(cp, 1) || cp >= 65438 && cp <= 65439 || cp >= 127995 && cp <= 127999 || cp >= 917536 && cp <= 917631);
+	}
+	function isEastAsianWidthFHWExcludingEmoji(widths, cp) {
+		const width = getClass(widths, cp);
+		return width === 2 || width === 3 || width === 5 && !hasProperty(cp, 5);
+	}
+	function isSegmentBreakSkipChar(widths, cp) {
+		return isEastAsianWidthFHWExcludingEmoji(widths, cp) && !hasProperty(cp, 6) && cp !== 8361;
+	}
+	function isEastAsianPunctuation(widths, cp) {
+		return getClass(widths, cp) !== 0 && (hasProperty(cp, 2) && cp !== 8361 || cp === 65374 || cp === 12288);
+	}
+	function isInvalidChar(ch) {
+		if (ch >= 32 && ch < 127) return false;
+		if (ch <= 159) return true;
+		return (ch & 65280) === 8192 && (ch === 8203 || ch === 8232 || ch === 8233 || ch === 8288) || ch === 65279 || isBidiControl(ch);
+	}
+	function isDiscardable(ch, is8bit) {
+		return ch === CH_SHY || !is8bit && isBidiControl(ch);
+	}
+	var isSpaceOrTab = (ch) => ch === 32 || ch === 9;
+	var isSpaceOrTabOrSegmentBreak = (ch) => ch === 32 || ch === 9 || ch === 10;
+	function isSpaceCombiningSequenceTail(text, from) {
+		for (let i = from; i < text.length; i++) {
+			const ch = text.charCodeAt(i);
+			if (isClusterExtenderExcludingJoiners(ch)) return true;
+			if (!isBidiControl(ch)) return false;
+		}
+		return false;
+	}
+	function isJapaneseOrChinese(language) {
+		const breakLanguage = getBreakLanguage(language);
+		return (breakLanguage === "ja" || breakLanguage === "zh") && language.charCodeAt(2) !== 95;
+	}
+	function isEastAsianSegmentBreak(text, start, end, japaneseOrChinese) {
+		if (start === 0 || end >= text.length) return false;
+		const widths = eastAsianWidths ??= unpackClasses("gecko/east_asian_width");
+		let before;
+		let pos = start;
+		do {
+			const low = text.charCodeAt(pos - 1);
+			const high = pos > 1 ? text.charCodeAt(pos - 2) : 0;
+			if (isSurrogatePair(high, low)) {
+				before = combine(high, low);
+				pos -= 2;
+			} else {
+				before = low;
+				pos--;
+			}
+		} while (hasProperty(before, 4) && pos > 0);
+		let after;
+		pos = end;
+		do {
+			after = text.codePointAt(pos);
+			pos += after > 65535 ? 2 : 1;
+		} while (hasProperty(after, 4) && pos < text.length);
+		return isSegmentBreakSkipChar(widths, before) && isSegmentBreakSkipChar(widths, after) || japaneseOrChinese && (isEastAsianPunctuation(widths, before) || isEastAsianPunctuation(widths, after));
+	}
+	function transformText(input, is8bit, preserveWhiteSpace, frameStarts) {
+		const len = input.length;
+		const orig = new Int32Array(len);
+		const skipped = new Uint8Array(len);
+		let leftOut = null;
+		let n = 0;
+		let dropsBidiControl = false;
+		if (preserveWhiteSpace) for (let i = 0; i < len; i++) {
+			const ch = input.charCodeAt(i);
+			if (!isDiscardable(ch, is8bit)) orig[n++] = i;
+			else {
+				skipped[i] = 1;
+				dropsBidiControl ||= ch !== CH_SHY;
 			}
 		}
-		const e = startLevel & 1 ? "R" : "L";
-		const sor = e;
-		let lastType = sor;
-		for (let i = start; i < end; i++) if (types[i] === "NSM") types[i] = lastType;
-		else lastType = types[i];
-		lastType = sor;
-		for (let i = start; i < end; i++) {
-			const t = types[i];
-			if (t === "EN") types[i] = lastType === "AL" ? "AN" : "EN";
-			else if (t === "R" || t === "L" || t === "AL") lastType = t;
+		else {
+			let inWhitespace = false;
+			let i = 0;
+			let frame = 0;
+			let frameEnd = frameStarts === null ? len : 0;
+			while (i < len) {
+				const ch = input.charCodeAt(i);
+				if (!isSpaceOrTabOrSegmentBreak(ch) && !isDiscardable(ch, is8bit)) {
+					if (ch === 12 || ch === 13 && input.charCodeAt(i + 1) !== 10) (leftOut ??= new Uint8Array(len))[i] = 1;
+					orig[n++] = i;
+					inWhitespace = false;
+					i++;
+					continue;
+				}
+				if (isSpaceOrTabOrSegmentBreak(ch)) {
+					if (i >= frameEnd) {
+						while (frame < frameStarts.length && frameStarts[frame] <= i) frame++;
+						frameEnd = frame < frameStarts.length ? frameStarts[frame] : len;
+					}
+					let keepLastSpace = false;
+					let hasSegmentBreak = ch === 10;
+					let trailingDiscardables = 0;
+					let dropped = 0;
+					const goesOnPastDropped = inWhitespace && i > 0 && isDiscardable(input.charCodeAt(i - 1), is8bit);
+					let j = i + 1;
+					for (; j < frameEnd; j++) {
+						const c = input.charCodeAt(j);
+						if (c === 10) hasSegmentBreak = true;
+						else if (isDiscardable(c, is8bit)) dropped++;
+						else if (!isSpaceOrTab(c)) break;
+					}
+					while (isDiscardable(input.charCodeAt(j - 1), is8bit)) {
+						j--;
+						trailingDiscardables++;
+					}
+					if (!is8bit && input.charCodeAt(j - 1) === 32 && j < frameEnd && isSpaceCombiningSequenceTail(input, j)) {
+						keepLastSpace = true;
+						j--;
+					}
+					for (let k = i; k < j; k++) {
+						const c = input.charCodeAt(k);
+						if (isDiscardable(c, is8bit)) {
+							skipped[k] = 1;
+							dropsBidiControl ||= c !== CH_SHY;
+						} else if (inWhitespace || hasSegmentBreak && isSpaceOrTab(c)) {
+							skipped[k] = 1;
+							if (dropped > trailingDiscardables || goesOnPastDropped) (leftOut ??= new Uint8Array(len))[k] = 1;
+						} else {
+							orig[n++] = k;
+							inWhitespace = true;
+						}
+					}
+					if (keepLastSpace) orig[n++] = j++;
+					for (let k = 0; k < trailingDiscardables; k++) {
+						dropsBidiControl ||= input.charCodeAt(j) !== CH_SHY;
+						skipped[j++] = 1;
+					}
+					i = j;
+					continue;
+				}
+				skipped[i] = 1;
+				dropsBidiControl ||= ch !== CH_SHY;
+				inWhitespace = false;
+				i++;
+			}
 		}
-		for (let i = start; i < end; i++) if (types[i] === "AL") types[i] = "R";
-		for (let i = start + 1; i < end - 1; i++) {
-			if (types[i] === "ES" && types[i - 1] === "EN" && types[i + 1] === "EN") types[i] = "EN";
-			if (types[i] === "CS" && (types[i - 1] === "EN" || types[i - 1] === "AN") && types[i + 1] === types[i - 1]) types[i] = types[i - 1];
+		let text = "";
+		let sliceStart = 0;
+		let sliceEnd = 0;
+		for (let k = 0; k < n; k++) {
+			const i = orig[k];
+			const ch = input.charCodeAt(i);
+			if (!preserveWhiteSpace && (ch === 9 || ch === 10)) {
+				text += input.slice(sliceStart, sliceEnd) + " ";
+				sliceStart = sliceEnd = i + 1;
+			} else if (i !== sliceEnd) {
+				text += input.slice(sliceStart, sliceEnd);
+				sliceStart = i;
+				sliceEnd = i + 1;
+			} else sliceEnd++;
 		}
-		for (let i = start; i < end; i++) {
-			if (types[i] !== "EN") continue;
-			let j;
-			for (j = i - 1; j >= start && types[j] === "ET"; j--) types[j] = "EN";
-			for (j = i + 1; j < end && types[j] === "ET"; j++) types[j] = "EN";
-		}
-		for (let i = start; i < end; i++) {
-			const t = types[i];
-			if (t === "WS" || t === "ES" || t === "ET" || t === "CS") types[i] = "ON";
-		}
-		lastType = sor;
-		for (let i = start; i < end; i++) {
-			const t = types[i];
-			if (t === "EN") types[i] = lastType === "L" ? "L" : "EN";
-			else if (t === "R" || t === "L") lastType = t;
-		}
-		for (let i = start; i < end; i++) {
-			if (types[i] !== "ON") continue;
-			let runEnd = i + 1;
-			while (runEnd < end && types[runEnd] === "ON") runEnd++;
-			const before = i > start ? types[i - 1] : sor;
-			const after = runEnd < end ? types[runEnd] : sor;
-			const bDir = before !== "L" ? "R" : "L";
-			if (bDir === (after !== "L" ? "R" : "L")) for (let j = i; j < runEnd; j++) types[j] = bDir;
-			i = runEnd - 1;
-		}
-		for (let i = start; i < end; i++) if (types[i] === "ON") types[i] = e;
-		for (let i = start; i < end; i++) {
-			const t = types[i];
-			let level = startLevel;
-			if ((startLevel & 1) === 0) {
-				if (t === "R") level++;
-				else if (t === "AN" || t === "EN") level += 2;
-			} else if (t === "L" || t === "AN" || t === "EN") level++;
-			levels[i] = level;
-		}
-		return startLevel;
+		text += input.slice(sliceStart, sliceEnd);
+		return {
+			text,
+			orig: orig.subarray(0, n),
+			skipped,
+			leftOut,
+			dropsBidiControl
+		};
 	}
-	function computeSegmentLevels(normalized, segStarts) {
-		const bidiLevels = computeBidiLevels(normalized);
-		if (bidiLevels === null) return null;
-		const segLevels = new Int8Array(segStarts.length);
-		for (let i = 0; i < segStarts.length; i++) segLevels[i] = bidiLevels[segStarts[i]];
-		return segLevels;
+	function isTrimmableSpace(source, pos, is8bit) {
+		switch (source.charCodeAt(pos)) {
+			case 32:
+			case 5760: return is8bit || !isSpaceCombiningSequenceTail(source, pos + 1);
+			case 10:
+			case 9:
+			case 13:
+			case 12: return true;
+			default: return false;
+		}
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/analysis.js
-	var collapsibleWhitespaceRunRe = /[ \t\n\r\f]+/g;
+	function hasCompressedLeadingWhitespace(source, skipped, is8bit, preserveWhiteSpace) {
+		if (preserveWhiteSpace || skipped[0] === 0) return false;
+		for (let k = 0; k < source.length && skipped[k] === 1; k++) if (isTrimmableSpace(source, k, is8bit)) return true;
+		return false;
+	}
+	function extendCluster(g, i) {
+		g.clusterStart[i] = 0;
+		g.isSpace[i] = 0;
+	}
+	function setupClusterBoundaries(g, text, from, to, graphemeTable, ends) {
+		let ch0 = text.charCodeAt(from);
+		if (to - from > 1 && isSurrogatePair(ch0, text.charCodeAt(from + 1))) ch0 = combine(ch0, text.charCodeAt(from + 1));
+		if (isClusterExtender(ch0)) extendCluster(g, from);
+		let low = from;
+		while (low < to && text.charCodeAt(low) < 768) low++;
+		const count = low === to ? 0 : findGraphemeEnds(graphemeTable, text, from, to, ends);
+		for (let k = 0, pos = from; pos < to; k++) {
+			const ch = text.charCodeAt(pos);
+			if (ch === 32 || ch === 12288) g.isSpace[pos] = 1;
+			else if (ch === 2479 && pos > from && text.charCodeAt(pos - 1) === 2509) extendCluster(g, pos);
+			const end = count === 0 ? pos + 1 : ends[k];
+			for (pos++; pos < end; pos++) extendCluster(g, pos);
+		}
+	}
+	function splitAndInitTextRun(g, text, graphemeTable, ends) {
+		const end = text.length;
+		let wordStart = 0;
+		for (let i = 0; i < end; i++) {
+			const ch = text.charCodeAt(i);
+			if (!((ch === 32 || ch === 160) && !(i + 1 < end && isClusterExtender(text.charCodeAt(i + 1)))) && !isInvalidChar(ch)) continue;
+			if (i > wordStart) setupClusterBoundaries(g, text, wordStart, i, graphemeTable, ends);
+			if (ch === 32) g.isSpace[i] = 1;
+			wordStart = i + 1;
+		}
+		if (end > wordStart) setupClusterBoundaries(g, text, wordStart, end, graphemeTable, ends);
+	}
+	var lineData = null;
+	function getLineBreakClass(line, c) {
+		return c > 1114111 ? 0 : getClass(line.classes, c);
+	}
+	var AI = 1;
+	var AL = 3;
+	var BK = 10;
+	var CJ = 12;
+	var CM = 14;
+	var CR = 16;
+	var H2 = 21;
+	var H3 = 22;
+	var HY = 24;
+	var ID = 25;
+	var JL = 29;
+	var JT = 30;
+	var JV = 31;
+	var LF = 32;
+	var NL = 33;
+	var NU = 35;
+	var SA = 46;
+	var SP = 47;
+	var ZW = 53;
+	var ZWJ = 54;
+	var BREAK = 253;
+	var NO_MATCH = 254;
+	var KEEP = 255;
+	var INTERMEDIATE = 120;
+	function getComplexLanguage(u) {
+		if (u >= 3585 && u <= 3711) return 1;
+		if (u >= 3712 && u <= 3839) return 2;
+		if (u >= 4096 && u <= 4255 || u >= 43488 && u <= 43519 || u >= 43616 && u <= 43647) return 3;
+		if (u >= 6016 && u <= 6143 || u >= 6624 && u <= 6655) return 4;
+		return 0;
+	}
+	function segmentComplex(units) {
+		const result = [];
+		for (let i = 0; i < units.length;) {
+			const language = getComplexLanguage(units[i]);
+			let j = i + 1;
+			while (j < units.length && getComplexLanguage(units[j]) === language) j++;
+			if (language !== 0) {
+				let slice = "";
+				for (let k = i; k < j; k += 4096) slice += String.fromCharCode(...units.slice(k, Math.min(j, k + 4096)));
+				for (const part of getWordSegmenter().segment(slice)) if (part.index > 0) result.push(i + part.index);
+			}
+			result.push(j);
+			i = j;
+		}
+		return result;
+	}
+	function isKeepAllLetter(p) {
+		return p === AI || p === AL || p === ID || p === NU || p === HY || p === H2 || p === H3 || p === JL || p === JV || p === JT || p === CJ;
+	}
+	function readCodePoint(text, i, end) {
+		const c = text.charCodeAt(i);
+		if ((c & 64512) === 55296 && i + 1 < end) {
+			const next = text.charCodeAt(i + 1);
+			if ((next & 64512) === 56320) return ((c & 1023) << 10) + (next & 1023) + 65536;
+		}
+		return c;
+	}
+	function markWordBreaks(line, text, start, end, keepAll, state) {
+		const len = end - start;
+		const states = line.states;
+		let pos = 0;
+		let cp = readCodePoint(text, start, end);
+		let front = cp > 65535 ? 2 : 1;
+		let cache = [];
+		let cacheAt = 0;
+		let cacheOffset = 0;
+		for (;;) {
+			if (cacheAt < cache.length) {
+				const firstPos = cache[cacheAt++] - cacheOffset;
+				let i = 0;
+				while (i !== firstPos) {
+					i += cp > 65535 ? 2 : 1;
+					pos = front;
+					if (pos >= len) return;
+					cp = readCodePoint(text, start + pos, end);
+					front += cp > 65535 ? 2 : 1;
+				}
+				cacheOffset += i;
+				state[start + pos] = 1;
+				continue;
+			}
+			let lb9Left = -1;
+			let lb8aAfterLb9 = false;
+			outer: for (;;) {
+				const leftCodepoint = cp;
+				const leftProp = lb9Left >= 0 ? lb9Left : getLineBreakClass(line, leftCodepoint);
+				const afterZwj = lb8aAfterLb9 || lb9Left < 0 && leftProp === ZWJ;
+				pos = front;
+				if (pos >= len) return;
+				cp = readCodePoint(text, start + pos, end);
+				front += cp > 65535 ? 2 : 1;
+				const rightProp = getLineBreakClass(line, cp);
+				if ((rightProp === CM || rightProp === ZWJ) && leftProp !== BK && leftProp !== CR && leftProp !== LF && leftProp !== NL && leftProp !== SP && leftProp !== ZW) {
+					lb9Left = leftProp;
+					lb8aAfterLb9 = rightProp === ZWJ;
+					continue;
+				}
+				lb9Left = -1;
+				lb8aAfterLb9 = false;
+				if (keepAll && isKeepAllLetter(leftProp) && isKeepAllLetter(rightProp)) continue;
+				if (getLineBreakClass(line, leftCodepoint) === SA && rightProp === SA) {
+					const units = [leftCodepoint & 65535];
+					for (let p = pos, c = cp;;) {
+						units.push(c & 65535);
+						p += c > 65535 ? 2 : 1;
+						if (p >= len) break;
+						c = readCodePoint(text, start + p, end);
+						if (getLineBreakClass(line, c) !== SA) break;
+					}
+					cache = segmentComplex(units);
+					cacheAt = 1;
+					let i = 1;
+					while (i !== cache[0]) {
+						i++;
+						pos = front;
+						if (pos >= len) return;
+						cp = readCodePoint(text, start + pos, end);
+						front += cp > 65535 ? 2 : 1;
+					}
+					cacheOffset = i;
+					break;
+				}
+				const breakState = states[leftProp * 68 + rightProp];
+				if (breakState === BREAK || breakState === NO_MATCH) {
+					if (afterZwj) continue;
+					break;
+				}
+				if (breakState === KEEP) continue;
+				let index = breakState >= INTERMEDIATE ? breakState - INTERMEDIATE : breakState;
+				let prevFront = front;
+				let prevPos = pos;
+				let prevCp = cp;
+				let previousIsAfterZwj = afterZwj;
+				let leftPropPreLb9 = rightProp;
+				const isIntermediateRuleNoMatch = index > 54;
+				for (;;) {
+					const innerAfterZwj = leftPropPreLb9 === ZWJ;
+					const previousBreakStateIsCpProp = index <= 54;
+					pos = front;
+					if (pos >= len) {
+						if (states[index * 68 + 67] !== NO_MATCH) return;
+						front = prevFront;
+						pos = prevPos;
+						cp = prevCp;
+						if (previousIsAfterZwj) continue outer;
+						break outer;
+					}
+					cp = readCodePoint(text, start + pos, end);
+					front += cp > 65535 ? 2 : 1;
+					const prop = getLineBreakClass(line, cp);
+					if ((prop === CM || prop === ZWJ) && leftPropPreLb9 !== BK && leftPropPreLb9 !== CR && leftPropPreLb9 !== LF && leftPropPreLb9 !== NL && leftPropPreLb9 !== SP && leftPropPreLb9 !== ZW) {
+						leftPropPreLb9 = prop;
+						continue;
+					}
+					const next = states[index * 68 + prop];
+					if (next === KEEP) continue outer;
+					if (next === NO_MATCH) {
+						front = prevFront;
+						pos = prevPos;
+						cp = prevCp;
+						if (innerAfterZwj) {
+							if (isIntermediateRuleNoMatch && !previousIsAfterZwj) break outer;
+							continue outer;
+						}
+						if (previousIsAfterZwj) continue outer;
+						break outer;
+					}
+					if (next === BREAK) {
+						if (innerAfterZwj) continue outer;
+						break outer;
+					}
+					if (next >= INTERMEDIATE) {
+						index = next - INTERMEDIATE;
+						prevFront = front;
+						prevPos = pos;
+						prevCp = cp;
+						previousIsAfterZwj = innerAfterZwj;
+					} else {
+						index = next;
+						if (previousBreakStateIsCpProp) {
+							prevFront = front;
+							prevPos = pos;
+							prevCp = cp;
+							previousIsAfterZwj = innerAfterZwj;
+						}
+					}
+					leftPropPreLb9 = prop;
+				}
+			}
+			state[start + pos] = 1;
+		}
+	}
+	var NON_BREAKABLE_ASCII = new Uint8Array([
+		0,
+		0,
+		1,
+		1,
+		0,
+		0,
+		1,
+		1,
+		0,
+		0,
+		1,
+		0,
+		1,
+		0,
+		1,
+		0,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		0,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		0,
+		0,
+		0,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		1,
+		0,
+		0,
+		0,
+		1,
+		0
+	]);
+	function getBreakStates(line, text, is8bit, afterLeadingWhitespace, keepAll) {
+		const len = text.length;
+		const state = new Uint8Array(len);
+		let afterBreakableSpace = afterLeadingWhitespace;
+		let wordStart = 0;
+		let wordMightBeBreakable = false;
+		for (let offset = 0; offset <= len; offset++) {
+			const ch = offset < len ? text.charCodeAt(offset) : -1;
+			const isSpace = ch === 32 || ch === 9 || ch === 13;
+			if (afterBreakableSpace && !isSpace && ch >= 0) state[offset] = 1;
+			afterBreakableSpace = isSpace;
+			if (ch >= 0 && !isSpace && (is8bit || ch !== 10)) {
+				if (!(ch >= 32 && ch <= 127 && NON_BREAKABLE_ASCII[ch - 32] === 1)) wordMightBeBreakable = true;
+				continue;
+			}
+			if (offset > wordStart && wordMightBeBreakable) markWordBreaks(line, text, wordStart, offset, keepAll, state);
+			wordMightBeBreakable = false;
+			wordStart = offset + 1;
+		}
+		return state;
+	}
+	function getGeckoLineBreaks(source, preserveWhiteSpace, keepAll, graphemeTable, frameStarts = null) {
+		const len = source.length;
+		const flags = new Uint8Array(len + 1);
+		if (len === 0) return {
+			breaks: flags,
+			leftOut: null,
+			dropsBidiControl: false
+		};
+		let is8bit = true;
+		for (let i = 0; i < len && is8bit; i++) is8bit = source.charCodeAt(i) < 256;
+		const tr = transformText(source, is8bit, preserveWhiteSpace, frameStarts);
+		const n = tr.text.length;
+		if (n === 0) return {
+			breaks: flags,
+			leftOut: null,
+			dropsBidiControl: tr.dropsBidiControl
+		};
+		const g = {
+			clusterStart: new Uint8Array(n).fill(1),
+			isSpace: new Uint8Array(n)
+		};
+		splitAndInitTextRun(g, tr.text, graphemeTable, new Int32Array(n));
+		const state = getBreakStates(lineData ??= {
+			classes: unpackClasses("gecko/line"),
+			states: unpackTable(geckoLineBreakStatesPacked)
+		}, tr.text, is8bit, hasCompressedLeadingWhitespace(source, tr.skipped, is8bit, preserveWhiteSpace), keepAll);
+		for (let t = 1; t < n; t++) {
+			const rawPos = tr.orig[t];
+			const normal = state[t] === 1 && (g.clusterStart[t] === 1 || g.isSpace[t - 1] === 1);
+			const afterSoftHyphen = tr.skipped[rawPos - 1] === 1 && source.charCodeAt(rawPos - 1) === CH_SHY;
+			if (normal || afterSoftHyphen) flags[rawPos] = normal && afterSoftHyphen ? 9 : 1;
+			else if (g.clusterStart[t] === 1) flags[rawPos] = 2;
+		}
+		return {
+			breaks: flags,
+			leftOut: tr.leftOut,
+			dropsBidiControl: tr.dropsBidiControl
+		};
+	}
+	var SEGMENT_KINDS = [
+		"text",
+		"space",
+		"zero-width-break",
+		"soft-hyphen",
+		"preserved-space",
+		"tab",
+		"zero-width-glue",
+		"control",
+		"hard-break"
+	];
+	var collapsibleWhitespaceRunRe = /[ \t\n\r\f]{2,}|[\t\n\r\f]/g;
 	var needsWhitespaceNormalizationRe = /[\t\n\r\f]| {2,}|^ | $/;
-	function normalizeWhitespaceNormal(text) {
+	function isSegmentBreakRunSpace(code, scan) {
+		return code === 32 || code === 9 || code === 10 || code === 13 && scan === "blink";
+	}
+	function removeSkippableSegmentBreaks(text, profile, language = null) {
+		const scan = profile.lineBreakScan;
+		if (scan === "webkit" || !text.includes("\n")) return text;
+		const eastAsian = scan === "gecko" && maybeEastAsianRe.test(text);
+		if (!eastAsian && !text.includes("​")) return text;
+		const japaneseOrChinese = eastAsian && isJapaneseOrChinese(language);
+		let result = "";
+		let copied = 0;
+		for (let newline = text.indexOf("\n"); newline !== -1;) {
+			let start = newline;
+			for (let index = newline - 1; index >= 0; index--) {
+				const code = text.charCodeAt(index);
+				if (isSegmentBreakRunSpace(code, scan)) start = index;
+				else if (!(scan === "gecko" && isDiscardable(code, false))) break;
+			}
+			let end = newline + 1;
+			let index = end;
+			for (; index < text.length; index++) {
+				const code = text.charCodeAt(index);
+				if (isSegmentBreakRunSpace(code, scan)) end = index + 1;
+				else if (!(scan === "gecko" && isDiscardable(code, false))) break;
+			}
+			newline = text.indexOf("\n", index);
+			if (scan === "gecko" && text.charCodeAt(end - 1) === 32 && isSpaceCombiningSequenceTail(text, end)) end--;
+			if (text.charCodeAt(start - 1) !== 8203 && text.charCodeAt(end) !== 8203 && !(eastAsian && isEastAsianSegmentBreak(text, start, end, japaneseOrChinese))) continue;
+			result += text.slice(copied, start);
+			for (let member = start; member < end; member++) if (!isSegmentBreakRunSpace(text.charCodeAt(member), scan)) result += text[member];
+			copied = end;
+		}
+		return copied === 0 ? text : result + text.slice(copied);
+	}
+	function getTrailingCollapsibleStart(text, from, profile) {
+		let start = text.length;
+		for (let i = text.length - 1; i >= from; i--) {
+			const code = text.charCodeAt(i);
+			if (isCollapsibleSpaceCode(code)) start = i;
+			else if (!(profile.lineBreakScan === "gecko" && isBidiControl(code))) break;
+		}
+		return start;
+	}
+	var maybeEastAsianRe = /[\u1100-\uFFFF]/;
+	function collapseWhitespaceNormal(text) {
 		if (!needsWhitespaceNormalizationRe.test(text)) return text;
 		let normalized = text.replace(collapsibleWhitespaceRunRe, " ");
 		if (normalized.charCodeAt(0) === 32) normalized = normalized.slice(1);
@@ -11134,1911 +9360,2521 @@ createHTML: (html) => {
 		if (!/[\r\f]/.test(text)) return text;
 		return text.replace(/\r\n/g, "\n").replace(/[\r\f]/g, "\n");
 	}
-	var sharedGraphemeSegmenter = null;
-	function getSharedGraphemeSegmenter() {
-		if (sharedGraphemeSegmenter === null) sharedGraphemeSegmenter = new Intl.Segmenter(void 0, { granularity: "grapheme" });
-		return sharedGraphemeSegmenter;
-	}
-	var sharedWordSegmenter = null;
-	var segmenterLocale;
-	function getSharedWordSegmenter() {
-		if (sharedWordSegmenter === null) sharedWordSegmenter = new Intl.Segmenter(segmenterLocale, { granularity: "word" });
-		return sharedWordSegmenter;
-	}
-	var arabicScriptRe = /\p{Script=Arabic}/u;
 	var combiningMarkRe = /\p{M}/u;
-	var decimalDigitRe = /\p{Nd}/u;
-	function containsArabicScript(text) {
-		return arabicScriptRe.test(text);
-	}
-	var cjkRe = /[\u3000-\u30FF\u3130-\u318F\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\uFF00-\uFFEF\u{20000}-\u{2A6DF}\u{2A700}-\u{2EE5D}\u{2F800}-\u{2FA1F}\u{30000}-\u{33479}]/u;
-	function isCJK(s) {
-		return cjkRe.test(s);
-	}
-	function endsWithLineStartProhibitedText(text) {
-		const last = getLastCodePoint(text);
-		return last !== null && (kinsokuStart.has(last) || leftStickyPunctuation.has(last));
-	}
-	var keepAllGlueChars = /* @__PURE__ */ new Set([
-		"\xA0",
-		" ",
-		"⁠",
-		"﻿"
-	]);
-	var keepAllDashBreakChars = /* @__PURE__ */ new Set([
-		"-",
-		"‐",
-		"–",
-		"—"
-	]);
-	function endsWithKeepAllGlueText(text) {
-		const last = getLastCodePoint(text);
-		return last !== null && keepAllGlueChars.has(last);
-	}
-	function endsWithKeepAllDashBreakText(text) {
-		const last = getLastCodePoint(text);
-		return last !== null && keepAllDashBreakChars.has(last);
-	}
-	function canContinueKeepAllTextRun(previousText, breakAfterPunctuation) {
-		if (endsWithKeepAllGlueText(previousText)) return false;
-		if (!breakAfterPunctuation) return true;
-		if (endsWithLineStartProhibitedText(previousText)) return false;
-		if (endsWithKeepAllDashBreakText(previousText)) return false;
-		return true;
-	}
-	var kinsokuStart = /* @__PURE__ */ new Set([
-		"，",
-		"．",
-		"！",
-		"：",
-		"；",
-		"？",
-		"、",
-		"。",
-		"・",
-		"）",
-		"〕",
-		"〉",
-		"》",
-		"」",
-		"』",
-		"】",
-		"〗",
-		"〙",
-		"〛",
-		"ー",
-		"々",
-		"〻",
-		"ゝ",
-		"ゞ",
-		"ヽ",
-		"ヾ"
-	]);
-	var kinsokuEnd = /* @__PURE__ */ new Set([
-		"\"",
-		"(",
-		"[",
-		"{",
-		"¡",
-		"¿",
-		"“",
-		"‘",
-		"‚",
-		"„",
-		"«",
-		"‹",
-		"⸘",
-		"（",
-		"〔",
-		"〈",
-		"《",
-		"「",
-		"『",
-		"【",
-		"〖",
-		"〘",
-		"〚"
-	]);
-	var forwardStickyGlue = /* @__PURE__ */ new Set(["'", "’"]);
-	var leftStickyPunctuation = /* @__PURE__ */ new Set([
-		".",
-		",",
-		"!",
-		"?",
-		":",
-		";",
-		"،",
-		"؛",
-		"؟",
-		"।",
-		"॥",
-		"၊",
-		"။",
-		"၌",
-		"၍",
-		"၏",
-		")",
-		"]",
-		"}",
-		"%",
-		"\"",
-		"”",
-		"’",
-		"»",
-		"›",
-		"…"
-	]);
-	var arabicNoSpaceTrailingPunctuation = /* @__PURE__ */ new Set([
-		":",
-		".",
-		"،",
-		"؛"
-	]);
-	var myanmarMedialGlue = /* @__PURE__ */ new Set(["၏"]);
-	var closingQuoteChars = /* @__PURE__ */ new Set([
-		"”",
-		"’",
-		"»",
-		"›",
-		"」",
-		"』",
-		"】",
-		"》",
-		"〉",
-		"〕",
-		"）"
-	]);
-	function isLeftStickyPunctuationSegment(segment) {
-		if (isPunctuationGlueCluster(segment)) return true;
-		let sawPunctuation = false;
-		for (const ch of segment) {
-			if (leftStickyPunctuation.has(ch) || isLineBreakNumericAffix(ch)) {
-				sawPunctuation = true;
-				continue;
-			}
-			if (sawPunctuation && combiningMarkRe.test(ch)) continue;
-			return false;
-		}
-		return sawPunctuation;
-	}
-	function isCJKLineStartProhibitedSegment(segment) {
-		for (const ch of segment) if (!kinsokuStart.has(ch) && !leftStickyPunctuation.has(ch)) return false;
-		return segment.length > 0;
-	}
-	function isForwardStickyClusterSegment(segment) {
-		if (isPunctuationGlueCluster(segment)) return true;
-		for (const ch of segment) if (!kinsokuEnd.has(ch) && !forwardStickyGlue.has(ch) && !combiningMarkRe.test(ch) && !isLineBreakNumericAffix(ch)) return false;
-		return segment.length > 0;
-	}
-	function isPunctuationGlueCluster(segment) {
-		let sawPunctuation = false;
-		for (const ch of segment) {
-			if (ch === "\\" || combiningMarkRe.test(ch)) continue;
-			if (kinsokuEnd.has(ch) || leftStickyPunctuation.has(ch) || forwardStickyGlue.has(ch)) {
-				sawPunctuation = true;
-				continue;
-			}
-			return false;
-		}
-		return sawPunctuation;
-	}
-	function previousCodePointStart(text, end) {
-		const last = end - 1;
-		if (last <= 0) return Math.max(last, 0);
-		const lastCodeUnit = text.charCodeAt(last);
-		if (lastCodeUnit < 56320 || lastCodeUnit > 57343) return last;
-		const maybeHigh = last - 1;
-		if (maybeHigh < 0) return last;
-		const highCodeUnit = text.charCodeAt(maybeHigh);
-		return highCodeUnit >= 55296 && highCodeUnit <= 56319 ? maybeHigh : last;
-	}
-	function getLastCodePoint(text) {
-		if (text.length === 0) return null;
-		const start = previousCodePointStart(text, text.length);
-		return text.slice(start);
-	}
-	function getFirstSignificantCodePoint(text) {
-		for (const ch of text) if (!combiningMarkRe.test(ch)) return ch;
-		return null;
-	}
-	function getLastSignificantCodePoint(text, end = text.length) {
-		for (; end > 0;) {
-			const start = previousCodePointStart(text, end);
-			const ch = text.slice(start, end);
-			if (!combiningMarkRe.test(ch)) return ch;
-			end = start;
-		}
-		return null;
-	}
-	var lineBreakNumericAffixRanges = [
-		36,
-		37,
-		43,
-		43,
-		92,
-		92,
-		162,
-		165,
-		176,
-		177,
-		1423,
-		1423,
-		1545,
-		1547,
-		1642,
-		1642,
-		2046,
-		2047,
-		2546,
-		2547,
-		2553,
-		2555,
-		2801,
-		2801,
-		3065,
-		3065,
-		3449,
-		3449,
-		3647,
-		3647,
-		6107,
-		6107,
-		8240,
-		8247,
-		8279,
-		8279,
-		8352,
-		8399,
-		8451,
-		8451,
-		8457,
-		8457,
-		8470,
-		8470,
-		8722,
-		8723,
-		43064,
-		43064,
-		65020,
-		65020,
-		65129,
-		65130,
-		65284,
-		65285,
-		65504,
-		65505,
-		65509,
-		65510,
-		73693,
-		73696,
-		123647,
-		123647,
-		126124,
-		126124,
-		126128,
-		126128
-	];
-	function isCodePointInRanges(codePoint, ranges) {
-		for (let i = 0; i < ranges.length; i += 2) if (codePoint >= ranges[i] && codePoint <= ranges[i + 1]) return true;
-		return false;
-	}
-	function isLineBreakNumericAffix(ch) {
-		const codePoint = ch.codePointAt(0);
-		return codePoint !== void 0 && isCodePointInRanges(codePoint, lineBreakNumericAffixRanges);
-	}
-	function endsWithLineBreakNumericAffix(text) {
-		const last = getLastSignificantCodePoint(text);
-		return last !== null && isLineBreakNumericAffix(last);
-	}
-	function startsWithDecimalDigit(text) {
-		const first = getFirstSignificantCodePoint(text);
-		return first !== null && decimalDigitRe.test(first);
-	}
-	function splitTrailingForwardStickyCluster(text) {
-		let splitIndex = text.length;
-		while (splitIndex > 0) {
-			const start = previousCodePointStart(text, splitIndex);
-			const ch = text.slice(start, splitIndex);
-			if (combiningMarkRe.test(ch) || kinsokuEnd.has(ch) || forwardStickyGlue.has(ch)) {
-				splitIndex = start;
-				continue;
-			}
-			break;
-		}
-		if (splitIndex <= 0 || splitIndex === text.length) return null;
-		return {
-			head: text.slice(0, splitIndex),
-			tail: text.slice(splitIndex)
-		};
-	}
-	function getRepeatableSingleCharRunChar(text, isWordLike, kind) {
-		return kind === "text" && !isWordLike && text.length === 1 && text !== "-" && text !== "—" ? text : null;
-	}
-	function hasArabicNoSpacePunctuation(containsArabic, lastCodePoint) {
-		return containsArabic && lastCodePoint !== null && arabicNoSpaceTrailingPunctuation.has(lastCodePoint);
-	}
-	function endsWithMyanmarMedialGlue(segment) {
-		const lastCodePoint = getLastCodePoint(segment);
-		return lastCodePoint !== null && myanmarMedialGlue.has(lastCodePoint);
-	}
-	function splitLeadingSpaceAndMarks(segment) {
-		if (segment.length < 2 || segment[0] !== " ") return null;
-		const marks = segment.slice(1);
-		if (/^\p{M}+$/u.test(marks)) return {
-			space: " ",
-			marks
-		};
-		return null;
-	}
-	function endsWithClosingQuote(text) {
-		let end = text.length;
-		while (end > 0) {
-			const start = previousCodePointStart(text, end);
-			const ch = text.slice(start, end);
-			if (closingQuoteChars.has(ch)) return true;
-			if (!leftStickyPunctuation.has(ch)) return false;
-			end = start;
-		}
-		return false;
-	}
-	function classifySegmentBreakChar(ch, whiteSpace) {
+	function classifySegmentBreakCode(code, whiteSpace, scan) {
 		if (whiteSpace === "pre-wrap") {
-			if (ch === " ") return "preserved-space";
-			if (ch === "	") return "tab";
-			if (ch === "\n") return "hard-break";
+			if (code === 32) return 4;
+			if (code === 9) return 5;
+			if (code === 10) return 8;
 		}
-		if (ch === " ") return "space";
-		if (ch === "\xA0" || ch === " " || ch === "⁠" || ch === "﻿") return "glue";
-		if (ch === "​") return "zero-width-break";
-		if (ch === "­") return "soft-hyphen";
-		return "text";
+		if (code === 32) return 1;
+		if (code === 8203) return 2;
+		if (code === 173) return 3;
+		if (code === 133 && scan === "webkit") return 7;
+		return 0;
 	}
-	var breakCharRe = /[\x20\t\n\xA0\xAD\u200B\u202F\u2060\uFEFF]/;
-	function joinTextParts(parts) {
-		return parts.length === 1 ? parts[0] : parts.join("");
+	function isCollapsibleSpaceCode(code) {
+		return code === 32 || code === 9 || code === 10 || code === 13 || code === 12;
 	}
-	function joinReversedPrefixParts(prefixParts, tail) {
-		const parts = [];
-		for (let i = prefixParts.length - 1; i >= 0; i--) parts.push(prefixParts[i]);
-		parts.push(tail);
-		return joinTextParts(parts);
-	}
-	function splitSegmentByBreakKind(segment, isWordLike, start, whiteSpace) {
-		if (!breakCharRe.test(segment)) return [{
-			text: segment,
-			isWordLike,
-			kind: "text",
-			start
-		}];
-		const pieces = [];
-		let currentKind = null;
-		let currentStart = 0;
-		let currentWordLike = false;
-		let offset = 0;
-		for (const ch of segment) {
-			const kind = classifySegmentBreakChar(ch, whiteSpace);
-			const wordLike = kind === "text" && isWordLike;
-			if (currentKind !== null && kind === currentKind && wordLike === currentWordLike) {
-				offset += ch.length;
-				continue;
-			}
-			if (currentKind !== null) pieces.push({
-				text: segment.slice(currentStart, offset),
-				isWordLike: currentWordLike,
-				kind: currentKind,
-				start: start + currentStart
-			});
-			currentKind = kind;
-			currentStart = offset;
-			currentWordLike = wordLike;
-			offset += ch.length;
-		}
-		if (currentKind !== null) pieces.push({
-			text: segment.slice(currentStart),
-			isWordLike: currentWordLike,
-			kind: currentKind,
-			start: start + currentStart
-		});
-		return pieces;
-	}
-	function isTextRunBoundary(kind) {
-		return kind === "space" || kind === "preserved-space" || kind === "zero-width-break" || kind === "hard-break";
-	}
-	var urlSchemeSegmentRe = /^[A-Za-z][A-Za-z0-9+.-]*:$/;
-	function isUrlLikeRunStart(segmentation, index) {
-		const text = segmentation.texts[index];
-		if (text.startsWith("www.")) return true;
-		return urlSchemeSegmentRe.test(text) && index + 1 < segmentation.len && segmentation.kinds[index + 1] === "text" && segmentation.texts[index + 1] === "//";
-	}
-	function isUrlQueryBoundarySegment(text) {
-		return text.includes("?") && (text.includes("://") || text.startsWith("www."));
-	}
-	function mergeUrlRuns(segmentation, normalized, profile) {
-		const texts = [];
-		const isWordLike = [];
-		const kinds = [];
-		const starts = [];
-		for (let i = 0; i < segmentation.len; i++) {
-			const start = segmentation.starts[i];
-			let text = segmentation.texts[i];
-			let wordLike = segmentation.isWordLike[i];
-			const kind = segmentation.kinds[i];
-			let queryStartOverride = -1;
-			if (kind === "text" && isUrlLikeRunStart(segmentation, i)) {
-				const urlParts = [text];
-				let j = i + 1;
-				while (j < segmentation.len && !isTextRunBoundary(segmentation.kinds[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
-					if (queryStartOverride < 0 && isUrlLikeRunStart(segmentation, j)) queryStartOverride = segmentation.starts[j];
-					const nextText = segmentation.texts[j];
-					urlParts.push(nextText);
-					wordLike = true;
-					j++;
-					if (nextText.includes("?")) break;
-				}
-				text = joinTextParts(urlParts);
-				i = j - 1;
-			}
-			texts.push(text);
-			isWordLike.push(wordLike);
-			kinds.push(kind);
-			starts.push(start);
-			if (!isUrlQueryBoundarySegment(text)) continue;
-			const nextIndex = i + 1;
-			if (nextIndex >= segmentation.len || isTextRunBoundary(segmentation.kinds[nextIndex])) continue;
-			const queryParts = [];
-			const queryStart = queryStartOverride < 0 ? segmentation.starts[nextIndex] : queryStartOverride;
-			let j = nextIndex;
-			while (j < segmentation.len && !isTextRunBoundary(segmentation.kinds[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
-				queryParts.push(segmentation.texts[j]);
-				j++;
-			}
-			if (queryParts.length > 0) {
-				texts.push(joinTextParts(queryParts));
-				isWordLike.push(true);
-				kinds.push("text");
-				starts.push(queryStart);
-				i = j - 1;
-			}
-		}
-		return {
-			len: texts.length,
-			texts,
-			isWordLike,
-			kinds,
-			starts
-		};
-	}
-	var numericJoinerChars = /* @__PURE__ */ new Set([
-		":",
-		"-",
-		"/",
-		"×",
-		",",
-		".",
-		"+",
-		"–",
-		"—"
-	]);
-	var wordInternalSymbolRe = /[\p{P}\p{S}\p{Co}]/u;
-	var emojiPresentationRe$1 = /\p{Emoji_Presentation}/u;
-	var noSpaceWordBreakAfterChars = /* @__PURE__ */ new Set([
-		"?",
-		"֊",
-		"-",
-		"‐",
-		"‒",
-		"–",
-		"—",
-		"…",
-		"‼",
-		"‽",
-		"⁉"
-	]);
-	function isAsciiWordInternalSymbolCode(code) {
-		return code >= 33 && code <= 47 && code !== 45 || code >= 58 && code <= 64 && code !== 63 || code >= 91 && code <= 96 || code >= 123 && code <= 126;
-	}
-	function isNoSpaceWordInternalSymbol(ch) {
-		const code = ch.charCodeAt(0);
-		if (code < 128) return isAsciiWordInternalSymbolCode(code);
-		return !noSpaceWordBreakAfterChars.has(ch) && !emojiPresentationRe$1.test(ch) && wordInternalSymbolRe.test(ch);
-	}
-	function isNoSpaceWordInternalSymbolSegment(text) {
-		let sawSymbol = false;
-		for (const ch of text) {
-			if (combiningMarkRe.test(ch)) continue;
-			if (!isNoSpaceWordInternalSymbol(ch)) return false;
-			sawSymbol = true;
-		}
-		return sawSymbol;
-	}
-	function endsWithNoSpaceWordJoiner(text) {
-		for (let end = text.length; end > 0;) {
-			const start = previousCodePointStart(text, end);
-			const ch = text.slice(start, end);
-			if (combiningMarkRe.test(ch)) {
-				end = start;
-				continue;
-			}
-			return isNoSpaceWordInternalSymbol(ch) || isLineBreakNumericAffix(ch);
-		}
-		return false;
-	}
-	var asciiAlphabeticBoundaryRe = /[A-Za-z#&*<=>@^_`~]/;
-	function isAsciiBoundary(left, right) {
-		return left.charCodeAt(0) < 128 && right.charCodeAt(0) < 128;
-	}
-	function numericAffixBoundary(source, boundary, profile) {
-		if (!profile.geckoAsciiLineBreaks || boundary <= 0 || boundary >= source.length) return null;
-		const left = getLastSignificantCodePoint(source, boundary);
-		const right = String.fromCodePoint(source.codePointAt(boundary));
-		if (left === null || !isAsciiBoundary(left, right)) return null;
-		const leftAffix = isLineBreakNumericAffix(left);
-		const rightAffix = isLineBreakNumericAffix(right);
-		if (!leftAffix && !rightAffix) return null;
-		if (right === ")" || right === "]" || right === "}" || "!,.:;?/".includes(right)) return true;
-		if ("([{".includes(left) || left === "\"" || left === "'" || right === "\"" || right === "'") return true;
-		if (right === "|" || right === "-") return true;
-		if (leftAffix && asciiAlphabeticBoundaryRe.test(right) || asciiAlphabeticBoundaryRe.test(left) && rightAffix) return true;
-		if (rightAffix && (")]}".includes(left) || /[0-9]/.test(left))) return true;
-		if (leftAffix && ("([{".includes(right) || /[0-9]/.test(right))) return true;
-		return false;
-	}
-	function openingPunctuationJoinsPrevious(left, right, profile, leftEnd = left.length) {
-		const first = right[0];
-		if (first === void 0 || !"([{".includes(first)) return null;
-		const last = getLastSignificantCodePoint(left, leftEnd);
-		if (last === null) return null;
-		if (profile.geckoAsciiLineBreaks && isAsciiBoundary(last, first)) return asciiAlphabeticBoundaryRe.test(last) || decimalDigitRe.test(last) || "\"'([{".includes(last) || isLineBreakNumericAffix(last);
-		if (last.charCodeAt(0) >= 128) return !isCJK(last) && /[\p{L}\p{N}]/u.test(last) ? true : null;
-		return /[A-Za-z0-9]/.test(last) || "$'(/<@[^_`{".includes(last);
-	}
-	function canJoinNoSpaceWordBoundary(leftText, leftWordLike, rightText, rightWordLike, profile) {
-		if (rightText[0] === "-" && isCJK(leftText)) return true;
-		if (isCJK(leftText) || isCJK(rightText)) return false;
-		const openingJoin = openingPunctuationJoinsPrevious(leftText, rightText, profile);
-		if (openingJoin !== null) return openingJoin;
-		const leftSymbol = !leftWordLike && isNoSpaceWordInternalSymbolSegment(leftText);
-		const rightSymbol = !rightWordLike && isNoSpaceWordInternalSymbolSegment(rightText);
-		const leftAffix = endsWithLineBreakNumericAffix(leftText);
-		const leftEndsJoiner = (leftWordLike || leftAffix) && endsWithNoSpaceWordJoiner(leftText);
-		if (!leftSymbol && !rightSymbol && !leftEndsJoiner) return false;
-		return (leftWordLike || leftSymbol || leftAffix) && (rightWordLike || rightSymbol);
-	}
-	function segmentContainsDecimalDigit(text) {
-		for (const ch of text) if (decimalDigitRe.test(ch)) return true;
-		return false;
-	}
-	function isNumericRunSegment(text) {
-		if (text.length === 0) return false;
-		for (const ch of text) {
-			if (decimalDigitRe.test(ch) || numericJoinerChars.has(ch)) continue;
-			return false;
-		}
-		return true;
-	}
-	function mergeNumericRuns(segmentation, normalized, profile) {
-		const texts = [];
-		const isWordLike = [];
-		const kinds = [];
-		const starts = [];
-		function pushNumericRun(text, start) {
-			if (text.includes("-")) {
-				const parts = text.split("-");
-				let shouldSplit = parts.length > 1;
-				for (let i = 0; i < parts.length; i++) {
-					const part = parts[i];
-					if (!shouldSplit) break;
-					if (part.length === 0 || !segmentContainsDecimalDigit(part) || !isNumericRunSegment(part)) shouldSplit = false;
-				}
-				if (shouldSplit) {
-					let offset = 0;
-					for (let i = 0; i < parts.length; i++) {
-						const part = parts[i];
-						const splitText = i < parts.length - 1 ? `${part}-` : part;
-						texts.push(splitText);
-						isWordLike.push(true);
-						kinds.push("text");
-						starts.push(start + offset);
-						offset += splitText.length;
-					}
-					return;
+	function mapSourceLineBreaks(source, normalizedLength, sourceBreaks, whiteSpace, spaceSources) {
+		const breaks = new Uint8Array(normalizedLength + 1);
+		let normalizedIndex = 0;
+		if (whiteSpace === "pre-wrap") {
+			for (let i = 0; i < source.length; i++, normalizedIndex++) {
+				breaks[normalizedIndex] = sourceBreaks[i];
+				if (source.charCodeAt(i) === 13 && source.charCodeAt(i + 1) === 10) {
+					i++;
+					if ((sourceBreaks[i] & 1) !== 0) breaks[normalizedIndex] = sourceBreaks[i];
 				}
 			}
-			texts.push(text);
-			isWordLike.push(true);
-			kinds.push("text");
-			starts.push(start);
+			breaks[normalizedLength] = sourceBreaks[source.length];
+			return breaks;
 		}
-		for (let i = 0; i < segmentation.len; i++) {
-			const text = segmentation.texts[i];
-			const kind = segmentation.kinds[i];
-			if (kind === "text" && isNumericRunSegment(text) && segmentContainsDecimalDigit(text)) {
-				const mergedParts = [text];
-				let j = i + 1;
-				while (j < segmentation.len && segmentation.kinds[j] === "text" && isNumericRunSegment(segmentation.texts[j]) && numericAffixBoundary(normalized, segmentation.starts[j], profile) !== false) {
-					mergedParts.push(segmentation.texts[j]);
-					j++;
-				}
-				pushNumericRun(joinTextParts(mergedParts), segmentation.starts[i]);
-				i = j - 1;
-				continue;
-			}
-			texts.push(text);
-			isWordLike.push(segmentation.isWordLike[i]);
-			kinds.push(kind);
-			starts.push(segmentation.starts[i]);
-		}
-		return {
-			len: texts.length,
-			texts,
-			isWordLike,
-			kinds,
-			starts
-		};
-	}
-	function mergeNoSpaceWordChains(segmentation, normalized, profile) {
-		const texts = [];
-		const isWordLike = [];
-		const kinds = [];
-		const starts = [];
 		let i = 0;
-		while (i < segmentation.len) {
-			const text = segmentation.texts[i];
-			const kind = segmentation.kinds[i];
-			const wordLike = segmentation.isWordLike[i];
-			if (kind === "text") {
-				const mergedParts = [text];
-				let j = i + 1;
-				let mergedWordLike = wordLike;
-				while (j < segmentation.len && segmentation.kinds[j] === "text" && (numericAffixBoundary(normalized, segmentation.starts[j], profile) ?? canJoinNoSpaceWordBoundary(segmentation.texts[j - 1], segmentation.isWordLike[j - 1], segmentation.texts[j], segmentation.isWordLike[j], profile))) {
-					const nextText = segmentation.texts[j];
-					mergedParts.push(nextText);
-					mergedWordLike = mergedWordLike || segmentation.isWordLike[j];
-					j++;
-				}
-				if (j > i + 1) {
-					texts.push(joinTextParts(mergedParts));
-					isWordLike.push(mergedWordLike);
-					kinds.push("text");
-					starts.push(segmentation.starts[i]);
-					i = j;
-					continue;
-				}
+		while (i < source.length && isCollapsibleSpaceCode(source.charCodeAt(i))) i++;
+		while (i < source.length) {
+			let end = i + 1;
+			if (isCollapsibleSpaceCode(source.charCodeAt(i))) {
+				while (end < source.length && isCollapsibleSpaceCode(source.charCodeAt(end))) end++;
+				if (end === source.length) break;
 			}
-			texts.push(text);
-			isWordLike.push(wordLike);
-			kinds.push(kind);
-			starts.push(segmentation.starts[i]);
-			i++;
+			if ((sourceBreaks[i] & 1) === 0 && breaks[normalizedIndex] === 0) breaks[normalizedIndex] = sourceBreaks[i];
+			if (spaceSources !== null) spaceSources[normalizedIndex] = source.charCodeAt(i);
+			const start = i;
+			for (; i < end; i++) if ((sourceBreaks[i] & 1) !== 0) breaks[i === start ? normalizedIndex : normalizedIndex + 1] = sourceBreaks[i];
+			normalizedIndex++;
 		}
-		return {
-			len: texts.length,
-			texts,
-			isWordLike,
-			kinds,
-			starts
-		};
+		breaks[normalizedLength] = (sourceBreaks[i] & 1) === 0 ? sourceBreaks[i] : sourceBreaks[i] & 4;
+		return breaks;
 	}
-	function mergeGlueConnectedTextRuns(segmentation) {
-		const texts = [];
-		const isWordLike = [];
-		const kinds = [];
+	function classifySegmentUnit(normalized, breaks, i, code, whiteSpace, scan) {
+		if ((code === 8232 || code === 8233) && (breaks[i + 1] & 4) !== 0) return 8;
+		if (code === 173 && (breaks[i + 1] & 8) !== 0 && followsChunkContent(normalized, i)) return 2;
+		return classifySegmentBreakCode(code, whiteSpace, scan);
+	}
+	function followsChunkContent(normalized, i) {
+		let j = i - 1;
+		while (j >= 0 && normalized.charCodeAt(j) === 173) j--;
+		return j >= 0 && normalized.charCodeAt(j) !== 10;
+	}
+	function gathersKind(kind) {
+		return kind === 0 || kind === 1 || kind === 4 || kind === 3;
+	}
+	function isControlSegmentCode(code) {
+		return code < 32 || code >= 127 && code <= 159 || code === 8232 || code === 8233;
+	}
+	function segmentAtLineBreaks(normalized, spaceSources, breaks, whiteSpace, scan, hangTabs, dropsBidiControl) {
+		const oneCluster = scan === "gecko" ? 128 : 0;
 		const starts = [];
-		let read = 0;
-		while (read < segmentation.len) {
-			const textParts = [segmentation.texts[read]];
-			let wordLike = segmentation.isWordLike[read];
-			let kind = segmentation.kinds[read];
-			let start = segmentation.starts[read];
-			if (kind === "glue") {
-				const glueParts = [textParts[0]];
-				const glueStart = start;
-				read++;
-				while (read < segmentation.len && segmentation.kinds[read] === "glue") {
-					glueParts.push(segmentation.texts[read]);
-					read++;
-				}
-				const glueText = joinTextParts(glueParts);
-				if (read < segmentation.len && segmentation.kinds[read] === "text") {
-					textParts[0] = glueText;
-					textParts.push(segmentation.texts[read]);
-					wordLike = segmentation.isWordLike[read];
-					kind = "text";
-					start = glueStart;
-					read++;
-				} else {
-					texts.push(glueText);
-					isWordLike.push(false);
-					kinds.push("glue");
-					starts.push(glueStart);
+		const flags = [];
+		let lastAlone = false;
+		let markRun = false;
+		let droppedEnd = -1;
+		let lastKind = -1;
+		for (let i = 0; i < normalized.length; i++) {
+			const code = normalized.charCodeAt(i);
+			if (dropsBidiControl && i < droppedEnd) continue;
+			if (dropsBidiControl && isDiscardable(code, false) && (i === 0 || (breaks[i] & 16) !== 0 || !isDiscardable(normalized.charCodeAt(i - 1), false))) {
+				let j = i;
+				let controlEnd = -1;
+				for (; j < normalized.length && isDiscardable(normalized.charCodeAt(j), false) && (j === i || (breaks[j] & 16) === 0); j++) if (isBidiControl(normalized.charCodeAt(j))) controlEnd = j + 1;
+				if (controlEnd > 0) {
+					const startsItem = lastKind >= 0 && lastKind !== 8 && (breaks[i] & 16) !== 0;
+					const chunkStart = lastKind < 0 || lastKind === 8 || startsItem;
+					if (chunkStart) {
+						const endsChunk = j === normalized.length || classifySegmentUnit(normalized, breaks, j, normalized.charCodeAt(j), whiteSpace, scan) === 8;
+						if (!endsChunk) {
+							if (startsItem) breaks[i] = breaks[i] | breaks[j] & 1;
+							breaks[j] = breaks[j] & -10;
+						}
+						droppedEnd = j;
+						if (endsChunk && lastKind >= 0) continue;
+					} else droppedEnd = controlEnd;
+					if (chunkStart || lastAlone || markRun) {
+						starts.push(i);
+						flags.push(0 | oneCluster);
+						lastKind = 0;
+						lastAlone = false;
+						markRun = false;
+					}
 					continue;
 				}
-			} else read++;
-			if (kind === "text") while (read < segmentation.len && segmentation.kinds[read] === "glue") {
-				const glueParts = [];
-				while (read < segmentation.len && segmentation.kinds[read] === "glue") {
-					glueParts.push(segmentation.texts[read]);
-					read++;
-				}
-				const glueText = joinTextParts(glueParts);
-				if (read < segmentation.len && segmentation.kinds[read] === "text") {
-					textParts.push(glueText, segmentation.texts[read]);
-					wordLike = wordLike || segmentation.isWordLike[read];
-					read++;
-					continue;
-				}
-				textParts.push(glueText);
 			}
-			texts.push(joinTextParts(textParts));
-			isWordLike.push(wordLike);
-			kinds.push(kind);
-			starts.push(start);
+			const kind = classifySegmentUnit(normalized, breaks, i, code, whiteSpace, scan);
+			const alone = kind === 0 && isControlSegmentCode(code);
+			const unbroken = (breaks[i] & 1) === 0;
+			if ((breaks[i] & 17) === 0 && !alone && !lastAlone && !(markRun && !combiningMarkRe.test(normalized[i])) && kind === lastKind && gathersKind(kind)) {
+				if ((breaks[i] & 2) !== 0) flags[flags.length - 1] = flags[flags.length - 1] & -129;
+				continue;
+			}
+			markRun = unbroken && kind === 0 && combiningMarkRe.test(normalized[i]) && (lastAlone || lastKind === 2 || lastKind === 3 || lastKind === 7);
+			starts.push(i);
+			flags.push(kind | oneCluster);
+			lastKind = kind;
+			lastAlone = alone;
 		}
+		let hasUnbroken = false;
+		const count = flags.length;
+		for (let j = count - 2; j >= 0; j--) {
+			const kind = flags[j] & 15;
+			const next = flags[j + 1] & 15;
+			if ((breaks[starts[j + 1]] & 1) !== 0 || kind === 8) continue;
+			if (!hangTabs && (next === 5 || next === 4 && kind === 5)) {
+				if (kind === 3) continue;
+			} else if (next === 0 || next === 6 || next === 7) {
+				if (kind === 2 || kind === 3) flags[j] = flags[j] & -16 | 6;
+			} else continue;
+			flags[j + 1] = flags[j + 1] | 32;
+			hasUnbroken = true;
+		}
+		if (hasUnbroken) {
+			for (let j = 0; j < count; j++) if ((flags[j] & 32) === 0) flags[j] = flags[j] | 64;
+		}
+		const texts = [];
+		for (let j = 0; j < count; j++) texts.push(normalized.slice(starts[j], j + 1 < count ? starts[j + 1] : normalized.length));
 		return {
-			len: texts.length,
+			normalized,
+			spaceSources,
 			texts,
-			isWordLike,
-			kinds,
-			starts
+			starts,
+			flags,
+			hasUnbroken
 		};
 	}
-	function carryTrailingForwardStickyAcrossCJKBoundary(segmentation) {
-		const { texts, kinds, starts } = segmentation;
-		for (let i = 0; i < texts.length - 1; i++) {
-			if (kinds[i] !== "text" || kinds[i + 1] !== "text") continue;
-			if (!isCJK(texts[i]) || !isCJK(texts[i + 1])) continue;
-			const split = splitTrailingForwardStickyCluster(texts[i]);
-			if (split === null) continue;
-			texts[i] = split.head;
-			texts[i + 1] = split.tail + texts[i + 1];
-			starts[i + 1] = starts[i] + split.head.length;
-		}
-	}
-	function buildMergedSegmentation(normalized, profile, whiteSpace) {
-		const wordSegmenter = getSharedWordSegmenter();
-		let mergedLen = 0;
-		const mergedTexts = [];
-		const mergedWordLike = [];
-		const mergedKinds = [];
-		const mergedStarts = [];
-		let hasTail = false;
-		let tailStart = 0;
-		let tailEnd = 0;
-		let tailWordLike = false;
-		let tailKind = "text";
-		let tailSingleCharRunChar = null;
-		let tailContainsCJK = false;
-		let tailContainsArabicScript = false;
-		let tailEndsWithClosingQuote = false;
-		let tailEndsWithMyanmarMedialGlue = false;
-		let tailHasArabicNoSpacePunctuation = false;
-		for (const s of wordSegmenter.segment(normalized)) for (const piece of splitSegmentByBreakKind(s.segment, s.isWordLike ?? false, s.index, whiteSpace)) {
-			const isText = piece.kind === "text";
-			const repeatableSingleCharRunChar = getRepeatableSingleCharRunChar(piece.text, piece.isWordLike, piece.kind);
-			const pieceContainsCJK = isCJK(piece.text);
-			const pieceContainsArabicScript = containsArabicScript(piece.text);
-			const pieceLastCodePoint = getLastCodePoint(piece.text);
-			const pieceEndsWithClosingQuote = endsWithClosingQuote(piece.text);
-			const pieceEndsWithMyanmarMedialGlue = endsWithMyanmarMedialGlue(piece.text);
-			const pieceEnd = piece.start + piece.text.length;
-			const boundaryJoin = numericAffixBoundary(normalized, piece.start, profile) ?? (tailContainsCJK || pieceContainsCJK ? null : openingPunctuationJoinsPrevious(normalized, piece.text, profile, piece.start));
-			let appendToTail = false;
-			if (profile.carryCJKAfterClosingQuote && isText && hasTail && tailKind === "text" && pieceContainsCJK && tailContainsCJK && tailEndsWithClosingQuote) appendToTail = true;
-			else if (isText && hasTail && tailKind === "text" && isCJKLineStartProhibitedSegment(piece.text) && tailContainsCJK) appendToTail = true;
-			else if (isText && hasTail && tailKind === "text" && tailEndsWithMyanmarMedialGlue) appendToTail = true;
-			else if (isText && hasTail && tailKind === "text" && piece.isWordLike && pieceContainsArabicScript && tailHasArabicNoSpacePunctuation) appendToTail = true;
-			else if (repeatableSingleCharRunChar !== null && hasTail && tailKind === "text" && tailSingleCharRunChar === repeatableSingleCharRunChar && boundaryJoin !== false) {
-				tailEnd = pieceEnd;
-				continue;
-			} else if (isText && !piece.isWordLike && hasTail && tailKind === "text" && !tailContainsCJK && (isLeftStickyPunctuationSegment(piece.text) || piece.text === "-" && tailWordLike)) appendToTail = true;
-			if (isText && hasTail && tailKind === "text" && boundaryJoin !== null) appendToTail = boundaryJoin;
-			if (appendToTail) {
-				tailEnd = pieceEnd;
-				tailWordLike = tailWordLike || piece.isWordLike;
-				tailSingleCharRunChar = null;
-				tailContainsCJK = tailContainsCJK || pieceContainsCJK;
-				tailContainsArabicScript = tailContainsArabicScript || pieceContainsArabicScript;
-				tailEndsWithClosingQuote = pieceEndsWithClosingQuote;
-				tailEndsWithMyanmarMedialGlue = pieceEndsWithMyanmarMedialGlue;
-				tailHasArabicNoSpacePunctuation = hasArabicNoSpacePunctuation(tailContainsArabicScript, pieceLastCodePoint);
+	function analyzeText(text, profile, whiteSpace = "normal", wordBreak = "normal", language = null, paragraph = null) {
+		const preserve = whiteSpace === "pre-wrap";
+		const scanStarts = paragraph === null ? null : [];
+		let source = preserve ? text : paragraph !== null && paragraph.ownSegmentBreaks ? removeItemsSkippableSegmentBreaks(text, paragraph.starts, profile, language, scanStarts) : removeSkippableSegmentBreaks(text, profile, language);
+		if (paragraph !== null && scanStarts.length === 0) for (let k = 0; k < paragraph.starts.length; k++) scanStarts.push(paragraph.starts[k]);
+		let normalized = preserve ? normalizeWhitespacePreWrap(text) : collapseWhitespaceNormal(source);
+		const keepAll = wordBreak === "keep-all";
+		let breaks;
+		let spaceSources = null;
+		let dropsBidiControl = false;
+		if (profile.lineBreakScan === "blink") breaks = getBlinkLineBreaks(normalized, keepAll, language);
+		else {
+			let sourceBreaks;
+			if (profile.lineBreakScan === "webkit") {
+				sourceBreaks = paragraph === null ? getWebKitLineBreaks(source, preserve, keepAll, language) : getWebKitParagraphBreaks(source, paragraph, preserve, keepAll, language);
+				if (!preserve && source !== normalized && /\r(?!\n)/.test(source)) {
+					let count = 0;
+					for (let i = 0; i < source.length; i++) if (source.charCodeAt(i) !== 13 || source.charCodeAt(i + 1) === 10) sourceBreaks[count++] = sourceBreaks[i];
+					else sourceBreaks[i + 1] = sourceBreaks[i + 1] | sourceBreaks[i];
+					sourceBreaks[count] = sourceBreaks[source.length];
+					source = source.replace(/\r(?!\n)/g, "");
+					normalized = collapseWhitespaceNormal(source);
+				}
 			} else {
-				if (hasTail) {
-					mergedTexts[mergedLen] = normalized.slice(tailStart, tailEnd);
-					mergedWordLike[mergedLen] = tailWordLike;
-					mergedKinds[mergedLen] = tailKind;
-					mergedStarts[mergedLen] = tailStart;
-					mergedLen++;
+				const gecko = getGeckoLineBreaks(source, preserve, keepAll, profile.graphemeTable, scanStarts);
+				dropsBidiControl = gecko.dropsBidiControl;
+				sourceBreaks = gecko.breaks;
+				if (paragraph !== null) for (let k = 0; k < paragraph.atomic.length; k++) {
+					if (!paragraph.atomic[k]) continue;
+					let after = scanStarts[k] + 1;
+					while (after < source.length && isDiscardable(source.charCodeAt(after), false)) after++;
+					sourceBreaks[after] = sourceBreaks[after] & -9;
 				}
-				hasTail = true;
-				tailStart = piece.start;
-				tailEnd = pieceEnd;
-				tailWordLike = piece.isWordLike;
-				tailKind = piece.kind;
-				tailSingleCharRunChar = repeatableSingleCharRunChar;
-				tailContainsCJK = pieceContainsCJK;
-				tailContainsArabicScript = pieceContainsArabicScript;
-				tailEndsWithClosingQuote = pieceEndsWithClosingQuote;
-				tailEndsWithMyanmarMedialGlue = pieceEndsWithMyanmarMedialGlue;
-				tailHasArabicNoSpacePunctuation = hasArabicNoSpacePunctuation(pieceContainsArabicScript, pieceLastCodePoint);
+				const leftOut = gecko.leftOut;
+				const trailing = !preserve && (dropsBidiControl || leftOut !== null) ? getTrailingCollapsibleStart(source, 0, profile) : source.length;
+				if (leftOut !== null || trailing < source.length) {
+					let runSpace = -1;
+					if (leftOut !== null && trailing < source.length) for (let i = trailing - 1; i >= 0; i--) {
+						const code = source.charCodeAt(i);
+						if (!isSpaceOrTabOrSegmentBreak(code) && !isDiscardable(code, false)) break;
+						if (isSpaceOrTabOrSegmentBreak(code) && leftOut[i] !== 1) {
+							runSpace = -1;
+							break;
+						}
+						if (isSpaceOrTabOrSegmentBreak(code)) runSpace = i;
+					}
+					const from = leftOut === null ? trailing : 0;
+					let kept = "";
+					let copied = 0;
+					let count = from;
+					let last = from - 1;
+					for (let i = from; i < source.length; i++) {
+						if (i < trailing ? leftOut !== null && leftOut[i] === 1 && i !== runSpace : isCollapsibleSpaceCode(source.charCodeAt(i))) {
+							kept += source.slice(copied, i);
+							copied = i + 1;
+							continue;
+						}
+						const breakBefore = sourceBreaks[i];
+						sourceBreaks[count++] = last >= 0 && last < i - 1 && (breakBefore & 1) !== 0 && source.charCodeAt(last) === 173 ? breakBefore | 8 : breakBefore;
+						last = i;
+					}
+					sourceBreaks[count] = sourceBreaks[source.length];
+					source = kept + source.slice(copied);
+					normalized = collapseWhitespaceNormal(source);
+				}
+			}
+			if (profile.lineBreakScan === "webkit" && !preserve && source !== normalized) spaceSources = new Uint16Array(normalized.length);
+			breaks = source === normalized ? sourceBreaks : mapSourceLineBreaks(source, normalized.length, sourceBreaks, whiteSpace, spaceSources);
+		}
+		if (paragraph !== null) markItemStarts(text, normalized, breaks, paragraph, profile.lineBreakScan);
+		return segmentAtLineBreaks(normalized, spaceSources, breaks, whiteSpace, profile.lineBreakScan, profile.hangTabs, dropsBidiControl);
+	}
+	function removeItemsSkippableSegmentBreaks(text, starts, profile, language, resultStarts) {
+		if (profile.lineBreakScan === "webkit" || !text.includes("\n")) return text;
+		let result = "";
+		let copied = 0;
+		let newline = text.indexOf("\n");
+		for (let k = 0; k < starts.length; k++) {
+			const start = starts[k];
+			const end = k + 1 < starts.length ? starts[k + 1] : text.length;
+			resultStarts.push(result.length + start - copied);
+			if (newline < 0 || newline >= end) continue;
+			const item = text.slice(start, end);
+			const transformed = removeSkippableSegmentBreaks(item, profile, language);
+			if (transformed.length !== item.length) {
+				result += text.slice(copied, start) + transformed;
+				copied = end;
+			}
+			newline = text.indexOf("\n", end);
+		}
+		return copied === 0 ? text : result + text.slice(copied);
+	}
+	function alignToSource(source, normalized, scan) {
+		const offsets = new Int32Array(normalized.length);
+		const cr = scan === "blink" ? -1 : 13;
+		const ff = scan === "gecko" ? 12 : -1;
+		let i = 0;
+		for (let j = 0; j < normalized.length; j++) {
+			const unit = normalized.charCodeAt(j);
+			while (i < source.length) {
+				const code = source.charCodeAt(i);
+				if (code === unit || isCollapsibleSpaceCode(code) && (unit === 32 ? code !== cr && code !== ff : unit === 10)) break;
+				i++;
+			}
+			offsets[j] = i++;
+			if (unit === 10 && source.charCodeAt(i - 1) === 13 && source.charCodeAt(i) === 10) i++;
+		}
+		return offsets;
+	}
+	function markItemStarts(text, normalized, breaks, paragraph, scan) {
+		const offsets = paragraph.sourceOffsets = alignToSource(text, normalized, scan);
+		const { starts, atomic } = paragraph;
+		for (let k = 0, j = 0; k < starts.length; k++) {
+			while (j < normalized.length && offsets[j] < starts[k]) j++;
+			if (j === normalized.length) break;
+			breaks[j] = breaks[j] | 16;
+			if (atomic[k] && offsets[j] === starts[k]) {
+				breaks[j] = breaks[j] | 1;
+				breaks[j + 1] = breaks[j + 1] | 17;
 			}
 		}
-		if (hasTail) {
-			mergedTexts[mergedLen] = normalized.slice(tailStart, tailEnd);
-			mergedWordLike[mergedLen] = tailWordLike;
-			mergedKinds[mergedLen] = tailKind;
-			mergedStarts[mergedLen] = tailStart;
-			mergedLen++;
-		}
-		for (let i = 1; i < mergedLen; i++) if (mergedKinds[i] === "text" && !mergedWordLike[i] && isPunctuationGlueCluster(mergedTexts[i]) && mergedKinds[i - 1] === "text" && !isCJK(mergedTexts[i - 1]) && (numericAffixBoundary(normalized, mergedStarts[i], profile) ?? openingPunctuationJoinsPrevious(normalized, mergedTexts[i], profile, mergedStarts[i])) !== false) {
-			mergedTexts[i - 1] += mergedTexts[i];
-			mergedWordLike[i - 1] = mergedWordLike[i - 1] || mergedWordLike[i];
-			mergedTexts[i] = "";
-		}
-		let nextLiveIndex = -1;
-		let forwardStickyPrefixParts = null;
-		for (let i = mergedLen - 1; i >= 0; i--) {
-			const text = mergedTexts[i];
-			if (text.length === 0) continue;
-			const nextText = forwardStickyPrefixParts?.at(-1) ?? (nextLiveIndex >= 0 ? mergedTexts[nextLiveIndex] : null);
-			if (mergedKinds[i] === "text" && !mergedWordLike[i] && nextText !== null && mergedKinds[nextLiveIndex] === "text" && ((numericAffixBoundary(normalized, mergedStarts[i] + text.length, profile) ?? (isForwardStickyClusterSegment(text) && openingPunctuationJoinsPrevious(text, nextText, profile) !== false)) || text === "-" && startsWithDecimalDigit(nextText))) {
-				if (forwardStickyPrefixParts === null) forwardStickyPrefixParts = [];
-				forwardStickyPrefixParts.push(text);
-				mergedStarts[nextLiveIndex] = mergedStarts[i];
-				mergedTexts[i] = "";
-				continue;
+	}
+	function getWebKitParagraphBreaks(source, paragraph, preserve, keepAll, language) {
+		const { items, starts, atomic } = paragraph;
+		const breaks = new Uint8Array(source.length + 1);
+		let previous = -1;
+		for (let k = 0; k < starts.length; k++) {
+			const start = starts[k];
+			const end = k + 1 < starts.length ? starts[k + 1] : source.length;
+			if (start === end) continue;
+			const first = source.charCodeAt(start);
+			if (end - start > 1 || first === 8232 || first === 8233) {
+				const itemBreaks = getWebKitLineBreaks(items[k].text, preserve, keepAll, language);
+				for (let i = 1; i <= end - start; i++) breaks[start + i] = itemBreaks[i];
 			}
-			if (forwardStickyPrefixParts !== null) {
-				mergedTexts[nextLiveIndex] = joinReversedPrefixParts(forwardStickyPrefixParts, mergedTexts[nextLiveIndex]);
-				forwardStickyPrefixParts = null;
+			if (previous >= 0 && !atomic[k] && !atomic[previous]) {
+				const last = source.charCodeAt(start - 1);
+				if (!preserve && (first !== 13 && isCollapsibleSpaceCode(first) || last !== 13 && isCollapsibleSpaceCode(last)) || getWebKitBreakBetweenItems(items[previous].text, items[k].text, keepAll, language)) breaks[start] = breaks[start] | 1;
 			}
-			nextLiveIndex = i;
+			previous = k;
 		}
-		if (forwardStickyPrefixParts !== null) mergedTexts[nextLiveIndex] = joinReversedPrefixParts(forwardStickyPrefixParts, mergedTexts[nextLiveIndex]);
-		let compactLen = 0;
-		for (let read = 0; read < mergedLen; read++) {
-			const text = mergedTexts[read];
-			if (text.length === 0) continue;
-			if (compactLen !== read) {
-				mergedTexts[compactLen] = text;
-				mergedWordLike[compactLen] = mergedWordLike[read];
-				mergedKinds[compactLen] = mergedKinds[read];
-				mergedStarts[compactLen] = mergedStarts[read];
-			}
-			compactLen++;
-		}
-		mergedTexts.length = compactLen;
-		mergedWordLike.length = compactLen;
-		mergedKinds.length = compactLen;
-		mergedStarts.length = compactLen;
-		const mergedRuns = mergeNoSpaceWordChains(mergeNumericRuns(mergeUrlRuns(mergeGlueConnectedTextRuns({
-			len: compactLen,
-			texts: mergedTexts,
-			isWordLike: mergedWordLike,
-			kinds: mergedKinds,
-			starts: mergedStarts
-		}), normalized, profile), normalized, profile), normalized, profile);
-		carryTrailingForwardStickyAcrossCJKBoundary(mergedRuns);
-		for (let i = 0; i < mergedRuns.len - 1; i++) {
-			const split = splitLeadingSpaceAndMarks(mergedRuns.texts[i]);
-			if (split === null) continue;
-			if (mergedRuns.kinds[i] !== "space" && mergedRuns.kinds[i] !== "preserved-space" || mergedRuns.kinds[i + 1] !== "text" || !containsArabicScript(mergedRuns.texts[i + 1])) continue;
-			mergedRuns.texts[i] = split.space;
-			mergedRuns.isWordLike[i] = false;
-			mergedRuns.kinds[i] = mergedRuns.kinds[i] === "preserved-space" ? "preserved-space" : "space";
-			mergedRuns.texts[i + 1] = split.marks + mergedRuns.texts[i + 1];
-			mergedRuns.starts[i + 1] = mergedRuns.starts[i] + split.space.length;
-		}
-		return mergedRuns;
+		return breaks;
 	}
-	function mergeKeepAllTextSegments(normalized, segmentation, profile) {
-		if (segmentation.len <= 1) return segmentation;
-		const texts = [];
-		const isWordLike = [];
-		const kinds = [];
-		const starts = [];
-		let groupStart = -1;
-		let groupContainsCJK = false;
-		function pushOriginalText(index) {
-			texts.push(segmentation.texts[index]);
-			isWordLike.push(segmentation.isWordLike[index]);
-			kinds.push("text");
-			starts.push(segmentation.starts[index]);
-		}
-		function pushMergedText(start, end) {
-			let wordLike = false;
-			for (let i = start; i < end; i++) wordLike = wordLike || segmentation.isWordLike[i];
-			const sourceStart = segmentation.starts[start];
-			const sourceEnd = end < segmentation.len ? segmentation.starts[end] : normalized.length;
-			texts.push(normalized.slice(sourceStart, sourceEnd));
-			isWordLike.push(wordLike);
-			kinds.push("text");
-			starts.push(sourceStart);
-		}
-		function flushGroup(end) {
-			if (groupStart < 0) return;
-			if (groupContainsCJK) {
-				if (groupStart + 1 === end) pushOriginalText(groupStart);
-				else pushMergedText(groupStart, end);
-			} else for (let i = groupStart; i < end; i++) pushOriginalText(i);
-			groupStart = -1;
-			groupContainsCJK = false;
-		}
-		for (let i = 0; i < segmentation.len; i++) {
-			const text = segmentation.texts[i];
-			const kind = segmentation.kinds[i];
-			if (kind === "text") {
-				if (groupStart >= 0 && (!canContinueKeepAllTextRun(segmentation.texts[i - 1], profile.breakKeepAllAfterPunctuation) || numericAffixBoundary(normalized, segmentation.starts[i], profile) === false)) flushGroup(i);
-				if (groupStart < 0) groupStart = i;
-				groupContainsCJK = groupContainsCJK || isCJK(text);
-				continue;
-			}
-			flushGroup(i);
-			texts.push(text);
-			isWordLike.push(segmentation.isWordLike[i]);
-			kinds.push(kind);
-			starts.push(segmentation.starts[i]);
-		}
-		flushGroup(segmentation.len);
-		return {
-			len: texts.length,
-			texts,
-			isWordLike,
-			kinds,
-			starts
-		};
-	}
-	function isNumericHyphen(text, index) {
-		const next = text.charCodeAt(index + 1);
-		if (next < 128) {
-			if (next < 48 || next > 57) return false;
-		} else {
-			const codePoint = text.codePointAt(index + 1);
-			if (codePoint === void 0 || !decimalDigitRe.test(String.fromCodePoint(codePoint))) return false;
-		}
-		for (let end = index; end > 0;) {
-			const start = previousCodePointStart(text, end);
-			const previous = text.slice(start, end);
-			if (!combiningMarkRe.test(previous)) return isCJK(previous) || !/[\p{L}\p{N}]/u.test(previous);
-			end = start;
-		}
-		return true;
-	}
-	function buildBaseCjkUnits(segText, profile) {
-		const units = [];
-		let unitStart = 0;
-		let unitEnd = 0;
-		let unitContainsCJK = false;
-		let unitEndsWithClosingQuote = false;
-		let unitIsSingleKinsokuEnd = false;
-		let unitHasHyphen = false;
-		let unitHasNumericHyphen = false;
-		function pushUnit() {
-			if (unitEnd === unitStart) return;
-			units.push({
-				text: segText.slice(unitStart, unitEnd),
-				start: unitStart,
-				overflow: unitContainsCJK ? unitHasHyphen ? "grapheme" : "none" : "word-like"
-			});
-			unitStart = unitEnd;
-			unitContainsCJK = false;
-			unitEndsWithClosingQuote = false;
-			unitIsSingleKinsokuEnd = false;
-			unitHasHyphen = false;
-			unitHasNumericHyphen = false;
-		}
-		function startUnit(grapheme, start, graphemeContainsCJK) {
-			unitStart = start;
-			unitEnd = start + grapheme.length;
-			unitContainsCJK = graphemeContainsCJK;
-			unitHasHyphen = grapheme === "-";
-			unitEndsWithClosingQuote = endsWithClosingQuote(grapheme);
-			unitIsSingleKinsokuEnd = kinsokuEnd.has(grapheme);
-		}
-		function appendToUnit(grapheme, graphemeContainsCJK) {
-			unitEnd += grapheme.length;
-			unitContainsCJK = unitContainsCJK || graphemeContainsCJK;
-			unitHasHyphen = unitHasHyphen || grapheme === "-";
-			const graphemeEndsWithClosingQuote = endsWithClosingQuote(grapheme);
-			if (grapheme.length === 1 && leftStickyPunctuation.has(grapheme)) unitEndsWithClosingQuote = unitEndsWithClosingQuote || graphemeEndsWithClosingQuote;
-			else unitEndsWithClosingQuote = graphemeEndsWithClosingQuote;
-			unitIsSingleKinsokuEnd = false;
-		}
-		for (const gs of getSharedGraphemeSegmenter().segment(segText)) {
-			const grapheme = gs.segment;
-			const graphemeContainsCJK = isCJK(grapheme);
-			if (unitEnd === unitStart) {
-				startUnit(grapheme, gs.index, graphemeContainsCJK);
-				continue;
-			}
-			const attachHyphen = grapheme === "-" && unitContainsCJK;
-			if (attachHyphen && isNumericHyphen(segText, gs.index)) unitHasNumericHyphen = true;
-			if (unitIsSingleKinsokuEnd || kinsokuStart.has(grapheme) || leftStickyPunctuation.has(grapheme) || attachHyphen || unitHasNumericHyphen && !graphemeContainsCJK || profile.carryCJKAfterClosingQuote && graphemeContainsCJK && unitEndsWithClosingQuote) {
-				appendToUnit(grapheme, graphemeContainsCJK);
-				continue;
-			}
-			if (!unitContainsCJK && !graphemeContainsCJK) {
-				appendToUnit(grapheme, graphemeContainsCJK);
-				continue;
-			}
-			pushUnit();
-			startUnit(grapheme, gs.index, graphemeContainsCJK);
-		}
-		pushUnit();
-		return units;
-	}
-	function mergeKeepAllTextUnits(segText, units, profile) {
-		if (units.length <= 1) return units;
-		const merged = [];
-		let groupStart = -1;
-		let groupContainsCJK = false;
-		function pushMergedUnit(start, end) {
-			const sourceStart = units[start].start;
-			const sourceEnd = end < units.length ? units[end].start : segText.length;
-			merged.push({
-				text: segText.slice(sourceStart, sourceEnd),
-				start: sourceStart,
-				overflow: "word-like"
-			});
-		}
-		function flushGroup(end) {
-			if (groupStart < 0) return;
-			if (groupContainsCJK) {
-				if (groupStart + 1 === end) merged.push(units[groupStart]);
-				else pushMergedUnit(groupStart, end);
-			} else for (let i = groupStart; i < end; i++) merged.push(units[i]);
-			groupStart = -1;
-			groupContainsCJK = false;
-		}
-		for (let i = 0; i < units.length; i++) {
-			const unit = units[i];
-			if (groupStart >= 0 && (!canContinueKeepAllTextRun(units[i - 1].text, profile.breakKeepAllAfterPunctuation) || numericAffixBoundary(segText, unit.start, profile) === false)) flushGroup(i);
-			if (groupStart < 0) groupStart = i;
-			groupContainsCJK = groupContainsCJK || isCJK(unit.text);
-		}
-		flushGroup(units.length);
-		return merged;
-	}
-	function getCjkTextUnits(text, profile, wordBreak) {
-		const units = buildBaseCjkUnits(text, profile);
-		return wordBreak === "keep-all" ? mergeKeepAllTextUnits(text, units, profile) : units;
-	}
-	function isPreferredBreakGrapheme(grapheme) {
-		return grapheme === "-" || grapheme === "֊" || grapheme === "‐" || grapheme === "‒" || grapheme === "–" || grapheme === "—";
-	}
-	function isIndependentSymbolRun(text) {
-		if (text.length === 0 || /\p{Cf}/u.test(text)) return false;
-		for (const { segment } of getSharedGraphemeSegmenter().segment(text)) {
-			const base = String.fromCodePoint(segment.codePointAt(0));
-			if (!/[\p{P}\p{S}]/u.test(base) || emojiPresentationRe$1.test(base) || segment.includes("️") || /\p{Emoji_Modifier}/u.test(base)) return false;
-		}
-		return true;
-	}
-	function getBreakablePreferredBreaks(text) {
-		if (!/[-\u058A\u2010\u2012\u2013\u2014]/u.test(text)) return null;
-		const breaks = [];
-		let graphemeIndex = 0;
-		for (const gs of getSharedGraphemeSegmenter().segment(text)) {
-			graphemeIndex++;
-			const numericSign = gs.segment === "-" && isNumericHyphen(text, gs.index);
-			if (isPreferredBreakGrapheme(gs.segment) && !numericSign) breaks.push(graphemeIndex);
-		}
-		return breaks.length === 0 ? null : breaks;
-	}
-	function analyzeText(text, profile, whiteSpace = "normal", wordBreak = "normal") {
-		const normalized = whiteSpace === "pre-wrap" ? normalizeWhitespacePreWrap(text) : normalizeWhitespaceNormal(text);
-		if (normalized.length === 0) return {
-			normalized,
-			len: 0,
-			texts: [],
-			isWordLike: [],
-			kinds: [],
-			starts: []
-		};
-		const mergedSegmentation = buildMergedSegmentation(normalized, profile, whiteSpace);
-		return {
-			normalized,
-			...wordBreak === "keep-all" ? mergeKeepAllTextSegments(normalized, mergedSegmentation, profile) : mergedSegmentation
-		};
-	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/measurement.js
-	var measureContext = null;
-	var segmentMetricCaches = /* @__PURE__ */ new Map();
+	var webkitGenericFamilyNames = [
+		"",
+		"Zapfino",
+		"Menlo",
+		"Kefa III",
+		"Geeza Pro",
+		"Snell Roundhand",
+		"Kohinoor Bangla",
+		"Kokonor|Kailasa",
+		"Kailasa",
+		"Galvji",
+		"Noto Sans Tagalog",
+		"Kohinoor Gujarati",
+		"Lucida Grande|Arial Hebrew",
+		"Apple Chancery|Arial Hebrew",
+		"Courier New",
+		"ITF Devanagari|Kohinoor Devanagari",
+		"Kohinoor Devanagari",
+		"Noto Sans Armenian",
+		"Euphemia UCAS",
+		"Hiragino Mincho ProN",
+		"Hiragino Sans",
+		"Helvetica",
+		"Khmer MN|Khmer Sangam MN",
+		"Khmer Sangam MN",
+		"Kannada MN|Noto Sans Kannada",
+		"Noto Sans Kannada",
+		"AppleMyungjo|Apple SD Gothic Neo",
+		"Apple SD Gothic Neo",
+		"Noto Nastaliq Urdu",
+		"Lao MN|Lao Sangam MN",
+		"Lao Sangam MN",
+		"Malayalam MN|Malayalam Sangam MN",
+		"Malayalam Sangam MN",
+		"Noto Serif Myanmar|Noto Sans Myanmar",
+		"Noto Sans Myanmar",
+		"Oriya MN|Noto Sans Oriya",
+		"Noto Sans Oriya",
+		"Mukta Mahee",
+		"Sinhala MN|Sinhala Sangam MN",
+		"Sinhala Sangam MN",
+		"Tamil Sangam MN",
+		"Kohinoor Telugu",
+		"Thonburi",
+		"Songti TC|PingFang HK",
+		"PingFang HK",
+		"Songti SC|PingFang SC",
+		"PingFang SC",
+		"Songti TC|PingFang TC",
+		"PingFang TC",
+		"Songti TC|PingFang MO",
+		"PingFang MO"
+	];
+	var webkitGenericFamilies = {
+		"": [
+			0,
+			0,
+			0,
+			1,
+			2
+		],
+		"am": [
+			3,
+			3,
+			3,
+			3,
+			2
+		],
+		"ar": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"bg": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"bn": [
+			6,
+			6,
+			6,
+			6,
+			2
+		],
+		"bo": [
+			7,
+			8,
+			7,
+			7,
+			2
+		],
+		"chr": [
+			9,
+			9,
+			9,
+			9,
+			2
+		],
+		"ckb": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"fa": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"fil": [
+			10,
+			10,
+			10,
+			10,
+			2
+		],
+		"gu": [
+			11,
+			11,
+			11,
+			11,
+			2
+		],
+		"he": [
+			0,
+			12,
+			13,
+			0,
+			14
+		],
+		"hi": [
+			15,
+			16,
+			16,
+			16,
+			2
+		],
+		"hy": [
+			17,
+			17,
+			17,
+			17,
+			2
+		],
+		"iu": [
+			18,
+			18,
+			18,
+			18,
+			2
+		],
+		"ja": [
+			19,
+			20,
+			19,
+			19,
+			2
+		],
+		"ka": [
+			21,
+			0,
+			21,
+			21,
+			2
+		],
+		"km": [
+			22,
+			23,
+			22,
+			22,
+			2
+		],
+		"kn": [
+			24,
+			25,
+			24,
+			24,
+			2
+		],
+		"ko": [
+			26,
+			27,
+			26,
+			26,
+			2
+		],
+		"ks": [
+			28,
+			28,
+			28,
+			28,
+			2
+		],
+		"lo": [
+			29,
+			30,
+			29,
+			29,
+			2
+		],
+		"lrc": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"ml": [
+			31,
+			32,
+			31,
+			31,
+			2
+		],
+		"my": [
+			33,
+			34,
+			33,
+			33,
+			2
+		],
+		"mzn": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"or": [
+			35,
+			36,
+			35,
+			35,
+			2
+		],
+		"pa": [
+			37,
+			37,
+			37,
+			37,
+			2
+		],
+		"ps": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"ro": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"ru": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"sd": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"si": [
+			38,
+			39,
+			38,
+			38,
+			2
+		],
+		"sr": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"ta": [
+			40,
+			40,
+			40,
+			40,
+			2
+		],
+		"te": [
+			41,
+			41,
+			41,
+			41,
+			2
+		],
+		"th": [
+			42,
+			42,
+			42,
+			42,
+			2
+		],
+		"tr": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"ug": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"uk": [
+			0,
+			0,
+			5,
+			5,
+			2
+		],
+		"ur": [
+			28,
+			28,
+			28,
+			28,
+			2
+		],
+		"yi": [
+			0,
+			12,
+			13,
+			0,
+			14
+		],
+		"yue": [
+			43,
+			44,
+			43,
+			43,
+			2
+		],
+		"zh": [
+			45,
+			46,
+			45,
+			45,
+			2
+		],
+		"kk-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"ks-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"ks-deva": [
+			0,
+			0,
+			0,
+			1,
+			2
+		],
+		"ms-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"pa-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"sd-deva": [
+			0,
+			0,
+			0,
+			1,
+			2
+		],
+		"ur-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"uz-arab": [
+			4,
+			4,
+			4,
+			4,
+			2
+		],
+		"yue-hans": [
+			45,
+			46,
+			45,
+			45,
+			2
+		],
+		"zh-hant": [
+			47,
+			48,
+			47,
+			47,
+			2
+		],
+		"zh-hk": [
+			43,
+			44,
+			43,
+			43,
+			2
+		],
+		"zh-mo": [
+			49,
+			50,
+			49,
+			49,
+			2
+		],
+		"zh-tw": [
+			47,
+			48,
+			47,
+			47,
+			2
+		],
+		"pa-aran-pk": [
+			28,
+			28,
+			28,
+			28,
+			2
+		],
+		"yue-hant-mo": [
+			49,
+			50,
+			49,
+			49,
+			2
+		],
+		"zh-hant-hk": [
+			43,
+			44,
+			43,
+			43,
+			2
+		],
+		"zh-hant-mo": [
+			49,
+			50,
+			49,
+			49,
+			2
+		]
+	};
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/measurement.js
+	var measureState = null;
 	var cachedEngineProfile = null;
 	var MAX_PREFIX_FIT_GRAPHEMES = 96;
-	var emojiPresentationRe = /\p{Emoji_Presentation}/u;
+	var LETTER_SPACED_SHAPING = "0.000001px";
+	var MAX_CACHED_SEGMENTS = 1 << 18;
+	var emojiGraphemeRe = /\p{Emoji_Presentation}|\p{Extended_Pictographic}|\p{Emoji}\uFE0F/u;
 	var maybeEmojiRe = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u20E3]/u;
-	var emojiCorrectionCache = /* @__PURE__ */ new Map();
-	function getMeasureContext() {
-		if (measureContext !== null) return measureContext;
-		if (typeof OffscreenCanvas !== "undefined") {
-			measureContext = new OffscreenCanvas(1, 1).getContext("2d");
-			return measureContext;
+	var genericKeywords = [
+		"serif",
+		"sans-serif",
+		"cursive",
+		"fantasy",
+		"monospace"
+	];
+	var familyListItemRe = /("[^"]*"|'[^']*')|(^|,)(\s*)(serif|sans-serif|cursive|fantasy|monospace)(?=\s*(?:,|$))/gi;
+	var fontSizeRe = /\dpx(?:\s*\/\s*\S+)?\s+/;
+	var familyRe = /(?:"[^"]*"|'[^']*'|[^,])+/g;
+	function getWebKitGenericFamilies(language, ctx) {
+		let tag = language.toLowerCase().replaceAll("_", "-");
+		let han = null;
+		for (let at = tag; han === null;) if (" aa ab ady af ak am ar as ast av ay az ba be bg bi bn bo bs ca ce ceb ch chk cs cy da de dv dz ee efi el en es et eu fa fi fil fj fo fr fur fy ga gaa gd gil gl gn gsw gu ha haw he hi hil ho hr ht hu hy id ig ii ilo inh is it iu ja jv ka kaj kam kbd kha kk kl km kn ko kok kos kpe krc ks ku kum ky la lah lb lez ln lo lt lv mai mdf mg mh mi mk ml mn mr ms mt my myv na nb ne niu nl nn nr nso ny oc om or os pa pag pap pau pl pon ps pt qu rm rn ro ru rw sa sah sat sd se sg si sid sk sl sm so sq sr ss st su sv sw ta te tet tg th ti tig tk tkl tl tn to tpi tr trv ts tt tvl tw ty tyv udm ug uk und ur uz ve vi wal war wo xh yap yo za zh zh-hk zh-tw zu ".includes(` ${at} `)) han = at === "zh";
+		else {
+			const cut = at.lastIndexOf("-");
+			if (cut < 0 || at.endsWith("-zyyy")) return null;
+			if (" arab armn bali batk beng blis bopo brah brai bugi buhd cans cham cher cirt copt cprt cyrl cyrs deva dsrt egyd egyh egyp ethi geok geor glag goth grek gujr guru hang hani hano hans hant hebr hira hmng hrkt hung inds ital java jpan kali kana khar khmr knda kore laoo latf latg latn lepc limb lina linb mand maya mero mlym mong mymr nkoo ogam orkh orya osma perm phag phnx plrd qaai roro runr sara shaw sinh sylo syrc syre syrj syrn tagb tale talu taml telu teng tfng tglg thaa thai tibt ugar vaii visp xpeo xsux yiii zxxx ".includes(` ${at.slice(cut + 1)} `)) han = at.endsWith("-hani");
+			at = at.slice(0, cut);
 		}
-		if (typeof document !== "undefined") {
-			measureContext = document.createElement("canvas").getContext("2d");
-			return measureContext;
+		if (han) tag = "zh-hans";
+		let row = webkitGenericFamilies[tag];
+		while (row === void 0) {
+			tag = tag.slice(0, Math.max(0, tag.lastIndexOf("-")));
+			row = webkitGenericFamilies[tag];
 		}
-		throw new Error("Text measurement requires OffscreenCanvas or a DOM canvas context.");
+		const families = [];
+		for (let i = 0; i < row.length; i++) {
+			const first = row.indexOf(row[i]);
+			if (first < i) {
+				families.push(families[first]);
+				continue;
+			}
+			const name = webkitGenericFamilyNames[row[i]];
+			const pair = name.indexOf("|");
+			const family = pair < 0 ? name : hasFamily(ctx, name.slice(0, pair)) ? name.slice(0, pair) : name.slice(pair + 1);
+			families.push(family === "" ? "" : `"${family}"`);
+		}
+		return families;
 	}
-	function getSegmentMetricCache(font) {
-		let cache = segmentMetricCaches.get(font);
-		if (!cache) {
-			cache = /* @__PURE__ */ new Map();
-			segmentMetricCaches.set(font, cache);
+	var familyProbeText = "Hamburg 한中 नम សួ ನಮ ສະ നമ မင ନମ ආය བཀ";
+	function hasFamily(ctx, family) {
+		for (const fallback of ["monospace", "serif"]) {
+			ctx.font = `16px ${fallback}`;
+			const width = ctx.measureText(familyProbeText).width;
+			ctx.font = `16px "${family}", ${fallback}`;
+			if (ctx.measureText(familyProbeText).width !== width) return true;
 		}
-		return cache;
+		return false;
 	}
-	function getSegmentMetrics(seg, cache) {
-		let metrics = cache.get(seg);
-		if (metrics === void 0) {
-			metrics = { width: getMeasureContext().measureText(seg).width };
-			cache.set(seg, metrics);
+	function getCanvasFont(font, families) {
+		const size = fontSizeRe.exec(font);
+		if (size === null) return font;
+		const start = size.index + size[0].length;
+		return font.slice(0, start) + font.slice(start).replace(familyListItemRe, (item, quoted, separator, space, keyword) => {
+			const named = quoted === void 0 ? families[genericKeywords.indexOf(keyword.toLowerCase())] : "";
+			return named === "" ? item : separator + space + named;
+		});
+	}
+	function getHyphenText(measurement) {
+		if (measurement.hyphenText !== null) return measurement.hyphenText;
+		const font = measurement.canvasFont;
+		const size = fontSizeRe.exec(font);
+		let hyphenText = "-";
+		if (size !== null && getSegmentMetrics("‐", measurement).width !== getSegmentMetrics("-", measurement).width) {
+			const context = getContext(measurement);
+			const start = size.index + size[0].length;
+			const prefix = font.slice(0, start);
+			const families = font.slice(start).match(familyRe) ?? [];
+			const monospace = prefix + "monospace";
+			const serif = prefix + "serif";
+			if (measureIn(context, monospace, " ") !== measureIn(context, serif, " ") && measureIn(context, monospace, "‐") !== measureIn(context, serif, "‐")) for (let i = 0; i < families.length; i++) {
+				const beforeMonospace = `${prefix}${families[i]}, monospace`;
+				const beforeSerif = `${prefix}${families[i]}, serif`;
+				if (measureIn(context, beforeMonospace, " ") !== measureIn(context, beforeSerif, " ")) continue;
+				if (measureIn(context, beforeMonospace, "‐") === measureIn(context, beforeSerif, "‐")) hyphenText = "‐";
+				break;
+			}
+			context.font = font;
 		}
+		measurement.hyphenText = hyphenText;
+		return hyphenText;
+	}
+	function measureIn(context, font, text) {
+		context.font = font;
+		return context.measureText(text).width;
+	}
+	var localeLanguage;
+	function getPreparationLanguage(profile) {
+		if (measureState !== null && measureState.segments > MAX_CACHED_SEGMENTS) clearMeasurementCaches();
+		let language = localeLanguage ?? null;
+		if (localeLanguage === void 0 && typeof document !== "undefined") {
+			const lang = document.documentElement?.lang;
+			if (typeof lang === "string") language = lang;
+		}
+		return language === "" && profile.laysOutUnderDefaultLocale ? getBlinkDefaultLocale() : language;
+	}
+	var MAX_APP_UNITS = (1 << 30) - 1;
+	function readLetterSpacing(letterSpacing, profile) {
+		const value = letterSpacing ?? 0;
+		if (!Number.isFinite(value)) throw new RangeError(`letterSpacing must be a finite number of CSS px, not ${value}`);
+		if (!profile.letterSpacingInAppUnits) return value;
+		const units = Math.fround(Math.fround(value) * 60);
+		return Math.min(Math.round(Math.abs(units)), MAX_APP_UNITS) * Math.sign(units) / 60;
+	}
+	function zeros(count) {
+		const out = [];
+		for (let i = 0; i < count; i++) out.push(0);
+		return out;
+	}
+	var GLYPH_COUNT_SPACING = 2 ** 20;
+	var noExtraSpacings = [];
+	function getExtraSpacings(seg, measurement) {
+		if (!measurement.state.takesLetterSpacing) return noExtraSpacings;
+		const ends = new Int32Array(seg.length);
+		const count = findGraphemeEnds(getEngineProfile().graphemeTable, seg, 0, seg.length, ends);
+		const prefixes = count <= MAX_PREFIX_FIT_GRAPHEMES;
+		const counts = measurement.glyphCounts;
+		let context = null;
+		let extras = noExtraSpacings;
+		try {
+			let before = 0;
+			for (let i = 0, start = 0; i < count; start = ends[i++]) {
+				const text = seg.slice(prefixes ? 0 : start, ends[i]);
+				let glyphs = counts.get(text);
+				if (glyphs === void 0) {
+					if (context === null) {
+						context = getContext(measurement);
+						context.letterSpacing = `${GLYPH_COUNT_SPACING}px`;
+					}
+					glyphs = Math.round(context.measureText(text).width / GLYPH_COUNT_SPACING);
+					counts.set(text, glyphs);
+				}
+				const extra = glyphs - (prefixes ? before : 0) - 1;
+				before = glyphs;
+				if (extra === 0 && extras.length === 0) continue;
+				if (extras.length === 0) extras = zeros(count);
+				extras[i] = extra;
+			}
+		} finally {
+			if (context !== null) context.letterSpacing = measurement.letterSpacing;
+		}
+		return extras;
+	}
+	function getSegmentMetrics(seg, measurement) {
+		return measurement.metrics.get(seg) ?? addMetrics(measurement.metrics, seg, seg, measurement);
+	}
+	function getFollowingSpaceMetrics(seg, measurement) {
+		return measurement.followingSpaceMetrics.get(seg) ?? addMetrics(measurement.followingSpaceMetrics, seg, seg + " ", measurement);
+	}
+	function addMetrics(cache, seg, text, measurement) {
+		const metrics = {
+			width: getContext(measurement).measureText(text).width,
+			emojiCount: -1,
+			fit: null,
+			spaceKerning: null,
+			extraSpacings: null
+		};
+		cache.set(seg, metrics);
+		measurement.state.segments++;
+		if (!measurement.measuredKana && kanaRe.test(seg)) measurement.measuredKana = true;
 		return metrics;
 	}
-	function getEngineProfile() {
-		if (cachedEngineProfile !== null) return cachedEngineProfile;
-		if (typeof navigator === "undefined") {
-			cachedEngineProfile = {
-				geckoAsciiLineBreaks: false,
-				lineFitEpsilon: .005,
-				carryCJKAfterClosingQuote: false,
-				breakKeepAllAfterPunctuation: true,
-				preferPrefixWidthsForBreakableRuns: false
-			};
-			return cachedEngineProfile;
+	var kanaRe = /[\u3041-\u30FF]/;
+	var kanaPairRe = /[\u3041-\u30FF]{2}/;
+	var KANA_COUNT = 191;
+	var noSpaceKerning = {
+		after: 0,
+		before: 0
+	};
+	function isCanvasWordLetter(code) {
+		return code >= 12353 && code <= 12438 || code >= 12449 && code <= 12538 || code >= 13312 && code <= 40959 || code >= 63744 && code <= 64255;
+	}
+	function takesNoSpaceKerning(code) {
+		return hasProperty(code, 1) || (code & 63488) === 55296 || isCanvasWordLetter(code) || code >= 44032 && code <= 55203;
+	}
+	function getFontSpaceKerning(measurement) {
+		if (measurement.spaceKerning === void 0) {
+			const context = getContext(measurement);
+			let probe = "\u2028";
+			for (let code = 33; code <= 126; code++) probe += String.fromCharCode(code) + "\u2028";
+			const kerned = context.measureText(probe).width;
+			context.fontKerning = "none";
+			const unkerned = context.measureText(probe).width;
+			context.fontKerning = "auto";
+			measurement.spaceKerning = kerned !== unkerned && context.measureText("\u2028").width === getSegmentMetrics(" ", measurement).width ? /* @__PURE__ */ new Map() : null;
 		}
-		const ua = navigator.userAgent;
-		const isSafari = navigator.vendor === "Apple Computer, Inc." && ua.includes("Safari/") && !ua.includes("Chrome/") && !ua.includes("Chromium/") && !ua.includes("CriOS/") && !ua.includes("FxiOS/") && !ua.includes("EdgiOS/");
-		const isChromium = ua.includes("Chrome/") || ua.includes("Chromium/") || ua.includes("CriOS/") || ua.includes("Edg/");
-		cachedEngineProfile = {
-			geckoAsciiLineBreaks: ua.includes("Firefox/") && !ua.includes("FxiOS/"),
-			lineFitEpsilon: isSafari ? 1 / 64 : .005,
-			carryCJKAfterClosingQuote: isChromium,
-			breakKeepAllAfterPunctuation: !isSafari,
-			preferPrefixWidthsForBreakableRuns: isSafari
+		return measurement.spaceKerning;
+	}
+	function getCharacterSpaceKerning(code, spaceFirst, measurement, kernings) {
+		const key = code << 1 | (spaceFirst ? 1 : 0);
+		let kerning = kernings.get(key);
+		if (kerning === void 0) {
+			kerning = 0;
+			if (!takesNoSpaceKerning(code)) {
+				const character = String.fromCharCode(code);
+				const pairWidth = getContext(measurement).measureText(spaceFirst ? "\u2028" + character : character + "\u2028").width;
+				kerning = pairWidth - getSegmentMetrics(character, measurement).width - getSegmentMetrics(" ", measurement).width;
+				if (Math.abs(kerning) <= pairWidth / 4194304) kerning = 0;
+			}
+			kernings.set(key, kerning);
+		}
+		return kerning;
+	}
+	function getSpaceKerning(seg, metrics, measurement, kernings) {
+		let first = 0;
+		let last = seg.length - 1;
+		while (first < last && hasProperty(seg.charCodeAt(first), 4)) first++;
+		while (last > first && hasProperty(seg.charCodeAt(last), 4)) last--;
+		const before = first < last && hasProperty(seg.charCodeAt(first + 1), 1) ? 0 : getCharacterSpaceKerning(seg.charCodeAt(first), true, measurement, kernings);
+		const after = getCharacterSpaceKerning(seg.charCodeAt(last), false, measurement, kernings);
+		return metrics.spaceKerning = after === 0 && before === 0 ? noSpaceKerning : {
+			after,
+			before
 		};
-		return cachedEngineProfile;
+	}
+	function getSpaceWidth(measurement) {
+		return measurement.spaceWidth ??= getSegmentMetrics(" ", measurement).width;
+	}
+	var KANA_PROBE = "プダグタノムブイメえずぺ";
+	function getWholeRunContext(measurement) {
+		const state = measurement.state;
+		if (state.wholeRunContext === null) {
+			state.wholeRunContext = createContext(state.language);
+			state.wholeRunContext.textRendering = "optimizeLegibility";
+		}
+		if (state.wholeRunFont !== measurement.kanaFont) state.wholeRunContext.font = state.wholeRunFont = measurement.kanaFont;
+		return state.wholeRunContext;
+	}
+	function sameInk(a, b) {
+		const bound = a.width / 4194304;
+		return Math.abs(a.width - b.width) <= bound && Math.abs(a.actualBoundingBoxLeft - b.actualBoundingBoxLeft) <= bound && Math.abs(a.actualBoundingBoxRight - b.actualBoundingBoxRight) <= bound;
+	}
+	function getFontKanaKerning(measurement) {
+		if (measurement.kanaKerning === void 0) {
+			measurement.kanaKerning = null;
+			const font = measurement.canvasFont;
+			const size = fontSizeRe.exec(font);
+			const start = size === null ? 0 : size.index + size[0].length;
+			const families = size === null ? null : font.slice(start).match(familyRe);
+			const lists = families === null ? 1 : families.length;
+			let own = null;
+			for (let i = 0; i < lists; i++) {
+				const list = i === 0 ? font : font.slice(0, start) + families.slice(i).join(",");
+				measurement.kanaFont = list;
+				const context = getWholeRunContext(measurement);
+				const kerned = context.measureText(KANA_PROBE).width;
+				context.fontKerning = "none";
+				const unkerned = context.measureText(KANA_PROBE);
+				context.fontKerning = "auto";
+				if (own === null) own = unkerned;
+				else if (!sameInk(own, unkerned)) break;
+				if (kerned === unkerned.width) continue;
+				if (i > 0) {
+					let pairs = "";
+					for (let code = 12353; code <= 12438; code++) pairs += String.fromCharCode(code, 12290);
+					const shorter = context.measureText(pairs).width;
+					measurement.kanaFont = font;
+					const ownContext = getWholeRunContext(measurement);
+					const ownKerned = ownContext.measureText(pairs).width;
+					ownContext.fontKerning = "none";
+					const ownUnkerned = ownContext.measureText(pairs).width;
+					ownContext.fontKerning = "auto";
+					if (ownKerned === ownUnkerned || Math.abs(shorter - ownKerned) > ownKerned / 4194304) break;
+					measurement.kanaFont = list;
+				}
+				measurement.kanaKerning = (/* @__PURE__ */ new Float64Array(36481)).fill(NaN);
+				break;
+			}
+			if (measurement.kanaKerning === null) measurement.kanaFont = font;
+		}
+		return measurement.kanaKerning;
+	}
+	function getKanaKerning(text, start, at, measurement, kernings) {
+		const second = text.charCodeAt(at);
+		if (second < 12353 || second > 12543) return 0;
+		const first = text.charCodeAt(at - 1);
+		if (first < 12353 || first > 12543) return 0;
+		if (at > start) {
+			if (!isCanvasWordLetter(second)) return 0;
+			let k = at - 1;
+			let code = first;
+			while (code >= 12353 && code <= 12543 && !isCanvasWordLetter(code)) {
+				if (k === start) return 0;
+				code = text.charCodeAt(--k);
+			}
+			if (code >= 11904 && !isCanvasWordLetter(code)) return 0;
+		}
+		const index = (first - 12353) * KANA_COUNT + second - 12353;
+		const kerning = kernings[index];
+		return Number.isNaN(kerning) ? kernings[index] = measureKanaKerning(text.slice(at - 1, at + 1), measurement) : kerning;
+	}
+	function measureKanaKerning(pair, measurement) {
+		const pairWidth = getWholeRunContext(measurement).measureText(pair).width;
+		const kerning = pairWidth - getSegmentMetrics(pair[0], measurement).width - getSegmentMetrics(pair[1], measurement).width;
+		return Math.abs(kerning) <= pairWidth / 4194304 ? 0 : kerning;
+	}
+	function getTextWidth(text, measurement, emojiCorrection) {
+		return getCorrectedSegmentWidth(text, getSegmentMetrics(text, measurement), measurement, emojiCorrection);
+	}
+	function getLayoutEngine(userAgent) {
+		if (userAgent.includes("Firefox/")) return "gecko";
+		if (userAgent.includes("AppleWebKit/537.36")) return userAgent.includes("Chrome/") || userAgent.includes("Chromium/") ? "blink" : null;
+		return userAgent.includes("AppleWebKit/") ? "webkit" : null;
+	}
+	function getEngineProfile() {
+		return cachedEngineProfile ??= buildEngineProfile();
+	}
+	function buildEngineProfile() {
+		const engine = getLayoutEngine(typeof navigator === "undefined" ? "" : navigator.userAgent ?? "") ?? "blink";
+		return {
+			lineBreakScan: engine,
+			graphemeTable: engine === "webkit" ? "apple/char" : engine === "gecko" ? "gecko/char" : "chromium/char",
+			lineFitEpsilon: engine === "webkit" ? 1 / 64 : .005,
+			cutWordFit: engine === "blink" ? "reshaped-lines" : "segment-prefixes",
+			prefixFitMinWidth: engine === "webkit" ? 0 : 80,
+			cutWordKeepsLigatures: engine === "gecko",
+			measureTextWithFollowingSpace: engine === "webkit",
+			kernsAcrossCanvasWords: engine === "blink",
+			letterSpaceDiscretionaryHyphen: engine !== "blink",
+			letterSpacingInAppUnits: engine === "gecko",
+			canvasLetterSpacingDropsLigatures: engine !== "webkit",
+			unspacedCursive: engine === "blink" ? "run" : engine === "gecko" ? "cluster" : "none",
+			letterSpacesGlyphs: engine === "webkit",
+			unfitHyphenRetreat: engine === "blink" ? "reduced-width" : engine === "gecko" ? "full-width" : "full-width-or-first",
+			hyphenFromPrimaryFont: engine !== "gecko",
+			letterSpaceTabStops: engine !== "webkit",
+			letterSpaceTabs: engine === "webkit",
+			tabMinimumCharacter: engine === "gecko" ? "0" : " ",
+			tabsInAppUnits: engine === "gecko",
+			hangTabs: engine !== "gecko",
+			zeroWidthGlueTakesLine: engine !== "gecko",
+			hidesControlCharacters: engine === "gecko",
+			hanKerning: engine === "blink",
+			hangsIdeographicSpace: engine !== "webkit",
+			laysOutUnderDefaultLocale: engine === "blink",
+			namesGenericFamiliesByLanguage: engine === "webkit" && !/^(?:Linux|Win32|Haiku|$)/.test(navigator.platform),
+			hardBreakItemRetreat: engine === "blink" ? "item" : engine === "webkit" ? "fit" : "last-grapheme",
+			paddedOpeningFit: engine === "blink" ? "start" : engine === "webkit" ? "placed" : "both",
+			emptyAtomicAlwaysFits: engine === "gecko",
+			hangsSpacesPerTextFrame: engine === "gecko",
+			testsHyphenBeforeAtomic: engine !== "webkit",
+			transformsSegmentBreaksAcrossItems: engine === "blink"
+		};
 	}
 	function parseFontSize(font) {
 		const m = font.match(/(?:^|\D)(\d+(?:\.\d+)?)\s*px/);
 		return m ? parseFloat(m[1]) : 16;
 	}
-	function isEmojiGrapheme(g) {
-		return emojiPresentationRe.test(g) || g.includes("️");
-	}
 	function textMayContainEmoji(text) {
 		return maybeEmojiRe.test(text);
 	}
-	function getEmojiCorrection(font) {
-		let correction = emojiCorrectionCache.get(font);
-		if (correction !== void 0) return correction;
+	function getEmojiCorrection(font, measurement) {
+		let correction = measurement.emojiCorrection;
+		if (correction !== null) return correction;
 		const fontSize = parseFontSize(font);
-		const ctx = getMeasureContext();
-		ctx.font = font;
-		const canvasW = ctx.measureText("😀").width;
+		const askedBefore = measurement.emojiWidth !== 0;
+		const canvasW = measurement.emojiWidth = getContext(measurement).measureText("😀").width;
 		correction = 0;
-		if (canvasW > fontSize + .5 && typeof document !== "undefined" && document.body !== null) {
-			const span = document.createElement("span");
-			span.style.font = font;
-			span.style.display = "inline-block";
-			span.style.visibility = "hidden";
-			span.style.position = "absolute";
-			span.textContent = "😀";
-			document.body.appendChild(span);
-			const domW = span.getBoundingClientRect().width;
-			document.body.removeChild(span);
-			if (canvasW - domW > .5) correction = canvasW - domW;
+		if (canvasW > fontSize + .5 && typeof document !== "undefined") {
+			const domW = readEmojiWidth(font);
+			if (Number.isNaN(domW)) return 0;
+			if (canvasW - domW > .5) {
+				correction = canvasW - domW;
+				if (askedBefore) {
+					for (const metrics of measurement.metrics.values()) metrics.fit = null;
+					for (const metrics of measurement.followingSpaceMetrics.values()) metrics.fit = null;
+				}
+			}
 		}
-		emojiCorrectionCache.set(font, correction);
+		measurement.emojiCorrection = correction;
 		return correction;
 	}
-	function countEmojiGraphemes(text) {
+	function readEmojiWidth(font) {
+		const body = document.body;
+		if (body === null && document.head === null) return NaN;
+		const span = document.createElement("span");
+		span.style.cssText = "all:initial!important;-webkit-locale:inherit!important;display:inline-block!important;visibility:hidden!important;position:absolute!important";
+		span.style.setProperty("font", font, "important");
+		span.textContent = "😀";
+		let width = body === null ? NaN : readWidthIn(body, span);
+		if (Number.isNaN(width)) width = readWidthIn(document.documentElement, span);
+		return width;
+	}
+	function readWidthIn(parent, span) {
+		parent.appendChild(span);
+		const drawn = span.getBoundingClientRect().width;
+		const width = parseFloat(getComputedStyle(span).width);
+		parent.removeChild(span);
+		return Math.abs(drawn - width) <= width * 1e-5 ? drawn : width;
+	}
+	var CANVAS_WIDTH_ROUNDING = 2 ** -20;
+	var WORD_SUM_ROUNDING = 2 ** -17;
+	function getEmojiGlyphs(text, measurement) {
+		const width = getSegmentMetrics(text, measurement).width;
+		const glyphs = Math.round(width / measurement.emojiWidth);
+		return Math.abs(width - glyphs * measurement.emojiWidth) <= width * CANVAS_WIDTH_ROUNDING ? glyphs : 0;
+	}
+	var emojiStretchRe = /[\p{Extended_Pictographic}\p{Emoji_Component}\uFE0E]+/gu;
+	function countEmojiGlyphs(text, measurement) {
+		const ends = new Int32Array(text.length);
+		const graphemeCount = findGraphemeEnds(getEngineProfile().graphemeTable, text, 0, text.length, ends);
 		let count = 0;
-		const graphemeSegmenter = getSharedGraphemeSegmenter();
-		for (const g of graphemeSegmenter.segment(text)) if (isEmojiGrapheme(g.segment)) count++;
+		for (let i = 0, start = 0; i < graphemeCount; start = ends[i++]) {
+			const grapheme = text.slice(start, ends[i]);
+			if (!emojiGraphemeRe.test(grapheme)) continue;
+			const stretches = grapheme.match(emojiStretchRe);
+			for (let s = 0; s < stretches.length; s++) count += getEmojiGlyphs(stretches[s], measurement);
+		}
 		return count;
 	}
-	function getEmojiCount(seg, metrics) {
-		if (metrics.emojiCount === void 0) metrics.emojiCount = countEmojiGraphemes(seg);
-		return metrics.emojiCount;
-	}
-	function getCorrectedSegmentWidth(seg, metrics, emojiCorrection) {
+	function getCorrectedSegmentWidth(seg, metrics, measurement, emojiCorrection) {
 		if (emojiCorrection === 0) return metrics.width;
-		return metrics.width - getEmojiCount(seg, metrics) * emojiCorrection;
+		if (metrics.emojiCount < 0) metrics.emojiCount = countEmojiGlyphs(seg, measurement);
+		return metrics.width - metrics.emojiCount * emojiCorrection;
 	}
-	function getSegmentBreakableFitAdvances(seg, metrics, cache, emojiCorrection, mode) {
-		if (metrics.breakableFitAdvances !== void 0 && metrics.breakableFitMode === mode) return metrics.breakableFitAdvances;
-		metrics.breakableFitMode = mode;
-		const graphemeSegmenter = getSharedGraphemeSegmenter();
-		const graphemes = [];
-		for (const gs of graphemeSegmenter.segment(seg)) graphemes.push(gs.segment);
-		if (graphemes.length <= 1) {
-			metrics.breakableFitAdvances = null;
-			return metrics.breakableFitAdvances;
-		}
-		if (mode === "sum-graphemes") {
-			const advances = [];
-			for (const grapheme of graphemes) {
-				const graphemeMetrics = getSegmentMetrics(grapheme, cache);
-				advances.push(getCorrectedSegmentWidth(grapheme, graphemeMetrics, emojiCorrection));
+	function getSegmentFit(seg, metrics, measurement, emojiCorrection, mode, followingSpaceWidth = null) {
+		if (metrics.fit !== null && metrics.fit.mode === mode) return metrics.fit;
+		const profile = getEngineProfile();
+		const ends = new Int32Array(seg.length);
+		const count = findGraphemeEnds(profile.graphemeTable, seg, 0, seg.length, ends);
+		if (count <= 1) return metrics.fit = {
+			mode,
+			advances: null,
+			lineStartExtras: null
+		};
+		let advances;
+		let lineStartExtras = null;
+		let pairs = false;
+		if (mode === "reshaped-lines") {
+			const width = getCorrectedSegmentWidth(seg, metrics, measurement, emojiCorrection) - (followingSpaceWidth ?? 0);
+			const alone = measureFitAdvances(seg, ends, count, "sum-graphemes", metrics, measurement, emojiCorrection, followingSpaceWidth);
+			advances = alone;
+			if (!addUpTo(alone, width)) {
+				advances = measureFitAdvances(seg, ends, count, "pair-context", metrics, measurement, emojiCorrection, followingSpaceWidth);
+				pairs = count > MAX_PREFIX_FIT_GRAPHEMES || addUpTo(advances, width);
+				if (!pairs) advances = measureFitAdvances(seg, ends, count, "segment-prefixes", metrics, measurement, emojiCorrection, followingSpaceWidth);
+				lineStartExtras = [0];
+				for (let i = 1; i < count; i++) lineStartExtras.push(alone[i] - advances[i]);
 			}
-			metrics.breakableFitAdvances = advances;
-			return metrics.breakableFitAdvances;
+		} else {
+			const prefixes = mode === "segment-prefixes" && count <= MAX_PREFIX_FIT_GRAPHEMES;
+			pairs = mode !== "sum-graphemes" && !prefixes;
+			advances = measureFitAdvances(seg, ends, count, pairs ? "pair-context" : mode, metrics, measurement, emojiCorrection, followingSpaceWidth);
+			if (prefixes && profile.cutWordKeepsLigatures) countLigaturesOnFirstLetter(seg, ends, advances, measurement, emojiCorrection);
 		}
-		if (mode === "pair-context" || graphemes.length > MAX_PREFIX_FIT_GRAPHEMES) {
-			const advances = [];
-			let previousGrapheme = null;
-			let previousWidth = 0;
-			for (const grapheme of graphemes) {
-				const currentWidth = getCorrectedSegmentWidth(grapheme, getSegmentMetrics(grapheme, cache), emojiCorrection);
-				if (previousGrapheme === null) advances.push(currentWidth);
-				else {
-					const pair = previousGrapheme + grapheme;
-					const pairMetrics = getSegmentMetrics(pair, cache);
-					advances.push(getCorrectedSegmentWidth(pair, pairMetrics, emojiCorrection) - previousWidth);
+		if (profile.kernsAcrossCanvasWords && measurement.kanaKerning !== null && kanaPairRe.test(seg)) {
+			const kernings = getFontKanaKerning(measurement);
+			if (kernings !== null) for (let g = 1; g < count; g++) {
+				const kerning = getKanaKerning(seg, pairs && g > 1 ? ends[g - 2] : 0, ends[g - 1], measurement, kernings);
+				if (kerning > 0) advances[g - 1] = advances[g - 1] + kerning;
+				else if (kerning < 0) {
+					advances[g] = advances[g] + kerning;
+					lineStartExtras ??= zeros(count);
+					lineStartExtras[g] = lineStartExtras[g] - kerning;
 				}
-				previousGrapheme = grapheme;
-				previousWidth = currentWidth;
 			}
-			metrics.breakableFitAdvances = advances;
-			return metrics.breakableFitAdvances;
 		}
+		return metrics.fit = {
+			mode,
+			advances,
+			lineStartExtras
+		};
+	}
+	function countLigaturesOnFirstLetter(seg, ends, advances, measurement, emojiCorrection) {
+		if (!measurement.state.shapesLetterSpaced || measurement.letterSpacing !== "0px") return;
+		let first = 0;
+		for (let i = 1; i < advances.length; i++) {
+			const start = ends[i - 1];
+			const alone = getTextWidth(seg.slice(start, ends[i]), measurement, emojiCorrection);
+			if (Math.round((advances[i] - alone) * 60) !== 0 && isLigature(seg.slice(i === 1 ? 0 : ends[i - 2], ends[i]), measurement)) {
+				advances[first] = advances[first] + advances[i];
+				advances[i] = 0;
+			} else first = i;
+		}
+	}
+	function isLigature(pair, measurement) {
+		let ligature = measurement.ligaturePairs.get(pair);
+		if (ligature === void 0) {
+			const context = getContext(measurement);
+			const width = getSegmentMetrics(pair, measurement).width;
+			context.letterSpacing = LETTER_SPACED_SHAPING;
+			ligature = context.measureText(pair).width !== width;
+			context.letterSpacing = "0px";
+			measurement.ligaturePairs.set(pair, ligature);
+		}
+		return ligature;
+	}
+	function addUpTo(advances, width) {
+		let sum = 0;
+		for (let i = 0; i < advances.length; i++) sum += advances[i];
+		return Math.abs(sum - width) <= width * WORD_SUM_ROUNDING;
+	}
+	function measureFitAdvances(seg, ends, count, from, metrics, measurement, emojiCorrection, followingSpaceWidth) {
+		const prefixes = from === "segment-prefixes";
+		const pairs = from === "pair-context";
 		const advances = [];
-		let prefix = "";
-		let prefixWidth = 0;
-		for (const grapheme of graphemes) {
-			prefix += grapheme;
-			const prefixMetrics = getSegmentMetrics(prefix, cache);
-			const nextPrefixWidth = getCorrectedSegmentWidth(prefix, prefixMetrics, emojiCorrection);
-			advances.push(nextPrefixWidth - prefixWidth);
-			prefixWidth = nextPrefixWidth;
+		let previousStart = 0;
+		let previousWidth = 0;
+		for (let i = 0, start = 0; i < count; start = ends[i++]) {
+			const end = ends[i];
+			if (prefixes) {
+				const width = followingSpaceWidth !== null && i === count - 1 ? getCorrectedSegmentWidth(seg, metrics, measurement, emojiCorrection) - followingSpaceWidth : getTextWidth(seg.slice(0, end), measurement, emojiCorrection);
+				advances.push(width - previousWidth);
+				previousWidth = width;
+				continue;
+			}
+			const width = getTextWidth(seg.slice(start, end), measurement, emojiCorrection);
+			advances.push(pairs && i > 0 ? getTextWidth(seg.slice(previousStart, end), measurement, emojiCorrection) - previousWidth : width);
+			previousStart = start;
+			previousWidth = width;
 		}
-		metrics.breakableFitAdvances = advances;
-		return metrics.breakableFitAdvances;
+		if (followingSpaceWidth !== null && !prefixes) advances[count - 1] = advances[count - 1] + metrics.width - getSegmentMetrics(seg, measurement).width - followingSpaceWidth;
+		return advances;
 	}
-	function getFontMeasurementState(font, needsEmojiCorrection) {
-		const ctx = getMeasureContext();
-		ctx.font = font;
+	function getFontMeasurement(font, language, letterSpaced) {
+		if (measureState === null || measureState.language !== language) measureState = createMeasureState(language);
+		const state = measureState;
+		const shaped = letterSpaced && state.shapesLetterSpaced;
+		const fonts = shaped ? state.letterSpacedFonts : state.fonts;
+		state.font = "";
+		let measurement = fonts.get(font);
+		if (measurement === void 0) {
+			const canvasFont = state.genericFamilies === null ? font : getCanvasFont(font, state.genericFamilies);
+			if (!contextTakesFont(state.context, canvasFont)) throw new RangeError(`font must be a font string Canvas takes, a size in px then a family, such as 16px Inter, not "${font}"`);
+			measurement = {
+				state,
+				canvasFont,
+				letterSpacing: shaped ? LETTER_SPACED_SHAPING : "0px",
+				metrics: /* @__PURE__ */ new Map(),
+				followingSpaceMetrics: /* @__PURE__ */ new Map(),
+				spaceKerning: void 0,
+				measuredKana: false,
+				kanaKerning: void 0,
+				kanaFont: canvasFont,
+				emojiCorrection: null,
+				emojiWidth: 0,
+				hyphenText: null,
+				spaceWidth: null,
+				hanKerning: void 0,
+				ligaturePairs: /* @__PURE__ */ new Map(),
+				glyphCounts: /* @__PURE__ */ new Map()
+			};
+			fonts.set(font, measurement);
+		}
+		return measurement;
+	}
+	function contextTakesFont(context, font) {
+		context.font = "1px serif";
+		context.font = font;
+		if (context.font !== "1px serif") return true;
+		context.font = "2px serif";
+		context.font = font;
+		return context.font !== "2px serif";
+	}
+	function getContext(measurement) {
+		const state = measurement.state;
+		if (state.font !== measurement.canvasFont) state.context.font = state.font = measurement.canvasFont;
+		if (state.letterSpacing !== measurement.letterSpacing) state.context.letterSpacing = state.letterSpacing = measurement.letterSpacing;
+		return state.context;
+	}
+	function createContext(language) {
+		let context = null;
+		if (typeof OffscreenCanvas !== "undefined") context = new OffscreenCanvas(1, 1).getContext("2d");
+		else if (typeof document !== "undefined") context = document.createElement("canvas").getContext("2d");
+		if (context === null) throw new Error("Text measurement requires OffscreenCanvas or a DOM canvas context.");
+		if (language !== null && "lang" in context) context.lang = language;
+		return context;
+	}
+	function createMeasureState(language) {
+		const context = createContext(language);
+		const profile = getEngineProfile();
+		const takesLetterSpacing = typeof context.letterSpacing === "string";
 		return {
-			cache: getSegmentMetricCache(font),
-			emojiCorrection: needsEmojiCorrection ? getEmojiCorrection(font) : 0
+			language,
+			context,
+			font: "",
+			letterSpacing: "0px",
+			wholeRunContext: null,
+			wholeRunFont: "",
+			genericFamilies: language !== null && profile.namesGenericFamiliesByLanguage ? getWebKitGenericFamilies(language, context) : null,
+			takesLetterSpacing,
+			shapesLetterSpaced: takesLetterSpacing && profile.canvasLetterSpacingDropsLigatures,
+			fonts: /* @__PURE__ */ new Map(),
+			letterSpacedFonts: /* @__PURE__ */ new Map(),
+			segments: 0
 		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/line-break.js
-	function isDiscretionaryLineEnd(kinds, endSegmentIndex, endGraphemeIndex) {
-		return endGraphemeIndex === 0 && endSegmentIndex > 0 && endSegmentIndex < kinds.length && kinds[endSegmentIndex - 1] === "soft-hyphen";
+	function clearMeasurementCaches() {
+		if (measureState === null) return;
+		measureState.fonts.clear();
+		measureState.letterSpacedFonts.clear();
+		measureState.segments = 0;
 	}
-	function consumesAtLineStart(kind) {
-		return kind === "space" || kind === "zero-width-break" || kind === "soft-hyphen";
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/han-kerning.js
+	var OTHER = 0;
+	var OPEN = 1;
+	var CLOSE = 2;
+	var MIDDLE = 3;
+	var OPEN_NARROW = 4;
+	var CLOSE_NARROW = 5;
+	var DOT = 6;
+	var COLON = 7;
+	var SEMICOLON = 8;
+	var OPEN_QUOTE = 9;
+	var CLOSE_QUOTE = 10;
+	var openPunctuationRe = /\p{Ps}/uy;
+	var closePunctuationRe = /\p{Pe}/uy;
+	var maybeHanKerningRe = /[\u2018-\u301F\uFF08-\uFF60]/;
+	function maybeHanKerns(c) {
+		return c >= 8216 && c <= 12319 || c >= 65288 && c <= 65376;
 	}
-	function breaksAfter(kind) {
-		return kind === "space" || kind === "preserved-space" || kind === "tab" || kind === "zero-width-break" || kind === "soft-hyphen";
+	function textMayHanKern(text) {
+		return maybeHanKerningRe.test(text);
 	}
-	function normalizeLineStartSegmentIndex(prepared, segmentIndex, endSegmentIndex = prepared.widths.length) {
-		while (segmentIndex < endSegmentIndex) {
-			const kind = prepared.kinds[segmentIndex];
-			if (!consumesAtLineStart(kind)) break;
-			segmentIndex++;
-		}
-		return segmentIndex;
-	}
-	function getTabAdvance(lineWidth, tabStopAdvance) {
-		if (tabStopAdvance <= 0) return 0;
-		const remainder = lineWidth % tabStopAdvance;
-		if (Math.abs(remainder) <= 1e-6) return tabStopAdvance;
-		return tabStopAdvance - remainder;
-	}
-	function getLeadingLetterSpacing(prepared, hasContent, segmentIndex) {
-		return prepared.letterSpacing !== 0 && hasContent && prepared.spacingGraphemeCounts[segmentIndex] > 0 ? prepared.letterSpacing : 0;
-	}
-	function getLineEndContribution(leadingSpacing, segmentContribution) {
-		return segmentContribution === 0 ? 0 : leadingSpacing + segmentContribution;
-	}
-	function getTabTrailingLetterSpacing(prepared, segmentIndex) {
-		return prepared.letterSpacing !== 0 && prepared.spacingGraphemeCounts[segmentIndex] > 0 ? prepared.letterSpacing : 0;
-	}
-	function getWholeSegmentFitContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth) {
-		return getLineEndContribution(leadingSpacing, kind === "tab" ? segmentWidth + getTabTrailingLetterSpacing(prepared, segmentIndex) : prepared.lineEndFitAdvances[segmentIndex]);
-	}
-	function getBreakOpportunityFitContribution(prepared, kind, segmentIndex, leadingSpacing) {
-		return getLineEndContribution(leadingSpacing, kind === "tab" ? 0 : prepared.lineEndFitAdvances[segmentIndex]);
-	}
-	function getLineEndPaintContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth) {
-		return getLineEndContribution(leadingSpacing, kind === "tab" ? segmentWidth : prepared.lineEndPaintAdvances[segmentIndex]);
-	}
-	function getBreakableGraphemeAdvance(prepared, hasContent, baseAdvance) {
-		return prepared.letterSpacing !== 0 && hasContent ? baseAdvance + prepared.letterSpacing : baseAdvance;
-	}
-	function getBreakableCandidateFitWidth(prepared, candidatePaintWidth) {
-		return prepared.letterSpacing === 0 ? candidatePaintWidth : candidatePaintWidth + prepared.letterSpacing;
-	}
-	function getNextPreferredBreakIndex(preferredBreaks, preferredBreakIndex, graphemeEnd) {
-		let lo = preferredBreakIndex;
-		if (lo >= preferredBreaks.length || preferredBreaks[lo] >= graphemeEnd) return lo;
-		let hi = preferredBreaks.length;
-		lo++;
-		while (lo < hi) {
-			const mid = Math.floor((lo + hi) / 2);
-			if (preferredBreaks[mid] < graphemeEnd) lo = mid + 1;
-			else hi = mid;
-		}
-		return lo;
-	}
-	function getTerminalLetterSpacing(prepared, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
-		if (prepared.letterSpacing === 0) return 0;
-		if (endGraphemeIndex > 0) return prepared.spacingGraphemeCounts[endSegmentIndex] > 0 ? prepared.letterSpacing : 0;
-		if (isDiscretionaryLineEnd(prepared.kinds, endSegmentIndex, endGraphemeIndex)) return 0;
-		for (let i = endSegmentIndex - 1; i >= startSegmentIndex; i--) {
-			const kind = prepared.kinds[i];
-			if (kind === "space" || kind === "zero-width-break" || kind === "hard-break" || kind === "soft-hyphen") continue;
-			if (i === startSegmentIndex && startGraphemeIndex > 0) return prepared.letterSpacing;
-			return prepared.spacingGraphemeCounts[i] > 0 ? prepared.letterSpacing : 0;
-		}
-		return 0;
-	}
-	function finalizeLinePaintWidth(prepared, width, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
-		return width + getTerminalLetterSpacing(prepared, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex);
-	}
-	function findChunkIndexForStart(prepared, segmentIndex) {
-		let lo = 0;
-		let hi = prepared.chunks.length;
-		while (lo < hi) {
-			const mid = Math.floor((lo + hi) / 2);
-			if (segmentIndex < prepared.chunks[mid].consumedEndSegmentIndex) hi = mid;
-			else lo = mid + 1;
-		}
-		return lo < prepared.chunks.length ? lo : -1;
-	}
-	function normalizeLineStartInChunk(prepared, chunkIndex, cursor) {
-		let segmentIndex = cursor.segmentIndex;
-		if (cursor.graphemeIndex > 0) return chunkIndex;
-		for (let currentChunkIndex = chunkIndex; currentChunkIndex < prepared.chunks.length; currentChunkIndex++) {
-			const chunk = prepared.chunks[currentChunkIndex];
-			if (chunk.startSegmentIndex === chunk.endSegmentIndex && segmentIndex === chunk.startSegmentIndex) {
-				cursor.segmentIndex = segmentIndex;
-				cursor.graphemeIndex = 0;
-				return currentChunkIndex;
-			}
-			if (segmentIndex < chunk.startSegmentIndex) segmentIndex = chunk.startSegmentIndex;
-			segmentIndex = normalizeLineStartSegmentIndex(prepared, segmentIndex, chunk.endSegmentIndex);
-			if (segmentIndex < chunk.endSegmentIndex) {
-				cursor.segmentIndex = segmentIndex;
-				cursor.graphemeIndex = 0;
-				return currentChunkIndex;
-			}
-			if (chunk.consumedEndSegmentIndex >= prepared.widths.length) return -1;
-			segmentIndex = chunk.consumedEndSegmentIndex;
-			cursor.segmentIndex = segmentIndex;
-			cursor.graphemeIndex = 0;
-		}
-		return -1;
-	}
-	function normalizePreparedLineStart(prepared, cursor) {
-		if (cursor.segmentIndex >= prepared.widths.length) return -1;
-		const chunkIndex = findChunkIndexForStart(prepared, cursor.segmentIndex);
-		if (chunkIndex < 0) return -1;
-		return normalizeLineStartInChunk(prepared, chunkIndex, cursor);
-	}
-	function normalizeLineStartChunkIndexFromHint(prepared, chunkIndex, cursor) {
-		if (cursor.segmentIndex >= prepared.widths.length) return -1;
-		let nextChunkIndex = chunkIndex;
-		while (nextChunkIndex < prepared.chunks.length && cursor.segmentIndex >= prepared.chunks[nextChunkIndex].consumedEndSegmentIndex) nextChunkIndex++;
-		if (nextChunkIndex >= prepared.chunks.length) return -1;
-		return normalizeLineStartInChunk(prepared, nextChunkIndex, cursor);
-	}
-	function walkPreparedLinesSimple(prepared, maxWidth, onLine) {
-		const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks } = prepared;
-		if (widths.length === 0) return 0;
-		const fitLimit = maxWidth + getEngineProfile().lineFitEpsilon;
-		let lineCount = 0;
-		let lineW = 0;
-		let hasContent = false;
-		let lineStartSegmentIndex = 0;
-		let lineStartGraphemeIndex = 0;
-		let lineEndSegmentIndex = 0;
-		let lineEndGraphemeIndex = 0;
-		let pendingBreakSegmentIndex = -1;
-		let pendingBreakPaintWidth = 0;
-		function clearPendingBreak() {
-			pendingBreakSegmentIndex = -1;
-			pendingBreakPaintWidth = 0;
-		}
-		function emitCurrentLine(endSegmentIndex = lineEndSegmentIndex, endGraphemeIndex = lineEndGraphemeIndex, width = lineW) {
-			lineCount++;
-			onLine?.(width, lineStartSegmentIndex, lineStartGraphemeIndex, endSegmentIndex, endGraphemeIndex);
-			lineW = 0;
-			hasContent = false;
-			clearPendingBreak();
-		}
-		function startLineAtSegment(segmentIndex, width) {
-			hasContent = true;
-			lineStartSegmentIndex = segmentIndex;
-			lineStartGraphemeIndex = 0;
-			lineEndSegmentIndex = segmentIndex + 1;
-			lineEndGraphemeIndex = 0;
-			lineW = width;
-		}
-		function startLineAtGrapheme(segmentIndex, graphemeIndex, width) {
-			hasContent = true;
-			lineStartSegmentIndex = segmentIndex;
-			lineStartGraphemeIndex = graphemeIndex;
-			lineEndSegmentIndex = segmentIndex;
-			lineEndGraphemeIndex = graphemeIndex + 1;
-			lineW = width;
-		}
-		function appendWholeSegment(segmentIndex, width) {
-			if (!hasContent) {
-				startLineAtSegment(segmentIndex, width);
-				return;
-			}
-			lineW += width;
-			lineEndSegmentIndex = segmentIndex + 1;
-			lineEndGraphemeIndex = 0;
-		}
-		function appendBreakableSegmentFrom(segmentIndex, startGraphemeIndex) {
-			const fitAdvances = breakableFitAdvances[segmentIndex];
-			const preferredBreaks = breakablePreferredBreaks[segmentIndex] ?? null;
-			let preferredBreakIndex = preferredBreaks === null ? -1 : getNextPreferredBreakIndex(preferredBreaks, 0, startGraphemeIndex + 1);
-			let lastPreferredBreakEnd = -1;
-			let lastPreferredBreakWidth = 0;
-			let g = startGraphemeIndex;
-			while (g < fitAdvances.length) {
-				const gw = fitAdvances[g];
-				if (!hasContent) startLineAtGrapheme(segmentIndex, g, gw);
-				else if (lineW + gw > fitLimit) {
-					if (preferredBreaks !== null && lastPreferredBreakEnd > startGraphemeIndex) {
-						emitCurrentLine(segmentIndex, lastPreferredBreakEnd, lastPreferredBreakWidth);
-						g = lastPreferredBreakEnd;
-						preferredBreakIndex = getNextPreferredBreakIndex(preferredBreaks, preferredBreakIndex, g + 1);
-						lastPreferredBreakEnd = -1;
-						lastPreferredBreakWidth = 0;
-						continue;
-					}
-					emitCurrentLine();
-					startLineAtGrapheme(segmentIndex, g, gw);
-				} else {
-					lineW += gw;
-					lineEndSegmentIndex = segmentIndex;
-					lineEndGraphemeIndex = g + 1;
-				}
-				const graphemeEnd = g + 1;
-				if (preferredBreaks !== null && preferredBreaks[preferredBreakIndex] === graphemeEnd) {
-					lastPreferredBreakEnd = graphemeEnd;
-					lastPreferredBreakWidth = lineW;
-					preferredBreakIndex++;
-				}
-				g++;
-			}
-			if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
-				lineEndSegmentIndex = segmentIndex + 1;
-				lineEndGraphemeIndex = 0;
+	function getStaticCharType(text, index) {
+		const c = text.charCodeAt(index);
+		switch (c) {
+			case 8216:
+			case 8220: return OPEN_QUOTE;
+			case 8217:
+			case 8221: return CLOSE_QUOTE;
+			case 12289:
+			case 12290:
+			case 65292:
+			case 65294: return DOT;
+			case 65306: return COLON;
+			case 65307: return SEMICOLON;
+			case 183:
+			case 8231:
+			case 12288:
+			case 12539: return MIDDLE;
+			default: {
+				if (c < 40 || !hasProperty(c, 2)) return OTHER;
+				const wide = c >= 12288 && c <= 12351 || c >= 65281 && c <= 65376 || c >= 65504 && c <= 65510;
+				openPunctuationRe.lastIndex = closePunctuationRe.lastIndex = index;
+				if (openPunctuationRe.test(text)) return wide ? OPEN : OPEN_NARROW;
+				if (closePunctuationRe.test(text)) return wide ? CLOSE : CLOSE_NARROW;
+				return OTHER;
 			}
 		}
-		let i = 0;
-		while (i < widths.length) {
-			if (!hasContent) {
-				i = normalizeLineStartSegmentIndex(prepared, i);
-				if (i >= widths.length) break;
-			}
-			const w = widths[i];
-			const kind = kinds[i];
-			const breakAfter = breaksAfter(kind);
-			if (!hasContent) {
-				if (w > fitLimit && breakableFitAdvances[i] !== null) appendBreakableSegmentFrom(i, 0);
-				else startLineAtSegment(i, w);
-				if (breakAfter) {
-					pendingBreakSegmentIndex = i + 1;
-					pendingBreakPaintWidth = lineW - w;
-				}
-				i++;
-				continue;
-			}
-			if (lineW + w > fitLimit) {
-				if (breakAfter) {
-					appendWholeSegment(i, w);
-					emitCurrentLine(i + 1, 0, lineW - w);
-					i++;
-					continue;
-				}
-				if (pendingBreakSegmentIndex >= 0) {
-					if (lineEndSegmentIndex > pendingBreakSegmentIndex || lineEndSegmentIndex === pendingBreakSegmentIndex && lineEndGraphemeIndex > 0) {
-						emitCurrentLine();
-						continue;
-					}
-					emitCurrentLine(pendingBreakSegmentIndex, 0, pendingBreakPaintWidth);
-					continue;
-				}
-				if (w > fitLimit && breakableFitAdvances[i] !== null) {
-					emitCurrentLine();
-					appendBreakableSegmentFrom(i, 0);
-					i++;
-					continue;
-				}
-				emitCurrentLine();
-				continue;
-			}
-			appendWholeSegment(i, w);
-			if (breakAfter) {
-				pendingBreakSegmentIndex = i + 1;
-				pendingBreakPaintWidth = lineW - w;
-			}
-			i++;
-		}
-		if (hasContent) emitCurrentLine();
-		return lineCount;
 	}
-	function walkPreparedLinesRaw(prepared, maxWidth, onLine) {
-		if (prepared.simpleLineWalkFastPath) return walkPreparedLinesSimple(prepared, maxWidth, onLine);
-		const cursor = {
-			segmentIndex: 0,
-			graphemeIndex: 0
+	function getTypeFromBounds(ctx, c, hanWidth) {
+		const s = String.fromCharCode(c);
+		let advance;
+		let left;
+		let right;
+		if (isCanvasCjkSymbol(c)) {
+			const after = ctx.measureText("中" + s);
+			advance = after.width - hanWidth;
+			right = after.actualBoundingBoxRight - hanWidth;
+			left = -ctx.measureText(s + "中").actualBoundingBoxLeft;
+		} else {
+			const metrics = ctx.measureText(s);
+			advance = metrics.width;
+			left = -metrics.actualBoundingBoxLeft;
+			right = metrics.actualBoundingBoxRight;
+		}
+		const halfEm = advance / 2;
+		const type = right <= halfEm ? CLOSE : left >= halfEm ? OPEN : right - left <= halfEm && left >= halfEm / 2 ? MIDDLE : OTHER;
+		return {
+			advance,
+			type
 		};
-		return walkPreparedComplexLines(prepared, cursor, normalizePreparedLineStart(prepared, cursor), maxWidth, onLine).lineCount;
 	}
-	function walkPreparedComplexLines(prepared, cursor, chunkIndex, maxWidth, onLine, lineLimit = Number.POSITIVE_INFINITY) {
-		const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks, discretionaryHyphenWidth } = prepared;
-		const fitLimit = maxWidth + getEngineProfile().lineFitEpsilon;
-		let lineStartSegmentIndex;
-		let lineStartGraphemeIndex;
-		let lineW;
-		let hasContent;
-		let lineEndSegmentIndex;
-		let lineEndGraphemeIndex;
-		let pendingBreakSegmentIndex;
-		let pendingBreakFitWidth;
-		let pendingBreakPaintWidth;
-		let pendingBreakKind;
-		function getCurrentLinePaintWidth() {
-			return pendingBreakKind === "soft-hyphen" && pendingBreakSegmentIndex === lineEndSegmentIndex && lineEndGraphemeIndex === 0 ? pendingBreakPaintWidth : lineW;
+	function getTrim(data, c, measurement) {
+		let trim = data.trims.get(c);
+		if (trim === void 0) {
+			const one = String.fromCharCode(c);
+			trim = 2 * getSegmentMetrics(one, measurement).width - getSegmentMetrics(one + one, measurement).width;
+			data.trims.set(c, trim);
 		}
-		function finishLine(endSegmentIndex = lineEndSegmentIndex, endGraphemeIndex = lineEndGraphemeIndex, width = getCurrentLinePaintWidth()) {
-			if (!hasContent) return null;
-			cursor.segmentIndex = endSegmentIndex;
-			cursor.graphemeIndex = endGraphemeIndex;
-			return finalizeLinePaintWidth(prepared, width, lineStartSegmentIndex, lineStartGraphemeIndex, endSegmentIndex, endGraphemeIndex);
-		}
-		function startLineAtSegment(segmentIndex, width) {
-			hasContent = true;
-			lineEndSegmentIndex = segmentIndex + 1;
-			lineEndGraphemeIndex = 0;
-			lineW = width;
-		}
-		function startLineAtGrapheme(segmentIndex, graphemeIndex, width) {
-			hasContent = true;
-			lineEndSegmentIndex = segmentIndex;
-			lineEndGraphemeIndex = graphemeIndex + 1;
-			lineW = width;
-		}
-		function appendWholeSegment(segmentIndex, advance) {
-			if (!hasContent) {
-				startLineAtSegment(segmentIndex, advance);
-				return;
-			}
-			lineW += advance;
-			lineEndSegmentIndex = segmentIndex + 1;
-			lineEndGraphemeIndex = 0;
-		}
-		function updatePendingBreakForWholeSegment(kind, breakAfter, segmentIndex, segmentWidth, leadingSpacing, advance) {
-			if (!breakAfter) return;
-			const fitAdvance = getBreakOpportunityFitContribution(prepared, kind, segmentIndex, leadingSpacing);
-			const paintAdvance = getLineEndPaintContribution(prepared, kind, segmentIndex, leadingSpacing, segmentWidth);
-			pendingBreakSegmentIndex = segmentIndex + 1;
-			pendingBreakFitWidth = lineW - advance + fitAdvance;
-			pendingBreakPaintWidth = lineW - advance + paintAdvance;
-			pendingBreakKind = kind;
-		}
-		function appendBreakableSegmentFrom(segmentIndex, startGraphemeIndex) {
-			const fitAdvances = breakableFitAdvances[segmentIndex];
-			const preferredBreaks = breakablePreferredBreaks[segmentIndex] ?? null;
-			let preferredBreakIndex = preferredBreaks === null ? -1 : getNextPreferredBreakIndex(preferredBreaks, 0, startGraphemeIndex + 1);
-			let lastPreferredBreakEnd = -1;
-			let lastPreferredBreakWidth = 0;
-			for (let g = startGraphemeIndex; g < fitAdvances.length; g++) {
-				const baseGw = fitAdvances[g];
-				if (!hasContent) startLineAtGrapheme(segmentIndex, g, baseGw);
-				else {
-					const gw = getBreakableGraphemeAdvance(prepared, true, baseGw);
-					const candidatePaintWidth = lineW + gw;
-					if (getBreakableCandidateFitWidth(prepared, candidatePaintWidth) > fitLimit) {
-						if (preferredBreaks !== null && lastPreferredBreakEnd > startGraphemeIndex) return finishLine(segmentIndex, lastPreferredBreakEnd, lastPreferredBreakWidth);
-						return finishLine();
-					}
-					lineW = candidatePaintWidth;
-					lineEndSegmentIndex = segmentIndex;
-					lineEndGraphemeIndex = g + 1;
-				}
-				const graphemeEnd = g + 1;
-				if (preferredBreaks !== null && preferredBreaks[preferredBreakIndex] === graphemeEnd) {
-					lastPreferredBreakEnd = graphemeEnd;
-					lastPreferredBreakWidth = lineW;
-					preferredBreakIndex++;
-				}
-			}
-			if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
-				lineEndSegmentIndex = segmentIndex + 1;
-				lineEndGraphemeIndex = 0;
-			}
+		return trim;
+	}
+	function getFontData(measurement) {
+		if (measurement.hanKerning !== void 0) return measurement.hanKerning;
+		const data = {
+			typeForDot: OTHER,
+			typeForColon: OTHER,
+			typeForSemicolon: OTHER,
+			quoteFullwidth: false,
+			trims: /* @__PURE__ */ new Map()
+		};
+		if (getTrim(data, 12300, measurement) <= .001) {
+			measurement.hanKerning = null;
 			return null;
 		}
-		let lineCount = 0;
-		let lastLineWidth = null;
-		while (chunkIndex >= 0 && lineCount < lineLimit) {
-			lineStartSegmentIndex = cursor.segmentIndex;
-			lineStartGraphemeIndex = cursor.graphemeIndex;
-			lineW = 0;
-			hasContent = false;
-			lineEndSegmentIndex = cursor.segmentIndex;
-			lineEndGraphemeIndex = cursor.graphemeIndex;
-			pendingBreakSegmentIndex = -1;
-			pendingBreakFitWidth = 0;
-			pendingBreakPaintWidth = 0;
-			pendingBreakKind = null;
-			const chunk = prepared.chunks[chunkIndex];
-			let lineWidth = null;
-			if (chunk.startSegmentIndex === chunk.endSegmentIndex) {
-				cursor.segmentIndex = chunk.consumedEndSegmentIndex;
-				cursor.graphemeIndex = 0;
-				lineWidth = 0;
-			} else {
-				lineLoop: for (let i = cursor.segmentIndex; i < chunk.endSegmentIndex; i++) {
-					const kind = kinds[i];
-					const breakAfter = breaksAfter(kind);
-					const startGraphemeIndex = i === cursor.segmentIndex ? cursor.graphemeIndex : 0;
-					const leadingSpacing = getLeadingLetterSpacing(prepared, hasContent, i);
-					const w = kind === "tab" ? getTabAdvance(lineW + leadingSpacing, prepared.tabStopAdvance) : widths[i];
-					const advance = leadingSpacing + w;
-					const fitAdvance = getWholeSegmentFitContribution(prepared, kind, i, leadingSpacing, w);
-					if (kind === "soft-hyphen" && startGraphemeIndex === 0) {
-						if (hasContent) {
-							lineEndSegmentIndex = i + 1;
-							lineEndGraphemeIndex = 0;
-							if (i + 1 < chunk.endSegmentIndex) {
-								pendingBreakSegmentIndex = i + 1;
-								pendingBreakFitWidth = lineW + discretionaryHyphenWidth;
-								pendingBreakPaintWidth = lineW + discretionaryHyphenWidth;
-								pendingBreakKind = kind;
-							}
-						}
-						continue;
-					}
-					if (!hasContent) {
-						if (startGraphemeIndex > 0) {
-							const line = appendBreakableSegmentFrom(i, startGraphemeIndex);
-							if (line !== null) {
-								lineWidth = line;
-								break lineLoop;
-							}
-						} else if (fitAdvance > fitLimit && breakableFitAdvances[i] !== null) {
-							const line = appendBreakableSegmentFrom(i, 0);
-							if (line !== null) {
-								lineWidth = line;
-								break lineLoop;
-							}
-						} else startLineAtSegment(i, w);
-						updatePendingBreakForWholeSegment(kind, breakAfter, i, w, leadingSpacing, advance);
-						continue;
-					}
-					if (lineW + fitAdvance > fitLimit) {
-						const currentBreakFitWidth = lineW + getBreakOpportunityFitContribution(prepared, kind, i, leadingSpacing);
-						const currentBreakPaintWidth = lineW + getLineEndPaintContribution(prepared, kind, i, leadingSpacing, w);
-						if (breakAfter && currentBreakFitWidth <= fitLimit) {
-							appendWholeSegment(i, advance);
-							lineWidth = finishLine(i + 1, 0, currentBreakPaintWidth);
-							break lineLoop;
-						}
-						if (pendingBreakSegmentIndex >= 0 && pendingBreakFitWidth <= fitLimit) {
-							if (lineEndSegmentIndex > pendingBreakSegmentIndex || lineEndSegmentIndex === pendingBreakSegmentIndex && lineEndGraphemeIndex > 0) {
-								lineWidth = finishLine();
-								break lineLoop;
-							}
-							lineWidth = finishLine(pendingBreakSegmentIndex, 0, pendingBreakPaintWidth);
-							break lineLoop;
-						}
-						lineWidth = finishLine();
-						break lineLoop;
-					}
-					appendWholeSegment(i, advance);
-					updatePendingBreakForWholeSegment(kind, breakAfter, i, w, leadingSpacing, advance);
-				}
-				if (lineWidth === null) lineWidth = pendingBreakSegmentIndex === chunk.consumedEndSegmentIndex && lineEndGraphemeIndex === 0 ? finishLine(chunk.consumedEndSegmentIndex, 0, pendingBreakPaintWidth) : finishLine(chunk.consumedEndSegmentIndex, 0, lineW);
-			}
-			if (lineWidth === null) break;
-			lastLineWidth = lineWidth;
-			lineCount++;
-			onLine?.(lineWidth, lineStartSegmentIndex, lineStartGraphemeIndex, cursor.segmentIndex, cursor.graphemeIndex);
-			if (lineCount < lineLimit) chunkIndex = normalizeLineStartChunkIndexFromHint(prepared, chunkIndex, cursor);
+		const hanWidth = getSegmentMetrics("中", measurement).width;
+		const ctx = getContext(measurement);
+		const glyphs = [
+			12289,
+			12290,
+			65292,
+			65294,
+			65306,
+			65307,
+			8220,
+			8216,
+			8221,
+			8217
+		].map((c) => getTypeFromBounds(ctx, c, hanWidth));
+		const group = (from, to) => {
+			for (let i = from + 1; i < to; i++) if (glyphs[i].advance !== glyphs[from].advance || glyphs[i].type !== glyphs[from].type) return OTHER;
+			return glyphs[from].type;
+		};
+		data.typeForDot = group(0, 4);
+		data.typeForColon = glyphs[4].type;
+		data.typeForSemicolon = glyphs[5].type;
+		data.quoteFullwidth = group(6, 8) === OPEN && group(8, 10) === CLOSE;
+		measurement.hanKerning = data;
+		return data;
+	}
+	function getCharType(data, text, index) {
+		const type = getStaticCharType(text, index);
+		switch (type) {
+			case DOT: return data.typeForDot;
+			case COLON: return data.typeForColon;
+			case SEMICOLON: return data.typeForSemicolon;
+			case OPEN_QUOTE: return data.quoteFullwidth ? OPEN : OPEN_NARROW;
+			case CLOSE_QUOTE: return data.quoteFullwidth ? CLOSE : CLOSE_NARROW;
+			default: return type;
 		}
-		return {
-			lineCount,
-			lastLineWidth
-		};
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/@chenglou+pretext@0.0.9/node_modules/@chenglou/pretext/dist/layout.js
-	function createEmptyPrepared(includeSegments) {
-		if (includeSegments) return {
-			widths: [],
-			lineEndFitAdvances: [],
-			lineEndPaintAdvances: [],
-			kinds: [],
-			simpleLineWalkFastPath: true,
-			segLevels: null,
-			breakableFitAdvances: [],
-			breakablePreferredBreaks: [],
-			letterSpacing: 0,
-			spacingGraphemeCounts: [],
-			discretionaryHyphenWidth: 0,
-			tabStopAdvance: 0,
-			chunks: [],
-			segments: []
-		};
-		return {
-			widths: [],
-			lineEndFitAdvances: [],
-			lineEndPaintAdvances: [],
-			kinds: [],
-			simpleLineWalkFastPath: true,
-			segLevels: null,
-			breakableFitAdvances: [],
-			breakablePreferredBreaks: [],
-			letterSpacing: 0,
-			spacingGraphemeCounts: [],
-			discretionaryHyphenWidth: 0,
-			tabStopAdvance: 0,
-			chunks: []
-		};
+	function haltedSide(earlier, later) {
+		if (later === OPEN && (earlier === OPEN || earlier === MIDDLE || earlier === CLOSE || earlier === OPEN_NARROW)) return 1;
+		if (earlier === CLOSE && (later === CLOSE || later === MIDDLE || later === CLOSE_NARROW)) return -1;
+		return 0;
 	}
-	function countRenderedSpacingGraphemes(text, kind) {
-		if (kind === "zero-width-break" || kind === "soft-hyphen" || kind === "hard-break") return 0;
-		if (kind === "tab") return 1;
-		let count = 0;
-		const graphemeSegmenter = getSharedGraphemeSegmenter();
-		for (const _ of graphemeSegmenter.segment(text)) count++;
-		return count;
+	function isCanvasCjkSymbol(c) {
+		return c >= 12288 && c <= 12543 || c >= 65072 && c <= 65135 || c >= 65280 && c <= 65519 && c !== 65307;
+	}
+	function getHanKerningTrims(measurement, analysis, from, to) {
+		const out = {
+			widthTrims: null,
+			lineStartExtras: null,
+			lineEndTrims: null,
+			overflowLineEndTrims: null
+		};
+		const data = getFontData(measurement);
+		if (data === null) return out;
+		const { flags, starts, normalized } = analysis;
+		const count = flags.length;
+		const addWidthTrim = (i, trim) => {
+			out.widthTrims ??= zeros(to - from);
+			out.widthTrims[i - from] = out.widthTrims[i - from] + trim;
+		};
+		for (let i = from; i < to; i++) {
+			if ((flags[i] & 15) !== 0) continue;
+			const start = starts[i];
+			const end = i + 1 < count ? starts[i + 1] : normalized.length;
+			const first = normalized.charCodeAt(start);
+			if (i > 0 && maybeHanKerns(first) && haltedSide(getCharType(data, normalized, start - 1), getCharType(data, normalized, start)) === 1) {
+				const trim = getTrim(data, first, measurement);
+				out.lineStartExtras ??= zeros(to - from);
+				out.lineStartExtras[i - from] = trim;
+				addWidthTrim(i, trim);
+			}
+			for (let k = start + 1; k < end; k++) {
+				const earlier = normalized.charCodeAt(k - 1);
+				const later = normalized.charCodeAt(k);
+				if (!(maybeHanKerns(earlier) || maybeHanKerns(later)) || isCanvasCjkSymbol(earlier) === isCanvasCjkSymbol(later)) continue;
+				const side = haltedSide(getCharType(data, normalized, k - 1), getCharType(data, normalized, k));
+				if (side !== 0) addWidthTrim(i, getTrim(data, side === 1 ? later : earlier, measurement));
+			}
+			const last = normalized.charCodeAt(end - 1);
+			if (!maybeHanKerns(last)) continue;
+			const atEnd = i + 1 === count;
+			if (!atEnd && haltedSide(getCharType(data, normalized, end - 1), getCharType(data, normalized, end)) === -1) {
+				addWidthTrim(i, getTrim(data, last, measurement));
+				continue;
+			}
+			const lastType = getStaticCharType(normalized, end - 1);
+			if (lastType !== CLOSE && lastType !== CLOSE_QUOTE || getCharType(data, normalized, end - 1) !== CLOSE) continue;
+			if (atEnd || (flags[i + 1] & 15) === 0 && (flags[i + 1] & 32) === 0) {
+				out.lineEndTrims ??= zeros(to - from);
+				out.lineEndTrims[i - from] = getTrim(data, last, measurement);
+			} else {
+				out.overflowLineEndTrims ??= zeros(to - from);
+				out.overflowLineEndTrims[i - from] = getTrim(data, last, measurement);
+			}
+		}
+		return out;
+	}
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/prepare.js
+	function countRenderedSpacingGraphemes(text, kind, graphemeTable) {
+		return kind === 2 ? 0 : findGraphemeEnds(graphemeTable, text, 0, text.length, null);
 	}
 	function addInternalLetterSpacing(width, graphemeCount, letterSpacing) {
 		return graphemeCount > 1 ? width + (graphemeCount - 1) * letterSpacing : width;
 	}
-	function measureAnalysis(analysis, font, includeSegments, wordBreak, letterSpacing) {
-		const engineProfile = getEngineProfile();
-		const { cache, emojiCorrection } = getFontMeasurementState(font, textMayContainEmoji(analysis.normalized));
-		const discretionaryHyphenWidth = getCorrectedSegmentWidth("-", getSegmentMetrics("-", cache), emojiCorrection) + (letterSpacing === 0 ? 0 : letterSpacing * 2);
-		const tabStopAdvance = getCorrectedSegmentWidth(" ", getSegmentMetrics(" ", cache), emojiCorrection) * 8;
-		const hasLetterSpacing = letterSpacing !== 0;
-		if (analysis.len === 0) return createEmptyPrepared(includeSegments);
-		const widths = [];
-		const lineEndFitAdvances = [];
-		const lineEndPaintAdvances = [];
-		const kinds = [];
-		let simpleLineWalkFastPath = !hasLetterSpacing;
-		const segStarts = includeSegments ? [] : null;
-		const breakableFitAdvances = [];
-		const breakablePreferredBreaks = [];
-		const spacingGraphemeCounts = [];
-		const segments = includeSegments ? [] : null;
-		const chunks = [];
-		let chunkStartSegmentIndex = 0;
-		function pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, breakableFitAdvance, breakablePreferredBreak, spacingGraphemeCount) {
-			if (kind !== "text" && kind !== "space" && kind !== "zero-width-break") simpleLineWalkFastPath = false;
-			widths.push(width);
-			lineEndFitAdvances.push(lineEndFitAdvance);
-			lineEndPaintAdvances.push(lineEndPaintAdvance);
-			kinds.push(kind);
-			segStarts?.push(start);
-			breakableFitAdvances.push(breakableFitAdvance);
-			breakablePreferredBreaks.push(breakablePreferredBreak);
-			if (hasLetterSpacing) spacingGraphemeCounts.push(spacingGraphemeCount);
-			if (segments !== null) segments.push(text);
+	var complexTextPathRanges = [
+		741,
+		745,
+		768,
+		879,
+		1425,
+		1469,
+		1471,
+		1487,
+		1536,
+		4255,
+		4352,
+		4607,
+		4957,
+		4959,
+		5888,
+		6319,
+		6400,
+		6479,
+		6528,
+		6623,
+		6656,
+		7423,
+		7616,
+		7679,
+		8400,
+		8447,
+		9977,
+		9977,
+		11503,
+		11505,
+		12330,
+		12335,
+		12441,
+		12444,
+		42620,
+		42621,
+		42736,
+		42737,
+		43008,
+		44031,
+		55216,
+		55295,
+		65024,
+		65039,
+		65056,
+		65071,
+		68096,
+		68191,
+		69632,
+		69839,
+		69888,
+		70111,
+		70144,
+		70223,
+		70320,
+		70527,
+		70656,
+		70879,
+		71040,
+		71263,
+		71296,
+		71375,
+		71424,
+		72895,
+		92928,
+		93071,
+		125184,
+		125279,
+		127462,
+		127487,
+		127995,
+		127999,
+		917504,
+		917631,
+		917760,
+		917999
+	];
+	var extendedPictographicRe = /\p{Extended_Pictographic}/u;
+	var leadingCombiningMarkRe = lazyRegExp(String.raw`^\p{M}`, "u");
+	var numericRunRe = /^[\p{Nd}:\-/×,.+\u2013\u2014]+$/u;
+	var controlCharacterRe = /^[\p{Cc}\u2028\u2029]$/u;
+	function needsComplexTextPath(text) {
+		let previousIsEmoji = false;
+		for (let i = 0; i < text.length;) {
+			const codePoint = text.codePointAt(i);
+			i += codePoint > 65535 ? 2 : 1;
+			if (codePoint === 8205 && previousIsEmoji) return true;
+			previousIsEmoji = codePoint > 65535 && extendedPictographicRe.test(String.fromCodePoint(codePoint));
+			for (let range = 0; range < complexTextPathRanges.length && codePoint >= complexTextPathRanges[range]; range += 2) if (codePoint <= complexTextPathRanges[range + 1]) return true;
 		}
-		function pushMeasuredTextSegment(text, textMetrics, kind, start, allowOverflowBreaks) {
-			const spacingGraphemeCount = hasLetterSpacing ? countRenderedSpacingGraphemes(text, kind) : 0;
-			const width = addInternalLetterSpacing(getCorrectedSegmentWidth(text, textMetrics, emojiCorrection), spacingGraphemeCount, letterSpacing);
-			const baseLineEndFitAdvance = kind === "space" || kind === "preserved-space" || kind === "zero-width-break" ? 0 : width;
-			const lineEndFitAdvance = baseLineEndFitAdvance === 0 ? 0 : baseLineEndFitAdvance + (spacingGraphemeCount > 0 ? letterSpacing : 0);
-			const lineEndPaintAdvance = kind === "space" || kind === "zero-width-break" ? 0 : width;
-			if (allowOverflowBreaks && text.length > 1) {
-				let fitMode = "sum-graphemes";
-				if (letterSpacing !== 0) fitMode = "segment-prefixes";
-				else if (isNumericRunSegment(text)) fitMode = "pair-context";
-				else if (engineProfile.preferPrefixWidthsForBreakableRuns) fitMode = "segment-prefixes";
-				const fitAdvances = getSegmentBreakableFitAdvances(text, textMetrics, cache, emojiCorrection, fitMode);
-				pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, fitAdvances, fitAdvances === null || wordBreak === "keep-all" ? null : getBreakablePreferredBreaks(text), spacingGraphemeCount);
-				return;
-			}
-			pushMeasuredSegment(text, width, lineEndFitAdvance, lineEndPaintAdvance, kind, start, null, null, spacingGraphemeCount);
-		}
-		for (let mi = 0; mi < analysis.len; mi++) {
-			const segText = analysis.texts[mi];
-			const segKind = analysis.kinds[mi];
-			const segStart = analysis.starts[mi];
-			if (segKind === "soft-hyphen") {
-				pushMeasuredSegment(segText, 0, discretionaryHyphenWidth, discretionaryHyphenWidth, segKind, segStart, null, null, 0);
-				continue;
-			}
-			if (segKind === "hard-break") {
-				const endSegmentIndex = widths.length;
-				pushMeasuredSegment(segText, 0, 0, 0, segKind, segStart, null, null, 0);
-				chunks.push({
-					startSegmentIndex: chunkStartSegmentIndex,
-					endSegmentIndex,
-					consumedEndSegmentIndex: widths.length
-				});
-				chunkStartSegmentIndex = widths.length;
-				continue;
-			}
-			if (segKind === "tab") {
-				pushMeasuredSegment(segText, 0, 0, 0, segKind, segStart, null, null, hasLetterSpacing ? countRenderedSpacingGraphemes(segText, segKind) : 0);
-				continue;
-			}
-			if (segKind === "text" && isCJK(segText)) {
-				const measuredUnits = getCjkTextUnits(segText, engineProfile, wordBreak);
-				for (let i = 0; i < measuredUnits.length; i++) {
-					const unit = measuredUnits[i];
-					const unitMetrics = getSegmentMetrics(unit.text, cache);
-					pushMeasuredTextSegment(unit.text, unitMetrics, "text", segStart + unit.start, unit.overflow === "grapheme" || analysis.isWordLike[mi] && (wordBreak === "keep-all" || unit.overflow === "word-like"));
-				}
-				continue;
-			}
-			pushMeasuredTextSegment(segText, getSegmentMetrics(segText, cache), segKind, segStart, segKind === "text" && (analysis.isWordLike[mi] || isIndependentSymbolRun(segText)));
-		}
-		if (chunkStartSegmentIndex < widths.length) chunks.push({
-			startSegmentIndex: chunkStartSegmentIndex,
-			endSegmentIndex: widths.length,
-			consumedEndSegmentIndex: widths.length
-		});
-		const segLevels = segStarts === null ? null : computeSegmentLevels(analysis.normalized, segStarts);
-		if (segments !== null) return {
-			widths,
-			lineEndFitAdvances,
-			lineEndPaintAdvances,
-			kinds,
-			simpleLineWalkFastPath,
-			segLevels,
-			breakableFitAdvances,
-			breakablePreferredBreaks,
-			letterSpacing,
-			spacingGraphemeCounts,
-			discretionaryHyphenWidth,
-			tabStopAdvance,
-			chunks,
-			segments
-		};
-		return {
-			widths,
-			lineEndFitAdvances,
-			lineEndPaintAdvances,
-			kinds,
-			simpleLineWalkFastPath,
-			segLevels,
-			breakableFitAdvances,
-			breakablePreferredBreaks,
-			letterSpacing,
-			spacingGraphemeCounts,
-			discretionaryHyphenWidth,
-			tabStopAdvance,
-			chunks
-		};
+		return false;
 	}
+	var mixedDirectionRe = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF\u200F\u{10800}-\u{10FFF}\u{1E800}-\u{1EFFF}\u202A-\u202E\u2066-\u2069]/u;
+	function isSpaceKind(kind) {
+		return kind === 1 || kind === 4;
+	}
+	var scriptClasses = null;
+	function getScriptFacts(c) {
+		return scriptClassFacts[getClass(scriptClasses ??= unpackClasses("chromium/script"), c)];
+	}
+	function getScriptFactsAt(text, i) {
+		const c = text.codePointAt(i);
+		const facts = getScriptFacts(c);
+		const next = i + (c > 65535 ? 2 : 1);
+		if ((facts & 1024) !== 0 && next < text.length) {
+			const markScripts = getScriptFacts(text.codePointAt(next)) >> 5 & 31;
+			if (markScripts !== 0) return facts & -32 | markScripts;
+		}
+		return facts;
+	}
+	function mayHoldCursive(text) {
+		for (let i = 0; i < text.length; i++) {
+			if (text.charCodeAt(i) < 128) continue;
+			const facts = getScriptFacts(text.codePointAt(i));
+			if ((facts & 31) === 16 || (facts >> 5 & 31) === 16) return true;
+		}
+		return false;
+	}
+	function readScriptRuns(runs, text, to) {
+		const { openBrackets } = runs;
+		while (runs.read < to || runs.scripts === 31 && runs.read < text.length) {
+			const c = text.codePointAt(runs.read);
+			const facts = getScriptFactsAt(text, runs.read);
+			let scripts = facts & 31;
+			const opened = (facts & 8192) !== 0 ? openBrackets.lastIndexOf(c - (facts >> 14)) : -1;
+			if (opened >= 0) {
+				if (openBrackets[opened + 1] !== 0) scripts = openBrackets[opened + 1];
+				openBrackets.length = opened + 2;
+			}
+			if ((runs.scripts & scripts) !== 0) runs.scripts &= scripts;
+			else {
+				for (let k = openBrackets.length - 1; k > 0 && openBrackets[k] === 0; k -= 2) openBrackets[k] = runs.scripts & -runs.scripts;
+				runs.scripts = scripts;
+			}
+			if ((facts & 4096) !== 0) {
+				if (openBrackets.length === 64) openBrackets.splice(0, 2);
+				openBrackets.push(c, 0);
+			}
+			runs.read += c > 65535 ? 2 : 1;
+		}
+		return runs.scripts;
+	}
+	function spaceSharesScriptRun(runs, text, at, end) {
+		let scripts = getScriptFactsAt(text, at) & 31;
+		for (let first = at; scripts === 31 && first + 1 < end && hasProperty(text.charCodeAt(first), 4); first++) scripts = getScriptFactsAt(text, first + 1) & 31;
+		if (scripts === 31) return true;
+		for (let i = at - 2; i >= 0; i--) {
+			if ((text.charCodeAt(i) & 64512) === 56320 && i > 0) i--;
+			const facts = getScriptFactsAt(text, i);
+			if ((facts & 8192) !== 0) break;
+			const before = facts & 31;
+			if (before === 31) continue;
+			if ((before & before - 1) === 0) return (before & scripts) !== 0;
+			break;
+		}
+		return (readScriptRuns(runs, text, at) & scripts) !== 0;
+	}
+	function getUnspacedGraphemes(text, start, end, graphemeTable, runs) {
+		const ends = new Int32Array(end - start);
+		const count = findGraphemeEnds(graphemeTable, text, start, end, ends);
+		let unspaced = null;
+		for (let g = 0, at = start; g < count; at = ends[g++]) if (runs === null ? (getScriptFacts(text.codePointAt(at)) & 2048) !== 0 : readScriptRuns(runs, text, at + 1) === 16 && text.charCodeAt(at) !== 160) (unspaced ??= []).push(g);
+		return unspaced;
+	}
+	function getFollowingSpaceTail(analysis, analysisIndex, to) {
+		const { normalized, spaceSources, starts, flags } = analysis;
+		let next = analysisIndex + 1;
+		while (next < to && (flags[next] & 15) === 2) next++;
+		if (next >= to) return null;
+		const nextKind = flags[next] & 15;
+		const spaceStart = starts[next];
+		if (nextKind !== 1 && nextKind !== 4 || (spaceSources === null ? normalized.charCodeAt(spaceStart) : spaceSources[spaceStart]) !== 32) return null;
+		return normalized.slice(starts[analysisIndex + 1], spaceStart);
+	}
+	function getTailKerning(item, measurement, spaceWidth) {
+		return getFollowingSpaceMetrics(item, measurement).width - getSegmentMetrics(item, measurement).width - spaceWidth;
+	}
+	function getJoinedNarrowing(analysis, analysisIndex, to, before, beforeMetrics, measurement, emojiCorrection, lineFitEpsilon) {
+		if (before === null) return 0;
+		const { texts, flags } = analysis;
+		let next = analysisIndex + 1;
+		while (next < to && (flags[next] & 15) === 3) next++;
+		if (next >= to || (flags[next] & 15) !== 0) return 0;
+		const after = texts[next];
+		const apart = getCorrectedSegmentWidth(before, beforeMetrics, measurement, emojiCorrection) + getTextWidth(after, measurement, emojiCorrection);
+		const together = getTextWidth(before + after, measurement, emojiCorrection);
+		return apart - together > lineFitEpsilon ? apart - together : 0;
+	}
+	function getTextSegmentWidth(text, textMetrics, measurement, emojiCorrection, followingSpaceWidth, followingSpaceKerning) {
+		return getCorrectedSegmentWidth(text, textMetrics, measurement, emojiCorrection) - followingSpaceWidth + followingSpaceKerning;
+	}
+	function measureAnalysis(analysis, from, to, font, includeSegments, letterSpacing, engineProfile, language, overflowBreaks, paragraph) {
+		const { normalized, texts, starts, flags } = analysis;
+		const ownStart = from === 0 ? 0 : starts[from];
+		const own = from === 0 && to === flags.length ? normalized : to === from + 1 ? texts[from] : normalized.slice(ownStart, to < flags.length ? starts[to] : normalized.length);
+		const widths = paragraph === null ? [] : paragraph.widths;
+		const segmentFlags = paragraph === null ? new Uint8Array(to - from) : paragraph.segmentFlags;
+		const breakableFitAdvances = paragraph === null ? [] : paragraph.breakableFitAdvances;
+		const segments = includeSegments ? [] : null;
+		const base = widths.length;
+		const hasLetterSpacing = letterSpacing !== 0;
+		const fontMeasurement = getFontMeasurement(font, language, hasLetterSpacing);
+		const emojiCorrection = textMayContainEmoji(own) ? getEmojiCorrection(font, fontMeasurement) : 0;
+		const hasSpace = own.includes(" ");
+		const spaceWidth = hasSpace || own.includes("	") ? getSpaceWidth(fontMeasurement) : 0;
+		const tabStopSpacing = engineProfile.letterSpaceTabStops ? letterSpacing : 0;
+		const tabStopAdvance = engineProfile.tabsInAppUnits ? (Math.round(spaceWidth * 60) + Math.round(tabStopSpacing * 60)) * 8 / 60 : (spaceWidth + tabStopSpacing) * 8;
+		let minimumTabAdvance = 0;
+		let fontSpaceKerning = engineProfile.kernsAcrossCanvasWords && own.includes(" ") ? getFontSpaceKerning(fontMeasurement) : null;
+		if (fontSpaceKerning !== null && mixedDirectionRe.test(own)) fontSpaceKerning = null;
+		const scriptRuns = {
+			read: 0,
+			scripts: 31,
+			openBrackets: []
+		};
+		let spaceShare = 0;
+		const cursiveSpacing = hasLetterSpacing && engineProfile.unspacedCursive !== "none" && mayHoldCursive(own);
+		let simpleKinds = !hasLetterSpacing;
+		let breakableLineStartExtras = null;
+		let discretionaryHyphenContexts = null;
+		let previousJoinablePiece = null;
+		let previousJoinableMetrics = null;
+		const returnFitsEachSideAlone = engineProfile.unfitHyphenRetreat === "full-width-or-first";
+		for (let mi = from, at = base; mi < to; mi++, at++) {
+			const text = texts[mi];
+			const segment = flags[mi];
+			const kind = segment & 15;
+			let width = 0;
+			let spacingGraphemeCount = 0;
+			let fitAdvances = null;
+			switch (kind) {
+				case 0: {
+					if (engineProfile.hidesControlCharacters && controlCharacterRe.test(text)) {
+						spacingGraphemeCount = 1;
+						break;
+					}
+					const followingSpaceTail = engineProfile.measureTextWithFollowingSpace && hasSpace ? getFollowingSpaceTail(analysis, mi, to) : null;
+					const measuredWithSpace = followingSpaceTail === "";
+					const textMetrics = measuredWithSpace ? getFollowingSpaceMetrics(text, fontMeasurement) : getSegmentMetrics(text, fontMeasurement);
+					previousJoinablePiece = text;
+					previousJoinableMetrics = textMetrics;
+					let followingSpaceKerning = followingSpaceTail === null || measuredWithSpace ? 0 : getTailKerning(text + followingSpaceTail, fontMeasurement, spaceWidth);
+					if (fontSpaceKerning !== null && textMetrics.spaceKerning !== noSpaceKerning) {
+						const spaceBefore = mi > from && isSpaceKind(flags[mi - 1] & 15);
+						const spaceAfter = mi + 1 < to && isSpaceKind(flags[mi + 1] & 15);
+						if (spaceBefore || spaceAfter) {
+							const kerning = textMetrics.spaceKerning ?? getSpaceKerning(text, textMetrics, fontMeasurement, fontSpaceKerning);
+							if (spaceAfter) {
+								followingSpaceKerning = Math.max(kerning.after, 0);
+								spaceShare = Math.min(kerning.after, 0);
+							}
+							if (spaceBefore && kerning.before !== 0 && !((flags[mi - 1] & 15) === 4 && (mi === from + 1 || (flags[mi - 2] & 15) === 8)) && spaceSharesScriptRun(scriptRuns, own, starts[mi] - ownStart, starts[mi] - ownStart + text.length)) widths[at - 1] = widths[at - 1] + kerning.before;
+						}
+					}
+					width = getTextSegmentWidth(text, textMetrics, fontMeasurement, emojiCorrection, measuredWithSpace ? spaceWidth : 0, followingSpaceKerning);
+					let unspaced = null;
+					let extraSpacings = noExtraSpacings;
+					if (hasLetterSpacing) {
+						spacingGraphemeCount = countRenderedSpacingGraphemes(text, kind, engineProfile.graphemeTable);
+						if (cursiveSpacing) {
+							unspaced = getUnspacedGraphemes(own, starts[mi] - ownStart, starts[mi] - ownStart + text.length, engineProfile.graphemeTable, engineProfile.unspacedCursive === "run" ? scriptRuns : null);
+							if (unspaced !== null) width -= unspaced.length * letterSpacing;
+						}
+						if (engineProfile.letterSpacesGlyphs) {
+							extraSpacings = textMetrics.extraSpacings ??= needsComplexTextPath(text) ? getExtraSpacings(text, fontMeasurement) : noExtraSpacings;
+							for (let k = 0; k < extraSpacings.length; k++) width += extraSpacings[k] * letterSpacing;
+						}
+					}
+					if (!overflowBreaks || (segment & 128) !== 0 || text.length === 1) break;
+					const fit = getSegmentFit(text, textMetrics, fontMeasurement, emojiCorrection, letterSpacing !== 0 ? "segment-prefixes" : numericRunRe.test(text) ? "pair-context" : textMetrics.width < engineProfile.prefixFitMinWidth ? "sum-graphemes" : engineProfile.cutWordFit, measuredWithSpace ? spaceWidth : null);
+					fitAdvances = fit.advances;
+					if (fitAdvances === null) break;
+					if (fit.lineStartExtras !== null) (breakableLineStartExtras ??= new Array(to - from).fill(null))[mi - from] = fit.lineStartExtras;
+					if (followingSpaceKerning !== 0) {
+						fitAdvances = fitAdvances.slice();
+						fitAdvances[fitAdvances.length - 1] = fitAdvances[fitAdvances.length - 1] + followingSpaceKerning;
+					}
+					if (extraSpacings.length !== 0) {
+						fitAdvances = fitAdvances.slice();
+						for (let k = 0; k < extraSpacings.length; k++) fitAdvances[k] = fitAdvances[k] + extraSpacings[k] * letterSpacing;
+					}
+					if (unspaced !== null) {
+						fitAdvances = fitAdvances.slice();
+						for (let k = 0; k < unspaced.length; k++) fitAdvances[unspaced[k]] = fitAdvances[unspaced[k]] - letterSpacing;
+					}
+					break;
+				}
+				case 1:
+				case 4:
+				case 2:
+					width = getTextWidth(text, fontMeasurement, emojiCorrection) + spaceShare;
+					spaceShare = 0;
+					if (hasLetterSpacing) spacingGraphemeCount = countRenderedSpacingGraphemes(text, kind, engineProfile.graphemeTable);
+					break;
+				case 5:
+					if (engineProfile.letterSpaceTabs) spacingGraphemeCount = 1;
+					if (minimumTabAdvance === 0) minimumTabAdvance = getTextWidth(engineProfile.tabMinimumCharacter, fontMeasurement, emojiCorrection) / 2;
+					break;
+				case 7: {
+					width = getTextWidth(text, fontMeasurement, emojiCorrection);
+					const nextText = mi + 1 < to ? texts[mi + 1] : "";
+					if (hasLetterSpacing && (mi > from && (flags[mi - 1] & 15) === 0 && needsComplexTextPath(texts[mi - 1]) || leadingCombiningMarkRe().test(nextText) && needsComplexTextPath(nextText))) spacingGraphemeCount = 1;
+					break;
+				}
+			}
+			if (kind !== 0 && kind !== 1 && kind !== 2) simpleKinds = false;
+			if (kind !== 0 && kind !== 3) previousJoinablePiece = null;
+			segmentFlags[at] = segment & -129 | (hasLetterSpacing && spacingGraphemeCount > 0 ? 16 : 0);
+			widths[at] = addInternalLetterSpacing(width, spacingGraphemeCount, letterSpacing);
+			breakableFitAdvances[at] = fitAdvances;
+			if (segments !== null) segments[mi - from] = text;
+			if (kind !== 0 && text.charCodeAt(0) === 173) {
+				discretionaryHyphenContexts ??= zeros(mi - from);
+				discretionaryHyphenContexts[mi - from] = returnFitsEachSideAlone ? 0 : getJoinedNarrowing(analysis, mi, to, previousJoinablePiece, previousJoinableMetrics, fontMeasurement, emojiCorrection, engineProfile.lineFitEpsilon);
+			} else if (discretionaryHyphenContexts !== null) discretionaryHyphenContexts[mi - from] = 0;
+		}
+		const discretionaryHyphenWidth = getTextWidth(discretionaryHyphenContexts === null ? "-" : engineProfile.hyphenFromPrimaryFont ? getHyphenText(fontMeasurement) : "‐", fontMeasurement, emojiCorrection) + (letterSpacing === 0 ? 0 : letterSpacing * (engineProfile.letterSpaceDiscretionaryHyphen ? 2 : 1));
+		let hanKerning = {
+			widthTrims: null,
+			lineStartExtras: null,
+			lineEndTrims: null,
+			overflowLineEndTrims: null
+		};
+		if (engineProfile.hanKerning && textMayHanKern(own)) {
+			hanKerning = getHanKerningTrims(fontMeasurement, analysis, from, to);
+			const trims = hanKerning.widthTrims;
+			if (trims !== null) for (let i = 0; i < trims.length; i++) widths[base + i] = widths[base + i] - trims[i];
+		}
+		let lineStartExtras = hanKerning.lineStartExtras;
+		if (engineProfile.kernsAcrossCanvasWords && fontMeasurement.measuredKana && fontMeasurement.kanaKerning !== null && kanaPairRe.test(own)) {
+			const kanaKerning = getFontKanaKerning(fontMeasurement);
+			if (kanaKerning !== null) lineStartExtras = addKanaKerning(lineStartExtras, widths, base, analysis, from, to, fontMeasurement, kanaKerning);
+		}
+		let lineEndTrims = hanKerning.lineEndTrims;
+		if (engineProfile.hangsIdeographicSpace && own.includes("　")) lineEndTrims = addIdeographicSpaceHangs(lineEndTrims, analysis, fontMeasurement, letterSpacing, discretionaryHyphenWidth, from, to);
+		const prepared = {
+			widths,
+			segmentFlags,
+			simpleLineWalkFastPath: simpleKinds && !analysis.hasUnbroken,
+			simpleLineCountFastPath: simpleKinds,
+			breakableFitAdvances,
+			letterSpacing,
+			discretionaryHyphenWidth,
+			discretionaryHyphenContexts,
+			breakableLineStartExtras,
+			lineStartExtras,
+			lineEndTrims,
+			overflowLineEndTrims: hanKerning.overflowLineEndTrims,
+			tabStopAdvance,
+			minimumTabAdvance
+		};
+		if (segments !== null) prepared.segments = segments;
+		return prepared;
+	}
+	function addKanaKerning(extras, widths, base, analysis, from, to, measurement, kernings) {
+		const { normalized, starts, flags } = analysis;
+		for (let i = from; i < to; i++) {
+			if ((flags[i] & 15) !== 0) continue;
+			const start = starts[i];
+			const end = i + 1 < flags.length ? starts[i + 1] : normalized.length;
+			const at = base + i - from;
+			for (let k = i > from ? start : start + 1; k < end; k++) {
+				const kerning = getKanaKerning(normalized, start, k, measurement, kernings);
+				if (kerning === 0) continue;
+				if (k > start) widths[at] = widths[at] + kerning;
+				else if (kerning > 0) widths[at - 1] = widths[at - 1] + kerning;
+				else {
+					widths[at] = widths[at] + kerning;
+					extras ??= zeros(to - from);
+					extras[i - from] = extras[i - from] - kerning;
+				}
+			}
+		}
+		return extras;
+	}
+	function addIdeographicSpaceHangs(trims, analysis, measurement, letterSpacing, hyphenWidth, from, to) {
+		const { normalized, starts, flags } = analysis;
+		for (let i = from; i < to; i++) {
+			const end = i + 1 < flags.length ? starts[i + 1] : normalized.length;
+			if ((flags[i] & 15) !== 0 || normalized.charCodeAt(end - 1) !== 12288) continue;
+			if (i + 1 < to) {
+				const next = flags[i + 1] & 15;
+				if (next !== 8 && next !== 1 && !(next === 0 && (flags[i + 1] & 32) === 0)) continue;
+			}
+			let start = end - 1;
+			while (start > starts[i] && normalized.charCodeAt(start - 1) === 12288) start--;
+			const run = normalized.slice(start, end);
+			const afterSoftHyphen = i > 0 && start === starts[i] && normalized.charCodeAt(start - 1) === 173;
+			const hang = getSegmentMetrics(run, measurement).width + run.length * letterSpacing - (afterSoftHyphen ? hyphenWidth : 0);
+			if (hang <= 0) continue;
+			trims ??= zeros(to - from);
+			trims[i - from] = trims[i - from] + hang;
+		}
+		return trims;
+	}
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/line-break.js
+	var BREAK_AFTER_KINDS = 62;
+	function breaksAfterKind(kind) {
+		return (1 << kind & BREAK_AFTER_KINDS) !== 0;
+	}
+	function isDiscretionaryLineEnd(segmentFlags, segmentCount, endSegmentIndex, endGraphemeIndex) {
+		return endGraphemeIndex === 0 && endSegmentIndex > 0 && endSegmentIndex < segmentCount && (segmentFlags[endSegmentIndex - 1] & 15) === 3;
+	}
+	function consumesAtLineStart(kind, atChunkStart) {
+		return kind === 1 || kind === 3 || kind === 2 && !atChunkStart;
+	}
+	function getTabAdvance(position, tabStopAdvance, minimumAdvance, appUnits) {
+		if (appUnits) {
+			const stop = Math.round(tabStopAdvance * 60);
+			if (stop <= 0) return 0;
+			const x = Math.round(position * 60);
+			return (Math.ceil((x + Math.round(minimumAdvance * 120) / 2) / stop) * stop - x) / 60;
+		}
+		if (tabStopAdvance <= 0) return 0;
+		const advance = tabStopAdvance - (position - Math.floor(position / tabStopAdvance) * tabStopAdvance);
+		return advance < minimumAdvance ? advance + tabStopAdvance : advance;
+	}
+	function getItemTabAdvance(prepared, items, index, lineWidth, appUnits) {
+		const stopAdvance = items.tabStopAdvances === null ? prepared.tabStopAdvance : items.tabStopAdvances[index];
+		const minimumAdvance = items.minimumTabAdvances === null ? prepared.minimumTabAdvance : items.minimumTabAdvances[index];
+		return getTabAdvance(lineWidth - (items.insideExtras === null ? 0 : items.insideExtras[index] / 2), stopAdvance, minimumAdvance, appUnits) + prepared.widths[index];
+	}
+	function getTerminalLetterSpacing(prepared, openingEdges, hangingKinds, startSegmentIndex, startGraphemeIndex, endSegmentIndex, endGraphemeIndex) {
+		const { letterSpacing, segmentFlags } = prepared;
+		if (letterSpacing === 0) return 0;
+		if (endGraphemeIndex > 0) return (segmentFlags[endSegmentIndex] & 16) !== 0 ? letterSpacing : 0;
+		const segmentCount = prepared.widths.length;
+		if (isDiscretionaryLineEnd(segmentFlags, segmentCount, endSegmentIndex, endGraphemeIndex)) return 0;
+		if (endSegmentIndex > startSegmentIndex && endSegmentIndex < segmentCount && (segmentFlags[endSegmentIndex] & 15) !== 8 && (1 << (segmentFlags[endSegmentIndex - 1] & 15) & hangingKinds) !== 0) return 0;
+		for (let i = endSegmentIndex - 1; i >= startSegmentIndex; i--) {
+			const flags = segmentFlags[i];
+			const kind = flags & 15;
+			if (kind === 1 || kind !== 7 && kind !== 5 && (flags & 16) === 0 && kind !== 9 && (openingEdges === null || openingEdges[i] === 0)) continue;
+			if (i === startSegmentIndex && startGraphemeIndex > 0) return letterSpacing;
+			return (flags & 16) !== 0 ? letterSpacing : 0;
+		}
+		return 0;
+	}
+	function normalizeMaxWidth(maxWidth) {
+		return maxWidth <= Infinity ? maxWidth : Infinity;
+	}
+	function normalizePreparedLineStart(prepared, cursor) {
+		const { segmentFlags } = prepared;
+		const segmentCount = prepared.widths.length;
+		let segmentIndex = cursor.segmentIndex;
+		if (segmentIndex >= segmentCount) return false;
+		if (cursor.graphemeIndex > 0) return true;
+		let atChunkStart = segmentIndex === 0 || (segmentFlags[segmentIndex - 1] & 15) === 8;
+		while (true) {
+			const kind = segmentFlags[segmentIndex] & 15;
+			if (kind === 8) {
+				if (atChunkStart) {
+					cursor.segmentIndex = segmentIndex;
+					cursor.graphemeIndex = 0;
+					return true;
+				}
+				if (++segmentIndex >= segmentCount) return false;
+				cursor.segmentIndex = segmentIndex;
+				cursor.graphemeIndex = 0;
+				atChunkStart = true;
+			} else if (consumesAtLineStart(kind, atChunkStart)) {
+				if (++segmentIndex >= segmentCount) return false;
+			} else {
+				cursor.segmentIndex = segmentIndex;
+				cursor.graphemeIndex = 0;
+				return true;
+			}
+		}
+	}
+	function walkPreparedLinesRaw(prepared, maxWidth, onLine, stats = {
+		lineCount: 0,
+		maxLineWidth: 0
+	}) {
+		const cursor = {
+			segmentIndex: 0,
+			graphemeIndex: 0
+		};
+		if (!prepared.simpleLineWalkFastPath) {
+			if (normalizePreparedLineStart(prepared, cursor)) walkPreparedComplexLines(prepared, cursor, maxWidth, onLine, stats);
+			return stats.lineCount;
+		}
+		const { segmentFlags } = prepared;
+		const segmentCount = prepared.widths.length;
+		while (true) {
+			let startSegmentIndex = cursor.segmentIndex;
+			const atTextStart = startSegmentIndex === 0;
+			while (startSegmentIndex < segmentCount && consumesAtLineStart(segmentFlags[startSegmentIndex] & 15, atTextStart)) startSegmentIndex++;
+			if (startSegmentIndex >= segmentCount) return stats.lineCount;
+			const startGraphemeIndex = cursor.graphemeIndex;
+			cursor.segmentIndex = startSegmentIndex;
+			const width = stepPreparedSimpleLineGeometry(prepared, cursor, maxWidth);
+			stats.lineCount++;
+			if (width > stats.maxLineWidth) stats.maxLineWidth = width;
+			onLine?.(width, startSegmentIndex, startGraphemeIndex, cursor.segmentIndex, cursor.graphemeIndex);
+		}
+	}
+	function staysAfterObject(segmentFlags, segmentCount, start, hangingKinds) {
+		let after = start + 1;
+		while (after < segmentCount && (1 << (segmentFlags[after] & 15) & hangingKinds) !== 0) after++;
+		return after === segmentCount || (segmentFlags[after] & 15) !== 5;
+	}
+	function returnsFromUnfitHyphen(prepared, lineStartSegmentIndex, breakSegmentIndex, breakWidth, fitLimit, endKeepsJoin) {
+		const { discretionaryHyphenContexts, segmentFlags } = prepared;
+		const softHyphenIndex = breakSegmentIndex - 1;
+		if (softHyphenIndex < lineStartSegmentIndex || (segmentFlags[softHyphenIndex] & 15) !== 3 || breakWidth <= fitLimit) return false;
+		const overflow = breakWidth - fitLimit;
+		let narrowing = 0;
+		const last = endKeepsJoin ? softHyphenIndex : softHyphenIndex - 1;
+		if (discretionaryHyphenContexts !== null) for (let i = lineStartSegmentIndex; i <= last; i++) narrowing += discretionaryHyphenContexts[i];
+		return narrowing < overflow;
+	}
+	function walkPreparedComplexLines(prepared, cursor, maxWidth, onLine, stats, singleLine = false) {
+		const { widths, segmentFlags, breakableFitAdvances, discretionaryHyphenWidth, letterSpacing, lineStartExtras, lineEndTrims, overflowLineEndTrims, tabStopAdvance, minimumTabAdvance } = prepared;
+		const segmentCount = widths.length;
+		const items = prepared.items;
+		const hyphenWidths = items === void 0 ? null : items.hyphenWidths;
+		const hyphenRooms = items === void 0 ? null : items.hyphenRooms;
+		const itemEndHalts = items === void 0 ? null : items.itemEndHalts;
+		const insideExtras = items === void 0 ? null : items.insideExtras;
+		const fillExtras = items === void 0 ? null : items.fillExtras;
+		const openingEdges = items === void 0 ? null : items.openingEdges;
+		const emptyObjectSpaces = items === void 0 ? null : items.emptyObjectSpaces;
+		const emptyObjectReturns = items === void 0 ? null : items.emptyObjectReturns;
+		const engineProfile = getEngineProfile();
+		const hangingKinds = 16 | (engineProfile.hangTabs ? 32 : 0);
+		const hangGoesOnPastEmpty = items !== void 0 && engineProfile.hangsSpacesPerTextFrame;
+		const testsHyphenBeforeAtomic = engineProfile.testsHyphenBeforeAtomic;
+		const zeroWidthGlueTakesLine = engineProfile.zeroWidthGlueTakesLine;
+		const tabsInAppUnits = engineProfile.tabsInAppUnits;
+		const paddedOpeningFit = engineProfile.paddedOpeningFit;
+		const hardBreakItemRetreat = engineProfile.hardBreakItemRetreat;
+		const availableWidth = Math.max(0, maxWidth);
+		const fitLimit = availableWidth + engineProfile.lineFitEpsilon;
+		const retreatsFromUnfitHyphen = prepared.discretionaryHyphenContexts !== null;
+		const reservesHyphenWidth = engineProfile.unfitHyphenRetreat === "reduced-width";
+		const reservedHyphenWidth = reservesHyphenWidth ? discretionaryHyphenWidth : 0;
+		const keepsFirstBreak = retreatsFromUnfitHyphen && engineProfile.unfitHyphenRetreat === "full-width-or-first";
+		const hyphenEndKeepsJoin = engineProfile.unfitHyphenRetreat === "full-width";
+		let lastLineWidth = null;
+		while (true) {
+			const lineStartSegmentIndex = cursor.segmentIndex;
+			const lineStartGraphemeIndex = cursor.graphemeIndex;
+			let lineW = 0;
+			let hasContent = false;
+			let lineEndSegmentIndex = lineStartSegmentIndex;
+			let lineEndGraphemeIndex = lineStartGraphemeIndex;
+			let pendingBreakSegmentIndex = -1;
+			let pendingBreakWidth = 0;
+			let fitBreakSegmentIndex = -1;
+			let fitBreakPaintWidth = 0;
+			let hangEndSegmentIndex = -1;
+			let hangStartWidth = 0;
+			let hangStays = false;
+			let hangEdgesWidth = 0;
+			let lineEndTrimmed = 0;
+			let zeroWidthPrefix = true;
+			let afterUnspacedControl = false;
+			let endSegmentIndex = -1;
+			let endGraphemeIndex = 0;
+			let endWidth = 0;
+			let returnsFromHyphen = false;
+			let lineWidth = null;
+			if ((segmentFlags[lineStartSegmentIndex] & 15) === 8) {
+				cursor.segmentIndex = lineStartSegmentIndex + 1;
+				cursor.graphemeIndex = 0;
+				lineWidth = lineStartExtras === null ? 0 : lineStartExtras[lineStartSegmentIndex];
+			} else {
+				decided: {
+					let consumedEndSegmentIndex;
+					for (let i = lineStartSegmentIndex;; i++) {
+						if (i >= segmentCount) {
+							consumedEndSegmentIndex = segmentCount;
+							break;
+						}
+						let fillStart;
+						let fillSpacing = 0;
+						const flags = segmentFlags[i];
+						const kind = flags & 15;
+						if (kind === 8) {
+							consumedEndSegmentIndex = i + 1;
+							break;
+						}
+						const spaced = (flags & 16) !== 0;
+						const breakAfter = (1 << kind & BREAK_AFTER_KINDS) !== 0;
+						const startGraphemeIndex = i === lineStartSegmentIndex ? lineStartGraphemeIndex : 0;
+						const gap = letterSpacing !== 0 && hasContent && !zeroWidthPrefix && !afterUnspacedControl ? letterSpacing : 0;
+						let leadingSpacing = 0;
+						if (letterSpacing !== 0 && (spaced || kind === 7 || kind === 5 || kind === 9 || openingEdges !== null && openingEdges[i] !== 0)) {
+							leadingSpacing = gap;
+							afterUnspacedControl = !spaced;
+						}
+						if (kind !== 2 && kind !== 6) zeroWidthPrefix = false;
+						const w = kind !== 5 ? widths[i] : items === void 0 ? getTabAdvance(lineW + leadingSpacing, tabStopAdvance, minimumTabAdvance, tabsInAppUnits) : getItemTabAdvance(prepared, items, i, hasContent ? lineW + leadingSpacing : lineStartExtras === null ? 0 : lineStartExtras[i], tabsInAppUnits);
+						const advance = leadingSpacing + w;
+						const endTrim = lineEndTrims === null ? 0 : lineEndTrims[i];
+						if (kind === 3 && startGraphemeIndex === 0) {
+							if (hasContent) {
+								let hyphenWidth = discretionaryHyphenWidth;
+								let fitsHyphen = true;
+								if (items !== void 0) {
+									if (retreatsFromUnfitHyphen && i > lineStartSegmentIndex && (segmentFlags[i - 1] & 15) === 9) {
+										fitBreakSegmentIndex = i;
+										fitBreakPaintWidth = lineW;
+									}
+									if (hangGoesOnPastEmpty && hangEndSegmentIndex === i) {
+										hangEndSegmentIndex = i + 1;
+										hangStartWidth = Math.max(hangStartWidth, Math.min(lineW, availableWidth));
+									}
+									if (hyphenWidths !== null) hyphenWidth = hyphenWidths[i];
+									fitsHyphen = testsHyphenBeforeAtomic || i + 1 === segmentCount || (segmentFlags[i + 1] & 15) !== 9 || openingEdges !== null && openingEdges[i + 1] !== 0;
+								}
+								lineEndSegmentIndex = i + 1;
+								lineEndGraphemeIndex = 0;
+								if (i + 1 < segmentCount && (segmentFlags[i + 1] & 15) !== 8) {
+									pendingBreakSegmentIndex = i + 1;
+									pendingBreakWidth = lineW + hyphenWidth;
+									if (retreatsFromUnfitHyphen && ((fitsHyphen ? pendingBreakWidth : lineW) <= fitLimit || keepsFirstBreak && fitBreakSegmentIndex < 0)) {
+										fitBreakSegmentIndex = pendingBreakSegmentIndex;
+										fitBreakPaintWidth = pendingBreakWidth;
+									}
+								}
+							}
+							continue;
+						}
+						let fitAdvance = 0;
+						if (letterSpacing !== 0 && !spaced && !breakAfter && kind !== 7) fitAdvance = gap + w;
+						else if (breakAfter ? kind === 5 : w !== 0 || kind === 7) {
+							const contribution = w + (spaced ? letterSpacing : 0);
+							if (contribution !== 0) fitAdvance = leadingSpacing + contribution;
+						}
+						let hangs = (1 << kind & hangingKinds) !== 0;
+						if (hangGoesOnPastEmpty && kind === 2 && hangEndSegmentIndex === i) hangs = true;
+						if (hangs) {
+							if (hangEndSegmentIndex !== i) {
+								hangStartWidth = lineW - lineEndTrimmed + leadingSpacing;
+								hangStays = false;
+								if (items !== void 0 && i > lineStartSegmentIndex && (segmentFlags[i - 1] & 15) === 9) {
+									hangStays = staysAfterObject(segmentFlags, segmentCount, i, hangingKinds);
+									if (!hangStays) {
+										pendingBreakSegmentIndex = i;
+										pendingBreakWidth = lineW - lineEndTrimmed;
+									}
+								}
+								hangEdgesWidth = 0;
+							}
+							hangEndSegmentIndex = i + 1;
+							if (openingEdges !== null) {
+								hangStartWidth += openingEdges[i];
+								hangEdgesWidth += openingEdges[i];
+							}
+						}
+						if (!hasContent && kind === 6 && !zeroWidthGlueTakesLine) {
+							lineEndSegmentIndex = i + 1;
+							lineEndGraphemeIndex = 0;
+							continue;
+						}
+						if (!hasContent) {
+							if (startGraphemeIndex > 0) fillStart = startGraphemeIndex;
+							else {
+								const startExtra = lineStartExtras === null ? 0 : lineStartExtras[i];
+								const startTrim = overflowLineEndTrims !== null && fitAdvance + startExtra - overflowLineEndTrims[i] <= fitLimit ? overflowLineEndTrims[i] : endTrim;
+								if (fitAdvance + startExtra - startTrim > fitLimit && breakableFitAdvances[i] !== null && !hangs) fillStart = 0;
+								else {
+									hasContent = true;
+									lineEndSegmentIndex = i + 1;
+									lineEndGraphemeIndex = 0;
+									lineW = w + startExtra;
+									if (hangs) hangStartWidth += startExtra;
+									lineEndTrimmed = fitAdvance + startExtra > fitLimit && kind !== 9 ? startTrim : 0;
+									if (itemEndHalts !== null && lineEndTrimmed !== 0 && itemEndHalts[i] !== 0) {
+										lineW -= lineEndTrimmed;
+										lineEndTrimmed = 0;
+									}
+									if (breakAfter && (i + 1 === segmentCount || (segmentFlags[i + 1] & 32) === 0)) {
+										pendingBreakSegmentIndex = i + 1;
+										pendingBreakWidth = hangs ? hangStartWidth : kind === 5 ? lineW : lineW - advance;
+									}
+									if (retreatsFromUnfitHyphen && breakAfter && pendingBreakWidth + (hyphenRooms === null || pendingBreakSegmentIndex < 0 ? reservedHyphenWidth : hyphenRooms[pendingBreakSegmentIndex]) <= fitLimit) {
+										fitBreakSegmentIndex = pendingBreakSegmentIndex;
+										fitBreakPaintWidth = pendingBreakWidth;
+									}
+									continue;
+								}
+							}
+						} else {
+							const newFitW = hangs ? hangStartWidth - hangEdgesWidth : lineW + fitAdvance;
+							let overflows = newFitW - endTrim > fitLimit;
+							if (items !== void 0) {
+								let placesEmptyObject = false;
+								if (emptyObjectSpaces !== null && kind === 9 && w === 0 && newFitW > fitLimit) {
+									const contentW = hangEndSegmentIndex === i ? hangStartWidth : lineW;
+									const space = emptyObjectSpaces[i];
+									placesEmptyObject = contentW <= fitLimit || !(space >= 0 && contentW - space > fitLimit || emptyObjectReturns[i] === 1);
+								}
+								const narrowsOverflow = fitAdvance < 0 && lineW - lineEndTrimmed > fitLimit;
+								overflows = (overflows || narrowsOverflow) && !(hangs && hangStays) && !placesEmptyObject;
+								if (hangGoesOnPastEmpty && !overflows && hangEndSegmentIndex === i && kind === 9 && w === 0) {
+									hangEndSegmentIndex = i + 1;
+									hangStartWidth = Math.max(hangStartWidth, Math.min(lineW + advance, availableWidth));
+								}
+							}
+							if (overflows) {
+								const contentW = lineW - lineEndTrimmed;
+								if (breakAfter && (hangs || kind !== 5) && (contentW <= fitLimit || pendingBreakSegmentIndex < 0 && (kind === 1 || kind === 2) || kind === 2 && (segmentFlags[i - 1] & 15) === 9)) {
+									endWidth = hangs ? hangStartWidth : contentW;
+									lineW += advance;
+									endSegmentIndex = i + 1;
+									endGraphemeIndex = 0;
+									break decided;
+								}
+								if (kind === 5 && !hangs && pendingBreakSegmentIndex < 0) {
+									endSegmentIndex = i;
+									endGraphemeIndex = 0;
+									endWidth = hangEndSegmentIndex === i && i > lineStartSegmentIndex ? hangStartWidth : contentW;
+									break decided;
+								}
+								const unbroken = (flags & 32) !== 0;
+								if (kind === 9 && unbroken && hangEndSegmentIndex === i && (paddedOpeningFit === "start" ? hangStartWidth - hangEdgesWidth / 2 <= fitLimit && lineW - hangEdgesWidth / 2 > fitLimit : paddedOpeningFit === "placed" && hangStartWidth - hangEdgesWidth + w - endTrim <= fitLimit)) {
+									hangEndSegmentIndex = i + 1;
+									hangStartWidth += w;
+									hangEdgesWidth += w;
+									lineW += advance;
+									lineEndSegmentIndex = i + 1;
+									lineEndGraphemeIndex = 0;
+									continue;
+								}
+								if (unbroken && pendingBreakSegmentIndex >= 0) {
+									lineEndSegmentIndex = pendingBreakSegmentIndex;
+									lineEndGraphemeIndex = 0;
+								}
+								if (!unbroken || pendingBreakSegmentIndex >= 0) {
+									returnsFromHyphen = true;
+									break decided;
+								}
+								if (overflowLineEndTrims !== null && newFitW - overflowLineEndTrims[i] <= fitLimit) {
+									lineW += advance;
+									lineEndSegmentIndex = i + 1;
+									lineEndGraphemeIndex = 0;
+									lineEndTrimmed = overflowLineEndTrims[i];
+									if (itemEndHalts !== null && itemEndHalts[i] !== 0) {
+										lineW -= lineEndTrimmed;
+										lineEndTrimmed = 0;
+									}
+									continue;
+								}
+								if (kind === 9 && hardBreakItemRetreat !== "item" && i + 1 < segmentCount && (segmentFlags[i + 1] & 15) === 8) {
+									const beforeFlags = segmentFlags[i - 1];
+									const beforeKind = beforeFlags & 15;
+									const spaceAdvances = beforeKind === 4 ? breakableFitAdvances[i - 1] : null;
+									if (spaceAdvances !== null) {
+										const count = spaceAdvances.length;
+										const spaceAdvance = spaceAdvances[0];
+										const moved = hardBreakItemRetreat !== "fit" || lineW <= fitLimit ? 1 : spaceAdvance > 0 ? Math.min(count, Math.ceil((lineW - fitLimit) / spaceAdvance)) : count;
+										const contentStart = openingEdges !== null && openingEdges[lineStartSegmentIndex] !== 0 ? lineStartSegmentIndex + 1 : lineStartSegmentIndex;
+										if (i - 1 > contentStart || count - moved > lineStartGraphemeIndex) {
+											endSegmentIndex = i - 1;
+											endGraphemeIndex = count - moved;
+											endWidth = hangStartWidth;
+											break decided;
+										}
+									}
+									const beforeAdvances = beforeKind === 0 || beforeKind === 7 ? breakableFitAdvances[i - 1] : null;
+									const spacing = (beforeFlags & 16) !== 0 ? letterSpacing : 0;
+									if (beforeAdvances !== null && (i - 1 > lineStartSegmentIndex || beforeAdvances.length - 1 > lineStartGraphemeIndex)) {
+										endSegmentIndex = i - 1;
+										endGraphemeIndex = beforeAdvances.length - 1;
+										endWidth = lineW - beforeAdvances[endGraphemeIndex] - spacing;
+										break decided;
+									}
+									if (beforeAdvances === null && (beforeKind === 0 || beforeKind === 7) && i - 1 > lineStartSegmentIndex) {
+										endSegmentIndex = i - 1;
+										endGraphemeIndex = 0;
+										endWidth = lineW - widths[i - 1] - spacing;
+										break decided;
+									}
+									if (spaceAdvances !== null || beforeKind !== 4 && beforeKind !== 5) {
+										lineW += advance;
+										lineEndSegmentIndex = i + 1;
+										lineEndGraphemeIndex = 0;
+										lineEndTrimmed = 0;
+										continue;
+									}
+								}
+								if (breakableFitAdvances[i] === null) {
+									returnsFromHyphen = true;
+									break decided;
+								}
+								fillStart = 0;
+								fillSpacing = leadingSpacing;
+							} else {
+								if ((flags & 64) !== 0 && !breakAfter && pendingBreakSegmentIndex !== i) {
+									pendingBreakSegmentIndex = i;
+									pendingBreakWidth = lineW;
+								}
+								if (retreatsFromUnfitHyphen && !breakAfter && (flags & 32) === 0 && i > lineStartSegmentIndex && !breaksAfterKind(segmentFlags[i - 1] & 15) && (!reservesHyphenWidth || lineW + (hyphenRooms === null ? discretionaryHyphenWidth : hyphenRooms[i]) <= fitLimit)) {
+									fitBreakSegmentIndex = i;
+									fitBreakPaintWidth = lineW;
+								}
+								lineEndSegmentIndex = i + 1;
+								lineEndGraphemeIndex = 0;
+								if (itemEndHalts !== null && newFitW > fitLimit && itemEndHalts[i] !== 0) {
+									lineW += advance - endTrim;
+									lineEndTrimmed = 0;
+								} else {
+									lineW += advance;
+									if (fitAdvance !== 0 && !hangs) lineEndTrimmed = newFitW > fitLimit && kind !== 9 ? endTrim : 0;
+								}
+								if (breakAfter && (i + 1 === segmentCount || (segmentFlags[i + 1] & 32) === 0)) {
+									pendingBreakSegmentIndex = i + 1;
+									pendingBreakWidth = hangs ? hangStartWidth : kind === 5 ? lineW : lineW - advance - lineEndTrimmed;
+								}
+								if (retreatsFromUnfitHyphen && breakAfter && pendingBreakWidth + (hyphenRooms === null || pendingBreakSegmentIndex < 0 ? reservedHyphenWidth : hyphenRooms[pendingBreakSegmentIndex]) <= fitLimit) {
+									fitBreakSegmentIndex = pendingBreakSegmentIndex;
+									fitBreakPaintWidth = pendingBreakWidth;
+								}
+								continue;
+							}
+						}
+						const fitAdvances = breakableFitAdvances[i];
+						const fitCount = fitAdvances.length;
+						for (let g = fillStart; g < fitCount; g++) {
+							const baseGw = fitAdvances[g];
+							if (!hasContent) {
+								hasContent = true;
+								lineEndSegmentIndex = i;
+								lineEndGraphemeIndex = g + 1;
+								const startExtras = prepared.breakableLineStartExtras?.[i] ?? null;
+								lineW = startExtras === null ? baseGw : baseGw + startExtras[g];
+								if (g > 0 ? insideExtras !== null : fillExtras !== null) lineW += g > 0 ? insideExtras[i] : fillExtras[i];
+							} else {
+								const candidatePaintWidth = lineW + (baseGw + (g > fillStart ? letterSpacing : fillSpacing));
+								if (candidatePaintWidth + letterSpacing > fitLimit) break decided;
+								lineW = candidatePaintWidth;
+								lineEndSegmentIndex = i;
+								lineEndGraphemeIndex = g + 1;
+							}
+						}
+						if (hasContent && lineEndSegmentIndex === i && lineEndGraphemeIndex === fitCount) {
+							lineEndSegmentIndex = i + 1;
+							lineEndGraphemeIndex = 0;
+						}
+					}
+					endSegmentIndex = consumedEndSegmentIndex;
+					endGraphemeIndex = 0;
+					if (pendingBreakSegmentIndex === consumedEndSegmentIndex && lineEndGraphemeIndex === 0) {
+						endWidth = pendingBreakWidth;
+						returnsFromHyphen = true;
+					} else endWidth = lineW - lineEndTrimmed;
+				}
+				if (hasContent) {
+					if (returnsFromHyphen && fitBreakSegmentIndex >= 0 && pendingBreakSegmentIndex === lineEndSegmentIndex && lineEndGraphemeIndex === 0 && returnsFromUnfitHyphen(prepared, lineStartSegmentIndex, lineEndSegmentIndex, pendingBreakWidth, fitLimit, hyphenEndKeepsJoin)) {
+						endSegmentIndex = fitBreakSegmentIndex;
+						endGraphemeIndex = 0;
+						endWidth = fitBreakPaintWidth;
+					} else if (endSegmentIndex < 0) {
+						endSegmentIndex = lineEndSegmentIndex;
+						endGraphemeIndex = lineEndGraphemeIndex;
+						endWidth = pendingBreakSegmentIndex === lineEndSegmentIndex && lineEndGraphemeIndex === 0 ? pendingBreakWidth : items !== void 0 && hangEndSegmentIndex === lineEndSegmentIndex && lineEndGraphemeIndex === 0 ? hangStartWidth : lineW - lineEndTrimmed;
+					}
+					cursor.segmentIndex = endSegmentIndex;
+					cursor.graphemeIndex = endGraphemeIndex;
+					const hangsWhereUnfit = endGraphemeIndex === 0 && hangEndSegmentIndex >= 0 && (endSegmentIndex === hangEndSegmentIndex || endSegmentIndex === hangEndSegmentIndex + 1) && (hangEndSegmentIndex === segmentCount || (segmentFlags[hangEndSegmentIndex] & 15) === 8);
+					const paintWidth = (hangsWhereUnfit ? lineW - lineEndTrimmed : endWidth) + getTerminalLetterSpacing(prepared, openingEdges, hangingKinds, lineStartSegmentIndex, lineStartGraphemeIndex, endSegmentIndex, endGraphemeIndex);
+					lineWidth = hangsWhereUnfit ? Math.max(hangStartWidth, Math.min(paintWidth, availableWidth)) : paintWidth;
+				}
+			}
+			if (lineWidth === null) break;
+			lastLineWidth = lineWidth;
+			if (stats !== null) {
+				stats.lineCount++;
+				if (lineWidth > stats.maxLineWidth) stats.maxLineWidth = lineWidth;
+			}
+			onLine?.(lineWidth, lineStartSegmentIndex, lineStartGraphemeIndex, cursor.segmentIndex, cursor.graphemeIndex);
+			if (singleLine || !normalizePreparedLineStart(prepared, cursor)) break;
+		}
+		return lastLineWidth;
+	}
+	function stepPreparedSimpleLineGeometry(prepared, cursor, maxWidth) {
+		const { widths, segmentFlags, breakableFitAdvances, lineStartExtras, lineEndTrims, overflowLineEndTrims } = prepared;
+		const fitLimit = Math.max(0, maxWidth) + getEngineProfile().lineFitEpsilon;
+		const start = cursor.segmentIndex;
+		const startAdvances = breakableFitAdvances[start];
+		const startW = lineStartExtras === null ? widths[start] : widths[start] + lineStartExtras[start];
+		const startEndTrim = lineEndTrims === null ? 0 : lineEndTrims[start];
+		const startTrim = overflowLineEndTrims !== null && startW - overflowLineEndTrims[start] <= fitLimit ? overflowLineEndTrims[start] : startEndTrim;
+		let lineW;
+		let endTrimmed = 0;
+		if (cursor.graphemeIndex > 0 || startW - startTrim > fitLimit && startAdvances !== null) {
+			const fitAdvances = startAdvances;
+			const startExtras = prepared.breakableLineStartExtras?.[start] ?? null;
+			let g = cursor.graphemeIndex + 1;
+			lineW = startExtras === null ? fitAdvances[g - 1] : fitAdvances[g - 1] + startExtras[g - 1];
+			const items = prepared.items;
+			if (items !== void 0 && (g > 1 ? items.insideExtras !== null : items.fillExtras !== null)) lineW += g > 1 ? items.insideExtras[start] : items.fillExtras[start];
+			for (; g < fitAdvances.length; g++) {
+				if (lineW + fitAdvances[g] > fitLimit) {
+					cursor.graphemeIndex = g;
+					return lineW;
+				}
+				lineW += fitAdvances[g];
+			}
+		} else {
+			lineW = startW;
+			if (startW > fitLimit) endTrimmed = startTrim;
+		}
+		for (let i = start + 1; i < widths.length; i++) {
+			const w = widths[i];
+			const endTrim = lineEndTrims === null ? 0 : lineEndTrims[i];
+			if (lineW + w - endTrim > fitLimit) {
+				const hangs = breaksAfterKind(segmentFlags[i] & 15);
+				cursor.segmentIndex = hangs ? i + 1 : i;
+				cursor.graphemeIndex = 0;
+				return !hangs && breaksAfterKind(segmentFlags[i - 1] & 15) ? lineW - widths[i - 1] : lineW - endTrimmed;
+			}
+			lineW += w;
+			endTrimmed = lineW > fitLimit ? endTrim : 0;
+		}
+		cursor.segmentIndex = widths.length;
+		cursor.graphemeIndex = 0;
+		return lineW - endTrimmed;
+	}
+	// ../../node_modules/.pnpm/@chenglou+pretext@1.0.0/node_modules/@chenglou/pretext/dist/layout.js
 	function prepareInternal(text, font, includeSegments, options) {
 		const wordBreak = options?.wordBreak ?? "normal";
-		const letterSpacing = options?.letterSpacing ?? 0;
-		return measureAnalysis(analyzeText(text, getEngineProfile(), options?.whiteSpace, wordBreak), font, includeSegments, wordBreak, letterSpacing);
+		const engineProfile = getEngineProfile();
+		const letterSpacing = readLetterSpacing(options?.letterSpacing, engineProfile);
+		const language = getPreparationLanguage(engineProfile);
+		const analysis = analyzeText(text, engineProfile, options?.whiteSpace, wordBreak, language);
+		return measureAnalysis(analysis, 0, analysis.flags.length, font, includeSegments, letterSpacing, engineProfile, language, true, null);
 	}
 	function prepareWithSegments(text, font, options) {
-		return prepareInternal(text, font, true, options);
+		const prepared = prepareInternal(text, font, true, options);
+		const kinds = [];
+		for (let i = 0; i < prepared.segmentFlags.length; i++) kinds.push(SEGMENT_KINDS[prepared.segmentFlags[i] & 15]);
+		prepared.kinds = kinds;
+		return prepared;
 	}
 	function getInternalPrepared(prepared) {
 		return prepared;
 	}
+	function measureLineStats(prepared, maxWidth) {
+		const stats = {
+			lineCount: 0,
+			maxLineWidth: 0
+		};
+		walkPreparedLinesRaw(getInternalPrepared(prepared), normalizeMaxWidth(maxWidth), void 0, stats);
+		return stats;
+	}
 	function measureNaturalWidth(prepared) {
-		let maxWidth = 0;
-		walkPreparedLinesRaw(getInternalPrepared(prepared), Number.POSITIVE_INFINITY, (width) => {
-			if (width > maxWidth) maxWidth = width;
-		});
-		return maxWidth;
+		return measureLineStats(prepared, Number.POSITIVE_INFINITY).maxLineWidth;
 	}
 	typeof Intl !== "undefined" && "Segmenter" in Intl;
 	/** Natural (unwrapped) width of `text` in `font`, px. */
@@ -13081,8 +11917,7 @@ createHTML: (html) => {
 		const s = getComputedStyle(el);
 		return `${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
 	}
-	//#endregion
-	//#region src/lib/views/shared/format.ts
+	// src/lib/views/shared/format.ts
 	function fmtTime(d, locale) {
 		return fmtTime$1(d, locale);
 	}
@@ -13132,8 +11967,7 @@ createHTML: (html) => {
 			day: "numeric"
 		});
 	}
-	//#endregion
-	//#region src/lib/views/shared/opening-top.ts
+	// src/lib/views/shared/opening-top.ts
 	/**
 	* Where a time grid opens: the y (grid px, 0 = first visible hour) to put at
 	* the top of the scroller so no event is sliced there.
@@ -13170,8 +12004,7 @@ createHTML: (html) => {
 		}
 		return Math.max(0, y);
 	}
-	//#endregion
-	//#region src/lib/views/planner/PlannerWeek.svelte
+	// src/lib/views/planner/PlannerWeek.svelte
 	var root_1$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-cont svelte-j4rvbp" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8" class="svelte-j4rvbp"><path d="M5.5 1.5 2.5 4l3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="svelte-j4rvbp"></path></svg></span>`);
 	var root_2$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-span svelte-j4rvbp" aria-hidden="true"> </span>`);
 	var root_3$7 = /* @__PURE__ */ from_html(`<span class="tw-ad-arrow svelte-j4rvbp" aria-hidden="true"><svg viewBox="0 0 8 8" width="8" height="8" class="svelte-j4rvbp"><path d="M2.5 1.5 5.5 4l-3 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="svelte-j4rvbp"></path></svg></span>`);
@@ -14485,8 +13318,7 @@ createHTML: (html) => {
 		"focusin",
 		"keydown"
 	]);
-	//#endregion
-	//#region src/lib/views/planner/Planner.svelte
+	// src/lib/views/planner/Planner.svelte
 	var rest_excludes$2 = /* @__PURE__ */ new Set([
 		"$$slots",
 		"$$events",
@@ -14499,8 +13331,7 @@ createHTML: (html) => {
 			return mode();
 		} }, () => rest));
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/easing/index.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/easing/index.js
 	/**
 	* Cubic scaling, decelerate towards end.
 	*
@@ -14511,8 +13342,7 @@ createHTML: (html) => {
 		const f = t - 1;
 		return f * f * f + 1;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/animate/index.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/animate/index.js
 	/** @import { FlipParams, AnimationConfig } from './public.js' */
 	/**
 	* The flip function calculates the start and end position of an element and animates between them, translating the x and y values.
@@ -14564,8 +13394,7 @@ createHTML: (html) => {
 		}
 		return zoom;
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/transition/index.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/transition/index.js
 	/** @param {number} t */
 	function cubic_out(t) {
 		const f = t - 1;
@@ -14646,8 +13475,7 @@ createHTML: (html) => {
 		}
 		return [transition(to_send, to_receive, false), transition(to_receive, to_send, true)];
 	}
-	//#endregion
-	//#region ../../node_modules/.pnpm/svelte@5.57.1_@typescript-eslint+types@8.62.1/node_modules/svelte/src/motion/index.js
+	// ../../node_modules/.pnpm/svelte@5.57.3_@typescript-eslint+types@8.62.1/node_modules/svelte/src/motion/index.js
 	/**
 	* A [media query](https://svelte.dev/docs/svelte/svelte-reactivity#MediaQuery) that matches if the user [prefers reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 	*
@@ -14673,8 +13501,7 @@ createHTML: (html) => {
 	* @since 5.7.0
 	*/
 	var prefersReducedMotion = /*@__PURE__*/ new MediaQuery("(prefers-reduced-motion: reduce)");
-	//#endregion
-	//#region src/lib/views/shared/chip-fit.svelte.ts
+	// src/lib/views/shared/chip-fit.svelte.ts
 	function createChipFit(options) {
 		let width = /* @__PURE__ */ state(0);
 		let fonts = /* @__PURE__ */ state(proxy({}));
@@ -14728,8 +13555,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/views/planner/PlannerScroll.svelte
+	// src/lib/views/planner/PlannerScroll.svelte
 	var allDaySegmentContent = ($$anchor, seg = noop) => {
 		var fragment = root_4$6();
 		var node = first_child(fragment);
@@ -15876,8 +14702,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/views/agenda/AgendaDay.svelte
+	// src/lib/views/agenda/AgendaDay.svelte
 	var root$4 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge svelte-n8lbn1"> </span>`);
 	var root_1$5 = /* @__PURE__ */ from_html(`<span class="ag-day-head-badge ag-day-head-badge--muted svelte-n8lbn1"> </span>`);
 	var root_2$5 = /* @__PURE__ */ from_html(`<div><span class="ag-day-head-num svelte-n8lbn1"> </span> <!> <span class="ag-day-head-name svelte-n8lbn1"> </span> <span class="ag-day-head-date svelte-n8lbn1"> </span></div>`);
@@ -16696,8 +15521,7 @@ createHTML: (html) => {
 		"touchend",
 		"click"
 	]);
-	//#endregion
-	//#region src/lib/views/agenda/AgendaWeek.svelte
+	// src/lib/views/agenda/AgendaWeek.svelte
 	var root$3 = /* @__PURE__ */ from_html(`<span class="ag-card-eta svelte-uhwfyj"> </span>`);
 	var root_1$4 = /* @__PURE__ */ from_html(`<span class="ag-card-sub svelte-uhwfyj"> </span>`);
 	var root_2$4 = /* @__PURE__ */ from_html(`<span class="ag-card-loc svelte-uhwfyj"> </span>`);
@@ -17510,8 +16334,7 @@ createHTML: (html) => {
 		"touchend",
 		"keydown"
 	]);
-	//#endregion
-	//#region src/lib/views/agenda/Agenda.svelte
+	// src/lib/views/agenda/Agenda.svelte
 	var rest_excludes$1 = /* @__PURE__ */ new Set([
 		"$$slots",
 		"$$events",
@@ -17534,8 +16357,7 @@ createHTML: (html) => {
 		});
 		append($$anchor, fragment);
 	}
-	//#endregion
-	//#region src/lib/views/mobile/MobileDay.svelte
+	// src/lib/views/mobile/MobileDay.svelte
 	var root_1$3 = /* @__PURE__ */ from_html(`<span class="mb-allday-span svelte-zbkzcp"> </span>`);
 	var root_2$3 = /* @__PURE__ */ from_html(`<button type="button"><span class="mb-allday-dot svelte-zbkzcp"></span> <span class="mb-allday-title svelte-zbkzcp"> </span> <!></button>`);
 	var root_3$3 = /* @__PURE__ */ from_html(`<button type="button" class="mb-allday-more svelte-zbkzcp"> </button>`);
@@ -18319,8 +17141,7 @@ createHTML: (html) => {
 		"keydown",
 		"contextmenu"
 	]);
-	//#endregion
-	//#region src/lib/views/mobile/MobileWeek.svelte
+	// src/lib/views/mobile/MobileWeek.svelte
 	var root$2 = /* @__PURE__ */ from_html(`<span> </span>`);
 	var root_1$2 = /* @__PURE__ */ from_html(`<span class="mw-empty svelte-1d18hkf"> </span>`);
 	var root_2$2 = /* @__PURE__ */ from_html(`<span class="mw-ev-title svelte-1d18hkf"> </span> <span class="mw-ev-time svelte-1d18hkf"> </span>`, 1);
@@ -18635,8 +17456,7 @@ createHTML: (html) => {
 		"click",
 		"keydown"
 	]);
-	//#endregion
-	//#region src/lib/views/mobile/Mobile.svelte
+	// src/lib/views/mobile/Mobile.svelte
 	var rest_excludes = /* @__PURE__ */ new Set([
 		"$$slots",
 		"$$events",
@@ -18659,8 +17479,7 @@ createHTML: (html) => {
 		});
 		append($$anchor, fragment);
 	}
-	//#endregion
-	//#region src/lib/views/month/MonthGrid.svelte
+	// src/lib/views/month/MonthGrid.svelte
 	var root$1 = /* @__PURE__ */ from_html(`<div class="mg-head-cell svelte-pvjuld" role="columnheader"> </div>`);
 	var root_1$1 = /* @__PURE__ */ from_html(`<span><span class="mg-chip-dot svelte-pvjuld"></span></span>`);
 	var root_2$1 = /* @__PURE__ */ from_html(`<button type="button"><!></button>`);
@@ -19047,8 +17866,7 @@ createHTML: (html) => {
 		"focusin",
 		"keydown"
 	]);
-	//#endregion
-	//#region src/lib/adapters/errors.ts
+	// src/lib/adapters/errors.ts
 	/**
 	* The two refusals the calendar tells apart when a write fails.
 	*
@@ -19081,8 +17899,7 @@ createHTML: (html) => {
 	function isNotFoundError(e) {
 		return e instanceof EventNotFoundError || e instanceof Error && /not found/i.test(e.message);
 	}
-	//#endregion
-	//#region src/lib/engine/event-store.svelte.ts
+	// src/lib/engine/event-store.svelte.ts
 	function createEventStore(adapter) {
 		const getAdapter = typeof adapter === "function" ? adapter : () => adapter;
 		let eventMap = new SvelteMap();
@@ -19237,8 +18054,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/engine/view-state.svelte.ts
+	// src/lib/engine/view-state.svelte.ts
 	function inferMode(view) {
 		if (view.startsWith("day")) return "day";
 		if (view.startsWith("month")) return "month";
@@ -19342,8 +18158,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/engine/selection.svelte.ts
+	// src/lib/engine/selection.svelte.ts
 	function createSelection() {
 		let selectedId = /* @__PURE__ */ state(null);
 		let hoveredId = /* @__PURE__ */ state(null);
@@ -19386,8 +18201,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/engine/drag.svelte.ts
+	// src/lib/engine/drag.svelte.ts
 	function createDragState() {
 		let mode = /* @__PURE__ */ state("none");
 		let payload = /* @__PURE__ */ state(null);
@@ -19452,35 +18266,9 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/theme/presets.ts
-	/**
-	* Theme presets for timeline components.
-	*
-	* Each preset is a CSS inline-style string of --dt-* custom properties.
-	* Pass to the `theme` prop of any timeline component.
-	*
-	* Presets:
-	*   auto     — Transparent: inherit --dt-* from the host page (recommended default)
-	*   neutral  — Explicit light theme: white bg, blue accent, works standalone
-	*   midnight — Explicit dark theme: charcoal bg, red accent
-	*/
-	/**
-	* Auto — triggers the smart auto-theme engine.
-	*
-	* When passed to Calendar's `theme` prop, the component will probe the host
-	* page at mount time (background, fonts, accent color, light/dark mode)
-	* and generate matching --dt-* CSS tokens automatically.
-	*
-	* Reactively watches for host theme changes (e.g. dark-mode toggle).
-	*
-	* If you want passive inheritance only (no probing), pass `autoTheme={false}`
-	* alongside `theme={auto}`.
-	*/
-	var auto = ``;
 	/** All available presets keyed by name */
 	var presets = {
-		auto,
+		auto: "",
 		neutral: `
 	--dt-stage-bg: #efebe9;
 	--dt-bg: #efebe9;
@@ -19525,8 +18313,7 @@ createHTML: (html) => {
 	--dt-mono: ui-monospace, 'SFMono-Regular', monospace;
 `
 	};
-	//#endregion
-	//#region src/lib/theme/auto.ts
+	// src/lib/theme/auto.ts
 	function parseColor(raw) {
 		if (!raw || raw === "transparent" || raw === "rgba(0, 0, 0, 0)") return null;
 		const rgba = raw.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
@@ -20109,8 +18896,7 @@ createHTML: (html) => {
 			document.removeEventListener("animationend", onTransitionEnd);
 		};
 	}
-	//#endregion
-	//#region src/lib/calendar/Calendar.svelte
+	// src/lib/calendar/Calendar.svelte
 	var defaultViews = [
 		{
 			id: "day-planner",
@@ -20174,7 +18960,7 @@ createHTML: (html) => {
 		push($$props, true);
 		/** Breakpoint (px) at which auto-mobile activates */
 		const MOBILE_BREAKPOINT = 768;
-		let views = prop($$props, "views", 3, defaultViews), theme = prop($$props, "theme", 3, auto), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 0), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), minColumnWidth = prop($$props, "minColumnWidth", 3, 110), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), columns = prop($$props, "columns", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
+		let views = prop($$props, "views", 3, defaultViews), theme = prop($$props, "theme", 3, ""), mondayStart = prop($$props, "mondayStart", 3, true), heightProp = prop($$props, "height", 3, 600), borderRadius = prop($$props, "borderRadius", 3, 0), readOnly = prop($$props, "readOnly", 3, false), snapInterval = prop($$props, "snapInterval", 3, 15), minColumnWidth = prop($$props, "minColumnWidth", 3, 110), showModePills = prop($$props, "showModePills", 3, true), showNavigation = prop($$props, "showNavigation", 3, true), equalDays = prop($$props, "equalDays", 3, false), showDates = prop($$props, "showDates", 3, true), compact = prop($$props, "compact", 3, false), columns = prop($$props, "columns", 3, false), mobileProp = prop($$props, "mobile", 3, "auto");
 		const unzone = (d) => $$props.timezone ? fromZonedTime(d, $$props.timezone) : d;
 		const zoneIn = (d) => d && $$props.timezone ? toZonedTime(d, $$props.timezone) : d;
 		const effectiveCreate = /* @__PURE__ */ user_derived(() => readOnly() || !$$props.oneventcreate ? void 0 : (range) => $$props.oneventcreate({
@@ -20197,7 +18983,7 @@ createHTML: (html) => {
 		const stackHeader = /* @__PURE__ */ user_derived(() => get(useMobile) && get(containerWidth) > 0 && get(containerWidth) < HEADER_STACK_BREAKPOINT);
 		let calEl = /* @__PURE__ */ state(void 0);
 		let probedTheme = /* @__PURE__ */ state("");
-		const needsProbe = /* @__PURE__ */ user_derived(() => theme() === auto && $$props.autoTheme !== false);
+		const needsProbe = /* @__PURE__ */ user_derived(() => theme() === "" && $$props.autoTheme !== false);
 		onMount(() => {
 			if (!get(calEl)) return;
 			set(containerWidth, get(calEl).clientWidth, true);
@@ -20216,7 +19002,7 @@ createHTML: (html) => {
 			};
 		});
 		/** Effective theme: user-provided takes priority, otherwise probed auto. */
-		const effectiveTheme = /* @__PURE__ */ user_derived(() => theme() === auto && $$props.autoTheme !== false ? get(probedTheme) : theme());
+		const effectiveTheme = /* @__PURE__ */ user_derived(() => theme() === "" && $$props.autoTheme !== false ? get(probedTheme) : theme());
 		const effectiveAdapter = /* @__PURE__ */ user_derived(() => $$props.timezone ? wrapAdapterWithTimezone($$props.adapter, $$props.timezone) : $$props.adapter);
 		const store = createEventStore(() => get(effectiveAdapter));
 		const viewState = createViewState(untrack(() => ({
@@ -20813,8 +19599,7 @@ createHTML: (html) => {
 		pop();
 	}
 	delegate(["keydown", "click"]);
-	//#endregion
-	//#region src/lib/adapters/memory.ts
+	// src/lib/adapters/memory.ts
 	var counter = 0;
 	function uid() {
 		return `mem-${Date.now()}-${++counter}`;
@@ -20874,8 +19659,7 @@ createHTML: (html) => {
 			}
 		};
 	}
-	//#endregion
-	//#region src/lib/widget/CalendarWidget.svelte
+	// src/lib/widget/CalendarWidget.svelte
 	function CalendarWidget($$anchor, $$props) {
 		push($$props, true);
 		/** Events endpoint — fetched as `GET {api}?start=…&end=…` (ISO instants); answers an array of events or `{ events: [...] }` */
@@ -21070,8 +19854,7 @@ createHTML: (html) => {
 		}
 		pop();
 	}
-	//#endregion
-	//#region src/lib/widget/widget.ts
+	// src/lib/widget/widget.ts
 	/**
 	* Widget entry point — registers <day-calendar> as a custom element.
 	*
@@ -21223,5 +20006,4 @@ createHTML: (html) => {
 			customElements.upgrade(el);
 		}
 	}
-	//#endregion
 })();

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.1
+
+### Patch Changes
+
+- `@chenglou/pretext` 0.0.9 → 1.0.0. The calls the text layout makes (`prepare`, `layout`, `prepareWithSegments`, `measureNaturalWidth`) are unchanged; the unused `@sveltejs/adapter-node` dev dependency is gone.
+
 ## 1.9.0
 
 ### Minor Changes
